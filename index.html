@@ -7,9 +7,12 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
 </head>
+<!-- Home Page-->
 <body>
+
+    <!-- Nav Bar -->
     <nav>
-                    <!-- LEFT — Logo -->
+                    <!-- LEFT  Logo -->
         <a href="index.html" class="nav-logo">
             <div class="nav-logo-icon">
             <i class="ti ti-book-2"></i>
@@ -17,7 +20,7 @@
             <span class="nav-logo-text">Inkwell</span>
         </a>
         
-        <!-- CENTER — Links -->
+        <!-- CENTER  Links -->
         <ul class="nav-links">
             <li><a href="index.html" class="active">Home</a></li>
             <li><a href="search.html">Search</a></li>
@@ -25,13 +28,627 @@
             <li><a href="social.html">Social</a></li>
         </ul>
         
-        <!-- RIGHT — Auth -->
+        <!-- RIGHT  Auth -->
         <div class="nav-auth">
             <a href="login.html" class="btn-ghost">Log in</a>
             <a href="login.html" class="btn-primary">Sign up</a>
         </div>
 
     </nav>
+
+    <!-- Section 1 Hero -->
+    <section class="hero">
+         <!-- DIV 1  LEFT SIDE  Text -->
+        <div> 
+            <span>Beyond a simple rating</span>
+            <h1>Some stories leave a mark.</h1>
+            <h2>Every story you read becomes part of you. Remember it and share it.</h2>
+            <p>Log what you read, save what hit you, write what it meant to you. Because the same story speaks differently to every person who lives it.</p>
+            <button>Join Inkwell</button>
+            <button>Start Exploring</button>
+        </div>
+
+           <!-- DIV 2  RIGHT SIDE Rotating Card -->
+        <div class="hero-right">
+
+            <!-- THE TILT CARD -->
+            <div class="card-effect">
+
+                <!-- DIV 1 inside card  Cover -->
+                <div class="card-cover-side">
+                    <img class="card-cover-img" id="card-cover" src="" alt="">
+                </div>
+
+                <!-- DIV 2 inside card  Info -->
+                <div class="card-info-side">
+                    <span class="card-type" id="card-type"></span>
+                    <h3 class="card-title" id="card-title"></h3>
+                    <p class="card-author" id="card-author"></p>
+                    <div class="card-score">
+                        <span class="card-star">★</span>
+                        <span id="card-score"></span>
+                        <span class="card-max-score">/10</span>
+                    </div>
+                           <!-- DIV 3 inside card  Buttons -->
+                    <div class="card-buttons">
+                        <button class="card-btn">Quotes</button>
+                        <button class="card-btn">Moments</button>
+                        <button class="card-btn">Characters</button>
+                        <button class="card-btn">Notes</button>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- Section 2 Product -->
+    <section id="section-2-empty-shelf" class="section section-empty-shelf">
+
+        <!-- Section title -->
+        <header class="section-2-header">
+            <h2>A rating tells you nothing.</h2>
+        </header>
+
+        <!-- Scroll animation wrapper -->
+        <div class="empty-shelf-scroll">
+
+            <!-- STAGE 1: Basic empty row appears first -->
+            <div class="scroll-stage stage-basic-row" data-stage="basic-row">
+                <article class="media-row media-row-empty">
+                    <div class="media-cover">
+                        <img src="assets/vagabond-cover.jpg" alt="Vagabond manga cover">
+                    </div>
+
+                    <div class="media-main-info">
+                        <h3>Vagabond</h3>
+                        <p>Takehiko Inoue</p>
+                    </div>
+
+                    <div class="media-rating">
+                        <span>9/10</span>
+                    </div>
+                </article>
+            </div>
+
+            <!-- STAGE 2: Row vanishes, multiple quotes fall in -->
+            <div class="scroll-stage stage-quotes-fall" data-stage="quotes-fall">
+                <div class="falling-quotes">
+                    <blockquote class="falling-quote quote-1">
+                        Lorem ipsum dolor sit amet.
+                    </blockquote>
+
+                    <blockquote class="falling-quote quote-2">
+                        Consectetur adipiscing elit.
+                    </blockquote>
+
+                    <blockquote class="falling-quote quote-3">
+                        Sed do eiusmod tempor.
+                    </blockquote>
+
+                    <blockquote class="falling-quote quote-4">
+                        Integer vitae libero ac risus.
+                    </blockquote>
+                </div>
+            </div>
+
+             <!-- STAGE 3: Row returns, quotes become the first button -->
+            <div class="scroll-stage stage-row-with-quotes" data-stage="row-with-quotes">
+                <article class="media-row media-row-expanded">
+                    <div class="media-cover">
+                        <img src="assets/vagabond-cover.jpg" alt="Vagabond manga cover">
+                    </div>
+
+                    <div class="media-main-info">
+                        <h3>Vagabond</h3>
+                        <p>Takehiko Inoue</p>
+
+                        <div class="media-depth-buttons">
+                            <button type="button" class="depth-button depth-button-quotes">
+                                Quotes
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="media-rating">
+                        <span>9/10</span>
+                     </div>
+                </article>
+            </div>
+
+            <!-- STAGE 4: Row vanishes, favourite moment images move around -->
+            <div class="scroll-stage stage-moments-move" data-stage="moments-move">
+                <div class="moving-moments">
+                    <figure class="moment-frame moment-frame-1">
+                        <img src="assets/vagabond-moment-1.jpg" alt="Vagabond moment placeholder">
+                        <figcaption>Lorem ipsum moment.</figcaption>
+                    </figure>
+
+                    <figure class="moment-frame moment-frame-2">
+                        <img src="assets/vagabond-moment-2.jpg" alt="Vagabond moment placeholder">
+                        <figcaption>Dolor sit amet.</figcaption>
+                    </figure>
+
+                    <figure class="moment-frame moment-frame-3">
+                        <img src="assets/vagabond-moment-3.jpg" alt="Vagabond moment placeholder">
+                        <figcaption>Consectetur elit.</figcaption>
+                    </figure>
+                </div>
+            </div>
+
+            <!-- STAGE 5: Row returns, favourite moment becomes a button -->
+            <div class="scroll-stage stage-row-with-moment" data-stage="row-with-moment">
+                <article class="media-row media-row-expanded">
+                    <div class="media-cover">
+                        <img src="assets/vagabond-cover.jpg" alt="Vagabond manga cover">
+                    </div>
+
+                    <div class="media-main-info">
+                        <h3>Vagabond</h3>
+                        <p>Takehiko Inoue</p>
+
+                        <div class="media-depth-buttons">
+                            <button type="button" class="depth-button depth-button-quotes">
+                                Quotes
+                            </button>
+
+                            <button type="button" class="depth-button depth-button-moment">
+                                Moment
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="media-rating">
+                        <span>9/10</span>
+                    </div>
+                </article>
+            </div>
+
+            <!-- STAGE 6: Row vanishes, character names appear -->
+            <div class="scroll-stage stage-characters-appear" data-stage="characters-appear">
+                <div class="character-cloud">
+                    <figure class="character-name character-1">
+                        <img src="img/Musashi Miyamoto.jpg" alt="Musashi Miyamoto IMG">
+                        <figcaption>1.Musashi Miyamoto</figcaption>
+                    </figure>
+
+                    <figure class="character-name character-2">
+                        <img src="img/Kojiro Sasaki.jpg" alt="Kojiro Sasaki IMG">
+                        <figcaption>2.Kojiro Sasaki</figcaption>
+                    </figure>
+
+                    <figure class="character-name character-3">
+                        <img src="img/Otsu.jpg" alt="Otsu">
+                        <figcaption>3.Otsu</figcaption>
+                    </figure>
+
+                    <figure class="character-name character-4">
+                        <img src="img/Matahachi Honiden.jpg" alt="Matahachi Honiden IMG">
+                        <figcaption>4.Matahachi Honiden</figcaption>
+                    </figure>
+
+                    <figure class="character-name character-5">
+                        <img src="img/Takuan Soho.jpg" alt="Takuan Soho IMG">
+                        <figcaption>5.Takuan Soho</figcaption>
+                    </figure>
+
+                    <figure class="character-name character-6">
+                        <img src="img/Seijuro Yoshioka.jpg" alt="Seijuro Yoshioka IMG">
+                        <figcaption>6.Seijuro Yoshioka</figcaption>
+                    </figure>
+
+                    <figure class="character-name character-7">
+                        <img src="img/Denshichiro Yoshioka.jpg" alt="Denshichiro Yoshioka IMG">
+                        <figcaption>7.Denshichiro Yoshioka</figcaption>
+                    </figure>
+
+                </div>
+            </div>
+
+            <!-- STAGE 7: Row returns, character button gets added -->
+            <div class="scroll-stage stage-row-with-character" data-stage="row-with-character">
+                <article class="media-row media-row-expanded">
+                    <div class="media-cover">
+                        <img src="assets/vagabond-cover.jpg" alt="Vagabond manga cover">
+                    </div>
+
+                    <div class="media-main-info">
+                        <h3>Vagabond</h3>
+                        <p>Takehiko Inoue</p>
+
+                        <div class="media-depth-buttons">
+                            <button type="button" class="depth-button depth-button-quotes">
+                                Quotes
+                            </button>
+
+                            <button type="button" class="depth-button depth-button-moment">
+                                Moment
+                            </button>
+
+                            <button type="button" class="depth-button depth-button-character">
+                                Characters
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="media-rating">
+                        <span>9/10</span>
+                    </div>
+                </article>
+            </div>
+
+            <!-- STAGE 8: Row vanishes, notes appear last -->
+            <div class="scroll-stage stage-notes-appear" data-stage="notes-appear">
+                <div class="notes-cloud">
+                    <p class="note-card note-1">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                    </p>
+
+                    <p class="note-card note-2">
+                        Sed do eiusmod tempor incididunt ut labore.
+                    </p>
+
+                    <p class="note-card note-3">
+                        Ut enim ad minim veniam, quis nostrud exercitation.
+                    </p>
+                </div>
+            </div>
+
+            <!-- STAGE 9: Final row with every button added -->
+            <div class="scroll-stage stage-final-row" data-stage="final-row">
+                <article class="media-row media-row-expanded">
+                    <div class="media-cover">
+                        <img src="assets/vagabond-cover.jpg" alt="Vagabond manga cover">
+                    </div>
+
+                    <div class="media-main-info">
+                        <h3>Vagabond</h3>
+                        <p>Takehiko Inoue</p>
+
+                        <div class="media-depth-buttons">
+                            <button type="button" class="depth-button depth-button-quotes">
+                                Quotes
+                            </button>
+
+                            <button type="button" class="depth-button depth-button-moment">
+                                Moment
+                            </button>
+
+                            <button type="button" class="depth-button depth-button-character">
+                                Characters
+                            </button>
+
+                            <button type="button" class="depth-button depth-button-notes">
+                                Notes
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="media-rating">
+                        <span>9/10</span>
+                    </div>
+                </article>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Section 3 Search Demo -->
+    <section id="section-3-search-demo" class="section section-search-demo" aria-labelledby="section-3-title">
+
+        <!-- LEFT SIDE TEXT -->
+        <div class="section-3-copy">
+            <span class="section-label">Your first step</span>
+
+            <h2 id="section-3-title">
+                Find it. Save it. Keep going.
+            </h2>
+
+            <p>
+                Search any story you are reading or watching. Add it to your library,
+                then choose where it belongs.
+            </p>
+        </div>
+
+        <!-- RIGHT SIDE INTERACTIVE DEMO -->
+        <div class="section-3-demo" aria-label="Interactive search and save demo">
+
+            <div class="demo-window">
+
+                <!-- Window Header -->
+                <div class="demo-window-header" aria-hidden="true">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+
+                <!-- Demo Body -->
+                <div class="demo-window-body">
+
+                    <!-- Search -->
+                    <form class="demo-search-form" action="search.html" method="get">
+                        <label for="home-demo-search">
+                            Search your next story
+                        </label>
+
+                        <div class="demo-search-bar">
+                            <input
+                                id="home-demo-search"
+                                name="q"
+                                type="search"
+                                placeholder="Search a book, manga, anime, film, or show"
+                                autocomplete="off"
+                            >
+
+                            <button type="submit" aria-label="Search">
+                                <i class="ti ti-search"></i>
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Empty State Before Search -->
+                    <div class="demo-empty-state">
+                        <p>Type a title to find it and add it to your library.</p>
+                    </div>
+
+                    <!-- Result Area For JavaScript Later -->
+                    <div class="demo-result-area" aria-live="polite">
+
+                        <!-- 
+                            Later with JavaScript:
+                            When the user searches, inject the result card here.
+                        -->
+
+                        <template id="home-demo-result-template">
+                            <article class="demo-result-card">
+
+                                <div class="demo-result-cover">
+                                    <img src="" alt="">
+                                </div>
+
+                                <div class="demo-result-info">
+                                    <h3></h3>
+                                    <p class="demo-result-creator"></p>
+                                    <p class="demo-result-type"></p>
+                                </div>
+
+                                <button class="demo-add-button" type="button">
+                                    Add
+                                </button>
+
+                            </article>
+                        </template>
+
+                    </div>
+
+                    <!-- Status Picker -->
+                    <fieldset class="demo-status-picker" disabled>
+                        <legend>Where should it go?</legend>
+
+                        <div class="demo-status-options">
+
+                            <label>
+                                <input type="radio" name="demo_status" value="reading">
+                                <span>Reading</span>
+                            </label>
+
+                            <label>
+                                <input type="radio" name="demo_status" value="completed">
+                                <span>Completed</span>
+                            </label>
+
+                            <label>
+                                <input type="radio" name="demo_status" value="planned">
+                                <span>Planned</span>
+                            </label>
+
+                            <label>
+                                <input type="radio" name="demo_status" value="paused">
+                                <span>Paused</span>
+                            </label>
+
+                            <label>
+                                <input type="radio" name="demo_status" value="dropped">
+                                <span>Dropped</span>
+                            </label>
+
+                        </div>
+                    </fieldset>
+
+                    <!-- Saved Message -->
+                    <div class="demo-saved-message" role="status" aria-live="polite" hidden>
+                        <i class="ti ti-check"></i>
+                        <span>Saved to your library.</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section> 
+    <!-- Section 4 Library -->
+    <section id="section-4-library" class="section section-library" aria-labelledby="section-4-title">
+
+        <!-- LEFT SIDE TEXT -->
+        <div class="section-4-copy">
+            <span class="section-label">Your library</span>
+
+            <h2 id="section-4-title">
+                Build your library.
+            </h2>
+
+            <p>
+                Everything you add has a place. Filter by format, switch between
+                statuses, and keep your library organized as you go.
+            </p>
+        </div>
+
+        <!-- RIGHT SIDE LIBRARY DEMO -->
+        <div class="section-4-demo" aria-label="Library organization preview">
+
+            <div class="library-window">
+
+                <!-- WINDOW HEADER -->
+                <div class="library-window-header">
+                    <div class="library-window-controls" aria-hidden="true">
+                        <span class="library-window-dot"></span>
+                        <span class="library-window-dot"></span>
+                        <span class="library-window-dot"></span>
+                    </div>
+
+                    <div class="library-window-heading">
+                        <span class="library-window-title">My Library</span>
+                        <span class="library-window-count">
+                            <span data-library-count>0</span> saved
+                        </span>
+                    </div>
+                </div>
+
+                <!-- LIBRARY BODY -->
+                <div class="library-window-body">
+
+                    <!-- FORMAT FILTERS -->
+                    <div class="library-filter-group" aria-label="Filter by format">
+                        <button type="button" class="library-filter active" data-format-filter="all" aria-pressed="true">
+                            All
+                        </button>
+
+                        <button type="button" class="library-filter" data-format-filter="book" aria-pressed="false">
+                            Books
+                        </button>
+
+                        <button type="button" class="library-filter" data-format-filter="comic" aria-pressed="false">
+                            Comics
+                        </button>
+
+                        <button type="button" class="library-filter" data-format-filter="manga" aria-pressed="false">
+                            Manga
+                        </button>
+
+                        <button type="button" class="library-filter" data-format-filter="anime" aria-pressed="false">
+                            Anime
+                        </button>
+
+                        <button type="button" class="library-filter" data-format-filter="show" aria-pressed="false">
+                            Shows
+                        </button>
+
+                        <button type="button" class="library-filter" data-format-filter="movie" aria-pressed="false">
+                            Movies
+                        </button>
+                    </div>
+
+                    <!-- STATUS FILTERS -->
+                    <div class="library-status-group" aria-label="Filter by status">
+                        <button type="button" class="library-status-filter active" data-status-filter="all" aria-pressed="true">
+                            All
+                        </button>
+
+                        <button type="button" class="library-status-filter" data-status-filter="in-progress" aria-pressed="false">
+                            In Progress
+                        </button>
+
+                        <button type="button" class="library-status-filter" data-status-filter="completed" aria-pressed="false">
+                            Completed
+                        </button>
+
+                        <button type="button" class="library-status-filter" data-status-filter="planned" aria-pressed="false">
+                            Planned
+                        </button>
+
+                        <button type="button" class="library-status-filter" data-status-filter="paused" aria-pressed="false">
+                            Paused
+                        </button>
+
+                        <button type="button" class="library-status-filter" data-status-filter="dropped" aria-pressed="false">
+                            Dropped
+                        </button>
+                    </div>
+
+                    <!-- LIST HEADER -->
+                    <div class="library-list-header" aria-hidden="true">
+                        <span class="library-header-story">Story</span>
+                        <span class="library-header-format">Format</span>
+                        <span class="library-header-status">Status</span>
+                        <span class="library-header-rating">Score</span>
+                    </div>
+
+                    <!-- EMPTY STATE -->
+                    <div class="library-empty-state" data-library-empty>
+                        <p>
+                            Search and add something above. Your saved stories will appear here.
+                        </p>
+                    </div>
+
+                    <!-- ITEMS ADDED FROM SECTION 3 GO HERE -->
+                    <div class="library-list" data-library-list aria-live="polite"></div>
+
+                    <!-- REUSABLE ROW TEMPLATE FOR JAVASCRIPT -->
+                    <template id="library-row-template">
+                        <article class="library-row" data-library-row data-format="" data-status="">
+
+                            <div class="library-row-cover">
+                                <img data-library-cover src="" alt="">
+                            </div>
+
+                            <div class="library-row-info">
+                                <h3 data-library-title></h3>
+                                <p data-library-creator></p>
+                            </div>
+
+                            <div class="library-row-format">
+                                <span data-library-format></span>
+                            </div>
+
+                            <div class="library-row-status">
+                                <select name="library_status" data-library-status aria-label="Change status">
+                                    <option value="in-progress">In Progress</option>
+                                    <option value="completed">Completed</option>
+                                    <option value="planned">Planned</option>
+                                    <option value="paused">Paused</option>
+                                    <option value="dropped">Dropped</option>
+                                </select>
+                            </div>
+
+                            <div class="library-row-rating">
+                                <span data-library-rating>—</span>
+                            </div>
+
+                        </article>
+                    </template>
+
+                    <!-- SAVE NOTICE -->
+                    <div class="library-save-notice" role="status">
+                        <i class="ti ti-lock" aria-hidden="true"></i>
+                        <span>Create an account to save changes to your real library.</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
 
 
 
