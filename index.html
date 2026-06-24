@@ -85,37 +85,60 @@
     </section>
 
     <!-- Section 2 Product -->
-    <section id="section-2-empty-shelf" class="section section-empty-shelf">
+    <section id="section-2-empty-shelf" class="section section-empty-shelf" aria-labelledby="section-2-title">
 
-        <!-- Section title -->
+        <!-- Section Title -->
         <header class="section-2-header">
-            <h2>A rating tells you nothing.</h2>
+            <span class="section-label">Beyond the score</span>
+
+            <h2 id="section-2-title">
+                A rating tells you nothing.
+            </h2>
+
+            <p>
+                A number can show how much you liked something. Inkwell helps you remember why.
+            </p>
         </header>
 
-        <!-- Scroll animation wrapper -->
+        <!-- Scroll Animation Wrapper -->
         <div class="empty-shelf-scroll">
 
-            <!-- STAGE 1: Basic empty row appears first -->
+            <!-- STAGE 1: Basic row appears first -->
             <div class="scroll-stage stage-basic-row" data-stage="basic-row">
-                <article class="media-row media-row-empty">
-                    <div class="media-cover">
-                        <img src="assets/vagabond-cover.jpg" alt="Vagabond manga cover">
+                <article class="media-library-row media-library-row-empty">
+
+                    <div class="media-row-main">
+
+                        <div class="media-row-cover">
+                            <img src="assets/vagabond-cover.jpg" alt="Vagabond manga cover">
+                        </div>
+
+                        <div class="media-row-info">
+                            <h3>Vagabond</h3>
+                            <p>Takehiko Inoue</p>
+                        </div>
+
+                        <div class="media-row-format">
+                            <span>Manga</span>
+                        </div>
+
+                        <div class="media-row-status">
+                            <span>Completed</span>
+                        </div>
+
+                        <div class="media-row-score">
+                            <span>9/10</span>
+                        </div>
+
                     </div>
 
-                    <div class="media-main-info">
-                        <h3>Vagabond</h3>
-                        <p>Takehiko Inoue</p>
-                    </div>
-
-                    <div class="media-rating">
-                        <span>9/10</span>
-                    </div>
                 </article>
             </div>
 
-            <!-- STAGE 2: Row vanishes, multiple quotes fall in -->
+            <!-- STAGE 2: Row vanishes, quotes appear -->
             <div class="scroll-stage stage-quotes-fall" data-stage="quotes-fall">
                 <div class="falling-quotes">
+
                     <blockquote class="falling-quote quote-1">
                         Lorem ipsum dolor sit amet.
                     </blockquote>
@@ -131,157 +154,204 @@
                     <blockquote class="falling-quote quote-4">
                         Integer vitae libero ac risus.
                     </blockquote>
+
                 </div>
             </div>
 
-             <!-- STAGE 3: Row returns, quotes become the first button -->
+            <!-- STAGE 3: Row returns with Quotes added underneath -->
             <div class="scroll-stage stage-row-with-quotes" data-stage="row-with-quotes">
-                <article class="media-row media-row-expanded">
-                    <div class="media-cover">
-                        <img src="assets/vagabond-cover.jpg" alt="Vagabond manga cover">
-                    </div>
+                <article class="media-library-row media-library-row-expanded">
 
-                    <div class="media-main-info">
-                        <h3>Vagabond</h3>
-                        <p>Takehiko Inoue</p>
+                    <div class="media-row-main">
 
-                        <div class="media-depth-buttons">
-                            <button type="button" class="depth-button depth-button-quotes">
-                                Quotes
-                            </button>
+                        <div class="media-row-cover">
+                            <img src="assets/vagabond-cover.jpg" alt="Vagabond manga cover">
                         </div>
+
+                        <div class="media-row-info">
+                            <h3>Vagabond</h3>
+                            <p>Takehiko Inoue</p>
+                        </div>
+
+                        <div class="media-row-format">
+                            <span>Manga</span>
+                        </div>
+
+                        <div class="media-row-status">
+                            <span>Completed</span>
+                        </div>
+
+                        <div class="media-row-score">
+                            <span>9/10</span>
+                        </div>
+
                     </div>
 
-                    <div class="media-rating">
-                        <span>9/10</span>
-                     </div>
+                    <div class="media-row-details" aria-label="Saved details for Vagabond">
+                        <button type="button" class="depth-button depth-button-quotes">
+                            Quotes
+                        </button>
+                    </div>
+
                 </article>
             </div>
 
-            <!-- STAGE 4: Row vanishes, favourite moment images move around -->
+            <!-- STAGE 4: Row vanishes, moments appear -->
             <div class="scroll-stage stage-moments-move" data-stage="moments-move">
                 <div class="moving-moments">
+
                     <figure class="moment-frame moment-frame-1">
-                        <img src="assets/vagabond-moment-1.jpg" alt="Vagabond moment placeholder">
+                        <img src="assets/vagabond-moment-1.jpg" alt="Saved Vagabond moment">
                         <figcaption>Lorem ipsum moment.</figcaption>
                     </figure>
 
                     <figure class="moment-frame moment-frame-2">
-                        <img src="assets/vagabond-moment-2.jpg" alt="Vagabond moment placeholder">
+                        <img src="assets/vagabond-moment-2.jpg" alt="Saved Vagabond moment">
                         <figcaption>Dolor sit amet.</figcaption>
                     </figure>
 
                     <figure class="moment-frame moment-frame-3">
-                        <img src="assets/vagabond-moment-3.jpg" alt="Vagabond moment placeholder">
+                        <img src="assets/vagabond-moment-3.jpg" alt="Saved Vagabond moment">
                         <figcaption>Consectetur elit.</figcaption>
                     </figure>
+
                 </div>
             </div>
 
-            <!-- STAGE 5: Row returns, favourite moment becomes a button -->
+            <!-- STAGE 5: Row returns with Moments added underneath -->
             <div class="scroll-stage stage-row-with-moment" data-stage="row-with-moment">
-                <article class="media-row media-row-expanded">
-                    <div class="media-cover">
-                        <img src="assets/vagabond-cover.jpg" alt="Vagabond manga cover">
-                    </div>
+                <article class="media-library-row media-library-row-expanded">
 
-                    <div class="media-main-info">
-                        <h3>Vagabond</h3>
-                        <p>Takehiko Inoue</p>
+                    <div class="media-row-main">
 
-                        <div class="media-depth-buttons">
-                            <button type="button" class="depth-button depth-button-quotes">
-                                Quotes
-                            </button>
-
-                            <button type="button" class="depth-button depth-button-moment">
-                                Moment
-                            </button>
+                        <div class="media-row-cover">
+                            <img src="assets/vagabond-cover.jpg" alt="Vagabond manga cover">
                         </div>
+
+                        <div class="media-row-info">
+                            <h3>Vagabond</h3>
+                            <p>Takehiko Inoue</p>
+                        </div>
+
+                        <div class="media-row-format">
+                            <span>Manga</span>
+                        </div>
+
+                        <div class="media-row-status">
+                            <span>Completed</span>
+                        </div>
+
+                        <div class="media-row-score">
+                            <span>9/10</span>
+                        </div>
+
                     </div>
 
-                    <div class="media-rating">
-                        <span>9/10</span>
+                    <div class="media-row-details" aria-label="Saved details for Vagabond">
+                        <button type="button" class="depth-button depth-button-quotes">
+                            Quotes
+                        </button>
+
+                        <button type="button" class="depth-button depth-button-moment">
+                            Moments
+                        </button>
                     </div>
+
                 </article>
             </div>
 
-            <!-- STAGE 6: Row vanishes, character names appear -->
+            <!-- STAGE 6: Row vanishes, characters appear -->
             <div class="scroll-stage stage-characters-appear" data-stage="characters-appear">
                 <div class="character-cloud">
+
                     <figure class="character-name character-1">
-                        <img src="img/Musashi Miyamoto.jpg" alt="Musashi Miyamoto IMG">
-                        <figcaption>1.Musashi Miyamoto</figcaption>
+                        <img src="img/Musashi Miyamoto.jpg" alt="Musashi Miyamoto">
+                        <figcaption>Musashi Miyamoto</figcaption>
                     </figure>
 
                     <figure class="character-name character-2">
-                        <img src="img/Kojiro Sasaki.jpg" alt="Kojiro Sasaki IMG">
-                        <figcaption>2.Kojiro Sasaki</figcaption>
+                        <img src="img/Kojiro Sasaki.jpg" alt="Kojiro Sasaki">
+                        <figcaption>Kojiro Sasaki</figcaption>
                     </figure>
 
                     <figure class="character-name character-3">
                         <img src="img/Otsu.jpg" alt="Otsu">
-                        <figcaption>3.Otsu</figcaption>
+                        <figcaption>Otsu</figcaption>
                     </figure>
 
                     <figure class="character-name character-4">
-                        <img src="img/Matahachi Honiden.jpg" alt="Matahachi Honiden IMG">
-                        <figcaption>4.Matahachi Honiden</figcaption>
+                        <img src="img/Matahachi Honiden.jpg" alt="Matahachi Honiden">
+                        <figcaption>Matahachi Honiden</figcaption>
                     </figure>
 
                     <figure class="character-name character-5">
-                        <img src="img/Takuan Soho.jpg" alt="Takuan Soho IMG">
-                        <figcaption>5.Takuan Soho</figcaption>
+                        <img src="img/Takuan Soho.jpg" alt="Takuan Soho">
+                        <figcaption>Takuan Soho</figcaption>
                     </figure>
 
                     <figure class="character-name character-6">
-                        <img src="img/Seijuro Yoshioka.jpg" alt="Seijuro Yoshioka IMG">
-                        <figcaption>6.Seijuro Yoshioka</figcaption>
+                        <img src="img/Seijuro Yoshioka.jpg" alt="Seijuro Yoshioka">
+                        <figcaption>Seijuro Yoshioka</figcaption>
                     </figure>
 
                     <figure class="character-name character-7">
-                        <img src="img/Denshichiro Yoshioka.jpg" alt="Denshichiro Yoshioka IMG">
-                        <figcaption>7.Denshichiro Yoshioka</figcaption>
+                        <img src="img/Denshichiro Yoshioka.jpg" alt="Denshichiro Yoshioka">
+                        <figcaption>Denshichiro Yoshioka</figcaption>
                     </figure>
 
                 </div>
             </div>
 
-            <!-- STAGE 7: Row returns, character button gets added -->
+            <!-- STAGE 7: Row returns with Characters added underneath -->
             <div class="scroll-stage stage-row-with-character" data-stage="row-with-character">
-                <article class="media-row media-row-expanded">
-                    <div class="media-cover">
-                        <img src="assets/vagabond-cover.jpg" alt="Vagabond manga cover">
-                    </div>
+                <article class="media-library-row media-library-row-expanded">
 
-                    <div class="media-main-info">
-                        <h3>Vagabond</h3>
-                        <p>Takehiko Inoue</p>
+                    <div class="media-row-main">
 
-                        <div class="media-depth-buttons">
-                            <button type="button" class="depth-button depth-button-quotes">
-                                Quotes
-                            </button>
-
-                            <button type="button" class="depth-button depth-button-moment">
-                                Moment
-                            </button>
-
-                            <button type="button" class="depth-button depth-button-character">
-                                Characters
-                            </button>
+                        <div class="media-row-cover">
+                            <img src="assets/vagabond-cover.jpg" alt="Vagabond manga cover">
                         </div>
+
+                        <div class="media-row-info">
+                            <h3>Vagabond</h3>
+                            <p>Takehiko Inoue</p>
+                        </div>
+
+                        <div class="media-row-format">
+                            <span>Manga</span>
+                        </div>
+
+                        <div class="media-row-status">
+                            <span>Completed</span>
+                        </div>
+
+                        <div class="media-row-score">
+                            <span>9/10</span>
+                        </div>
+
                     </div>
 
-                    <div class="media-rating">
-                        <span>9/10</span>
+                    <div class="media-row-details" aria-label="Saved details for Vagabond">
+                        <button type="button" class="depth-button depth-button-quotes">
+                            Quotes
+                        </button>
+
+                        <button type="button" class="depth-button depth-button-moment">
+                            Moments
+                        </button>
+
+                        <button type="button" class="depth-button depth-button-character">
+                            Characters
+                        </button>
                     </div>
+
                 </article>
             </div>
 
-            <!-- STAGE 8: Row vanishes, notes appear last -->
+            <!-- STAGE 8: Row vanishes, notes appear -->
             <div class="scroll-stage stage-notes-appear" data-stage="notes-appear">
                 <div class="notes-cloud">
+
                     <p class="note-card note-1">
                         Lorem ipsum dolor sit amet, consectetur adipiscing elit.
                     </p>
@@ -293,46 +363,62 @@
                     <p class="note-card note-3">
                         Ut enim ad minim veniam, quis nostrud exercitation.
                     </p>
+
                 </div>
             </div>
 
-            <!-- STAGE 9: Final row with every button added -->
+            <!-- STAGE 9: Final row with all deeper details underneath -->
             <div class="scroll-stage stage-final-row" data-stage="final-row">
-                <article class="media-row media-row-expanded">
-                    <div class="media-cover">
-                        <img src="assets/vagabond-cover.jpg" alt="Vagabond manga cover">
-                    </div>
+                <article class="media-library-row media-library-row-expanded media-library-row-complete">
 
-                    <div class="media-main-info">
-                        <h3>Vagabond</h3>
-                        <p>Takehiko Inoue</p>
+                    <div class="media-row-main">
 
-                        <div class="media-depth-buttons">
-                            <button type="button" class="depth-button depth-button-quotes">
-                                Quotes
-                            </button>
-
-                            <button type="button" class="depth-button depth-button-moment">
-                                Moment
-                            </button>
-
-                            <button type="button" class="depth-button depth-button-character">
-                                Characters
-                            </button>
-
-                            <button type="button" class="depth-button depth-button-notes">
-                                Notes
-                            </button>
+                        <div class="media-row-cover">
+                            <img src="assets/vagabond-cover.jpg" alt="Vagabond manga cover">
                         </div>
+
+                        <div class="media-row-info">
+                            <h3>Vagabond</h3>
+                            <p>Takehiko Inoue</p>
+                        </div>
+
+                        <div class="media-row-format">
+                            <span>Manga</span>
+                        </div>
+
+                        <div class="media-row-status">
+                            <span>Completed</span>
+                        </div>
+
+                        <div class="media-row-score">
+                            <span>9/10</span>
+                        </div>
+
                     </div>
 
-                    <div class="media-rating">
-                        <span>9/10</span>
+                    <div class="media-row-details" aria-label="Saved details for Vagabond">
+                        <button type="button" class="depth-button depth-button-quotes">
+                            Quotes
+                        </button>
+
+                        <button type="button" class="depth-button depth-button-moment">
+                            Moments
+                        </button>
+
+                        <button type="button" class="depth-button depth-button-character">
+                            Characters
+                        </button>
+
+                        <button type="button" class="depth-button depth-button-notes">
+                            Notes
+                        </button>
                     </div>
+
                 </article>
             </div>
 
         </div>
+
     </section>
 
     <!-- Section 3 Search Demo -->
@@ -470,6 +556,7 @@
         </div>
 
     </section> 
+    
     <!-- Section 4 Library -->
     <section id="section-4-library" class="section section-library" aria-labelledby="section-4-title">
 
