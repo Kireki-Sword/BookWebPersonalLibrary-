@@ -75,6 +75,7 @@
                         <button class="card-btn">Moments</button>
                         <button class="card-btn">Characters</button>
                         <button class="card-btn">Notes</button>
+                        <button class="card-btn">Thoughts</button>
                     </div>
                 </div>
 
@@ -90,330 +91,283 @@
         <!-- Section Title -->
         <header class="section-2-header">
             <span class="section-label">Beyond the score</span>
-
-            <h2 id="section-2-title">
-                A rating tells you nothing.
-            </h2>
-
-            <p>
-                A number can show how much you liked something. Inkwell helps you remember why.
-            </p>
+            <h2 id="section-2-title">A rating tells you nothing.</h2>
+            <p>A number can show how much you liked something. Inkwell helps you remember why.</p>
         </header>
 
         <!-- Scroll Animation Wrapper -->
         <div class="empty-shelf-scroll">
 
-            <!-- STAGE 1: Basic row appears first -->
+            <!-- STAGE 1: Basic empty row appears  just a title, score, nothing else -->
             <div class="scroll-stage stage-basic-row" data-stage="basic-row">
                 <article class="media-library-row media-library-row-empty">
-
                     <div class="media-row-main">
-
                         <div class="media-row-cover">
                             <img src="assets/vagabond-cover.jpg" alt="Vagabond manga cover">
                         </div>
-
                         <div class="media-row-info">
                             <h3>Vagabond</h3>
                             <p>Takehiko Inoue</p>
                         </div>
-
-                        <div class="media-row-format">
-                            <span>Manga</span>
-                        </div>
-
-                        <div class="media-row-status">
-                            <span>Completed</span>
-                        </div>
-
-                        <div class="media-row-score">
-                            <span>9/10</span>
-                        </div>
-
+                        <div class="media-row-format"><span>Manga</span></div>
+                        <div class="media-row-status"><span>Completed</span></div>
+                        <div class="media-row-score"><span>9/10</span></div>
                     </div>
-
+                    <!-- No buttons yet  this is what everyone else gives you -->
                 </article>
             </div>
 
-            <!-- STAGE 2: Row vanishes, quotes appear -->
+            <!-- STAGE 2: Row vanishes  quotes fall down the screen -->
             <div class="scroll-stage stage-quotes-fall" data-stage="quotes-fall">
                 <div class="falling-quotes">
-
                     <blockquote class="falling-quote quote-1">
-                        Lorem ipsum dolor sit amet.
+                        "You have no enemies. No one has the right to hurt another."
                     </blockquote>
-
                     <blockquote class="falling-quote quote-2">
-                        Consectetur adipiscing elit.
+                        "The only thing a man can do for another is to kill him or save him."
                     </blockquote>
-
                     <blockquote class="falling-quote quote-3">
-                        Sed do eiusmod tempor.
+                        "There is no path. The path is made by walking."
                     </blockquote>
-
                     <blockquote class="falling-quote quote-4">
-                        Integer vitae libero ac risus.
+                        "Strength is not something you have. It is something you find."
                     </blockquote>
-
                 </div>
             </div>
 
-            <!-- STAGE 3: Row returns with Quotes added underneath -->
+            <!-- STAGE 3: Row returns  Quotes button animates in, lands into row -->
             <div class="scroll-stage stage-row-with-quotes" data-stage="row-with-quotes">
                 <article class="media-library-row media-library-row-expanded">
-
                     <div class="media-row-main">
-
                         <div class="media-row-cover">
                             <img src="assets/vagabond-cover.jpg" alt="Vagabond manga cover">
                         </div>
-
                         <div class="media-row-info">
                             <h3>Vagabond</h3>
                             <p>Takehiko Inoue</p>
                         </div>
-
-                        <div class="media-row-format">
-                            <span>Manga</span>
-                        </div>
-
-                        <div class="media-row-status">
-                            <span>Completed</span>
-                        </div>
-
-                        <div class="media-row-score">
-                            <span>9/10</span>
-                        </div>
-
+                        <div class="media-row-format"><span>Manga</span></div>
+                        <div class="media-row-status"><span>Completed</span></div>
+                        <div class="media-row-score"><span>9/10</span></div>
                     </div>
-
                     <div class="media-row-details" aria-label="Saved details for Vagabond">
-                        <button type="button" class="depth-button depth-button-quotes">
+                        <!-- NEW this stage  falls in from above matching the quotes animation -->
+                        <button type="button" class="depth-button depth-button-new depth-button-quotes">
                             Quotes
                         </button>
                     </div>
-
                 </article>
             </div>
 
-            <!-- STAGE 4: Row vanishes, moments appear -->
+            <!-- STAGE 4: Row vanishes moments/panels fly across the screen -->
             <div class="scroll-stage stage-moments-move" data-stage="moments-move">
                 <div class="moving-moments">
-
                     <figure class="moment-frame moment-frame-1">
                         <img src="assets/vagabond-moment-1.jpg" alt="Saved Vagabond moment">
-                        <figcaption>Lorem ipsum moment.</figcaption>
+                        <figcaption>The duel in the rain.</figcaption>
                     </figure>
-
                     <figure class="moment-frame moment-frame-2">
                         <img src="assets/vagabond-moment-2.jpg" alt="Saved Vagabond moment">
-                        <figcaption>Dolor sit amet.</figcaption>
+                        <figcaption>Musashi alone in the forest.</figcaption>
                     </figure>
-
                     <figure class="moment-frame moment-frame-3">
                         <img src="assets/vagabond-moment-3.jpg" alt="Saved Vagabond moment">
-                        <figcaption>Consectetur elit.</figcaption>
+                        <figcaption>The final page of volume 22.</figcaption>
                     </figure>
-
                 </div>
             </div>
 
-            <!-- STAGE 5: Row returns with Moments added underneath -->
+            <!-- STAGE 5: Row returns Moments button animates in, Quotes sits still -->
             <div class="scroll-stage stage-row-with-moment" data-stage="row-with-moment">
                 <article class="media-library-row media-library-row-expanded">
-
                     <div class="media-row-main">
-
                         <div class="media-row-cover">
                             <img src="assets/vagabond-cover.jpg" alt="Vagabond manga cover">
                         </div>
-
                         <div class="media-row-info">
                             <h3>Vagabond</h3>
                             <p>Takehiko Inoue</p>
                         </div>
-
-                        <div class="media-row-format">
-                            <span>Manga</span>
-                        </div>
-
-                        <div class="media-row-status">
-                            <span>Completed</span>
-                        </div>
-
-                        <div class="media-row-score">
-                            <span>9/10</span>
-                        </div>
-
+                        <div class="media-row-format"><span>Manga</span></div>
+                        <div class="media-row-status"><span>Completed</span></div>
+                        <div class="media-row-score"><span>9/10</span></div>
                     </div>
-
                     <div class="media-row-details" aria-label="Saved details for Vagabond">
-                        <button type="button" class="depth-button depth-button-quotes">
+                        <!-- STATIC already existed, no animation -->
+                        <button type="button" class="depth-button depth-button-static depth-button-quotes">
                             Quotes
                         </button>
-
-                        <button type="button" class="depth-button depth-button-moment">
+                        <!-- NEW this stage flies in from the side matching moments animation -->
+                        <button type="button" class="depth-button depth-button-new depth-button-moment">
                             Moments
                         </button>
                     </div>
-
                 </article>
             </div>
 
-            <!-- STAGE 6: Row vanishes, characters appear -->
+            <!-- STAGE 6: Row vanishes characters float up onto screen -->
             <div class="scroll-stage stage-characters-appear" data-stage="characters-appear">
                 <div class="character-cloud">
-
                     <figure class="character-name character-1">
                         <img src="img/Musashi Miyamoto.jpg" alt="Musashi Miyamoto">
                         <figcaption>Musashi Miyamoto</figcaption>
                     </figure>
-
                     <figure class="character-name character-2">
                         <img src="img/Kojiro Sasaki.jpg" alt="Kojiro Sasaki">
                         <figcaption>Kojiro Sasaki</figcaption>
                     </figure>
-
                     <figure class="character-name character-3">
                         <img src="img/Otsu.jpg" alt="Otsu">
                         <figcaption>Otsu</figcaption>
                     </figure>
-
                     <figure class="character-name character-4">
                         <img src="img/Matahachi Honiden.jpg" alt="Matahachi Honiden">
                         <figcaption>Matahachi Honiden</figcaption>
                     </figure>
-
                     <figure class="character-name character-5">
                         <img src="img/Takuan Soho.jpg" alt="Takuan Soho">
                         <figcaption>Takuan Soho</figcaption>
                     </figure>
-
                     <figure class="character-name character-6">
                         <img src="img/Seijuro Yoshioka.jpg" alt="Seijuro Yoshioka">
                         <figcaption>Seijuro Yoshioka</figcaption>
                     </figure>
-
                     <figure class="character-name character-7">
                         <img src="img/Denshichiro Yoshioka.jpg" alt="Denshichiro Yoshioka">
                         <figcaption>Denshichiro Yoshioka</figcaption>
                     </figure>
-
                 </div>
             </div>
 
-            <!-- STAGE 7: Row returns with Characters added underneath -->
+            <!-- STAGE 7: Row returns Characters button animates in, others sit still -->
             <div class="scroll-stage stage-row-with-character" data-stage="row-with-character">
                 <article class="media-library-row media-library-row-expanded">
-
                     <div class="media-row-main">
-
                         <div class="media-row-cover">
                             <img src="assets/vagabond-cover.jpg" alt="Vagabond manga cover">
                         </div>
-
                         <div class="media-row-info">
                             <h3>Vagabond</h3>
                             <p>Takehiko Inoue</p>
                         </div>
-
-                        <div class="media-row-format">
-                            <span>Manga</span>
-                        </div>
-
-                        <div class="media-row-status">
-                            <span>Completed</span>
-                        </div>
-
-                        <div class="media-row-score">
-                            <span>9/10</span>
-                        </div>
-
+                        <div class="media-row-format"><span>Manga</span></div>
+                        <div class="media-row-status"><span>Completed</span></div>
+                        <div class="media-row-score"><span>9/10</span></div>
                     </div>
-
                     <div class="media-row-details" aria-label="Saved details for Vagabond">
-                        <button type="button" class="depth-button depth-button-quotes">
+                        <!-- STATIC already existed -->
+                        <button type="button" class="depth-button depth-button-static depth-button-quotes">
                             Quotes
                         </button>
-
-                        <button type="button" class="depth-button depth-button-moment">
+                        <!-- STATIC already existed -->
+                        <button type="button" class="depth-button depth-button-static depth-button-moment">
                             Moments
                         </button>
-
-                        <button type="button" class="depth-button depth-button-character">
+                        <!-- NEW this stage floats up from below matching characters animation -->
+                        <button type="button" class="depth-button depth-button-new depth-button-character">
                             Characters
                         </button>
                     </div>
-
                 </article>
             </div>
 
-            <!-- STAGE 8: Row vanishes, notes appear -->
+            <!-- STAGE 8: Row vanishes notes drift across like scattered sticky notes -->
             <div class="scroll-stage stage-notes-appear" data-stage="notes-appear">
                 <div class="notes-cloud">
-
                     <p class="note-card note-1">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                        Chapter 3 the pacing here slows down intentionally. Inoue is making you sit with Musashi.
                     </p>
-
                     <p class="note-card note-2">
-                        Sed do eiusmod tempor incididunt ut labore.
+                        Why does Kojiro feel more at peace than Musashi even though he can't hear?
                     </p>
-
                     <p class="note-card note-3">
-                        Ut enim ad minim veniam, quis nostrud exercitation.
+                        Volume 10 the fight choreography is unlike anything. No words needed.
                     </p>
-
                 </div>
             </div>
 
-            <!-- STAGE 9: Final row with all deeper details underneath -->
-            <div class="scroll-stage stage-final-row" data-stage="final-row">
-                <article class="media-library-row media-library-row-expanded media-library-row-complete">
-
+            <!-- STAGE 9: Row returns Notes button animates in, others sit still -->
+            <div class="scroll-stage stage-row-with-notes" data-stage="row-with-notes">
+                <article class="media-library-row media-library-row-expanded">
                     <div class="media-row-main">
-
                         <div class="media-row-cover">
                             <img src="assets/vagabond-cover.jpg" alt="Vagabond manga cover">
                         </div>
-
                         <div class="media-row-info">
                             <h3>Vagabond</h3>
                             <p>Takehiko Inoue</p>
                         </div>
-
-                        <div class="media-row-format">
-                            <span>Manga</span>
-                        </div>
-
-                        <div class="media-row-status">
-                            <span>Completed</span>
-                        </div>
-
-                        <div class="media-row-score">
-                            <span>9/10</span>
-                        </div>
-
+                        <div class="media-row-format"><span>Manga</span></div>
+                        <div class="media-row-status"><span>Completed</span></div>
+                        <div class="media-row-score"><span>9/10</span></div>
                     </div>
-
                     <div class="media-row-details" aria-label="Saved details for Vagabond">
-                        <button type="button" class="depth-button depth-button-quotes">
+                        <!-- STATIC already existed -->
+                        <button type="button" class="depth-button depth-button-static depth-button-quotes">
                             Quotes
                         </button>
-
-                        <button type="button" class="depth-button depth-button-moment">
+                        <!-- STATIC already existed -->
+                        <button type="button" class="depth-button depth-button-static depth-button-moment">
                             Moments
                         </button>
-
-                        <button type="button" class="depth-button depth-button-character">
+                        <!-- STATIC already existed -->
+                        <button type="button" class="depth-button depth-button-static depth-button-character">
                             Characters
                         </button>
-
-                        <button type="button" class="depth-button depth-button-notes">
+                        <!-- NEW this stage drifts in like a sticky note -->
+                        <button type="button" class="depth-button depth-button-new depth-button-notes">
                             Notes
                         </button>
                     </div>
+                </article>
+            </div>
 
+            <!-- STAGE 10: Row vanishes deep thoughts appear, long and personal, typed out -->
+            <div class="scroll-stage stage-thoughts-appear" data-stage="thoughts-appear">
+                <div class="thoughts-cloud">
+                    <p class="thought-card thought-1">
+                        Vagabond made me realise I had been confusing movement with progress. Musashi spends decades chasing strength and only finds peace when he stops defining himself by it. I've been doing the same thing in a different way.
+                    </p>
+                    <p class="thought-card thought-2">
+                        The contrast between Musashi and Kojiro broke me. One man obsessed with becoming the strongest. Another who was born deaf, never chose the sword, and somehow became just as formidable — maybe more. Inoue is asking something uncomfortable. What are you really chasing and why.
+                    </p>
+                </div>
+            </div>
+
+            <!-- STAGE 11: Final row all 5 buttons, Thoughts animates in last -->
+            <div class="scroll-stage stage-final-row" data-stage="final-row">
+                <article class="media-library-row media-library-row-expanded media-library-row-complete">
+                    <div class="media-row-main">
+                        <div class="media-row-cover">
+                            <img src="assets/vagabond-cover.jpg" alt="Vagabond manga cover">
+                        </div>
+                        <div class="media-row-info">
+                            <h3>Vagabond</h3>
+                            <p>Takehiko Inoue</p>
+                        </div>
+                        <div class="media-row-format"><span>Manga</span></div>
+                        <div class="media-row-status"><span>Completed</span></div>
+                        <div class="media-row-score"><span>9/10</span></div>
+                    </div>
+                    <div class="media-row-details" aria-label="Saved details for Vagabond">
+                        <!-- STATIC all already existed -->
+                        <button type="button" class="depth-button depth-button-static depth-button-quotes">
+                            Quotes
+                        </button>
+                        <button type="button" class="depth-button depth-button-static depth-button-moment">
+                            Moments
+                        </button>
+                        <button type="button" class="depth-button depth-button-static depth-button-character">
+                            Characters
+                        </button>
+                        <button type="button" class="depth-button depth-button-static depth-button-notes">
+                            Notes
+                        </button>
+                        <!-- NEW this stage fades in slowly, the deepest and last -->
+                        <button type="button" class="depth-button depth-button-new depth-button-thoughts">
+                            Thoughts
+                        </button>
+                    </div>
                 </article>
             </div>
 
@@ -556,8 +510,8 @@
         </div>
 
     </section> 
-    
-    <!-- Section 4 Library -->
+
+    <!-- Section 4 Library Organization Demo -->
     <section id="section-4-library" class="section section-library" aria-labelledby="section-4-title">
 
         <!-- LEFT SIDE TEXT -->
@@ -721,25 +675,225 @@
         </div>
 
     </section>
+
+    <!-- Section 5  Cover Rain + Same Story Different Souls -->
+    <section id="section-5" class="section section-cover-rain">
+
+        <!-- PHASE 1  Two columns of covers -->
+        <div class="rain-wrapper" id="rain-wrapper">
+
+            <!-- LEFT COLUMN  floats UP -->
+            <div class="rain-col rain-col-left" id="rain-left">
+                <div class="rain-item" style="--rotation: -6deg; --scale: 0.95;">
+                    <img src="assets/covers/brothers-karamazov.jpg" alt="The Brothers Karamazov">
+                </div>
+                <div class="rain-item" style="--rotation: 4deg; --scale: 1.05;">
+                    <img src="assets/covers/siddhartha.jpg" alt="Siddhartha">
+                </div>
+                <div class="rain-item" style="--rotation: -3deg; --scale: 0.9;">
+                    <img src="assets/covers/count-monte-cristo.jpg" alt="The Count of Monte Cristo">
+                </div>
+                <div class="rain-item" style="--rotation: 7deg; --scale: 1.0;">
+                    <img src="assets/covers/great-gatsby.jpg" alt="The Great Gatsby">
+                </div>
+                <div class="rain-item" style="--rotation: -5deg; --scale: 1.05;">
+                    <img src="assets/covers/red-rising.jpg" alt="Red Rising">
+                </div>
+                <div class="rain-item" style="--rotation: 3deg; --scale: 0.95;">
+                    <img src="assets/covers/zarathustra.jpg" alt="Thus Spoke Zarathustra">
+                </div>
+                <div class="rain-item" style="--rotation: -8deg; --scale: 1.0;">
+                    <img src="assets/covers/a-silent-voice.jpg" alt="A Silent Voice">
+                </div>
+                <div class="rain-item" style="--rotation: 5deg; --scale: 0.9;">
+                    <img src="assets/covers/interstellar.jpg" alt="Interstellar">
+                </div>
+                <div class="rain-item" style="--rotation: -4deg; --scale: 1.05;">
+                    <img src="assets/covers/parasite.jpg" alt="Parasite">
+                </div>
+                <div class="rain-item" style="--rotation: 6deg; --scale: 0.95;">
+                    <img src="assets/covers/grave-of-fireflies.jpg" alt="Grave of the Fireflies">
+                </div>
+                <div class="rain-item" style="--rotation: -2deg; --scale: 1.0;">
+                    <img src="assets/covers/the-green-mile.jpg" alt="The Green Mile">
+                </div>
+                <div class="rain-item" style="--rotation: 8deg; --scale: 0.9;">
+                    <img src="assets/covers/hereditary.jpg" alt="Hereditary">
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN  falls DOWN -->
+            <div class="rain-col rain-col-right" id="rain-right">
+                <div class="rain-item" style="--rotation: 5deg; --scale: 1.0;">
+                    <img src="assets/covers/brothers-karamazov.jpg" alt="The Brothers Karamazov">
+                </div>
+                <div class="rain-item" style="--rotation: -7deg; --scale: 0.95;">
+                    <img src="assets/covers/breaking-bad.jpg" alt="Breaking Bad">
+                </div>
+                <div class="rain-item" style="--rotation: 3deg; --scale: 1.05;">
+                    <img src="assets/covers/supernatural.jpg" alt="Supernatural">
+                </div>
+                <div class="rain-item" style="--rotation: -5deg; --scale: 0.9;">
+                    <img src="assets/covers/doctor-who.jpg" alt="Doctor Who">
+                </div>
+                <div class="rain-item" style="--rotation: 6deg; --scale: 1.0;">
+                    <img src="assets/covers/true-detective.jpg" alt="True Detective">
+                </div>
+                <div class="rain-item" style="--rotation: -4deg; --scale: 0.95;">
+                    <img src="assets/covers/dark.jpg" alt="Dark">
+                </div>
+                <div class="rain-item" style="--rotation: 8deg; --scale: 1.05;">
+                    <img src="assets/covers/berserk.jpg" alt="Berserk">
+                </div>
+                <div class="rain-item" style="--rotation: -3deg; --scale: 0.9;">
+                    <img src="assets/covers/one-piece.jpg" alt="One Piece">
+                </div>
+                <div class="rain-item" style="--rotation: 5deg; --scale: 1.0;">
+                    <img src="assets/covers/billy-bat.jpg" alt="Billy Bat">
+                </div>
+                <div class="rain-item" style="--rotation: -6deg; --scale: 0.95;">
+                    <img src="assets/covers/tokyo-ghoul-re.jpg" alt="Tokyo Ghoul:re">
+                </div>
+                <div class="rain-item" style="--rotation: 4deg; --scale: 1.05;">
+                    <img src="assets/covers/vinland-saga.jpg" alt="Vinland Saga">
+                </div>
+                <div class="rain-item" style="--rotation: -8deg; --scale: 0.9;">
+                    <img src="assets/covers/the-climber.jpg" alt="The Climber">
+                </div>
+            </div>
+
+            <!-- CENTER LABEL  fades in over the rain -->
+            <div class="rain-label" id="rain-label">
+                <span class="section-label">Every story finds its reader</span>
+                <h2>Some books find you.<br>Others you find.</h2>
+                <p>Keep scrolling</p>
+            </div>
+
+        </div>
+
+        <!-- TRANSITION  Brothers Karamazov rises to center -->
+        <div class="transition-book" id="transition-book" aria-hidden="true">
+            <img src="assets/covers/brothers-karamazov.jpg" alt="The Brothers Karamazov">
+        </div>
+
+        <!-- PHASE 2 Same book different souls -->
+        <div class="souls-section" id="souls-section">
+
+            <!-- Shared book anchored at top center -->
+            <div class="souls-book" id="souls-book">
+                <img src="assets/covers/brothers-karamazov.jpg" alt="The Brothers Karamazov">
+                <div class="souls-book-info">
+                    <h3 class="souls-book-title">The Brothers Karamazov</h3>
+                    <p class="souls-book-author">Fyodor Dostoevsky</p>
+                </div>
+            </div>
+
+            <!-- Section label -->
+            <div class="souls-label">
+                <span class="section-label">Same story. Different souls.</span>
+                <p>Two readers. One book. See what each took from it.</p>
+            </div>
+
+            <!-- Two columns  always revealed simultaneously -->
+            <div class="souls-columns">
+
+                <!-- LEFT  Marcus -->
+                <div class="souls-col souls-col-left">
+
+                    <!-- Person header -->
+                    <div class="souls-person">
+                        <img class="souls-avatar" src="assets/avatars/marcus.jpg" alt="Marcus">
+                        <span class="souls-name">Marcus</span>
+                    </div>
+
+                    <!-- ROUND 1  Quote -->
+                    <div class="souls-round souls-round-quote" data-round="1">
+                        <span class="souls-round-label">Favourite Quote</span>
+                        <blockquote class="souls-quote">
+                            "Above all, don't lie to yourself. The man who lies to himself and listens to his own lie comes to a point that he cannot distinguish the truth."
+                        </blockquote>
+                    </div>
+
+                    <!-- ROUND 2  Moment -->
+                    <div class="souls-round souls-round-moment" data-round="2">
+                        <span class="souls-round-label">Favourite Moment</span>
+                        <p class="souls-moment">
+                            Dmitri breaking down in the courtroom. All that rage and pride finally crumbling. I had to put the book down and sit with it for a while.
+                        </p>
+                    </div>
+
+                    <!-- ROUND 3  Character -->
+                    <div class="souls-round souls-round-character" data-round="3">
+                        <span class="souls-round-label">Favourite Character</span>
+                        <p class="souls-character-name">Dmitri Karamazov</p>
+                        <p class="souls-character-note">
+                            The most human character I have ever read. Flawed, loud, irrational — and somehow the most honest of all three brothers.
+                        </p>
+                    </div>
+
+                    <!-- ROUND 4  Thoughts -->
+                    <div class="souls-round souls-round-thoughts" data-round="4">
+                        <span class="souls-round-label">Thoughts</span>
+                        <p class="souls-thoughts" id="thoughts-marcus">
+                            This book made me sit with guilt in a way I never had before. Dmitri's rage, Ivan's doubt, Alyosha's quiet faith — I saw parts of myself in all three brothers and that was deeply uncomfortable. Dostoevsky doesn't let you pick a side. He makes you live inside all of them.
+                        </p>
+                    </div>
+
+                </div>
+
+                <!-- Vertical divider -->
+                <div class="souls-divider" aria-hidden="true"></div>
+
+                <!-- RIGHT Lena -->
+                <div class="souls-col souls-col-right">
+
+                    <!-- Person header -->
+                    <div class="souls-person">
+                        <img class="souls-avatar" src="assets/avatars/lena.jpg" alt="Lena">
+                        <span class="souls-name">Lena</span>
+                    </div>
+
+                    <!-- ROUND 1 Quote -->
+                    <div class="souls-round souls-round-quote" data-round="1">
+                        <span class="souls-round-label">Favourite Quote</span>
+                        <blockquote class="souls-quote">
+                            "It's not miracles that produce faith, but faith that produces miracles."
+                        </blockquote>
+                    </div>
+
+                    <!-- ROUND 2  Moment -->
+                    <div class="souls-round souls-round-moment" data-round="2">
+                        <span class="souls-round-label">Favourite Moment</span>
+                        <p class="souls-moment">
+                            Alyosha holding the dying boy at the end. No words. Just presence. The quietest and most devastating scene in the whole book.
+                        </p>
+                    </div>
+
+                    <!-- ROUND 3  Character -->
+                    <div class="souls-round souls-round-character" data-round="3">
+                        <span class="souls-round-label">Favourite Character</span>
+                        <p class="souls-character-name">Ivan Karamazov</p>
+                        <p class="souls-character-note">
+                            Ivan broke me. His rebellion against God isn't atheism — it's grief. The Grand Inquisitor is the most honest thing I've ever read about doubt.
+                        </p>
+                    </div>
+
+                    <!-- ROUND 4  Thoughts -->
+                    <div class="souls-round souls-round-thoughts" data-round="4">
+                        <span class="souls-round-label">Thoughts</span>
+                        <p class="souls-thoughts" id="thoughts-lena">
+                            I came for the philosophy and stayed for the grief. The Grand Inquisitor chapter alone changed how I think about freedom and faith. I've never felt so intellectually shattered by a single chapter. And then Alyosha just quietly keeps loving everyone anyway. That contrast destroyed me.
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
     
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
-
-
-
 
     <script src="index.js"></script>
     

@@ -162,19 +162,16 @@ Show searching a title and adding it to the library
 4. Build Your Library
 Show Reading, Watching, Completed, Planned, Paused, Dropped
 
-5. Save What Stayed
-Quotes, Moments, Characters, Notes
-
-6. Your Profile Has Meaning
+5. Your Profile Has Meaning
 Show how saved entries become part of a public/private profile
 
-7. Find People Through Stories
+6. Find People Through Stories
 Profiles, public entries, chat, social discovery
 
-8. FAQ / Doubt Killer
+7. FAQ / Doubt Killer
 Answer privacy, what content types, why not MAL/Goodreads/Letterboxd, public vs private
 
-9. Final CTA
+8. Final CTA
 Start your library
 
 That order works because it goes:
@@ -301,3 +298,213 @@ For Inkwell, the strongest positioning is:
 
 Inkwell is not just where you rate stories.
 It is where you keep what they left behind.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Yes — after login, the marketing homepage should basically disappear from the main experience.
+
+The homepage is for people who do not understand Inkwell yet. Once someone logs in, they already understand the product. They should go straight into the app.
+
+Your current nav has Home, Search, My Library, Social, plus Log in and Sign up. I would change that depending on whether the user is logged out or logged in.
+
+Best setup
+Before login
+
+The website is a marketing + preview site.
+
+Navbar should be:
+
+Logo / Inkwell
+Home
+Explore
+How it works
+Log in
+Sign up
+
+Or simpler:
+
+Logo / Inkwell
+Explore
+Log in
+Sign up
+
+I would remove “My Library” from the logged-out navbar because the user does not have a library yet. Clicking “My Library” before creating an account feels weird because there is nothing real to show.
+
+You can keep Search/Explore before login because browsing is useful. But if they try to save something:
+
+Create an account to save this to your library.
+
+For Social, I would not call it “Social” before login. I would call it:
+
+Explore
+
+Because logged-out users can explore public profiles or public entries, but they cannot fully participate.
+
+Before login pages
+
+Use this structure:
+
+/               → homepage landing page
+/search         → public search / explore page
+/login          → log in
+/signup         → create account
+/profile/name   → public profile, view-only
+
+Logged-out users can:
+
+View homepage
+Search titles
+Preview public profiles
+Preview public entries
+Understand the app
+
+Logged-out users cannot:
+
+Add to library
+Save notes
+Change status
+Rate items
+Follow people
+Chat
+Edit profile
+
+When they try, show:
+
+Create an account to save your library.
+After login
+
+The website becomes the actual app.
+
+Navbar should be:
+
+Logo / Inkwell
+Search
+My Library
+Social
+Profile
+
+Maybe also:
+
+Notifications
+Settings
+Log out
+
+After login, the user should not land on the marketing homepage.
+
+They should land on either:
+
+/dashboard
+
+or:
+
+/library
+
+My recommendation:
+
+Send logged-in users to My Library
+
+Because Inkwell’s core product is the personal library.
+
+So after login:
+
+Login → My Library
+Sign up → onboarding/search first item → My Library
+
+The logo should not take them back to the marketing homepage. It should take them to:
+
+/dashboard
+
+or:
+
+/library
+Should logged-in users still be able to see the homepage?
+
+Yes, but not as a main nav item.
+
+They can access it through:
+
+About Inkwell
+
+in the footer or settings.
+
+But the main app nav should not include “Home” as the marketing homepage. That would be confusing.
+
+Best before vs after structure
+LOGGED OUT NAV
+
+Inkwell
+Home
+Explore
+Log in
+Sign up
+LOGGED IN NAV
+
+Inkwell
+Search
+My Library
+Social
+Profile
+What to do with My Library before login
+
+Do not show it in the main nav.
+
+But if someone clicks a CTA like “Start your library,” send them to signup.
+
+Start your library → signup
+
+If they search something and click “Add”:
+
+Add → signup modal/page
+Message: Create an account to save this to your library.
+What to do with Social before login
+
+Do not make it full social.
+
+Before login, use:
+
+Explore
+
+It can show public profiles or public shelves.
+
+After login, use:
+
+Social
+
+Now they can follow, interact, maybe chat later.
+
+Final recommendation
+
+Use two different experiences:
+
+Before login:
+Marketing site + public preview.
+
+After login:
+Actual app.
+
+And use this rule:
+
+Viewing = allowed without account.
+Saving/editing/interacting = account required.
+
+That gives people enough value to understand Inkwell, but still makes account creation necessary for the real product.
