@@ -195,16 +195,16 @@ nav {
 /* Section 1 Hero */
 
 .hero {
-  min-height: auto; /* EDITED — removes forced huge top/bottom empty space */
+  min-height: calc(100svh - 64px); 
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(420px, 0.95fr);
   align-items: center;
-  max-width: 1220px; /* EDITED — slightly wider so hero breathes horizontally, not vertically */
+  max-width: 1220px;
   margin: 0 auto;
-  padding: clamp(3.25rem, 6vh, 5rem) 2rem clamp(4.5rem, 7vh, 5.75rem); /* EDITED — tighter vertical whitespace */
-  gap: clamp(3rem, 6vw, 5rem); /* EDITED — still spacious, but less empty */
+  padding: 2.25rem 2rem 3rem;
+  gap: clamp(3rem, 6vw, 5rem); 
   position: relative;
-  isolation: isolate; /* NEW — keeps background glow behind hero content only */
+  isolation: isolate; 
 }
 
 /* NEW — warm atmosphere behind the hero so the page feels less flat/dull */
