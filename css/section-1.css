@@ -1,0 +1,707 @@
+/* Section 1 Hero */
+
+.hero {
+  height: calc(100vh - 64px); 
+  min-height: 720px; 
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(420px, 0.95fr);
+  align-items: center;
+  max-width: 1220px;
+  margin: 0 auto;
+  padding: 2.25rem 2rem 3rem;
+  gap: clamp(3rem, 6vw, 5rem); 
+  position: relative;
+  isolation: isolate; 
+  overflow: hidden; 
+  background: radial-gradient(rgba(226, 185, 143, 0.24), transparent 65%);
+}
+
+
+/* LEFT SIDE */
+
+.hero-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.95rem; /* EDITED — tighter rhythm between text blocks */
+  max-width: 660px; /* EDITED — gives title room without feeling scattered */
+}
+
+/* All left side elements start invisible for JS to animate in */
+.hero-left > * {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+/* Span label */
+.hero-label {
+  font-family: var(--font-body);
+  font-size: 0.76rem; /* EDITED — slightly tighter label */
+  font-weight: 700; /* EDITED — label needs more confidence */
+  color: var(--warm-brown-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.13em; /* EDITED — cleaner premium label */
+  opacity: 0;
+  transform: translateY(16px);
+}
+
+/* H1 */
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(3.35rem, 5.8vw, 5rem); /* EDITED — stronger hero statement */
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: -0.06em; /* EDITED — premium display type usually needs tighter tracking */
+  line-height: 0.98; /* EDITED — more confident, less loose */
+  max-width: 660px; /* EDITED — controls wrap */
+  margin-top: 0.2rem; /* EDITED — small breathing room from the label above */
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+/* H2 */
+.hero-subtitle {
+  font-family: var(--font-display);
+  font-size: clamp(1.12rem, 2vw, 1.42rem); /* EDITED — stronger poetic hook */
+  font-weight: 400;
+  font-style: italic;
+  color: var(--ink-mid);
+  line-height: 1.55;
+  letter-spacing: -0.01em;
+  max-width: 560px; /* EDITED — smoother line length */
+  margin-top: 0.25rem; /* EDITED — clearer separation from title */
+  opacity: 0;
+  transform: translateY(18px);
+}
+
+/* Paragraph */
+.hero-p {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: var(--ink-light);
+  line-height: 1.85; /* EDITED — more readable paragraph rhythm */
+  max-width: 530px; /* EDITED — better line length */
+  margin-top: 0.2rem; /* EDITED — balanced with subtitle */
+  opacity: 0;
+  transform: translateY(16px);
+}
+
+/* Button wrapper */
+.hero-buttons {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1rem; /* EDITED — CTA needs separation from body copy */
+  opacity: 0;
+  transform: translateY(14px);
+}
+
+/* Join Inkwell — primary */
+.hero-btn-primary {
+  background: var(--warm-brown-dark); /* EDITED — stronger CTA */
+  border: 1.5px solid var(--warm-brown-dark);
+  color: var(--white);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 700; /* EDITED — CTA should feel decisive */
+  min-height: 48px; /* NEW — better button tap/click target */
+  padding: 0 1.6rem;
+  border-radius: 999px; /* EDITED — more polished pill shape */
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  position: relative;
+  overflow: hidden;
+  box-shadow:
+    0 12px 28px rgba(127, 75, 47, 0.28),
+    inset 0 1px 0 rgba(255,255,255,0.16); /* NEW — primary button pops more */
+  transition:
+    background var(--transition),
+    border-color var(--transition),
+    transform var(--transition),
+    box-shadow var(--transition);
+}
+
+/* Inner glow layer - sits on top, invisible by default must add content: '' the beofre crete it before the element it does nothing after with .hero-btn-primary:hover::before 
+it activate  becase we chose it at opacity 0 */
+.hero-btn-primary::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.12) 0%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  opacity: 0;
+  transition: opacity var(--transition);
+}
+
+.hero-btn-primary:hover {
+  background: #673B25;
+  border-color: #673B25;
+  transform: translateY(-2px);
+  box-shadow:
+    0 16px 34px rgba(127, 75, 47, 0.34),
+    0 1px 0 rgba(255,255,255,0.08) inset;
+}
+
+.hero-btn-primary:active {
+  transform: translateY(0);
+}
+
+.hero-btn-primary:hover::before {
+  opacity: 1;
+}
+
+/* Start Exploring - ghost */
+.hero-btn-ghost {
+  background: rgba(255, 252, 248, 0.52); /* EDITED — ghost button no longer feels invisible */
+  border: 1.5px solid var(--border-strong);
+  color: var(--ink-mid);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 600; /* EDITED — matches primary CTA weight */
+  min-height: 48px; /* NEW — consistent button height */
+  padding: 0 1.6rem;
+  border-radius: 999px; /* EDITED — more polished pill shape */
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition:
+    background var(--transition),
+    border-color var(--transition),
+    color var(--transition),
+    transform var(--transition),
+    box-shadow var(--transition);
+}
+
+.hero-btn-ghost:hover {
+  background: rgba(184, 121, 78, 0.1);
+  border-color: var(--warm-brown);
+  color: var(--ink);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(127, 75, 47, 0.14);
+}
+
+.hero-btn-ghost:active {
+  transform: translateY(0);
+  box-shadow: none;
+  background: rgba(184, 121, 78, 0.14);
+}
+
+/* NEW — visible keyboard focus for accessibility without changing your visual style */
+.hero-btn-primary:focus-visible,
+.hero-btn-ghost:focus-visible,
+.btn-primary:focus-visible,
+.btn-ghost:focus-visible,
+.card-btn:focus-visible {
+  outline: 3px solid rgba(184, 121, 78, 0.35);
+  outline-offset: 3px;
+}
+
+/* NEW — optional line under the CTA if you add <p class="hero-proof">...</p> in HTML */
+.hero-proof {
+  margin-top: 0.15rem;
+  font-size: 0.86rem;
+  color: var(--ink-faint);
+  opacity: 1; /* keeps it visible even though .hero-left > * starts hidden for JS animation */
+  transform: none;
+}
+
+/* ___ RIGHT SIDE _____________________________ */
+
+.hero-right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  justify-self: end; /* NEW — makes the card feel intentionally placed on the right */
+  width: 100%;
+  opacity: 0;
+  transform: translateX(30px) translateY(-8px); /* EDITED — slightly lifts card so layout feels less static */
+}
+
+/* ___ TILT CARD _______________________________ */
+
+.card-effect {
+  position: relative;
+  display: flex;
+  background:
+    linear-gradient(135deg, rgba(255, 250, 243, 0.98), rgba(255,255,255,0.96) 50%, rgba(246, 234, 220, 0.9)),
+    var(--white); /* EDITED — stronger paper-like depth instead of flat white */
+  border-radius: 30px; /* EDITED — larger hero card radius */
+  border: 1px solid rgba(127, 75, 47, 0.22);
+  box-shadow: var(--shadow-hero-card); /* EDITED — stronger premium hero depth */
+  overflow: hidden;
+  width: 100%;
+  max-width: 560px; /* EDITED — a bit stronger as a hero object */
+  min-height: 360px; /* EDITED — makes the card feel like a feature preview */
+  cursor: default;
+  /* Smooth tilt on mouse move */
+  transition: transform 0.1s ease-out, box-shadow var(--transition);
+    /* Needed for 3D perspective */
+  transform-style: preserve-3d;
+  will-change: transform; /* Tells the browser in advance that this element is going to be transformed constantly as the cursor moves. */
+}
+
+/* NEW — subtle inner highlight so card feels less flat */
+.card-effect::before {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  border-radius: 29px;
+  background: linear-gradient(
+    to bottom,
+    rgba(255,255,255,0.38),
+    rgba(255,255,255,0) 35%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ___ GLARE LAYER ____________________________ */
+/* Sits on top of everything inside the card neccery to keep teh card working and hadd teh effct */
+
+.card-glare {
+  position: absolute;
+  inset: 0;
+  border-radius: 30px; /* EDITED — matches card radius */
+  pointer-events: none;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  /* background set dynamically by JS */
+}
+
+.card-effect:hover .card-glare {
+  opacity: 1;
+}
+
+/* ___ COVER SIDE ______________________________ */
+/* FIXED — removed duplicate declaration that existed twice in the old file,
+   removed conflicting min-height: 100% / min-height: 0 pair,
+   now a single clean rule using aspect-ratio for real book proportions */
+
+.card-cover-side {
+  flex-shrink: 0;
+  width: 205px; /* EDITED — stronger cover area for future rotating covers */
+  aspect-ratio: 2 / 3; /* real book cover proportions instead of a stretched empty box */
+  align-self: stretch; /* still matches the card's height naturally without forcing min-height */
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 40% 25%, rgba(255,255,255,0.35), transparent 35%),
+    linear-gradient(160deg, rgba(44, 36, 22, 0.22), rgba(184, 121, 78, 0.30)),
+    var(--cream-dark); /* EDITED — cover placeholder feels intentional before JS image loads */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* NEW — paper/cover texture layer so empty image state does not look like a blank box */
+.card-cover-side::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(255,255,255,0.15), transparent 22%, rgba(44,36,22,0.08) 100%),
+    radial-gradient(circle at 60% 70%, rgba(255,255,255,0.22), transparent 38%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.card-cover-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  position: relative; /* NEW — keeps real cover image above placeholder texture */
+  z-index: 2;
+
+  /* Parallax offset applied by JS */
+  transition: transform 0.1s ease-out, opacity var(--transition);
+  will-change: transform;
+}
+
+/* Placeholder when image is loading or missing */
+.card-cover-side::after {
+  content: ''; /* EDITED — removed emoji so it looks more professional */
+  position: absolute;
+  inset: 0;
+  display: block;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(239, 229, 216, 0.55),
+      rgba(226, 185, 143, 0.38),
+      rgba(239, 229, 216, 0.55)
+    );
+  background-size: 220% 100%;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 3;
+  animation: cardSkeletonShimmer 1.8s ease-in-out infinite;
+}
+
+.card-cover-side:has(.card-cover-img[src=""])::after,
+.card-cover-side:has(.card-cover-img:not([src]))::after {
+  opacity: 1;
+}
+
+.card-cover-side:has(.card-cover-img[src=""]) .card-cover-img,
+.card-cover-side:has(.card-cover-img:not([src])) .card-cover-img {
+  opacity: 0; /* NEW — hides broken/empty image while JS has not filled it */
+}
+
+
+/* __ INFO SIDE ___________________________ */
+
+.card-info-side {
+  flex: 1;
+  padding: 1.75rem 1.65rem; /* EDITED — balanced with stronger card size */
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem; /* EDITED — tighter, more professional information stack */
+  justify-content: flex-start;
+  min-width: 0;
+  background: rgba(255, 252, 248, 0.76); /* NEW — info side no longer feels like empty white */
+  position: relative;
+  z-index: 2;
+}
+
+/* Card content fades during crossfade transition */
+.card-info-side.is-fading {
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.card-info-side.is-visible {
+  opacity: 1;
+  transition: opacity 0.5s ease;
+}
+
+/* Type badge - Manga / Book / Movie etc */
+.card-type {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--warm-brown-dark);
+  background: rgba(184, 121, 78, 0.12);
+  border: 1px solid rgba(226, 185, 143, 0.9);
+  padding: 0.28rem 0.68rem;
+  border-radius: 999px;
+  width: fit-content;
+  min-height: 24px; /* NEW — holds space before JS text loads */
+}
+
+/* Title */
+.card-title {
+  font-family: var(--font-display);
+  font-size: 1.55rem; /* EDITED — stronger card hierarchy */
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  min-height: 2.05rem; /* NEW — prevents empty title from collapsing */
+
+  /* Truncate if too long */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Author */
+.card-author {
+  font-family: var(--font-body);
+  font-size: 0.95rem; /* EDITED — author should support title, not compete with it */
+  color: var(--ink-light);
+  font-weight: 400;
+  min-height: 1.2rem; /* NEW — prevents empty author from collapsing */
+}
+
+/* Score row */
+.card-score {
+  display: flex; 
+  align-items: baseline;
+  gap: 0.25rem;
+  margin-top: 0.1rem;
+}
+
+.card-star {
+  color: var(--warm-brown);
+  font-size: 1rem; /* EDITED — star should match larger score */
+}
+
+#card-score {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+  min-width: 2.3rem; /* NEW — keeps score area stable before JS fills it */
+  display: inline-block;
+}
+
+.card-max-score {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  color: var(--ink-faint);
+}
+
+
+/* NEW — empty text skeletons so the card looks intentional before JS injects rotating content */
+.card-type:empty,
+.card-title:empty,
+.card-author:empty,
+#card-score:empty {
+  color: transparent;
+  border-color: transparent;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(184, 121, 78, 0.12),
+      rgba(184, 121, 78, 0.23),
+      rgba(184, 121, 78, 0.12)
+    );
+  background-size: 220% 100%;
+  animation: cardSkeletonShimmer 1.8s ease-in-out infinite;
+}
+
+.card-type:empty {
+  width: 92px;
+  height: 24px;
+  padding: 0;
+}
+
+.card-title:empty {
+  display: block;
+  width: 82%;
+  height: 34px;
+  border-radius: 999px;
+}
+
+.card-author:empty {
+  width: 52%;
+  height: 16px;
+  border-radius: 999px;
+}
+
+#card-score:empty {
+  width: 44px;
+  height: 26px;
+  border-radius: 999px;
+}
+
+/* NEW — optional saved quote inside the hero card.
+   Add <blockquote class="card-memory-quote">...</blockquote> under the score in HTML. */
+.card-memory-quote {
+  margin-top: 0.35rem;
+  padding: 0.85rem 0.95rem;
+  border-left: 3px solid var(--warm-brown);
+  border-radius: 14px;
+  background: rgba(184, 121, 78, 0.09);
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  line-height: 1.45;
+  color: var(--ink-mid);
+}
+
+/* NEW — optional note preview if you want the card to show actual remembered meaning, not only a score */
+.card-note-preview {
+  padding: 0.85rem 0.95rem;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: rgba(250, 246, 239, 0.78);
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: var(--ink-light);
+}
+
+
+/* ___ CARD BUTTONS _____________________________ */
+
+
+.card-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(184, 121, 78, 0.22);
+}
+
+.card-btn {
+  background: rgba(255, 252, 248, 0.82); /* EDITED — pills feel less empty */
+  border: 1px solid var(--border-strong);
+  color: rgba(78, 58, 41, 0.82); /* EDITED — better contrast */
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600; /* EDITED — buttons feel more intentional */
+  padding: 0.42rem 0.88rem;
+  border-radius: 999px;
+  cursor: pointer;
+  position: relative;
+
+  transition:
+    background var(--transition),
+    border-color var(--transition),
+    color var(--transition),
+    transform var(--transition),
+    box-shadow var(--transition);
+}
+
+
+/* Hover - warm fill, full opacity, lift */
+.card-btn:hover {
+  background: rgba(184, 121, 78, 0.13);
+  border-color: var(--warm-brown);
+  color: var(--ink-mid);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(127, 75, 47, 0.16);
+}
+
+/* Click - push back down */
+.card-btn:active {
+  transform: translateY(0);
+  box-shadow: none;
+  background: rgba(184, 121, 78, 0.18);
+}
+
+
+
+/* ___ LOAD ANIMATIONS _________________________________ */
+/* These are the keyframes JS uses on page load */
+
+@keyframes heroFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(var(--slide-from, 20px));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes heroFadeRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px) translateY(-8px); /* EDITED — matches lifted card position */
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) translateY(-8px); /* EDITED — card stays slightly lifted */
+  }
+}
+
+/* NEW — skeleton shimmer for empty card content before JS fills it */
+@keyframes cardSkeletonShimmer {
+  0% {
+    background-position: 120% 0;
+  }
+  100% {
+    background-position: -120% 0;
+  }
+}
+
+/* Classes JS adds to trigger each animation */
+.hero-animate-up {
+  animation: heroFadeUp 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.hero-animate-right {
+  animation: heroFadeRight 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* __ SCROLL AWAY ______________________________________________ */
+/* When hero leaves viewport - added by IntersectionObserver */
+
+.hero-left.hero-exiting {
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.hero-right.hero-exiting {
+  opacity: 0;
+  transform: translateX(20px) translateY(-8px); /* EDITED — keeps same lifted baseline */
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+/* NEW — JS adds this class on mouseleave so the card resets smoothly instead of snapping back */
+.card-effect.is-resetting {
+  transition: transform 0.5s ease, box-shadow var(--transition);
+}
+
+.card-effect.is-resetting .card-cover-img {
+  transition: transform 0.5s ease;
+}
+
+/* NEW — responsive hero fixes so the two-column hero does not break on tablets */
+@media (max-width: 980px) {
+  .hero {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    padding-top: 3rem;
+    padding-bottom: 4.5rem;
+  }
+
+  .hero-right {
+    justify-self: center;
+  }
+
+  .card-effect {
+    max-width: 620px;
+  }
+}
+
+/* NEW — mobile card layout: cover on top, info below, easier to read on small screens */
+@media (max-width: 560px) {
+  .hero {
+    padding-inline: 1.2rem;
+    padding-top: 2.5rem;
+  }
+
+  .hero-title {
+    font-size: clamp(2.65rem, 13vw, 3.35rem);
+    line-height: 1;
+  }
+
+  .hero-buttons {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .hero-btn-primary,
+  .hero-btn-ghost {
+    justify-content: center;
+  }
+
+  .card-effect {
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .card-cover-side {
+    width: 100%;
+    height: 260px;
+    aspect-ratio: auto;
+  }
+
+  .card-info-side {
+    padding: 1.35rem;
+  }
+}
