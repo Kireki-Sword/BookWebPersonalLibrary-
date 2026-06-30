@@ -641,3 +641,11 @@ it activate  becase we chose it at opacity 0 */
   transform: translateX(20px);
   transition: opacity 0.5s ease, transform 0.5s ease;
 }
+
+.card-effect.is-resetting {
+  transition: transform 0.5s ease, box-shadow var(--transition);
+}
+
+.card-effect.is-resetting .card-cover-img {
+  transition: transform 0.5s ease;
+}
