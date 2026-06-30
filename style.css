@@ -195,7 +195,8 @@ nav {
 /* Section 1 Hero */
 
 .hero {
-  min-height: calc(100svh - 64px); 
+  height: calc(100vh - 64px); 
+  min-height: 720px; 
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(420px, 0.95fr);
   align-items: center;
@@ -205,6 +206,7 @@ nav {
   gap: clamp(3rem, 6vw, 5rem); 
   position: relative;
   isolation: isolate; 
+  overflow: hidden; 
 }
 
 /* NEW — warm atmosphere behind the hero so the page feels less flat/dull */
