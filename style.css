@@ -201,7 +201,7 @@ nav {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 1.25rem;
+  gap: 1rem; /* FIXED — was 1.25rem, tightened for better rhythm between text blocks */
 }
 
 /* All left side elements start invisible for JS to animate in */
@@ -225,11 +225,13 @@ nav {
 /* H1 */
 .hero-title {
   font-family: var(--font-display);
-  font-size: clamp(2.4rem, 5vw, 3.75rem);
+  font-size: clamp(2.6rem, 4.2vw, 3.4rem); /* FIXED — smaller max so it doesn't wrap awkwardly */
   font-weight: 600;
   color: var(--ink);
   letter-spacing: -0.03em;
-  line-height: 1.1;
+  line-height: 1.15;
+  max-width: 560px; /* NEW — controls exactly where the title line breaks instead of random browser wrap */
+  margin-top: 0.25rem; /* NEW — small breathing room from the label above */
   opacity: 0;
   transform: translateY(20px);
 }
@@ -243,6 +245,8 @@ nav {
   color: var(--ink-mid);
   line-height: 1.5;
   letter-spacing: -0.01em;
+  max-width: 520px; /* NEW — controls wrap point, matches title rhythm */
+  margin-top: 0.1rem; /* NEW — tiny gap so it doesn't feel glued to title */
   opacity: 0;
   transform: translateY(18px);
 }
@@ -255,6 +259,7 @@ nav {
   color: var(--ink-light);
   line-height: 1.75;
   max-width: 480px;
+  margin-top: 0.25rem; /* NEW — separates paragraph from subtitle a bit more clearly */
   opacity: 0;
   transform: translateY(16px);
 }
@@ -381,7 +386,6 @@ it activate  becase we chose it at opacity 0 */
   overflow: hidden;
   width: 100%;
   max-width: 560px;
-  min-height: 460px;
   cursor: default;
   /* Smooth tilt on mouse move */
   transition: transform 0.1s ease-out, box-shadow var(--transition);
@@ -409,13 +413,21 @@ it activate  becase we chose it at opacity 0 */
 }
 
 /* ___ COVER SIDE ______________________________ */
+/* FIXED — removed duplicate declaration that existed twice in the old file,
+   removed conflicting min-height: 100% / min-height: 0 pair,
+   now a single clean rule using aspect-ratio for real book proportions */
 
 .card-cover-side {
   flex-shrink: 0;
-  width: 220px;
-  min-height: 100%;
+  width: 200px;
+  aspect-ratio: 2 / 3; /* real book cover proportions instead of a stretched empty box */
+  align-self: stretch; /* still matches the card's height naturally without forcing min-height */
   position: relative;
   overflow: hidden;
+  background: var(--cream-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .card-cover-img {
@@ -429,12 +441,7 @@ it activate  becase we chose it at opacity 0 */
   will-change: transform;
 }
 
-
 /* Placeholder when image is loading or missing */
-.card-cover-side {
-  position: relative;
-}
-
 .card-cover-side::after {
   content: '📖';
   position: absolute;
@@ -442,7 +449,7 @@ it activate  becase we chose it at opacity 0 */
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2.5rem;
+  font-size: 3rem;
   background: var(--cream-dark);
   opacity: 0;
   pointer-events: none;
@@ -458,10 +465,11 @@ it activate  becase we chose it at opacity 0 */
 
 .card-info-side {
   flex: 1;
-  padding: 2.25rem 2rem;
+  padding: 1.75rem 1.75rem;
   display: flex;
   flex-direction: column;
-  gap: 0.9rem;
+  gap: 1.1rem;
+  justify-content: flex-start;
   min-width: 0;
 }
 
@@ -546,6 +554,7 @@ it activate  becase we chose it at opacity 0 */
 
 
 /* ___ CARD BUTTONS _____________________________ */
+
 
 .card-buttons {
   display: flex;
