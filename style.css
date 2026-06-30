@@ -10,15 +10,16 @@
   --warm-brown-light: #E8C5A0;
   --ink: #2C2416;
   --ink-mid: #5C4A32;
-  --ink-light: #8C7A62;
-  --ink-faint: #B8A898;
+  --ink-light: #75624D; /* EDITED — slightly darker so paragraph/card text feels less washed out */
+  --ink-faint: #9B8976; /* EDITED — still soft, but more readable than before */
   --white: #FFFFFF;
   --surface: #FFFCF8;
-  --border: rgba(200, 149, 108, 0.2);
-  --border-strong: rgba(200, 149, 108, 0.4);
+  --border: rgba(200, 149, 108, 0.22); /* EDITED — tiny bit stronger so cards/buttons don't disappear */
+  --border-strong: rgba(168, 114, 74, 0.42); /* EDITED — stronger warm outline for professional contrast */
   --shadow-sm: 0 2px 8px rgba(44, 36, 22, 0.06);
   --shadow-md: 0 4px 20px rgba(44, 36, 22, 0.1);
   --shadow-lg: 0 8px 40px rgba(44, 36, 22, 0.14);
+  --shadow-hero-card: 0 32px 90px rgba(44, 36, 22, 0.16), 0 10px 28px rgba(44, 36, 22, 0.08); /* NEW — deeper hero card shadow */
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 18px;
@@ -35,16 +36,18 @@ body {
   line-height: 1.6;
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden; /* NEW — prevents horizontal scroll from glow/tilt effects */
 }
+
 /* NAVBAR  */
 nav {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(250, 247, 242, 0.92);
+  background: rgba(250, 247, 242, 0.88); /* EDITED — softer glass effect */
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid rgba(44, 36, 22, 0.08); /* EDITED — cleaner premium divider */
   height: 64px;
   display: flex;
   align-items: center;
@@ -66,17 +69,19 @@ nav {
   width: 36px;
   height: 36px;
   background: var(--warm-brown);
-  border-radius: var(--radius-sm);
+  border-radius: 12px; /* EDITED — softer logo shape */
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--white);
   font-size: 18px;
-  transition: background var(--transition);
+  transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
+  box-shadow: 0 8px 20px rgba(200, 149, 108, 0.22); /* NEW — gives logo more brand presence */
 }
  
 .nav-logo:hover .nav-logo-icon {
   background: var(--warm-brown-dark);
+  transform: translateY(-1px); /* NEW — tiny premium hover lift */
 }
 
 .nav-logo-text {
@@ -114,7 +119,6 @@ nav {
   color: var(--warm-brown-dark);
   background: rgba(200, 149, 108, 0.12);
 }
-
 
 /* Right side buttons */
 .nav-auth {
@@ -185,13 +189,43 @@ nav {
 /* Section 1 Hero */
 
 .hero {
-  min-height: calc(100vh - 64px);
-  display: flex;
+  min-height: calc(92vh - 64px); /* EDITED — less huge empty top space than full 100vh */
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(390px, 0.95fr);
   align-items: center;
-  padding: 2rem 1.5rem;        
-  max-width: 1280px; 
+  max-width: 1180px;
   margin: 0 auto;
-  gap: 3rem;
+  padding: clamp(3rem, 7vh, 4.75rem) 2rem clamp(5rem, 10vh, 7rem);
+  gap: clamp(3.5rem, 7vw, 5.5rem); /* EDITED — responsive spacing between text and card */
+  position: relative;
+  isolation: isolate; /* NEW — keeps background glow behind hero content only */
+}
+
+/* NEW — warm atmosphere behind the hero so the page feels less flat/dull */
+.hero::before {
+  content: '';
+  position: absolute;
+  width: 560px;
+  height: 560px;
+  right: -8%;
+  top: 10%;
+  background: radial-gradient(circle, rgba(200, 149, 108, 0.16), transparent 65%);
+  filter: blur(18px);
+  z-index: -1;
+  pointer-events: none;
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  width: 360px;
+  height: 360px;
+  left: -5%;
+  bottom: 4%;
+  background: radial-gradient(circle, rgba(232, 197, 160, 0.18), transparent 68%);
+  filter: blur(24px);
+  z-index: -1;
+  pointer-events: none;
 }
 
 /* LEFT SIDE */
@@ -202,6 +236,7 @@ nav {
   flex-direction: column;
   align-items: flex-start;
   gap: 1rem; /* FIXED — was 1.25rem, tightened for better rhythm between text blocks */
+  max-width: 620px; /* NEW — keeps the text column controlled and premium */
 }
 
 /* All left side elements start invisible for JS to animate in */
@@ -213,11 +248,11 @@ nav {
 /* Span label */
 .hero-label {
   font-family: var(--font-body);
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: var(--warm-brown);
+  font-size: 0.76rem; /* EDITED — slightly tighter label */
+  font-weight: 700; /* EDITED — label needs more confidence */
+  color: var(--warm-brown-dark);
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
   opacity: 0;
   transform: translateY(16px);
 }
@@ -225,12 +260,12 @@ nav {
 /* H1 */
 .hero-title {
   font-family: var(--font-display);
-  font-size: clamp(2.6rem, 4.2vw, 3.4rem); /* FIXED — smaller max so it doesn't wrap awkwardly */
+  font-size: clamp(3rem, 5.2vw, 4.55rem); /* EDITED — stronger hero statement, more top-tier landing page feel */
   font-weight: 600;
   color: var(--ink);
-  letter-spacing: -0.03em;
-  line-height: 1.15;
-  max-width: 560px; /* NEW — controls exactly where the title line breaks instead of random browser wrap */
+  letter-spacing: -0.055em; /* EDITED — premium display type usually needs tighter tracking */
+  line-height: 1.02;
+  max-width: 640px; /* EDITED — lets the title breathe without random browser wrap */
   margin-top: 0.25rem; /* NEW — small breathing room from the label above */
   opacity: 0;
   transform: translateY(20px);
@@ -239,13 +274,13 @@ nav {
 /* H2 */
 .hero-subtitle {
   font-family: var(--font-display);
-  font-size: clamp(1.1rem, 2vw, 1.35rem);
+  font-size: clamp(1.12rem, 2vw, 1.42rem); /* EDITED — stronger poetic hook */
   font-weight: 400;
   font-style: italic;
   color: var(--ink-mid);
-  line-height: 1.5;
+  line-height: 1.55;
   letter-spacing: -0.01em;
-  max-width: 520px; /* NEW — controls wrap point, matches title rhythm */
+  max-width: 560px; /* EDITED — slightly wider so it reads smoother */
   margin-top: 0.1rem; /* NEW — tiny gap so it doesn't feel glued to title */
   opacity: 0;
   transform: translateY(18px);
@@ -257,8 +292,8 @@ nav {
   font-size: 1rem;
   font-weight: 400;
   color: var(--ink-light);
-  line-height: 1.75;
-  max-width: 480px;
+  line-height: 1.85; /* EDITED — more readable paragraph rhythm */
+  max-width: 530px; /* EDITED — supports the clearer product explanation copy */
   margin-top: 0.25rem; /* NEW — separates paragraph from subtitle a bit more clearly */
   opacity: 0;
   transform: translateY(16px);
@@ -268,8 +303,8 @@ nav {
 .hero-buttons {
   display: flex;
   align-items: center;
-  gap: 0.875rem;
-  margin-top: 0.5rem;
+  gap: 1rem;
+  margin-top: 1rem; /* EDITED — CTA needs more separation from body copy */
   opacity: 0;
   transform: translateY(14px);
 }
@@ -281,9 +316,10 @@ nav {
   color: var(--white);
   font-family: var(--font-body);
   font-size: 0.95rem;
-  font-weight: 500;
-  padding: 0.8rem 1.75rem;
-  border-radius: var(--radius-md);
+  font-weight: 600; /* EDITED — CTA should feel more decisive */
+  min-height: 48px; /* NEW — better button tap/click target */
+  padding: 0 1.55rem;
+  border-radius: 999px; /* EDITED — more polished pill shape */
   cursor: pointer;
   text-decoration: none;
   display: inline-flex;
@@ -321,9 +357,11 @@ it activate  becase we chose it at opacity 0 */
     0 4px 16px rgba(200, 149, 108, 0.35),
     0 1px 0 rgba(255,255,255,0.06) inset;
 }
+
 .hero-btn-primary:active {
   transform: translateY(0);
 }
+
 .hero-btn-primary:hover::before {
   opacity: 1;
 }
@@ -335,9 +373,10 @@ it activate  becase we chose it at opacity 0 */
   color: var(--ink-mid);
   font-family: var(--font-body);
   font-size: 0.95rem;
-  font-weight: 500;
-  padding: 0.8rem 1.75rem;
-  border-radius: var(--radius-md);
+  font-weight: 600; /* EDITED — matches primary CTA weight */
+  min-height: 48px; /* NEW — consistent button height */
+  padding: 0 1.55rem;
+  border-radius: 999px; /* EDITED — more polished pill shape */
   cursor: pointer;
   text-decoration: none;
   display: inline-flex;
@@ -365,6 +404,25 @@ it activate  becase we chose it at opacity 0 */
   background: rgba(200, 149, 108, 0.12);
 }
 
+/* NEW — visible keyboard focus for accessibility without changing your visual style */
+.hero-btn-primary:focus-visible,
+.hero-btn-ghost:focus-visible,
+.btn-primary:focus-visible,
+.btn-ghost:focus-visible,
+.card-btn:focus-visible {
+  outline: 3px solid rgba(200, 149, 108, 0.35);
+  outline-offset: 3px;
+}
+
+/* NEW — optional line under the CTA if you add <p class="hero-proof">...</p> in HTML */
+.hero-proof {
+  margin-top: 0.15rem;
+  font-size: 0.86rem;
+  color: var(--ink-faint);
+  opacity: 1; /* keeps it visible even though .hero-left > * starts hidden for JS animation */
+  transform: none;
+}
+
 /* ___ RIGHT SIDE _____________________________ */
 
 .hero-right {
@@ -372,6 +430,8 @@ it activate  becase we chose it at opacity 0 */
   display: flex;
   align-items: center;
   justify-content: center;
+  justify-self: end; /* NEW — makes the card feel intentionally placed on the right */
+  width: 100%;
   opacity: 0;
   transform: translateX(30px);
 }
@@ -381,13 +441,16 @@ it activate  becase we chose it at opacity 0 */
 .card-effect {
   position: relative;
   display: flex;
-  background: var(--white);
-  border-radius: var(--radius-xl);
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow-lg);
+  background:
+    linear-gradient(135deg, rgba(255,255,255,0.98), rgba(255,252,248,0.92)),
+    var(--white); /* EDITED — subtle paper-like depth instead of flat white */
+  border-radius: 28px; /* EDITED — larger hero card radius */
+  border: 1px solid rgba(200, 149, 108, 0.24);
+  box-shadow: var(--shadow-hero-card); /* EDITED — stronger premium hero depth */
   overflow: hidden;
   width: 100%;
-  max-width: 560px;
+  max-width: 540px;
+  min-height: 340px; /* NEW — makes the card feel like a real feature preview, not a small row */
   cursor: default;
   /* Smooth tilt on mouse move */
   transition: transform 0.1s ease-out, box-shadow var(--transition);
@@ -421,7 +484,7 @@ it activate  becase we chose it at opacity 0 */
 
 .card-cover-side {
   flex-shrink: 0;
-  width: 200px;
+  width: 190px; /* EDITED — slightly smaller so info side has more breathing room */
   aspect-ratio: 2 / 3; /* real book cover proportions instead of a stretched empty box */
   align-self: stretch; /* still matches the card's height naturally without forcing min-height */
   position: relative;
@@ -467,10 +530,10 @@ it activate  becase we chose it at opacity 0 */
 
 .card-info-side {
   flex: 1;
-  padding: 1.75rem 1.75rem;
+  padding: 1.65rem 1.6rem; /* EDITED — balanced with new card size */
   display: flex;
   flex-direction: column;
-  gap: 1.1rem;
+  gap: 0.8rem; /* EDITED — tighter, more professional information stack */
   justify-content: flex-start;
   min-width: 0;
 }
@@ -491,22 +554,22 @@ it activate  becase we chose it at opacity 0 */
   display: inline-flex;
   align-items: center;
   font-family: var(--font-body);
-  font-size: 0.7rem;
-  font-weight: 600;
+  font-size: 0.72rem;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--warm-brown-dark);
   background: rgba(200, 149, 108, 0.12);
   border: 1px solid var(--warm-brown-light);
-  padding: 0.2rem 0.6rem;
-  border-radius: 20px;
+  padding: 0.28rem 0.68rem;
+  border-radius: 999px;
   width: fit-content;
 }
 
 /* Title */
 .card-title {
   font-family: var(--font-display);
-  font-size: 1.5rem;
+  font-size: 1.55rem; /* EDITED — stronger card hierarchy */
   font-weight: 600;
   color: var(--ink);
   letter-spacing: -0.01em;
@@ -522,7 +585,7 @@ it activate  becase we chose it at opacity 0 */
 /* Author */
 .card-author {
   font-family: var(--font-body);
-  font-size: 1.05rem;
+  font-size: 0.95rem; /* EDITED — author should support title, not compete with it */
   color: var(--ink-light);
   font-weight: 400;
 }
@@ -537,12 +600,12 @@ it activate  becase we chose it at opacity 0 */
 
 .card-star {
   color: var(--warm-brown);
-  font-size: 0.95rem;
+  font-size: 1rem; /* EDITED — star should match larger score */
 }
 
 #card-score {
   font-family: var(--font-display);
-  font-size: 1.4rem;
+  font-size: 1.35rem;
   font-weight: 600;
   color: var(--ink);
   letter-spacing: -0.02em;
@@ -552,6 +615,32 @@ it activate  becase we chose it at opacity 0 */
   font-family: var(--font-body);
   font-size: 0.78rem;
   color: var(--ink-faint);
+}
+
+
+/* NEW — optional saved quote inside the hero card.
+   Add <blockquote class="card-memory-quote">...</blockquote> under the score in HTML. */
+.card-memory-quote {
+  margin-top: 0.35rem;
+  padding: 0.85rem 0.95rem;
+  border-left: 3px solid var(--warm-brown);
+  border-radius: 14px;
+  background: rgba(200, 149, 108, 0.08);
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  line-height: 1.45;
+  color: var(--ink-mid);
+}
+
+/* NEW — optional note preview if you want the card to show actual remembered meaning, not only a score */
+.card-note-preview {
+  padding: 0.85rem 0.95rem;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: rgba(250, 247, 242, 0.72);
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: var(--ink-light);
 }
 
 
@@ -568,14 +657,14 @@ it activate  becase we chose it at opacity 0 */
 }
 
 .card-btn {
-  background: transparent;
+  background: rgba(255, 252, 248, 0.75); /* EDITED — pills feel less empty */
   border: 1px solid var(--border-strong);
   color: rgba(92, 74, 50, 0.7); /* ink-mid at 70% */
   font-family: var(--font-body);
   font-size: 0.8rem;
   font-weight: 500;
   padding: 0.4rem 0.85rem;
-  border-radius: 20px;
+  border-radius: 999px;
   cursor: pointer;
   position: relative;
 
@@ -655,10 +744,65 @@ it activate  becase we chose it at opacity 0 */
   transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
+/* NEW — JS adds this class on mouseleave so the card resets smoothly instead of snapping back */
 .card-effect.is-resetting {
   transition: transform 0.5s ease, box-shadow var(--transition);
 }
 
 .card-effect.is-resetting .card-cover-img {
   transition: transform 0.5s ease;
+}
+
+/* NEW — responsive hero fixes so the two-column hero does not break on tablets */
+@media (max-width: 980px) {
+  .hero {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    padding-top: 3rem;
+  }
+
+  .hero-right {
+    justify-self: center;
+  }
+
+  .card-effect {
+    max-width: 620px;
+  }
+}
+
+/* NEW — mobile card layout: cover on top, info below, easier to read on small screens */
+@media (max-width: 560px) {
+  .hero {
+    padding-inline: 1.2rem;
+  }
+
+  .hero-title {
+    font-size: clamp(2.45rem, 12vw, 3.2rem);
+  }
+
+  .hero-buttons {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .hero-btn-primary,
+  .hero-btn-ghost {
+    justify-content: center;
+  }
+
+  .card-effect {
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .card-cover-side {
+    width: 100%;
+    height: 260px;
+    aspect-ratio: auto;
+  }
+
+  .card-info-side {
+    padding: 1.35rem;
+  }
 }
