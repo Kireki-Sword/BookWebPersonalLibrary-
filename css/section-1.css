@@ -12,7 +12,6 @@
   gap: clamp(3rem, 6vw, 5rem); 
   position: relative;
   isolation: isolate; 
-  overflow: hidden; 
   background: radial-gradient(rgba(226, 185, 143, 0.24), transparent 65%);
 }
 
