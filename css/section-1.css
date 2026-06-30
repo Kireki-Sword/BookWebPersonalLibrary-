@@ -6,13 +6,29 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(420px, 0.95fr);
   align-items: center;
-  max-width: 1220px;
-  margin: 0 auto;
-  padding: 2.25rem 2rem 3rem;
+
+  /* FIXED — hero is full width now, so the background has no vertical edge */
+  width: 100%;
+  max-width: none;
+  margin: 0;
+
+  /* Keeps your content aligned like a centered 1220px container */
+  padding:
+    2.25rem
+    max(2rem, calc((100vw - 1220px) / 2 + 2rem))
+    3rem;
+
   gap: clamp(3rem, 6vw, 5rem); 
   position: relative;
   isolation: isolate; 
-  background: radial-gradient(rgba(226, 185, 143, 0.24), transparent 65%);
+
+  /* FIXED — background is spread across the whole hero, not just the middle */
+  background:
+    radial-gradient(ellipse at 26% 42%, rgba(226, 185, 143, 0.20) 0%, rgba(226, 185, 143, 0.08) 35%, transparent 68%),
+    radial-gradient(ellipse at 74% 42%, rgba(184, 121, 78, 0.14) 0%, rgba(184, 121, 78, 0.06) 36%, transparent 70%),
+    radial-gradient(ellipse at 50% 92%, rgba(226, 185, 143, 0.14) 0%, rgba(226, 185, 143, 0.05) 42%, transparent 74%),
+    linear-gradient(180deg, rgba(255, 252, 248, 0.82) 0%, rgba(250, 246, 239, 0.96) 62%, rgba(250, 246, 239, 1) 100%),
+    var(--cream);
 }
 
 
