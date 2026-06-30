@@ -38,28 +38,34 @@
 
     <!-- Section 1 Hero -->
     <section class="hero">
-         <!-- DIV 1  LEFT SIDE  Text -->
-        <div> 
-            <span>Beyond a simple rating</span>
-            <h1>Some stories leave a mark.</h1>
-            <h2>Every story you read becomes part of you. Remember it and share it.</h2>
-            <p>Log what you read, save what hit you, write what it meant to you. Because the same story speaks differently to every person who lives it.</p>
-            <button>Join Inkwell</button>
-            <button>Start Exploring</button>
+
+        <!-- DIV 1 - LEFT SIDE - Text -->
+        <div class="hero-left">
+            <span class="hero-label">Beyond a simple rating</span>
+            <h1 class="hero-title">Some stories leave a mark.</h1>
+            <h2 class="hero-subtitle">Every story you read becomes part of you. Remember it and share it.</h2>
+            <p class="hero-p">Log what you read, save what hit you, write what it meant to you. Because the same story speaks differently to every person who lives it.</p>
+            <div class="hero-buttons">
+                <button class="hero-btn-primary">Join Inkwell</button>
+                <button class="hero-btn-ghost">Start Exploring</button>
+            </div>
         </div>
 
-           <!-- DIV 2  RIGHT SIDE Rotating Card -->
+        <!-- DIV 2 - RIGHT SIDE - Rotating Card -->
         <div class="hero-right">
 
             <!-- THE TILT CARD -->
             <div class="card-effect">
 
-                <!-- DIV 1 inside card  Cover -->
+                <!-- GLARE LAYER - JS controls this -->
+                <div class="card-glare"></div>
+
+                <!-- DIV 1 inside card - Cover -->
                 <div class="card-cover-side">
                     <img class="card-cover-img" id="card-cover" src="" alt="">
                 </div>
 
-                <!-- DIV 2 inside card  Info -->
+                <!-- DIV 2 inside card - Info -->
                 <div class="card-info-side">
                     <span class="card-type" id="card-type"></span>
                     <h3 class="card-title" id="card-title"></h3>
@@ -69,7 +75,8 @@
                         <span id="card-score"></span>
                         <span class="card-max-score">/10</span>
                     </div>
-                           <!-- DIV 3 inside card  Buttons -->
+
+                    <!-- DIV 3 inside card - Buttons -->
                     <div class="card-buttons">
                         <button class="card-btn">Quotes</button>
                         <button class="card-btn">Moments</button>
