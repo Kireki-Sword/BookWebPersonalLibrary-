@@ -1,3 +1,7 @@
+.section-empty-shelf {
+  background: red !important;
+  min-height: 100vh !important;
+}
 /* ==========================================================
    SECTION 2 — EMPTY SHELF / BEYOND THE SCORE
 
