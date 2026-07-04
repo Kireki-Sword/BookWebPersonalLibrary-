@@ -1,7 +1,8 @@
 /* ============================================================
    SECTION 2 — BACKGROUND
-   Based directly on Section 1 hero background.
-   No grid. No dots. No visible circle.
+   Based on Section 1 hero background.
+   Color spreads across the whole section.
+   No grid. No dots. No extra pseudo background layers.
 ============================================================ */
 
 #section-2-empty-shelf.section-empty-shelf {
@@ -10,225 +11,94 @@
   overflow: hidden;
 
   min-height: 100vh;
+
   padding:
     clamp(5.5rem, 8vw, 8rem)
-    max(1.5rem, calc((100vw - 1220px) / 2 + 2rem))
+    max(2rem, calc((100vw - 1220px) / 2 + 2rem))
     clamp(5.5rem, 8vw, 8rem);
 
   color: var(--ink);
 
+  /* SAME BACKGROUND LANGUAGE AS SECTION 1 */
   background:
     radial-gradient(
-      ellipse at 26% 38%,
-      rgba(226, 185, 143, 0.18) 0%,
-      rgba(226, 185, 143, 0.075) 35%,
-      transparent 68%
-    ),
-    radial-gradient(
-      ellipse at 74% 40%,
-      rgba(184, 121, 78, 0.12) 0%,
-      rgba(184, 121, 78, 0.052) 36%,
-      transparent 70%
-    ),
-    radial-gradient(
-      ellipse at 50% 92%,
-      rgba(226, 185, 143, 0.13) 0%,
-      rgba(226, 185, 143, 0.046) 42%,
-      transparent 74%
-    ),
-    linear-gradient(
-      180deg,
-      rgba(250, 246, 239, 1) 0%,
-      rgba(255, 252, 248, 0.82) 34%,
-      rgba(250, 246, 239, 0.96) 68%,
-      rgba(250, 246, 239, 1) 100%
-    ),
-    var(--cream);
-}
-
-/* Keep real content above background layers */
-#section-2-empty-shelf.section-empty-shelf > * {
-  position: relative;
-  z-index: 2;
-}
-
-/* Soft atmosphere layer, same family as Section 1 but calmer */
-#section-2-empty-shelf.section-empty-shelf::before {
-  content: "";
-  position: absolute;
-  inset: -24%;
-  z-index: 0;
-  pointer-events: none;
-
-  background:
-    radial-gradient(
-      ellipse at 28% 46%,
-      rgba(226, 185, 143, 0.12) 0%,
-      rgba(226, 185, 143, 0.04) 38%,
-      transparent 72%
-    ),
-    radial-gradient(
-      ellipse at 74% 48%,
-      rgba(184, 121, 78, 0.075) 0%,
-      rgba(184, 121, 78, 0.025) 40%,
-      transparent 74%
-    ),
-    radial-gradient(
-      ellipse at 50% 82%,
-      rgba(127, 75, 47, 0.045) 0%,
-      rgba(127, 75, 47, 0.014) 42%,
-      transparent 78%
-    );
-
-  filter: blur(54px);
-  opacity: 0.76;
-}
-
-/* Finish layer: only soft edge depth and section blending */
-#section-2-empty-shelf.section-empty-shelf::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-
-  background:
-    linear-gradient(
-      180deg,
-      rgba(250, 246, 239, 0.72) 0%,
-      rgba(250, 246, 239, 0.28) 16%,
-      transparent 38%
-    ),
-    linear-gradient(
-      90deg,
-      rgba(36, 26, 17, 0.024) 0%,
-      transparent 16%,
-      transparent 84%,
-      rgba(36, 26, 17, 0.024) 100%
-    ),
-    linear-gradient(
-      180deg,
-      transparent 0%,
-      transparent 76%,
-      rgba(239, 229, 216, 0.16) 100%
-    );
-
-  opacity: 0.72;
-}
-
-/* ============================================================
-   OPTIONAL STAGE MOODS
-   Only changes glow strength. Still same Section 1 background style.
-============================================================ */
-
-#section-2-empty-shelf.section-empty-shelf.is-stage-empty {
-  background:
-    radial-gradient(
-      ellipse at 26% 38%,
-      rgba(226, 185, 143, 0.14) 0%,
-      rgba(226, 185, 143, 0.055) 35%,
-      transparent 68%
-    ),
-    radial-gradient(
-      ellipse at 74% 40%,
-      rgba(184, 121, 78, 0.09) 0%,
-      rgba(184, 121, 78, 0.036) 36%,
-      transparent 70%
-    ),
-    radial-gradient(
-      ellipse at 50% 92%,
-      rgba(226, 185, 143, 0.10) 0%,
-      rgba(226, 185, 143, 0.035) 42%,
-      transparent 74%
-    ),
-    linear-gradient(
-      180deg,
-      rgba(250, 246, 239, 1) 0%,
-      rgba(255, 252, 248, 0.82) 34%,
-      rgba(250, 246, 239, 0.96) 68%,
-      rgba(250, 246, 239, 1) 100%
-    ),
-    var(--cream);
-}
-
-#section-2-empty-shelf.section-empty-shelf.is-stage-quotes,
-#section-2-empty-shelf.section-empty-shelf.is-stage-notes,
-#section-2-empty-shelf.section-empty-shelf.is-stage-final {
-  background:
-    radial-gradient(
-      ellipse at 26% 38%,
+      ellipse at 26% 42%,
       rgba(226, 185, 143, 0.20) 0%,
       rgba(226, 185, 143, 0.08) 35%,
       transparent 68%
     ),
     radial-gradient(
-      ellipse at 74% 40%,
-      rgba(184, 121, 78, 0.135) 0%,
-      rgba(184, 121, 78, 0.058) 36%,
+      ellipse at 74% 42%,
+      rgba(184, 121, 78, 0.14) 0%,
+      rgba(184, 121, 78, 0.06) 36%,
       transparent 70%
     ),
     radial-gradient(
       ellipse at 50% 92%,
-      rgba(226, 185, 143, 0.145) 0%,
-      rgba(226, 185, 143, 0.052) 42%,
+      rgba(226, 185, 143, 0.14) 0%,
+      rgba(226, 185, 143, 0.05) 42%,
       transparent 74%
     ),
     linear-gradient(
       180deg,
-      rgba(250, 246, 239, 1) 0%,
-      rgba(255, 252, 248, 0.84) 34%,
-      rgba(250, 246, 239, 0.96) 68%,
+      rgba(255, 252, 248, 0.82) 0%,
+      rgba(250, 246, 239, 0.96) 62%,
       rgba(250, 246, 239, 1) 100%
     ),
     var(--cream);
 }
 
-#section-2-empty-shelf.section-empty-shelf.is-stage-thoughts {
-  background:
-    radial-gradient(
-      ellipse at 26% 38%,
-      rgba(226, 185, 143, 0.12) 0%,
-      rgba(226, 185, 143, 0.045) 35%,
-      transparent 68%
-    ),
-    radial-gradient(
-      ellipse at 74% 40%,
-      rgba(127, 75, 47, 0.08) 0%,
-      rgba(127, 75, 47, 0.032) 36%,
-      transparent 70%
-    ),
-    radial-gradient(
-      ellipse at 50% 92%,
-      rgba(184, 121, 78, 0.10) 0%,
-      rgba(184, 121, 78, 0.034) 42%,
-      transparent 74%
-    ),
-    linear-gradient(
-      180deg,
-      rgba(250, 246, 239, 1) 0%,
-      rgba(251, 244, 236, 0.9) 44%,
-      rgba(250, 246, 239, 1) 100%
-    ),
-    var(--cream);
+/* Keep content above the background */
+#section-2-empty-shelf.section-empty-shelf > * {
+  position: relative;
+  z-index: 2;
 }
 
-/* ============================================================
-   MOBILE
-============================================================ */
+/* IMPORTANT:
+   Kill old Section 2 pseudo backgrounds.
+   This removes the old grid / circle / texture completely.
+*/
+#section-2-empty-shelf.section-empty-shelf::before,
+#section-2-empty-shelf.section-empty-shelf::after {
+  content: none;
+  display: none;
+}
 
+/* Mobile */
 @media (max-width: 768px) {
   #section-2-empty-shelf.section-empty-shelf {
     min-height: 100vh;
-    padding: 4.5rem 1rem;
-  }
 
-  #section-2-empty-shelf.section-empty-shelf::before {
-    inset: -36%;
-    filter: blur(58px);
-    opacity: 0.64;
-  }
+    padding:
+      4.5rem
+      1rem
+      4.5rem;
 
-  #section-2-empty-shelf.section-empty-shelf::after {
-    opacity: 0.58;
+    background:
+      radial-gradient(
+        ellipse at 24% 30%,
+        rgba(226, 185, 143, 0.18) 0%,
+        rgba(226, 185, 143, 0.07) 36%,
+        transparent 70%
+      ),
+      radial-gradient(
+        ellipse at 78% 34%,
+        rgba(184, 121, 78, 0.12) 0%,
+        rgba(184, 121, 78, 0.05) 38%,
+        transparent 72%
+      ),
+      radial-gradient(
+        ellipse at 50% 92%,
+        rgba(226, 185, 143, 0.12) 0%,
+        rgba(226, 185, 143, 0.045) 42%,
+        transparent 76%
+      ),
+      linear-gradient(
+        180deg,
+        rgba(255, 252, 248, 0.82) 0%,
+        rgba(250, 246, 239, 0.96) 62%,
+        rgba(250, 246, 239, 1) 100%
+      ),
+      var(--cream);
   }
 }
