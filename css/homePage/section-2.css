@@ -1773,3 +1773,916 @@
     display: none;
   }
 }
+
+
+
+
+/* ============================================================================
+   SECTION 2 — PREMIUM ROW + ALL-STAGES DEV MODE PATCH
+   Paste at the bottom of section-2.css
+============================================================================ */
+
+
+/* ============================================================================
+   1. DEV MODE — SHOW ALL STAGES AGAIN
+   Later, when GSAP is ready, remove this block and let JS control stages.
+============================================================================ */
+
+#section-2-empty-shelf .empty-shelf-scroll {
+  position: relative;
+  width: 100%;
+  max-width: 1060px;
+  margin-inline: auto;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(4.5rem, 8vw, 7rem);
+}
+
+#section-2-empty-shelf .scroll-stage,
+#section-2-empty-shelf .scroll-stage[aria-hidden="true"],
+#section-2-empty-shelf .scroll-stage[aria-hidden="false"] {
+  width: 100%;
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.85rem;
+
+  opacity: 1 !important;
+  visibility: visible !important;
+  position: relative;
+}
+
+/* Keep stage labels visible while designing */
+#section-2-empty-shelf .scroll-stage::before {
+  content: "STAGE — " attr(data-stage);
+  display: inline-flex;
+
+  font-family: var(--font-body);
+  font-size: 0.68rem;
+  font-weight: 850;
+  color: rgba(127, 75, 47, 0.46);
+  text-transform: uppercase;
+  letter-spacing: 0.13em;
+
+  margin-bottom: 0.25rem;
+}
+
+
+/* ============================================================================
+   2. ROW STAGE HALO
+   Warm glow behind every row card so the card becomes the center object.
+============================================================================ */
+
+#section-2-empty-shelf .stage-basic-row,
+#section-2-empty-shelf .stage-row-with-quotes,
+#section-2-empty-shelf .stage-row-with-moment,
+#section-2-empty-shelf .stage-row-with-character,
+#section-2-empty-shelf .stage-row-with-notes,
+#section-2-empty-shelf .stage-final-row {
+  isolation: isolate;
+}
+
+#section-2-empty-shelf .stage-basic-row::after,
+#section-2-empty-shelf .stage-row-with-quotes::after,
+#section-2-empty-shelf .stage-row-with-moment::after,
+#section-2-empty-shelf .stage-row-with-character::after,
+#section-2-empty-shelf .stage-row-with-notes::after,
+#section-2-empty-shelf .stage-final-row::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 58%;
+
+  width: min(980px, 94vw);
+  height: 310px;
+
+  transform: translate(-50%, -50%);
+  z-index: -1;
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      ellipse at center,
+      rgba(226, 185, 143, 0.34) 0%,
+      rgba(226, 185, 143, 0.16) 34%,
+      rgba(184, 121, 78, 0.075) 54%,
+      transparent 76%
+    );
+
+  filter: blur(38px);
+  opacity: 0.82;
+
+  transition:
+    opacity 320ms ease,
+    filter 320ms ease,
+    transform 320ms ease;
+}
+
+/* Hovering the row stage warms the light around the card */
+#section-2-empty-shelf .stage-basic-row:hover::after,
+#section-2-empty-shelf .stage-row-with-quotes:hover::after,
+#section-2-empty-shelf .stage-row-with-moment:hover::after,
+#section-2-empty-shelf .stage-row-with-character:hover::after,
+#section-2-empty-shelf .stage-row-with-notes:hover::after,
+#section-2-empty-shelf .stage-final-row:hover::after {
+  opacity: 1;
+  filter: blur(42px);
+  transform: translate(-50%, -50%) scale(1.04);
+}
+
+
+/* ============================================================================
+   3. ROW CARD — STRONGER PREMIUM SURFACE
+============================================================================ */
+
+#section-2-empty-shelf .media-library-row {
+  --row-sheen-position: 145%;
+
+  width: min(960px, 100%);
+  min-height: 166px;
+  margin-inline: auto;
+
+  padding: 1.65rem 1.8rem;
+
+  position: relative;
+  isolation: isolate;
+  overflow: visible;
+
+  border-radius: 31px;
+  border: 1px solid rgba(184, 121, 78, 0.30);
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.78) 0%,
+      rgba(255, 255, 255, 0) 34%
+    ),
+    linear-gradient(
+      180deg,
+      #fffefa 0%,
+      #fff8ef 56%,
+      #fff2e4 100%
+    );
+
+  box-shadow:
+    0 54px 120px rgba(44, 36, 22, 0.16),
+    0 18px 42px rgba(44, 36, 22, 0.11),
+    0 2px 0 rgba(255, 255, 255, 0.82) inset,
+    0 -1px 0 rgba(127, 75, 47, 0.07) inset;
+
+  transform:
+    perspective(1200px)
+    translateY(0)
+    rotateX(0deg)
+    rotateY(0deg);
+
+  transform-style: preserve-3d;
+
+  transition:
+    transform 340ms cubic-bezier(0.22, 1, 0.36, 1),
+    background 280ms ease,
+    border-color 280ms ease,
+    box-shadow 340ms ease;
+}
+
+/* Soft contact shadow under the card */
+#section-2-empty-shelf .media-library-row::after {
+  content: "";
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  bottom: -20px;
+  height: 36px;
+  z-index: -1;
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      ellipse at center,
+      rgba(44, 36, 22, 0.22) 0%,
+      rgba(44, 36, 22, 0.10) 38%,
+      transparent 72%
+    );
+
+  filter: blur(16px);
+  opacity: 0.54;
+
+  transition:
+    opacity 300ms ease,
+    transform 300ms ease;
+}
+
+/* Card-wide subtle premium sheen.
+   This is for the whole card, not the cover-specific gloss. */
+#section-2-empty-shelf .media-library-row::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+
+  border-radius: inherit;
+
+  background:
+    linear-gradient(
+      105deg,
+      transparent 0%,
+      transparent 36%,
+      rgba(255, 255, 255, 0.18) 46%,
+      rgba(226, 185, 143, 0.10) 52%,
+      transparent 64%,
+      transparent 100%
+    );
+
+  background-size: 240% 100%;
+  background-position: var(--row-sheen-position) 0;
+
+  opacity: 0;
+
+  transition:
+    background-position 950ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 240ms ease;
+}
+
+#section-2-empty-shelf .media-library-row:hover {
+  transform:
+    perspective(1200px)
+    translateY(-6px)
+    rotateX(0.65deg)
+    rotateY(-0.35deg);
+
+  border-color: rgba(127, 75, 47, 0.42);
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.84) 0%,
+      rgba(255, 255, 255, 0) 34%
+    ),
+    linear-gradient(
+      180deg,
+      #fffffb 0%,
+      #fff5e8 56%,
+      #ffecd8 100%
+    );
+
+  box-shadow:
+    0 68px 150px rgba(44, 36, 22, 0.20),
+    0 26px 54px rgba(44, 36, 22, 0.14),
+    0 2px 0 rgba(255, 255, 255, 0.86) inset,
+    0 -1px 0 rgba(127, 75, 47, 0.10) inset;
+}
+
+#section-2-empty-shelf .media-library-row:hover::before {
+  --row-sheen-position: -120%;
+  opacity: 1;
+}
+
+#section-2-empty-shelf .media-library-row:hover::after {
+  opacity: 0.76;
+  transform: translateY(5px) scaleX(1.05);
+}
+
+
+/* ============================================================================
+   4. INNER LAYOUT — BETTER GROUPING
+   cover | title/author/chips | score
+============================================================================ */
+
+#section-2-empty-shelf .media-row-main {
+  position: relative;
+  z-index: 3;
+
+  display: grid;
+  grid-template-columns: 116px max-content max-content minmax(1rem, 1fr) auto;
+  grid-template-areas:
+    "cover info   info   info score"
+    "cover format status .    score";
+
+  column-gap: 0.62rem;
+  row-gap: 0.68rem;
+  align-items: center;
+}
+
+#section-2-empty-shelf .media-row-info {
+  grid-area: info;
+  align-self: end;
+  min-width: 0;
+
+  transform: translateZ(18px);
+}
+
+#section-2-empty-shelf .media-row-format {
+  grid-area: format;
+  align-self: start;
+  margin: 0;
+  transform: translateZ(13px);
+}
+
+#section-2-empty-shelf .media-row-status {
+  grid-area: status;
+  align-self: start;
+  margin: 0;
+  transform: translateZ(13px);
+}
+
+
+/* ============================================================================
+   5. COVER — OBJECT DEPTH + COVER-ONLY GLOSS
+============================================================================ */
+
+#section-2-empty-shelf .media-row-cover {
+  grid-area: cover;
+  grid-row: 1 / -1;
+
+  width: 116px;
+  aspect-ratio: 2 / 3;
+
+  position: relative;
+  overflow: hidden;
+
+  border-radius: 20px;
+  border: 1px solid rgba(127, 75, 47, 0.20);
+
+  background:
+    radial-gradient(
+      circle at 24% 18%,
+      rgba(255, 255, 255, 0.48),
+      transparent 30%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(255, 252, 248, 0.35),
+      rgba(226, 185, 143, 0.36) 42%,
+      rgba(127, 75, 47, 0.18)
+    ),
+    var(--cream-dark);
+
+  box-shadow:
+    0 26px 48px rgba(44, 36, 22, 0.23),
+    0 9px 18px rgba(44, 36, 22, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.50);
+
+  transform: translateZ(26px);
+
+  transition:
+    transform 330ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 260ms ease,
+    box-shadow 330ms ease;
+}
+
+/* Cover edge / book-jacket depth */
+#section-2-empty-shelf .media-row-cover::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.28) 0%,
+      transparent 18%,
+      transparent 78%,
+      rgba(36, 26, 17, 0.11) 100%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.20) 0%,
+      transparent 42%
+    );
+
+  opacity: 0.76;
+}
+
+/* Cover gloss. This now triggers ONLY on .media-row-cover:hover. */
+#section-2-empty-shelf .media-row-cover::after {
+  content: "";
+  position: absolute;
+  top: -34%;
+  left: -92%;
+  z-index: 4;
+
+  width: 58%;
+  height: 172%;
+
+  pointer-events: none;
+
+  background:
+    linear-gradient(
+      105deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.12) 34%,
+      rgba(255, 255, 255, 0.62) 50%,
+      rgba(226, 185, 143, 0.14) 56%,
+      transparent 70%
+    );
+
+  transform: rotate(12deg);
+  opacity: 0;
+
+  transition:
+    left 850ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 180ms ease;
+}
+
+#section-2-empty-shelf .media-row-cover img {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+  object-fit: cover;
+
+  color: transparent;
+  font-size: 0;
+
+  transform: scale(1.001);
+
+  transition:
+    transform 420ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 300ms ease;
+}
+
+/* Row hover gives the cover depth, but NOT gloss. */
+#section-2-empty-shelf .media-library-row:hover .media-row-cover {
+  transform: translateY(-4px) rotate(-0.8deg) translateZ(34px);
+
+  border-color: rgba(127, 75, 47, 0.30);
+
+  box-shadow:
+    0 32px 58px rgba(44, 36, 22, 0.26),
+    0 12px 24px rgba(44, 36, 22, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.58);
+}
+
+/* Important: cancel any old row-hover cover shine from earlier CSS. */
+#section-2-empty-shelf .media-library-row:hover .media-row-cover::after {
+  left: -92%;
+  opacity: 0;
+}
+
+/* Cover hover gives the actual glossy sweep. */
+#section-2-empty-shelf .media-row-cover:hover {
+  transform: translateY(-7px) rotate(-1.35deg) translateZ(42px);
+
+  border-color: rgba(127, 75, 47, 0.38);
+
+  box-shadow:
+    0 38px 68px rgba(44, 36, 22, 0.30),
+    0 14px 28px rgba(44, 36, 22, 0.17),
+    inset 0 1px 0 rgba(255, 255, 255, 0.62);
+}
+
+#section-2-empty-shelf .media-row-cover:hover::after {
+  left: 132%;
+  opacity: 1;
+}
+
+#section-2-empty-shelf .media-row-cover:hover img {
+  transform: scale(1.045);
+  filter: saturate(1.10) contrast(1.07);
+}
+
+/* Cancel old row-hover image filter if it exists earlier */
+#section-2-empty-shelf .media-library-row:hover .media-row-cover img {
+  filter: none;
+}
+
+
+/* ============================================================================
+   6. TITLE / AUTHOR — MORE PREMIUM HIERARCHY
+============================================================================ */
+
+#section-2-empty-shelf .media-row-info h3 {
+  margin: 0;
+
+  font-family: var(--font-display);
+  font-size: clamp(1.98rem, 2.6vw, 2.32rem);
+  font-weight: 720;
+  line-height: 0.92;
+  letter-spacing: -0.052em;
+
+  color: #1f160f;
+
+  text-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.68),
+    0 10px 24px rgba(127, 75, 47, 0.06);
+
+  transition:
+    color 240ms ease,
+    transform 240ms ease;
+}
+
+#section-2-empty-shelf .media-row-info p {
+  margin-top: 0.46rem;
+
+  font-family: var(--font-body);
+  font-size: 0.98rem;
+  font-weight: 600;
+  line-height: 1.35;
+
+  color: rgba(78, 58, 41, 0.82);
+
+  transition:
+    color 240ms ease,
+    transform 240ms ease;
+}
+
+#section-2-empty-shelf .media-library-row:hover .media-row-info h3 {
+  color: var(--ink);
+  transform: translateY(-1px);
+}
+
+#section-2-empty-shelf .media-library-row:hover .media-row-info p {
+  color: var(--ink-mid);
+}
+
+
+/* ============================================================================
+   7. META CHIPS — RICHER, LESS FLAT
+============================================================================ */
+
+#section-2-empty-shelf .media-row-format span,
+#section-2-empty-shelf .media-row-status span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 32px;
+  padding: 0.38rem 0.82rem;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 252, 248, 0.94) 0%,
+      rgba(226, 185, 143, 0.17) 100%
+    );
+
+  border: 1px solid rgba(184, 121, 78, 0.32);
+  border-radius: 999px;
+
+  box-shadow:
+    0 7px 16px rgba(127, 75, 47, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72);
+
+  font-family: var(--font-body);
+  font-size: 0.76rem;
+  font-weight: 850;
+  line-height: 1;
+  color: var(--warm-brown-dark);
+  white-space: nowrap;
+
+  transition:
+    transform 220ms ease,
+    background 220ms ease,
+    border-color 220ms ease,
+    box-shadow 220ms ease,
+    color 220ms ease;
+}
+
+#section-2-empty-shelf .media-library-row:hover .media-row-format span,
+#section-2-empty-shelf .media-library-row:hover .media-row-status span {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 252, 248, 1) 0%,
+      rgba(226, 185, 143, 0.25) 100%
+    );
+
+  border-color: rgba(127, 75, 47, 0.38);
+
+  box-shadow:
+    0 10px 20px rgba(127, 75, 47, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.78);
+
+  color: #6f3f26;
+}
+
+#section-2-empty-shelf .media-row-format span:hover,
+#section-2-empty-shelf .media-row-status span:hover {
+  transform: translateY(-1px);
+}
+
+
+/* ============================================================================
+   8. SCORE — STABLE CAPSULE + FLOATING “BUT WHY?”
+============================================================================ */
+
+#section-2-empty-shelf .media-row-score {
+  grid-area: score;
+  grid-row: 1 / -1;
+  align-self: center;
+  justify-self: end;
+
+  position: relative;
+
+  min-width: 96px;
+  height: 60px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0 1.2rem;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 252, 248, 1) 0%,
+      rgba(255, 244, 230, 0.96) 100%
+    );
+
+  border: 1px solid rgba(184, 121, 78, 0.30);
+  border-radius: 999px;
+
+  box-shadow:
+    0 15px 34px rgba(44, 36, 22, 0.10),
+    inset 0 1px 0 rgba(255, 255, 255, 0.78);
+
+  cursor: default;
+
+  transform: translateZ(30px);
+
+  transition:
+    transform 280ms cubic-bezier(0.22, 1, 0.36, 1),
+    background 240ms ease,
+    border-color 240ms ease,
+    box-shadow 280ms ease;
+}
+
+#section-2-empty-shelf .media-row-score span {
+  position: relative;
+  z-index: 2;
+
+  font-family: var(--font-display);
+  font-size: 1.55rem;
+  font-weight: 760;
+  letter-spacing: -0.026em;
+  line-height: 1;
+
+  color: var(--ink);
+
+  transform: none;
+  transition: color 220ms ease;
+}
+
+/* Warm aura behind score */
+#section-2-empty-shelf .media-row-score::before {
+  content: "";
+  position: absolute;
+  inset: -14px;
+  z-index: 0;
+  pointer-events: none;
+
+  border-radius: 999px;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(226, 185, 143, 0.38) 0%,
+      rgba(184, 121, 78, 0.16) 42%,
+      transparent 72%
+    );
+
+  opacity: 0;
+  transform: scale(0.86);
+
+  transition:
+    opacity 240ms ease,
+    transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Floating thought bubble, not inside the capsule */
+#section-2-empty-shelf .media-row-score::after {
+  content: "but why?";
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 0.68rem);
+  z-index: 6;
+
+  transform:
+    translateX(-50%)
+    translateY(8px)
+    scale(0.96);
+
+  padding: 0.46rem 0.72rem;
+
+  background:
+    linear-gradient(
+      180deg,
+      #fffefa 0%,
+      #fff1df 100%
+    );
+
+  border: 1px solid rgba(184, 121, 78, 0.34);
+  border-radius: 999px;
+
+  box-shadow:
+    0 16px 34px rgba(44, 36, 22, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.78);
+
+  font-family: var(--font-body);
+  font-size: 0.64rem;
+  font-weight: 850;
+  color: var(--warm-brown-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  white-space: nowrap;
+
+  opacity: 0;
+  pointer-events: none;
+
+  transition:
+    opacity 220ms ease,
+    transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+#section-2-empty-shelf .media-row-score:hover,
+#section-2-empty-shelf .media-row-score:focus-within {
+  transform: translateY(-4px) translateZ(42px);
+
+  background:
+    linear-gradient(
+      180deg,
+      #fffffb 0%,
+      #ffedd8 100%
+    );
+
+  border-color: rgba(127, 75, 47, 0.46);
+
+  box-shadow:
+    0 22px 44px rgba(127, 75, 47, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.82);
+}
+
+/* Cancel old score layout-shift behavior if it exists earlier */
+#section-2-empty-shelf .media-row-score:hover {
+  padding-bottom: 0;
+}
+
+#section-2-empty-shelf .media-row-score:hover span,
+#section-2-empty-shelf .media-row-score:focus-within span {
+  transform: none;
+}
+
+#section-2-empty-shelf .media-row-score:hover::before,
+#section-2-empty-shelf .media-row-score:focus-within::before {
+  opacity: 1;
+  transform: scale(1);
+}
+
+#section-2-empty-shelf .media-row-score:hover::after,
+#section-2-empty-shelf .media-row-score:focus-within::after {
+  opacity: 1;
+
+  transform:
+    translateX(-50%)
+    translateY(0)
+    scale(1);
+}
+
+
+/* ============================================================================
+   9. ROW DETAILS / BUTTON ROW COMPATIBILITY
+============================================================================ */
+
+#section-2-empty-shelf .media-row-details {
+  position: relative;
+  z-index: 3;
+
+  margin-top: 1.35rem;
+  padding-top: 1.05rem;
+
+  border-top: 1px solid rgba(184, 121, 78, 0.18);
+}
+
+
+/* ============================================================================
+   10. MOBILE
+============================================================================ */
+
+@media (max-width: 900px) {
+  #section-2-empty-shelf .media-library-row {
+    width: min(880px, 100%);
+  }
+
+  #section-2-empty-shelf .media-row-main {
+    grid-template-columns: 104px max-content max-content minmax(1rem, 1fr) auto;
+  }
+
+  #section-2-empty-shelf .media-row-cover {
+    width: 104px;
+  }
+}
+
+@media (max-width: 640px) {
+  #section-2-empty-shelf .empty-shelf-scroll {
+    gap: 4rem;
+  }
+
+  #section-2-empty-shelf .stage-basic-row::after,
+  #section-2-empty-shelf .stage-row-with-quotes::after,
+  #section-2-empty-shelf .stage-row-with-moment::after,
+  #section-2-empty-shelf .stage-row-with-character::after,
+  #section-2-empty-shelf .stage-row-with-notes::after,
+  #section-2-empty-shelf .stage-final-row::after {
+    width: 96vw;
+    height: 240px;
+    filter: blur(34px);
+    opacity: 0.62;
+  }
+
+  #section-2-empty-shelf .media-library-row {
+    width: 100%;
+    min-height: auto;
+    padding: 1.08rem;
+    border-radius: 24px;
+  }
+
+  #section-2-empty-shelf .media-row-main {
+    grid-template-columns: 78px max-content max-content minmax(0, 1fr) auto;
+    grid-template-areas:
+      "cover info   info   info score"
+      "cover format status .    .";
+
+    column-gap: 0.48rem;
+    row-gap: 0.52rem;
+  }
+
+  #section-2-empty-shelf .media-row-cover {
+    width: 78px;
+    border-radius: 14px;
+  }
+
+  #section-2-empty-shelf .media-row-info h3 {
+    font-size: 1.45rem;
+  }
+
+  #section-2-empty-shelf .media-row-info p {
+    font-size: 0.86rem;
+  }
+
+  #section-2-empty-shelf .media-row-format span,
+  #section-2-empty-shelf .media-row-status span {
+    min-height: 28px;
+    padding: 0.32rem 0.62rem;
+    font-size: 0.69rem;
+  }
+
+  #section-2-empty-shelf .media-row-score {
+    min-width: 68px;
+    height: 44px;
+    padding-inline: 0.7rem;
+  }
+
+  #section-2-empty-shelf .media-row-score span {
+    font-size: 1.14rem;
+  }
+
+  #section-2-empty-shelf .media-row-score::after {
+    display: none;
+  }
+
+  #section-2-empty-shelf .media-library-row:hover {
+    transform: translateY(-2px);
+  }
+}
+
+
+/* ============================================================================
+   11. REDUCED MOTION
+============================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  #section-2-empty-shelf .media-library-row,
+  #section-2-empty-shelf .media-library-row::before,
+  #section-2-empty-shelf .media-library-row::after,
+  #section-2-empty-shelf .media-row-cover,
+  #section-2-empty-shelf .media-row-cover::after,
+  #section-2-empty-shelf .media-row-cover img,
+  #section-2-empty-shelf .media-row-score,
+  #section-2-empty-shelf .media-row-score::before,
+  #section-2-empty-shelf .media-row-score::after,
+  #section-2-empty-shelf .media-row-info h3,
+  #section-2-empty-shelf .media-row-info p,
+  #section-2-empty-shelf .media-row-format span,
+  #section-2-empty-shelf .media-row-status span {
+    transition: none;
+  }
+
+  #section-2-empty-shelf .media-library-row:hover,
+  #section-2-empty-shelf .media-library-row:hover .media-row-cover,
+  #section-2-empty-shelf .media-row-cover:hover,
+  #section-2-empty-shelf .media-row-score:hover {
+    transform: none;
+  }
+
+  #section-2-empty-shelf .media-library-row::before,
+  #section-2-empty-shelf .media-row-cover::after {
+    display: none;
+  }
+}
