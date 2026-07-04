@@ -1,152 +1,164 @@
-/* ================================
-   Section 2 — Memory Depth JS
-   File: js/homePage/section-2.js
-================================ */
+
+/* ==========================================================
+   SECTION 2 — ORIGINAL HTML JAVASCRIPT
+   File: javaScript/section-2.js
+
+   Needs GSAP + ScrollTrigger loaded before this file.
+   Buttons do NOT show previews.
+========================================================== */
 
 (() => {
-  'use strict';
+  "use strict";
 
-  const SECTION_SELECTOR = '#section-2-memory-depth';
-  const PREVIEW_HIDE_DELAY = 220;
-  const RESIZE_DEBOUNCE = 180;
+  const SECTION_SELECTOR = "#section-2-empty-shelf";
+  const RESIZE_DELAY = 180;
 
-  const STAGES = [
-    { name: 'empty', from: 0 },
-    { name: 'quotes', from: 0.08 },
-    { name: 'moments', from: 0.28 },
-    { name: 'characters', from: 0.48 },
-    { name: 'notes', from: 0.66 },
-    { name: 'thoughts', from: 0.80 },
-    { name: 'complete', from: 0.97 }
+  const STAGE_SELECTORS = {
+    basic: ".stage-basic-row",
+    quotesEvidence: ".stage-quotes-fall",
+    quotesRow: ".stage-row-with-quotes",
+    momentsEvidence: ".stage-moments-move",
+    momentsRow: ".stage-row-with-moment",
+    charactersEvidence: ".stage-characters-appear",
+    charactersRow: ".stage-row-with-character",
+    notesEvidence: ".stage-notes-appear",
+    notesRow: ".stage-row-with-notes",
+    thoughtsEvidence: ".stage-thoughts-appear",
+    finalRow: ".stage-final-row"
+  };
+
+  const MOOD_CLASSES = [
+    "is-stage-empty",
+    "is-stage-quotes",
+    "is-stage-moments",
+    "is-stage-characters",
+    "is-stage-notes",
+    "is-stage-thoughts",
+    "is-stage-final"
   ];
 
-  const BUTTON_REVEALS = [
-    { type: 'quotes', from: 0.258 },
-    { type: 'moments', from: 0.46 },
-    { type: 'characters', from: 0.64 },
-    { type: 'notes', from: 0.797 },
-    { type: 'thoughts', from: 0.963 }
+  const PROGRESS_STATES = [
+    { from: 0.00, stage: "basic", mood: "empty" },
+    { from: 0.08, stage: "quotesEvidence", mood: "quotes" },
+    { from: 0.22, stage: "quotesRow", mood: "quotes" },
+    { from: 0.30, stage: "momentsEvidence", mood: "moments" },
+    { from: 0.44, stage: "momentsRow", mood: "moments" },
+    { from: 0.50, stage: "charactersEvidence", mood: "characters" },
+    { from: 0.64, stage: "charactersRow", mood: "characters" },
+    { from: 0.70, stage: "notesEvidence", mood: "notes" },
+    { from: 0.82, stage: "notesRow", mood: "notes" },
+    { from: 0.86, stage: "thoughtsEvidence", mood: "thoughts" },
+    { from: 0.95, stage: "finalRow", mood: "final" }
   ];
 
-  const ROTATION_BY_CLASS = [
-    ['quote-strip-1', -4],
-    ['quote-strip-2', 3],
-    ['quote-strip-3', -1],
-    ['moment-panel-hero', -1],
-    ['moment-panel-left', 3],
-    ['moment-panel-right', -3],
-    ['character-card-1', -4],
-    ['character-card-2', 4],
-    ['character-card-3', -2],
-    ['note-card-1', -5],
-    ['note-card-2', 4],
-    ['note-card-3', -2]
-  ];
-
-  const CENTERED_CLASSES = [
-    'moment-panel-hero',
-    'character-card-main',
-    'thought-page'
-  ];
+  const BUTTON_PROGRESS = {
+    quotes: 0.23,
+    moments: 0.45,
+    characters: 0.65,
+    notes: 0.83,
+    thoughts: 0.96
+  };
 
   const onReady = (callback) => {
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', callback, { once: true });
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", callback, { once: true });
     } else {
       callback();
     }
   };
 
-  onReady(initMemoryDepthSection);
+  onReady(initSection2);
 
-  function initMemoryDepthSection() {
+  function initSection2() {
     const section = document.querySelector(SECTION_SELECTOR);
-    if (!section || section.dataset.memoryDepthReady === 'true') return;
+    if (!section || section.dataset.section2Ready === "true") return;
 
-    section.dataset.memoryDepthReady = 'true';
+    section.dataset.section2Ready = "true";
 
     const ctx = createContext(section);
-    if (!ctx.scroll || !ctx.scene || !ctx.row) return;
+    if (!ctx.scroll || !ctx.stages.length) return;
 
-    setupPreviewInteractions(ctx);
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
 
-    const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     let destroyAnimation = null;
+    let destroyCursor = null;
     let resizeTimer = null;
 
     const restart = () => {
-      if (typeof destroyAnimation === 'function') {
-        destroyAnimation();
-        destroyAnimation = null;
-      }
+      if (typeof destroyAnimation === "function") destroyAnimation();
+      if (typeof destroyCursor === "function") destroyCursor();
 
-      resetSection(ctx);
+      resetInlineState(ctx);
 
-      if (motionQuery.matches) {
-        setupReducedMotion(ctx);
+      if (reducedMotion.matches || !hasGSAP()) {
+        setupStaticFinalState(ctx);
         return;
       }
 
-      if (!hasGSAP()) {
-        setupNoGSAPFallback(ctx);
-        return;
-      }
-
-      destroyAnimation = setupScrollStory(ctx);
+      destroyCursor = finePointer.matches ? setupCursorGlow(ctx) : null;
+      destroyAnimation = setupScrollAnimation(ctx);
     };
 
     restart();
 
-    const handleResize = () => {
+    const onResize = () => {
       window.clearTimeout(resizeTimer);
-      resizeTimer = window.setTimeout(restart, RESIZE_DEBOUNCE);
+      resizeTimer = window.setTimeout(() => {
+        if (window.ScrollTrigger) window.ScrollTrigger.refresh();
+      }, RESIZE_DELAY);
     };
 
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", onResize);
 
-    if (typeof motionQuery.addEventListener === 'function') {
-      motionQuery.addEventListener('change', restart);
-    } else if (typeof motionQuery.addListener === 'function') {
-      motionQuery.addListener(restart);
+    if (typeof reducedMotion.addEventListener === "function") {
+      reducedMotion.addEventListener("change", restart);
+    } else if (typeof reducedMotion.addListener === "function") {
+      reducedMotion.addListener(restart);
     }
 
-    window.addEventListener('pagehide', () => {
+    if (typeof finePointer.addEventListener === "function") {
+      finePointer.addEventListener("change", restart);
+    } else if (typeof finePointer.addListener === "function") {
+      finePointer.addListener(restart);
+    }
+
+    window.addEventListener("pagehide", () => {
       window.clearTimeout(resizeTimer);
-      if (typeof destroyAnimation === 'function') destroyAnimation();
+      if (typeof destroyAnimation === "function") destroyAnimation();
+      if (typeof destroyCursor === "function") destroyCursor();
     });
   }
 
   function createContext(section) {
-    const buttons = Array.from(section.querySelectorAll('[data-depth-button]'));
-    const previews = Array.from(section.querySelectorAll('[data-preview-card]'));
-    const evidenceCards = Array.from(section.querySelectorAll('.evidence-card'));
+    const scroll = section.querySelector(".empty-shelf-scroll");
+
+    const stageMap = {};
+    Object.entries(STAGE_SELECTORS).forEach(([key, selector]) => {
+      stageMap[key] = section.querySelector(selector);
+    });
+
+    const stages = Object.values(stageMap).filter(Boolean);
+
+    const allRows = Array.from(section.querySelectorAll(".media-library-row"));
+    const allButtons = Array.from(section.querySelectorAll(".depth-button"));
 
     return {
       section,
-      scroll: section.querySelector('[data-scroll-scene="memory-depth"]'),
-      scene: section.querySelector('[data-pin-scene]'),
-      row: section.querySelector('[data-memory-row]'),
-      rowScore: section.querySelector('.memory-row-score'),
-      depthLabel: section.querySelector('[data-depth-label]'),
-      depthButtonsWrap: section.querySelector('.memory-depth-buttons'),
-      fallback: section.querySelector('[data-reduced-motion-fallback]'),
+      scroll,
+      stageMap,
+      stages,
+      allRows,
+      allButtons,
 
-      buttons,
-      previews,
-      evidenceCards,
+      quotes: Array.from(section.querySelectorAll(".falling-quote")),
+      moments: Array.from(section.querySelectorAll(".moment-frame")),
+      characters: Array.from(section.querySelectorAll(".character-name")),
+      notes: Array.from(section.querySelectorAll(".note-card")),
+      thoughts: Array.from(section.querySelectorAll(".thought-card")),
 
-      quoteCards: Array.from(section.querySelectorAll('.evidence-layer-quotes .evidence-card')),
-      momentCards: Array.from(section.querySelectorAll('.evidence-layer-moments .evidence-card')),
-      characterCards: Array.from(section.querySelectorAll('.evidence-layer-characters .evidence-card')),
-      noteCards: Array.from(section.querySelectorAll('.evidence-layer-notes .evidence-card')),
-      thoughtCards: Array.from(section.querySelectorAll('.evidence-layer-thoughts .evidence-card')),
-
-      buttonMap: new Map(buttons.map((button) => [button.dataset.depthButton, button])),
-      previewMap: new Map(previews.map((card) => [card.dataset.previewCard, card])),
-      previewTimers: new Map(),
-
-      currentStage: null,
-      currentPreview: null
+      currentStageKey: null,
+      currentMood: null
     };
   }
 
@@ -154,228 +166,282 @@
     return Boolean(window.gsap && window.ScrollTrigger);
   }
 
-  function resetSection(ctx) {
-    const { section, scroll, fallback, row, buttons, previews, evidenceCards, depthLabel } = ctx;
+  function resetInlineState(ctx) {
+    ctx.section.classList.remove("is-enhanced");
+    MOOD_CLASSES.forEach((className) => ctx.section.classList.remove(className));
 
-    section.classList.remove('is-enhanced');
-    setStage(ctx, 'empty');
-
-    if (scroll) {
-      scroll.hidden = false;
-      scroll.removeAttribute('aria-hidden');
-    }
-
-    if (fallback) {
-      fallback.hidden = true;
-      fallback.setAttribute('aria-hidden', 'true');
-    }
-
-    if (row) row.classList.remove('memory-row-complete');
-    if (depthLabel) depthLabel.textContent = 'What made it matter';
-
-    buttons.forEach((button) => {
-      button.classList.remove('is-revealed', 'is-landing', 'is-active');
-      button.setAttribute('aria-expanded', 'false');
-      button.style.removeProperty('opacity');
-      button.style.removeProperty('visibility');
-      button.style.removeProperty('transform');
-      button.style.removeProperty('pointer-events');
+    ctx.stages.forEach((stage) => {
+      stage.classList.remove("is-active", "is-before", "is-after");
+      stage.style.removeProperty("opacity");
+      stage.style.removeProperty("visibility");
+      stage.style.removeProperty("transform");
+      stage.style.removeProperty("pointer-events");
     });
 
-    previews.forEach((card) => {
-      card.classList.remove('is-active');
-      card.hidden = true;
+    ctx.allRows.forEach((row) => {
+      row.style.removeProperty("opacity");
+      row.style.removeProperty("visibility");
+      row.style.removeProperty("transform");
+      row.style.removeProperty("--row-x");
+      row.style.removeProperty("--row-y");
     });
 
-    evidenceCards.forEach((card) => {
-      card.classList.remove('is-active', 'is-landing', 'is-stacked');
-      card.style.removeProperty('opacity');
-      card.style.removeProperty('visibility');
-      card.style.removeProperty('transform');
+    getAllEvidence(ctx).forEach((item) => {
+      item.classList.remove("is-readable", "is-gathering", "is-compressing");
+      item.style.removeProperty("opacity");
+      item.style.removeProperty("visibility");
+      item.style.removeProperty("transform");
+      item.style.removeProperty("z-index");
     });
 
-    ctx.previewTimers.forEach((timer) => window.clearTimeout(timer));
-    ctx.previewTimers.clear();
-    ctx.currentPreview = null;
+    ctx.allButtons.forEach((button) => {
+      button.classList.remove("is-locked", "is-forming", "is-landing", "is-landed");
+      button.style.removeProperty("opacity");
+      button.style.removeProperty("visibility");
+      button.style.removeProperty("transform");
+      button.style.removeProperty("pointer-events");
+    });
+
+    ctx.section.style.removeProperty("--section2-cursor-x");
+    ctx.section.style.removeProperty("--section2-cursor-y");
+
+    ctx.currentStageKey = null;
+    ctx.currentMood = null;
   }
 
-  function setupReducedMotion(ctx) {
-    const { section, scroll, fallback, row, buttons, depthLabel } = ctx;
+  function setupStaticFinalState(ctx) {
+    setMood(ctx, "final");
 
-    section.classList.remove('is-enhanced');
-    setStage(ctx, 'complete');
-
-    if (scroll) {
-      scroll.hidden = true;
-      scroll.setAttribute('aria-hidden', 'true');
-    }
-
-    if (fallback) {
-      fallback.hidden = false;
-      fallback.removeAttribute('aria-hidden');
-    }
-
-    if (row) row.classList.add('memory-row-complete');
-    if (depthLabel) depthLabel.textContent = 'Evidence saved';
-
-    buttons.forEach((button) => {
-      button.classList.add('is-revealed');
-      button.classList.remove('is-landing', 'is-active');
-      button.setAttribute('aria-expanded', 'false');
+    ctx.stages.forEach((stage) => {
+      const isFinal = stage === ctx.stageMap.finalRow;
+      stage.style.display = isFinal ? "grid" : "none";
+      stage.style.opacity = isFinal ? "1" : "0";
+      stage.style.visibility = isFinal ? "visible" : "hidden";
+      stage.style.pointerEvents = isFinal ? "auto" : "none";
     });
+
+    ctx.allButtons.forEach((button) => {
+      button.classList.add("is-landed");
+      button.classList.remove("is-locked", "is-forming", "is-landing");
+      button.style.opacity = "1";
+      button.style.visibility = "visible";
+      button.style.pointerEvents = "auto";
+    });
+
+    const finalRow = ctx.stageMap.finalRow?.querySelector(".media-library-row");
+    if (finalRow) finalRow.classList.add("media-library-row-complete");
   }
 
-  function setupNoGSAPFallback(ctx) {
-    const { section, row, buttons, depthLabel } = ctx;
+  function setupCursorGlow(ctx) {
+    let sectionFrame = null;
+    let rowFrame = null;
+    let lastSectionEvent = null;
+    let lastRowEvent = null;
 
-    section.classList.remove('is-enhanced');
-    setStage(ctx, 'complete');
+    const updateSectionGlow = () => {
+      sectionFrame = null;
+      if (!lastSectionEvent) return;
 
-    if (row) row.classList.add('memory-row-complete');
-    if (depthLabel) depthLabel.textContent = 'Evidence saved';
+      const rect = ctx.section.getBoundingClientRect();
+      const x = ((lastSectionEvent.clientX - rect.left) / rect.width) * 100;
+      const y = ((lastSectionEvent.clientY - rect.top) / rect.height) * 100;
 
-    buttons.forEach((button) => {
-      button.classList.add('is-revealed');
-      button.classList.remove('is-landing', 'is-active');
-      button.setAttribute('aria-expanded', 'false');
+      ctx.section.style.setProperty("--section2-cursor-x", `${clamp(x, 0, 100)}%`);
+      ctx.section.style.setProperty("--section2-cursor-y", `${clamp(y, 0, 100)}%`);
+    };
+
+    const updateRowGlow = () => {
+      rowFrame = null;
+      if (!lastRowEvent) return;
+
+      const row = lastRowEvent.currentTarget;
+      const rect = row.getBoundingClientRect();
+      const x = ((lastRowEvent.clientX - rect.left) / rect.width) * 100;
+      const y = ((lastRowEvent.clientY - rect.top) / rect.height) * 100;
+
+      row.style.setProperty("--row-x", `${clamp(x, 0, 100)}%`);
+      row.style.setProperty("--row-y", `${clamp(y, 0, 100)}%`);
+    };
+
+    const onSectionMove = (event) => {
+      lastSectionEvent = event;
+      if (!sectionFrame) sectionFrame = window.requestAnimationFrame(updateSectionGlow);
+    };
+
+    const onRowMove = (event) => {
+      lastRowEvent = event;
+      if (!rowFrame) rowFrame = window.requestAnimationFrame(updateRowGlow);
+    };
+
+    const onRowLeave = (event) => {
+      event.currentTarget.style.removeProperty("--row-x");
+      event.currentTarget.style.removeProperty("--row-y");
+    };
+
+    ctx.section.addEventListener("pointermove", onSectionMove);
+    ctx.allRows.forEach((row) => {
+      row.addEventListener("pointermove", onRowMove);
+      row.addEventListener("pointerleave", onRowLeave);
     });
+
+    return () => {
+      ctx.section.removeEventListener("pointermove", onSectionMove);
+
+      ctx.allRows.forEach((row) => {
+        row.removeEventListener("pointermove", onRowMove);
+        row.removeEventListener("pointerleave", onRowLeave);
+        row.style.removeProperty("--row-x");
+        row.style.removeProperty("--row-y");
+      });
+
+      if (sectionFrame) window.cancelAnimationFrame(sectionFrame);
+      if (rowFrame) window.cancelAnimationFrame(rowFrame);
+    };
   }
 
-  function setupScrollStory(ctx) {
+  function setupScrollAnimation(ctx) {
     const { gsap, ScrollTrigger } = window;
     gsap.registerPlugin(ScrollTrigger);
 
-    ctx.section.classList.add('is-enhanced');
-    setStage(ctx, 'empty');
-    closeAllPreviews(ctx);
+    ctx.section.classList.add("is-enhanced");
 
-    const landingMap = measureLandingTargets(ctx);
-
-    prepareAnimatedElements(ctx, landingMap);
+    prepareInitialAnimationState(ctx, gsap);
 
     const tl = gsap.timeline({
-      defaults: { ease: 'none' },
+      defaults: {
+        ease: "power2.out"
+      },
       scrollTrigger: {
         trigger: ctx.scroll,
-        start: () => `top top+=${getNavOffset(ctx)}`,
-        end: 'bottom bottom',
-        scrub: 0.65,
+        start: `top top+=${getNavOffset(ctx)}`,
+        end: "bottom bottom",
+        scrub: 0.75,
         invalidateOnRefresh: true,
-        onUpdate: (self) => syncScrollState(ctx, self.progress),
-        onRefresh: (self) => syncScrollState(ctx, self.progress)
+        onUpdate: (self) => syncSectionState(ctx, self.progress),
+        onRefresh: (self) => syncSectionState(ctx, self.progress)
       }
     });
 
-    tl.addLabel('row', 0);
+    tl.addLabel("basic", 0);
 
-    tl.to(ctx.row, {
-      autoAlpha: 1,
-      y: 0,
-      scale: 1,
-      duration: 0.16,
-      ease: 'power2.out'
-    }, 'row');
+    showStage(tl, ctx, "basic", 0);
+    tl.fromTo(
+      ctx.stageMap.basic?.querySelector(".media-library-row"),
+      { autoAlpha: 0, y: 26, scale: 0.985 },
+      { autoAlpha: 1, y: 0, scale: 1, duration: 0.7 },
+      0
+    );
 
-    if (ctx.rowScore) {
-      tl.to(ctx.rowScore, {
-        scale: 1.055,
-        duration: 0.045,
-        ease: 'power2.out'
-      }, 0.13);
-
-      tl.to(ctx.rowScore, {
-        scale: 1,
-        duration: 0.055,
-        ease: 'power2.out'
-      }, 0.175);
-    }
-
-    addMemorySequence(tl, ctx, {
-      type: 'quotes',
-      cards: ctx.quoteCards,
-      at: 0.22,
-      readable: 0.17,
-      gather: 0.16,
-      compress: 0.08,
-      button: 0.08,
-      startY: -330,
-      startSpread: 80,
-      stackScale: 0.42,
-      finalScale: 0.08,
-      stagger: 0.035
+    addEvidenceSequence(tl, ctx, {
+      type: "quotes",
+      evidenceKey: "quotes",
+      evidenceStageKey: "quotesEvidence",
+      rowStageKey: "quotesRow",
+      buttonSelector: ".depth-button-quotes",
+      startTime: 1.0,
+      startY: -320,
+      startXSpread: 38,
+      readableDuration: 0.85,
+      gatherDuration: 0.62,
+      buttonDuration: 0.45,
+      rotationOffset: 6,
+      gatherY: 255,
+      finalScale: 0.18,
+      mood: "quotes"
     });
 
-    addMemorySequence(tl, ctx, {
-      type: 'moments',
-      cards: ctx.momentCards,
-      at: 0.76,
-      readable: 0.18,
-      gather: 0.18,
-      compress: 0.08,
-      button: 0.08,
+    addEvidenceSequence(tl, ctx, {
+      type: "moments",
+      evidenceKey: "moments",
+      evidenceStageKey: "momentsEvidence",
+      rowStageKey: "momentsRow",
+      buttonSelector: ".depth-button-moment",
+      startTime: 3.0,
       startY: -360,
-      startSpread: 110,
-      stackScale: 0.34,
-      finalScale: 0.075,
-      stagger: 0.04
+      startXSpread: 70,
+      readableDuration: 0.86,
+      gatherDuration: 0.66,
+      buttonDuration: 0.45,
+      rotationOffset: 3,
+      gatherY: 270,
+      finalScale: 0.14,
+      mood: "moments"
     });
 
-    addMemorySequence(tl, ctx, {
-      type: 'characters',
-      cards: ctx.characterCards,
-      at: 1.30,
-      readable: 0.16,
-      gather: 0.17,
-      compress: 0.08,
-      button: 0.08,
-      startY: 240,
-      startSpread: 95,
-      stackScale: 0.38,
-      finalScale: 0.08,
-      stagger: 0.032
+    addEvidenceSequence(tl, ctx, {
+      type: "characters",
+      evidenceKey: "characters",
+      evidenceStageKey: "charactersEvidence",
+      rowStageKey: "charactersRow",
+      buttonSelector: ".depth-button-character",
+      startTime: 5.0,
+      startY: 210,
+      startXSpread: 54,
+      readableDuration: 0.85,
+      gatherDuration: 0.66,
+      buttonDuration: 0.45,
+      rotationOffset: 4,
+      gatherY: 245,
+      finalScale: 0.15,
+      mood: "characters"
     });
 
-    addMemorySequence(tl, ctx, {
-      type: 'notes',
-      cards: ctx.noteCards,
-      at: 1.78,
-      readable: 0.14,
-      gather: 0.16,
-      compress: 0.075,
-      button: 0.08,
-      startY: -240,
-      startSpread: 70,
-      stackScale: 0.42,
-      finalScale: 0.08,
-      stagger: 0.035
+    addEvidenceSequence(tl, ctx, {
+      type: "notes",
+      evidenceKey: "notes",
+      evidenceStageKey: "notesEvidence",
+      rowStageKey: "notesRow",
+      buttonSelector: ".depth-button-notes",
+      startTime: 7.0,
+      startY: -260,
+      startXSpread: 44,
+      readableDuration: 0.78,
+      gatherDuration: 0.62,
+      buttonDuration: 0.45,
+      rotationOffset: 7,
+      gatherY: 245,
+      finalScale: 0.17,
+      mood: "notes"
     });
 
-    addMemorySequence(tl, ctx, {
-      type: 'thoughts',
-      cards: ctx.thoughtCards,
-      at: 2.24,
-      readable: 0.16,
-      gather: 0.15,
-      compress: 0.08,
-      button: 0.08,
-      startY: -190,
-      startSpread: 0,
-      stackScale: 0.44,
-      finalScale: 0.08,
-      stagger: 0
+    addEvidenceSequence(tl, ctx, {
+      type: "thoughts",
+      evidenceKey: "thoughts",
+      evidenceStageKey: "thoughtsEvidence",
+      rowStageKey: "finalRow",
+      buttonSelector: ".depth-button-thoughts",
+      startTime: 8.85,
+      startY: -120,
+      startXSpread: 20,
+      readableDuration: 0.92,
+      gatherDuration: 0.68,
+      buttonDuration: 0.5,
+      rotationOffset: 1,
+      gatherY: 205,
+      finalScale: 0.13,
+      mood: "thoughts",
+      soft: true
     });
 
-    tl.to(ctx.row, {
-      scale: 1.01,
-      duration: 0.08,
-      ease: 'power2.out'
-    }, 2.68);
+    tl.to(
+      ctx.stageMap.finalRow?.querySelector(".media-library-row"),
+      {
+        scale: 1.012,
+        duration: 0.28,
+        ease: "power2.out"
+      },
+      10.6
+    );
 
-    tl.to(ctx.row, {
-      scale: 1,
-      duration: 0.08,
-      ease: 'power2.out'
-    }, 2.76);
+    tl.to(
+      ctx.stageMap.finalRow?.querySelector(".media-library-row"),
+      {
+        scale: 1,
+        duration: 0.28,
+        ease: "power2.out"
+      },
+      10.9
+    );
 
     ScrollTrigger.refresh();
 
@@ -384,429 +450,405 @@
       tl.kill();
 
       gsap.killTweensOf([
-        ctx.row,
-        ctx.rowScore,
-        ctx.buttons,
-        ctx.evidenceCards
+        ctx.stages,
+        ctx.allRows,
+        ctx.allButtons,
+        getAllEvidence(ctx)
       ]);
 
       gsap.set([
-        ctx.row,
-        ctx.rowScore,
-        ctx.buttons,
-        ctx.evidenceCards
-      ], { clearProps: 'all' });
+        ctx.stages,
+        ctx.allRows,
+        ctx.allButtons,
+        getAllEvidence(ctx)
+      ], { clearProps: "all" });
+
+      ctx.section.classList.remove("is-enhanced");
     };
   }
 
-  function prepareAnimatedElements(ctx, landingMap) {
-    const { gsap } = window;
+  function prepareInitialAnimationState(ctx, gsap) {
+    setMood(ctx, "empty");
+    setActiveStage(ctx, "basic");
 
-    gsap.set(ctx.row, {
+    gsap.set(ctx.stages, {
       autoAlpha: 0,
-      y: 28,
+      y: 18,
       scale: 0.985,
-      transformOrigin: '50% 65%'
+      pointerEvents: "none"
     });
 
-    gsap.set(ctx.buttons, {
-      autoAlpha: 0,
-      y: -30,
-      scale: 0.9,
-      transformOrigin: '50% 50%',
-      pointerEvents: 'none'
-    });
-
-    ctx.evidenceCards.forEach((card) => {
-      const pose = getBasePose(card);
-      const landing = landingMap.get(card) || { x: 0, y: 240 };
-
-      card.dataset.landX = String(landing.x);
-      card.dataset.landY = String(landing.y);
-
-      gsap.set(card, {
-        autoAlpha: 0,
-        x: 0,
-        y: 0,
-        xPercent: pose.xPercent,
-        rotation: pose.rotation,
-        scale: 1,
-        transformOrigin: '50% 72%'
-      });
-    });
-  }
-
-  function addMemorySequence(tl, ctx, cfg) {
-    const cards = cfg.cards || [];
-    const button = ctx.buttonMap.get(cfg.type);
-    if (!cards.length || !button) return;
-
-    const enterAt = cfg.at;
-    const holdAt = enterAt + 0.14;
-    const gatherAt = holdAt + cfg.readable;
-    const compressAt = gatherAt + cfg.gather;
-    const buttonAt = compressAt + cfg.compress * 0.58;
-
-    tl.addLabel(`${cfg.type}-enter`, enterAt);
-    tl.addLabel(`${cfg.type}-button`, buttonAt);
-
-    tl.to(cards, {
+    gsap.set(ctx.stageMap.basic, {
       autoAlpha: 1,
-      x: (index) => getEntranceX(index, cards.length, cfg.startSpread),
-      y: cfg.startY,
-      scale: 0.94,
-      rotation: (index, card) => getBasePose(card).rotation + getEntranceRotation(index, cards.length),
-      duration: 0.001
-    }, enterAt);
+      y: 0,
+      scale: 1,
+      pointerEvents: "auto"
+    });
 
-    tl.to(cards, {
+    gsap.set(getAllEvidence(ctx), {
+      autoAlpha: 0,
+      y: 0,
       x: 0,
-      y: 0,
-      scale: 1,
-      rotation: (index, card) => getBasePose(card).rotation,
-      duration: 0.16,
-      ease: 'power2.out',
-      stagger: cfg.stagger
-    }, enterAt + 0.001);
+      scale: 1
+    });
 
-    tl.to(cards, {
-      y: 14,
-      duration: 0.035,
-      ease: 'power1.out',
-      stagger: cfg.stagger * 0.45
-    }, holdAt);
+    ctx.allButtons.forEach((button) => {
+      button.classList.add("is-locked");
+      button.classList.remove("is-landing", "is-landed", "is-forming");
+    });
 
-    tl.to(cards, {
-      x: (index, card) => getLandingX(card, index, cards.length),
-      y: (index, card) => getLandingY(card, index, cards.length),
-      scale: cfg.stackScale,
-      rotation: (index) => getStackRotation(index, cards.length),
-      autoAlpha: 0.92,
-      duration: cfg.gather,
-      ease: 'power2.inOut',
-      stagger: cfg.stagger * 0.55
-    }, gatherAt);
+    const staticButtons = ctx.section.querySelectorAll(".depth-button-static");
+    staticButtons.forEach((button) => {
+      button.classList.remove("is-locked");
+      button.classList.add("is-landed");
+    });
 
-    tl.to(cards, {
-      x: (index, card) => getLandingX(card, index, cards.length) + getCollapseNudge(index, cards.length),
-      y: (index, card) => getLandingY(card, index, cards.length) + 18,
-      scale: cfg.finalScale,
-      rotation: 0,
+    const firstRows = ctx.section.querySelectorAll(".stage-basic-row .depth-button");
+    firstRows.forEach((button) => {
+      button.classList.add("is-locked");
+      button.classList.remove("is-landed");
+    });
+
+    gsap.set(".depth-button-new", {
       autoAlpha: 0,
-      duration: cfg.compress,
-      ease: 'power2.in',
-      stagger: cfg.stagger * 0.35
-    }, compressAt);
-
-    tl.to(button, {
-      autoAlpha: 1,
-      y: 10,
-      scale: 1.055,
-      duration: cfg.button * 0.42,
-      ease: 'power2.out'
-    }, buttonAt);
-
-    tl.to(button, {
-      y: 0,
-      scale: 1,
-      duration: cfg.button * 0.58,
-      ease: 'back.out(2.2)'
-    }, buttonAt + cfg.button * 0.42);
-  }
-
-  function measureLandingTargets(ctx) {
-    const map = new Map();
-    const rowRect = ctx.row.getBoundingClientRect();
-    const trayRect = ctx.depthButtonsWrap?.getBoundingClientRect() || rowRect;
-
-    const groupMap = [
-      ['quotes', ctx.quoteCards],
-      ['moments', ctx.momentCards],
-      ['characters', ctx.characterCards],
-      ['notes', ctx.noteCards],
-      ['thoughts', ctx.thoughtCards]
-    ];
-
-    groupMap.forEach(([type, cards]) => {
-      const button = ctx.buttonMap.get(type);
-      const buttonRect = button?.getBoundingClientRect() || trayRect;
-      const targetX = buttonRect.left + buttonRect.width / 2;
-      const targetY = buttonRect.top + buttonRect.height / 2;
-
-      cards.forEach((card, index) => {
-        const rect = card.getBoundingClientRect();
-        const cardX = rect.left + rect.width / 2;
-        const cardY = rect.top + rect.height / 2;
-
-        map.set(card, {
-          x: targetX - cardX + getStackOffsetX(index, cards.length),
-          y: targetY - cardY - 6 + getStackOffsetY(index, cards.length)
-        });
-      });
+      y: -28,
+      scale: 0.9,
+      pointerEvents: "none"
     });
-
-    return map;
   }
 
-  function syncScrollState(ctx, progress) {
-    setStage(ctx, getStageForProgress(progress));
-    syncDepthLabel(ctx, progress);
-    syncButtons(ctx, progress);
+  function addEvidenceSequence(tl, ctx, config) {
+    const gsap = window.gsap;
+    const evidence = ctx[config.evidenceKey] || [];
+    const evidenceStage = ctx.stageMap[config.evidenceStageKey];
+    const rowStage = ctx.stageMap[config.rowStageKey];
 
-    if (ctx.row) {
-      ctx.row.classList.toggle('memory-row-complete', progress >= 0.97);
+    if (!evidence.length || !evidenceStage || !rowStage) return;
+
+    const button = rowStage.querySelector(config.buttonSelector);
+    const start = config.startTime;
+    const enterEnd = start + 0.65;
+    const gatherStart = enterEnd + config.readableDuration;
+    const rowStart = gatherStart + config.gatherDuration * 0.75;
+    const buttonStart = rowStart + 0.20;
+
+    tl.addLabel(`${config.type}-evidence`, start);
+    showStage(tl, ctx, config.evidenceStageKey, start);
+
+    tl.set(evidenceStage, { pointerEvents: "auto" }, start);
+
+    tl.fromTo(
+      evidence,
+      {
+        autoAlpha: 0,
+        y: config.startY,
+        x: (index) => getSpreadX(index, evidence.length, config.startXSpread),
+        scale: config.soft ? 0.97 : 0.9,
+        rotation: (index) => getRotation(index, evidence.length, config.rotationOffset)
+      },
+      {
+        autoAlpha: 1,
+        y: 0,
+        x: 0,
+        scale: 1,
+        rotation: 0,
+        duration: 0.65,
+        stagger: config.soft ? 0.08 : 0.06,
+        ease: config.soft ? "power2.out" : "back.out(1.45)",
+        onStart: () => {
+          evidence.forEach((item) => {
+            item.classList.add("is-readable");
+            item.classList.remove("is-gathering", "is-compressing");
+          });
+        }
+      },
+      start
+    );
+
+    tl.to(
+      evidence,
+      {
+        y: 10,
+        duration: config.readableDuration,
+        stagger: 0.02,
+        ease: "none"
+      },
+      enterEnd
+    );
+
+    tl.to(
+      evidence,
+      {
+        x: (index) => getGatherX(index, evidence.length),
+        y: (index) => config.gatherY + index * 5,
+        scale: config.finalScale,
+        rotation: (index) => getCollapseRotation(index, evidence.length),
+        autoAlpha: 0,
+        duration: config.gatherDuration,
+        stagger: 0.035,
+        ease: "power2.in",
+        onStart: () => {
+          evidence.forEach((item) => {
+            item.classList.add("is-gathering");
+            item.classList.remove("is-readable");
+          });
+        },
+        onComplete: () => {
+          evidence.forEach((item) => {
+            item.classList.add("is-compressing");
+            item.classList.remove("is-gathering");
+          });
+        }
+      },
+      gatherStart
+    );
+
+    showStage(tl, ctx, config.rowStageKey, rowStart);
+
+    const row = rowStage.querySelector(".media-library-row");
+
+    tl.fromTo(
+      row,
+      {
+        autoAlpha: 0,
+        y: 18,
+        scale: 0.992
+      },
+      {
+        autoAlpha: 1,
+        y: 0,
+        scale: 1,
+        duration: 0.42,
+        ease: "power2.out"
+      },
+      rowStart
+    );
+
+    if (button) {
+      tl.set(
+        button,
+        {
+          autoAlpha: 0,
+          y: -34,
+          scale: 0.88,
+          pointerEvents: "none"
+        },
+        rowStart
+      );
+
+      tl.to(
+        button,
+        {
+          autoAlpha: 1,
+          y: 7,
+          scale: 1.06,
+          duration: config.buttonDuration * 0.48,
+          ease: "power2.out",
+          onStart: () => {
+            button.classList.remove("is-locked", "is-landed");
+            button.classList.add("is-landing");
+          }
+        },
+        buttonStart
+      );
+
+      tl.to(
+        button,
+        {
+          y: 0,
+          scale: 1,
+          duration: config.buttonDuration * 0.52,
+          ease: "back.out(2.3)",
+          onComplete: () => {
+            button.classList.remove("is-landing");
+            button.classList.add("is-landed");
+            button.style.pointerEvents = "auto";
+          },
+          onReverseComplete: () => {
+            button.classList.remove("is-landing", "is-landed");
+            button.classList.add("is-locked");
+            button.style.pointerEvents = "none";
+          }
+        },
+        buttonStart + config.buttonDuration * 0.48
+      );
     }
+
+    tl.to(
+      row,
+      {
+        scale: 1.006,
+        duration: 0.12,
+        ease: "power2.out"
+      },
+      buttonStart + 0.14
+    );
+
+    tl.to(
+      row,
+      {
+        scale: 1,
+        duration: 0.14,
+        ease: "power2.out"
+      },
+      buttonStart + 0.28
+    );
   }
 
-  function syncButtons(ctx, progress) {
-    BUTTON_REVEALS.forEach(({ type, from }) => {
-      const button = ctx.buttonMap.get(type);
-      if (!button) return;
+  function showStage(tl, ctx, stageKey, at) {
+    const stage = ctx.stageMap[stageKey];
+    if (!stage) return;
 
-      const shouldReveal = progress >= from;
-      const revealed = button.classList.contains('is-revealed');
+    tl.to(
+      ctx.stages,
+      {
+        autoAlpha: 0,
+        y: 12,
+        scale: 0.992,
+        pointerEvents: "none",
+        duration: 0.18,
+        ease: "power1.out"
+      },
+      at
+    );
 
-      if (shouldReveal && !revealed) {
-        button.classList.add('is-revealed');
-        button.style.pointerEvents = 'auto';
-      }
-
-      if (!shouldReveal && revealed) {
-        button.classList.remove('is-revealed', 'is-landing', 'is-active');
-        button.setAttribute('aria-expanded', 'false');
-        button.style.pointerEvents = 'none';
-        closePreview(ctx, type, true);
-      }
-    });
+    tl.to(
+      stage,
+      {
+        autoAlpha: 1,
+        y: 0,
+        scale: 1,
+        pointerEvents: "auto",
+        duration: 0.22,
+        ease: "power1.out"
+      },
+      at + 0.04
+    );
   }
 
-  function syncDepthLabel(ctx, progress) {
-    if (!ctx.depthLabel) return;
+  function syncSectionState(ctx, progress) {
+    const state = getStateForProgress(progress);
+    if (!state) return;
 
-    if (progress >= 0.97) {
-      ctx.depthLabel.textContent = 'Evidence saved';
-    } else if (progress >= 0.18) {
-      ctx.depthLabel.textContent = 'Evidence saving';
-    } else {
-      ctx.depthLabel.textContent = 'What made it matter';
+    setMood(ctx, state.mood);
+    setActiveStage(ctx, state.stage);
+    syncButtonState(ctx, progress);
+  }
+
+  function getStateForProgress(progress) {
+    let current = PROGRESS_STATES[0];
+
+    for (const state of PROGRESS_STATES) {
+      if (progress >= state.from) current = state;
     }
-  }
-
-  function setStage(ctx, stageName) {
-    if (!stageName || ctx.currentStage === stageName) return;
-
-    STAGES.forEach(({ name }) => {
-      ctx.section.classList.remove(`is-stage-${name}`);
-    });
-
-    ctx.section.classList.add(`is-stage-${stageName}`);
-    ctx.currentStage = stageName;
-  }
-
-  function getStageForProgress(progress) {
-    let current = STAGES[0].name;
-
-    STAGES.forEach(({ name, from }) => {
-      if (progress >= from) current = name;
-    });
 
     return current;
   }
 
-  function getBasePose(card) {
-    let rotation = 0;
+  function setMood(ctx, mood) {
+    const className = `is-stage-${mood}`;
+    if (ctx.currentMood === className) return;
 
-    ROTATION_BY_CLASS.forEach(([className, value]) => {
-      if (card.classList.contains(className)) rotation = value;
-    });
-
-    const xPercent = CENTERED_CLASSES.some((className) => card.classList.contains(className)) ? -50 : 0;
-
-    return { rotation, xPercent };
+    MOOD_CLASSES.forEach((name) => ctx.section.classList.remove(name));
+    ctx.section.classList.add(className);
+    ctx.currentMood = className;
   }
 
-  function getEntranceX(index, total, spread) {
-    if (total <= 1 || !spread) return 0;
-    const middle = (total - 1) / 2;
-    return (index - middle) * spread;
-  }
+  function setActiveStage(ctx, activeKey) {
+    if (ctx.currentStageKey === activeKey) return;
 
-  function getEntranceRotation(index, total) {
-    if (total <= 1) return -2;
-    const middle = (total - 1) / 2;
-    return (index - middle) * 3;
-  }
+    const activeStage = ctx.stageMap[activeKey];
+    if (!activeStage) return;
 
-  function getStackOffsetX(index, total) {
-    if (total <= 1) return 0;
-    const middle = (total - 1) / 2;
-    return (index - middle) * 10;
-  }
+    ctx.stages.forEach((stage) => {
+      stage.classList.remove("is-active", "is-before", "is-after");
 
-  function getStackOffsetY(index) {
-    return index * 5;
-  }
-
-  function getLandingX(card, index, total) {
-    const base = Number.parseFloat(card.dataset.landX || '0');
-    return base + getStackOffsetX(index, total);
-  }
-
-  function getLandingY(card, index, total) {
-    const base = Number.parseFloat(card.dataset.landY || '0');
-    return base + getStackOffsetY(index, total);
-  }
-
-  function getCollapseNudge(index, total) {
-    if (total <= 1) return 0;
-    const middle = (total - 1) / 2;
-    return (middle - index) * 6;
-  }
-
-  function getStackRotation(index, total) {
-    if (total <= 1) return 0;
-    const middle = (total - 1) / 2;
-    return (index - middle) * 4;
-  }
-
-  function setupPreviewInteractions(ctx) {
-    const coarsePointer = window.matchMedia('(hover: none), (pointer: coarse)');
-
-    ctx.buttons.forEach((button) => {
-      const type = button.dataset.depthButton;
-      if (!type) return;
-
-      button.addEventListener('mouseenter', () => {
-        if (!coarsePointer.matches && isButtonUsable(ctx, button)) {
-          openPreview(ctx, type);
-        }
-      });
-
-      button.addEventListener('mouseleave', () => {
-        if (!coarsePointer.matches && document.activeElement !== button) {
-          closePreview(ctx, type);
-        }
-      });
-
-      button.addEventListener('focus', () => {
-        if (isButtonUsable(ctx, button)) openPreview(ctx, type);
-      });
-
-      button.addEventListener('blur', () => {
-        window.setTimeout(() => {
-          if (document.activeElement !== button) closePreview(ctx, type);
-        }, 80);
-      });
-
-      button.addEventListener('click', (event) => {
-        if (!isButtonUsable(ctx, button)) return;
-
-        if (button.classList.contains('is-active') && coarsePointer.matches) {
-          closePreview(ctx, type);
-        } else {
-          openPreview(ctx, type);
-        }
-
-        event.stopPropagation();
-      });
-
-      button.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape') {
-          closeAllPreviews(ctx);
-          button.blur();
-        }
-      });
-    });
-
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') closeAllPreviews(ctx);
-    });
-
-    document.addEventListener('pointerdown', (event) => {
-      if (!ctx.section.contains(event.target)) {
-        closeAllPreviews(ctx);
-        return;
-      }
-
-      if (!event.target.closest('[data-depth-button]')) {
-        closeAllPreviews(ctx);
+      if (stage === activeStage) {
+        stage.classList.add("is-active");
+      } else {
+        stage.classList.add("is-after");
       }
     });
+
+    ctx.currentStageKey = activeKey;
   }
 
-  function isButtonUsable(ctx, button) {
-    if (!button || button.disabled) return false;
-    if (ctx.section.classList.contains('is-enhanced')) {
-      return button.classList.contains('is-revealed');
-    }
-    return true;
-  }
+  function syncButtonState(ctx, progress) {
+    const groups = [
+      { key: "quotes", selector: ".depth-button-quotes" },
+      { key: "moments", selector: ".depth-button-moment" },
+      { key: "characters", selector: ".depth-button-character" },
+      { key: "notes", selector: ".depth-button-notes" },
+      { key: "thoughts", selector: ".depth-button-thoughts" }
+    ];
 
-  function openPreview(ctx, type) {
-    const button = ctx.buttonMap.get(type);
-    const card = ctx.previewMap.get(type);
-    if (!button || !card) return;
+    groups.forEach((group) => {
+      const threshold = BUTTON_PROGRESS[group.key];
+      const shouldBeLanded = progress >= threshold;
+      const buttons = Array.from(ctx.section.querySelectorAll(group.selector));
 
-    closeAllPreviews(ctx, type);
+      buttons.forEach((button) => {
+        if (button.classList.contains("depth-button-static") && shouldBeLanded) {
+          button.classList.remove("is-locked", "is-landing");
+          button.classList.add("is-landed");
+          button.style.pointerEvents = "auto";
+          return;
+        }
 
-    const oldTimer = ctx.previewTimers.get(card);
-    if (oldTimer) window.clearTimeout(oldTimer);
-
-    button.classList.add('is-active');
-    button.setAttribute('aria-expanded', 'true');
-
-    card.hidden = false;
-    card.classList.remove('is-active');
-
-    window.requestAnimationFrame(() => {
-      card.classList.add('is-active');
+        if (!shouldBeLanded) {
+          button.classList.remove("is-landed", "is-landing");
+          button.classList.add("is-locked");
+          button.style.pointerEvents = "none";
+        }
+      });
     });
-
-    ctx.currentPreview = type;
   }
 
-  function closePreview(ctx, type, immediate = false) {
-    const button = ctx.buttonMap.get(type);
-    const card = ctx.previewMap.get(type);
-    if (!button || !card) return;
-
-    button.classList.remove('is-active');
-    button.setAttribute('aria-expanded', 'false');
-    card.classList.remove('is-active');
-
-    const oldTimer = ctx.previewTimers.get(card);
-    if (oldTimer) window.clearTimeout(oldTimer);
-
-    if (immediate) {
-      card.hidden = true;
-      ctx.previewTimers.delete(card);
-    } else {
-      const timer = window.setTimeout(() => {
-        if (!card.classList.contains('is-active')) card.hidden = true;
-        ctx.previewTimers.delete(card);
-      }, PREVIEW_HIDE_DELAY);
-
-      ctx.previewTimers.set(card, timer);
-    }
-
-    if (ctx.currentPreview === type) ctx.currentPreview = null;
+  function getAllEvidence(ctx) {
+    return [
+      ...ctx.quotes,
+      ...ctx.moments,
+      ...ctx.characters,
+      ...ctx.notes,
+      ...ctx.thoughts
+    ];
   }
 
-  function closeAllPreviews(ctx, exceptType = null) {
-    ctx.buttons.forEach((button) => {
-      const type = button.dataset.depthButton;
-      if (!type || type === exceptType) return;
-      closePreview(ctx, type);
-    });
+  function getSpreadX(index, total, amount) {
+    if (total <= 1) return 0;
+    const middle = (total - 1) / 2;
+    return (index - middle) * amount;
+  }
+
+  function getGatherX(index, total) {
+    if (total <= 1) return 0;
+    const middle = (total - 1) / 2;
+    return (middle - index) * 18;
+  }
+
+  function getRotation(index, total, amount) {
+    if (total <= 1) return amount * -0.4;
+    const middle = (total - 1) / 2;
+    return (index - middle) * amount;
+  }
+
+  function getCollapseRotation(index, total) {
+    if (total <= 1) return 0;
+    const middle = (total - 1) / 2;
+    return (middle - index) * 2;
   }
 
   function getNavOffset(ctx) {
     const raw = window
       .getComputedStyle(ctx.section)
-      .getPropertyValue('--memory-nav-offset')
+      .getPropertyValue("--section-2-nav-offset")
       .trim();
 
     const value = Number.parseFloat(raw);
     return Number.isFinite(value) ? value : 64;
+  }
+
+  function clamp(value, min, max) {
+    return Math.min(max, Math.max(min, value));
   }
 })();
