@@ -933,13 +933,7 @@
     grid-column: span 2;
   }
 
-  .moment-frame,
-  .character-name,
-  .note-card,
-  .thought-card,
-  .falling-quote {
-    /* touch devices don't hover — keep the resting state calm and legible,
-       hover-only lifts are a bonus on devices that support them, not a
-       requirement to read the content */
-  }
+  /* touch devices don't hover — keep the resting state calm and legible,
+     hover-only lifts are a bonus on devices that support them, not a
+     requirement to read the content */
 }
