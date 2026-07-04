@@ -3819,6 +3819,1199 @@ This gives us the strongest design direction before touching the HTML/CSS/JS.
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Yes. With the code you gave, I now have a much clearer idea of the **real Inkwell visual system**.
+
+Your website already has a strong identity:
+
+```text
+warm paper
+deep espresso ink
+brown book/leather accents
+soft premium shadows
+Newsreader display typography
+Inter UI typography
+subtle blur/glass nav
+rounded card language
+```
+
+So Section 2 should **not** become a random flashy animation section. It needs to feel like the same website, but more alive.
+
+I researched the interaction and design side again using design systems and UX sources: Material interaction states, NN/g microinteractions and animation guidance, Carbon spacing/motion/color layering, Shopify Polaris spacing/card layout, and similar systems. The useful lesson is: hover/focus/pressed states should be clear but restrained; spacing should group related content; animation should give feedback and explain state changes; and color/elevation should create layers, not noise. Material specifically treats hover, focus, pressed, selected, and activated as distinct states; NN/g defines microinteractions as trigger-feedback pairs; Carbon explains color layering and spacing scales; Polaris emphasizes spacing/proximity inside cards. ([Material Design][1])
+
+# Ultimate Section 2 Design Plan
+
+## 1. The core identity
+
+Section 2 should feel like:
+
+```text
+a warm memory desk
+a manga/book entry sitting on paper
+evidence scattered around it
+the row slowly becoming meaningful
+```
+
+Section 1 says:
+
+```text
+Some stories leave a mark.
+```
+
+Section 2 proves:
+
+```text
+A rating tells you nothing until memories explain it.
+```
+
+So the visual rule is:
+
+```text
+Section 1 = emotional promise.
+Section 2 = physical proof.
+```
+
+That means Section 2 needs more depth, more tactile cards, more hover life, and a better row hierarchy.
+
+---
+
+# 2. Use your existing color system
+
+From your global CSS, these are the important colors:
+
+```css
+--cream: #FAF6EF;
+--cream-dark: #EFE5D8;
+--warm-brown: #B8794E;
+--warm-brown-dark: #7F4B2F;
+--warm-brown-light: #E2B98F;
+--ink: #241A11;
+--ink-mid: #4E3A29;
+--ink-light: #6F5A45;
+--ink-faint: #9B8772;
+--surface: #FFFCF8;
+```
+
+We should **not** invent a new palette.
+
+Instead, Section 2 should use those colors better.
+
+## Background colors
+
+Use:
+
+```text
+base = --cream
+paper shadow = --cream-dark
+main surface = --surface
+warm glow = --warm-brown-light
+accent glow = --warm-brown
+deep text = --ink
+secondary text = --ink-light
+```
+
+## Avoid
+
+```text
+cold gray
+pure white everywhere
+orange neon
+heavy yellow
+flat beige-on-beige
+```
+
+The current Section 2 problem is not the palette itself. The problem is that the colors are not layered enough.
+
+Carbon’s color guidance is useful here: UI should use layered surfaces so each object has a clear spatial level, instead of everything sitting on one flat background. ([Carbon Design System][2])
+
+---
+
+# 3. Background plan
+
+Your Section 1 background feels premium because it has warm gradients and depth. Section 2 currently feels too flat.
+
+The new Section 2 background should have **six layers**.
+
+## Layer 1: warm paper base
+
+The section base remains:
+
+```css
+var(--cream)
+```
+
+This keeps the page connected to Section 1.
+
+## Layer 2: large ambient glow
+
+Add a large soft glow behind the row:
+
+```text
+position: center / lower-middle
+color: warm-brown-light with very low opacity
+shape: large radial ellipse
+purpose: makes the row feel staged
+```
+
+This should feel like warm light on paper.
+
+## Layer 3: subtle side vignette
+
+Add darker warmth near edges:
+
+```text
+left/right edges slightly deeper
+center stays clean
+```
+
+This helps guide the eye toward the row and evidence.
+
+## Layer 4: faint manga grid
+
+A very faint grid/panel pattern:
+
+```text
+opacity low by default
+stronger during Moments stage
+not visible enough to distract
+```
+
+This connects to manga without making the background busy.
+
+## Layer 5: paper grain
+
+Subtle paper texture using CSS gradients:
+
+```text
+tiny dots
+low opacity
+no harsh noise
+```
+
+This makes it feel physical.
+
+## Layer 6: cursor-following glow
+
+This is important.
+
+The cursor effect should apply to **both the background and the row**, but not in the same way.
+
+```text
+background cursor glow = large, soft, slow
+row cursor glow = smaller, brighter, only while hovering row
+evidence cursor glow = local highlight only on hovered card
+```
+
+The cursor effect should feel like:
+
+```text
+a warm reading lamp
+not a neon gaming trail
+```
+
+So the glow should be amber/cream, blurred, low-opacity, and disabled on mobile/reduced motion.
+
+---
+
+# 4. Cursor-following effect plan
+
+## Background cursor glow
+
+Use CSS variables later controlled by JavaScript:
+
+```css
+--cursor-x
+--cursor-y
+```
+
+The background pseudo-element uses:
+
+```css
+radial-gradient(circle at var(--cursor-x) var(--cursor-y), ...)
+```
+
+Effect:
+
+```text
+when mouse moves across Section 2, the paper subtly brightens under the cursor
+```
+
+This makes the section feel alive even before the scroll animation.
+
+## Row cursor glow
+
+The row gets its own variables:
+
+```css
+--row-x
+--row-y
+```
+
+When hovering the row:
+
+```text
+small warm light follows inside the card
+border warms
+surface slightly brightens
+shadow becomes deeper
+```
+
+Do **not** make this too strong. It should be visible but classy.
+
+## Evidence local glow
+
+Each evidence card gets a hover highlight:
+
+```text
+quote: paper edge light
+moment: image sheen
+character: portrait highlight
+note: sticky paper glow
+thought: journal ink glow
+```
+
+This gives life without adding popups.
+
+---
+
+# 5. Section spacing plan
+
+The current Section 2 has too much empty vertical space. The header and row feel disconnected.
+
+Better visual rhythm:
+
+```text
+header at top
+row enters sooner
+evidence appears around the row
+row sits lower-middle, not at the very bottom
+```
+
+Viewport composition:
+
+```text
+top 18–25% = title/context
+middle 30–65% = evidence
+lower-middle 62–78% = row anchor
+```
+
+The row should feel like the desk object that everything falls toward.
+
+Do not leave huge blank space between title and row unless it is intentionally used for falling evidence.
+
+---
+
+# 6. Header plan
+
+The header should stay similar to Section 1 but quieter.
+
+Use:
+
+```text
+Newsreader title
+Inter paragraph
+brown uppercase label
+centered desktop
+left aligned mobile
+```
+
+But reduce unnecessary vertical emptiness.
+
+The title:
+
+```text
+A rating tells you nothing.
+```
+
+should feel strong, but it should not push the row too far away.
+
+Suggested behavior:
+
+```text
+desktop: big title, max-width controlled
+tablet/mobile: tighter spacing
+during scroll: header can fade/soften as row becomes focus
+```
+
+---
+
+# 7. Row redesign plan
+
+This is the biggest improvement.
+
+Current row problem:
+
+```text
+too wide
+too much empty middle space
+cover broken
+buttons feel like footer
+rating is isolated
+```
+
+New row layout:
+
+```text
+[ Cover ] [ Main content + buttons ] [ Rating ]
+```
+
+Visually:
+
+```text
+┌────────────────────────────────────────────────────────┐
+│ Cover   Vagabond                           9/10        │
+│         Takehiko Inoue                                 │
+│         Manga · Completed                              │
+│                                                        │
+│         Quotes  Moments  Characters  Notes  Thoughts   │
+└────────────────────────────────────────────────────────┘
+```
+
+## Row width
+
+Use:
+
+```text
+desktop max-width: 980px–1040px
+not 1120px+
+```
+
+The row should feel dense and premium, not stretched.
+
+## Row surface
+
+The row should be slightly brighter than the background:
+
+```text
+background = cream
+row = surface / soft white cream
+```
+
+This creates separation.
+
+## Row shadow
+
+Use your existing:
+
+```css
+--shadow-hero-card
+```
+
+But make it more focused:
+
+```text
+soft large shadow under row
+small darker contact shadow directly below
+```
+
+This makes the card feel like it is sitting on the paper desk.
+
+## Row border
+
+Use:
+
+```css
+rgba(184, 121, 78, 0.24)
+```
+
+On hover:
+
+```text
+border warms slightly
+```
+
+## Row gloss
+
+Yes, the row can have a glossy/light sweep effect, but it should not become glassy.
+
+The correct style is:
+
+```text
+polished paper sheen
+not plastic
+not glassmorphism
+```
+
+Effect:
+
+```text
+on row hover, a soft diagonal highlight moves from left to right
+very low opacity
+slow enough to feel premium
+```
+
+This matches your Section 1 card direction.
+
+---
+
+# 8. Row hover plan
+
+When hovering the whole row:
+
+```text
+row lifts 2–3px
+shadow deepens
+border warms
+inner cursor glow appears
+soft sheen moves across surface
+cover lifts slightly
+rating warms slightly
+buttons become a little more alive
+```
+
+But this must be subtle.
+
+Do not make every child jump strongly at the same time. The row hover is the global “card is alive” effect. Then individual parts have their own stronger hover effects.
+
+---
+
+# 9. Cover plan
+
+The cover is currently broken. That must be fixed first.
+
+The path should load the real image. Otherwise the design will always look bad.
+
+## Cover size
+
+Use:
+
+```text
+desktop: 132px–148px wide
+tablet: 112px
+mobile: 92px–100px
+```
+
+## Cover styling
+
+```text
+aspect ratio 2/3
+rounded 18px
+stronger shadow
+slight contrast
+slightly darker than the row
+```
+
+## Cover hover
+
+```text
+lift 4px
+rotate -1deg or 1deg
+image saturates/contrasts slightly
+gloss streak crosses the cover
+shadow becomes sharper
+```
+
+This should be one of the most premium parts of the row.
+
+---
+
+# 10. Title/meta plan
+
+Currently the title is okay, but spacing is wrong.
+
+Group:
+
+```text
+Vagabond
+Takehiko Inoue
+Manga · Completed
+```
+
+The meta should not float far to the right.
+
+Either use chips under the author or style `.media-row-format` and `.media-row-status` as small chips near the title.
+
+The user’s eye should read:
+
+```text
+cover → title → author → meta → buttons → score
+```
+
+Use proximity: related things closer together, unrelated things farther apart. Polaris and Carbon spacing guidance both support using consistent spacing scales to create clear grouping and rhythm. ([Polaris React][3])
+
+---
+
+# 11. Rating plan
+
+The rating should normally be clean.
+
+Default:
+
+```text
+9/10
+```
+
+Hover/focus:
+
+```text
+but why?
+```
+
+So remove permanent “but why?” from normal view.
+
+## Rating default
+
+```text
+small capsule
+clean white/cream surface
+strong 9/10
+no clutter
+```
+
+## Rating hover
+
+```text
+capsule expands or adds bottom padding slightly
+“but why?” fades/slides in
+background warms
+border warms
+score lifts 1px
+```
+
+This creates a small interaction moment.
+
+It matches the concept perfectly:
+
+```text
+A rating looks simple.
+When you question it, the deeper evidence matters.
+```
+
+---
+
+# 12. Button tray plan
+
+Buttons should not be previews. They are the final saved evidence labels.
+
+The buttons should be inside the content column, not separated like a footer.
+
+Remove or soften the divider line.
+
+## Button layout
+
+```text
+buttons under meta
+left aligned with title
+wrap naturally
+small gap
+```
+
+## Button states
+
+```text
+locked = hidden before evidence arrives
+forming = barely visible / compressed state
+landing = falling/bounce state
+landed = normal saved pill
+hover = warm lift
+active = pressed down
+focus = visible keyboard ring
+```
+
+Material’s interaction-state guidance is useful here: hover/focus/pressed/selected states should be distinguishable, not all the same. ([Material Design][1])
+
+## Button hover
+
+```text
+translateY(-2px)
+border becomes warm-brown
+background becomes warm cream
+text becomes ink
+small shadow appears
+```
+
+No preview.
+
+---
+
+# 13. Evidence interactivity plan
+
+This is the most important “alive” upgrade.
+
+The evidence cards should feel physical even before JS animation.
+
+## Global evidence rule
+
+Evidence cards should not act like buttons unless they really open something. But they can still have hover feedback.
+
+So:
+
+```text
+hover = physical reaction
+click = no fake action for now
+cursor = default or subtle, not pointer unless clickable
+```
+
+NN/g’s microinteraction guidance says the best small interactions are trigger-feedback pairs. Here, the trigger is hover/focus, and the feedback is a small physical response. ([Nielsen Norman Group][4])
+
+---
+
+# 14. Quote interaction plan
+
+Quotes should feel like loose paper strips.
+
+## Default quote style
+
+```text
+cream paper strip
+soft border
+Newsreader text
+slight rotation
+soft shadow
+paper edge highlight
+```
+
+## Hover one quote
+
+```text
+lift 6px
+rotate closer to 0deg
+shadow deepens
+paper surface brightens
+text darkens
+z-index increases
+```
+
+## Hover quote group
+
+When hovering the quote area:
+
+```text
+all quotes spread slightly
+hovered quote comes forward
+non-hovered quotes soften slightly
+```
+
+This creates the “scattered paper” feeling.
+
+## Focus state
+
+If quotes become focusable later:
+
+```text
+outline warm brown
+same lift but no chaotic movement
+```
+
+---
+
+# 15. Moment/manga panel interaction plan
+
+Manga panels should be more visual and stronger.
+
+## Default panel style
+
+```text
+larger panel
+ink-like border
+paper mat
+small caption
+image not too washed out
+one hero panel
+two supporting panels
+```
+
+## Hover panel
+
+```text
+panel lifts 8px
+image zooms 1.03x inside frame
+ink border darkens
+caption becomes more visible
+shadow deepens
+neighbor panels dim slightly
+```
+
+This makes it feel like selecting a manga panel from a board.
+
+## Stage background
+
+During Moments stage:
+
+```text
+manga grid becomes more visible
+background contrast slightly increases
+```
+
+---
+
+# 16. Character card interaction plan
+
+Characters should be portrait cards, not circles.
+
+## Default character card
+
+```text
+portrait rectangle
+rounded corners
+image-heavy
+name plate at bottom
+warm border
+soft card shadow
+```
+
+## Hover character
+
+```text
+card lifts
+z-index increases
+image brightens
+name plate warms
+other character cards dim slightly
+```
+
+This creates focus and hierarchy.
+
+## Main character
+
+Musashi should be the largest card.
+
+Supporting characters should be smaller.
+
+On mobile, hide extra character cards so the layout does not get crowded.
+
+---
+
+# 17. Notes interaction plan
+
+Notes should feel like sticky notes.
+
+## Default note
+
+```text
+small warm note
+slight rotation
+top tape mark
+soft shadow
+Inter text
+```
+
+## Hover note
+
+```text
+lift 6px
+rotation changes slightly
+top tape highlight appears
+shadow deepens
+paper brightens
+```
+
+Notes should feel tactile and quick, not like essay cards.
+
+---
+
+# 18. Thoughts interaction plan
+
+Thoughts should be calmer than all other evidence.
+
+## Default thought card
+
+```text
+journal page
+larger cream card
+soft ink wash
+more whitespace
+Newsreader text
+less rotation
+```
+
+## Hover thought page
+
+```text
+page lifts softly
+ink wash becomes visible
+shadow grows slowly
+text becomes slightly darker
+```
+
+No bouncy movement. This is the emotional/deep stage.
+
+---
+
+# 19. Background mood by stage
+
+CSS should prepare classes:
+
+```css
+.is-stage-empty
+.is-stage-quotes
+.is-stage-moments
+.is-stage-characters
+.is-stage-notes
+.is-stage-thoughts
+.is-stage-final
+```
+
+## Empty
+
+```text
+quiet paper
+small row glow
+```
+
+## Quotes
+
+```text
+warmer glow
+paper strips feel highlighted
+```
+
+## Moments
+
+```text
+manga grid stronger
+slightly sharper contrast
+```
+
+## Characters
+
+```text
+soft spotlight behind portrait cluster
+```
+
+## Notes
+
+```text
+warmer sticky-note tone
+```
+
+## Thoughts
+
+```text
+subtle ink wash
+slightly calmer/darker center
+```
+
+## Final
+
+```text
+row glow strongest
+card feels complete
+buttons feel settled
+```
+
+---
+
+# 20. Motion and timing plan
+
+Even though we are focusing on CSS now, the CSS needs to prepare for JS.
+
+Use motion like this:
+
+```text
+small hover effects: 180ms–260ms
+row sheen: 650ms–900ms
+button landing later: 450ms–650ms
+evidence hover lift: 220ms–320ms
+```
+
+NN/g says UX animation should be brief, subtle, and purposeful; Carbon also separates motion into productive/expressive uses with consistent easing. ([Nielsen Norman Group][5])
+
+## Use these properties
+
+```text
+transform
+opacity
+filter small amounts
+box-shadow small changes
+background-position / radial-gradient vars
+```
+
+## Avoid
+
+```text
+animating width
+animating height
+animating top/left
+heavy blur everywhere
+constant motion on every element
+```
+
+---
+
+# 21. Accessibility plan
+
+We need reduced motion.
+
+For `prefers-reduced-motion: reduce`:
+
+```text
+disable cursor-follow glow movement
+disable big transforms
+disable scatter animation
+disable row sheen movement
+keep color/outline hover states
+show final row statically
+```
+
+Also:
+
+```text
+all real buttons get focus-visible
+buttons keep target size around 40px+
+hover-only effects should not be required to understand content
+```
+
+The interaction should be nice, not necessary.
+
+---
+
+# 22. Mobile plan
+
+Mobile should not try to copy the full cinematic desktop layout.
+
+## Mobile row
+
+```text
+cover left
+title/right content beside it
+score under title or beside title
+buttons wrap below
+row width 100%
+less empty space
+```
+
+## Mobile background
+
+```text
+less grid
+less cursor glow
+simpler paper glow
+```
+
+## Mobile evidence
+
+```text
+quotes stack
+one manga hero panel + one supporting panel
+main character + two support characters
+notes stack
+one thought page
+```
+
+No hover dependency on mobile.
+
+---
+
+# 23. What to remove from the current CSS
+
+Remove or replace these ideas:
+
+```text
+row max-width 1120px
+footer-like button tray with strong divider
+always visible “but why?”
+flat background with weak depth
+evidence cards with weak hover
+meta chips floating far right
+giant dead space between header and row
+```
+
+Keep:
+
+```text
+warm palette
+Newsreader + Inter
+premium shadows
+rounded card language
+evidence categories
+no button previews
+reduced motion fallback
+```
+
+---
+
+# 24. CSS architecture for final code
+
+The final Section 2 CSS should be built in this order:
+
+```text
+1. Section variables
+2. Background layers
+3. Cursor glow hooks
+4. Header
+5. Scroll scene/stage shell
+6. Row shell
+7. Row inner 3-column layout
+8. Row gloss/sheen/cursor hover
+9. Cover
+10. Title/author/meta
+11. Rating hover with “but why?”
+12. Button tray inside content column
+13. Button states
+14. Shared evidence card settings
+15. Quotes
+16. Moments
+17. Characters
+18. Notes
+19. Thoughts
+20. Evidence hover interactions
+21. Stage mood classes
+22. Tablet layout
+23. Mobile layout
+24. Reduced motion
+```
+
+This will make the CSS clean and easier to animate later.
+
+---
+
+# 25. Future JS hooks the CSS should prepare
+
+Even though we are not writing JS yet, CSS needs hooks like:
+
+```css
+.section-empty-shelf.is-enhanced
+.scroll-stage.is-active
+.evidence-card.is-readable
+.evidence-card.is-gathering
+.evidence-card.is-compressing
+.depth-button.is-locked
+.depth-button.is-forming
+.depth-button.is-landing
+.depth-button.is-landed
+```
+
+Also cursor variables:
+
+```css
+--cursor-x
+--cursor-y
+--row-x
+--row-y
+```
+
+Later JS updates those variables.
+
+---
+
+# Final ultimate plan
+
+The final design should work like this:
+
+```text
+The user scrolls into Section 2.
+The warm paper background already feels alive.
+The row appears as a compact premium saved-entry card.
+The cover is strong and real.
+The rating is clean: 9/10.
+On rating hover, “but why?” appears.
+The row has a soft cursor-follow glow.
+The row has a subtle paper sheen on hover.
+Every part of the row has its own microinteraction.
+Quotes feel like loose paper.
+Moments feel like manga panels.
+Characters feel like portrait cards.
+Notes feel like sticky notes.
+Thoughts feel like a journal page.
+Buttons do not preview anything.
+Buttons represent saved evidence.
+Later, JavaScript makes each evidence type fall into the row and become a button.
+At the end, the row feels complete and earned.
+```
+
+The design rule for the final CSS:
+
+```text
+warm, physical, premium, alive — but never noisy.
+```
+
+And the most important layout rule:
+
+```text
+The row is the anchor.
+The evidence is the motion.
+The buttons are the result.
+The background is the atmosphere.
+```
+
+[1]: https://m3.material.io/foundations/interaction/states/applying-states?utm_source=chatgpt.com "States – Material Design 3"
+[2]: https://carbondesignsystem.com/elements/color/overview/?utm_source=chatgpt.com "Color"
+[3]: https://polaris-react.shopify.com/patterns/card-layout?utm_source=chatgpt.com "Card layout"
+[4]: https://www.nngroup.com/articles/microinteractions/?utm_source=chatgpt.com "Microinteractions in User Experience"
+[5]: https://www.nngroup.com/articles/animation-purpose-ux/?utm_source=chatgpt.com "The Role of Animation and Motion in UX"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 Yes — after login, the marketing homepage should basically disappear from the main experience.
 
 The homepage is for people who do not understand Inkwell yet. Once someone logs in, they already understand the product. They should go straight into the app.
