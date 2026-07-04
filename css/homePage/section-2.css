@@ -2079,3 +2079,507 @@
     transition: none !important;
   }
 }
+
+/* ============================================================================
+   FINAL PASS — MANGA COVER PROPORTION + STRONGER OBJECT-LOCAL ATMOSPHERE
+   ------------------------------------------------------------------------
+   Fixes from latest review:
+   1) The cover was vertically correct, but horizontally too narrow for a manga
+      cover. A manga cover is usually close to a 2:3 portrait ratio, so if the
+      card content height is around 300px, the cover width should be around
+      190px, not 132px.
+   2) The background warmth was correctly localized, but the glow radius and
+      warmth were too weak. This keeps the page base calm while making warmth
+      stronger only around actual objects: the book card, quote groups, moments,
+      character/notes/thoughts groups.
+   ============================================================================ */
+
+#section-2-empty-shelf,
+.section-empty-shelf {
+  /* Wider card so the larger manga-proportion cover does not squeeze content. */
+  --section-2-row-width: 1020px;
+  --section-2-cover-width: 194px;
+  --section-2-card-gap: 2.05rem;
+
+  position: relative;
+  overflow: hidden;
+
+  /* Calm paper base only. The warmth comes from object glows below, not from a
+     full-page tan/orange wash. */
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 252, 246, 0.58), transparent 28%),
+    linear-gradient(180deg, #fbf8f3 0%, #faf5ee 46%, #fbf8f3 100%) !important;
+}
+
+/* Prevent section-level color wash from returning. */
+#section-2-empty-shelf::before,
+.section-empty-shelf::before,
+.scroll-stage::before {
+  content: none !important;
+  display: none !important;
+}
+
+/* Keep paper texture extremely quiet, so it does not read as a full-color wash. */
+#section-2-empty-shelf::after,
+.section-empty-shelf::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: radial-gradient(rgba(97, 58, 31, 0.03) 0.65px, transparent 0.65px);
+  background-size: 4px 4px;
+  opacity: 0.065 !important;
+}
+
+#section-2-empty-shelf > *,
+.section-empty-shelf > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* -------------------------------------------------------------------------
+   Stronger, larger CARD-LOCAL glow.
+   This should feel like the first hero card atmosphere: warm around the object,
+   but not a uniform background color.
+   ------------------------------------------------------------------------- */
+
+.card-wrap {
+  position: relative;
+  width: min(var(--section-2-row-width), calc(100vw - 48px));
+  margin-inline: auto;
+  isolation: isolate;
+  perspective: 1200px;
+}
+
+.card-wrap::before {
+  content: "" !important;
+  display: block !important;
+  position: absolute;
+  left: 50%;
+  top: 54%;
+  z-index: -2;
+  pointer-events: none;
+
+  width: min(calc(100% + 280px), calc(var(--section-2-row-width) + 280px));
+  height: calc(100% + 250px);
+  border-radius: 64px;
+
+  background:
+    radial-gradient(
+      ellipse at 50% 56%,
+      rgba(185, 92, 29, 0.36) 0%,
+      rgba(205, 122, 48, 0.22) 34%,
+      rgba(205, 122, 48, 0.095) 56%,
+      transparent 78%
+    );
+  filter: blur(54px);
+  opacity: 0.92;
+  transform: translate(-50%, -50%) scale(1);
+  transition:
+    opacity 240ms ease,
+    transform 240ms ease,
+    background 240ms ease,
+    filter 240ms ease;
+}
+
+/* Contact shadow directly beneath the card. This makes the card feel grounded
+   without tinting the whole section. */
+.card-wrap::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -62px;
+  z-index: -1;
+  pointer-events: none;
+  width: min(88%, 880px);
+  height: 132px;
+  border-radius: 999px;
+  background:
+    radial-gradient(
+      ellipse at center,
+      rgba(83, 45, 19, 0.20),
+      rgba(127, 70, 28, 0.105) 38%,
+      transparent 72%
+    );
+  filter: blur(26px);
+  opacity: 0.72;
+  transform: translateX(-50%);
+  transition: opacity 240ms ease, transform 240ms ease;
+}
+
+.card-wrap:hover::before {
+  opacity: 1;
+  filter: blur(58px);
+  transform: translate(-50%, -50%) scale(1.035);
+  background:
+    radial-gradient(
+      ellipse at 50% 56%,
+      rgba(197, 96, 28, 0.46) 0%,
+      rgba(221, 134, 51, 0.28) 35%,
+      rgba(221, 134, 51, 0.12) 58%,
+      transparent 80%
+    );
+}
+
+.card-wrap:hover::after {
+  opacity: 0.86;
+  transform: translateX(-50%) scaleX(1.03);
+}
+
+/* Fallback only for markup where the media row is not wrapped by .card-wrap.
+   This is object-sized, not stage-sized. */
+.scroll-stage:not(:has(.card-wrap)):has(.media-library-row)::before {
+  content: "" !important;
+  display: block !important;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: -2;
+  pointer-events: none;
+  width: min(calc(var(--section-2-row-width) + 280px), calc(100% + 220px));
+  height: 590px;
+  border-radius: 64px;
+  background:
+    radial-gradient(
+      ellipse at 50% 56%,
+      rgba(185, 92, 29, 0.32),
+      rgba(205, 122, 48, 0.19) 34%,
+      rgba(205, 122, 48, 0.085) 56%,
+      transparent 78%
+    );
+  filter: blur(54px);
+  opacity: 0.86;
+  transform: translate(-50%, -50%);
+}
+
+.scroll-stage:not(:has(.card-wrap)):has(.media-library-row:hover)::before {
+  opacity: 1;
+  background:
+    radial-gradient(
+      ellipse at 50% 56%,
+      rgba(197, 96, 28, 0.42),
+      rgba(221, 134, 51, 0.25) 35%,
+      rgba(221, 134, 51, 0.11) 58%,
+      transparent 80%
+    );
+}
+
+/* -------------------------------------------------------------------------
+   MANGA-PROPORTION FULL-HEIGHT COVER CARD GRID
+   ------------------------------------------------------------------------- */
+
+.media-library-row {
+  width: min(var(--section-2-row-width), calc(100vw - 48px));
+  min-height: 364px !important;
+  margin-inline: auto;
+  padding: 30px;
+
+  display: grid !important;
+  grid-template-columns: var(--section-2-cover-width) minmax(0, 1fr) auto;
+  grid-template-areas:
+    "cover info    score"
+    "cover chips   score"
+    "cover details details";
+
+  /* Content height is about 304px after padding. With a 194px cover width,
+     this gives a manga-like portrait ratio instead of the too-skinny 132px look. */
+  grid-template-rows: minmax(126px, 1fr) auto minmax(104px, auto);
+  column-gap: var(--section-2-card-gap);
+  row-gap: 0.78rem;
+  align-items: stretch;
+
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+
+  border-radius: 32px;
+  border: 1px solid rgba(184, 121, 78, 0.24);
+  background:
+    radial-gradient(circle at 18% 48%, rgba(226, 173, 111, 0.09), transparent 36%),
+    linear-gradient(180deg, rgba(255, 253, 249, 0.985) 0%, rgba(255, 248, 238, 0.97) 100%);
+  box-shadow:
+    0 34px 86px rgba(87, 49, 22, 0.15),
+    0 12px 26px rgba(87, 49, 22, 0.09),
+    inset 0 1px 0 rgba(255, 255, 255, 0.84);
+
+  transform: perspective(900px) translateZ(0);
+  transition:
+    transform 240ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 220ms ease,
+    background 220ms ease,
+    box-shadow 240ms ease;
+}
+
+.media-library-row:has(.media-row-details) {
+  min-height: 364px !important;
+}
+
+/* Flatten the old internal row wrapper so the cover can span the full card,
+   not just the top mini-row. */
+.media-row-main {
+  display: contents !important;
+}
+
+.media-row-cover,
+.media-row-info,
+.media-row-format,
+.media-row-status,
+.media-row-score,
+.media-row-details {
+  position: relative;
+  z-index: 1;
+}
+
+/* Key cover fix: wider manga-cover proportion + full vertical span from near
+   top border to near bottom border. The divider/details do not affect it. */
+.media-row-cover {
+  grid-area: cover !important;
+  align-self: stretch !important;
+  justify-self: start !important;
+
+  width: var(--section-2-cover-width) !important;
+  height: 100% !important;
+  min-height: 292px !important;
+  max-height: none !important;
+  aspect-ratio: auto !important;
+
+  border-radius: 18px;
+  overflow: hidden;
+  background: linear-gradient(145deg, #d7b999 0%, #ead5bd 55%, #cfae8c 100%);
+  border: 1px solid rgba(126, 78, 45, 0.22);
+  box-shadow:
+    0 24px 42px rgba(72, 42, 21, 0.18),
+    0 7px 16px rgba(72, 42, 21, 0.11),
+    inset 0 1px 0 rgba(255, 255, 255, 0.50);
+}
+
+.media-row-cover img {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+  object-fit: cover;
+  object-position: center top;
+}
+
+.media-row-info {
+  grid-area: info !important;
+  align-self: end;
+  min-width: 0;
+  padding-top: 0.35rem;
+}
+
+.media-row-format,
+.media-row-status {
+  grid-area: chips !important;
+  align-self: start;
+  margin-top: 0.7rem;
+}
+
+.media-row-status {
+  margin-left: calc(0.75rem + 4.95rem);
+}
+
+.media-row-score {
+  grid-area: score !important;
+  grid-row: 1 / 3 !important;
+  align-self: center;
+  justify-self: end;
+}
+
+/* Divider and Saved Layers stay only in the right column. */
+.media-row-details {
+  grid-area: details !important;
+  align-self: stretch;
+  width: 100% !important;
+  margin: 1.08rem 0 0 !important;
+  padding-top: 1.08rem;
+  border-top: 1px solid rgba(184, 121, 78, 0.17);
+
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 0.58rem;
+}
+
+.media-row-details::before {
+  flex-basis: 100%;
+}
+
+.media-library-row:hover {
+  transform: perspective(900px) rotateX(0.65deg) translateY(-6px);
+  border-color: rgba(127, 75, 47, 0.38);
+  background:
+    radial-gradient(circle at 18% 48%, rgba(234, 177, 107, 0.13), transparent 38%),
+    linear-gradient(180deg, rgba(255, 254, 251, 0.995) 0%, rgba(255, 250, 241, 0.986) 100%);
+  box-shadow:
+    0 44px 104px rgba(87, 49, 22, 0.19),
+    0 16px 34px rgba(87, 49, 22, 0.115),
+    inset 0 1px 0 rgba(255, 255, 255, 0.88);
+}
+
+/* -------------------------------------------------------------------------
+   OBJECT-LOCAL GLOWS FOR QUOTES / MOMENTS / CHARACTERS / NOTES / THOUGHTS
+   ------------------------------------------------------------------------- */
+
+.falling-quotes,
+.moving-moments,
+.character-cloud,
+.notes-cloud,
+.thoughts-cloud {
+  position: relative;
+  isolation: isolate;
+}
+
+.falling-quotes::before,
+.moving-moments::before,
+.character-cloud::before,
+.notes-cloud::before,
+.thoughts-cloud::before {
+  content: "" !important;
+  display: block !important;
+  position: absolute;
+  left: 50%;
+  top: 52%;
+  z-index: -1;
+  pointer-events: none;
+
+  width: min(calc(100% + 260px), calc(var(--section-2-row-width) + 260px));
+  height: calc(100% + 230px);
+  border-radius: 999px;
+
+  background:
+    radial-gradient(
+      ellipse at center,
+      rgba(185, 97, 35, 0.24) 0%,
+      rgba(214, 137, 61, 0.135) 40%,
+      rgba(214, 137, 61, 0.06) 58%,
+      transparent 78%
+    );
+  filter: blur(56px);
+  opacity: 0.88;
+  transform: translate(-50%, -50%);
+}
+
+/* Warmer local contact shadows on the actual objects. */
+.falling-quote,
+.moment-frame,
+.character-name,
+.note-card,
+.thought-card {
+  background-color: rgba(255, 251, 245, 0.94);
+  border-color: rgba(184, 121, 78, 0.18);
+  box-shadow:
+    0 26px 58px rgba(62, 42, 22, 0.13),
+    0 7px 18px rgba(155, 90, 50, 0.075),
+    inset 0 1px 0 rgba(255, 255, 255, 0.66);
+}
+
+.falling-quote:hover,
+.moment-frame:hover,
+.character-name:hover,
+.note-card:hover,
+.thought-card:hover {
+  box-shadow:
+    0 34px 72px rgba(62, 42, 22, 0.18),
+    0 10px 26px rgba(155, 90, 50, 0.11),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72);
+}
+
+/* -------------------------------------------------------------------------
+   RESPONSIVE COVER PROPORTIONS
+   ------------------------------------------------------------------------- */
+
+@media (max-width: 1050px) {
+  #section-2-empty-shelf,
+  .section-empty-shelf {
+    --section-2-row-width: 940px;
+    --section-2-cover-width: 176px;
+    --section-2-card-gap: 1.65rem;
+  }
+
+  .media-library-row {
+    min-height: 344px !important;
+    grid-template-rows: minmax(116px, 1fr) auto minmax(98px, auto);
+  }
+
+  .media-library-row:has(.media-row-details) {
+    min-height: 344px !important;
+  }
+
+  .media-row-cover {
+    min-height: 276px !important;
+  }
+}
+
+@media (max-width: 760px) {
+  #section-2-empty-shelf,
+  .section-empty-shelf {
+    --section-2-cover-width: 118px;
+    --section-2-card-gap: 1rem;
+  }
+
+  .media-library-row {
+    width: min(100%, calc(100vw - 32px));
+    min-height: auto !important;
+    padding: 22px;
+    grid-template-columns: var(--section-2-cover-width) minmax(0, 1fr);
+    grid-template-areas:
+      "cover info"
+      "cover chips"
+      "score score"
+      "details details";
+    grid-template-rows: auto auto auto auto;
+  }
+
+  .media-row-cover {
+    width: var(--section-2-cover-width) !important;
+    min-height: 178px !important;
+    height: auto !important;
+    align-self: stretch !important;
+  }
+
+  .media-row-score {
+    grid-area: score !important;
+    grid-row: auto !important;
+    justify-self: start;
+    align-self: center;
+    margin-top: 0.35rem;
+  }
+
+  .media-row-details {
+    grid-area: details !important;
+    margin-top: 0.8rem !important;
+  }
+
+  .card-wrap::before,
+  .scroll-stage:not(:has(.card-wrap)):has(.media-library-row)::before,
+  .falling-quotes::before,
+  .moving-moments::before,
+  .character-cloud::before,
+  .notes-cloud::before,
+  .thoughts-cloud::before {
+    width: calc(100% + 78px);
+    height: calc(100% + 92px);
+    filter: blur(36px);
+    opacity: 0.74;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-wrap::before,
+  .card-wrap::after,
+  .scroll-stage:not(:has(.card-wrap)):has(.media-library-row)::before,
+  .falling-quotes::before,
+  .moving-moments::before,
+  .character-cloud::before,
+  .notes-cloud::before,
+  .thoughts-cloud::before,
+  .media-library-row {
+    transition: none !important;
+  }
+
+  .media-library-row:hover {
+    transform: none !important;
+  }
+}
