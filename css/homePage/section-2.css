@@ -1,66 +1,112 @@
 /* ============================================================================
-   SECTION 2 — PART 1: PREMIUM STATIC + HOVER PASS
+   SECTION 2 — FINAL ADAPTED CSS SO FAR
    ------------------------------------------------------------------------
-   Goal: make the header + first row card feel like the center of
-   attention BEFORE any GSAP touches it. Hover states are now in scope
-   (row lift, cover lift, sheen, score "but why?" reveal) — but no
-   evidence-card styling, no GSAP hooks, no cursor-follow glow yet.
+   Current mode: DEVELOPMENT STACK MODE
+   - All stages are visible so you can review every step.
+   - Later, when GSAP is ready, switch to production stage mode.
 
-   Contents:
-     1. Section container + background (calm continuation of Section 1)
-     2. Header (label / title / subtitle)
-     3. Scroll wrapper
-     4. Hide every stage except the active one
-     5. Card shell (surface, border, shadow, highlight)
-     6. Card inner grid (cover | text | score)
-     7. Cover (size, fallback, hover-through-row)
-     8. Title / author
-     9. Meta chips
-     10. Score capsule (+ "but why?" hover reveal)
-     11. Row hover (lift, shadow, sheen)
-     12. Mobile layout
+   Built for your existing HTML:
+   <section id="section-2-empty-shelf" class="section section-empty-shelf">
+
+   Uses your global tokens:
+   --cream, --cream-dark, --surface, --warm-brown, --warm-brown-dark,
+   --warm-brown-light, --ink, --ink-mid, --ink-light, --ink-faint,
+   --border, --shadow-hero-card, --radius-*, --font-display, --font-body.
    ============================================================================ */
+
+
+/* ============================================================================
+   0. ACCESSIBILITY HELPERS
+============================================================================ */
+
+#section-2-empty-shelf .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
 
 
 /* ============================================================================
    1. SECTION CONTAINER + BACKGROUND
    ------------------------------------------------------------------------
-   Still no grid, no dots, no visible shapes — the card is the star, the
-   background is just warm light behind it, barely noticeable on its own.
-   ============================================================================ */
+   Matches Section 1's warm world: cream base, soft brown warmth, no grid,
+   no dots, no visible hard circle. The card/evidence are the focus.
+============================================================================ */
 
-#section-2-empty-shelf,
-.section-empty-shelf {
+#section-2-empty-shelf.section-empty-shelf {
   --section-2-row-width: 960px;
 
   position: relative;
+  isolation: isolate;
+  overflow: hidden;
   width: 100%;
 
   padding:
-    5rem
+    clamp(4.5rem, 6vw, 6rem)
     max(1.5rem, calc((100vw - 1220px) / 2 + 1.5rem))
-    6rem;
+    clamp(6rem, 8vw, 8rem);
 
   color: var(--ink);
 
   background:
-    radial-gradient(ellipse at 28% 14%, rgba(226, 185, 143, 0.12) 0%, rgba(226, 185, 143, 0.04) 42%, transparent 72%),
-    radial-gradient(ellipse at 70% 88%, rgba(184, 121, 78, 0.09) 0%, rgba(184, 121, 78, 0.03) 44%, transparent 74%),
+    radial-gradient(
+      ellipse at 26% 34%,
+      rgba(226, 185, 143, 0.19) 0%,
+      rgba(226, 185, 143, 0.075) 35%,
+      transparent 68%
+    ),
+    radial-gradient(
+      ellipse at 76% 36%,
+      rgba(184, 121, 78, 0.125) 0%,
+      rgba(184, 121, 78, 0.052) 36%,
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse at 50% 94%,
+      rgba(226, 185, 143, 0.13) 0%,
+      rgba(226, 185, 143, 0.045) 42%,
+      transparent 76%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(255, 252, 248, 0.82) 0%,
+      rgba(250, 246, 239, 0.96) 62%,
+      rgba(250, 246, 239, 1) 100%
+    ),
     var(--cream);
+}
+
+#section-2-empty-shelf.section-empty-shelf > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* Kill any old pseudo background layers from earlier versions. */
+#section-2-empty-shelf.section-empty-shelf::before,
+#section-2-empty-shelf.section-empty-shelf::after {
+  content: none;
+  display: none;
 }
 
 
 /* ============================================================================
    2. SECTION HEADER
-   ============================================================================ */
+============================================================================ */
 
-.section-2-header {
+#section-2-empty-shelf .section-2-header {
+  width: 100%;
   max-width: 880px;
-  margin: 0 auto 4rem; /* header-to-card gap lives here, see plan section 2 */
+  margin: 0 auto clamp(3.5rem, 5vw, 4.75rem);
   text-align: center;
 }
 
-.section-2-header .section-label {
+#section-2-empty-shelf .section-label {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -68,1724 +114,40 @@
 
   font-family: var(--font-body);
   font-size: 0.78rem;
-  font-weight: 700;
+  font-weight: 800;
   color: var(--warm-brown-dark);
   text-transform: uppercase;
   letter-spacing: 0.18em;
 }
 
-.section-2-header h2 {
+#section-2-empty-shelf .section-2-header h2 {
   margin: 0 auto;
 
   font-family: var(--font-display);
   font-size: clamp(3rem, 5.8vw, 5.25rem);
-  font-weight: 650;
+  font-weight: 680;
   color: var(--ink);
   letter-spacing: -0.055em;
   line-height: 0.94;
 }
 
-.section-2-header p {
+#section-2-empty-shelf .section-2-header p {
   max-width: 680px;
   margin: 1.15rem auto 0;
 
   font-family: var(--font-body);
-  font-size: 1.05rem;
+  font-size: clamp(1rem, 1.2vw, 1.08rem);
+  font-weight: 400;
   color: var(--ink-light);
-  line-height: 1.7;
+  line-height: 1.72;
 }
 
 
 /* ============================================================================
-   3. SCROLL WRAPPER
-   ============================================================================ */
-
-.empty-shelf-scroll {
-  position: relative;
-}
-
-
-/* ============================================================================
-   4. STAGE VISIBILITY — PREVIEW MODE
+   3. SCROLL WRAPPER — DEVELOPMENT STACK MODE
    ------------------------------------------------------------------------
-   TEMPORARY: showing every stage stacked in normal page flow so you can
-   scroll through and review/edit all 11 at once. This is NOT the final
-   behavior — once GSAP comes back, only one stage should show at a time
-   again. To restore that later, delete this block and un-comment the
-   one below it.
-
-   Also adds a small CSS-only label above each stage (using its
-   data-stage attribute, no JS) so you can tell which block is which —
-   several of these stages reuse the same "Vagabond" row, so without a
-   label they're hard to tell apart while scrolling past quickly.
-   ============================================================================ */
-
-.empty-shelf-scroll {
-  display: flex;
-  flex-direction: column;
-  gap: 5rem;
-}
-
-.scroll-stage {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-}
-
-.scroll-stage::before {
-  content: "STAGE — " attr(data-stage);
-  font-family: var(--font-body);
-  font-size: 0.68rem;
-  font-weight: 800;
-  color: rgba(184, 121, 78, 0.55);
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-}
-
-/* PRODUCTION RULE — re-enable this (and remove the preview block above)
-   once GSAP is driving stage switching again:
-
-.scroll-stage[aria-hidden="true"] {
-  display: none;
-}
-
-*/
-
-
-/* ============================================================================
-   5. CARD SHELL — surface, border, shadow, highlight
-   ------------------------------------------------------------------------
-   This is where the "physical object on a desk" feeling comes from: a
-   faint top-to-bottom gradient (not flat cream), two-layer shadow (a
-   big soft ambient one + a tighter contact one), and a 1px inner
-   highlight that catches the light like polished paper.
-   ============================================================================ */
-
-.media-library-row {
-  width: min(var(--section-2-row-width), 100%);
-  min-height: 158px;
-  margin-inline: auto;
-
-  padding: 1.65rem 1.75rem;
-
-  background: linear-gradient(180deg, #fffdfa 0%, #fff8f0 100%);
-  border: 1px solid rgba(184, 121, 78, 0.24);
-  border-radius: 28px;
-
-  box-shadow:
-    0 30px 80px rgba(44, 36, 22, 0.12),
-    0 10px 24px rgba(44, 36, 22, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.75);
-
-  position: relative;
-  overflow: hidden; /* keeps the sheen sweep (section 11) contained */
-
-  transform: translateZ(0);
-  transition:
-    transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
-    border-color 260ms ease,
-    box-shadow 280ms ease;
-}
-
-
-/* ============================================================================
-   6. CARD INNER GRID — cover | text | score
-   ============================================================================ */
-
-.media-row-main {
-  position: relative;
-  z-index: 1; /* sits above the sheen sweep in section 11 */
-
-  display: grid;
-  grid-template-columns: 108px minmax(0, 1fr) auto;
-  grid-template-areas:
-    "cover info   score"
-    "cover chips  score";
-  column-gap: 1.35rem;
-  row-gap: 0.55rem;
-  align-items: center;
-}
-
-
-/* ============================================================================
-   7. COVER
-   ------------------------------------------------------------------------
-   Fallback gradient means even a missing/broken image still reads as an
-   intentional object, never a broken-icon moment.
-   ============================================================================ */
-
-.media-row-cover {
-  grid-area: cover;
-  grid-row: 1 / -1;
-
-  width: 108px;
-  aspect-ratio: 2 / 3;
-
-  border-radius: 17px;
-  overflow: hidden;
-
-  background:
-    radial-gradient(circle at 30% 22%, rgba(255, 255, 255, 0.30), transparent 32%),
-    linear-gradient(150deg, rgba(44, 36, 22, 0.12), rgba(184, 121, 78, 0.26)),
-    var(--cream-dark);
-
-  box-shadow: 0 14px 30px rgba(44, 36, 22, 0.16);
-
-  transition:
-    transform 280ms cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 280ms ease;
-}
-
-.media-row-cover img {
-  width: 100%;
-  height: 100%;
-  display: block;
-  object-fit: cover;
-
-  color: transparent; /* hides alt text if the path 404s */
-  font-size: 0;
-
-  transition: filter 280ms ease;
-}
-
-/* Cover reacts to hovering the WHOLE row, not just itself — a stable,
-   understated lift rather than the hero card's 3D tilt. */
-.media-library-row:hover .media-row-cover {
-  transform: translateY(-3px) rotate(-1deg);
-  box-shadow: 0 18px 36px rgba(44, 36, 22, 0.20);
-}
-
-.media-library-row:hover .media-row-cover img {
-  filter: saturate(1.05) contrast(1.04);
-}
-
-
-/* ============================================================================
-   8. TITLE / AUTHOR
-   ============================================================================ */
-
-.media-row-info {
-  grid-area: info;
-  min-width: 0;
-  align-self: end;
-}
-
-.media-row-info h3 {
-  font-family: var(--font-display);
-  font-size: clamp(1.75rem, 2.6vw, 2rem);
-  font-weight: 700;
-  color: var(--ink);
-  letter-spacing: -0.035em;
-  line-height: 1;
-}
-
-.media-row-info p {
-  margin-top: 0.35rem;
-
-  font-family: var(--font-body);
-  font-size: 0.95rem;
-  font-weight: 500;
-  color: var(--ink-light);
-  line-height: 1.3;
-}
-
-
-/* ============================================================================
-   9. META CHIPS
-   ============================================================================ */
-
-.media-row-format,
-.media-row-status {
-  grid-area: chips;
-  align-self: start;
-  margin-top: 0.75rem; /* author -> chips spacing */
-}
-
-.media-row-status {
-  margin-left: calc(0.55rem + 4.6rem); /* chip-gap + estimated format-chip width */
-}
-
-.media-row-format span,
-.media-row-status span {
-  display: inline-flex;
-  align-items: center;
-
-  padding: 0.34rem 0.7rem;
-
-  background: rgba(184, 121, 78, 0.08);
-  border: 1px solid rgba(184, 121, 78, 0.22);
-  border-radius: 999px;
-
-  font-family: var(--font-body);
-  font-size: 0.78rem;
-  font-weight: 700;
-  color: var(--warm-brown-dark);
-  white-space: nowrap;
-
-  transition: background 220ms ease, border-color 220ms ease;
-}
-
-.media-library-row:hover .media-row-format span,
-.media-library-row:hover .media-row-status span {
-  background: rgba(184, 121, 78, 0.12);
-  border-color: rgba(184, 121, 78, 0.34);
-}
-
-
-/* ============================================================================
-   10. SCORE CAPSULE — with "but why?" hover reveal
-   ------------------------------------------------------------------------
-   Default state shows only "9/10" — clean, no clutter. Hovering (or
-   focusing, for keyboard users) the capsule reveals "but why?" below it,
-   which is the whole thesis of the section compressed into one
-   interaction: a score alone doesn't explain itself.
-   ============================================================================ */
-
-.media-row-score {
-  grid-area: score;
-  grid-row: 1 / -1;
-  align-self: center;
-  justify-self: end;
-
-  position: relative;
-  min-width: 86px;
-  height: 56px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  padding: 0 1.1rem;
-
-  background: rgba(255, 252, 248, 0.9);
-  border: 1px solid rgba(184, 121, 78, 0.24);
-  border-radius: 999px;
-  box-shadow: 0 8px 22px rgba(44, 36, 22, 0.06);
-
-  cursor: default;
-
-  transition:
-    transform 240ms ease,
-    padding-bottom 240ms ease,
-    background 240ms ease,
-    border-color 240ms ease,
-    box-shadow 240ms ease;
-}
-
-.media-row-score span {
-  font-family: var(--font-display);
-  font-size: 1.45rem;
-  font-weight: 700;
-  color: var(--ink);
-  letter-spacing: -0.02em;
-  line-height: 1;
-
-  transition: transform 240ms ease;
-}
-
-.media-row-score::after {
-  content: "but why?";
-  position: absolute;
-  left: 50%;
-  bottom: 0.45rem;
-  transform: translateX(-50%) translateY(4px);
-
-  font-family: var(--font-body);
-  font-size: 0.62rem;
-  font-weight: 800;
-  color: var(--warm-brown-dark);
-  text-transform: uppercase;
-  letter-spacing: 0.09em;
-  white-space: nowrap;
-
-  opacity: 0;
-  transition: opacity 220ms ease, transform 220ms ease;
-}
-
-.media-row-score:hover,
-.media-row-score:focus-within {
-  transform: translateY(-2px);
-  padding-bottom: 1.1rem;
-  background: rgba(255, 252, 248, 1);
-  border-color: rgba(184, 121, 78, 0.4);
-  box-shadow: 0 14px 30px rgba(127, 75, 47, 0.14);
-}
-
-.media-row-score:hover span,
-.media-row-score:focus-within span {
-  transform: translateY(-5px);
-}
-
-.media-row-score:hover::after,
-.media-row-score:focus-within::after {
-  opacity: 0.9;
-  transform: translateX(-50%) translateY(0);
-}
-
-
-/* ============================================================================
-   11. ROW HOVER — lift, deeper shadow, warmer border, soft sheen
-   ------------------------------------------------------------------------
-   The sheen is a slow (700ms) diagonal highlight, deliberately subtle —
-   this should read as polished paper catching light, not glossy plastic.
-   ============================================================================ */
-
-.media-library-row::before {
-  content: "";
-  position: absolute;
-  top: -50%;
-  left: -85%;
-  z-index: 0;
-  width: 55%;
-  height: 200%;
-  pointer-events: none;
-
-  background: linear-gradient(
-    105deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.10) 35%,
-    rgba(255, 255, 255, 0.30) 48%,
-    rgba(255, 255, 255, 0.10) 61%,
-    transparent 100%
-  );
-
-  transform: translateX(0) rotate(8deg);
-  opacity: 0;
-
-  transition: transform 700ms cubic-bezier(0.22, 1, 0.36, 1), opacity 220ms ease;
-}
-
-.media-library-row:hover {
-  transform: translateY(-2px);
-  border-color: rgba(127, 75, 47, 0.34);
-
-  box-shadow:
-    0 38px 95px rgba(44, 36, 22, 0.16),
-    0 14px 30px rgba(44, 36, 22, 0.10),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8);
-}
-
-.media-library-row:hover::before {
-  opacity: 1;
-  transform: translateX(310%) rotate(8deg);
-}
-
-
-/* ============================================================================
-   12. MOBILE LAYOUT
-   ============================================================================ */
-
-@media (max-width: 900px) {
-  #section-2-empty-shelf,
-  .section-empty-shelf {
-    padding: 4.5rem max(1.25rem, calc((100vw - 760px) / 2 + 1.25rem)) 5rem;
-  }
-
-  .media-library-row {
-    width: min(860px, 100%);
-  }
-
-  .media-row-cover {
-    width: 100px;
-  }
-
-  .media-row-format,
-  .media-row-status {
-    grid-area: chips;
-  }
-}
-
-@media (max-width: 640px) {
-  #section-2-empty-shelf,
-  .section-empty-shelf {
-    padding: 4rem 1.1rem 4.5rem;
-  }
-
-  .section-2-header {
-    margin-bottom: 2.75rem;
-  }
-
-  .section-2-header h2 {
-    font-size: clamp(2.15rem, 9vw, 2.6rem);
-  }
-
-  .section-2-header p {
-    font-size: 0.95rem;
-  }
-
-  .media-library-row {
-    padding: 1.15rem 1.2rem;
-    border-radius: 22px;
-  }
-
-  .media-row-main {
-    grid-template-columns: 76px minmax(0, 1fr) auto;
-    column-gap: 0.9rem;
-  }
-
-  .media-row-cover {
-    width: 76px;
-    border-radius: 12px;
-  }
-
-  .media-row-info h3 {
-    font-size: 1.35rem;
-  }
-
-  .media-row-status {
-    margin-left: calc(0.4rem + 3.6rem);
-  }
-
-  .media-row-score {
-    min-width: 74px;
-    height: 46px;
-    padding: 0 0.8rem;
-  }
-
-  .media-row-score span {
-    font-size: 1.2rem;
-  }
-
-  /* Hover-dependent reveal doesn't work well on touch — keep the score
-     legible without ever needing a hover on mobile. */
-  .media-row-score::after {
-    display: none;
-  }
-}
-
-
-/* ============================================================================
-   13. BUTTON TRAY — "Saved layers" + depth buttons
-   ------------------------------------------------------------------------
-   Appears inside the card for every stage from row-with-quotes onward.
-   Sits below the cover/info/score grid, separated by a thin warm rule.
-   Still no landing animation here — that's GSAP's job later. This is
-   just what the tray and buttons look like at rest and on hover.
-   ============================================================================ */
-
-.media-row-details {
-  position: relative;
-  z-index: 1;
-
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.55rem;
-
-  margin-top: 1.25rem;
-  padding-top: 1rem;
-  border-top: 1px solid rgba(184, 121, 78, 0.16);
-}
-
-.media-row-details::before {
-  content: "Saved layers";
-  flex-basis: 100%;
-  margin-bottom: 0.1rem;
-
-  font-family: var(--font-body);
-  font-size: 0.68rem;
-  font-weight: 800;
-  color: rgba(155, 135, 114, 0.9);
-  text-transform: uppercase;
-  letter-spacing: 0.11em;
-}
-
-.depth-button {
-  min-height: 38px;
-  padding: 0 0.95rem;
-
-  background: rgba(184, 121, 78, 0.07);
-  border: 1px solid rgba(184, 121, 78, 0.26);
-  border-radius: 999px;
-
-  font-family: var(--font-body);
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: var(--ink-mid);
-
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-
-  transition:
-    background 220ms ease,
-    border-color 220ms ease,
-    color 220ms ease,
-    transform 220ms ease,
-    box-shadow 220ms ease;
-}
-
-.depth-button:hover {
-  background: rgba(184, 121, 78, 0.14);
-  border-color: rgba(184, 121, 78, 0.42);
-  color: var(--ink);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 16px rgba(127, 75, 47, 0.14);
-}
-
-.depth-button:active {
-  transform: translateY(0);
-  box-shadow: none;
-}
-
-.depth-button:focus-visible {
-  outline: 3px solid rgba(184, 121, 78, 0.36);
-  outline-offset: 3px;
-}
-
-/* Slightly warmer fill — visually marks "the layer this stage just added"
-   even before GSAP gives it an actual landing animation. */
-.depth-button-new {
-  background: rgba(184, 121, 78, 0.13);
-  border-color: rgba(184, 121, 78, 0.4);
-  color: var(--ink);
-}
-
-
-/* ============================================================================
-   14. EVIDENCE STAGE CONTAINERS
-   ------------------------------------------------------------------------
-   Each cloud (quotes/moments/characters/notes/thoughts) replaces the row
-   entirely for its stage. For now these lay out as calm, responsive
-   grids — no absolute scatter/rotation yet, since that's tied to the
-   GSAP phase. Same max-width as the row card so the whole section keeps
-   one consistent column, even as the content swaps.
-   ============================================================================ */
-
-.falling-quotes,
-.moving-moments,
-.character-cloud,
-.notes-cloud,
-.thoughts-cloud {
-  display: grid;
-  gap: 1.1rem;
-  width: min(var(--section-2-row-width), 100%);
-  margin-inline: auto;
-}
-
-.falling-quotes,
-.notes-cloud {
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-}
-
-.moving-moments {
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-}
-
-.character-cloud {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-}
-
-.thoughts-cloud {
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-}
-
-
-/* ============================================================================
-   15. QUOTES — paper strips
-   ============================================================================ */
-
-.falling-quote {
-  padding: 1.1rem 1.25rem;
-
-  background: linear-gradient(180deg, #fffdfa 0%, #fff8f0 100%);
-  border: 1px solid rgba(127, 75, 47, 0.18);
-  border-radius: 18px;
-  box-shadow: 0 18px 42px rgba(44, 36, 22, 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.6);
-
-  font-family: var(--font-display);
-  font-size: 1.05rem;
-  line-height: 1.5;
-  color: var(--ink-mid);
-  cursor: default;
-
-  transition: transform 240ms ease, box-shadow 240ms ease, border-color 240ms ease, color 240ms ease;
-}
-
-.falling-quote:hover {
-  transform: translateY(-5px);
-  color: var(--ink);
-  border-color: rgba(184, 121, 78, 0.36);
-  box-shadow: 0 26px 56px rgba(44, 36, 22, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.7);
-}
-
-
-/* ============================================================================
-   16. MOMENTS — manga panels
-   ============================================================================ */
-
-.moment-frame {
-  margin: 0;
-  padding: 0.6rem;
-
-  background: linear-gradient(180deg, #fffdfa 0%, #fff4e6 100%);
-  border: 1px solid rgba(44, 36, 22, 0.22);
-  border-radius: 16px;
-  box-shadow: 0 22px 50px rgba(44, 36, 22, 0.14);
-
-  cursor: default;
-  transition: transform 240ms ease, box-shadow 240ms ease, border-color 240ms ease;
-}
-
-.moment-frame img {
-  width: 100%;
-  aspect-ratio: 16 / 10;
-  display: block;
-  object-fit: cover;
-  border-radius: 10px;
-
-  background: var(--cream-dark);
-  color: transparent;
-  font-size: 0;
-
-  transition: transform 380ms ease, filter 240ms ease;
-}
-
-.moment-frame figcaption {
-  margin-top: 0.5rem;
-  padding: 0 0.15rem;
-
-  font-family: var(--font-body);
-  font-size: 0.78rem;
-  font-weight: 650;
-  color: var(--ink-faint);
-  line-height: 1.35;
-
-  transition: color 240ms ease;
-}
-
-.moment-frame:hover {
-  transform: translateY(-5px);
-  border-color: rgba(44, 36, 22, 0.36);
-  box-shadow: 0 30px 66px rgba(44, 36, 22, 0.20);
-}
-
-.moment-frame:hover img {
-  transform: scale(1.03);
-  filter: saturate(1.06) contrast(1.05);
-}
-
-.moment-frame:hover figcaption {
-  color: var(--ink-mid);
-}
-
-
-/* ============================================================================
-   17. CHARACTERS — portrait cards
-   ------------------------------------------------------------------------
-   Musashi (character-1) is the protagonist, so it spans two grid columns
-   to read as the lead card among supporting characters.
-   ============================================================================ */
-
-.character-name {
-  margin: 0;
-  overflow: hidden;
-
-  background: linear-gradient(180deg, #fffdfa 0%, #fff8f0 100%);
-  border: 1px solid rgba(127, 75, 47, 0.18);
-  border-radius: 20px;
-  box-shadow: 0 20px 46px rgba(44, 36, 22, 0.12);
-
-  cursor: default;
-  transition: transform 240ms ease, box-shadow 240ms ease, border-color 240ms ease;
-}
-
-.character-name img {
-  width: 100%;
-  aspect-ratio: 3 / 4;
-  display: block;
-  object-fit: cover;
-
-  background: var(--cream-dark);
-  color: transparent;
-  font-size: 0;
-
-  transition: transform 380ms ease, filter 240ms ease;
-}
-
-.character-name figcaption {
-  padding: 0.7rem 0.8rem;
-
-  background: linear-gradient(180deg, rgba(255, 252, 248, 0.94), rgba(250, 246, 239, 0.9));
-
-  font-family: var(--font-body);
-  font-size: 0.82rem;
-  font-weight: 750;
-  color: var(--ink);
-  line-height: 1.25;
-
-  transition: background 240ms ease, color 240ms ease;
-}
-
-.character-1 {
-  grid-column: span 2;
-}
-
-.character-name:hover {
-  transform: translateY(-5px) scale(1.01);
-  border-color: rgba(184, 121, 78, 0.36);
-  box-shadow: 0 28px 60px rgba(44, 36, 22, 0.18);
-}
-
-.character-name:hover img {
-  transform: scale(1.03);
-  filter: saturate(1.06) contrast(1.04);
-}
-
-.character-name:hover figcaption {
-  color: var(--warm-brown-dark);
-  background: linear-gradient(180deg, #fffdfa, rgba(226, 185, 143, 0.16));
-}
-
-
-/* ============================================================================
-   18. NOTES — sticky notes
-   ============================================================================ */
-
-.note-card {
-  position: relative;
-  min-height: 130px;
-  padding: 1.05rem;
-
-  background: linear-gradient(180deg, #fffdfa 0%, #fff4e6 100%);
-  border: 1px solid rgba(127, 75, 47, 0.18);
-  border-radius: 15px;
-  box-shadow: 0 18px 40px rgba(44, 36, 22, 0.10);
-
-  font-family: var(--font-body);
-  font-size: 0.9rem;
-  line-height: 1.6;
-  color: var(--ink-mid);
-  cursor: default;
-
-  transition: transform 240ms ease, box-shadow 240ms ease, border-color 240ms ease, color 240ms ease;
-}
-
-/* Small "tape mark" at the top — the sticky-note tell. */
-.note-card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 18px;
-  right: 18px;
-  height: 6px;
-  border-radius: 0 0 999px 999px;
-  background: rgba(184, 121, 78, 0.20);
-  transition: background 240ms ease, height 240ms ease;
-}
-
-.note-card:hover {
-  transform: translateY(-5px);
-  color: var(--ink);
-  border-color: rgba(184, 121, 78, 0.36);
-  box-shadow: 0 26px 54px rgba(44, 36, 22, 0.16);
-}
-
-.note-card:hover::before {
-  height: 8px;
-  background: rgba(184, 121, 78, 0.28);
-}
-
-
-/* ============================================================================
-   19. THOUGHTS — journal pages
-   ------------------------------------------------------------------------
-   The deepest evidence category, so it's calmer than the rest: bigger,
-   more whitespace, softer hover, no rotation anywhere.
-   ============================================================================ */
-
-.thought-card {
-  padding: 1.5rem 1.6rem;
-
-  background: linear-gradient(180deg, #fffdfa 0%, #fff8f0 100%);
-  border: 1px solid rgba(127, 75, 47, 0.18);
-  border-radius: 24px;
-  box-shadow: 0 22px 52px rgba(44, 36, 22, 0.12);
-
-  font-family: var(--font-display);
-  font-size: 1.08rem;
-  line-height: 1.55;
-  color: var(--ink-mid);
-  cursor: default;
-
-  transition: transform 260ms ease, box-shadow 260ms ease, border-color 260ms ease, color 260ms ease;
-}
-
-.thought-card:hover {
-  transform: translateY(-4px);
-  color: var(--ink);
-  border-color: rgba(184, 121, 78, 0.32);
-  box-shadow: 0 28px 60px rgba(44, 36, 22, 0.16);
-}
-
-
-/* ============================================================================
-   20. RESPONSIVE — evidence + button tray
-   ============================================================================ */
-
-@media (max-width: 900px) {
-  .character-cloud {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .character-1 {
-    grid-column: span 2;
-  }
-}
-
-@media (max-width: 640px) {
-  .media-row-details {
-    margin-top: 1rem;
-    padding-top: 0.85rem;
-    gap: 0.45rem;
-  }
-
-  .depth-button {
-    flex: 1 1 calc(50% - 0.45rem);
-    min-height: 40px;
-    padding-inline: 0.75rem;
-  }
-
-  .falling-quotes,
-  .moving-moments,
-  .notes-cloud,
-  .thoughts-cloud {
-    grid-template-columns: 1fr;
-  }
-
-  .character-cloud {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.85rem;
-  }
-
-  .character-1 {
-    grid-column: span 2;
-  }
-
-  /* touch devices don't hover — keep the resting state calm and legible,
-     hover-only lifts are a bonus on devices that support them, not a
-     requirement to read the content */
-}
-
-/* ============================================================================
-   SECTION 2 — PART 1 PREMIUM OVERRIDE PATCH
-   Paste this at the VERY BOTTOM of section-2.css
-   ============================================================================ */
-
-
-/* ============================================================================
-   1. PRODUCTION PREVIEW FIX
-   Hide debug stage labels and show only active stage for now.
-   ============================================================================ */
-
-#section-2-empty-shelf .scroll-stage::before {
-  content: none;
-  display: none;
-}
-
-#section-2-empty-shelf .empty-shelf-scroll {
-  position: relative;
-  width: 100%;
-  max-width: 1060px;
-  margin-inline: auto;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  gap: 0;
-}
-
-/* For now, only show the active stage.
-   Later GSAP will replace this with opacity/absolute positioning. */
-#section-2-empty-shelf .scroll-stage[aria-hidden="true"] {
-  display: none;
-}
-
-#section-2-empty-shelf .scroll-stage[aria-hidden="false"] {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-
-/* ============================================================================
-   2. CARD STAGE HALO
-   This makes the row feel like the center of attention.
-   ============================================================================ */
-
-#section-2-empty-shelf .empty-shelf-scroll::before {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 50%;
-
-  width: min(980px, 92vw);
-  height: 280px;
-
-  transform: translate(-50%, -48%);
-  pointer-events: none;
-  z-index: 0;
-
-  background:
-    radial-gradient(
-      ellipse at 50% 50%,
-      rgba(226, 185, 143, 0.30) 0%,
-      rgba(226, 185, 143, 0.13) 34%,
-      rgba(184, 121, 78, 0.06) 54%,
-      transparent 74%
-    );
-
-  filter: blur(34px);
-  opacity: 0.85;
-}
-
-#section-2-empty-shelf .scroll-stage {
-  position: relative;
-  z-index: 1;
-}
-
-
-/* ============================================================================
-   3. STRONGER PREMIUM ROW CARD
-   More depth, richer surface, better object feeling.
-   ============================================================================ */
-
-#section-2-empty-shelf .media-library-row {
-  --row-sheen-x: -120%;
-
-  width: min(940px, 100%);
-  min-height: 156px;
-
-  padding: 1.55rem 1.65rem;
-
-  background:
-    linear-gradient(
-      135deg,
-      rgba(255, 255, 255, 0.72) 0%,
-      transparent 28%
-    ),
-    linear-gradient(
-      180deg,
-      #fffefa 0%,
-      #fff9f1 58%,
-      #fff5e9 100%
-    );
-
-  border: 1px solid rgba(184, 121, 78, 0.26);
-  border-radius: 30px;
-
-  box-shadow:
-    0 44px 110px rgba(44, 36, 22, 0.14),
-    0 18px 36px rgba(44, 36, 22, 0.10),
-    0 2px 0 rgba(255, 255, 255, 0.7) inset,
-    0 -1px 0 rgba(127, 75, 47, 0.06) inset;
-
-  position: relative;
-  overflow: visible;
-
-  transform:
-    perspective(1200px)
-    translateY(0)
-    rotateX(0deg)
-    rotateY(0deg);
-
-  transform-style: preserve-3d;
-
-  transition:
-    transform 320ms cubic-bezier(0.22, 1, 0.36, 1),
-    border-color 260ms ease,
-    box-shadow 320ms ease,
-    background 260ms ease;
-}
-
-/* Warm contact shadow under the card */
-#section-2-empty-shelf .media-library-row::after {
-  content: "";
-  position: absolute;
-  left: 7%;
-  right: 7%;
-  bottom: -18px;
-  height: 32px;
-  z-index: -1;
-  pointer-events: none;
-
-  background:
-    radial-gradient(
-      ellipse at center,
-      rgba(44, 36, 22, 0.20) 0%,
-      rgba(44, 36, 22, 0.09) 36%,
-      transparent 72%
-    );
-
-  filter: blur(16px);
-  opacity: 0.5;
-
-  transition:
-    opacity 300ms ease,
-    transform 300ms ease;
-}
-
-/* Card-wide premium gloss */
-#section-2-empty-shelf .media-library-row::before {
-  content: "";
-  position: absolute;
-  top: -42%;
-  left: var(--row-sheen-x);
-  z-index: 2;
-
-  width: 42%;
-  height: 190%;
-
-  pointer-events: none;
-
-  background:
-    linear-gradient(
-      105deg,
-      transparent 0%,
-      rgba(255, 255, 255, 0.08) 34%,
-      rgba(255, 255, 255, 0.40) 48%,
-      rgba(226, 185, 143, 0.12) 56%,
-      transparent 72%
-    );
-
-  transform: rotate(10deg);
-  opacity: 0;
-
-  transition:
-    left 850ms cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 220ms ease;
-}
-
-#section-2-empty-shelf .media-library-row:hover {
-  transform:
-    perspective(1200px)
-    translateY(-5px)
-    rotateX(0.6deg)
-    rotateY(-0.45deg);
-
-  border-color: rgba(127, 75, 47, 0.38);
-
-  box-shadow:
-    0 56px 130px rgba(44, 36, 22, 0.18),
-    0 24px 46px rgba(44, 36, 22, 0.12),
-    0 2px 0 rgba(255, 255, 255, 0.8) inset,
-    0 -1px 0 rgba(127, 75, 47, 0.08) inset;
-}
-
-#section-2-empty-shelf .media-library-row:hover::before {
-  left: 126%;
-  opacity: 1;
-}
-
-#section-2-empty-shelf .media-library-row:hover::after {
-  opacity: 0.72;
-  transform: translateY(4px) scaleX(1.04);
-}
-
-
-/* ============================================================================
-   4. CARD INNER LAYOUT
-   Tightens spacing so the card feels less empty.
-   ============================================================================ */
-
-#section-2-empty-shelf .media-row-main {
-  position: relative;
-  z-index: 3;
-
-  display: grid;
-  grid-template-columns: 112px minmax(0, 1fr) auto;
-  grid-template-areas:
-    "cover info  score"
-    "cover chips score";
-
-  column-gap: 1.45rem;
-  row-gap: 0.58rem;
-  align-items: center;
-}
-
-
-/* ============================================================================
-   5. COVER — richer object, shine, physical lift
-   ============================================================================ */
-
-#section-2-empty-shelf .media-row-cover {
-  grid-area: cover;
-
-  width: 112px;
-  aspect-ratio: 2 / 3;
-
-  position: relative;
-  overflow: hidden;
-
-  border-radius: 19px;
-  border: 1px solid rgba(127, 75, 47, 0.16);
-
-  background:
-    radial-gradient(
-      circle at 24% 18%,
-      rgba(255, 255, 255, 0.46),
-      transparent 30%
-    ),
-    linear-gradient(
-      145deg,
-      rgba(255, 252, 248, 0.34),
-      rgba(226, 185, 143, 0.34) 42%,
-      rgba(127, 75, 47, 0.16)
-    ),
-    var(--cream-dark);
-
-  box-shadow:
-    0 22px 40px rgba(44, 36, 22, 0.20),
-    0 8px 16px rgba(44, 36, 22, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.46);
-
-  transform: translateZ(18px);
-  transition:
-    transform 320ms cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 320ms ease,
-    border-color 260ms ease;
-}
-
-/* subtle book edge */
-#section-2-empty-shelf .media-row-cover::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  pointer-events: none;
-
-  background:
-    linear-gradient(
-      90deg,
-      rgba(255, 255, 255, 0.26) 0%,
-      transparent 18%,
-      transparent 82%,
-      rgba(36, 26, 17, 0.08) 100%
-    ),
-    linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.18),
-      transparent 42%
-    );
-
-  opacity: 0.72;
-}
-
-/* cover-specific shine */
-#section-2-empty-shelf .media-row-cover::after {
-  content: "";
-  position: absolute;
-  top: -35%;
-  left: -90%;
-  z-index: 3;
-
-  width: 56%;
-  height: 170%;
-
-  pointer-events: none;
-
-  background:
-    linear-gradient(
-      105deg,
-      transparent 0%,
-      rgba(255, 255, 255, 0.12) 34%,
-      rgba(255, 255, 255, 0.55) 50%,
-      transparent 68%
-    );
-
-  transform: rotate(12deg);
-  opacity: 0;
-
-  transition:
-    left 780ms cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 180ms ease;
-}
-
-#section-2-empty-shelf .media-row-cover img {
-  width: 100%;
-  height: 100%;
-
-  display: block;
-  object-fit: cover;
-
-  color: transparent;
-  font-size: 0;
-
-  transform: scale(1.001);
-  transition:
-    transform 420ms cubic-bezier(0.22, 1, 0.36, 1),
-    filter 300ms ease;
-}
-
-#section-2-empty-shelf .media-library-row:hover .media-row-cover {
-  transform: translateY(-6px) rotate(-1.2deg) translateZ(32px);
-
-  border-color: rgba(127, 75, 47, 0.28);
-
-  box-shadow:
-    0 30px 54px rgba(44, 36, 22, 0.24),
-    0 12px 22px rgba(44, 36, 22, 0.13),
-    inset 0 1px 0 rgba(255, 255, 255, 0.55);
-}
-
-#section-2-empty-shelf .media-library-row:hover .media-row-cover::after,
-#section-2-empty-shelf .media-row-cover:hover::after {
-  left: 132%;
-  opacity: 1;
-}
-
-#section-2-empty-shelf .media-library-row:hover .media-row-cover img {
-  transform: scale(1.035);
-  filter: saturate(1.08) contrast(1.06);
-}
-
-
-/* ============================================================================
-   6. TITLE / AUTHOR — stronger hierarchy
-   ============================================================================ */
-
-#section-2-empty-shelf .media-row-info {
-  grid-area: info;
-  align-self: end;
-  min-width: 0;
-
-  transform: translateZ(14px);
-}
-
-#section-2-empty-shelf .media-row-info h3 {
-  margin: 0;
-
-  font-family: var(--font-display);
-  font-size: clamp(1.9rem, 2.4vw, 2.18rem);
-  font-weight: 700;
-  line-height: 0.95;
-  letter-spacing: -0.045em;
-
-  color: var(--ink);
-
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.52);
-}
-
-#section-2-empty-shelf .media-row-info p {
-  margin-top: 0.42rem;
-
-  font-family: var(--font-body);
-  font-size: 0.96rem;
-  font-weight: 550;
-  line-height: 1.35;
-
-  color: var(--ink-light);
-}
-
-#section-2-empty-shelf .media-library-row:hover .media-row-info h3 {
-  color: #1d140d;
-}
-
-
-/* ============================================================================
-   7. META CHIPS — less flat, better grouped
-   ============================================================================ */
-
-#section-2-empty-shelf .media-row-format,
-#section-2-empty-shelf .media-row-status {
-  grid-area: chips;
-  align-self: start;
-  margin-top: 0.72rem;
-
-  transform: translateZ(10px);
-}
-
-#section-2-empty-shelf .media-row-status {
-  margin-left: 4.9rem;
-}
-
-#section-2-empty-shelf .media-row-format span,
-#section-2-empty-shelf .media-row-status span {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  min-height: 30px;
-  padding: 0.35rem 0.78rem;
-
-  background:
-    linear-gradient(
-      180deg,
-      rgba(255, 252, 248, 0.82) 0%,
-      rgba(226, 185, 143, 0.13) 100%
-    );
-
-  border: 1px solid rgba(184, 121, 78, 0.28);
-  border-radius: 999px;
-
-  box-shadow:
-    0 5px 12px rgba(127, 75, 47, 0.06),
-    inset 0 1px 0 rgba(255, 255, 255, 0.65);
-
-  font-family: var(--font-body);
-  font-size: 0.76rem;
-  font-weight: 800;
-  line-height: 1;
-  color: var(--warm-brown-dark);
-  white-space: nowrap;
-
-  transition:
-    transform 220ms ease,
-    background 220ms ease,
-    border-color 220ms ease,
-    box-shadow 220ms ease;
-}
-
-#section-2-empty-shelf .media-library-row:hover .media-row-format span,
-#section-2-empty-shelf .media-library-row:hover .media-row-status span {
-  background:
-    linear-gradient(
-      180deg,
-      rgba(255, 252, 248, 0.94) 0%,
-      rgba(226, 185, 143, 0.20) 100%
-    );
-
-  border-color: rgba(184, 121, 78, 0.42);
-  box-shadow:
-    0 7px 16px rgba(127, 75, 47, 0.10),
-    inset 0 1px 0 rgba(255, 255, 255, 0.72);
-}
-
-#section-2-empty-shelf .media-row-format span:hover,
-#section-2-empty-shelf .media-row-status span:hover {
-  transform: translateY(-1px);
-}
-
-
-/* ============================================================================
-   8. SCORE CAPSULE — stable shape + floating “but why?” popover
-   ============================================================================ */
-
-#section-2-empty-shelf .media-row-score {
-  grid-area: score;
-  grid-row: 1 / -1;
-  align-self: center;
-  justify-self: end;
-
-  position: relative;
-
-  min-width: 92px;
-  height: 58px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  padding: 0 1.18rem;
-
-  background:
-    linear-gradient(
-      180deg,
-      rgba(255, 252, 248, 0.98) 0%,
-      rgba(255, 246, 235, 0.92) 100%
-    );
-
-  border: 1px solid rgba(184, 121, 78, 0.26);
-  border-radius: 999px;
-
-  box-shadow:
-    0 12px 28px rgba(44, 36, 22, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.72);
-
-  cursor: default;
-
-  transform: translateZ(22px);
-
-  transition:
-    transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
-    background 240ms ease,
-    border-color 240ms ease,
-    box-shadow 260ms ease;
-}
-
-#section-2-empty-shelf .media-row-score span {
-  position: relative;
-  z-index: 2;
-
-  font-family: var(--font-display);
-  font-size: 1.48rem;
-  font-weight: 700;
-  letter-spacing: -0.025em;
-  line-height: 1;
-
-  color: var(--ink);
-
-  transition: color 240ms ease;
-}
-
-/* soft aura behind score */
-#section-2-empty-shelf .media-row-score::before {
-  content: "";
-  position: absolute;
-  inset: -12px;
-  z-index: 0;
-
-  border-radius: 999px;
-  pointer-events: none;
-
-  background:
-    radial-gradient(
-      circle,
-      rgba(226, 185, 143, 0.34) 0%,
-      rgba(184, 121, 78, 0.14) 40%,
-      transparent 72%
-    );
-
-  opacity: 0;
-  transform: scale(0.86);
-
-  transition:
-    opacity 240ms ease,
-    transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-/* floating popover ABOVE the rating */
-#section-2-empty-shelf .media-row-score::after {
-  content: "but why?";
-  position: absolute;
-  left: 50%;
-  bottom: calc(100% + 0.62rem);
-  z-index: 5;
-
-  transform:
-    translateX(-50%)
-    translateY(8px)
-    scale(0.96);
-
-  padding: 0.42rem 0.66rem;
-
-  background:
-    linear-gradient(
-      180deg,
-      #fffdfa 0%,
-      #fff3e4 100%
-    );
-
-  border: 1px solid rgba(184, 121, 78, 0.30);
-  border-radius: 999px;
-
-  box-shadow:
-    0 14px 30px rgba(44, 36, 22, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.72);
-
-  font-family: var(--font-body);
-  font-size: 0.64rem;
-  font-weight: 850;
-  color: var(--warm-brown-dark);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  white-space: nowrap;
-
-  opacity: 0;
-  pointer-events: none;
-
-  transition:
-    opacity 220ms ease,
-    transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-/* tiny connector dot */
-#section-2-empty-shelf .media-row-score .score-dot {
-  display: none;
-}
-
-#section-2-empty-shelf .media-row-score:hover,
-#section-2-empty-shelf .media-row-score:focus-within {
-  transform: translateY(-3px) translateZ(34px);
-
-  background:
-    linear-gradient(
-      180deg,
-      #fffefa 0%,
-      #fff1df 100%
-    );
-
-  border-color: rgba(127, 75, 47, 0.42);
-
-  box-shadow:
-    0 18px 36px rgba(127, 75, 47, 0.16),
-    inset 0 1px 0 rgba(255, 255, 255, 0.78);
-}
-
-#section-2-empty-shelf .media-row-score:hover::before,
-#section-2-empty-shelf .media-row-score:focus-within::before {
-  opacity: 1;
-  transform: scale(1);
-}
-
-#section-2-empty-shelf .media-row-score:hover::after,
-#section-2-empty-shelf .media-row-score:focus-within::after {
-  opacity: 1;
-
-  transform:
-    translateX(-50%)
-    translateY(0)
-    scale(1);
-}
-
-
-/* ============================================================================
-   9. FINAL-ROW / BUTTON ROW COMPATIBILITY
-   Keeps expanded rows from feeling cramped later.
-   ============================================================================ */
-
-#section-2-empty-shelf .media-row-details {
-  position: relative;
-  z-index: 3;
-}
-
-
-/* ============================================================================
-   10. MOBILE ADJUSTMENTS
-   ============================================================================ */
-
-@media (max-width: 900px) {
-  #section-2-empty-shelf .media-library-row {
-    width: min(880px, 100%);
-  }
-
-  #section-2-empty-shelf .media-row-main {
-    grid-template-columns: 100px minmax(0, 1fr) auto;
-    column-gap: 1.15rem;
-  }
-
-  #section-2-empty-shelf .media-row-cover {
-    width: 100px;
-  }
-
-  #section-2-empty-shelf .media-row-status {
-    margin-left: 4.55rem;
-  }
-}
-
-@media (max-width: 640px) {
-  #section-2-empty-shelf .empty-shelf-scroll::before {
-    width: 96vw;
-    height: 240px;
-    filter: blur(30px);
-    opacity: 0.62;
-  }
-
-  #section-2-empty-shelf .media-library-row {
-    width: 100%;
-    min-height: auto;
-    padding: 1.05rem;
-    border-radius: 24px;
-  }
-
-  #section-2-empty-shelf .media-row-main {
-    grid-template-columns: 78px minmax(0, 1fr) auto;
-    grid-template-areas:
-      "cover info score"
-      "cover chips chips";
-
-    column-gap: 0.9rem;
-    row-gap: 0.52rem;
-  }
-
-  #section-2-empty-shelf .media-row-cover {
-    width: 78px;
-    border-radius: 14px;
-  }
-
-  #section-2-empty-shelf .media-row-info h3 {
-    font-size: 1.42rem;
-  }
-
-  #section-2-empty-shelf .media-row-info p {
-    font-size: 0.86rem;
-  }
-
-  #section-2-empty-shelf .media-row-format,
-  #section-2-empty-shelf .media-row-status {
-    margin-top: 0.45rem;
-  }
-
-  #section-2-empty-shelf .media-row-status {
-    margin-left: 4.25rem;
-  }
-
-  #section-2-empty-shelf .media-row-format span,
-  #section-2-empty-shelf .media-row-status span {
-    min-height: 28px;
-    padding: 0.32rem 0.62rem;
-    font-size: 0.7rem;
-  }
-
-  #section-2-empty-shelf .media-row-score {
-    min-width: 68px;
-    height: 44px;
-    padding-inline: 0.7rem;
-  }
-
-  #section-2-empty-shelf .media-row-score span {
-    font-size: 1.16rem;
-  }
-
-  /* No hover popover on touch/mobile */
-  #section-2-empty-shelf .media-row-score::after {
-    display: none;
-  }
-
-  #section-2-empty-shelf .media-library-row:hover {
-    transform: translateY(-2px);
-  }
-}
-
-
-/* ============================================================================
-   11. REDUCED MOTION
-   ============================================================================ */
-
-@media (prefers-reduced-motion: reduce) {
-  #section-2-empty-shelf .media-library-row,
-  #section-2-empty-shelf .media-library-row::before,
-  #section-2-empty-shelf .media-library-row::after,
-  #section-2-empty-shelf .media-row-cover,
-  #section-2-empty-shelf .media-row-cover::after,
-  #section-2-empty-shelf .media-row-cover img,
-  #section-2-empty-shelf .media-row-score,
-  #section-2-empty-shelf .media-row-score::before,
-  #section-2-empty-shelf .media-row-score::after,
-  #section-2-empty-shelf .media-row-format span,
-  #section-2-empty-shelf .media-row-status span {
-    transition: none;
-  }
-
-  #section-2-empty-shelf .media-library-row:hover,
-  #section-2-empty-shelf .media-library-row:hover .media-row-cover,
-  #section-2-empty-shelf .media-row-score:hover {
-    transform: none;
-  }
-
-  #section-2-empty-shelf .media-library-row::before,
-  #section-2-empty-shelf .media-row-cover::after {
-    display: none;
-  }
-}
-
-
-
-
-/* ============================================================================
-   SECTION 2 — PREMIUM ROW + ALL-STAGES DEV MODE PATCH
-   Paste at the bottom of section-2.css
-============================================================================ */
-
-
-/* ============================================================================
-   1. DEV MODE — SHOW ALL STAGES AGAIN
-   Later, when GSAP is ready, remove this block and let JS control stages.
+   You asked to see all steps now, so every stage is visible.
+   Later for GSAP, replace this with absolute/pinned stage behavior.
 ============================================================================ */
 
 #section-2-empty-shelf .empty-shelf-scroll {
@@ -1803,7 +165,9 @@
 #section-2-empty-shelf .scroll-stage,
 #section-2-empty-shelf .scroll-stage[aria-hidden="true"],
 #section-2-empty-shelf .scroll-stage[aria-hidden="false"] {
+  position: relative;
   width: 100%;
+
   display: flex !important;
   flex-direction: column;
   align-items: center;
@@ -1812,10 +176,9 @@
 
   opacity: 1 !important;
   visibility: visible !important;
-  position: relative;
 }
 
-/* Keep stage labels visible while designing */
+/* Visible while designing so you can see the steps. Remove for production. */
 #section-2-empty-shelf .scroll-stage::before {
   content: "STAGE — " attr(data-stage);
   display: inline-flex;
@@ -1830,10 +193,40 @@
   margin-bottom: 0.25rem;
 }
 
+/* Production mode later, when GSAP controls visibility:
+
+#section-2-empty-shelf .empty-shelf-scroll {
+  min-height: 72vh;
+  display: grid;
+  place-items: center;
+}
+
+#section-2-empty-shelf .scroll-stage {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  opacity: 0;
+  visibility: hidden;
+}
+
+#section-2-empty-shelf .scroll-stage.is-active {
+  opacity: 1;
+  visibility: visible;
+}
+
+#section-2-empty-shelf .scroll-stage::before {
+  content: none;
+}
+
+*/
+
 
 /* ============================================================================
-   2. ROW STAGE HALO
-   Warm glow behind every row card so the card becomes the center object.
+   4. ROW STAGE HALO
+   ------------------------------------------------------------------------
+   Warm light behind every row stage. This makes the card feel like the
+   center object instead of a flat rectangle on the page.
 ============================================================================ */
 
 #section-2-empty-shelf .stage-basic-row,
@@ -1881,7 +274,6 @@
     transform 320ms ease;
 }
 
-/* Hovering the row stage warms the light around the card */
 #section-2-empty-shelf .stage-basic-row:hover::after,
 #section-2-empty-shelf .stage-row-with-quotes:hover::after,
 #section-2-empty-shelf .stage-row-with-moment:hover::after,
@@ -1895,13 +287,13 @@
 
 
 /* ============================================================================
-   3. ROW CARD — STRONGER PREMIUM SURFACE
+   5. ROW CARD — PREMIUM SURFACE + 2.5D HOVER
 ============================================================================ */
 
 #section-2-empty-shelf .media-library-row {
   --row-sheen-position: 145%;
 
-  width: min(960px, 100%);
+  width: min(var(--section-2-row-width), 100%);
   min-height: 166px;
   margin-inline: auto;
 
@@ -1948,7 +340,7 @@
     box-shadow 340ms ease;
 }
 
-/* Soft contact shadow under the card */
+/* Contact shadow below card. */
 #section-2-empty-shelf .media-library-row::after {
   content: "";
   position: absolute;
@@ -1975,8 +367,7 @@
     transform 300ms ease;
 }
 
-/* Card-wide subtle premium sheen.
-   This is for the whole card, not the cover-specific gloss. */
+/* Card-wide subtle sheen on row hover. */
 #section-2-empty-shelf .media-library-row::before {
   content: "";
   position: absolute;
@@ -2048,8 +439,7 @@
 
 
 /* ============================================================================
-   4. INNER LAYOUT — BETTER GROUPING
-   cover | title/author/chips | score
+   6. ROW INNER LAYOUT — COVER | INFO GROUP | SCORE
 ============================================================================ */
 
 #section-2-empty-shelf .media-row-main {
@@ -2071,7 +461,6 @@
   grid-area: info;
   align-self: end;
   min-width: 0;
-
   transform: translateZ(18px);
 }
 
@@ -2091,7 +480,7 @@
 
 
 /* ============================================================================
-   5. COVER — OBJECT DEPTH + COVER-ONLY GLOSS
+   7. COVER — OBJECT DEPTH + COVER-ONLY GLOSS
 ============================================================================ */
 
 #section-2-empty-shelf .media-row-cover {
@@ -2134,7 +523,7 @@
     box-shadow 330ms ease;
 }
 
-/* Cover edge / book-jacket depth */
+/* Cover edge / book-jacket depth. */
 #section-2-empty-shelf .media-row-cover::before {
   content: "";
   position: absolute;
@@ -2159,7 +548,7 @@
   opacity: 0.76;
 }
 
-/* Cover gloss. This now triggers ONLY on .media-row-cover:hover. */
+/* Cover gloss: ONLY on .media-row-cover:hover. */
 #section-2-empty-shelf .media-row-cover::after {
   content: "";
   position: absolute;
@@ -2207,7 +596,7 @@
     filter 300ms ease;
 }
 
-/* Row hover gives the cover depth, but NOT gloss. */
+/* Row hover gives cover depth, but NOT gloss and NOT image filter. */
 #section-2-empty-shelf .media-library-row:hover .media-row-cover {
   transform: translateY(-4px) rotate(-0.8deg) translateZ(34px);
 
@@ -2219,13 +608,16 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.58);
 }
 
-/* Important: cancel any old row-hover cover shine from earlier CSS. */
 #section-2-empty-shelf .media-library-row:hover .media-row-cover::after {
   left: -92%;
   opacity: 0;
 }
 
-/* Cover hover gives the actual glossy sweep. */
+#section-2-empty-shelf .media-library-row:hover .media-row-cover img {
+  filter: none;
+}
+
+/* Cover hover gives actual gloss and image richness. */
 #section-2-empty-shelf .media-row-cover:hover {
   transform: translateY(-7px) rotate(-1.35deg) translateZ(42px);
 
@@ -2247,14 +639,9 @@
   filter: saturate(1.10) contrast(1.07);
 }
 
-/* Cancel old row-hover image filter if it exists earlier */
-#section-2-empty-shelf .media-library-row:hover .media-row-cover img {
-  filter: none;
-}
-
 
 /* ============================================================================
-   6. TITLE / AUTHOR — MORE PREMIUM HIERARCHY
+   8. TITLE / AUTHOR — PREMIUM HIERARCHY
 ============================================================================ */
 
 #section-2-empty-shelf .media-row-info h3 {
@@ -2303,7 +690,7 @@
 
 
 /* ============================================================================
-   7. META CHIPS — RICHER, LESS FLAT
+   9. META CHIPS — RICHER, LESS FLAT
 ============================================================================ */
 
 #section-2-empty-shelf .media-row-format span,
@@ -2369,7 +756,7 @@
 
 
 /* ============================================================================
-   8. SCORE — STABLE CAPSULE + FLOATING “BUT WHY?”
+   10. SCORE — STABLE CAPSULE + FLOATING “BUT WHY?”
 ============================================================================ */
 
 #section-2-empty-shelf .media-row-score {
@@ -2430,7 +817,7 @@
   transition: color 220ms ease;
 }
 
-/* Warm aura behind score */
+/* Warm aura behind score. */
 #section-2-empty-shelf .media-row-score::before {
   content: "";
   position: absolute;
@@ -2456,7 +843,7 @@
     transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* Floating thought bubble, not inside the capsule */
+/* Floating thought bubble, not inside the capsule. */
 #section-2-empty-shelf .media-row-score::after {
   content: "but why?";
   position: absolute;
@@ -2519,11 +906,6 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.82);
 }
 
-/* Cancel old score layout-shift behavior if it exists earlier */
-#section-2-empty-shelf .media-row-score:hover {
-  padding-bottom: 0;
-}
-
 #section-2-empty-shelf .media-row-score:hover span,
 #section-2-empty-shelf .media-row-score:focus-within span {
   transform: none;
@@ -2547,25 +929,430 @@
 
 
 /* ============================================================================
-   9. ROW DETAILS / BUTTON ROW COMPATIBILITY
+   11. BUTTON TRAY — DEPTH BUTTONS FOR LATER ROW STAGES
 ============================================================================ */
 
 #section-2-empty-shelf .media-row-details {
   position: relative;
   z-index: 3;
 
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.55rem;
+
   margin-top: 1.35rem;
   padding-top: 1.05rem;
-
   border-top: 1px solid rgba(184, 121, 78, 0.18);
+}
+
+#section-2-empty-shelf .media-row-details::before {
+  content: "Saved layers";
+  flex-basis: 100%;
+  margin-bottom: 0.1rem;
+
+  font-family: var(--font-body);
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: rgba(155, 135, 114, 0.9);
+  text-transform: uppercase;
+  letter-spacing: 0.11em;
+}
+
+#section-2-empty-shelf .depth-button {
+  min-height: 38px;
+  padding: 0 0.95rem;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 252, 248, 0.88) 0%,
+      rgba(184, 121, 78, 0.09) 100%
+    );
+
+  border: 1px solid rgba(184, 121, 78, 0.28);
+  border-radius: 999px;
+
+  box-shadow:
+    0 6px 14px rgba(127, 75, 47, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.68);
+
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 760;
+  color: var(--ink-mid);
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  transition:
+    background 220ms ease,
+    border-color 220ms ease,
+    color 220ms ease,
+    transform 220ms ease,
+    box-shadow 220ms ease;
+}
+
+#section-2-empty-shelf .depth-button:hover {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 252, 248, 1) 0%,
+      rgba(184, 121, 78, 0.16) 100%
+    );
+
+  border-color: rgba(184, 121, 78, 0.46);
+  color: var(--ink);
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 10px 20px rgba(127, 75, 47, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.74);
+}
+
+#section-2-empty-shelf .depth-button:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+#section-2-empty-shelf .depth-button:focus-visible {
+  outline: 3px solid rgba(184, 121, 78, 0.36);
+  outline-offset: 3px;
+}
+
+#section-2-empty-shelf .depth-button-new {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 252, 248, 1) 0%,
+      rgba(184, 121, 78, 0.18) 100%
+    );
+
+  border-color: rgba(184, 121, 78, 0.44);
+  color: var(--ink);
 }
 
 
 /* ============================================================================
-   10. MOBILE
+   12. EVIDENCE STAGE CONTAINERS
+============================================================================ */
+
+#section-2-empty-shelf .falling-quotes,
+#section-2-empty-shelf .moving-moments,
+#section-2-empty-shelf .character-cloud,
+#section-2-empty-shelf .notes-cloud,
+#section-2-empty-shelf .thoughts-cloud {
+  display: grid;
+  gap: 1.1rem;
+  width: min(var(--section-2-row-width), 100%);
+  margin-inline: auto;
+}
+
+#section-2-empty-shelf .falling-quotes,
+#section-2-empty-shelf .notes-cloud {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+#section-2-empty-shelf .moving-moments {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+#section-2-empty-shelf .character-cloud {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+#section-2-empty-shelf .thoughts-cloud {
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+}
+
+
+/* ============================================================================
+   13. QUOTES — PAPER STRIPS
+============================================================================ */
+
+#section-2-empty-shelf .falling-quote {
+  margin: 0;
+  padding: 1.1rem 1.25rem;
+
+  background: linear-gradient(180deg, #fffdfa 0%, #fff8f0 100%);
+  border: 1px solid rgba(127, 75, 47, 0.18);
+  border-radius: 18px;
+
+  box-shadow:
+    0 18px 42px rgba(44, 36, 22, 0.10),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  line-height: 1.5;
+  color: var(--ink-mid);
+  cursor: default;
+
+  transition:
+    transform 240ms ease,
+    box-shadow 240ms ease,
+    border-color 240ms ease,
+    color 240ms ease;
+}
+
+#section-2-empty-shelf .falling-quote:hover {
+  transform: translateY(-5px);
+  color: var(--ink);
+  border-color: rgba(184, 121, 78, 0.36);
+
+  box-shadow:
+    0 26px 56px rgba(44, 36, 22, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+
+/* ============================================================================
+   14. MOMENTS — MANGA PANELS
+============================================================================ */
+
+#section-2-empty-shelf .moment-frame {
+  margin: 0;
+  padding: 0.6rem;
+
+  background: linear-gradient(180deg, #fffdfa 0%, #fff4e6 100%);
+  border: 1px solid rgba(44, 36, 22, 0.22);
+  border-radius: 16px;
+  box-shadow: 0 22px 50px rgba(44, 36, 22, 0.14);
+
+  cursor: default;
+  overflow: hidden;
+
+  transition:
+    transform 240ms ease,
+    box-shadow 240ms ease,
+    border-color 240ms ease;
+}
+
+#section-2-empty-shelf .moment-frame img {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  display: block;
+  object-fit: cover;
+  border-radius: 10px;
+
+  background: var(--cream-dark);
+  color: transparent;
+  font-size: 0;
+
+  transition:
+    transform 380ms ease,
+    filter 240ms ease;
+}
+
+#section-2-empty-shelf .moment-frame figcaption {
+  margin-top: 0.5rem;
+  padding: 0 0.15rem;
+
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 650;
+  color: var(--ink-faint);
+  line-height: 1.35;
+
+  transition: color 240ms ease;
+}
+
+#section-2-empty-shelf .moment-frame:hover {
+  transform: translateY(-5px);
+  border-color: rgba(44, 36, 22, 0.36);
+  box-shadow: 0 30px 66px rgba(44, 36, 22, 0.20);
+}
+
+#section-2-empty-shelf .moment-frame:hover img {
+  transform: scale(1.03);
+  filter: saturate(1.06) contrast(1.05);
+}
+
+#section-2-empty-shelf .moment-frame:hover figcaption {
+  color: var(--ink-mid);
+}
+
+
+/* ============================================================================
+   15. CHARACTERS — PORTRAIT CARDS
+============================================================================ */
+
+#section-2-empty-shelf .character-name {
+  margin: 0;
+  overflow: hidden;
+
+  background: linear-gradient(180deg, #fffdfa 0%, #fff8f0 100%);
+  border: 1px solid rgba(127, 75, 47, 0.18);
+  border-radius: 20px;
+  box-shadow: 0 20px 46px rgba(44, 36, 22, 0.12);
+
+  cursor: default;
+
+  transition:
+    transform 240ms ease,
+    box-shadow 240ms ease,
+    border-color 240ms ease;
+}
+
+#section-2-empty-shelf .character-name img {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  display: block;
+  object-fit: cover;
+
+  background: var(--cream-dark);
+  color: transparent;
+  font-size: 0;
+
+  transition:
+    transform 380ms ease,
+    filter 240ms ease;
+}
+
+#section-2-empty-shelf .character-name figcaption {
+  padding: 0.7rem 0.8rem;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 252, 248, 0.94),
+      rgba(250, 246, 239, 0.9)
+    );
+
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 750;
+  color: var(--ink);
+  line-height: 1.25;
+
+  transition:
+    background 240ms ease,
+    color 240ms ease;
+}
+
+#section-2-empty-shelf .character-1 {
+  grid-column: span 2;
+}
+
+#section-2-empty-shelf .character-name:hover {
+  transform: translateY(-5px) scale(1.01);
+  border-color: rgba(184, 121, 78, 0.36);
+  box-shadow: 0 28px 60px rgba(44, 36, 22, 0.18);
+}
+
+#section-2-empty-shelf .character-name:hover img {
+  transform: scale(1.03);
+  filter: saturate(1.06) contrast(1.04);
+}
+
+#section-2-empty-shelf .character-name:hover figcaption {
+  color: var(--warm-brown-dark);
+  background: linear-gradient(180deg, #fffdfa, rgba(226, 185, 143, 0.16));
+}
+
+
+/* ============================================================================
+   16. NOTES — STICKY NOTES
+============================================================================ */
+
+#section-2-empty-shelf .note-card {
+  position: relative;
+  min-height: 130px;
+  padding: 1.05rem;
+
+  background: linear-gradient(180deg, #fffdfa 0%, #fff4e6 100%);
+  border: 1px solid rgba(127, 75, 47, 0.18);
+  border-radius: 15px;
+  box-shadow: 0 18px 40px rgba(44, 36, 22, 0.10);
+
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--ink-mid);
+  cursor: default;
+
+  transition:
+    transform 240ms ease,
+    box-shadow 240ms ease,
+    border-color 240ms ease,
+    color 240ms ease;
+}
+
+#section-2-empty-shelf .note-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 18px;
+  right: 18px;
+  height: 6px;
+  border-radius: 0 0 999px 999px;
+  background: rgba(184, 121, 78, 0.20);
+
+  transition:
+    background 240ms ease,
+    height 240ms ease;
+}
+
+#section-2-empty-shelf .note-card:hover {
+  transform: translateY(-5px);
+  color: var(--ink);
+  border-color: rgba(184, 121, 78, 0.36);
+  box-shadow: 0 26px 54px rgba(44, 36, 22, 0.16);
+}
+
+#section-2-empty-shelf .note-card:hover::before {
+  height: 8px;
+  background: rgba(184, 121, 78, 0.28);
+}
+
+
+/* ============================================================================
+   17. THOUGHTS — JOURNAL PAGES
+============================================================================ */
+
+#section-2-empty-shelf .thought-card {
+  padding: 1.5rem 1.6rem;
+
+  background: linear-gradient(180deg, #fffdfa 0%, #fff8f0 100%);
+  border: 1px solid rgba(127, 75, 47, 0.18);
+  border-radius: 24px;
+  box-shadow: 0 22px 52px rgba(44, 36, 22, 0.12);
+
+  font-family: var(--font-display);
+  font-size: 1.08rem;
+  line-height: 1.55;
+  color: var(--ink-mid);
+  cursor: default;
+
+  transition:
+    transform 260ms ease,
+    box-shadow 260ms ease,
+    border-color 260ms ease,
+    color 260ms ease;
+}
+
+#section-2-empty-shelf .thought-card:hover {
+  transform: translateY(-4px);
+  color: var(--ink);
+  border-color: rgba(184, 121, 78, 0.32);
+  box-shadow: 0 28px 60px rgba(44, 36, 22, 0.16);
+}
+
+
+/* ============================================================================
+   18. RESPONSIVE
 ============================================================================ */
 
 @media (max-width: 900px) {
+  #section-2-empty-shelf.section-empty-shelf {
+    padding:
+      4.5rem
+      max(1.25rem, calc((100vw - 760px) / 2 + 1.25rem))
+      5.5rem;
+  }
+
   #section-2-empty-shelf .media-library-row {
     width: min(880px, 100%);
   }
@@ -2577,9 +1364,35 @@
   #section-2-empty-shelf .media-row-cover {
     width: 104px;
   }
+
+  #section-2-empty-shelf .character-cloud {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  #section-2-empty-shelf .character-1 {
+    grid-column: span 2;
+  }
 }
 
 @media (max-width: 640px) {
+  #section-2-empty-shelf.section-empty-shelf {
+    padding: 4rem 1.1rem 5rem;
+  }
+
+  #section-2-empty-shelf .section-2-header {
+    margin-bottom: 2.75rem;
+    text-align: left;
+  }
+
+  #section-2-empty-shelf .section-2-header h2 {
+    font-size: clamp(2.15rem, 9vw, 2.65rem);
+  }
+
+  #section-2-empty-shelf .section-2-header p {
+    margin-inline: 0;
+    font-size: 0.95rem;
+  }
+
   #section-2-empty-shelf .empty-shelf-scroll {
     gap: 4rem;
   }
@@ -2647,6 +1460,34 @@
     display: none;
   }
 
+  #section-2-empty-shelf .media-row-details {
+    margin-top: 1rem;
+    padding-top: 0.85rem;
+    gap: 0.45rem;
+  }
+
+  #section-2-empty-shelf .depth-button {
+    flex: 1 1 calc(50% - 0.45rem);
+    min-height: 40px;
+    padding-inline: 0.75rem;
+  }
+
+  #section-2-empty-shelf .falling-quotes,
+  #section-2-empty-shelf .moving-moments,
+  #section-2-empty-shelf .notes-cloud,
+  #section-2-empty-shelf .thoughts-cloud {
+    grid-template-columns: 1fr;
+  }
+
+  #section-2-empty-shelf .character-cloud {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.85rem;
+  }
+
+  #section-2-empty-shelf .character-1 {
+    grid-column: span 2;
+  }
+
   #section-2-empty-shelf .media-library-row:hover {
     transform: translateY(-2px);
   }
@@ -2654,7 +1495,7 @@
 
 
 /* ============================================================================
-   11. REDUCED MOTION
+   19. REDUCED MOTION
 ============================================================================ */
 
 @media (prefers-reduced-motion: reduce) {
@@ -2670,14 +1511,27 @@
   #section-2-empty-shelf .media-row-info h3,
   #section-2-empty-shelf .media-row-info p,
   #section-2-empty-shelf .media-row-format span,
-  #section-2-empty-shelf .media-row-status span {
+  #section-2-empty-shelf .media-row-status span,
+  #section-2-empty-shelf .depth-button,
+  #section-2-empty-shelf .falling-quote,
+  #section-2-empty-shelf .moment-frame,
+  #section-2-empty-shelf .moment-frame img,
+  #section-2-empty-shelf .character-name,
+  #section-2-empty-shelf .character-name img,
+  #section-2-empty-shelf .note-card,
+  #section-2-empty-shelf .thought-card {
     transition: none;
   }
 
   #section-2-empty-shelf .media-library-row:hover,
   #section-2-empty-shelf .media-library-row:hover .media-row-cover,
   #section-2-empty-shelf .media-row-cover:hover,
-  #section-2-empty-shelf .media-row-score:hover {
+  #section-2-empty-shelf .media-row-score:hover,
+  #section-2-empty-shelf .falling-quote:hover,
+  #section-2-empty-shelf .moment-frame:hover,
+  #section-2-empty-shelf .character-name:hover,
+  #section-2-empty-shelf .note-card:hover,
+  #section-2-empty-shelf .thought-card:hover {
     transform: none;
   }
 
