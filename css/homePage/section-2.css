@@ -1,21 +1,26 @@
 /* ============================================================
-   SECTION 2 — FINAL RESEARCH-BASED BACKGROUND
-   Matches Section 1: warm paper, soft atmosphere, premium depth.
-   No grid. No visible circle. No harsh color jump.
+   SECTION 2 — BACKGROUND ONLY
+   Scoped safely to Section 2.
+   Uses global tokens from style.css.
+   Does not override body, nav, hero, :root, or global buttons.
 ============================================================ */
 
-.section-empty-shelf {
+#section-2-empty-shelf.section-empty-shelf {
+  /* Section-only variables */
   --s2-bg-top: var(--cream);
-  --s2-bg-middle: #fffaf3;
+  --s2-bg-mid: #fffaf3;
   --s2-bg-bottom: var(--cream);
 
-  --s2-warm-glow: rgba(226, 185, 143, 0.16);
-  --s2-brown-glow: rgba(184, 121, 78, 0.10);
-  --s2-dark-glow: rgba(127, 75, 47, 0.055);
+  --s2-glow-left: rgba(226, 185, 143, 0.15);
+  --s2-glow-right: rgba(184, 121, 78, 0.095);
+  --s2-glow-bottom: rgba(226, 185, 143, 0.11);
+  --s2-glow-soft: rgba(226, 185, 143, 0.16);
+  --s2-glow-brown: rgba(184, 121, 78, 0.07);
+  --s2-glow-deep: rgba(127, 75, 47, 0.045);
 
-  --s2-top-fade-opacity: 0.72;
-  --s2-edge-depth: 0.028;
-  --s2-atmosphere-opacity: 0.82;
+  --s2-edge-depth: 0.026;
+  --s2-top-blend: 0.58;
+  --s2-atmosphere-opacity: 0.78;
 
   position: relative;
   isolation: isolate;
@@ -29,81 +34,73 @@
   background:
     radial-gradient(
       ellipse at 18% 24%,
-      var(--s2-warm-glow) 0%,
-      rgba(226, 185, 143, 0.065) 34%,
+      var(--s2-glow-left) 0%,
+      rgba(226, 185, 143, 0.055) 34%,
       transparent 68%
     ),
     radial-gradient(
-      ellipse at 84% 26%,
-      var(--s2-brown-glow) 0%,
-      rgba(184, 121, 78, 0.038) 36%,
+      ellipse at 84% 28%,
+      var(--s2-glow-right) 0%,
+      rgba(184, 121, 78, 0.034) 36%,
       transparent 72%
     ),
     radial-gradient(
-      ellipse at 50% 88%,
-      rgba(226, 185, 143, 0.11) 0%,
-      rgba(226, 185, 143, 0.04) 44%,
+      ellipse at 50% 90%,
+      var(--s2-glow-bottom) 0%,
+      rgba(226, 185, 143, 0.035) 42%,
       transparent 78%
     ),
     linear-gradient(
       180deg,
       var(--s2-bg-top) 0%,
-      var(--s2-bg-middle) 42%,
+      var(--s2-bg-mid) 42%,
       var(--s2-bg-bottom) 100%
     );
+
+  border-top: 1px solid rgba(127, 75, 47, 0.06);
 }
 
-/* Keep section content above the atmosphere */
-.section-empty-shelf > * {
+/* Keep the real content above the background layers */
+#section-2-empty-shelf.section-empty-shelf > * {
   position: relative;
   z-index: 2;
 }
 
-/* 
-   Atmosphere layer.
-   This creates a soft premium glow like Section 1,
-   but blurred enough that it never looks like a visible circle.
-*/
-.section-empty-shelf::before {
+/* Soft blurred atmosphere — no grid, no visible circle */
+#section-2-empty-shelf.section-empty-shelf::before {
   content: "";
   position: absolute;
-  inset: -28%;
+  inset: -30%;
   z-index: 0;
   pointer-events: none;
 
   background:
     radial-gradient(
-      ellipse at 48% 52%,
-      rgba(226, 185, 143, 0.18) 0%,
-      rgba(226, 185, 143, 0.075) 36%,
-      rgba(226, 185, 143, 0.025) 56%,
-      transparent 76%
+      ellipse at 48% 56%,
+      var(--s2-glow-soft) 0%,
+      rgba(226, 185, 143, 0.065) 36%,
+      rgba(226, 185, 143, 0.022) 56%,
+      transparent 78%
     ),
     radial-gradient(
-      ellipse at 22% 72%,
-      rgba(184, 121, 78, 0.075) 0%,
-      rgba(184, 121, 78, 0.026) 40%,
+      ellipse at 22% 74%,
+      var(--s2-glow-brown) 0%,
+      rgba(184, 121, 78, 0.022) 40%,
       transparent 76%
     ),
     radial-gradient(
       ellipse at 82% 76%,
-      var(--s2-dark-glow) 0%,
-      rgba(127, 75, 47, 0.018) 42%,
-      transparent 78%
+      var(--s2-glow-deep) 0%,
+      rgba(127, 75, 47, 0.015) 42%,
+      transparent 80%
     );
 
-  filter: blur(54px);
+  filter: blur(56px);
   opacity: var(--s2-atmosphere-opacity);
 }
 
-/*
-   Finish layer.
-   No grid. No dots. Only:
-   - very soft top blend from Section 1
-   - very soft side depth
-   - slight bottom warmth
-*/
-.section-empty-shelf::after {
+/* Finish layer: soft transition + edge depth only */
+#section-2-empty-shelf.section-empty-shelf::after {
   content: "";
   position: absolute;
   inset: 0;
@@ -113,8 +110,8 @@
   background:
     linear-gradient(
       180deg,
-      rgba(250, 246, 239, var(--s2-top-fade-opacity)) 0%,
-      rgba(250, 246, 239, 0.34) 12%,
+      rgba(250, 246, 239, var(--s2-top-blend)) 0%,
+      rgba(250, 246, 239, 0.28) 14%,
       transparent 34%
     ),
     linear-gradient(
@@ -128,73 +125,67 @@
       180deg,
       transparent 0%,
       transparent 72%,
-      rgba(239, 229, 216, 0.18) 100%
+      rgba(239, 229, 216, 0.16) 100%
     );
 
-  opacity: 0.82;
+  opacity: 0.78;
 }
 
 /* ============================================================
-   STAGE MOODS
-   These are intentionally subtle.
-   They should never make Section 2 feel like a different page.
+   OPTIONAL FUTURE STAGE MOODS
+   These only change Section 2 variables.
+   No layout changes. No global overrides.
 ============================================================ */
 
-.section-empty-shelf.is-stage-empty {
-  --s2-warm-glow: rgba(226, 185, 143, 0.13);
-  --s2-brown-glow: rgba(184, 121, 78, 0.075);
-  --s2-dark-glow: rgba(127, 75, 47, 0.04);
-  --s2-edge-depth: 0.022;
-  --s2-atmosphere-opacity: 0.74;
+#section-2-empty-shelf.section-empty-shelf.is-stage-empty {
+  --s2-glow-left: rgba(226, 185, 143, 0.12);
+  --s2-glow-right: rgba(184, 121, 78, 0.07);
+  --s2-glow-bottom: rgba(226, 185, 143, 0.09);
+  --s2-atmosphere-opacity: 0.7;
+  --s2-edge-depth: 0.02;
 }
 
-.section-empty-shelf.is-stage-quotes {
-  --s2-warm-glow: rgba(226, 185, 143, 0.18);
-  --s2-brown-glow: rgba(184, 121, 78, 0.105);
-  --s2-dark-glow: rgba(127, 75, 47, 0.048);
-  --s2-edge-depth: 0.026;
-  --s2-atmosphere-opacity: 0.82;
-}
-
-.section-empty-shelf.is-stage-moments {
-  --s2-warm-glow: rgba(226, 185, 143, 0.15);
-  --s2-brown-glow: rgba(184, 121, 78, 0.11);
-  --s2-dark-glow: rgba(127, 75, 47, 0.055);
-  --s2-edge-depth: 0.03;
+#section-2-empty-shelf.section-empty-shelf.is-stage-quotes {
+  --s2-glow-left: rgba(226, 185, 143, 0.17);
+  --s2-glow-right: rgba(184, 121, 78, 0.1);
+  --s2-glow-bottom: rgba(226, 185, 143, 0.12);
   --s2-atmosphere-opacity: 0.8;
 }
 
-.section-empty-shelf.is-stage-characters {
-  --s2-warm-glow: rgba(226, 185, 143, 0.17);
-  --s2-brown-glow: rgba(184, 121, 78, 0.09);
-  --s2-dark-glow: rgba(127, 75, 47, 0.045);
-  --s2-edge-depth: 0.026;
-  --s2-atmosphere-opacity: 0.8;
+#section-2-empty-shelf.section-empty-shelf.is-stage-moments {
+  --s2-glow-left: rgba(226, 185, 143, 0.14);
+  --s2-glow-right: rgba(184, 121, 78, 0.11);
+  --s2-glow-bottom: rgba(226, 185, 143, 0.1);
+  --s2-edge-depth: 0.028;
 }
 
-.section-empty-shelf.is-stage-notes {
-  --s2-warm-glow: rgba(226, 185, 143, 0.19);
-  --s2-brown-glow: rgba(184, 121, 78, 0.095);
-  --s2-dark-glow: rgba(127, 75, 47, 0.04);
-  --s2-edge-depth: 0.024;
+#section-2-empty-shelf.section-empty-shelf.is-stage-characters {
+  --s2-glow-left: rgba(226, 185, 143, 0.16);
+  --s2-glow-right: rgba(184, 121, 78, 0.085);
+  --s2-glow-bottom: rgba(226, 185, 143, 0.11);
+}
+
+#section-2-empty-shelf.section-empty-shelf.is-stage-notes {
+  --s2-glow-left: rgba(226, 185, 143, 0.18);
+  --s2-glow-right: rgba(184, 121, 78, 0.09);
+  --s2-glow-bottom: rgba(226, 185, 143, 0.13);
+}
+
+#section-2-empty-shelf.section-empty-shelf.is-stage-thoughts {
+  --s2-bg-mid: #fbf4ec;
+  --s2-glow-left: rgba(226, 185, 143, 0.11);
+  --s2-glow-right: rgba(127, 75, 47, 0.075);
+  --s2-glow-bottom: rgba(184, 121, 78, 0.09);
+  --s2-atmosphere-opacity: 0.72;
+  --s2-edge-depth: 0.04;
+}
+
+#section-2-empty-shelf.section-empty-shelf.is-stage-final {
+  --s2-glow-left: rgba(226, 185, 143, 0.2);
+  --s2-glow-right: rgba(184, 121, 78, 0.12);
+  --s2-glow-bottom: rgba(226, 185, 143, 0.15);
   --s2-atmosphere-opacity: 0.84;
-}
-
-.section-empty-shelf.is-stage-thoughts {
-  --s2-bg-middle: #fbf4ec;
-  --s2-warm-glow: rgba(226, 185, 143, 0.12);
-  --s2-brown-glow: rgba(127, 75, 47, 0.075);
-  --s2-dark-glow: rgba(36, 26, 17, 0.052);
-  --s2-edge-depth: 0.042;
-  --s2-atmosphere-opacity: 0.76;
-}
-
-.section-empty-shelf.is-stage-final {
-  --s2-warm-glow: rgba(226, 185, 143, 0.21);
-  --s2-brown-glow: rgba(184, 121, 78, 0.12);
-  --s2-dark-glow: rgba(127, 75, 47, 0.052);
   --s2-edge-depth: 0.03;
-  --s2-atmosphere-opacity: 0.86;
 }
 
 /* ============================================================
@@ -202,19 +193,19 @@
 ============================================================ */
 
 @media (max-width: 768px) {
-  .section-empty-shelf {
+  #section-2-empty-shelf.section-empty-shelf {
     min-height: 100vh;
     padding: 4.5rem 1rem;
   }
 
-  .section-empty-shelf::before {
+  #section-2-empty-shelf.section-empty-shelf::before {
     inset: -38%;
-    filter: blur(58px);
-    opacity: 0.68;
+    filter: blur(60px);
+    opacity: 0.66;
   }
 
-  .section-empty-shelf::after {
-    opacity: 0.64;
+  #section-2-empty-shelf.section-empty-shelf::after {
+    opacity: 0.62;
   }
 }
 
@@ -223,8 +214,8 @@
 ============================================================ */
 
 @media (prefers-reduced-motion: reduce) {
-  .section-empty-shelf::before,
-  .section-empty-shelf::after {
+  #section-2-empty-shelf.section-empty-shelf::before,
+  #section-2-empty-shelf.section-empty-shelf::after {
     transition: none;
   }
 }
