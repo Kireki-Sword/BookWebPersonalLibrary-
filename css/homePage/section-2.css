@@ -969,3 +969,807 @@
      hover-only lifts are a bonus on devices that support them, not a
      requirement to read the content */
 }
+
+/* ============================================================================
+   SECTION 2 — PART 1 PREMIUM OVERRIDE PATCH
+   Paste this at the VERY BOTTOM of section-2.css
+   ============================================================================ */
+
+
+/* ============================================================================
+   1. PRODUCTION PREVIEW FIX
+   Hide debug stage labels and show only active stage for now.
+   ============================================================================ */
+
+#section-2-empty-shelf .scroll-stage::before {
+  content: none;
+  display: none;
+}
+
+#section-2-empty-shelf .empty-shelf-scroll {
+  position: relative;
+  width: 100%;
+  max-width: 1060px;
+  margin-inline: auto;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  gap: 0;
+}
+
+/* For now, only show the active stage.
+   Later GSAP will replace this with opacity/absolute positioning. */
+#section-2-empty-shelf .scroll-stage[aria-hidden="true"] {
+  display: none;
+}
+
+#section-2-empty-shelf .scroll-stage[aria-hidden="false"] {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+/* ============================================================================
+   2. CARD STAGE HALO
+   This makes the row feel like the center of attention.
+   ============================================================================ */
+
+#section-2-empty-shelf .empty-shelf-scroll::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+
+  width: min(980px, 92vw);
+  height: 280px;
+
+  transform: translate(-50%, -48%);
+  pointer-events: none;
+  z-index: 0;
+
+  background:
+    radial-gradient(
+      ellipse at 50% 50%,
+      rgba(226, 185, 143, 0.30) 0%,
+      rgba(226, 185, 143, 0.13) 34%,
+      rgba(184, 121, 78, 0.06) 54%,
+      transparent 74%
+    );
+
+  filter: blur(34px);
+  opacity: 0.85;
+}
+
+#section-2-empty-shelf .scroll-stage {
+  position: relative;
+  z-index: 1;
+}
+
+
+/* ============================================================================
+   3. STRONGER PREMIUM ROW CARD
+   More depth, richer surface, better object feeling.
+   ============================================================================ */
+
+#section-2-empty-shelf .media-library-row {
+  --row-sheen-x: -120%;
+
+  width: min(940px, 100%);
+  min-height: 156px;
+
+  padding: 1.55rem 1.65rem;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.72) 0%,
+      transparent 28%
+    ),
+    linear-gradient(
+      180deg,
+      #fffefa 0%,
+      #fff9f1 58%,
+      #fff5e9 100%
+    );
+
+  border: 1px solid rgba(184, 121, 78, 0.26);
+  border-radius: 30px;
+
+  box-shadow:
+    0 44px 110px rgba(44, 36, 22, 0.14),
+    0 18px 36px rgba(44, 36, 22, 0.10),
+    0 2px 0 rgba(255, 255, 255, 0.7) inset,
+    0 -1px 0 rgba(127, 75, 47, 0.06) inset;
+
+  position: relative;
+  overflow: visible;
+
+  transform:
+    perspective(1200px)
+    translateY(0)
+    rotateX(0deg)
+    rotateY(0deg);
+
+  transform-style: preserve-3d;
+
+  transition:
+    transform 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 260ms ease,
+    box-shadow 320ms ease,
+    background 260ms ease;
+}
+
+/* Warm contact shadow under the card */
+#section-2-empty-shelf .media-library-row::after {
+  content: "";
+  position: absolute;
+  left: 7%;
+  right: 7%;
+  bottom: -18px;
+  height: 32px;
+  z-index: -1;
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      ellipse at center,
+      rgba(44, 36, 22, 0.20) 0%,
+      rgba(44, 36, 22, 0.09) 36%,
+      transparent 72%
+    );
+
+  filter: blur(16px);
+  opacity: 0.5;
+
+  transition:
+    opacity 300ms ease,
+    transform 300ms ease;
+}
+
+/* Card-wide premium gloss */
+#section-2-empty-shelf .media-library-row::before {
+  content: "";
+  position: absolute;
+  top: -42%;
+  left: var(--row-sheen-x);
+  z-index: 2;
+
+  width: 42%;
+  height: 190%;
+
+  pointer-events: none;
+
+  background:
+    linear-gradient(
+      105deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.08) 34%,
+      rgba(255, 255, 255, 0.40) 48%,
+      rgba(226, 185, 143, 0.12) 56%,
+      transparent 72%
+    );
+
+  transform: rotate(10deg);
+  opacity: 0;
+
+  transition:
+    left 850ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 220ms ease;
+}
+
+#section-2-empty-shelf .media-library-row:hover {
+  transform:
+    perspective(1200px)
+    translateY(-5px)
+    rotateX(0.6deg)
+    rotateY(-0.45deg);
+
+  border-color: rgba(127, 75, 47, 0.38);
+
+  box-shadow:
+    0 56px 130px rgba(44, 36, 22, 0.18),
+    0 24px 46px rgba(44, 36, 22, 0.12),
+    0 2px 0 rgba(255, 255, 255, 0.8) inset,
+    0 -1px 0 rgba(127, 75, 47, 0.08) inset;
+}
+
+#section-2-empty-shelf .media-library-row:hover::before {
+  left: 126%;
+  opacity: 1;
+}
+
+#section-2-empty-shelf .media-library-row:hover::after {
+  opacity: 0.72;
+  transform: translateY(4px) scaleX(1.04);
+}
+
+
+/* ============================================================================
+   4. CARD INNER LAYOUT
+   Tightens spacing so the card feels less empty.
+   ============================================================================ */
+
+#section-2-empty-shelf .media-row-main {
+  position: relative;
+  z-index: 3;
+
+  display: grid;
+  grid-template-columns: 112px minmax(0, 1fr) auto;
+  grid-template-areas:
+    "cover info  score"
+    "cover chips score";
+
+  column-gap: 1.45rem;
+  row-gap: 0.58rem;
+  align-items: center;
+}
+
+
+/* ============================================================================
+   5. COVER — richer object, shine, physical lift
+   ============================================================================ */
+
+#section-2-empty-shelf .media-row-cover {
+  grid-area: cover;
+
+  width: 112px;
+  aspect-ratio: 2 / 3;
+
+  position: relative;
+  overflow: hidden;
+
+  border-radius: 19px;
+  border: 1px solid rgba(127, 75, 47, 0.16);
+
+  background:
+    radial-gradient(
+      circle at 24% 18%,
+      rgba(255, 255, 255, 0.46),
+      transparent 30%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(255, 252, 248, 0.34),
+      rgba(226, 185, 143, 0.34) 42%,
+      rgba(127, 75, 47, 0.16)
+    ),
+    var(--cream-dark);
+
+  box-shadow:
+    0 22px 40px rgba(44, 36, 22, 0.20),
+    0 8px 16px rgba(44, 36, 22, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.46);
+
+  transform: translateZ(18px);
+  transition:
+    transform 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 320ms ease,
+    border-color 260ms ease;
+}
+
+/* subtle book edge */
+#section-2-empty-shelf .media-row-cover::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.26) 0%,
+      transparent 18%,
+      transparent 82%,
+      rgba(36, 26, 17, 0.08) 100%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.18),
+      transparent 42%
+    );
+
+  opacity: 0.72;
+}
+
+/* cover-specific shine */
+#section-2-empty-shelf .media-row-cover::after {
+  content: "";
+  position: absolute;
+  top: -35%;
+  left: -90%;
+  z-index: 3;
+
+  width: 56%;
+  height: 170%;
+
+  pointer-events: none;
+
+  background:
+    linear-gradient(
+      105deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.12) 34%,
+      rgba(255, 255, 255, 0.55) 50%,
+      transparent 68%
+    );
+
+  transform: rotate(12deg);
+  opacity: 0;
+
+  transition:
+    left 780ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 180ms ease;
+}
+
+#section-2-empty-shelf .media-row-cover img {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+  object-fit: cover;
+
+  color: transparent;
+  font-size: 0;
+
+  transform: scale(1.001);
+  transition:
+    transform 420ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 300ms ease;
+}
+
+#section-2-empty-shelf .media-library-row:hover .media-row-cover {
+  transform: translateY(-6px) rotate(-1.2deg) translateZ(32px);
+
+  border-color: rgba(127, 75, 47, 0.28);
+
+  box-shadow:
+    0 30px 54px rgba(44, 36, 22, 0.24),
+    0 12px 22px rgba(44, 36, 22, 0.13),
+    inset 0 1px 0 rgba(255, 255, 255, 0.55);
+}
+
+#section-2-empty-shelf .media-library-row:hover .media-row-cover::after,
+#section-2-empty-shelf .media-row-cover:hover::after {
+  left: 132%;
+  opacity: 1;
+}
+
+#section-2-empty-shelf .media-library-row:hover .media-row-cover img {
+  transform: scale(1.035);
+  filter: saturate(1.08) contrast(1.06);
+}
+
+
+/* ============================================================================
+   6. TITLE / AUTHOR — stronger hierarchy
+   ============================================================================ */
+
+#section-2-empty-shelf .media-row-info {
+  grid-area: info;
+  align-self: end;
+  min-width: 0;
+
+  transform: translateZ(14px);
+}
+
+#section-2-empty-shelf .media-row-info h3 {
+  margin: 0;
+
+  font-family: var(--font-display);
+  font-size: clamp(1.9rem, 2.4vw, 2.18rem);
+  font-weight: 700;
+  line-height: 0.95;
+  letter-spacing: -0.045em;
+
+  color: var(--ink);
+
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.52);
+}
+
+#section-2-empty-shelf .media-row-info p {
+  margin-top: 0.42rem;
+
+  font-family: var(--font-body);
+  font-size: 0.96rem;
+  font-weight: 550;
+  line-height: 1.35;
+
+  color: var(--ink-light);
+}
+
+#section-2-empty-shelf .media-library-row:hover .media-row-info h3 {
+  color: #1d140d;
+}
+
+
+/* ============================================================================
+   7. META CHIPS — less flat, better grouped
+   ============================================================================ */
+
+#section-2-empty-shelf .media-row-format,
+#section-2-empty-shelf .media-row-status {
+  grid-area: chips;
+  align-self: start;
+  margin-top: 0.72rem;
+
+  transform: translateZ(10px);
+}
+
+#section-2-empty-shelf .media-row-status {
+  margin-left: 4.9rem;
+}
+
+#section-2-empty-shelf .media-row-format span,
+#section-2-empty-shelf .media-row-status span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 30px;
+  padding: 0.35rem 0.78rem;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 252, 248, 0.82) 0%,
+      rgba(226, 185, 143, 0.13) 100%
+    );
+
+  border: 1px solid rgba(184, 121, 78, 0.28);
+  border-radius: 999px;
+
+  box-shadow:
+    0 5px 12px rgba(127, 75, 47, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.65);
+
+  font-family: var(--font-body);
+  font-size: 0.76rem;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--warm-brown-dark);
+  white-space: nowrap;
+
+  transition:
+    transform 220ms ease,
+    background 220ms ease,
+    border-color 220ms ease,
+    box-shadow 220ms ease;
+}
+
+#section-2-empty-shelf .media-library-row:hover .media-row-format span,
+#section-2-empty-shelf .media-library-row:hover .media-row-status span {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 252, 248, 0.94) 0%,
+      rgba(226, 185, 143, 0.20) 100%
+    );
+
+  border-color: rgba(184, 121, 78, 0.42);
+  box-shadow:
+    0 7px 16px rgba(127, 75, 47, 0.10),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72);
+}
+
+#section-2-empty-shelf .media-row-format span:hover,
+#section-2-empty-shelf .media-row-status span:hover {
+  transform: translateY(-1px);
+}
+
+
+/* ============================================================================
+   8. SCORE CAPSULE — stable shape + floating “but why?” popover
+   ============================================================================ */
+
+#section-2-empty-shelf .media-row-score {
+  grid-area: score;
+  grid-row: 1 / -1;
+  align-self: center;
+  justify-self: end;
+
+  position: relative;
+
+  min-width: 92px;
+  height: 58px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0 1.18rem;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 252, 248, 0.98) 0%,
+      rgba(255, 246, 235, 0.92) 100%
+    );
+
+  border: 1px solid rgba(184, 121, 78, 0.26);
+  border-radius: 999px;
+
+  box-shadow:
+    0 12px 28px rgba(44, 36, 22, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72);
+
+  cursor: default;
+
+  transform: translateZ(22px);
+
+  transition:
+    transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
+    background 240ms ease,
+    border-color 240ms ease,
+    box-shadow 260ms ease;
+}
+
+#section-2-empty-shelf .media-row-score span {
+  position: relative;
+  z-index: 2;
+
+  font-family: var(--font-display);
+  font-size: 1.48rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1;
+
+  color: var(--ink);
+
+  transition: color 240ms ease;
+}
+
+/* soft aura behind score */
+#section-2-empty-shelf .media-row-score::before {
+  content: "";
+  position: absolute;
+  inset: -12px;
+  z-index: 0;
+
+  border-radius: 999px;
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(226, 185, 143, 0.34) 0%,
+      rgba(184, 121, 78, 0.14) 40%,
+      transparent 72%
+    );
+
+  opacity: 0;
+  transform: scale(0.86);
+
+  transition:
+    opacity 240ms ease,
+    transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* floating popover ABOVE the rating */
+#section-2-empty-shelf .media-row-score::after {
+  content: "but why?";
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 0.62rem);
+  z-index: 5;
+
+  transform:
+    translateX(-50%)
+    translateY(8px)
+    scale(0.96);
+
+  padding: 0.42rem 0.66rem;
+
+  background:
+    linear-gradient(
+      180deg,
+      #fffdfa 0%,
+      #fff3e4 100%
+    );
+
+  border: 1px solid rgba(184, 121, 78, 0.30);
+  border-radius: 999px;
+
+  box-shadow:
+    0 14px 30px rgba(44, 36, 22, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72);
+
+  font-family: var(--font-body);
+  font-size: 0.64rem;
+  font-weight: 850;
+  color: var(--warm-brown-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+
+  opacity: 0;
+  pointer-events: none;
+
+  transition:
+    opacity 220ms ease,
+    transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* tiny connector dot */
+#section-2-empty-shelf .media-row-score .score-dot {
+  display: none;
+}
+
+#section-2-empty-shelf .media-row-score:hover,
+#section-2-empty-shelf .media-row-score:focus-within {
+  transform: translateY(-3px) translateZ(34px);
+
+  background:
+    linear-gradient(
+      180deg,
+      #fffefa 0%,
+      #fff1df 100%
+    );
+
+  border-color: rgba(127, 75, 47, 0.42);
+
+  box-shadow:
+    0 18px 36px rgba(127, 75, 47, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.78);
+}
+
+#section-2-empty-shelf .media-row-score:hover::before,
+#section-2-empty-shelf .media-row-score:focus-within::before {
+  opacity: 1;
+  transform: scale(1);
+}
+
+#section-2-empty-shelf .media-row-score:hover::after,
+#section-2-empty-shelf .media-row-score:focus-within::after {
+  opacity: 1;
+
+  transform:
+    translateX(-50%)
+    translateY(0)
+    scale(1);
+}
+
+
+/* ============================================================================
+   9. FINAL-ROW / BUTTON ROW COMPATIBILITY
+   Keeps expanded rows from feeling cramped later.
+   ============================================================================ */
+
+#section-2-empty-shelf .media-row-details {
+  position: relative;
+  z-index: 3;
+}
+
+
+/* ============================================================================
+   10. MOBILE ADJUSTMENTS
+   ============================================================================ */
+
+@media (max-width: 900px) {
+  #section-2-empty-shelf .media-library-row {
+    width: min(880px, 100%);
+  }
+
+  #section-2-empty-shelf .media-row-main {
+    grid-template-columns: 100px minmax(0, 1fr) auto;
+    column-gap: 1.15rem;
+  }
+
+  #section-2-empty-shelf .media-row-cover {
+    width: 100px;
+  }
+
+  #section-2-empty-shelf .media-row-status {
+    margin-left: 4.55rem;
+  }
+}
+
+@media (max-width: 640px) {
+  #section-2-empty-shelf .empty-shelf-scroll::before {
+    width: 96vw;
+    height: 240px;
+    filter: blur(30px);
+    opacity: 0.62;
+  }
+
+  #section-2-empty-shelf .media-library-row {
+    width: 100%;
+    min-height: auto;
+    padding: 1.05rem;
+    border-radius: 24px;
+  }
+
+  #section-2-empty-shelf .media-row-main {
+    grid-template-columns: 78px minmax(0, 1fr) auto;
+    grid-template-areas:
+      "cover info score"
+      "cover chips chips";
+
+    column-gap: 0.9rem;
+    row-gap: 0.52rem;
+  }
+
+  #section-2-empty-shelf .media-row-cover {
+    width: 78px;
+    border-radius: 14px;
+  }
+
+  #section-2-empty-shelf .media-row-info h3 {
+    font-size: 1.42rem;
+  }
+
+  #section-2-empty-shelf .media-row-info p {
+    font-size: 0.86rem;
+  }
+
+  #section-2-empty-shelf .media-row-format,
+  #section-2-empty-shelf .media-row-status {
+    margin-top: 0.45rem;
+  }
+
+  #section-2-empty-shelf .media-row-status {
+    margin-left: 4.25rem;
+  }
+
+  #section-2-empty-shelf .media-row-format span,
+  #section-2-empty-shelf .media-row-status span {
+    min-height: 28px;
+    padding: 0.32rem 0.62rem;
+    font-size: 0.7rem;
+  }
+
+  #section-2-empty-shelf .media-row-score {
+    min-width: 68px;
+    height: 44px;
+    padding-inline: 0.7rem;
+  }
+
+  #section-2-empty-shelf .media-row-score span {
+    font-size: 1.16rem;
+  }
+
+  /* No hover popover on touch/mobile */
+  #section-2-empty-shelf .media-row-score::after {
+    display: none;
+  }
+
+  #section-2-empty-shelf .media-library-row:hover {
+    transform: translateY(-2px);
+  }
+}
+
+
+/* ============================================================================
+   11. REDUCED MOTION
+   ============================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  #section-2-empty-shelf .media-library-row,
+  #section-2-empty-shelf .media-library-row::before,
+  #section-2-empty-shelf .media-library-row::after,
+  #section-2-empty-shelf .media-row-cover,
+  #section-2-empty-shelf .media-row-cover::after,
+  #section-2-empty-shelf .media-row-cover img,
+  #section-2-empty-shelf .media-row-score,
+  #section-2-empty-shelf .media-row-score::before,
+  #section-2-empty-shelf .media-row-score::after,
+  #section-2-empty-shelf .media-row-format span,
+  #section-2-empty-shelf .media-row-status span {
+    transition: none;
+  }
+
+  #section-2-empty-shelf .media-library-row:hover,
+  #section-2-empty-shelf .media-library-row:hover .media-row-cover,
+  #section-2-empty-shelf .media-row-score:hover {
+    transform: none;
+  }
+
+  #section-2-empty-shelf .media-library-row::before,
+  #section-2-empty-shelf .media-row-cover::after {
+    display: none;
+  }
+}
