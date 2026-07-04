@@ -1,104 +1,354 @@
-/* ============================================================
-   SECTION 2 — BACKGROUND
-   Based on Section 1 hero background.
-   Color spreads across the whole section.
-   No grid. No dots. No extra pseudo background layers.
-============================================================ */
+/* ============================================================================
+   SECTION 2 — STEP 1: STATIC FOUNDATION
+   ------------------------------------------------------------------------
+   This is deliberately the SIMPLE version. Per the design plan, we build
+   the header + one calm, premium row card first — no hover states, no
+   evidence card styling, no GSAP, no cursor glow. Those all come later,
+   once this static layout looks right on its own.
 
-#section-2-empty-shelf.section-empty-shelf {
+   Contents:
+     1. Section container + background (continues Section 1's world)
+     2. Header (label / title / subtitle)
+     3. Scroll wrapper spacing
+     4. Hide every stage except the active one
+     5. The row card (surface, size)
+     6. Cover
+     7. Title / author
+     8. Format / status chips
+     9. Rating capsule (static — no "but why?" reveal yet, that's a hover
+        effect and hover effects are explicitly not part of this step)
+     10. Mobile layout
+   ============================================================================ */
+
+
+/* ============================================================================
+   1. SECTION CONTAINER + BACKGROUND
+   ------------------------------------------------------------------------
+   Per the plan: Section 2 should NOT have its own background identity
+   (no grid, no dots, no paper texture). It should read as a continuation
+   of Section 1's world — same cream base, same soft warm-brown glows,
+   just calmer. The row card is what creates the visual interest here,
+   not the background.
+   ============================================================================ */
+
+#section-2-empty-shelf,
+.section-empty-shelf {
+  --section-2-row-width: 1000px; /* card width ceiling, per the plan's 960-1000px range */
+
   position: relative;
-  isolation: isolate;
-  overflow: hidden;
-
-  min-height: 100vh;
+  width: 100%;
 
   padding:
-    clamp(5.5rem, 8vw, 8rem)
-    max(2rem, calc((100vw - 1220px) / 2 + 2rem))
-    clamp(5.5rem, 8vw, 8rem);
+    5.5rem
+    max(1.5rem, calc((100vw - 1220px) / 2 + 1.5rem))
+    6.5rem;
 
   color: var(--ink);
 
-  /* SAME BACKGROUND LANGUAGE AS SECTION 1 */
+  /* Same gradient language as the hero, just quieter (two soft glows
+     instead of three, lower opacity) — continuation, not a new page. */
   background:
-    radial-gradient(
-      ellipse at 26% 42%,
-      rgba(226, 185, 143, 0.20) 0%,
-      rgba(226, 185, 143, 0.08) 35%,
-      transparent 68%
-    ),
-    radial-gradient(
-      ellipse at 74% 42%,
-      rgba(184, 121, 78, 0.14) 0%,
-      rgba(184, 121, 78, 0.06) 36%,
-      transparent 70%
-    ),
-    radial-gradient(
-      ellipse at 50% 92%,
-      rgba(226, 185, 143, 0.14) 0%,
-      rgba(226, 185, 143, 0.05) 42%,
-      transparent 74%
-    ),
-    linear-gradient(
-      180deg,
-      rgba(255, 252, 248, 0.82) 0%,
-      rgba(250, 246, 239, 0.96) 62%,
-      rgba(250, 246, 239, 1) 100%
-    ),
+    radial-gradient(ellipse at 30% 20%, rgba(226, 185, 143, 0.14) 0%, rgba(226, 185, 143, 0.05) 40%, transparent 70%),
+    radial-gradient(ellipse at 75% 65%, rgba(184, 121, 78, 0.10) 0%, rgba(184, 121, 78, 0.04) 42%, transparent 72%),
     var(--cream);
 }
 
-/* Keep content above the background */
-#section-2-empty-shelf.section-empty-shelf > * {
-  position: relative;
-  z-index: 2;
+
+/* ============================================================================
+   2. SECTION HEADER
+   ------------------------------------------------------------------------
+   Centered and premium, but quieter than the hero title — this is "calm
+   proof", not a second hero moment.
+   ============================================================================ */
+
+.section-2-header {
+  max-width: 700px;
+  margin: 0 auto 3.25rem;
+  text-align: center;
 }
 
-/* IMPORTANT:
-   Kill old Section 2 pseudo backgrounds.
-   This removes the old grid / circle / texture completely.
-*/
-#section-2-empty-shelf.section-empty-shelf::before,
-#section-2-empty-shelf.section-empty-shelf::after {
-  content: none;
+.section-2-header .section-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.85rem;
+
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--warm-brown-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+.section-2-header h2 {
+  margin: 0 auto;
+
+  font-family: var(--font-display);
+  font-size: clamp(2.6rem, 4.4vw, 4rem);
+  font-weight: 650;
+  color: var(--ink);
+  letter-spacing: -0.055em;
+  line-height: 1.02;
+}
+
+.section-2-header p {
+  max-width: 480px;
+  margin: 1.1rem auto 0;
+
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--ink-light);
+  line-height: 1.75;
+}
+
+
+/* ============================================================================
+   3. SCROLL WRAPPER SPACING
+   ------------------------------------------------------------------------
+   No pinning, no scroll-height trick yet — just a normal block with room
+   to breathe above the row card.
+   ============================================================================ */
+
+.empty-shelf-scroll {
+  position: relative;
+}
+
+.scroll-stage {
+  display: flex;
+  justify-content: center;
+}
+
+
+/* ============================================================================
+   4. HIDE EVERY STAGE EXCEPT THE ACTIVE ONE
+   ------------------------------------------------------------------------
+   Your HTML already marks the resting stage with aria-hidden="false" and
+   every other stage with aria-hidden="true" — no markup changes needed.
+   This is plain CSS, no JS required for this step.
+   ============================================================================ */
+
+.scroll-stage[aria-hidden="true"] {
   display: none;
 }
 
-/* Mobile */
-@media (max-width: 768px) {
-  #section-2-empty-shelf.section-empty-shelf {
-    min-height: 100vh;
 
-    padding:
-      4.5rem
-      1rem
-      4.5rem;
+/* ============================================================================
+   5. THE ROW CARD
+   ------------------------------------------------------------------------
+   Background/surface role separation: the SECTION background stays quiet
+   (step 1), the ROW becomes the raised surface people's eyes land on.
+   ============================================================================ */
 
-    background:
-      radial-gradient(
-        ellipse at 24% 30%,
-        rgba(226, 185, 143, 0.18) 0%,
-        rgba(226, 185, 143, 0.07) 36%,
-        transparent 70%
-      ),
-      radial-gradient(
-        ellipse at 78% 34%,
-        rgba(184, 121, 78, 0.12) 0%,
-        rgba(184, 121, 78, 0.05) 38%,
-        transparent 72%
-      ),
-      radial-gradient(
-        ellipse at 50% 92%,
-        rgba(226, 185, 143, 0.12) 0%,
-        rgba(226, 185, 143, 0.045) 42%,
-        transparent 76%
-      ),
-      linear-gradient(
-        180deg,
-        rgba(255, 252, 248, 0.82) 0%,
-        rgba(250, 246, 239, 0.96) 62%,
-        rgba(250, 246, 239, 1) 100%
-      ),
-      var(--cream);
+.media-library-row {
+  width: min(var(--section-2-row-width), 100%);
+  margin-inline: auto;
+
+  padding: 1.5rem 1.75rem;
+
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 28px;
+
+  box-shadow:
+    0 30px 70px rgba(44, 36, 22, 0.12),
+    0 10px 24px rgba(44, 36, 22, 0.07);
+}
+
+
+/* ============================================================================
+   6. COVER
+   ============================================================================ */
+
+.media-row-main {
+  display: grid;
+  grid-template-columns: 108px minmax(0, 1fr) auto;
+  grid-template-areas:
+    "cover info   score"
+    "cover chips  score";
+  column-gap: 1.25rem;
+  row-gap: 0.65rem;
+  align-items: center;
+}
+
+.media-row-cover {
+  grid-area: cover;
+  grid-row: 1 / -1; /* spans both rows so it sits centered against the full card height */
+
+  width: 108px;
+  aspect-ratio: 2 / 3;
+
+  border-radius: 16px;
+  overflow: hidden;
+
+  background:
+    linear-gradient(145deg, rgba(44, 36, 22, 0.10), rgba(184, 121, 78, 0.22)),
+    var(--cream-dark);
+
+  box-shadow: 0 14px 28px rgba(44, 36, 22, 0.14);
+}
+
+.media-row-cover img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+
+  /* If the image path is still a placeholder / 404s, this hides the
+     alt text so it doesn't bleed across the cover — no JS needed for
+     this small safety net. */
+  color: transparent;
+  font-size: 0;
+}
+
+
+/* ============================================================================
+   7. TITLE / AUTHOR
+   ------------------------------------------------------------------------
+   Grouped tightly together (proximity) — title and author read as one
+   unit, separate from the meta chips below and the score to the right.
+   ============================================================================ */
+
+.media-row-info {
+  grid-area: info;
+  min-width: 0;
+  align-self: end;
+}
+
+.media-row-info h3 {
+  font-family: var(--font-display);
+  font-size: clamp(1.55rem, 2.4vw, 2rem);
+  font-weight: 650;
+  color: var(--ink);
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+}
+
+.media-row-info p {
+  margin-top: 0.3rem;
+
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  color: var(--ink-light);
+  line-height: 1.4;
+}
+
+
+/* ============================================================================
+   8. FORMAT / STATUS CHIPS
+   ------------------------------------------------------------------------
+   Small, quiet metadata — not competing with the title, not styled like
+   the (future) evidence buttons.
+   ============================================================================ */
+
+.media-row-format,
+.media-row-status {
+  grid-area: chips;
+  align-self: start;
+}
+
+.media-row-status {
+  margin-left: 4.5rem; /* sits just to the right of the format chip */
+}
+
+.media-row-format span,
+.media-row-status span {
+  display: inline-flex;
+  align-items: center;
+
+  padding: 0.28rem 0.62rem;
+
+  background: rgba(184, 121, 78, 0.08);
+  border: 1px solid rgba(184, 121, 78, 0.26);
+  border-radius: 999px;
+
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--warm-brown-dark);
+  white-space: nowrap;
+}
+
+
+/* ============================================================================
+   9. RATING CAPSULE
+   ------------------------------------------------------------------------
+   Static and clean for this step. The "but why?" hover reveal is an
+   interaction, and interactions are a later phase.
+   ============================================================================ */
+
+.media-row-score {
+  grid-area: score;
+  grid-row: 1 / -1;
+  align-self: center;
+  justify-self: end;
+
+  display: flex;
+  align-items: baseline;
+  gap: 0.15rem;
+
+  padding: 0.65rem 1.1rem;
+
+  background: rgba(184, 121, 78, 0.07);
+  border: 1px solid rgba(184, 121, 78, 0.24);
+  border-radius: 999px;
+}
+
+.media-row-score span {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 650;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+}
+
+
+/* ============================================================================
+   10. MOBILE LAYOUT
+   ============================================================================ */
+
+@media (max-width: 640px) {
+  #section-2-empty-shelf,
+  .section-empty-shelf {
+    padding: 4rem 1.1rem 4.5rem;
+  }
+
+  .section-2-header {
+    margin-bottom: 2.5rem;
+  }
+
+  .section-2-header h2 {
+    font-size: clamp(2.15rem, 9vw, 2.6rem);
+  }
+
+  .media-library-row {
+    padding: 1.1rem 1.15rem;
+    border-radius: 22px;
+  }
+
+  .media-row-main {
+    grid-template-columns: 76px minmax(0, 1fr) auto;
+    column-gap: 0.9rem;
+  }
+
+  .media-row-cover {
+    width: 76px;
+    border-radius: 12px;
+  }
+
+  .media-row-info h3 {
+    font-size: 1.3rem;
+  }
+
+  .media-row-status {
+    margin-left: 3.6rem;
+  }
+
+  .media-row-score {
+    padding: 0.5rem 0.8rem;
+  }
+
+  .media-row-score span {
+    font-size: 1.15rem;
   }
 }
