@@ -93,296 +93,511 @@
 
     </section>
 
-    <!-- Section 2 Product -->
-    <section id="section-2-empty-shelf" class="section section-empty-shelf" aria-labelledby="section-2-title">
+    <!-- Section 2 Product: Memory Depth -->
+    <section
+        id="section-2-memory-depth"
+        class="section memory-depth-section"
+        aria-labelledby="section-2-title"
+        data-section="memory-depth"
+    >
 
         <!-- Section Title -->
-        <header class="section-2-header">
+        <header class="memory-depth-header">
             <span class="section-label">Beyond the score</span>
+
             <h2 id="section-2-title">A rating tells you nothing.</h2>
-            <p>A number can show how much you liked something. Inkwell helps you remember why.</p>
+
+            <p>
+                A number can show how much you liked something.
+                Inkwell helps you remember why.
+            </p>
         </header>
 
-        <!-- Scroll Animation Wrapper -->
-        <div class="empty-shelf-scroll">
+        <!-- One pinned scroll scene -->
+        <div class="memory-depth-scroll" data-scroll-scene="memory-depth">
 
-            <!-- STAGE 1: Basic empty row appears  just a title, score, nothing else -->
-            <div class="scroll-stage stage-basic-row" data-stage="basic-row">
-                <article class="media-library-row media-library-row-empty">
-                    <div class="media-row-main">
-                        <div class="media-row-cover">
-                            <img src="assets/vagabond-cover.jpg" alt="Vagabond manga cover">
-                        </div>
-                        <div class="media-row-info">
-                            <h3>Vagabond</h3>
-                            <p>Takehiko Inoue</p>
-                        </div>
-                        <div class="media-row-format"><span>Manga</span></div>
-                        <div class="media-row-status"><span>Completed</span></div>
-                        <div class="media-row-score"><span>9/10</span></div>
-                    </div>
-                    <!-- No buttons yet  this is what everyone else gives you -->
-                </article>
-            </div>
+            <div class="memory-depth-scene" data-pin-scene>
 
-            <!-- STAGE 2: Row vanishes  quotes fall down the screen -->
-            <div class="scroll-stage stage-quotes-fall" data-stage="quotes-fall">
-                <div class="falling-quotes">
-                    <blockquote class="falling-quote quote-1">
-                        "You have no enemies. No one has the right to hurt another."
-                    </blockquote>
-                    <blockquote class="falling-quote quote-2">
-                        "The only thing a man can do for another is to kill him or save him."
-                    </blockquote>
-                    <blockquote class="falling-quote quote-3">
-                        "There is no path. The path is made by walking."
-                    </blockquote>
-                    <blockquote class="falling-quote quote-4">
-                        "Strength is not something you have. It is something you find."
-                    </blockquote>
+                <!-- Decorative background layers -->
+                <div class="memory-depth-bg" aria-hidden="true">
+                    <div class="memory-bg-layer memory-bg-paper"></div>
+                    <div class="memory-bg-layer memory-bg-grid"></div>
+                    <div class="memory-bg-layer memory-bg-spotlight"></div>
+                    <div class="memory-bg-layer memory-bg-dust"></div>
+                    <div class="memory-bg-layer memory-bg-ink"></div>
+                    <div class="memory-bg-layer memory-bg-shelf-glow"></div>
                 </div>
-            </div>
 
-            <!-- STAGE 3: Row returns  Quotes button animates in, lands into row -->
-            <div class="scroll-stage stage-row-with-quotes" data-stage="row-with-quotes">
-                <article class="media-library-row media-library-row-expanded">
-                    <div class="media-row-main">
-                        <div class="media-row-cover">
-                            <img src="assets/vagabond-cover.jpg" alt="Vagabond manga cover">
-                        </div>
-                        <div class="media-row-info">
-                            <h3>Vagabond</h3>
-                            <p>Takehiko Inoue</p>
-                        </div>
-                        <div class="media-row-format"><span>Manga</span></div>
-                        <div class="media-row-status"><span>Completed</span></div>
-                        <div class="media-row-score"><span>9/10</span></div>
-                    </div>
-                    <div class="media-row-details" aria-label="Saved details for Vagabond">
-                        <!-- NEW this stage  falls in from above matching the quotes animation -->
-                        <button type="button" class="depth-button depth-button-new depth-button-quotes">
-                            Quotes
-                        </button>
-                    </div>
-                </article>
-            </div>
+                <!-- Decorative animated evidence stage -->
+                <div class="memory-evidence-stage" aria-hidden="true">
 
-            <!-- STAGE 4: Row vanishes moments/panels fly across the screen -->
-            <div class="scroll-stage stage-moments-move" data-stage="moments-move">
-                <div class="moving-moments">
-                    <figure class="moment-frame moment-frame-1">
-                        <img src="assets/vagabond-moment-1.jpg" alt="Saved Vagabond moment">
-                        <figcaption>The duel in the rain.</figcaption>
-                    </figure>
-                    <figure class="moment-frame moment-frame-2">
-                        <img src="assets/vagabond-moment-2.jpg" alt="Saved Vagabond moment">
-                        <figcaption>Musashi alone in the forest.</figcaption>
-                    </figure>
-                    <figure class="moment-frame moment-frame-3">
-                        <img src="assets/vagabond-moment-3.jpg" alt="Saved Vagabond moment">
-                        <figcaption>The final page of volume 22.</figcaption>
-                    </figure>
+                    <!-- Quotes fall first -->
+                    <div class="evidence-layer evidence-layer-quotes" data-evidence-layer="quotes">
+                        <figure class="evidence-card quote-strip quote-strip-1" data-evidence-item="quote">
+                            <blockquote>
+                                “A saved line that made the quiet parts feel heavier than the fight.”
+                            </blockquote>
+                        </figure>
+
+                        <figure class="evidence-card quote-strip quote-strip-2" data-evidence-item="quote">
+                            <blockquote>
+                                “The moment strength stopped feeling like victory.”
+                            </blockquote>
+                        </figure>
+
+                        <figure class="evidence-card quote-strip quote-strip-3" data-evidence-item="quote">
+                            <blockquote>
+                                “A sentence you wanted to keep before turning the page.”
+                            </blockquote>
+                        </figure>
+                    </div>
+
+                    <!-- Manga moments fall second -->
+                    <div class="evidence-layer evidence-layer-moments" data-evidence-layer="moments">
+                        <figure class="evidence-card moment-panel moment-panel-hero" data-evidence-item="moment">
+                            <!-- Use your own, licensed, or placeholder image here -->
+                            <img
+                                src="assets/section-2/vagabond-moment-hero.jpg"
+                                alt=""
+                                width="960"
+                                height="620"
+                                loading="lazy"
+                                decoding="async"
+                            >
+                            <figcaption>The rain duel.</figcaption>
+                        </figure>
+
+                        <figure class="evidence-card moment-panel moment-panel-left" data-evidence-item="moment">
+                            <!-- Use your own, licensed, or placeholder image here -->
+                            <img
+                                src="assets/section-2/vagabond-moment-forest.jpg"
+                                alt=""
+                                width="720"
+                                height="520"
+                                loading="lazy"
+                                decoding="async"
+                            >
+                            <figcaption>Alone in the forest.</figcaption>
+                        </figure>
+
+                        <figure class="evidence-card moment-panel moment-panel-right" data-evidence-item="moment">
+                            <!-- Use your own, licensed, or placeholder image here -->
+                            <img
+                                src="assets/section-2/vagabond-moment-page.jpg"
+                                alt=""
+                                width="720"
+                                height="520"
+                                loading="lazy"
+                                decoding="async"
+                            >
+                            <figcaption>The page that made the rating click.</figcaption>
+                        </figure>
+                    </div>
+
+                    <!-- Characters appear third -->
+                    <div class="evidence-layer evidence-layer-characters" data-evidence-layer="characters">
+                        <figure class="evidence-card character-card character-card-main" data-evidence-item="character">
+                            <!-- Use your own, licensed, or placeholder image here -->
+                            <img
+                                src="assets/section-2/character-musashi.jpg"
+                                alt=""
+                                width="520"
+                                height="720"
+                                loading="lazy"
+                                decoding="async"
+                            >
+                            <figcaption>
+                                <span class="character-name">Musashi Miyamoto</span>
+                                <span class="character-trait">restless → still</span>
+                            </figcaption>
+                        </figure>
+
+                        <figure class="evidence-card character-card character-card-support character-card-1" data-evidence-item="character">
+                            <!-- Use your own, licensed, or placeholder image here -->
+                            <img
+                                src="assets/section-2/character-kojiro.jpg"
+                                alt=""
+                                width="420"
+                                height="560"
+                                loading="lazy"
+                                decoding="async"
+                            >
+                            <figcaption>
+                                <span class="character-name">Kojiro Sasaki</span>
+                                <span class="character-trait">quiet force</span>
+                            </figcaption>
+                        </figure>
+
+                        <figure class="evidence-card character-card character-card-support character-card-2" data-evidence-item="character">
+                            <!-- Use your own, licensed, or placeholder image here -->
+                            <img
+                                src="assets/section-2/character-otsu.jpg"
+                                alt=""
+                                width="420"
+                                height="560"
+                                loading="lazy"
+                                decoding="async"
+                            >
+                            <figcaption>
+                                <span class="character-name">Otsu</span>
+                                <span class="character-trait">memory of home</span>
+                            </figcaption>
+                        </figure>
+
+                        <figure class="evidence-card character-card character-card-support character-card-3" data-evidence-item="character">
+                            <!-- Use your own, licensed, or placeholder image here -->
+                            <img
+                                src="assets/section-2/character-takuan.jpg"
+                                alt=""
+                                width="420"
+                                height="560"
+                                loading="lazy"
+                                decoding="async"
+                            >
+                            <figcaption>
+                                <span class="character-name">Takuan Soho</span>
+                                <span class="character-trait">rough wisdom</span>
+                            </figcaption>
+                        </figure>
+                    </div>
+
+                    <!-- Notes drift fourth -->
+                    <div class="evidence-layer evidence-layer-notes" data-evidence-layer="notes">
+                        <p class="evidence-card note-card note-card-1" data-evidence-item="note">
+                            Chapter 3 slows down so you sit with Musashi instead of rushing past him.
+                        </p>
+
+                        <p class="evidence-card note-card note-card-2" data-evidence-item="note">
+                            Kojiro feels peaceful in a way Musashi keeps trying to earn.
+                        </p>
+
+                        <p class="evidence-card note-card note-card-3" data-evidence-item="note">
+                            The best panels do not explain the feeling. They leave room for it.
+                        </p>
+                    </div>
+
+                    <!-- Thoughts arrive last -->
+                    <div class="evidence-layer evidence-layer-thoughts" data-evidence-layer="thoughts">
+                        <article class="evidence-card thought-page" data-evidence-item="thought">
+                            <span class="thought-page-label">Journal thought</span>
+
+                            <p>
+                                Vagabond made me realize I was confusing movement with progress.
+                            </p>
+                        </article>
+                    </div>
+
                 </div>
-            </div>
 
-            <!-- STAGE 5: Row returns Moments button animates in, Quotes sits still -->
-            <div class="scroll-stage stage-row-with-moment" data-stage="row-with-moment">
-                <article class="media-library-row media-library-row-expanded">
-                    <div class="media-row-main">
-                        <div class="media-row-cover">
-                            <img src="assets/vagabond-cover.jpg" alt="Vagabond manga cover">
-                        </div>
-                        <div class="media-row-info">
-                            <h3>Vagabond</h3>
-                            <p>Takehiko Inoue</p>
-                        </div>
-                        <div class="media-row-format"><span>Manga</span></div>
-                        <div class="media-row-status"><span>Completed</span></div>
-                        <div class="media-row-score"><span>9/10</span></div>
+                <!-- Main persistent saved row -->
+                <article
+                    class="memory-row"
+                    aria-labelledby="memory-entry-title"
+                    data-memory-row
+                >
+
+                    <div class="memory-row-cover">
+                        <!-- Use your own, licensed, or placeholder cover image here -->
+                        <img
+                            src="assets/section-2/vagabond-cover.jpg"
+                            alt="Vagabond manga cover"
+                            width="360"
+                            height="540"
+                            loading="lazy"
+                            decoding="async"
+                        >
                     </div>
-                    <div class="media-row-details" aria-label="Saved details for Vagabond">
-                        <!-- STATIC already existed, no animation -->
-                        <button type="button" class="depth-button depth-button-static depth-button-quotes">
-                            Quotes
-                        </button>
-                        <!-- NEW this stage flies in from the side matching moments animation -->
-                        <button type="button" class="depth-button depth-button-new depth-button-moment">
-                            Moments
-                        </button>
+
+                    <div class="memory-row-content">
+
+                        <div class="memory-row-main">
+
+                            <div class="memory-row-info">
+                                <p class="memory-row-kicker">Saved manga entry</p>
+
+                                <h3 id="memory-entry-title">Vagabond</h3>
+
+                                <p class="memory-row-author">Takehiko Inoue</p>
+
+                                <p class="memory-row-meta" aria-label="Manga, Completed">
+                                    <span>Manga</span>
+                                    <span aria-hidden="true">·</span>
+                                    <span>Completed</span>
+                                </p>
+                            </div>
+
+                            <div class="memory-row-score" aria-label="Rating: 9 out of 10">
+                                <span class="score-value" aria-hidden="true">9</span>
+                                <span class="score-divider" aria-hidden="true">/</span>
+                                <span class="score-total" aria-hidden="true">10</span>
+                                <span class="score-question" aria-hidden="true">but why?</span>
+                            </div>
+
+                        </div>
+
+                        <div class="memory-row-depth">
+
+                            <p class="memory-depth-label" data-depth-label>
+                                What made it matter
+                            </p>
+
+                            <div
+                                class="memory-depth-buttons"
+                                role="list"
+                                aria-label="Evidence saved for Vagabond"
+                            >
+
+                                <button
+                                    type="button"
+                                    class="depth-button depth-button-quotes"
+                                    data-depth-button="quotes"
+                                    data-reveal-step="1"
+                                    aria-controls="memory-preview-quotes"
+                                    aria-expanded="false"
+                                    role="listitem"
+                                >
+                                    <span class="depth-button-icon" aria-hidden="true">“”</span>
+                                    <span class="depth-button-text">Quotes</span>
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="depth-button depth-button-moments"
+                                    data-depth-button="moments"
+                                    data-reveal-step="2"
+                                    aria-controls="memory-preview-moments"
+                                    aria-expanded="false"
+                                    role="listitem"
+                                >
+                                    <span class="depth-button-icon" aria-hidden="true">▦</span>
+                                    <span class="depth-button-text">Moments</span>
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="depth-button depth-button-characters"
+                                    data-depth-button="characters"
+                                    data-reveal-step="3"
+                                    aria-controls="memory-preview-characters"
+                                    aria-expanded="false"
+                                    role="listitem"
+                                >
+                                    <span class="depth-button-icon" aria-hidden="true">◎</span>
+                                    <span class="depth-button-text">Characters</span>
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="depth-button depth-button-notes"
+                                    data-depth-button="notes"
+                                    data-reveal-step="4"
+                                    aria-controls="memory-preview-notes"
+                                    aria-expanded="false"
+                                    role="listitem"
+                                >
+                                    <span class="depth-button-icon" aria-hidden="true">✎</span>
+                                    <span class="depth-button-text">Notes</span>
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="depth-button depth-button-thoughts"
+                                    data-depth-button="thoughts"
+                                    data-reveal-step="5"
+                                    aria-controls="memory-preview-thoughts"
+                                    aria-expanded="false"
+                                    role="listitem"
+                                >
+                                    <span class="depth-button-icon" aria-hidden="true">◇</span>
+                                    <span class="depth-button-text">Thoughts</span>
+                                </button>
+
+                            </div>
+
+                        </div>
+
                     </div>
+
                 </article>
-            </div>
 
-            <!-- STAGE 6: Row vanishes characters float up onto screen -->
-            <div class="scroll-stage stage-characters-appear" data-stage="characters-appear">
-                <div class="character-cloud">
-                    <figure class="character-name character-1">
-                        <img src="img/Musashi Miyamoto.jpg" alt="Musashi Miyamoto">
-                        <figcaption>Musashi Miyamoto</figcaption>
-                    </figure>
-                    <figure class="character-name character-2">
-                        <img src="img/Kojiro Sasaki.jpg" alt="Kojiro Sasaki">
-                        <figcaption>Kojiro Sasaki</figcaption>
-                    </figure>
-                    <figure class="character-name character-3">
-                        <img src="img/Otsu.jpg" alt="Otsu">
-                        <figcaption>Otsu</figcaption>
-                    </figure>
-                    <figure class="character-name character-4">
-                        <img src="img/Matahachi Honiden.jpg" alt="Matahachi Honiden">
-                        <figcaption>Matahachi Honiden</figcaption>
-                    </figure>
-                    <figure class="character-name character-5">
-                        <img src="img/Takuan Soho.jpg" alt="Takuan Soho">
-                        <figcaption>Takuan Soho</figcaption>
-                    </figure>
-                    <figure class="character-name character-6">
-                        <img src="img/Seijuro Yoshioka.jpg" alt="Seijuro Yoshioka">
-                        <figcaption>Seijuro Yoshioka</figcaption>
-                    </figure>
-                    <figure class="character-name character-7">
-                        <img src="img/Denshichiro Yoshioka.jpg" alt="Denshichiro Yoshioka">
-                        <figcaption>Denshichiro Yoshioka</figcaption>
-                    </figure>
+                <!-- Preview cards for hover, focus, or tap -->
+                <div class="memory-preview-layer" data-preview-layer aria-live="polite">
+
+                    <article
+                        id="memory-preview-quotes"
+                        class="memory-preview-card preview-quotes"
+                        data-preview-card="quotes"
+                        hidden
+                    >
+                        <span class="preview-label">Saved quote</span>
+                        <p>
+                            A remembered line that made the rating feel personal.
+                        </p>
+                    </article>
+
+                    <article
+                        id="memory-preview-moments"
+                        class="memory-preview-card preview-moments"
+                        data-preview-card="moments"
+                        hidden
+                    >
+                        <span class="preview-label">Favourite moment</span>
+
+                        <figure>
+                            <!-- Use your own, licensed, or placeholder image here -->
+                            <img
+                                src="assets/section-2/vagabond-preview-moment.jpg"
+                                alt="Preview of a saved Vagabond moment"
+                                width="520"
+                                height="340"
+                                loading="lazy"
+                                decoding="async"
+                            >
+                            <figcaption>The page that made the rating click.</figcaption>
+                        </figure>
+                    </article>
+
+                    <article
+                        id="memory-preview-characters"
+                        class="memory-preview-card preview-characters"
+                        data-preview-card="characters"
+                        hidden
+                    >
+                        <span class="preview-label">Character saved</span>
+
+                        <figure>
+                            <!-- Use your own, licensed, or placeholder image here -->
+                            <img
+                                src="assets/section-2/character-musashi-preview.jpg"
+                                alt="Musashi Miyamoto character preview"
+                                width="320"
+                                height="420"
+                                loading="lazy"
+                                decoding="async"
+                            >
+                            <figcaption>
+                                <strong>Musashi Miyamoto</strong>
+                                <span>restless → still</span>
+                            </figcaption>
+                        </figure>
+                    </article>
+
+                    <article
+                        id="memory-preview-notes"
+                        class="memory-preview-card preview-notes"
+                        data-preview-card="notes"
+                        hidden
+                    >
+                        <span class="preview-label">Personal note</span>
+                        <p>
+                            The quiet parts matter because they make the battles feel earned.
+                        </p>
+                    </article>
+
+                    <article
+                        id="memory-preview-thoughts"
+                        class="memory-preview-card preview-thoughts"
+                        data-preview-card="thoughts"
+                        hidden
+                    >
+                        <span class="preview-label">Thought saved</span>
+                        <p>
+                            Vagabond made me realize I was confusing movement with progress.
+                        </p>
+                    </article>
+
                 </div>
+
             </div>
 
-            <!-- STAGE 7: Row returns Characters button animates in, others sit still -->
-            <div class="scroll-stage stage-row-with-character" data-stage="row-with-character">
-                <article class="media-library-row media-library-row-expanded">
-                    <div class="media-row-main">
-                        <div class="media-row-cover">
-                            <img src="assets/vagabond-cover.jpg" alt="Vagabond manga cover">
-                        </div>
-                        <div class="media-row-info">
-                            <h3>Vagabond</h3>
-                            <p>Takehiko Inoue</p>
-                        </div>
-                        <div class="media-row-format"><span>Manga</span></div>
-                        <div class="media-row-status"><span>Completed</span></div>
-                        <div class="media-row-score"><span>9/10</span></div>
-                    </div>
-                    <div class="media-row-details" aria-label="Saved details for Vagabond">
-                        <!-- STATIC already existed -->
-                        <button type="button" class="depth-button depth-button-static depth-button-quotes">
-                            Quotes
-                        </button>
-                        <!-- STATIC already existed -->
-                        <button type="button" class="depth-button depth-button-static depth-button-moment">
-                            Moments
-                        </button>
-                        <!-- NEW this stage floats up from below matching characters animation -->
-                        <button type="button" class="depth-button depth-button-new depth-button-character">
-                            Characters
-                        </button>
-                    </div>
-                </article>
-            </div>
+        </div>
 
-            <!-- STAGE 8: Row vanishes notes drift across like scattered sticky notes -->
-            <div class="scroll-stage stage-notes-appear" data-stage="notes-appear">
-                <div class="notes-cloud">
-                    <p class="note-card note-1">
-                        Chapter 3 the pacing here slows down intentionally. Inoue is making you sit with Musashi.
-                    </p>
-                    <p class="note-card note-2">
-                        Why does Kojiro feel more at peace than Musashi even though he can't hear?
-                    </p>
-                    <p class="note-card note-3">
-                        Volume 10 the fight choreography is unlike anything. No words needed.
-                    </p>
+        <!-- Reduced-motion/static version hook -->
+        <div
+            class="memory-depth-reduced"
+            data-reduced-motion-fallback
+            hidden
+            aria-label="Static version of the saved evidence section"
+        >
+
+            <article class="memory-row memory-row-complete" aria-labelledby="memory-entry-title-static">
+
+                <div class="memory-row-cover">
+                    <!-- Use your own, licensed, or placeholder cover image here -->
+                    <img
+                        src="assets/section-2/vagabond-cover.jpg"
+                        alt="Vagabond manga cover"
+                        width="360"
+                        height="540"
+                        loading="lazy"
+                        decoding="async"
+                    >
                 </div>
-            </div>
 
-            <!-- STAGE 9: Row returns Notes button animates in, others sit still -->
-            <div class="scroll-stage stage-row-with-notes" data-stage="row-with-notes">
-                <article class="media-library-row media-library-row-expanded">
-                    <div class="media-row-main">
-                        <div class="media-row-cover">
-                            <img src="assets/vagabond-cover.jpg" alt="Vagabond manga cover">
-                        </div>
-                        <div class="media-row-info">
-                            <h3>Vagabond</h3>
-                            <p>Takehiko Inoue</p>
-                        </div>
-                        <div class="media-row-format"><span>Manga</span></div>
-                        <div class="media-row-status"><span>Completed</span></div>
-                        <div class="media-row-score"><span>9/10</span></div>
-                    </div>
-                    <div class="media-row-details" aria-label="Saved details for Vagabond">
-                        <!-- STATIC already existed -->
-                        <button type="button" class="depth-button depth-button-static depth-button-quotes">
-                            Quotes
-                        </button>
-                        <!-- STATIC already existed -->
-                        <button type="button" class="depth-button depth-button-static depth-button-moment">
-                            Moments
-                        </button>
-                        <!-- STATIC already existed -->
-                        <button type="button" class="depth-button depth-button-static depth-button-character">
-                            Characters
-                        </button>
-                        <!-- NEW this stage drifts in like a sticky note -->
-                        <button type="button" class="depth-button depth-button-new depth-button-notes">
-                            Notes
-                        </button>
-                    </div>
-                </article>
-            </div>
+                <div class="memory-row-content">
 
-            <!-- STAGE 10: Row vanishes deep thoughts appear, long and personal, typed out -->
-            <div class="scroll-stage stage-thoughts-appear" data-stage="thoughts-appear">
-                <div class="thoughts-cloud">
-                    <p class="thought-card thought-1">
-                        Vagabond made me realise I had been confusing movement with progress. Musashi spends decades chasing strength and only finds peace when he stops defining himself by it. I've been doing the same thing in a different way.
-                    </p>
-                    <p class="thought-card thought-2">
-                        The contrast between Musashi and Kojiro broke me. One man obsessed with becoming the strongest. Another who was born deaf, never chose the sword, and somehow became just as formidable — maybe more. Inoue is asking something uncomfortable. What are you really chasing and why.
-                    </p>
+                    <div class="memory-row-main">
+                        <div class="memory-row-info">
+                            <p class="memory-row-kicker">Saved manga entry</p>
+                            <h3 id="memory-entry-title-static">Vagabond</h3>
+                            <p class="memory-row-author">Takehiko Inoue</p>
+                            <p class="memory-row-meta">Manga · Completed</p>
+                        </div>
+
+                        <div class="memory-row-score" aria-label="Rating: 9 out of 10">
+                            <span aria-hidden="true">9/10</span>
+                        </div>
+                    </div>
+
+                    <div class="memory-row-depth">
+                        <p class="memory-depth-label">Evidence saved</p>
+
+                        <div class="memory-depth-buttons" role="list" aria-label="Evidence saved for Vagabond">
+                            <button type="button" class="depth-button depth-button-quotes" role="listitem">Quotes</button>
+                            <button type="button" class="depth-button depth-button-moments" role="listitem">Moments</button>
+                            <button type="button" class="depth-button depth-button-characters" role="listitem">Characters</button>
+                            <button type="button" class="depth-button depth-button-notes" role="listitem">Notes</button>
+                            <button type="button" class="depth-button depth-button-thoughts" role="listitem">Thoughts</button>
+                        </div>
+                    </div>
+
                 </div>
-            </div>
 
-            <!-- STAGE 11: Final row all 5 buttons, Thoughts animates in last -->
-            <div class="scroll-stage stage-final-row" data-stage="final-row">
-                <article class="media-library-row media-library-row-expanded media-library-row-complete">
-                    <div class="media-row-main">
-                        <div class="media-row-cover">
-                            <img src="assets/vagabond-cover.jpg" alt="Vagabond manga cover">
-                        </div>
-                        <div class="media-row-info">
-                            <h3>Vagabond</h3>
-                            <p>Takehiko Inoue</p>
-                        </div>
-                        <div class="media-row-format"><span>Manga</span></div>
-                        <div class="media-row-status"><span>Completed</span></div>
-                        <div class="media-row-score"><span>9/10</span></div>
-                    </div>
-                    <div class="media-row-details" aria-label="Saved details for Vagabond">
-                        <!-- STATIC all already existed -->
-                        <button type="button" class="depth-button depth-button-static depth-button-quotes">
-                            Quotes
-                        </button>
-                        <button type="button" class="depth-button depth-button-static depth-button-moment">
-                            Moments
-                        </button>
-                        <button type="button" class="depth-button depth-button-static depth-button-character">
-                            Characters
-                        </button>
-                        <button type="button" class="depth-button depth-button-static depth-button-notes">
-                            Notes
-                        </button>
-                        <!-- NEW this stage fades in slowly, the deepest and last -->
-                        <button type="button" class="depth-button depth-button-new depth-button-thoughts">
-                            Thoughts
-                        </button>
-                    </div>
+            </article>
+
+            <div class="memory-static-cards" aria-label="Saved evidence examples">
+
+                <article class="memory-static-card static-card-quotes">
+                    <h4>Quotes</h4>
+                    <p>A saved line that made the rating feel personal.</p>
                 </article>
+
+                <article class="memory-static-card static-card-moments">
+                    <h4>Moments</h4>
+                    <p>The page that made the rating click.</p>
+                </article>
+
+                <article class="memory-static-card static-card-characters">
+                    <h4>Characters</h4>
+                    <p>Musashi Miyamoto — restless → still.</p>
+                </article>
+
+                <article class="memory-static-card static-card-notes">
+                    <h4>Notes</h4>
+                    <p>The quiet parts matter because they make the battles feel earned.</p>
+                </article>
+
+                <article class="memory-static-card static-card-thoughts">
+                    <h4>Thoughts</h4>
+                    <p>Vagabond made me realize I was confusing movement with progress.</p>
+                </article>
+
             </div>
 
         </div>
 
     </section>
-
+    
     <!-- Section 3 Search Demo -->
     <section id="section-3-search-demo" class="section section-search-demo" aria-labelledby="section-3-title">
 
@@ -906,6 +1121,7 @@
     <script src="index.js"></script>
     <script src="./javaScript/section-1.js"></script>
     <script src="./javaScript/section-2.js"></script>
+    
     
 </body>
 </html>
