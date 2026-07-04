@@ -1310,3 +1310,772 @@
     transform: none;
   }
 }
+/* ============================================================================
+   FINAL CORRECTION — FULL-HEIGHT COVER + LOCALIZED OBJECT GLOWS
+   ------------------------------------------------------------------------
+   This override fixes two issues:
+   1) The cover now owns the full vertical space of the whole card, from near
+      the top padding to near the bottom padding. The divider/details live only
+      in the right column and never shrink/cut the cover.
+   2) Section 2 no longer uses a heavy full-section tan wash. Warmth is mostly
+      localized around the active card / quote objects, like Section 1.
+   ============================================================================ */
+
+#section-2-empty-shelf,
+.section-empty-shelf {
+  --section-2-row-width: 940px;
+  --section-2-cover-width: 128px;
+  --section-2-card-gap: 1.8rem;
+
+  /* Keep the base calm and near-paper. The warmth should come from local
+     glows around objects, not from tinting the entire section orange. */
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 250, 241, 0.78), transparent 36%),
+    linear-gradient(180deg, #fbf6ee 0%, #faf1e7 42%, #fbf6ee 100%);
+}
+
+/* Remove the previous broad section wash. It was making the lower area look
+   uniformly tan instead of warmly lit around the actual content. */
+#section-2-empty-shelf::before,
+.section-empty-shelf::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 8rem;
+  width: min(980px, 72vw);
+  height: 420px;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: 999px;
+  background:
+    radial-gradient(
+      ellipse at center,
+      rgba(166, 95, 42, 0.10) 0%,
+      rgba(166, 95, 42, 0.055) 42%,
+      transparent 72%
+    );
+  filter: blur(58px);
+  opacity: 0.62;
+  transform: translateX(-50%);
+}
+
+/* Keep the paper texture extremely subtle. */
+#section-2-empty-shelf::after,
+.section-empty-shelf::after {
+  opacity: 0.10;
+}
+
+/* Local atmospheric warmth for every stage. This is the main fix for the
+   bottom feeling flat: the glow follows the object group instead of coloring
+   the entire background evenly. */
+.scroll-stage::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: -2;
+  width: min(1020px, 78vw);
+  height: min(520px, calc(100% + 230px));
+  pointer-events: none;
+  border-radius: 999px;
+  background:
+    radial-gradient(
+      ellipse at 50% 52%,
+      rgba(177, 99, 42, 0.16) 0%,
+      rgba(177, 99, 42, 0.075) 40%,
+      transparent 72%
+    );
+  filter: blur(60px);
+  opacity: 0.78;
+  transform: translate(-50%, -50%);
+}
+
+/* Extra localized warmth around evidence cards. This keeps quotes/moments from
+   sitting on a dead flat background while avoiding a full-page tan wash. */
+.falling-quotes,
+.moving-moments,
+.character-cloud,
+.notes-cloud,
+.thoughts-cloud {
+  position: relative;
+  isolation: isolate;
+}
+
+.falling-quotes::before,
+.moving-moments::before,
+.character-cloud::before,
+.notes-cloud::before,
+.thoughts-cloud::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: -1;
+  width: min(980px, 105%);
+  height: calc(100% + 180px);
+  pointer-events: none;
+  border-radius: 999px;
+  background:
+    radial-gradient(
+      ellipse at center,
+      rgba(174, 99, 44, 0.14),
+      rgba(174, 99, 44, 0.06) 44%,
+      transparent 74%
+    );
+  filter: blur(54px);
+  opacity: 0.82;
+  transform: translate(-50%, -50%);
+}
+
+/* Card becomes a real two-column object:
+   - left column: cover spanning every row
+   - right columns: info/chips/score/details
+   The cover is no longer trapped inside only the top row. */
+.media-library-row {
+  width: min(var(--section-2-row-width), 100%);
+  min-height: 320px;
+  padding: 30px;
+
+  display: grid;
+  grid-template-columns: var(--section-2-cover-width) minmax(0, 1fr) auto;
+  grid-template-areas:
+    "cover info    score"
+    "cover chips   score"
+    "cover details details";
+  grid-template-rows: minmax(86px, 1fr) auto auto;
+  column-gap: var(--section-2-card-gap);
+  row-gap: 0.7rem;
+  align-items: center;
+}
+
+.media-library-row:has(.media-row-details) {
+  min-height: 350px;
+}
+
+/* Flatten the old inner grid so its children can be placed by the card grid.
+   This is the key code issue: the old `.media-row-main` grid kept the cover
+   inside a separate top-only area, so the details row could never share the
+   same vertical cover column. */
+.media-row-main {
+  display: contents;
+}
+
+.media-row-cover,
+.media-row-info,
+.media-row-format,
+.media-row-status,
+.media-row-score,
+.media-row-details {
+  position: relative;
+  z-index: 1;
+}
+
+.media-row-cover {
+  grid-area: cover;
+  align-self: stretch;
+  justify-self: start;
+
+  width: var(--section-2-cover-width);
+  height: 100%;
+  min-height: 270px;
+  max-height: 295px;
+  aspect-ratio: auto;
+
+  border-radius: 18px;
+}
+
+.media-row-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.media-row-info {
+  grid-area: info;
+  align-self: end;
+  padding-top: 0.15rem;
+}
+
+.media-row-format,
+.media-row-status {
+  grid-area: chips;
+  align-self: start;
+  margin-top: 0.68rem;
+}
+
+.media-row-status {
+  margin-left: calc(0.7rem + 4.8rem);
+}
+
+.media-row-score {
+  grid-area: score;
+  grid-row: 1 / 3;
+  align-self: center;
+  justify-self: end;
+}
+
+/* Divider and saved layers are now truly right-column-only because the whole
+   element lives in the `details` grid area, not offset with margins. */
+.media-row-details {
+  grid-area: details;
+  width: 100%;
+  margin: 1.15rem 0 0;
+  padding-top: 1.15rem;
+  border-top: 1px solid rgba(184, 121, 78, 0.15);
+}
+
+/* The card-only aura remains, but it is tucked to the object instead of being
+   confused with the section background. */
+.card-wrap::before,
+.scroll-stage:not(:has(.card-wrap)):has(.media-library-row)::before {
+  background: radial-gradient(
+    ellipse at 50% 58%,
+    rgba(194, 111, 47, 0.22),
+    rgba(194, 111, 47, 0.09) 38%,
+    transparent 72%
+  );
+  opacity: 0.7;
+}
+
+.card-wrap:hover::before,
+.scroll-stage:not(:has(.card-wrap)):has(.media-library-row:hover)::before {
+  background: radial-gradient(
+    ellipse at 50% 58%,
+    rgba(207, 121, 49, 0.32),
+    rgba(207, 121, 49, 0.14) 40%,
+    transparent 74%
+  );
+  opacity: 0.98;
+}
+
+/* Responsive: keep the same idea, but reduce the cover instead of changing
+   the meaning of the layout. */
+@media (max-width: 900px) {
+  #section-2-empty-shelf,
+  .section-empty-shelf {
+    --section-2-cover-width: 116px;
+    --section-2-card-gap: 1.35rem;
+  }
+
+  .media-library-row {
+    grid-template-columns: var(--section-2-cover-width) minmax(0, 1fr) auto;
+    min-height: 310px;
+  }
+
+  .media-library-row:has(.media-row-details) {
+    min-height: 330px;
+  }
+
+  .media-row-cover {
+    min-height: 242px;
+    max-height: 272px;
+  }
+
+  .media-row-status {
+    margin-left: calc(0.65rem + 4.65rem);
+  }
+}
+
+@media (max-width: 640px) {
+  .media-library-row {
+    display: grid;
+    grid-template-columns: 82px minmax(0, 1fr);
+    grid-template-areas:
+      "cover info"
+      "cover chips"
+      "score score"
+      "details details";
+    grid-template-rows: auto auto auto auto;
+    min-height: auto;
+    row-gap: 0.75rem;
+  }
+
+  .media-library-row:has(.media-row-details) {
+    min-height: auto;
+  }
+
+  .media-row-cover {
+    width: 82px;
+    min-height: 124px;
+    max-height: 150px;
+    align-self: stretch;
+  }
+
+  .media-row-score {
+    grid-area: score;
+    grid-row: auto;
+    justify-self: start;
+    align-self: center;
+    margin-top: 0.45rem;
+  }
+
+  .media-row-details {
+    grid-area: details;
+    width: 100%;
+    margin: 0.75rem 0 0;
+  }
+}
+
+/* ============================================================================
+   FINAL OBJECT-LOCAL ATMOSPHERE FIX — NO FULL-SECTION TAN WASH
+   ------------------------------------------------------------------------
+   This is the final override for the issue shown in the screenshots:
+   - The background must stay calm and paper-like.
+   - Warmth must appear close to objects: the book card, quote cards,
+     moments, characters, notes, and thoughts.
+   - The cover must span from the card's top padding to its bottom padding,
+     while the divider/details live only in the right content column.
+   ============================================================================ */
+
+#section-2-empty-shelf,
+.section-empty-shelf {
+  --section-2-row-width: 940px;
+  --section-2-cover-width: 132px;
+  --section-2-card-gap: 1.85rem;
+
+  position: relative;
+  overflow: hidden;
+
+  /* Calm base only. Do not tint the whole section tan/orange. */
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 252, 246, 0.68), transparent 34%),
+    linear-gradient(180deg, #fbf7f1 0%, #faf4ec 46%, #fbf7f1 100%) !important;
+}
+
+/* Remove the broad section glow. It was the main cause of the whole lower
+   section becoming homogenous tan instead of warm only near objects. */
+#section-2-empty-shelf::before,
+.section-empty-shelf::before {
+  content: none !important;
+  display: none !important;
+}
+
+/* Keep only a barely visible paper grain. This adds texture without changing
+   the perceived background color. */
+#section-2-empty-shelf::after,
+.section-empty-shelf::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: radial-gradient(rgba(97, 58, 31, 0.035) 0.65px, transparent 0.65px);
+  background-size: 4px 4px;
+  opacity: 0.075 !important;
+}
+
+#section-2-empty-shelf > *,
+.section-empty-shelf > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* No generic stage glow. A glow on every .scroll-stage is too large and stacks
+   vertically, which makes the whole scrolled area look like one flat warm wash. */
+.scroll-stage::before {
+  content: none !important;
+  display: none !important;
+}
+
+/* The stage itself should be a neutral positioning container. */
+.scroll-stage {
+  position: relative;
+  isolation: isolate;
+}
+
+/* -------------------------------------------------------------------------
+   CARD-ONLY LOCAL AURA
+   ------------------------------------------------------------------------- */
+
+.card-wrap {
+  position: relative;
+  width: min(var(--section-2-row-width), 100%);
+  margin-inline: auto;
+  isolation: isolate;
+  perspective: 1200px;
+}
+
+.card-wrap::before {
+  content: "" !important;
+  display: block !important;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: -1;
+  pointer-events: none;
+
+  width: min(calc(100% + 96px), calc(var(--section-2-row-width) + 96px));
+  height: calc(100% + 92px);
+  border-radius: 52px;
+
+  background:
+    radial-gradient(
+      ellipse at 50% 58%,
+      rgba(194, 111, 47, 0.25),
+      rgba(194, 111, 47, 0.105) 39%,
+      transparent 72%
+    );
+  filter: blur(30px);
+  opacity: 0.76;
+  transform: translate(-50%, -50%) scale(1);
+
+  transition:
+    opacity 240ms ease,
+    transform 240ms ease,
+    background 240ms ease;
+}
+
+.card-wrap:hover::before {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1.026);
+  background:
+    radial-gradient(
+      ellipse at 50% 58%,
+      rgba(207, 121, 49, 0.35),
+      rgba(207, 121, 49, 0.155) 40%,
+      transparent 74%
+    );
+}
+
+/* Fallback when the markup does not include .card-wrap around a media row.
+   This is still local to the card object, not the whole stage. */
+.scroll-stage:not(:has(.card-wrap)):has(.media-library-row)::before {
+  content: "" !important;
+  display: block !important;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: -1;
+  pointer-events: none;
+
+  width: min(calc(var(--section-2-row-width) + 96px), calc(100% + 96px));
+  height: calc(100% + 92px);
+  border-radius: 52px;
+  background:
+    radial-gradient(
+      ellipse at 50% 58%,
+      rgba(194, 111, 47, 0.24),
+      rgba(194, 111, 47, 0.10) 39%,
+      transparent 72%
+    );
+  filter: blur(30px);
+  opacity: 0.74;
+  transform: translate(-50%, -50%) scale(1);
+  transition: opacity 240ms ease, transform 240ms ease, background 240ms ease;
+}
+
+.scroll-stage:not(:has(.card-wrap)):has(.media-library-row:hover)::before {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1.026);
+  background:
+    radial-gradient(
+      ellipse at 50% 58%,
+      rgba(207, 121, 49, 0.34),
+      rgba(207, 121, 49, 0.15) 40%,
+      transparent 74%
+    );
+}
+
+/* -------------------------------------------------------------------------
+   FULL-HEIGHT COVER CARD GRID
+   ------------------------------------------------------------------------- */
+
+.media-library-row {
+  width: min(var(--section-2-row-width), 100%);
+  min-height: 348px;
+  margin-inline: auto;
+  padding: 28px;
+
+  display: grid !important;
+  grid-template-columns: var(--section-2-cover-width) minmax(0, 1fr) auto;
+  grid-template-areas:
+    "cover info    score"
+    "cover chips   score"
+    "cover details details";
+  grid-template-rows: minmax(104px, 1fr) auto minmax(96px, auto);
+  column-gap: var(--section-2-card-gap);
+  row-gap: 0.72rem;
+  align-items: stretch;
+
+  background:
+    linear-gradient(180deg, rgba(255, 253, 249, 0.97) 0%, rgba(255, 248, 238, 0.955) 100%);
+  border: 1px solid rgba(184, 121, 78, 0.22);
+  border-radius: 30px;
+  box-shadow:
+    0 30px 74px rgba(87, 49, 22, 0.13),
+    0 11px 24px rgba(87, 49, 22, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.80);
+
+  position: relative;
+  overflow: hidden;
+  transform: perspective(900px) translateZ(0);
+  transition:
+    transform 240ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 220ms ease,
+    background 220ms ease,
+    box-shadow 240ms ease;
+}
+
+.media-library-row:has(.media-row-details) {
+  min-height: 348px !important;
+}
+
+/* Flatten old inner grid so all card children join the parent grid. */
+.media-row-main {
+  display: contents !important;
+}
+
+.media-row-cover,
+.media-row-info,
+.media-row-format,
+.media-row-status,
+.media-row-score,
+.media-row-details {
+  position: relative;
+  z-index: 1;
+}
+
+/* This is the cover fix: the cover spans every grid row in the left column,
+   from the top padding to the bottom padding. It is not controlled by the
+   divider or by the saved-layer row anymore. */
+.media-row-cover {
+  grid-area: cover !important;
+  align-self: stretch !important;
+  justify-self: start;
+
+  width: var(--section-2-cover-width) !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  aspect-ratio: auto !important;
+
+  border-radius: 18px;
+}
+
+.media-row-cover img {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+  object-fit: cover;
+}
+
+.media-row-info {
+  grid-area: info !important;
+  align-self: end;
+  min-width: 0;
+  padding-top: 0.25rem;
+}
+
+.media-row-format,
+.media-row-status {
+  grid-area: chips !important;
+  align-self: start;
+  margin-top: 0.65rem;
+}
+
+.media-row-status {
+  margin-left: calc(0.72rem + 4.85rem);
+}
+
+.media-row-score {
+  grid-area: score !important;
+  grid-row: 1 / 3 !important;
+  align-self: center;
+  justify-self: end;
+}
+
+/* Divider + Saved Layers live only in the right content column. It never runs
+   under the cover and never affects cover height. */
+.media-row-details {
+  grid-area: details !important;
+  align-self: stretch;
+  width: 100% !important;
+  margin: 1rem 0 0 !important;
+  padding-top: 1.05rem;
+  border-top: 1px solid rgba(184, 121, 78, 0.15);
+
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 0.55rem;
+}
+
+.media-row-details::before {
+  flex-basis: 100%;
+}
+
+/* -------------------------------------------------------------------------
+   EVIDENCE / OBJECT-LOCAL GLOWS
+   ------------------------------------------------------------------------- */
+
+.falling-quotes,
+.moving-moments,
+.character-cloud,
+.notes-cloud,
+.thoughts-cloud {
+  position: relative;
+  isolation: isolate;
+}
+
+/* Glow stays tight to each evidence group. It is wide enough to make the
+   objects feel warm, but not tall/wide enough to recolor the whole section. */
+.falling-quotes::before,
+.moving-moments::before,
+.character-cloud::before,
+.notes-cloud::before,
+.thoughts-cloud::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: -1;
+  width: min(calc(100% + 90px), calc(var(--section-2-row-width) + 90px));
+  height: calc(100% + 110px);
+  pointer-events: none;
+  border-radius: 999px;
+  background:
+    radial-gradient(
+      ellipse at center,
+      rgba(174, 99, 44, 0.13),
+      rgba(174, 99, 44, 0.052) 42%,
+      transparent 72%
+    );
+  filter: blur(42px);
+  opacity: 0.78;
+  transform: translate(-50%, -50%);
+}
+
+/* Slight individual contact warmth so the glow feels attached to the objects,
+   not painted on the page behind everything. */
+.falling-quote,
+.moment-frame,
+.character-name,
+.note-card,
+.thought-card {
+  box-shadow:
+    0 20px 48px rgba(44, 36, 22, 0.105),
+    0 4px 14px rgba(155, 90, 50, 0.055),
+    inset 0 1px 0 rgba(255, 255, 255, 0.62);
+}
+
+.falling-quote:hover,
+.moment-frame:hover,
+.character-name:hover,
+.note-card:hover,
+.thought-card:hover {
+  box-shadow:
+    0 30px 64px rgba(44, 36, 22, 0.16),
+    0 8px 22px rgba(155, 90, 50, 0.085),
+    inset 0 1px 0 rgba(255, 255, 255, 0.70);
+}
+
+/* Keep the whole-card hover premium but not dramatic. */
+.media-library-row:hover {
+  transform: perspective(900px) rotateX(0.65deg) translateY(-6px);
+  border-color: rgba(127, 75, 47, 0.34);
+  background:
+    linear-gradient(180deg, rgba(255, 254, 251, 0.99) 0%, rgba(255, 250, 241, 0.982) 100%);
+  box-shadow:
+    0 38px 92px rgba(87, 49, 22, 0.17),
+    0 15px 32px rgba(87, 49, 22, 0.11),
+    inset 0 1px 0 rgba(255, 255, 255, 0.86);
+}
+
+/* -------------------------------------------------------------------------
+   RESPONSIVE SAFETY
+   ------------------------------------------------------------------------- */
+
+@media (max-width: 900px) {
+  #section-2-empty-shelf,
+  .section-empty-shelf {
+    --section-2-cover-width: 116px;
+    --section-2-card-gap: 1.35rem;
+  }
+
+  .media-library-row {
+    min-height: 326px;
+    grid-template-columns: var(--section-2-cover-width) minmax(0, 1fr) auto;
+    grid-template-rows: minmax(92px, 1fr) auto minmax(92px, auto);
+  }
+
+  .media-library-row:has(.media-row-details) {
+    min-height: 326px !important;
+  }
+
+  .media-row-cover {
+    width: var(--section-2-cover-width) !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: none !important;
+  }
+
+  .media-row-status {
+    margin-left: calc(0.65rem + 4.65rem);
+  }
+}
+
+@media (max-width: 640px) {
+  .media-library-row {
+    display: grid !important;
+    grid-template-columns: 86px minmax(0, 1fr);
+    grid-template-areas:
+      "cover info"
+      "cover chips"
+      "score score"
+      "details details";
+    grid-template-rows: auto auto auto auto;
+    min-height: auto !important;
+    row-gap: 0.75rem;
+  }
+
+  .media-library-row:has(.media-row-details) {
+    min-height: auto !important;
+  }
+
+  .media-row-cover {
+    width: 86px !important;
+    height: auto !important;
+    min-height: 132px !important;
+    max-height: 160px !important;
+    align-self: stretch !important;
+  }
+
+  .media-row-score {
+    grid-area: score !important;
+    grid-row: auto !important;
+    justify-self: start;
+    align-self: center;
+    margin-top: 0.45rem;
+  }
+
+  .media-row-details {
+    grid-area: details !important;
+    width: 100% !important;
+    margin: 0.75rem 0 0 !important;
+  }
+
+  .card-wrap::before,
+  .scroll-stage:not(:has(.card-wrap)):has(.media-library-row)::before,
+  .falling-quotes::before,
+  .moving-moments::before,
+  .character-cloud::before,
+  .notes-cloud::before,
+  .thoughts-cloud::before {
+    width: calc(100% + 42px);
+    height: calc(100% + 56px);
+    filter: blur(30px);
+    opacity: 0.58;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-wrap::before,
+  .scroll-stage:not(:has(.card-wrap)):has(.media-library-row)::before,
+  .falling-quotes::before,
+  .moving-moments::before,
+  .character-cloud::before,
+  .notes-cloud::before,
+  .thoughts-cloud::before {
+    transition: none !important;
+  }
+}
