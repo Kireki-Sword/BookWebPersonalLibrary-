@@ -1,6 +1,7 @@
 /* Section 1 Hero */
 
 .hero {
+
   height: calc(100vh - 64px); 
   min-height: 720px; 
   display: grid;
@@ -19,9 +20,9 @@
     3rem;*/
 
   padding:
-    clamp(3.75rem, 6vw, 5.5rem)
-    max(2rem, calc((100vw - 1220px) / 2 + 2rem))
-    clamp(4rem, 6vw, 5.75rem);
+  clamp(3.75rem, 6vw, 5.5rem)
+  max(2rem, calc((100vw - 1220px) / 2 + 2rem))
+  clamp(4rem, 6vw, 5.75rem);
 
   gap: clamp(3rem, 6vw, 5rem); 
   position: relative;

@@ -104,22 +104,54 @@
   position: relative;
 }
 
-.scroll-stage {
-  display: flex;
-  justify-content: center;
-}
-
 
 /* ============================================================================
-   4. HIDE EVERY STAGE EXCEPT THE ACTIVE ONE
+   4. STAGE VISIBILITY — PREVIEW MODE
    ------------------------------------------------------------------------
-   Still driven by the aria-hidden attributes already in the HTML —
-   no JS needed for this phase.
+   TEMPORARY: showing every stage stacked in normal page flow so you can
+   scroll through and review/edit all 11 at once. This is NOT the final
+   behavior — once GSAP comes back, only one stage should show at a time
+   again. To restore that later, delete this block and un-comment the
+   one below it.
+
+   Also adds a small CSS-only label above each stage (using its
+   data-stage attribute, no JS) so you can tell which block is which —
+   several of these stages reuse the same "Vagabond" row, so without a
+   label they're hard to tell apart while scrolling past quickly.
    ============================================================================ */
+
+.empty-shelf-scroll {
+  display: flex;
+  flex-direction: column;
+  gap: 5rem;
+}
+
+.scroll-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.scroll-stage::before {
+  content: "STAGE — " attr(data-stage);
+  font-family: var(--font-body);
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: rgba(184, 121, 78, 0.55);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+/* PRODUCTION RULE — re-enable this (and remove the preview block above)
+   once GSAP is driving stage switching again:
 
 .scroll-stage[aria-hidden="true"] {
   display: none;
 }
+
+*/
 
 
 /* ============================================================================
