@@ -522,3 +522,424 @@
     display: none;
   }
 }
+
+
+/* ============================================================================
+   13. BUTTON TRAY — "Saved layers" + depth buttons
+   ------------------------------------------------------------------------
+   Appears inside the card for every stage from row-with-quotes onward.
+   Sits below the cover/info/score grid, separated by a thin warm rule.
+   Still no landing animation here — that's GSAP's job later. This is
+   just what the tray and buttons look like at rest and on hover.
+   ============================================================================ */
+
+.media-row-details {
+  position: relative;
+  z-index: 1;
+
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.55rem;
+
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(184, 121, 78, 0.16);
+}
+
+.media-row-details::before {
+  content: "Saved layers";
+  flex-basis: 100%;
+  margin-bottom: 0.1rem;
+
+  font-family: var(--font-body);
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: rgba(155, 135, 114, 0.9);
+  text-transform: uppercase;
+  letter-spacing: 0.11em;
+}
+
+.depth-button {
+  min-height: 38px;
+  padding: 0 0.95rem;
+
+  background: rgba(184, 121, 78, 0.07);
+  border: 1px solid rgba(184, 121, 78, 0.26);
+  border-radius: 999px;
+
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--ink-mid);
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  transition:
+    background 220ms ease,
+    border-color 220ms ease,
+    color 220ms ease,
+    transform 220ms ease,
+    box-shadow 220ms ease;
+}
+
+.depth-button:hover {
+  background: rgba(184, 121, 78, 0.14);
+  border-color: rgba(184, 121, 78, 0.42);
+  color: var(--ink);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(127, 75, 47, 0.14);
+}
+
+.depth-button:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.depth-button:focus-visible {
+  outline: 3px solid rgba(184, 121, 78, 0.36);
+  outline-offset: 3px;
+}
+
+/* Slightly warmer fill — visually marks "the layer this stage just added"
+   even before GSAP gives it an actual landing animation. */
+.depth-button-new {
+  background: rgba(184, 121, 78, 0.13);
+  border-color: rgba(184, 121, 78, 0.4);
+  color: var(--ink);
+}
+
+
+/* ============================================================================
+   14. EVIDENCE STAGE CONTAINERS
+   ------------------------------------------------------------------------
+   Each cloud (quotes/moments/characters/notes/thoughts) replaces the row
+   entirely for its stage. For now these lay out as calm, responsive
+   grids — no absolute scatter/rotation yet, since that's tied to the
+   GSAP phase. Same max-width as the row card so the whole section keeps
+   one consistent column, even as the content swaps.
+   ============================================================================ */
+
+.falling-quotes,
+.moving-moments,
+.character-cloud,
+.notes-cloud,
+.thoughts-cloud {
+  display: grid;
+  gap: 1.1rem;
+  width: min(var(--section-2-row-width), 100%);
+  margin-inline: auto;
+}
+
+.falling-quotes,
+.notes-cloud {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.moving-moments {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.character-cloud {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.thoughts-cloud {
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+}
+
+
+/* ============================================================================
+   15. QUOTES — paper strips
+   ============================================================================ */
+
+.falling-quote {
+  padding: 1.1rem 1.25rem;
+
+  background: linear-gradient(180deg, #fffdfa 0%, #fff8f0 100%);
+  border: 1px solid rgba(127, 75, 47, 0.18);
+  border-radius: 18px;
+  box-shadow: 0 18px 42px rgba(44, 36, 22, 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  line-height: 1.5;
+  color: var(--ink-mid);
+  cursor: default;
+
+  transition: transform 240ms ease, box-shadow 240ms ease, border-color 240ms ease, color 240ms ease;
+}
+
+.falling-quote:hover {
+  transform: translateY(-5px);
+  color: var(--ink);
+  border-color: rgba(184, 121, 78, 0.36);
+  box-shadow: 0 26px 56px rgba(44, 36, 22, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+
+/* ============================================================================
+   16. MOMENTS — manga panels
+   ============================================================================ */
+
+.moment-frame {
+  margin: 0;
+  padding: 0.6rem;
+
+  background: linear-gradient(180deg, #fffdfa 0%, #fff4e6 100%);
+  border: 1px solid rgba(44, 36, 22, 0.22);
+  border-radius: 16px;
+  box-shadow: 0 22px 50px rgba(44, 36, 22, 0.14);
+
+  cursor: default;
+  transition: transform 240ms ease, box-shadow 240ms ease, border-color 240ms ease;
+}
+
+.moment-frame img {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  display: block;
+  object-fit: cover;
+  border-radius: 10px;
+
+  background: var(--cream-dark);
+  color: transparent;
+  font-size: 0;
+
+  transition: transform 380ms ease, filter 240ms ease;
+}
+
+.moment-frame figcaption {
+  margin-top: 0.5rem;
+  padding: 0 0.15rem;
+
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 650;
+  color: var(--ink-faint);
+  line-height: 1.35;
+
+  transition: color 240ms ease;
+}
+
+.moment-frame:hover {
+  transform: translateY(-5px);
+  border-color: rgba(44, 36, 22, 0.36);
+  box-shadow: 0 30px 66px rgba(44, 36, 22, 0.20);
+}
+
+.moment-frame:hover img {
+  transform: scale(1.03);
+  filter: saturate(1.06) contrast(1.05);
+}
+
+.moment-frame:hover figcaption {
+  color: var(--ink-mid);
+}
+
+
+/* ============================================================================
+   17. CHARACTERS — portrait cards
+   ------------------------------------------------------------------------
+   Musashi (character-1) is the protagonist, so it spans two grid columns
+   to read as the lead card among supporting characters.
+   ============================================================================ */
+
+.character-name {
+  margin: 0;
+  overflow: hidden;
+
+  background: linear-gradient(180deg, #fffdfa 0%, #fff8f0 100%);
+  border: 1px solid rgba(127, 75, 47, 0.18);
+  border-radius: 20px;
+  box-shadow: 0 20px 46px rgba(44, 36, 22, 0.12);
+
+  cursor: default;
+  transition: transform 240ms ease, box-shadow 240ms ease, border-color 240ms ease;
+}
+
+.character-name img {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  display: block;
+  object-fit: cover;
+
+  background: var(--cream-dark);
+  color: transparent;
+  font-size: 0;
+
+  transition: transform 380ms ease, filter 240ms ease;
+}
+
+.character-name figcaption {
+  padding: 0.7rem 0.8rem;
+
+  background: linear-gradient(180deg, rgba(255, 252, 248, 0.94), rgba(250, 246, 239, 0.9));
+
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 750;
+  color: var(--ink);
+  line-height: 1.25;
+
+  transition: background 240ms ease, color 240ms ease;
+}
+
+.character-1 {
+  grid-column: span 2;
+}
+
+.character-name:hover {
+  transform: translateY(-5px) scale(1.01);
+  border-color: rgba(184, 121, 78, 0.36);
+  box-shadow: 0 28px 60px rgba(44, 36, 22, 0.18);
+}
+
+.character-name:hover img {
+  transform: scale(1.03);
+  filter: saturate(1.06) contrast(1.04);
+}
+
+.character-name:hover figcaption {
+  color: var(--warm-brown-dark);
+  background: linear-gradient(180deg, #fffdfa, rgba(226, 185, 143, 0.16));
+}
+
+
+/* ============================================================================
+   18. NOTES — sticky notes
+   ============================================================================ */
+
+.note-card {
+  position: relative;
+  min-height: 130px;
+  padding: 1.05rem;
+
+  background: linear-gradient(180deg, #fffdfa 0%, #fff4e6 100%);
+  border: 1px solid rgba(127, 75, 47, 0.18);
+  border-radius: 15px;
+  box-shadow: 0 18px 40px rgba(44, 36, 22, 0.10);
+
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--ink-mid);
+  cursor: default;
+
+  transition: transform 240ms ease, box-shadow 240ms ease, border-color 240ms ease, color 240ms ease;
+}
+
+/* Small "tape mark" at the top — the sticky-note tell. */
+.note-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 18px;
+  right: 18px;
+  height: 6px;
+  border-radius: 0 0 999px 999px;
+  background: rgba(184, 121, 78, 0.20);
+  transition: background 240ms ease, height 240ms ease;
+}
+
+.note-card:hover {
+  transform: translateY(-5px);
+  color: var(--ink);
+  border-color: rgba(184, 121, 78, 0.36);
+  box-shadow: 0 26px 54px rgba(44, 36, 22, 0.16);
+}
+
+.note-card:hover::before {
+  height: 8px;
+  background: rgba(184, 121, 78, 0.28);
+}
+
+
+/* ============================================================================
+   19. THOUGHTS — journal pages
+   ------------------------------------------------------------------------
+   The deepest evidence category, so it's calmer than the rest: bigger,
+   more whitespace, softer hover, no rotation anywhere.
+   ============================================================================ */
+
+.thought-card {
+  padding: 1.5rem 1.6rem;
+
+  background: linear-gradient(180deg, #fffdfa 0%, #fff8f0 100%);
+  border: 1px solid rgba(127, 75, 47, 0.18);
+  border-radius: 24px;
+  box-shadow: 0 22px 52px rgba(44, 36, 22, 0.12);
+
+  font-family: var(--font-display);
+  font-size: 1.08rem;
+  line-height: 1.55;
+  color: var(--ink-mid);
+  cursor: default;
+
+  transition: transform 260ms ease, box-shadow 260ms ease, border-color 260ms ease, color 260ms ease;
+}
+
+.thought-card:hover {
+  transform: translateY(-4px);
+  color: var(--ink);
+  border-color: rgba(184, 121, 78, 0.32);
+  box-shadow: 0 28px 60px rgba(44, 36, 22, 0.16);
+}
+
+
+/* ============================================================================
+   20. RESPONSIVE — evidence + button tray
+   ============================================================================ */
+
+@media (max-width: 900px) {
+  .character-cloud {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .character-1 {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 640px) {
+  .media-row-details {
+    margin-top: 1rem;
+    padding-top: 0.85rem;
+    gap: 0.45rem;
+  }
+
+  .depth-button {
+    flex: 1 1 calc(50% - 0.45rem);
+    min-height: 40px;
+    padding-inline: 0.75rem;
+  }
+
+  .falling-quotes,
+  .moving-moments,
+  .notes-cloud,
+  .thoughts-cloud {
+    grid-template-columns: 1fr;
+  }
+
+  .character-cloud {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.85rem;
+  }
+
+  .character-1 {
+    grid-column: span 2;
+  }
+
+  .moment-frame,
+  .character-name,
+  .note-card,
+  .thought-card,
+  .falling-quote {
+    /* touch devices don't hover — keep the resting state calm and legible,
+       hover-only lifts are a bonus on devices that support them, not a
+       requirement to read the content */
+  }
+}
