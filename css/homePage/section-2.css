@@ -1,88 +1,91 @@
 /* ============================================================
-   SECTION 2 — BACKGROUND ONLY
-   "A rating tells you nothing."
-   Warm paper desk / memory atmosphere
+   SECTION 2 — CLEAN PREMIUM BACKGROUND
+   Matches Section 1: warm paper, soft glow, no visible grid
 ============================================================ */
 
 .section-empty-shelf {
-  /* Cursor defaults. Later JS can update these values. */
-  --cursor-x: 50%;
-  --cursor-y: 46%;
+  --s2-bg: var(--cream);
+  --s2-bg-soft: #fbf1e6;
+  --s2-bg-light: #fffaf3;
 
-  /* Stage mood variables. Later JS can change these with classes. */
-  --section-2-glow-opacity: 0.34;
-  --section-2-grid-opacity: 0.12;
-  --section-2-ink-opacity: 0.045;
-  --section-2-vignette-opacity: 0.48;
+  --s2-glow-warm: rgba(226, 185, 143, 0.34);
+  --s2-glow-brown: rgba(184, 121, 78, 0.14);
+  --s2-glow-dark: rgba(127, 75, 47, 0.08);
+
+  --s2-paper-noise: 0.035;
+  --s2-edge-shadow: 0.06;
 
   position: relative;
   isolation: isolate;
   overflow: hidden;
 
   min-height: 100vh;
-  padding: clamp(5rem, 8vw, 8rem) 1.5rem;
+  padding: clamp(5.5rem, 8vw, 8rem) 1.5rem;
+
+  color: var(--ink);
 
   background:
     radial-gradient(
-      ellipse at 50% 72%,
-      rgba(226, 185, 143, var(--section-2-glow-opacity)) 0%,
-      rgba(226, 185, 143, 0.16) 28%,
-      rgba(226, 185, 143, 0) 62%
+      ellipse at 14% 18%,
+      rgba(184, 121, 78, 0.09) 0%,
+      rgba(184, 121, 78, 0.045) 26%,
+      transparent 58%
     ),
     radial-gradient(
-      circle at 16% 22%,
-      rgba(184, 121, 78, 0.10) 0%,
-      rgba(184, 121, 78, 0) 34%
-    ),
-    radial-gradient(
-      circle at 86% 18%,
-      rgba(127, 75, 47, 0.08) 0%,
-      rgba(127, 75, 47, 0) 32%
+      ellipse at 88% 20%,
+      rgba(226, 185, 143, 0.20) 0%,
+      rgba(226, 185, 143, 0.08) 30%,
+      transparent 62%
     ),
     linear-gradient(
       180deg,
       var(--cream) 0%,
-      #fbf3e8 44%,
+      var(--s2-bg-light) 28%,
+      var(--s2-bg-soft) 68%,
       var(--cream) 100%
     );
-
-  color: var(--ink);
 }
 
-/* Keep real section content above the background layers */
+/* Put real content above atmosphere */
 .section-empty-shelf > * {
   position: relative;
   z-index: 2;
 }
 
-/* Large soft reading-lamp glow + paper warmth */
+/* Soft abstract light, similar to Section 1 hero card atmosphere */
 .section-empty-shelf::before {
   content: "";
   position: absolute;
-  inset: -18%;
+  inset: -22%;
   z-index: 0;
   pointer-events: none;
 
   background:
     radial-gradient(
-      circle at var(--cursor-x) var(--cursor-y),
-      rgba(255, 252, 248, 0.72) 0%,
-      rgba(226, 185, 143, 0.22) 18%,
-      rgba(184, 121, 78, 0.08) 34%,
-      rgba(184, 121, 78, 0) 56%
+      ellipse at 50% 64%,
+      rgba(226, 185, 143, 0.24) 0%,
+      rgba(226, 185, 143, 0.12) 32%,
+      rgba(226, 185, 143, 0.04) 52%,
+      transparent 72%
     ),
     radial-gradient(
-      ellipse at 50% 68%,
-      rgba(127, 75, 47, 0.12) 0%,
-      rgba(127, 75, 47, 0.04) 32%,
-      rgba(127, 75, 47, 0) 66%
+      ellipse at 32% 76%,
+      rgba(184, 121, 78, 0.12) 0%,
+      rgba(184, 121, 78, 0.045) 34%,
+      transparent 68%
+    ),
+    radial-gradient(
+      ellipse at 76% 72%,
+      rgba(127, 75, 47, 0.075) 0%,
+      rgba(127, 75, 47, 0.03) 34%,
+      transparent 70%
     );
 
-  filter: blur(10px);
-  opacity: 0.9;
+  filter: blur(34px);
+  opacity: 0.85;
 }
 
-/* Paper grain + faint manga panel grid + edge vignette */
+/* Very subtle paper texture + soft edge depth */
 .section-empty-shelf::after {
   content: "";
   position: absolute;
@@ -91,128 +94,97 @@
   pointer-events: none;
 
   background:
-    /* side vignette */
     linear-gradient(
       90deg,
-      rgba(36, 26, 17, calc(var(--section-2-vignette-opacity) * 0.08)) 0%,
-      rgba(36, 26, 17, 0) 18%,
-      rgba(36, 26, 17, 0) 82%,
-      rgba(36, 26, 17, calc(var(--section-2-vignette-opacity) * 0.08)) 100%
+      rgba(36, 26, 17, var(--s2-edge-shadow)) 0%,
+      transparent 16%,
+      transparent 84%,
+      rgba(36, 26, 17, var(--s2-edge-shadow)) 100%
     ),
-
-    /* faint manga panel grid */
-    linear-gradient(
-      rgba(127, 75, 47, var(--section-2-grid-opacity)) 1px,
-      transparent 1px
-    ),
-    linear-gradient(
-      90deg,
-      rgba(127, 75, 47, var(--section-2-grid-opacity)) 1px,
-      transparent 1px
-    ),
-
-    /* paper grain dots */
     radial-gradient(
-      circle,
-      rgba(36, 26, 17, var(--section-2-ink-opacity)) 0 1px,
-      transparent 1px
+      circle at 20% 30%,
+      rgba(36, 26, 17, var(--s2-paper-noise)) 0 1px,
+      transparent 1.5px
+    ),
+    radial-gradient(
+      circle at 70% 64%,
+      rgba(127, 75, 47, 0.025) 0 1px,
+      transparent 1.5px
     );
 
   background-size:
     100% 100%,
-    92px 92px,
-    92px 92px,
-    18px 18px;
+    26px 26px,
+    34px 34px;
 
-  background-position:
-    center,
-    center,
-    center,
-    center;
-
-  opacity: 0.72;
-  mix-blend-mode: multiply;
+  opacity: 0.45;
 }
 
-/* Optional soft divider from Section 1 into Section 2 */
+/* Soft transition from Section 1 */
 .section-empty-shelf {
-  border-top: 1px solid rgba(127, 75, 47, 0.08);
+  border-top: 1px solid rgba(127, 75, 47, 0.07);
 }
 
 /* ============================================================
-   STAGE MOOD CLASSES
-   JS can add these later to the section.
+   OPTIONAL STAGE MOODS
+   Very subtle. No grid. No obvious color jump.
 ============================================================ */
 
 .section-empty-shelf.is-stage-empty {
-  --section-2-glow-opacity: 0.26;
-  --section-2-grid-opacity: 0.08;
-  --section-2-ink-opacity: 0.035;
+  --s2-paper-noise: 0.028;
+  --s2-edge-shadow: 0.045;
 }
 
 .section-empty-shelf.is-stage-quotes {
-  --section-2-glow-opacity: 0.42;
-  --section-2-grid-opacity: 0.10;
-  --section-2-ink-opacity: 0.04;
+  --s2-paper-noise: 0.035;
+  --s2-edge-shadow: 0.05;
 }
 
 .section-empty-shelf.is-stage-moments {
-  --section-2-glow-opacity: 0.34;
-  --section-2-grid-opacity: 0.18;
-  --section-2-ink-opacity: 0.05;
+  --s2-paper-noise: 0.04;
+  --s2-edge-shadow: 0.055;
 }
 
 .section-empty-shelf.is-stage-characters {
-  --section-2-glow-opacity: 0.38;
-  --section-2-grid-opacity: 0.10;
-  --section-2-ink-opacity: 0.04;
+  --s2-paper-noise: 0.033;
+  --s2-edge-shadow: 0.05;
 }
 
 .section-empty-shelf.is-stage-notes {
-  --section-2-glow-opacity: 0.46;
-  --section-2-grid-opacity: 0.09;
-  --section-2-ink-opacity: 0.035;
+  --s2-paper-noise: 0.032;
+  --s2-edge-shadow: 0.045;
 }
 
 .section-empty-shelf.is-stage-thoughts {
-  --section-2-glow-opacity: 0.28;
-  --section-2-grid-opacity: 0.07;
-  --section-2-ink-opacity: 0.06;
-  --section-2-vignette-opacity: 0.64;
+  --s2-paper-noise: 0.045;
+  --s2-edge-shadow: 0.075;
 }
 
 .section-empty-shelf.is-stage-final {
-  --section-2-glow-opacity: 0.52;
-  --section-2-grid-opacity: 0.12;
-  --section-2-ink-opacity: 0.04;
+  --s2-paper-noise: 0.035;
+  --s2-edge-shadow: 0.055;
 }
 
 /* ============================================================
-   MOBILE / REDUCED MOTION
+   MOBILE
 ============================================================ */
 
 @media (max-width: 768px) {
   .section-empty-shelf {
     padding: 4.5rem 1rem;
-    --section-2-grid-opacity: 0.06;
-  }
-
-  .section-empty-shelf::after {
-    background-size:
-      100% 100%,
-      72px 72px,
-      72px 72px,
-      20px 20px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .section-empty-shelf {
-    --cursor-x: 50%;
-    --cursor-y: 50%;
   }
 
   .section-empty-shelf::before {
-    filter: blur(14px);
+    inset: -30%;
+    filter: blur(38px);
+    opacity: 0.72;
+  }
+
+  .section-empty-shelf::after {
+    opacity: 0.32;
+    background-size:
+      100% 100%,
+      30px 30px,
+      38px 38px;
   }
 }
