@@ -31,20 +31,19 @@
 /* ============================================================================
    1. SECTION CONTAINER + BACKGROUND
    ------------------------------------------------------------------------
-   Warmed up from the flatter first pass: three soft radial glows instead
-   of two (amber added lower-center, behind where the card usually sits),
-   plus a very faint paper-grain texture (::before) — tiny, low-opacity
-   dots, not a visible pattern. Still no grid, no hard shapes; you should
-   feel more warmth and depth here without being able to point at what
-   changed.
+   Warmed up from the flatter first pass: section-level radial glows,
+   a large blurred ambient warmth layer (::before), and a very faint
+   paper-grain layer (::after). This makes the whole section behind the
+   card and evidence cards feel alive, not just the card itself.
    ============================================================================ */
 
 #section-2-empty-shelf,
 .section-empty-shelf {
-  --section-2-row-width: 920px;
+  --section-2-row-width: 940px;
 
   position: relative;
   width: 100%;
+  overflow: hidden;
 
   padding:
     5rem
@@ -53,30 +52,53 @@
 
   color: var(--ink);
 
+  /* Full-section warmth: this continues the blurry, alive atmosphere from
+     section 1 instead of leaving the quote/card area flat. */
   background:
-    radial-gradient(ellipse at 28% 10%, rgba(226, 185, 143, 0.10) 0%, rgba(226, 185, 143, 0.03) 42%, transparent 72%),
-    radial-gradient(ellipse at 72% 92%, rgba(184, 121, 78, 0.08) 0%, rgba(184, 121, 78, 0.025) 44%, transparent 74%),
-    linear-gradient(180deg, rgba(255, 252, 247, 0.80), rgba(250, 240, 226, 0.72)),
-    var(--cream);
+    radial-gradient(circle at 50% 18%, rgba(196, 122, 58, 0.12), transparent 34%),
+    radial-gradient(circle at 48% 58%, rgba(151, 91, 42, 0.10), transparent 42%),
+    radial-gradient(circle at 50% 100%, rgba(222, 165, 98, 0.16), transparent 45%),
+    linear-gradient(180deg, #fbf4ea 0%, #f4e4d1 100%);
 }
 
-/* Very faint paper grain — a few tiny dot layers at low opacity, masked
-   toward the edges so it never reads as a repeating pattern. */
+/* Large section-level ambient glow — this belongs to the section, not to the
+   card. It fills the empty space behind the main card and evidence cards so
+   the area feels warm, blurry, and alive. */
+#section-2-empty-shelf::before,
 .section-empty-shelf::before {
+  content: "";
+  position: absolute;
+  inset: 120px 8% auto 8%;
+  height: 520px;
+  z-index: 0;
+  pointer-events: none;
+
+  background:
+    radial-gradient(ellipse at center, rgba(166, 95, 42, 0.16), transparent 68%);
+  filter: blur(60px);
+  opacity: 0.9;
+}
+
+/* Very faint paper grain / atmosphere. Kept low-opacity so it reads as
+   warmth and texture, not as a visible pattern. */
+#section-2-empty-shelf::after,
+.section-empty-shelf::after {
   content: "";
   position: absolute;
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  opacity: 0.28;
 
-  background:
-    radial-gradient(circle at 22% 28%, rgba(127, 75, 47, 0.05) 0 1px, transparent 1.6px),
-    radial-gradient(circle at 68% 64%, rgba(44, 36, 22, 0.04) 0 1px, transparent 1.7px);
-  background-size: 38px 38px, 46px 46px;
+  background-image:
+    radial-gradient(rgba(97, 58, 31, 0.045) 0.7px, transparent 0.7px);
+  background-size: 4px 4px;
+  opacity: 0.18;
+}
 
-  -webkit-mask-image: radial-gradient(ellipse at center, black 0%, transparent 80%);
-  mask-image: radial-gradient(ellipse at center, black 0%, transparent 80%);
+#section-2-empty-shelf > *,
+.section-empty-shelf > * {
+  position: relative;
+  z-index: 1;
 }
 
 
@@ -132,6 +154,7 @@
 
 .empty-shelf-scroll {
   position: relative;
+  z-index: 1;
 }
 
 
@@ -254,7 +277,7 @@
 
 .media-library-row {
   width: min(var(--section-2-row-width), 100%);
-  min-height: 230px;
+  min-height: 250px;
   margin-inline: auto;
 
   padding: 30px;
@@ -281,7 +304,7 @@
 }
 
 .media-library-row:has(.media-row-details) {
-  min-height: 300px;
+  min-height: 330px;
 }
 
 
@@ -294,13 +317,15 @@
   z-index: 1; /* sits above the sheen sweep in section 11 */
 
   display: grid;
-  grid-template-columns: 112px minmax(0, 1fr) auto;
+  grid-template-columns: 124px minmax(0, 1fr) auto;
   grid-template-areas:
-    "cover info   score"
-    "cover chips  score";
-  min-height: 170px;
-  column-gap: 1.45rem;
-  row-gap: 0.55rem;
+    "cover info  score"
+    "cover chips score";
+  grid-template-rows: auto auto;
+  min-height: 190px;
+  column-gap: 1.6rem;
+  row-gap: 0.72rem;
+  align-content: center;
   align-items: center;
 }
 
@@ -317,7 +342,7 @@
   grid-row: 1 / -1;
 
   position: relative; /* positioning context for the shine sweep below */
-  width: 112px;
+  width: 124px;
   aspect-ratio: 2 / 3;
 
   border: 1px solid rgba(184, 121, 78, 0.16);
@@ -719,17 +744,18 @@
   }
 
   .media-row-main {
-    grid-template-columns: 100px minmax(0, 1fr) auto;
-    min-height: 152px;
+    grid-template-columns: 112px minmax(0, 1fr) auto;
+    min-height: 170px;
+    column-gap: 1.35rem;
   }
 
   .media-row-cover {
-    width: 100px;
+    width: 112px;
   }
 
   .media-row-details {
-    width: calc(100% - 100px - 1.35rem);
-    margin-left: calc(100px + 1.35rem);
+    width: calc(100% - 112px - 1.35rem);
+    margin-left: calc(112px + 1.35rem);
   }
 
   .media-row-format,
@@ -762,13 +788,13 @@
   }
 
   .media-row-main {
-    grid-template-columns: 76px minmax(0, 1fr) auto;
-    min-height: 116px;
+    grid-template-columns: 82px minmax(0, 1fr) auto;
+    min-height: 124px;
     column-gap: 0.9rem;
   }
 
   .media-row-cover {
-    width: 76px;
+    width: 82px;
     border-radius: 12px;
   }
 
@@ -816,11 +842,14 @@
   align-items: center;
   gap: 0.55rem;
 
-  width: calc(100% - 112px - 1.45rem);
-  margin-top: 1.05rem;
-  margin-left: calc(112px + 1.45rem);
-  padding-top: 1rem;
-  border-top: 1px solid rgba(184, 121, 78, 0.14);
+  /* Divider and saved layers belong only to the right content column.
+     They intentionally start after the cover so the cover can own the
+     full vertical top area without being visually cut by the line. */
+  width: calc(100% - 124px - 1.6rem);
+  margin-top: 1.15rem;
+  margin-left: calc(124px + 1.6rem);
+  padding-top: 1.15rem;
+  border-top: 1px solid rgba(184, 121, 78, 0.15);
 }
 
 .media-row-details::before {
