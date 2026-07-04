@@ -12,11 +12,16 @@
   max-width: none;
   margin: 0;
 
-  /* Keeps your content aligned like a centered 1220px container */
+  /* Keeps your content aligned like a centered 1220px container 
   padding:
     2.25rem
     max(2rem, calc((100vw - 1220px) / 2 + 2rem))
-    3rem;
+    3rem;*/
+
+  padding:
+    clamp(3.75rem, 6vw, 5.5rem)
+    max(2rem, calc((100vw - 1220px) / 2 + 2rem))
+    clamp(4rem, 6vw, 5.75rem);
 
   gap: clamp(3rem, 6vw, 5rem); 
   position: relative;

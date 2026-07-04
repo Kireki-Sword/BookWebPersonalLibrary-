@@ -1,69 +1,62 @@
 /* ============================================================================
-   SECTION 2 — STEP 1: STATIC FOUNDATION
+   SECTION 2 — PART 1: PREMIUM STATIC + HOVER PASS
    ------------------------------------------------------------------------
-   This is deliberately the SIMPLE version. Per the design plan, we build
-   the header + one calm, premium row card first — no hover states, no
-   evidence card styling, no GSAP, no cursor glow. Those all come later,
-   once this static layout looks right on its own.
+   Goal: make the header + first row card feel like the center of
+   attention BEFORE any GSAP touches it. Hover states are now in scope
+   (row lift, cover lift, sheen, score "but why?" reveal) — but no
+   evidence-card styling, no GSAP hooks, no cursor-follow glow yet.
 
    Contents:
-     1. Section container + background (continues Section 1's world)
+     1. Section container + background (calm continuation of Section 1)
      2. Header (label / title / subtitle)
-     3. Scroll wrapper spacing
+     3. Scroll wrapper
      4. Hide every stage except the active one
-     5. The row card (surface, size)
-     6. Cover
-     7. Title / author
-     8. Format / status chips
-     9. Rating capsule (static — no "but why?" reveal yet, that's a hover
-        effect and hover effects are explicitly not part of this step)
-     10. Mobile layout
+     5. Card shell (surface, border, shadow, highlight)
+     6. Card inner grid (cover | text | score)
+     7. Cover (size, fallback, hover-through-row)
+     8. Title / author
+     9. Meta chips
+     10. Score capsule (+ "but why?" hover reveal)
+     11. Row hover (lift, shadow, sheen)
+     12. Mobile layout
    ============================================================================ */
 
 
 /* ============================================================================
    1. SECTION CONTAINER + BACKGROUND
    ------------------------------------------------------------------------
-   Per the plan: Section 2 should NOT have its own background identity
-   (no grid, no dots, no paper texture). It should read as a continuation
-   of Section 1's world — same cream base, same soft warm-brown glows,
-   just calmer. The row card is what creates the visual interest here,
-   not the background.
+   Still no grid, no dots, no visible shapes — the card is the star, the
+   background is just warm light behind it, barely noticeable on its own.
    ============================================================================ */
 
 #section-2-empty-shelf,
 .section-empty-shelf {
-  --section-2-row-width: 1000px; /* card width ceiling, per the plan's 960-1000px range */
+  --section-2-row-width: 960px;
 
   position: relative;
   width: 100%;
 
   padding:
-    5.5rem
+    5rem
     max(1.5rem, calc((100vw - 1220px) / 2 + 1.5rem))
-    6.5rem;
+    6rem;
 
   color: var(--ink);
 
-  /* Same gradient language as the hero, just quieter (two soft glows
-     instead of three, lower opacity) — continuation, not a new page. */
   background:
-    radial-gradient(ellipse at 30% 20%, rgba(226, 185, 143, 0.14) 0%, rgba(226, 185, 143, 0.05) 40%, transparent 70%),
-    radial-gradient(ellipse at 75% 65%, rgba(184, 121, 78, 0.10) 0%, rgba(184, 121, 78, 0.04) 42%, transparent 72%),
+    radial-gradient(ellipse at 28% 14%, rgba(226, 185, 143, 0.12) 0%, rgba(226, 185, 143, 0.04) 42%, transparent 72%),
+    radial-gradient(ellipse at 70% 88%, rgba(184, 121, 78, 0.09) 0%, rgba(184, 121, 78, 0.03) 44%, transparent 74%),
     var(--cream);
 }
 
 
 /* ============================================================================
    2. SECTION HEADER
-   ------------------------------------------------------------------------
-   Centered and premium, but quieter than the hero title — this is "calm
-   proof", not a second hero moment.
    ============================================================================ */
 
 .section-2-header {
-  max-width: 700px;
-  margin: 0 auto 3.25rem;
+  max-width: 880px;
+  margin: 0 auto 4rem; /* header-to-card gap lives here, see plan section 2 */
   text-align: center;
 }
 
@@ -71,43 +64,40 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 0.85rem;
+  margin-bottom: 0.8rem;
 
   font-family: var(--font-body);
-  font-size: 0.72rem;
-  font-weight: 800;
+  font-size: 0.78rem;
+  font-weight: 700;
   color: var(--warm-brown-dark);
   text-transform: uppercase;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.18em;
 }
 
 .section-2-header h2 {
   margin: 0 auto;
 
   font-family: var(--font-display);
-  font-size: clamp(2.6rem, 4.4vw, 4rem);
+  font-size: clamp(3rem, 5.8vw, 5.25rem);
   font-weight: 650;
   color: var(--ink);
   letter-spacing: -0.055em;
-  line-height: 1.02;
+  line-height: 0.94;
 }
 
 .section-2-header p {
-  max-width: 480px;
-  margin: 1.1rem auto 0;
+  max-width: 680px;
+  margin: 1.15rem auto 0;
 
   font-family: var(--font-body);
-  font-size: 0.95rem;
+  font-size: 1.05rem;
   color: var(--ink-light);
-  line-height: 1.75;
+  line-height: 1.7;
 }
 
 
 /* ============================================================================
-   3. SCROLL WRAPPER SPACING
-   ------------------------------------------------------------------------
-   No pinning, no scroll-height trick yet — just a normal block with room
-   to breathe above the row card.
+   3. SCROLL WRAPPER
    ============================================================================ */
 
 .empty-shelf-scroll {
@@ -123,9 +113,8 @@
 /* ============================================================================
    4. HIDE EVERY STAGE EXCEPT THE ACTIVE ONE
    ------------------------------------------------------------------------
-   Your HTML already marks the resting stage with aria-hidden="false" and
-   every other stage with aria-hidden="true" — no markup changes needed.
-   This is plain CSS, no JS required for this step.
+   Still driven by the aria-hidden attributes already in the HTML —
+   no JS needed for this phase.
    ============================================================================ */
 
 .scroll-stage[aria-hidden="true"] {
@@ -134,58 +123,87 @@
 
 
 /* ============================================================================
-   5. THE ROW CARD
+   5. CARD SHELL — surface, border, shadow, highlight
    ------------------------------------------------------------------------
-   Background/surface role separation: the SECTION background stays quiet
-   (step 1), the ROW becomes the raised surface people's eyes land on.
+   This is where the "physical object on a desk" feeling comes from: a
+   faint top-to-bottom gradient (not flat cream), two-layer shadow (a
+   big soft ambient one + a tighter contact one), and a 1px inner
+   highlight that catches the light like polished paper.
    ============================================================================ */
 
 .media-library-row {
   width: min(var(--section-2-row-width), 100%);
+  min-height: 158px;
   margin-inline: auto;
 
-  padding: 1.5rem 1.75rem;
+  padding: 1.65rem 1.75rem;
 
-  background: var(--surface);
-  border: 1px solid var(--border);
+  background: linear-gradient(180deg, #fffdfa 0%, #fff8f0 100%);
+  border: 1px solid rgba(184, 121, 78, 0.24);
   border-radius: 28px;
 
   box-shadow:
-    0 30px 70px rgba(44, 36, 22, 0.12),
-    0 10px 24px rgba(44, 36, 22, 0.07);
+    0 30px 80px rgba(44, 36, 22, 0.12),
+    0 10px 24px rgba(44, 36, 22, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.75);
+
+  position: relative;
+  overflow: hidden; /* keeps the sheen sweep (section 11) contained */
+
+  transform: translateZ(0);
+  transition:
+    transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 260ms ease,
+    box-shadow 280ms ease;
 }
 
 
 /* ============================================================================
-   6. COVER
+   6. CARD INNER GRID — cover | text | score
    ============================================================================ */
 
 .media-row-main {
+  position: relative;
+  z-index: 1; /* sits above the sheen sweep in section 11 */
+
   display: grid;
   grid-template-columns: 108px minmax(0, 1fr) auto;
   grid-template-areas:
     "cover info   score"
     "cover chips  score";
-  column-gap: 1.25rem;
-  row-gap: 0.65rem;
+  column-gap: 1.35rem;
+  row-gap: 0.55rem;
   align-items: center;
 }
 
+
+/* ============================================================================
+   7. COVER
+   ------------------------------------------------------------------------
+   Fallback gradient means even a missing/broken image still reads as an
+   intentional object, never a broken-icon moment.
+   ============================================================================ */
+
 .media-row-cover {
   grid-area: cover;
-  grid-row: 1 / -1; /* spans both rows so it sits centered against the full card height */
+  grid-row: 1 / -1;
 
   width: 108px;
   aspect-ratio: 2 / 3;
 
-  border-radius: 16px;
+  border-radius: 17px;
   overflow: hidden;
 
   background:
-    linear-gradient(145deg, rgba(44, 36, 22, 0.10), rgba(184, 121, 78, 0.22)),
+    radial-gradient(circle at 30% 22%, rgba(255, 255, 255, 0.30), transparent 32%),
+    linear-gradient(150deg, rgba(44, 36, 22, 0.12), rgba(184, 121, 78, 0.26)),
     var(--cream-dark);
 
-  box-shadow: 0 14px 28px rgba(44, 36, 22, 0.14);
+  box-shadow: 0 14px 30px rgba(44, 36, 22, 0.16);
+
+  transition:
+    transform 280ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 280ms ease;
 }
 
 .media-row-cover img {
@@ -194,19 +212,26 @@
   display: block;
   object-fit: cover;
 
-  /* If the image path is still a placeholder / 404s, this hides the
-     alt text so it doesn't bleed across the cover — no JS needed for
-     this small safety net. */
-  color: transparent;
+  color: transparent; /* hides alt text if the path 404s */
   font-size: 0;
+
+  transition: filter 280ms ease;
+}
+
+/* Cover reacts to hovering the WHOLE row, not just itself — a stable,
+   understated lift rather than the hero card's 3D tilt. */
+.media-library-row:hover .media-row-cover {
+  transform: translateY(-3px) rotate(-1deg);
+  box-shadow: 0 18px 36px rgba(44, 36, 22, 0.20);
+}
+
+.media-library-row:hover .media-row-cover img {
+  filter: saturate(1.05) contrast(1.04);
 }
 
 
 /* ============================================================================
-   7. TITLE / AUTHOR
-   ------------------------------------------------------------------------
-   Grouped tightly together (proximity) — title and author read as one
-   unit, separate from the meta chips below and the score to the right.
+   8. TITLE / AUTHOR
    ============================================================================ */
 
 .media-row-info {
@@ -217,38 +242,37 @@
 
 .media-row-info h3 {
   font-family: var(--font-display);
-  font-size: clamp(1.55rem, 2.4vw, 2rem);
-  font-weight: 650;
+  font-size: clamp(1.75rem, 2.6vw, 2rem);
+  font-weight: 700;
   color: var(--ink);
-  letter-spacing: -0.03em;
-  line-height: 1.05;
+  letter-spacing: -0.035em;
+  line-height: 1;
 }
 
 .media-row-info p {
-  margin-top: 0.3rem;
+  margin-top: 0.35rem;
 
   font-family: var(--font-body);
-  font-size: 0.88rem;
+  font-size: 0.95rem;
+  font-weight: 500;
   color: var(--ink-light);
-  line-height: 1.4;
+  line-height: 1.3;
 }
 
 
 /* ============================================================================
-   8. FORMAT / STATUS CHIPS
-   ------------------------------------------------------------------------
-   Small, quiet metadata — not competing with the title, not styled like
-   the (future) evidence buttons.
+   9. META CHIPS
    ============================================================================ */
 
 .media-row-format,
 .media-row-status {
   grid-area: chips;
   align-self: start;
+  margin-top: 0.75rem; /* author -> chips spacing */
 }
 
 .media-row-status {
-  margin-left: 4.5rem; /* sits just to the right of the format chip */
+  margin-left: calc(0.55rem + 4.6rem); /* chip-gap + estimated format-chip width */
 }
 
 .media-row-format span,
@@ -256,25 +280,35 @@
   display: inline-flex;
   align-items: center;
 
-  padding: 0.28rem 0.62rem;
+  padding: 0.34rem 0.7rem;
 
   background: rgba(184, 121, 78, 0.08);
-  border: 1px solid rgba(184, 121, 78, 0.26);
+  border: 1px solid rgba(184, 121, 78, 0.22);
   border-radius: 999px;
 
   font-family: var(--font-body);
-  font-size: 0.72rem;
+  font-size: 0.78rem;
   font-weight: 700;
   color: var(--warm-brown-dark);
   white-space: nowrap;
+
+  transition: background 220ms ease, border-color 220ms ease;
+}
+
+.media-library-row:hover .media-row-format span,
+.media-library-row:hover .media-row-status span {
+  background: rgba(184, 121, 78, 0.12);
+  border-color: rgba(184, 121, 78, 0.34);
 }
 
 
 /* ============================================================================
-   9. RATING CAPSULE
+   10. SCORE CAPSULE — with "but why?" hover reveal
    ------------------------------------------------------------------------
-   Static and clean for this step. The "but why?" hover reveal is an
-   interaction, and interactions are a later phase.
+   Default state shows only "9/10" — clean, no clutter. Hovering (or
+   focusing, for keyboard users) the capsule reveals "but why?" below it,
+   which is the whole thesis of the section compressed into one
+   interaction: a score alone doesn't explain itself.
    ============================================================================ */
 
 .media-row-score {
@@ -283,29 +317,153 @@
   align-self: center;
   justify-self: end;
 
+  position: relative;
+  min-width: 86px;
+  height: 56px;
+
   display: flex;
-  align-items: baseline;
-  gap: 0.15rem;
+  align-items: center;
+  justify-content: center;
 
-  padding: 0.65rem 1.1rem;
+  padding: 0 1.1rem;
 
-  background: rgba(184, 121, 78, 0.07);
+  background: rgba(255, 252, 248, 0.9);
   border: 1px solid rgba(184, 121, 78, 0.24);
   border-radius: 999px;
+  box-shadow: 0 8px 22px rgba(44, 36, 22, 0.06);
+
+  cursor: default;
+
+  transition:
+    transform 240ms ease,
+    padding-bottom 240ms ease,
+    background 240ms ease,
+    border-color 240ms ease,
+    box-shadow 240ms ease;
 }
 
 .media-row-score span {
   font-family: var(--font-display);
-  font-size: 1.4rem;
-  font-weight: 650;
+  font-size: 1.45rem;
+  font-weight: 700;
   color: var(--ink);
   letter-spacing: -0.02em;
+  line-height: 1;
+
+  transition: transform 240ms ease;
+}
+
+.media-row-score::after {
+  content: "but why?";
+  position: absolute;
+  left: 50%;
+  bottom: 0.45rem;
+  transform: translateX(-50%) translateY(4px);
+
+  font-family: var(--font-body);
+  font-size: 0.62rem;
+  font-weight: 800;
+  color: var(--warm-brown-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  white-space: nowrap;
+
+  opacity: 0;
+  transition: opacity 220ms ease, transform 220ms ease;
+}
+
+.media-row-score:hover,
+.media-row-score:focus-within {
+  transform: translateY(-2px);
+  padding-bottom: 1.1rem;
+  background: rgba(255, 252, 248, 1);
+  border-color: rgba(184, 121, 78, 0.4);
+  box-shadow: 0 14px 30px rgba(127, 75, 47, 0.14);
+}
+
+.media-row-score:hover span,
+.media-row-score:focus-within span {
+  transform: translateY(-5px);
+}
+
+.media-row-score:hover::after,
+.media-row-score:focus-within::after {
+  opacity: 0.9;
+  transform: translateX(-50%) translateY(0);
 }
 
 
 /* ============================================================================
-   10. MOBILE LAYOUT
+   11. ROW HOVER — lift, deeper shadow, warmer border, soft sheen
+   ------------------------------------------------------------------------
+   The sheen is a slow (700ms) diagonal highlight, deliberately subtle —
+   this should read as polished paper catching light, not glossy plastic.
    ============================================================================ */
+
+.media-library-row::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -85%;
+  z-index: 0;
+  width: 55%;
+  height: 200%;
+  pointer-events: none;
+
+  background: linear-gradient(
+    105deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.10) 35%,
+    rgba(255, 255, 255, 0.30) 48%,
+    rgba(255, 255, 255, 0.10) 61%,
+    transparent 100%
+  );
+
+  transform: translateX(0) rotate(8deg);
+  opacity: 0;
+
+  transition: transform 700ms cubic-bezier(0.22, 1, 0.36, 1), opacity 220ms ease;
+}
+
+.media-library-row:hover {
+  transform: translateY(-2px);
+  border-color: rgba(127, 75, 47, 0.34);
+
+  box-shadow:
+    0 38px 95px rgba(44, 36, 22, 0.16),
+    0 14px 30px rgba(44, 36, 22, 0.10),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.media-library-row:hover::before {
+  opacity: 1;
+  transform: translateX(310%) rotate(8deg);
+}
+
+
+/* ============================================================================
+   12. MOBILE LAYOUT
+   ============================================================================ */
+
+@media (max-width: 900px) {
+  #section-2-empty-shelf,
+  .section-empty-shelf {
+    padding: 4.5rem max(1.25rem, calc((100vw - 760px) / 2 + 1.25rem)) 5rem;
+  }
+
+  .media-library-row {
+    width: min(860px, 100%);
+  }
+
+  .media-row-cover {
+    width: 100px;
+  }
+
+  .media-row-format,
+  .media-row-status {
+    grid-area: chips;
+  }
+}
 
 @media (max-width: 640px) {
   #section-2-empty-shelf,
@@ -314,15 +472,19 @@
   }
 
   .section-2-header {
-    margin-bottom: 2.5rem;
+    margin-bottom: 2.75rem;
   }
 
   .section-2-header h2 {
     font-size: clamp(2.15rem, 9vw, 2.6rem);
   }
 
+  .section-2-header p {
+    font-size: 0.95rem;
+  }
+
   .media-library-row {
-    padding: 1.1rem 1.15rem;
+    padding: 1.15rem 1.2rem;
     border-radius: 22px;
   }
 
@@ -337,18 +499,26 @@
   }
 
   .media-row-info h3 {
-    font-size: 1.3rem;
+    font-size: 1.35rem;
   }
 
   .media-row-status {
-    margin-left: 3.6rem;
+    margin-left: calc(0.4rem + 3.6rem);
   }
 
   .media-row-score {
-    padding: 0.5rem 0.8rem;
+    min-width: 74px;
+    height: 46px;
+    padding: 0 0.8rem;
   }
 
   .media-row-score span {
-    font-size: 1.15rem;
+    font-size: 1.2rem;
+  }
+
+  /* Hover-dependent reveal doesn't work well on touch — keep the score
+     legible without ever needing a hover on mobile. */
+  .media-row-score::after {
+    display: none;
   }
 }
