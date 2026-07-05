@@ -1,3 +1,5 @@
+
+
 /* ============================================================================
    SECTION 2 — PART 1b: PREMIUM DEPTH PASS
    ------------------------------------------------------------------------
@@ -3250,6 +3252,923 @@ body {
   .media-row-format span:hover,
   .media-row-status span:hover,
   .depth-button:hover {
+    transform: none !important;
+  }
+}
+
+/* ============================================================================
+   22. GSAP STORY PREP — ANIMATION-READY CSS HOOKS ONLY
+   ------------------------------------------------------------------------
+   This block intentionally does NOT change the current static/preview design
+   by default. It activates only when JS adds `.is-gsap-story` to the Section 2
+   root, for example:
+
+     document.querySelector('#section-2-empty-shelf')?.classList.add('is-gsap-story')
+
+   Purpose:
+   - prepare a pinned viewport stage for GSAP ScrollTrigger
+   - stop staged content from stacking vertically during the real animation
+   - hide evidence layers before JS animates them
+   - support the story where buttons are created one by one and inserted into
+     the Saved Layers row
+   - keep reduced-motion and static fallback safe
+   ============================================================================ */
+
+#section-2-empty-shelf.is-gsap-story,
+.section-empty-shelf.is-gsap-story {
+  --section-2-header-height: var(--header-height, 64px);
+  --story-stage-min-height: calc(100svh - var(--section-2-header-height));
+  --story-stage-max-width: min(1120px, 100%);
+  --story-layer-z: 4;
+  --story-card-z: 10;
+  --story-flying-button-z: 24;
+}
+
+/* In real GSAP mode the scroll wrapper becomes the pinned stage container.
+   The timeline/ScrollTrigger should pin `.empty-shelf-scroll`. */
+#section-2-empty-shelf.is-gsap-story .empty-shelf-scroll,
+.section-empty-shelf.is-gsap-story .empty-shelf-scroll {
+  position: relative;
+  display: block;
+  width: 100%;
+  min-height: var(--story-stage-min-height);
+  overflow: visible;
+  isolation: isolate;
+}
+
+/* Each stage overlays the same viewport instead of stacking down the page.
+   GSAP controls opacity/visibility as the user scrolls. */
+#section-2-empty-shelf.is-gsap-story .scroll-stage,
+.section-empty-shelf.is-gsap-story .scroll-stage {
+  position: absolute;
+  inset: 0;
+  min-height: var(--story-stage-min-height);
+  width: 100%;
+
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 0;
+
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translate3d(0, 0, 0);
+  will-change: opacity, transform;
+}
+
+/* JS can mark the currently readable/interactable stage with `.is-current`.
+   GSAP may also set autoAlpha directly; this class is just a safe CSS state. */
+#section-2-empty-shelf.is-gsap-story .scroll-stage.is-current,
+.section-empty-shelf.is-gsap-story .scroll-stage.is-current {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* Make the first stage visible before GSAP fully initializes, preventing a
+   blank flash. JS/GSAP can override this immediately after setup. */
+#section-2-empty-shelf.is-gsap-story .scroll-stage:first-child,
+.section-empty-shelf.is-gsap-story .scroll-stage:first-child {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* The main card should remain the visual anchor above layer objects. */
+#section-2-empty-shelf.is-gsap-story .card-wrap,
+.section-empty-shelf.is-gsap-story .card-wrap,
+#section-2-empty-shelf.is-gsap-story .media-library-row,
+.section-empty-shelf.is-gsap-story .media-library-row {
+  z-index: var(--story-card-z);
+}
+
+/* -------------------------------------------------------------------------
+   INTRO CARD / SAVED-LAYER ROW STATES
+   -------------------------------------------------------------------------
+   Step 1 should be simple: cover, title, author, meta chips, rating. No saved
+   layer row/buttons are visible until the story creates the first button.
+   JS should add `.is-bare-card` to the intro card and then remove it or add
+   `.has-saved-layers` once the first button lands.
+   ------------------------------------------------------------------------- */
+
+#section-2-empty-shelf.is-gsap-story .media-library-row.is-bare-card,
+.section-empty-shelf.is-gsap-story .media-library-row.is-bare-card {
+  min-height: clamp(318px, 34vw, 344px) !important;
+  grid-template-areas:
+    "cover info  score"
+    "cover chips score";
+  grid-template-rows: minmax(150px, 1fr) auto;
+}
+
+#section-2-empty-shelf.is-gsap-story .media-library-row.is-bare-card .media-row-score,
+.section-empty-shelf.is-gsap-story .media-library-row.is-bare-card .media-row-score {
+  grid-row: 1 / 3 !important;
+}
+
+#section-2-empty-shelf.is-gsap-story .media-library-row.is-bare-card .media-row-details,
+.section-empty-shelf.is-gsap-story .media-library-row.is-bare-card .media-row-details,
+#section-2-empty-shelf.is-gsap-story .media-row-details.is-empty,
+.section-empty-shelf.is-gsap-story .media-row-details.is-empty {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(10px) scale(0.98);
+}
+
+/* Once the first layer has been created, the saved row can appear. */
+#section-2-empty-shelf.is-gsap-story .media-library-row.has-saved-layers,
+.section-empty-shelf.is-gsap-story .media-library-row.has-saved-layers {
+  min-height: 348px !important;
+}
+
+#section-2-empty-shelf.is-gsap-story .media-row-details,
+.section-empty-shelf.is-gsap-story .media-row-details {
+  transform-origin: 50% 0%;
+  transition:
+    opacity 220ms ease,
+    visibility 220ms ease,
+    transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+#section-2-empty-shelf.is-gsap-story .media-row-details.is-visible,
+.section-empty-shelf.is-gsap-story .media-row-details.is-visible,
+#section-2-empty-shelf.is-gsap-story .media-library-row.has-saved-layers .media-row-details,
+.section-empty-shelf.is-gsap-story .media-library-row.has-saved-layers .media-row-details {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+}
+
+/* Buttons exist in the DOM for measurement, but they are visually absent until
+   GSAP lands them into the row. Add `.is-in-row` when a button has arrived. */
+#section-2-empty-shelf.is-gsap-story .depth-button,
+.section-empty-shelf.is-gsap-story .depth-button {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px) scale(0.94) rotateX(10deg);
+  transform-origin: 50% 50%;
+  will-change: opacity, transform;
+}
+
+#section-2-empty-shelf.is-gsap-story .depth-button.is-in-row,
+.section-empty-shelf.is-gsap-story .depth-button.is-in-row,
+#section-2-empty-shelf.is-gsap-story .depth-button.is-active,
+.section-empty-shelf.is-gsap-story .depth-button.is-active {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1) rotateX(0deg);
+}
+
+/* Active state after a layer has been saved into its button. */
+#section-2-empty-shelf.is-gsap-story .depth-button.is-active,
+.section-empty-shelf.is-gsap-story .depth-button.is-active {
+  background: linear-gradient(180deg, rgba(255, 252, 246, 0.98), rgba(207, 121, 49, 0.18));
+  border-color: rgba(155, 90, 50, 0.40);
+  color: var(--ink);
+  box-shadow:
+    0 10px 24px rgba(90, 48, 22, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72);
+}
+
+/* Temporary flying/morphing pill created by JS when evidence gathers into a
+   button. It can be injected inside `.empty-shelf-scroll` and animated to the
+   matching real `.depth-button`. */
+#section-2-empty-shelf.is-gsap-story .layer-button-seed,
+.section-empty-shelf.is-gsap-story .layer-button-seed {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: var(--story-flying-button-z);
+  min-height: 38px;
+  padding: 0 1.1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  pointer-events: none;
+
+  background: linear-gradient(180deg, rgba(255, 252, 246, 0.98), rgba(207, 121, 49, 0.18));
+  border: 1px solid rgba(155, 90, 50, 0.38);
+  box-shadow:
+    0 16px 34px rgba(90, 48, 22, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.76);
+
+  font-family: var(--font-body);
+  font-size: 0.84rem;
+  font-weight: 760;
+  color: var(--ink);
+  white-space: nowrap;
+
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.82) rotateX(14deg);
+  transform-style: preserve-3d;
+  will-change: transform, opacity, filter;
+}
+
+/* -------------------------------------------------------------------------
+   EVIDENCE SCENES — animation-ready overlay layout
+   -------------------------------------------------------------------------
+   These rules only apply in `.is-gsap-story`, so the current static preview
+   grids are left untouched. GSAP can animate each item from/to these positions.
+   ------------------------------------------------------------------------- */
+
+#section-2-empty-shelf.is-gsap-story .falling-quotes,
+#section-2-empty-shelf.is-gsap-story .moving-moments,
+#section-2-empty-shelf.is-gsap-story .character-cloud,
+#section-2-empty-shelf.is-gsap-story .notes-cloud,
+#section-2-empty-shelf.is-gsap-story .thoughts-cloud,
+.section-empty-shelf.is-gsap-story .falling-quotes,
+.section-empty-shelf.is-gsap-story .moving-moments,
+.section-empty-shelf.is-gsap-story .character-cloud,
+.section-empty-shelf.is-gsap-story .notes-cloud,
+.section-empty-shelf.is-gsap-story .thoughts-cloud {
+  position: absolute;
+  inset: 0;
+  z-index: var(--story-layer-z);
+  width: var(--story-stage-max-width);
+  min-height: var(--story-stage-min-height);
+  margin: auto;
+
+  display: block;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transform: translate3d(0, 0, 0);
+  will-change: opacity, transform;
+}
+
+#section-2-empty-shelf.is-gsap-story .falling-quotes.is-visible,
+#section-2-empty-shelf.is-gsap-story .moving-moments.is-visible,
+#section-2-empty-shelf.is-gsap-story .character-cloud.is-visible,
+#section-2-empty-shelf.is-gsap-story .notes-cloud.is-visible,
+#section-2-empty-shelf.is-gsap-story .thoughts-cloud.is-visible,
+.section-empty-shelf.is-gsap-story .falling-quotes.is-visible,
+.section-empty-shelf.is-gsap-story .moving-moments.is-visible,
+.section-empty-shelf.is-gsap-story .character-cloud.is-visible,
+.section-empty-shelf.is-gsap-story .notes-cloud.is-visible,
+.section-empty-shelf.is-gsap-story .thoughts-cloud.is-visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* Children are positioned absolutely only for the GSAP story. The custom
+   properties are defaults; JS/GSAP can override x/y/rotation per item. */
+#section-2-empty-shelf.is-gsap-story .falling-quote,
+#section-2-empty-shelf.is-gsap-story .moment-frame,
+#section-2-empty-shelf.is-gsap-story .character-name,
+#section-2-empty-shelf.is-gsap-story .note-card,
+#section-2-empty-shelf.is-gsap-story .thought-card,
+.section-empty-shelf.is-gsap-story .falling-quote,
+.section-empty-shelf.is-gsap-story .moment-frame,
+.section-empty-shelf.is-gsap-story .character-name,
+.section-empty-shelf.is-gsap-story .note-card,
+.section-empty-shelf.is-gsap-story .thought-card {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin: 0;
+
+  opacity: 0;
+  visibility: hidden;
+  transform:
+    translate(calc(-50% + var(--story-x, 0px)), calc(-50% + var(--story-y, 0px)))
+    rotate(var(--story-rotate, 0deg))
+    scale(var(--story-scale, 0.96));
+  transform-origin: 50% 50%;
+  will-change: transform, opacity, filter;
+  backface-visibility: hidden;
+}
+
+/* Readable default spread positions for the story version. GSAP can override
+   these, but they give a good no-measurement starting layout. */
+#section-2-empty-shelf.is-gsap-story .falling-quote:nth-child(1),
+.section-empty-shelf.is-gsap-story .falling-quote:nth-child(1) {
+  --story-x: -360px;
+  --story-y: -205px;
+  --story-rotate: -3deg;
+  width: min(270px, 28vw);
+}
+
+#section-2-empty-shelf.is-gsap-story .falling-quote:nth-child(2),
+.section-empty-shelf.is-gsap-story .falling-quote:nth-child(2) {
+  --story-x: 355px;
+  --story-y: -190px;
+  --story-rotate: 2.5deg;
+  width: min(275px, 29vw);
+}
+
+#section-2-empty-shelf.is-gsap-story .falling-quote:nth-child(3),
+.section-empty-shelf.is-gsap-story .falling-quote:nth-child(3) {
+  --story-x: 0px;
+  --story-y: 235px;
+  --story-rotate: -1.4deg;
+  width: min(300px, 32vw);
+}
+
+#section-2-empty-shelf.is-gsap-story .moment-frame,
+.section-empty-shelf.is-gsap-story .moment-frame {
+  width: min(285px, 28vw);
+}
+
+#section-2-empty-shelf.is-gsap-story .moment-frame:nth-child(1),
+.section-empty-shelf.is-gsap-story .moment-frame:nth-child(1) {
+  --story-x: -390px;
+  --story-y: -115px;
+  --story-rotate: -2deg;
+}
+
+#section-2-empty-shelf.is-gsap-story .moment-frame:nth-child(2),
+.section-empty-shelf.is-gsap-story .moment-frame:nth-child(2) {
+  --story-x: 385px;
+  --story-y: -105px;
+  --story-rotate: 2deg;
+}
+
+#section-2-empty-shelf.is-gsap-story .moment-frame:nth-child(3),
+.section-empty-shelf.is-gsap-story .moment-frame:nth-child(3) {
+  --story-x: -225px;
+  --story-y: 250px;
+  --story-rotate: 1.5deg;
+}
+
+#section-2-empty-shelf.is-gsap-story .moment-frame:nth-child(4),
+.section-empty-shelf.is-gsap-story .moment-frame:nth-child(4) {
+  --story-x: 225px;
+  --story-y: 250px;
+  --story-rotate: -1.5deg;
+}
+
+#section-2-empty-shelf.is-gsap-story .character-name,
+.section-empty-shelf.is-gsap-story .character-name {
+  width: min(190px, 18vw);
+}
+
+#section-2-empty-shelf.is-gsap-story .character-name:nth-child(1),
+.section-empty-shelf.is-gsap-story .character-name:nth-child(1) {
+  --story-x: -405px;
+  --story-y: -125px;
+  --story-rotate: -4deg;
+}
+
+#section-2-empty-shelf.is-gsap-story .character-name:nth-child(2),
+.section-empty-shelf.is-gsap-story .character-name:nth-child(2) {
+  --story-x: 405px;
+  --story-y: -125px;
+  --story-rotate: 4deg;
+}
+
+#section-2-empty-shelf.is-gsap-story .character-name:nth-child(3),
+.section-empty-shelf.is-gsap-story .character-name:nth-child(3) {
+  --story-x: -260px;
+  --story-y: 235px;
+  --story-rotate: 2deg;
+}
+
+#section-2-empty-shelf.is-gsap-story .character-name:nth-child(4),
+.section-empty-shelf.is-gsap-story .character-name:nth-child(4) {
+  --story-x: 260px;
+  --story-y: 235px;
+  --story-rotate: -2deg;
+}
+
+#section-2-empty-shelf.is-gsap-story .note-card,
+.section-empty-shelf.is-gsap-story .note-card {
+  width: min(230px, 22vw);
+}
+
+#section-2-empty-shelf.is-gsap-story .note-card:nth-child(1),
+.section-empty-shelf.is-gsap-story .note-card:nth-child(1) {
+  --story-x: -365px;
+  --story-y: -135px;
+  --story-rotate: -3deg;
+}
+
+#section-2-empty-shelf.is-gsap-story .note-card:nth-child(2),
+.section-empty-shelf.is-gsap-story .note-card:nth-child(2) {
+  --story-x: 360px;
+  --story-y: -122px;
+  --story-rotate: 2.5deg;
+}
+
+#section-2-empty-shelf.is-gsap-story .note-card:nth-child(3),
+.section-empty-shelf.is-gsap-story .note-card:nth-child(3) {
+  --story-x: -185px;
+  --story-y: 240px;
+  --story-rotate: 2deg;
+}
+
+#section-2-empty-shelf.is-gsap-story .note-card:nth-child(4),
+.section-empty-shelf.is-gsap-story .note-card:nth-child(4) {
+  --story-x: 205px;
+  --story-y: 245px;
+  --story-rotate: -2deg;
+}
+
+#section-2-empty-shelf.is-gsap-story .thought-card,
+.section-empty-shelf.is-gsap-story .thought-card {
+  width: min(320px, 30vw);
+}
+
+#section-2-empty-shelf.is-gsap-story .thought-card:nth-child(1),
+.section-empty-shelf.is-gsap-story .thought-card:nth-child(1) {
+  --story-x: -345px;
+  --story-y: -155px;
+}
+
+#section-2-empty-shelf.is-gsap-story .thought-card:nth-child(2),
+.section-empty-shelf.is-gsap-story .thought-card:nth-child(2) {
+  --story-x: 345px;
+  --story-y: -145px;
+}
+
+#section-2-empty-shelf.is-gsap-story .thought-card:nth-child(3),
+.section-empty-shelf.is-gsap-story .thought-card:nth-child(3) {
+  --story-x: 0px;
+  --story-y: 245px;
+}
+
+/* When JS marks a layer item visible, CSS gives a readable final state.
+   GSAP can still control these properties directly during the timeline. */
+#section-2-empty-shelf.is-gsap-story .layer-item.is-visible,
+#section-2-empty-shelf.is-gsap-story .falling-quote.is-visible,
+#section-2-empty-shelf.is-gsap-story .moment-frame.is-visible,
+#section-2-empty-shelf.is-gsap-story .character-name.is-visible,
+#section-2-empty-shelf.is-gsap-story .note-card.is-visible,
+#section-2-empty-shelf.is-gsap-story .thought-card.is-visible,
+.section-empty-shelf.is-gsap-story .layer-item.is-visible,
+.section-empty-shelf.is-gsap-story .falling-quote.is-visible,
+.section-empty-shelf.is-gsap-story .moment-frame.is-visible,
+.section-empty-shelf.is-gsap-story .character-name.is-visible,
+.section-empty-shelf.is-gsap-story .note-card.is-visible,
+.section-empty-shelf.is-gsap-story .thought-card.is-visible {
+  opacity: 1;
+  visibility: visible;
+  --story-scale: 1;
+}
+
+/* Focus/hover exploration after an item is visible. */
+#section-2-empty-shelf.is-gsap-story .falling-quotes.is-visible:hover .falling-quote.is-visible,
+#section-2-empty-shelf.is-gsap-story .moving-moments.is-visible:hover .moment-frame.is-visible,
+#section-2-empty-shelf.is-gsap-story .character-cloud.is-visible:hover .character-name.is-visible,
+#section-2-empty-shelf.is-gsap-story .notes-cloud.is-visible:hover .note-card.is-visible,
+#section-2-empty-shelf.is-gsap-story .thoughts-cloud.is-visible:hover .thought-card.is-visible,
+.section-empty-shelf.is-gsap-story .falling-quotes.is-visible:hover .falling-quote.is-visible,
+.section-empty-shelf.is-gsap-story .moving-moments.is-visible:hover .moment-frame.is-visible,
+.section-empty-shelf.is-gsap-story .character-cloud.is-visible:hover .character-name.is-visible,
+.section-empty-shelf.is-gsap-story .notes-cloud.is-visible:hover .note-card.is-visible,
+.section-empty-shelf.is-gsap-story .thoughts-cloud.is-visible:hover .thought-card.is-visible {
+  opacity: 0.62;
+}
+
+#section-2-empty-shelf.is-gsap-story .falling-quote.is-visible:hover,
+#section-2-empty-shelf.is-gsap-story .moment-frame.is-visible:hover,
+#section-2-empty-shelf.is-gsap-story .character-name.is-visible:hover,
+#section-2-empty-shelf.is-gsap-story .note-card.is-visible:hover,
+#section-2-empty-shelf.is-gsap-story .thought-card.is-visible:hover,
+.section-empty-shelf.is-gsap-story .falling-quote.is-visible:hover,
+.section-empty-shelf.is-gsap-story .moment-frame.is-visible:hover,
+.section-empty-shelf.is-gsap-story .character-name.is-visible:hover,
+.section-empty-shelf.is-gsap-story .note-card.is-visible:hover,
+.section-empty-shelf.is-gsap-story .thought-card.is-visible:hover {
+  opacity: 1 !important;
+  z-index: calc(var(--story-layer-z) + 8);
+  --story-scale: 1.045;
+}
+
+/* -------------------------------------------------------------------------
+   REDUCED MOTION FALLBACK FOR GSAP STORY MODE
+   -------------------------------------------------------------------------
+   If the user prefers reduced motion, do not pin/overlay the story. Restore
+   normal flow and show content clearly with minimal movement.
+   ------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  #section-2-empty-shelf.is-gsap-story .empty-shelf-scroll,
+  .section-empty-shelf.is-gsap-story .empty-shelf-scroll {
+    display: flex;
+    flex-direction: column;
+    gap: 4rem;
+    min-height: auto;
+  }
+
+  #section-2-empty-shelf.is-gsap-story .scroll-stage,
+  .section-empty-shelf.is-gsap-story .scroll-stage {
+    position: relative;
+    inset: auto;
+    min-height: auto;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto;
+    transform: none !important;
+  }
+
+  #section-2-empty-shelf.is-gsap-story .falling-quotes,
+  #section-2-empty-shelf.is-gsap-story .moving-moments,
+  #section-2-empty-shelf.is-gsap-story .character-cloud,
+  #section-2-empty-shelf.is-gsap-story .notes-cloud,
+  #section-2-empty-shelf.is-gsap-story .thoughts-cloud,
+  .section-empty-shelf.is-gsap-story .falling-quotes,
+  .section-empty-shelf.is-gsap-story .moving-moments,
+  .section-empty-shelf.is-gsap-story .character-cloud,
+  .section-empty-shelf.is-gsap-story .notes-cloud,
+  .section-empty-shelf.is-gsap-story .thoughts-cloud {
+    position: relative;
+    inset: auto;
+    display: grid;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto;
+    min-height: auto;
+  }
+
+  #section-2-empty-shelf.is-gsap-story .falling-quote,
+  #section-2-empty-shelf.is-gsap-story .moment-frame,
+  #section-2-empty-shelf.is-gsap-story .character-name,
+  #section-2-empty-shelf.is-gsap-story .note-card,
+  #section-2-empty-shelf.is-gsap-story .thought-card,
+  .section-empty-shelf.is-gsap-story .falling-quote,
+  .section-empty-shelf.is-gsap-story .moment-frame,
+  .section-empty-shelf.is-gsap-story .character-name,
+  .section-empty-shelf.is-gsap-story .note-card,
+  .section-empty-shelf.is-gsap-story .thought-card {
+    position: relative;
+    left: auto;
+    top: auto;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+  }
+
+  #section-2-empty-shelf.is-gsap-story .media-row-details,
+  #section-2-empty-shelf.is-gsap-story .depth-button,
+  .section-empty-shelf.is-gsap-story .media-row-details,
+  .section-empty-shelf.is-gsap-story .depth-button {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+  }
+}
+
+/* ============================================================================
+   23. GSAP STORY SAFETY CHECK PATCH
+   ------------------------------------------------------------------------
+   This patch keeps the static design untouched. It only improves `.is-gsap-story`
+   mode so the upcoming JavaScript does not fight CSS transitions/visibility.
+
+   JS setup recommendation:
+   1. Add `.is-gsap-story` before creating the ScrollTrigger.
+   2. Add `.is-bare-card` to `.media-library-row` for Step 1.
+   3. After GSAP has initialized all stage states, add `.is-story-ready` to the
+      Section 2 root so the first-stage anti-flash fallback no longer forces
+      the first stage visible.
+   ============================================================================ */
+
+/* Avoid CSS transitions fighting GSAP's inline transforms/opacity during the
+   scroll timeline. Hover polish can still be handled after the item/button has
+   landed by using separate hover rules or JS states. */
+#section-2-empty-shelf.is-gsap-story .scroll-stage,
+#section-2-empty-shelf.is-gsap-story .media-row-details,
+#section-2-empty-shelf.is-gsap-story .depth-button,
+#section-2-empty-shelf.is-gsap-story .layer-button-seed,
+#section-2-empty-shelf.is-gsap-story .falling-quotes,
+#section-2-empty-shelf.is-gsap-story .moving-moments,
+#section-2-empty-shelf.is-gsap-story .character-cloud,
+#section-2-empty-shelf.is-gsap-story .notes-cloud,
+#section-2-empty-shelf.is-gsap-story .thoughts-cloud,
+#section-2-empty-shelf.is-gsap-story .falling-quote,
+#section-2-empty-shelf.is-gsap-story .moment-frame,
+#section-2-empty-shelf.is-gsap-story .character-name,
+#section-2-empty-shelf.is-gsap-story .note-card,
+#section-2-empty-shelf.is-gsap-story .thought-card,
+.section-empty-shelf.is-gsap-story .scroll-stage,
+.section-empty-shelf.is-gsap-story .media-row-details,
+.section-empty-shelf.is-gsap-story .depth-button,
+.section-empty-shelf.is-gsap-story .layer-button-seed,
+.section-empty-shelf.is-gsap-story .falling-quotes,
+.section-empty-shelf.is-gsap-story .moving-moments,
+.section-empty-shelf.is-gsap-story .character-cloud,
+.section-empty-shelf.is-gsap-story .notes-cloud,
+.section-empty-shelf.is-gsap-story .thoughts-cloud,
+.section-empty-shelf.is-gsap-story .falling-quote,
+.section-empty-shelf.is-gsap-story .moment-frame,
+.section-empty-shelf.is-gsap-story .character-name,
+.section-empty-shelf.is-gsap-story .note-card,
+.section-empty-shelf.is-gsap-story .thought-card {
+  transition: none;
+}
+
+/* The first stage is visible as an anti-flash fallback before JS initializes.
+   Once JS adds `.is-story-ready`, only `.is-current` or GSAP inline styles
+   should decide which stage is visible. */
+#section-2-empty-shelf.is-gsap-story.is-story-ready .scroll-stage:first-child:not(.is-current),
+.section-empty-shelf.is-gsap-story.is-story-ready .scroll-stage:first-child:not(.is-current) {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* If JS marks a whole scene visible and then animates child opacity, the child
+   items must not remain `visibility: hidden`. This lets GSAP animate opacity
+   without requiring `.is-visible` on every single child first. */
+#section-2-empty-shelf.is-gsap-story .falling-quotes.is-visible .falling-quote,
+#section-2-empty-shelf.is-gsap-story .moving-moments.is-visible .moment-frame,
+#section-2-empty-shelf.is-gsap-story .character-cloud.is-visible .character-name,
+#section-2-empty-shelf.is-gsap-story .notes-cloud.is-visible .note-card,
+#section-2-empty-shelf.is-gsap-story .thoughts-cloud.is-visible .thought-card,
+.section-empty-shelf.is-gsap-story .falling-quotes.is-visible .falling-quote,
+.section-empty-shelf.is-gsap-story .moving-moments.is-visible .moment-frame,
+.section-empty-shelf.is-gsap-story .character-cloud.is-visible .character-name,
+.section-empty-shelf.is-gsap-story .notes-cloud.is-visible .note-card,
+.section-empty-shelf.is-gsap-story .thoughts-cloud.is-visible .thought-card {
+  visibility: visible;
+}
+
+/* Keep the simple Step 1 card safe. If JS uses `.is-bare-card`, all saved-layer
+   UI stays absent until the first generated button lands. */
+#section-2-empty-shelf.is-gsap-story .media-library-row.is-bare-card .media-row-details,
+.section-empty-shelf.is-gsap-story .media-library-row.is-bare-card .media-row-details {
+  display: none;
+}
+
+/* When the saved row becomes available, restore display and let opacity/GSAP
+   control the reveal. */
+#section-2-empty-shelf.is-gsap-story .media-library-row.has-saved-layers .media-row-details,
+.section-empty-shelf.is-gsap-story .media-library-row.has-saved-layers .media-row-details {
+  display: flex;
+}
+
+/* The story mode is meant for desktop/pointer layouts. On small screens, restore
+   a normal stacked flow so oversized absolute positions do not cause overflow or
+   confusing offscreen content. JS should also avoid creating ScrollTrigger below
+   this breakpoint. */
+@media (max-width: 760px) {
+  #section-2-empty-shelf.is-gsap-story .empty-shelf-scroll,
+  .section-empty-shelf.is-gsap-story .empty-shelf-scroll {
+    display: flex;
+    flex-direction: column;
+    gap: 4rem;
+    min-height: auto;
+    overflow: visible;
+  }
+
+  #section-2-empty-shelf.is-gsap-story .scroll-stage,
+  .section-empty-shelf.is-gsap-story .scroll-stage {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    min-height: auto;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto;
+    transform: none !important;
+  }
+
+  #section-2-empty-shelf.is-gsap-story .falling-quotes,
+  #section-2-empty-shelf.is-gsap-story .moving-moments,
+  #section-2-empty-shelf.is-gsap-story .character-cloud,
+  #section-2-empty-shelf.is-gsap-story .notes-cloud,
+  #section-2-empty-shelf.is-gsap-story .thoughts-cloud,
+  .section-empty-shelf.is-gsap-story .falling-quotes,
+  .section-empty-shelf.is-gsap-story .moving-moments,
+  .section-empty-shelf.is-gsap-story .character-cloud,
+  .section-empty-shelf.is-gsap-story .notes-cloud,
+  .section-empty-shelf.is-gsap-story .thoughts-cloud {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    min-height: auto;
+    display: grid;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto;
+    transform: none !important;
+  }
+
+  #section-2-empty-shelf.is-gsap-story .falling-quote,
+  #section-2-empty-shelf.is-gsap-story .moment-frame,
+  #section-2-empty-shelf.is-gsap-story .character-name,
+  #section-2-empty-shelf.is-gsap-story .note-card,
+  #section-2-empty-shelf.is-gsap-story .thought-card,
+  .section-empty-shelf.is-gsap-story .falling-quote,
+  .section-empty-shelf.is-gsap-story .moment-frame,
+  .section-empty-shelf.is-gsap-story .character-name,
+  .section-empty-shelf.is-gsap-story .note-card,
+  .section-empty-shelf.is-gsap-story .thought-card {
+    position: relative;
+    left: auto;
+    top: auto;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+  }
+
+  #section-2-empty-shelf.is-gsap-story .media-library-row.is-bare-card .media-row-details,
+  .section-empty-shelf.is-gsap-story .media-library-row.is-bare-card .media-row-details {
+    display: flex;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+  }
+
+  #section-2-empty-shelf.is-gsap-story .depth-button,
+  .section-empty-shelf.is-gsap-story .depth-button {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+  }
+}
+
+
+/* ============================================================================
+   24. GSAP STORY FINAL READINESS PATCH — SAFE TO PROCEED
+   ------------------------------------------------------------------------
+   Final tiny cleanup before JavaScript:
+   - moves story item spread positions out of the transform function so GSAP
+     does not need to parse transform values containing calc() + CSS variables
+   - adds an optional `.is-measuring` state for measuring hidden saved-layer
+     buttons before the row is visually revealed
+   - keeps Step 1 visually bare unless JS explicitly opts into measuring
+   ============================================================================ */
+
+/* Safer transform model for GSAP:
+   The item's resting spread position comes from left/top.
+   GSAP can then animate x, y, scale, rotation, autoAlpha without fighting
+   calc() expressions inside transform. */
+#section-2-empty-shelf.is-gsap-story .falling-quote,
+#section-2-empty-shelf.is-gsap-story .moment-frame,
+#section-2-empty-shelf.is-gsap-story .character-name,
+#section-2-empty-shelf.is-gsap-story .note-card,
+#section-2-empty-shelf.is-gsap-story .thought-card,
+.section-empty-shelf.is-gsap-story .falling-quote,
+.section-empty-shelf.is-gsap-story .moment-frame,
+.section-empty-shelf.is-gsap-story .character-name,
+.section-empty-shelf.is-gsap-story .note-card,
+.section-empty-shelf.is-gsap-story .thought-card {
+  left: calc(50% + var(--story-x, 0px));
+  top: calc(50% + var(--story-y, 0px));
+  transform:
+    translate(-50%, -50%)
+    rotate(var(--story-rotate, 0deg))
+    scale(var(--story-scale, 0.96));
+}
+
+/* Optional JS measurement helper:
+   Step 1 can keep `.is-bare-card` so the saved row is visually absent.
+   If JS needs real button coordinates before revealing the row, temporarily add
+   `.is-measuring` to `.media-library-row`, read getBoundingClientRect(), then
+   remove `.is-measuring`. */
+#section-2-empty-shelf.is-gsap-story .media-library-row.is-bare-card.is-measuring .media-row-details,
+.section-empty-shelf.is-gsap-story .media-library-row.is-bare-card.is-measuring .media-row-details {
+  display: flex !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  transform: translateY(0) scale(1) !important;
+}
+
+/* If JS uses `.is-measuring`, target buttons should also exist in layout while
+   remaining invisible. This prevents 0-size measurements. */
+#section-2-empty-shelf.is-gsap-story .media-library-row.is-measuring .depth-button,
+.section-empty-shelf.is-gsap-story .media-library-row.is-measuring .depth-button {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  transform: translateY(0) scale(1) rotateX(0deg) !important;
+}
+
+/* When a real button lands, allow it to receive pointer events even if the row
+   was previously hidden. */
+#section-2-empty-shelf.is-gsap-story .depth-button.is-in-row,
+#section-2-empty-shelf.is-gsap-story .depth-button.is-active,
+.section-empty-shelf.is-gsap-story .depth-button.is-in-row,
+.section-empty-shelf.is-gsap-story .depth-button.is-active {
+  pointer-events: auto;
+}
+
+
+/* ============================================================================
+   25. GSAP STORY FINAL INTERACTION SAFETY PATCH
+   ------------------------------------------------------------------------
+   Keep large absolute evidence-scene wrappers from blocking the card or the
+   flying button in empty transparent areas. The wrapper itself remains visible
+   for GSAP opacity control, but only visible child items receive pointer events.
+   This is safer for the upcoming JavaScript and prevents hover/click dead zones.
+   ============================================================================ */
+
+#section-2-empty-shelf.is-gsap-story .falling-quotes.is-visible,
+#section-2-empty-shelf.is-gsap-story .moving-moments.is-visible,
+#section-2-empty-shelf.is-gsap-story .character-cloud.is-visible,
+#section-2-empty-shelf.is-gsap-story .notes-cloud.is-visible,
+#section-2-empty-shelf.is-gsap-story .thoughts-cloud.is-visible,
+.section-empty-shelf.is-gsap-story .falling-quotes.is-visible,
+.section-empty-shelf.is-gsap-story .moving-moments.is-visible,
+.section-empty-shelf.is-gsap-story .character-cloud.is-visible,
+.section-empty-shelf.is-gsap-story .notes-cloud.is-visible,
+.section-empty-shelf.is-gsap-story .thoughts-cloud.is-visible {
+  pointer-events: none;
+}
+
+#section-2-empty-shelf.is-gsap-story .falling-quote.is-visible,
+#section-2-empty-shelf.is-gsap-story .moment-frame.is-visible,
+#section-2-empty-shelf.is-gsap-story .character-name.is-visible,
+#section-2-empty-shelf.is-gsap-story .note-card.is-visible,
+#section-2-empty-shelf.is-gsap-story .thought-card.is-visible,
+.section-empty-shelf.is-gsap-story .falling-quote.is-visible,
+.section-empty-shelf.is-gsap-story .moment-frame.is-visible,
+.section-empty-shelf.is-gsap-story .character-name.is-visible,
+.section-empty-shelf.is-gsap-story .note-card.is-visible,
+.section-empty-shelf.is-gsap-story .thought-card.is-visible {
+  pointer-events: auto;
+}
+
+@media (max-width: 760px), (prefers-reduced-motion: reduce) {
+  #section-2-empty-shelf.is-gsap-story .falling-quotes.is-visible,
+  #section-2-empty-shelf.is-gsap-story .moving-moments.is-visible,
+  #section-2-empty-shelf.is-gsap-story .character-cloud.is-visible,
+  #section-2-empty-shelf.is-gsap-story .notes-cloud.is-visible,
+  #section-2-empty-shelf.is-gsap-story .thoughts-cloud.is-visible,
+  .section-empty-shelf.is-gsap-story .falling-quotes.is-visible,
+  .section-empty-shelf.is-gsap-story .moving-moments.is-visible,
+  .section-empty-shelf.is-gsap-story .character-cloud.is-visible,
+  .section-empty-shelf.is-gsap-story .notes-cloud.is-visible,
+  .section-empty-shelf.is-gsap-story .thoughts-cloud.is-visible {
+    pointer-events: auto;
+  }
+}
+
+
+/* ============================================================================
+   26. GSAP STORY TRANSFORM SAFETY — FINAL JS HANDOFF PATCH
+   ------------------------------------------------------------------------
+   This is still gated by `.is-gsap-story`, so the static design remains
+   unchanged. It makes layer-item positioning safer for GSAP by separating the
+   base placement from the transform property.
+
+   Why:
+   - The planned JS may animate x/y/scale/rotation.
+   - If the base CSS also owns one long `transform` string, inline GSAP
+     transforms can overwrite the centering transform.
+   - Using individual transform properties for the base state keeps the
+     CSS-provided centering/spread stable while JS can animate transform values
+     or CSS variables more predictably.
+   ============================================================================ */
+
+#section-2-empty-shelf.is-gsap-story .falling-quote,
+#section-2-empty-shelf.is-gsap-story .moment-frame,
+#section-2-empty-shelf.is-gsap-story .character-name,
+#section-2-empty-shelf.is-gsap-story .note-card,
+#section-2-empty-shelf.is-gsap-story .thought-card,
+.section-empty-shelf.is-gsap-story .falling-quote,
+.section-empty-shelf.is-gsap-story .moment-frame,
+.section-empty-shelf.is-gsap-story .character-name,
+.section-empty-shelf.is-gsap-story .note-card,
+.section-empty-shelf.is-gsap-story .thought-card {
+  left: calc(50% + var(--story-x, 0px));
+  top: calc(50% + var(--story-y, 0px));
+
+  translate: -50% -50%;
+  rotate: var(--story-rotate, 0deg);
+  scale: var(--story-scale, 0.96);
+
+  transform: none;
+  transform-origin: 50% 50%;
+}
+
+/* When JS/GSAP adds inline transforms, these base individual transform
+   properties still keep the item centered in its intended story position. */
+#section-2-empty-shelf.is-gsap-story .layer-item.is-visible,
+#section-2-empty-shelf.is-gsap-story .falling-quote.is-visible,
+#section-2-empty-shelf.is-gsap-story .moment-frame.is-visible,
+#section-2-empty-shelf.is-gsap-story .character-name.is-visible,
+#section-2-empty-shelf.is-gsap-story .note-card.is-visible,
+#section-2-empty-shelf.is-gsap-story .thought-card.is-visible,
+.section-empty-shelf.is-gsap-story .layer-item.is-visible,
+.section-empty-shelf.is-gsap-story .falling-quote.is-visible,
+.section-empty-shelf.is-gsap-story .moment-frame.is-visible,
+.section-empty-shelf.is-gsap-story .character-name.is-visible,
+.section-empty-shelf.is-gsap-story .note-card.is-visible,
+.section-empty-shelf.is-gsap-story .thought-card.is-visible {
+  scale: 1;
+}
+
+/* Reduced-motion/mobile fallback should cancel both classic and individual
+   transforms so fallback layout remains normal and readable. */
+@media (max-width: 760px), (prefers-reduced-motion: reduce) {
+  #section-2-empty-shelf.is-gsap-story .falling-quote,
+  #section-2-empty-shelf.is-gsap-story .moment-frame,
+  #section-2-empty-shelf.is-gsap-story .character-name,
+  #section-2-empty-shelf.is-gsap-story .note-card,
+  #section-2-empty-shelf.is-gsap-story .thought-card,
+  .section-empty-shelf.is-gsap-story .falling-quote,
+  .section-empty-shelf.is-gsap-story .moment-frame,
+  .section-empty-shelf.is-gsap-story .character-name,
+  .section-empty-shelf.is-gsap-story .note-card,
+  .section-empty-shelf.is-gsap-story .thought-card {
+    translate: none !important;
+    rotate: none !important;
+    scale: none !important;
     transform: none !important;
   }
 }
