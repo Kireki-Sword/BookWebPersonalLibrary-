@@ -2583,3 +2583,673 @@
     transform: none !important;
   }
 }
+
+/* ============================================================================
+   FINAL CANONICAL PASS — SHARED LIGHT-TAN PAGE + BALANCED OBJECT GLOWS
+   ------------------------------------------------------------------------
+   Use this block as the final source of truth for the current design decision:
+   - Whole page: very light warm paper tan, consistent between Section 1 and 2.
+   - Objects: stronger darker tan glow around cards/quotes/etc.
+   - Cards: light ivory/cream so they still pop from the tan page.
+   - Cover: manga-like proportion, not too skinny and not too wide.
+   - Aura: balanced around all card sides + separate softer bottom contact shadow.
+   ============================================================================ */
+
+:root {
+  --page-base: #fbf3e8;
+  --page-warm: #f7ead9;
+  --page-depth: #efd8bc;
+
+  --card-surface: rgba(255, 250, 242, 0.9);
+  --card-surface-hover: rgba(255, 252, 247, 0.96);
+  --card-border: rgba(128, 78, 39, 0.18);
+  --card-border-hover: rgba(128, 78, 39, 0.3);
+
+  --object-glow-soft: rgba(176, 99, 42, 0.14);
+  --object-glow-medium: rgba(176, 99, 42, 0.22);
+  --object-glow-strong: rgba(166, 88, 35, 0.3);
+  --warm-shadow: rgba(78, 43, 18, 0.15);
+
+  --section-2-row-width-final: 1020px;
+  --section-2-cover-width-final: 180px;
+  --section-2-card-gap-final: 38px;
+  --section-2-card-radius-final: 32px;
+}
+
+html,
+body {
+  min-height: 100%;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 250, 241, 0.62), transparent 32%),
+    linear-gradient(
+      180deg,
+      var(--page-base) 0%,
+      var(--page-warm) 42%,
+      var(--page-base) 100%
+    ) !important;
+}
+
+body {
+  color: var(--ink);
+}
+
+/* Let the shared body background connect the page. Sections should not create
+   a hard white/cream reset between Section 1 and Section 2. */
+.hero-section,
+.section-hero,
+.landing-hero,
+#hero,
+#section-1,
+#section-2-empty-shelf,
+.section-empty-shelf {
+  position: relative;
+  overflow: hidden;
+  background: transparent !important;
+}
+
+/* Section 2 keeps layout/padding, but no longer paints its own full tan wash. */
+#section-2-empty-shelf,
+.section-empty-shelf {
+  --section-2-row-width: var(--section-2-row-width-final);
+  --section-2-cover-width: var(--section-2-cover-width-final);
+  --section-2-card-gap: var(--section-2-card-gap-final);
+
+  color: var(--ink);
+}
+
+/* Remove broad section/stage washes. Warmth should belong to objects, not the
+   whole empty background. */
+#section-2-empty-shelf::before,
+.section-empty-shelf::before {
+  content: none !important;
+  display: none !important;
+}
+
+/* Very faint paper texture only. It should not read as a separate color layer. */
+#section-2-empty-shelf::after,
+.section-empty-shelf::after {
+  content: "" !important;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: radial-gradient(rgba(97, 58, 31, 0.026) 0.65px, transparent 0.65px);
+  background-size: 4px 4px;
+  opacity: 0.055 !important;
+}
+
+#section-2-empty-shelf > *,
+.section-empty-shelf > * {
+  position: relative;
+  z-index: 1;
+}
+
+.empty-shelf-scroll {
+  position: relative;
+  z-index: 1;
+}
+
+.scroll-stage {
+  position: relative;
+  isolation: isolate;
+}
+
+.scroll-stage::before {
+  content: none !important;
+  display: none !important;
+}
+
+/* -------------------------------------------------------------------------
+   CARD WRAPPER — balanced aura on all sides + separate bottom shadow
+   ------------------------------------------------------------------------- */
+
+.card-wrap {
+  position: relative;
+  width: min(var(--section-2-row-width-final), calc(100vw - 48px));
+  margin-inline: auto;
+  isolation: isolate;
+  perspective: 1200px;
+}
+
+.card-wrap::before {
+  content: "" !important;
+  display: block !important;
+  position: absolute;
+  inset: -72px;
+  z-index: -2;
+  pointer-events: none;
+  border-radius: 86px;
+  background:
+    radial-gradient(
+      ellipse at center,
+      rgba(170, 92, 38, 0.25) 0%,
+      rgba(188, 116, 55, 0.145) 38%,
+      rgba(188, 116, 55, 0.06) 57%,
+      transparent 74%
+    );
+  filter: blur(54px);
+  opacity: 0.9;
+  transform: scale(1);
+  transition:
+    opacity 240ms ease,
+    transform 240ms ease,
+    background 240ms ease,
+    filter 240ms ease;
+}
+
+.card-wrap::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -58px;
+  z-index: -1;
+  pointer-events: none;
+  width: min(86%, 880px);
+  height: 124px;
+  border-radius: 999px;
+  background:
+    radial-gradient(
+      ellipse at center,
+      rgba(83, 45, 19, 0.18),
+      rgba(127, 70, 28, 0.095) 38%,
+      transparent 72%
+    );
+  filter: blur(26px);
+  opacity: 0.74;
+  transform: translateX(-50%);
+  transition: opacity 240ms ease, transform 240ms ease;
+}
+
+.card-wrap:hover::before {
+  opacity: 1;
+  transform: scale(1.035);
+  filter: blur(58px);
+  background:
+    radial-gradient(
+      ellipse at center,
+      rgba(157, 78, 31, 0.33) 0%,
+      rgba(190, 112, 48, 0.19) 40%,
+      rgba(190, 112, 48, 0.08) 59%,
+      transparent 76%
+    );
+}
+
+.card-wrap:hover::after {
+  opacity: 0.88;
+  transform: translateX(-50%) scaleX(1.035);
+}
+
+/* Fallback when the card is not wrapped in .card-wrap. This is still local to
+   the media row, not a generic stage background. */
+.scroll-stage:has(> .media-library-row):not(:has(.card-wrap))::before,
+.scroll-stage:not(:has(.card-wrap)):has(.media-library-row)::before {
+  content: "" !important;
+  display: block !important;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: -2;
+  pointer-events: none;
+  width: min(calc(var(--section-2-row-width-final) + 144px), calc(100% + 144px));
+  height: calc(100% + 144px);
+  border-radius: 86px;
+  background:
+    radial-gradient(
+      ellipse at center,
+      rgba(170, 92, 38, 0.23) 0%,
+      rgba(188, 116, 55, 0.135) 38%,
+      rgba(188, 116, 55, 0.055) 57%,
+      transparent 74%
+    );
+  filter: blur(54px);
+  opacity: 0.84;
+  transform: translate(-50%, -50%);
+}
+
+.scroll-stage:not(:has(.card-wrap)):has(.media-library-row:hover)::before {
+  opacity: 1;
+  background:
+    radial-gradient(
+      ellipse at center,
+      rgba(157, 78, 31, 0.31) 0%,
+      rgba(190, 112, 48, 0.18) 40%,
+      rgba(190, 112, 48, 0.075) 59%,
+      transparent 76%
+    );
+}
+
+/* -------------------------------------------------------------------------
+   BOOK CARD — proportions, grid, surface
+   ------------------------------------------------------------------------- */
+
+.media-library-row {
+  width: min(var(--section-2-row-width-final), calc(100vw - 48px)) !important;
+  min-height: 344px !important;
+  margin-inline: auto;
+  padding: 32px !important;
+
+  display: grid !important;
+  grid-template-columns: var(--section-2-cover-width-final) minmax(0, 1fr) auto;
+  grid-template-areas:
+    "cover info    score"
+    "cover chips   score"
+    "cover details details";
+  grid-template-rows: minmax(118px, 1fr) auto minmax(96px, auto);
+  column-gap: var(--section-2-card-gap-final);
+  row-gap: 0.75rem;
+  align-items: stretch;
+
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+
+  border-radius: var(--section-2-card-radius-final) !important;
+  border: 1px solid var(--card-border) !important;
+  background:
+    radial-gradient(circle at 19% 50%, rgba(226, 173, 111, 0.075), transparent 35%),
+    linear-gradient(180deg, rgba(255, 253, 249, 0.985) 0%, var(--card-surface) 100%) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.86),
+    0 18px 38px rgba(84, 47, 22, 0.10),
+    0 42px 80px rgba(84, 47, 22, 0.13) !important;
+
+  transform: perspective(900px) translateZ(0);
+  transition:
+    transform 240ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 220ms ease,
+    background 220ms ease,
+    box-shadow 240ms ease;
+}
+
+.media-library-row:has(.media-row-details) {
+  min-height: 344px !important;
+}
+
+.media-row-main {
+  display: contents !important;
+}
+
+.media-row-cover,
+.media-row-info,
+.media-row-format,
+.media-row-status,
+.media-row-score,
+.media-row-details {
+  position: relative;
+  z-index: 1;
+}
+
+/* Manga-like proportion. The cover spans from the card's top padding to bottom
+   padding, while the divider/details live only in the right column. */
+.media-row-cover {
+  grid-area: cover !important;
+  align-self: stretch !important;
+  justify-self: start !important;
+
+  width: var(--section-2-cover-width-final) !important;
+  height: 100% !important;
+  min-height: 260px !important;
+  max-height: 280px !important;
+  aspect-ratio: auto !important;
+
+  border-radius: 20px !important;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 30% 22%, rgba(255, 255, 255, 0.24), transparent 32%),
+    linear-gradient(145deg, #d7b999 0%, #ead5bd 55%, #cfae8c 100%) !important;
+  border: 1px solid rgba(126, 78, 45, 0.22) !important;
+  box-shadow:
+    0 24px 42px rgba(72, 42, 21, 0.18),
+    0 7px 16px rgba(72, 42, 21, 0.11),
+    inset 0 1px 0 rgba(255, 255, 255, 0.50) !important;
+}
+
+.media-row-cover img {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+  object-fit: cover;
+  object-position: center top;
+  color: transparent;
+  font-size: 0;
+}
+
+.media-row-info {
+  grid-area: info !important;
+  align-self: end;
+  min-width: 0;
+  padding-top: 0.25rem;
+}
+
+.media-row-info h3 {
+  margin: 0 !important;
+  font-size: clamp(30px, 2.05vw, 34px) !important;
+  line-height: 0.98 !important;
+  letter-spacing: -0.045em;
+  text-decoration: none !important;
+  cursor: default;
+}
+
+.media-row-info p {
+  margin-top: 0.38rem !important;
+  font-size: 16px !important;
+  line-height: 1.35 !important;
+  text-decoration: none !important;
+  cursor: default;
+}
+
+.media-row-info h3:hover {
+  color: #3d2114;
+  text-shadow: 0 10px 28px rgba(148, 78, 32, 0.14);
+  text-decoration: none !important;
+}
+
+.media-row-info p:hover {
+  color: var(--warm-brown-dark);
+  text-shadow: 0 8px 22px rgba(148, 78, 32, 0.10);
+  text-decoration: none !important;
+}
+
+.media-row-format,
+.media-row-status {
+  grid-area: chips !important;
+  align-self: start;
+  margin-top: 0.72rem !important;
+}
+
+.media-row-status {
+  margin-left: calc(0.78rem + 5.1rem) !important;
+}
+
+.media-row-format span,
+.media-row-status span {
+  min-height: 32px !important;
+  padding: 0 14px !important;
+  font-size: 13px !important;
+  font-weight: 650 !important;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(255, 250, 240, 0.96), rgba(184, 121, 78, 0.075)) !important;
+  border: 1px solid rgba(184, 121, 78, 0.24) !important;
+  color: var(--warm-brown-dark);
+  text-decoration: none !important;
+  cursor: pointer;
+}
+
+.media-row-format span:hover,
+.media-row-status span:hover {
+  transform: translateY(-1px);
+  background: linear-gradient(180deg, rgba(255, 252, 246, 1), rgba(207, 121, 49, 0.16)) !important;
+  border-color: rgba(155, 90, 50, 0.34) !important;
+  box-shadow:
+    0 8px 18px rgba(90, 48, 22, 0.10),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72) !important;
+}
+
+.media-row-score {
+  grid-area: score !important;
+  grid-row: 1 / 3 !important;
+  align-self: center;
+  justify-self: end;
+
+  min-width: 82px !important;
+  height: 58px !important;
+  padding: 0 1.08rem !important;
+  background: rgba(255, 252, 248, 0.93) !important;
+  border: 1px solid rgba(184, 121, 78, 0.24) !important;
+  box-shadow: 0 8px 22px rgba(44, 36, 22, 0.06) !important;
+}
+
+.media-row-score span {
+  font-size: 25px !important;
+  line-height: 1 !important;
+}
+
+.media-row-details {
+  grid-area: details !important;
+  align-self: stretch;
+  width: 100% !important;
+  margin: 1.08rem 0 0 !important;
+  padding-top: 1.08rem !important;
+  border-top: 1px solid rgba(184, 121, 78, 0.17) !important;
+
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 0.62rem !important;
+}
+
+.media-row-details::before {
+  flex-basis: 100%;
+  margin-bottom: 0.16rem;
+  font-size: 0.7rem !important;
+  letter-spacing: 0.12em;
+}
+
+.depth-button {
+  min-height: 38px !important;
+  padding: 0 18px !important;
+  font-size: 14px !important;
+  font-weight: 680 !important;
+  border-radius: 999px;
+  background: rgba(184, 121, 78, 0.075) !important;
+  border: 1px solid rgba(184, 121, 78, 0.27) !important;
+}
+
+.depth-button:hover {
+  transform: translateY(-1px);
+  background: rgba(207, 121, 49, 0.15) !important;
+  border-color: rgba(155, 90, 50, 0.4) !important;
+  box-shadow: 0 8px 18px rgba(90, 48, 22, 0.11) !important;
+}
+
+.depth-button:focus:not(:focus-visible),
+.media-row-format span:focus:not(:focus-visible),
+.media-row-status span:focus:not(:focus-visible) {
+  outline: none !important;
+}
+
+.depth-button:focus-visible,
+.media-row-format span:focus-visible,
+.media-row-status span:focus-visible,
+.media-library-row:focus-visible {
+  outline: 2px solid rgba(155, 90, 50, 0.55) !important;
+  outline-offset: 4px;
+}
+
+.media-library-row:hover {
+  transform: perspective(900px) rotateX(0.65deg) translateY(-6px) !important;
+  border-color: var(--card-border-hover) !important;
+  background:
+    radial-gradient(circle at 19% 50%, rgba(234, 177, 107, 0.11), transparent 37%),
+    linear-gradient(180deg, rgba(255, 254, 251, 0.995) 0%, var(--card-surface-hover) 100%) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.88),
+    0 22px 44px rgba(84, 47, 22, 0.125),
+    0 54px 104px rgba(84, 47, 22, 0.17) !important;
+}
+
+/* -------------------------------------------------------------------------
+   OBJECT-LOCAL GLOWS FOR QUOTES / MOMENTS / CHARACTERS / NOTES / THOUGHTS
+   ------------------------------------------------------------------------- */
+
+.falling-quotes,
+.moving-moments,
+.character-cloud,
+.notes-cloud,
+.thoughts-cloud {
+  position: relative;
+  isolation: isolate;
+}
+
+.falling-quotes::before,
+.moving-moments::before,
+.character-cloud::before,
+.notes-cloud::before,
+.thoughts-cloud::before {
+  content: "" !important;
+  display: block !important;
+  position: absolute;
+  inset: -64px -82px;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: 999px;
+  background:
+    radial-gradient(
+      ellipse at center,
+      rgba(176, 99, 42, 0.19) 0%,
+      rgba(176, 99, 42, 0.105) 42%,
+      rgba(176, 99, 42, 0.045) 58%,
+      transparent 74%
+    );
+  filter: blur(52px);
+  opacity: 0.82;
+  transform: none !important;
+}
+
+.falling-quote,
+.moment-frame,
+.character-name,
+.note-card,
+.thought-card {
+  background-color: rgba(255, 251, 245, 0.94);
+  border-color: rgba(184, 121, 78, 0.18);
+  box-shadow:
+    0 24px 54px rgba(62, 42, 22, 0.12),
+    0 6px 16px rgba(155, 90, 50, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.66) !important;
+}
+
+.falling-quote:hover,
+.moment-frame:hover,
+.character-name:hover,
+.note-card:hover,
+.thought-card:hover {
+  box-shadow:
+    0 34px 72px rgba(62, 42, 22, 0.18),
+    0 10px 26px rgba(155, 90, 50, 0.11),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72) !important;
+}
+
+/* -------------------------------------------------------------------------
+   RESPONSIVE PROPORTIONS
+   ------------------------------------------------------------------------- */
+
+@media (max-width: 1080px) {
+  :root {
+    --section-2-row-width-final: 960px;
+    --section-2-cover-width-final: 170px;
+    --section-2-card-gap-final: 34px;
+  }
+
+  .media-library-row {
+    min-height: 334px !important;
+    grid-template-rows: minmax(112px, 1fr) auto minmax(92px, auto);
+  }
+
+  .media-library-row:has(.media-row-details) {
+    min-height: 334px !important;
+  }
+
+  .media-row-cover {
+    min-height: 250px !important;
+    max-height: 270px !important;
+  }
+}
+
+@media (max-width: 760px) {
+  :root {
+    --section-2-cover-width-final: 118px;
+    --section-2-card-gap-final: 1rem;
+  }
+
+  .card-wrap,
+  .media-library-row {
+    width: min(100%, calc(100vw - 32px)) !important;
+  }
+
+  .media-library-row {
+    min-height: auto !important;
+    padding: 22px !important;
+    grid-template-columns: var(--section-2-cover-width-final) minmax(0, 1fr);
+    grid-template-areas:
+      "cover info"
+      "cover chips"
+      "score score"
+      "details details";
+    grid-template-rows: auto auto auto auto;
+    row-gap: 0.75rem;
+  }
+
+  .media-library-row:has(.media-row-details) {
+    min-height: auto !important;
+  }
+
+  .media-row-cover {
+    width: var(--section-2-cover-width-final) !important;
+    height: auto !important;
+    min-height: 178px !important;
+    max-height: 186px !important;
+    align-self: stretch !important;
+  }
+
+  .media-row-score {
+    grid-area: score !important;
+    grid-row: auto !important;
+    justify-self: start;
+    align-self: center;
+    margin-top: 0.35rem;
+  }
+
+  .media-row-details {
+    grid-area: details !important;
+    margin-top: 0.8rem !important;
+  }
+
+  .card-wrap::before,
+  .scroll-stage:has(> .media-library-row):not(:has(.card-wrap))::before,
+  .scroll-stage:not(:has(.card-wrap)):has(.media-library-row)::before,
+  .falling-quotes::before,
+  .moving-moments::before,
+  .character-cloud::before,
+  .notes-cloud::before,
+  .thoughts-cloud::before {
+    filter: blur(34px);
+    opacity: 0.7;
+  }
+
+  .card-wrap::before {
+    inset: -42px;
+  }
+
+  .card-wrap::after {
+    bottom: -38px;
+    height: 86px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-wrap::before,
+  .card-wrap::after,
+  .scroll-stage:has(> .media-library-row):not(:has(.card-wrap))::before,
+  .scroll-stage:not(:has(.card-wrap)):has(.media-library-row)::before,
+  .falling-quotes::before,
+  .moving-moments::before,
+  .character-cloud::before,
+  .notes-cloud::before,
+  .thoughts-cloud::before,
+  .media-library-row,
+  .media-row-cover,
+  .media-row-format span,
+  .media-row-status span,
+  .depth-button {
+    transition: none !important;
+  }
+
+  .media-library-row:hover,
+  .media-row-cover:hover,
+  .media-row-format span:hover,
+  .media-row-status span:hover,
+  .depth-button:hover {
+    transform: none !important;
+  }
+}
