@@ -3253,3 +3253,101 @@ body {
     transform: none !important;
   }
 }
+
+
+
+
+/* ============================================================================
+   SECTION 2 — JS ANIMATION MODE PATCH
+   Add this at the very bottom of section-2.css
+   ============================================================================ */
+
+.section-empty-shelf.is-js-ready .empty-shelf-scroll {
+  display: block;
+}
+
+.section-empty-shelf.is-js-ready .stage-viewport {
+  position: relative;
+  min-height: min(720px, 82vh);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.section-empty-shelf.is-js-ready .card-wrap {
+  position: relative;
+  z-index: 5;
+}
+
+.section-empty-shelf.is-js-ready .scroll-stage {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.section-empty-shelf.is-js-ready .scroll-stage.is-active {
+  pointer-events: auto;
+}
+
+.section-empty-shelf.is-js-ready .media-row-details {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+}
+
+.section-empty-shelf.is-js-ready .media-row-details.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.section-empty-shelf.is-js-ready .depth-button {
+  pointer-events: none;
+}
+
+.section-empty-shelf.is-js-ready .depth-button.is-landed {
+  pointer-events: auto;
+}
+
+/* Temporary flying button created by JS */
+.depth-button-proxy {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 999;
+
+  min-height: 38px;
+  padding: 0 0.95rem;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(255, 252, 248, 0.98);
+  border: 1px solid rgba(184, 121, 78, 0.34);
+  border-radius: 999px;
+
+  box-shadow:
+    0 16px 34px rgba(90, 48, 22, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72);
+
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--ink);
+
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  white-space: nowrap;
+  transform-style: preserve-3d;
+}
