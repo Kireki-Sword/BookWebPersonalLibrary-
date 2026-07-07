@@ -1,13 +1,13 @@
 /* ============================================================================
-   SECTION 2 — SCROLL STORY JS V5
+   SECTION 2 — SCROLL STORY JS FINAL
    ---------------------------------------------------------------------------
    Fixes:
    - Card starts naturally under title/subtitle.
    - On scroll, title fades away.
-   - Card anchors lower, near the bottom, but stays fully visible.
+   - Card anchors at the real bottom of the viewport while staying fully visible.
    - Evidence appears above the card.
    - Evidence gathers into the correct button.
-   - Scrolling back up fully resets the card to the normal starting position.
+   - Scrolling back up resets the card to its natural starting position.
    ============================================================================ */
 
 (() => {
@@ -142,30 +142,26 @@
   function setInitialState() {
     gsap.set(header, {
       autoAlpha: 1,
-      y: 0,
-      clearProps: "transform"
+      y: 0
     });
 
     gsap.set(viewport, {
-      y: 0,
-      clearProps: "transform"
+      y: 0
     });
 
     /*
-      Card starts visible in the normal HTML position.
-      It should NOT fade in from below.
+      The card starts visible in its natural HTML position.
+      It should not fade in or start anchored.
     */
     gsap.set(cardWrap, {
       autoAlpha: 1,
       y: 0,
       scale: 1,
-      clearProps: "transform",
       transformOrigin: "center center"
     });
 
     gsap.set(card, {
       y: 0,
-      clearProps: "transform",
       transformOrigin: "center center"
     });
 
@@ -221,31 +217,23 @@
   }
 
   function resetToNaturalStart() {
-    /*
-      This fixes the bug where scrolling back up could leave the card
-      anchored at the wrong place.
-    */
     gsap.set(header, {
       autoAlpha: 1,
-      y: 0,
-      clearProps: "transform"
+      y: 0
     });
 
     gsap.set(viewport, {
-      y: 0,
-      clearProps: "transform"
+      y: 0
     });
 
     gsap.set(cardWrap, {
       autoAlpha: 1,
       y: 0,
-      scale: 1,
-      clearProps: "transform"
+      scale: 1
     });
 
     gsap.set(card, {
-      y: 0,
-      clearProps: "transform"
+      y: 0
     });
 
     gsap.set(detailsTray, {
@@ -313,14 +301,9 @@
         anticipatePin: 1,
         invalidateOnRefresh: true,
 
-        /*
-          Important:
-          Before ScrollTrigger recalculates positions, reset transforms.
-          This prevents wrong measurements after scrolling back/forth.
-        */
         onRefreshInit: () => {
           gsap.set([viewport, cardWrap, card], {
-            clearProps: "transform"
+            y: 0
           });
         },
 
@@ -361,7 +344,7 @@
       Step 2:
       Title fades away.
       Stage moves up.
-      Card moves lower.
+      Card anchors at the true bottom.
     */
     tl.addLabel("anchor-card");
 
@@ -397,7 +380,7 @@
     );
 
     /*
-      Let the card settle before the evidence appears.
+      Let the card settle before evidence appears.
     */
     tl.to({}, { duration: 0.42 });
 
@@ -651,8 +634,8 @@
     const headerRect = header.getBoundingClientRect();
 
     /*
-      Pull the stage up after the title fades.
-      Not too much, or the card will jump upward on reverse.
+      The title fades visually, but its layout space still exists.
+      This pulls the stage upward to reclaim part of that empty space.
     */
     const maxLift = window.innerWidth <= 640 ? 150 : 210;
     const desiredLift = headerRect.height + 30;
@@ -662,40 +645,50 @@
 
   function getCardAnchorY() {
     /*
-      Measurement fix:
-      Make sure we measure from the natural starting position,
-      not from a previously transformed/anchored position.
+      TRUE BOTTOM ANCHOR:
+      The bottom of the card should sit near the bottom of the browser viewport,
+      while the full card remains visible.
     */
-    const viewportCurrentY = gsap.getProperty(viewport, "y");
-    const cardCurrentY = gsap.getProperty(cardWrap, "y");
 
+    const savedViewportY = gsap.getProperty(viewport, "y");
+    const savedCardY = gsap.getProperty(cardWrap, "y");
+
+    /*
+      Measure from the natural position, not from an already-transformed state.
+      This prevents the card from sticking at the wrong place when scrolling up.
+    */
     gsap.set(viewport, { y: 0 });
     gsap.set(cardWrap, { y: 0 });
 
     const cardRect = cardWrap.getBoundingClientRect();
-    const viewportLift = getViewportLiftY();
+    const viewportLiftY = getViewportLiftY();
 
     /*
-      V5:
-      Card should anchor near the bottom, but stay fully visible.
+      Smaller number = closer to the bottom.
+      Increase this if the card feels too low.
     */
-    const bottomPadding = window.innerWidth <= 640 ? 26 : 38;
+    const bottomGap = window.innerWidth <= 640 ? 24 : 32;
 
-    const targetTopByRatio =
-      window.innerHeight * (window.innerWidth <= 640 ? 0.56 : 0.62);
+    /*
+      Actual bottom anchor:
+      card top = viewport height - card height - bottom gap
+    */
+    const targetTop = window.innerHeight - cardRect.height - bottomGap;
 
-    const safeBottomTop =
-      window.innerHeight - cardRect.height - bottomPadding;
+    /*
+      Since the stage itself moves upward, include viewportLiftY.
+    */
+    const currentTopAfterViewportLift = cardRect.top + viewportLiftY;
 
-    const targetTop = Math.min(targetTopByRatio, safeBottomTop);
-
-    const currentTopAfterViewportLift = cardRect.top + viewportLift;
     const moveAmount = targetTop - currentTopAfterViewportLift;
 
-    gsap.set(viewport, { y: viewportCurrentY });
-    gsap.set(cardWrap, { y: cardCurrentY });
+    /*
+      Restore current animation state after measuring.
+    */
+    gsap.set(viewport, { y: savedViewportY });
+    gsap.set(cardWrap, { y: savedCardY });
 
-    return gsap.utils.clamp(-220, 340, moveAmount);
+    return Math.max(0, moveAmount);
   }
 
   function getButtonRect(layer) {
