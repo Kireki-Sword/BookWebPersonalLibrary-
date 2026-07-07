@@ -3257,9 +3257,16 @@ body {
 
 
 
+
+
+
 /* ============================================================================
-   SECTION 2 — JS ANIMATION MODE PATCH
-   Add this at the very bottom of section-2.css
+   SECTION 2 — JS ANIMATION MODE PATCH V2
+   ---------------------------------------------------------------------------
+   Goal:
+   - Start card naturally under title/subtitle.
+   - During pinned scroll, move card lower.
+   - Keep evidence visible in the open space above the card.
    ============================================================================ */
 
 .section-empty-shelf.is-js-ready .empty-shelf-scroll {
@@ -3268,22 +3275,27 @@ body {
 
 .section-empty-shelf.is-js-ready .stage-viewport {
   position: relative;
-  min-height: min(720px, 82vh);
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  min-height: clamp(660px, 82vh, 790px);
 }
 
+/* Card starts in normal flow under the header.
+   JS later moves it downward with transform, not absolute positioning. */
 .section-empty-shelf.is-js-ready .card-wrap {
   position: relative;
-  z-index: 5;
+  z-index: 10;
+  margin-inline: auto;
+  will-change: transform, opacity;
 }
 
+/* Evidence stage lives above the lower anchored card. */
 .section-empty-shelf.is-js-ready .scroll-stage {
   position: absolute;
-  inset: 0;
-  z-index: 2;
+  left: 0;
+  right: 0;
+  top: 0;
+
+  height: min(390px, 46vh);
+  z-index: 6;
 
   display: flex;
   align-items: center;
@@ -3295,9 +3307,20 @@ body {
 }
 
 .section-empty-shelf.is-js-ready .scroll-stage.is-active {
+  visibility: visible;
   pointer-events: auto;
 }
 
+/* Make evidence easier to see while animating. */
+.section-empty-shelf.is-js-ready .falling-quotes,
+.section-empty-shelf.is-js-ready .moving-moments,
+.section-empty-shelf.is-js-ready .character-cloud,
+.section-empty-shelf.is-js-ready .notes-cloud,
+.section-empty-shelf.is-js-ready .thoughts-cloud {
+  width: min(860px, 100%);
+}
+
+/* Tray starts hidden. JS reveals it after Quotes lands. */
 .section-empty-shelf.is-js-ready .media-row-details {
   opacity: 0;
   visibility: hidden;
@@ -3350,4 +3373,15 @@ body {
   pointer-events: none;
   white-space: nowrap;
   transform-style: preserve-3d;
+}
+
+/* Mobile: don't force a huge pinned stage. */
+@media (max-width: 640px) {
+  .section-empty-shelf.is-js-ready .stage-viewport {
+    min-height: 680px;
+  }
+
+  .section-empty-shelf.is-js-ready .scroll-stage {
+    height: 330px;
+  }
 }
