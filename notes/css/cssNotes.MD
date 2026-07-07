@@ -2461,7 +2461,7 @@
   transform: translate(-50%, -50%);
 }
 
-/* Warmer local contact shadows on the actual objects. */
+/* Warmer local contact shadows on the actual objects.  */
 .falling-quote,
 .moment-frame,
 .character-name,
