@@ -3473,3 +3473,52 @@ body {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+/* ============================================================================
+   SECTION 2 — EVIDENCE SIZE BOOST
+   Makes quotes, moments, characters, notes, and thoughts a bit bigger.
+   ============================================================================ */
+
+/* Quotes */
+.section-empty-shelf.is-js-ready .falling-quote {
+  padding: 1.25rem 1.45rem;
+  font-size: 1.16rem;
+}
+
+/* Moments */
+.section-empty-shelf.is-js-ready .moment-frame {
+  padding: 0.72rem;
+}
+
+.section-empty-shelf.is-js-ready .moment-frame figcaption {
+  font-size: 0.86rem;
+}
+
+/* Characters */
+.section-empty-shelf.is-js-ready .character-cloud {
+  grid-template-columns: repeat(7, minmax(96px, 1fr));
+  max-width: 980px;
+  gap: 0.82rem;
+}
+
+.section-empty-shelf.is-js-ready .character-name figcaption {
+  font-size: 0.76rem;
+  padding: 0.58rem 0.62rem;
+}
+
+/* Notes */
+.section-empty-shelf.is-js-ready .note-card {
+  min-height: 150px;
+  padding: 1.2rem;
+  font-size: 0.98rem;
+}
+
+/* Thoughts */
+.section-empty-shelf.is-js-ready .thoughts-cloud {
+  max-width: 940px;
+}
+
+.section-empty-shelf.is-js-ready .thought-card {
+  padding: 1.7rem 1.8rem;
+  font-size: 1.18rem;
+}
