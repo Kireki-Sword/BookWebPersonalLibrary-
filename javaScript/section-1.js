@@ -143,7 +143,7 @@ if (heroSection && heroLeftDiv && heroRight) {
       }
     });
   }, {
-    threshold: 0.1 // triggers when only 10% of hero is visible
+    threshold: 0.1 // triggers when only 10% of hero is visible.
   });
 
   heroObserver.observe(heroSection);
