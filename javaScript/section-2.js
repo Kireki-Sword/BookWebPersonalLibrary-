@@ -1,11 +1,14 @@
 /* ============================================================================
-   SECTION 2 — SCROLL STORY JS V3
+   SECTION 2 — SCROLL STORY JS V4
    ---------------------------------------------------------------------------
-   Main improvement from V1:
-   - Card starts naturally below the title/subtitle.
-   - During scroll, header moves away and card anchors lower.
-   - Evidence gets its own visible stage above the card.
-   - Evidence gathers toward the actual button slot.
+   Behavior:
+   - Card starts visible in the normal HTML position under the title/subtitle.
+   - On scroll, title/subtitle fade upward.
+   - The stage moves upward to reclaim the title space.
+   - The card anchors lower, but stays fully visible.
+   - Quotes / moments / characters / notes / thoughts appear above the card.
+   - Each evidence group gathers into a temporary proxy button.
+   - The proxy button lands into the real button slot.
    ============================================================================ */
 
 (() => {
@@ -79,7 +82,9 @@
 
   let masterTimeline = null;
   let lastAnnouncedIndex = -2;
-  let trayRevealTime = Infinity;
+  let lastStatusText = "";
+  let trayRevealTime = Number.POSITIVE_INFINITY;
+  let resizeTimer = null;
 
   initSection2();
 
@@ -98,7 +103,11 @@
     masterTimeline = buildMasterTimeline();
 
     window.addEventListener("resize", () => {
-      ScrollTrigger.refresh();
+      clearTimeout(resizeTimer);
+
+      resizeTimer = setTimeout(() => {
+        ScrollTrigger.refresh();
+      }, 150);
     });
   }
 
@@ -114,57 +123,65 @@
   }
 
   function createButtonProxies() {
+    document
+      .querySelectorAll('[data-section-2-proxy="true"]')
+      .forEach((proxy) => proxy.remove());
+
     layers.forEach((layer) => {
       const proxy = document.createElement("div");
 
       proxy.className = "depth-button-proxy";
       proxy.textContent = layer.label;
       proxy.setAttribute("aria-hidden", "true");
+      proxy.setAttribute("data-section-2-proxy", "true");
 
       document.body.appendChild(proxy);
       layer.proxy = proxy;
     });
   }
 
-    function setInitialState() {
+  function setInitialState() {
     gsap.set(header, {
-        autoAlpha: 1,
-        y: 0
+      autoAlpha: 1,
+      y: 0
+    });
+
+    gsap.set(viewport, {
+      y: 0
     });
 
     /*
-        IMPORTANT:
-        The card should NOT fade in from nothing.
-        It should already be visible in the normal HTML position,
-        right below the title/subtitle.
+      The card should start visible in normal page position.
+      No fade-in. No fake intro position.
     */
     gsap.set(cardWrap, {
-        autoAlpha: 1,
-        y: 0,
-        scale: 1,
-        transformOrigin: "center center"
+      autoAlpha: 1,
+      y: 0,
+      scale: 1,
+      transformOrigin: "center center"
     });
 
     gsap.set(card, {
-        transformOrigin: "center center"
+      y: 0,
+      transformOrigin: "center center"
     });
 
     gsap.set(detailsTray, {
-        autoAlpha: 0,
-        y: 10
+      autoAlpha: 0,
+      y: 10
     });
 
     layers.forEach((layer) => {
-        if (!layer.stage || !layer.button) return;
+      if (!layer.stage || !layer.button) return;
 
-        layer.stage.setAttribute("aria-hidden", "true");
-        layer.stage.classList.remove("is-active");
+      layer.stage.setAttribute("aria-hidden", "true");
+      layer.stage.classList.remove("is-active");
 
-        gsap.set(layer.stage, {
+      gsap.set(layer.stage, {
         autoAlpha: 0
-        });
+      });
 
-        gsap.set(layer.items, {
+      gsap.set(layer.items, {
         autoAlpha: 0,
         x: 0,
         y: 0,
@@ -172,28 +189,28 @@
         rotation: 0,
         filter: "blur(0px)",
         transformOrigin: "center center"
-        });
+      });
 
-        layer.button.classList.remove("is-landed", "depth-button-new");
-        layer.button.setAttribute("aria-hidden", "true");
-        layer.button.tabIndex = -1;
+      layer.button.classList.remove("is-landed", "depth-button-new");
+      layer.button.setAttribute("aria-hidden", "true");
+      layer.button.tabIndex = -1;
 
-        gsap.set(layer.button, {
+      gsap.set(layer.button, {
         autoAlpha: 0,
         y: 8,
         scale: 0.96
-        });
+      });
 
-        gsap.set(layer.proxy, {
+      gsap.set(layer.proxy, {
         autoAlpha: 0,
         x: 0,
         y: 0,
         scale: 0.8,
         rotationX: 0,
         rotationY: 0
-        });
+      });
     });
-}
+  }
 
   function buildMasterTimeline() {
     const tl = gsap.timeline({
@@ -215,63 +232,69 @@
     tl.addLabel("natural-card");
 
     /*
-    STEP 1:
-    The card is already visible under the title/subtitle.
-    This small hold lets the user understand the normal rating card first.
+      Step 1:
+      The user sees the normal card under the title/subtitle first.
     */
-    tl.to({}, { duration: 0.55 });
+    tl.to({}, { duration: 0.5 });
 
     tl.fromTo(
-    score,
-    {
+      score,
+      {
         boxShadow: "0 8px 22px rgba(44, 36, 22, 0.06)"
-    },
-    {
+      },
+      {
         boxShadow: "0 18px 46px rgba(184, 121, 78, 0.24)",
         duration: 0.22,
         yoyo: true,
         repeat: 1
-    }
+      }
     );
 
     tl.to({}, { duration: 0.18 });
 
     /*
-    STEP 2:
-    Now the scroll story begins:
-    - title/subtitle fade upward
-    - card moves down
-    - card anchors near the bottom
-    - empty space opens above the card for evidence
+      Step 2:
+      The header fades away.
+      The stage moves upward to reclaim header space.
+      The card anchors lower, but stays visible.
     */
     tl.addLabel("anchor-card");
 
     tl.to(
-    header,
-    {
+      header,
+      {
         autoAlpha: 0,
         y: -58,
         duration: 0.75,
         ease: "power2.inOut"
-    },
-    "anchor-card"
+      },
+      "anchor-card"
     );
 
     tl.to(
-    cardWrap,
-    {
+      viewport,
+      {
+        y: () => getViewportLiftY(),
+        duration: 0.9,
+        ease: "power3.inOut"
+      },
+      "anchor-card"
+    );
+
+    tl.to(
+      cardWrap,
+      {
         y: () => getCardAnchorY(),
         duration: 0.9,
         ease: "power3.inOut"
-    },
-    "anchor-card"
+      },
+      "anchor-card"
     );
 
     /*
-    Small pause after the card reaches the bottom.
-    This prevents quotes from starting before the card has finished anchoring.
+      Small pause so quotes do not appear while the card is still moving.
     */
-    tl.to({}, { duration: 0.22 });
+    tl.to({}, { duration: 0.4 });
 
     layers.forEach((layer) => {
       addLayerSequence(tl, layer);
@@ -308,13 +331,11 @@
 
     tl.addLabel(`${layer.key}-start`);
 
-    /* Stage becomes active and visible. */
     tl.to(layer.stage, {
       autoAlpha: 1,
       duration: 0.18
     });
 
-    /* Evidence enters clearly above the card. */
     tl.fromTo(
       layer.items,
       getEvidenceEnterFrom(layer),
@@ -322,16 +343,17 @@
       "<"
     );
 
-    /* Give the user a moment to actually see the evidence. */
+    /*
+      Let the evidence stay readable before it gathers.
+    */
     tl.to({}, { duration: getReadDuration(layer) });
 
-    /* Evidence gathers toward the real button slot. */
     tl.to(layer.items, {
       x: (_index, element) => getGatherDelta(element, layer).x,
       y: (_index, element) => getGatherDelta(element, layer).y,
       scale: 0.28,
       rotation: 0,
-      autoAlpha: 0.52,
+      autoAlpha: 0.55,
       filter: "blur(1.5px)",
       stagger: {
         each: 0.035,
@@ -341,7 +363,6 @@
       ease: "power2.inOut"
     });
 
-    /* First button creates the Saved Layers tray. */
     if (layer.index === 0) {
       trayRevealTime = tl.duration();
 
@@ -356,7 +377,6 @@
       );
     }
 
-    /* Proxy button forms near the gathered evidence. */
     tl.set(
       layer.proxy,
       {
@@ -377,7 +397,6 @@
       duration: 0.16
     });
 
-    /* Proxy flies into the real button position. */
     tl.to(layer.proxy, {
       x: () => getButtonRect(layer).left,
       y: () => getButtonRect(layer).top,
@@ -391,7 +410,6 @@
 
     layer.landTime = tl.duration();
 
-    /* Real button appears exactly where the proxy lands. */
     tl.set(
       layer.button,
       {
@@ -423,7 +441,6 @@
       "<"
     );
 
-    /* Evidence fades out only after the button lands. */
     tl.to(layer.stage, {
       autoAlpha: 0,
       duration: 0.22
@@ -444,46 +461,46 @@
     if (layer.key === "quotes") {
       return {
         ...base,
-        x: (index) => [-110, 110, -70, 80][index % 4],
-        y: (index) => [-45, -35, 45, 55][index % 4],
-        rotation: (index, element) => getElementRotate(element) * 2
+        x: (index) => [-70, 70, -45, 45][index % 4],
+        y: (index) => [-28, -22, 32, 36][index % 4],
+        rotation: (index, element) => getElementRotate(element) * 1.5
       };
     }
 
     if (layer.key === "moments") {
       return {
         ...base,
-        x: (index) => [-120, 120, 0][index % 3],
-        y: (index) => [35, 40, 70][index % 3],
-        scale: 0.9,
-        rotation: (index, element) => getElementRotate(element) * 1.5
+        x: (index) => [-85, 85, 0][index % 3],
+        y: (index) => [28, 30, 45][index % 3],
+        scale: 0.92,
+        rotation: (index, element) => getElementRotate(element) * 1.3
       };
     }
 
     if (layer.key === "characters") {
       return {
         ...base,
-        x: (index) => [-130, 130, -85, 95, -55, 60, 0][index % 7],
-        y: (index) => [25, 25, 55, 55, 30, 45, 70][index % 7],
+        x: (index) => [-90, 90, -60, 60, -40, 40, 0][index % 7],
+        y: (index) => [18, 18, 34, 34, 22, 28, 42][index % 7],
         scale: 0.9,
-        rotation: (index, element) => getElementRotate(element) * 1.4
+        rotation: (index, element) => getElementRotate(element) * 1.2
       };
     }
 
     if (layer.key === "notes") {
       return {
         ...base,
-        x: (index) => [-75, 75, 0][index % 3],
-        y: (index) => [35, 45, 55][index % 3],
+        x: (index) => [-58, 58, 0][index % 3],
+        y: (index) => [28, 34, 40][index % 3],
         scale: 0.94,
-        rotation: (index, element) => getElementRotate(element) * 1.8
+        rotation: (index, element) => getElementRotate(element) * 1.5
       };
     }
 
     return {
       ...base,
-      x: (index) => [-45, 45][index % 2],
-      y: 24,
+      x: (index) => [-35, 35][index % 2],
+      y: 22,
       scale: 0.96,
       rotation: 0
     };
@@ -494,8 +511,8 @@
       autoAlpha: 1,
       x: 0,
       y: 0,
-      scale: (index, element) => Number(element.dataset.scale || 1),
-      rotation: (index, element) => getElementRotate(element),
+      scale: (_index, element) => Number(element.dataset.scale || 1),
+      rotation: (_index, element) => getElementRotate(element),
       filter: "blur(0px)",
       duration: getEnterDuration(layer),
       stagger: {
@@ -513,45 +530,59 @@
   }
 
   function getEnterStagger(layer) {
-    if (layer.key === "characters") return 0.05;
+    if (layer.key === "characters") return 0.045;
     if (layer.key === "thoughts") return 0.12;
-    return 0.07;
+    return 0.065;
   }
 
   function getReadDuration(layer) {
-    if (layer.key === "thoughts") return 0.58;
+    if (layer.key === "thoughts") return 0.6;
     if (layer.key === "characters") return 0.48;
-    return 0.42;
+    return 0.44;
   }
 
   function getElementRotate(element) {
     return Number(element.dataset.rotate || 0);
   }
 
-  /* This is the key layout fix.
-     Card starts naturally under the header, then JS moves it near the bottom
-     of the stage viewport during the pinned animation. */
-    function getCardAnchorY() {
-    const viewportRect = viewport.getBoundingClientRect();
-    const cardRect = cardWrap.getBoundingClientRect();
+  function getViewportLiftY() {
+    const headerRect = header.getBoundingClientRect();
 
     /*
-        We want the card to end near the bottom of the stage viewport,
-        but not outside the section.
-
-        This calculates how far the card needs to move from its natural
-        starting position to its anchored bottom position.
+      Header fades visually, but its layout space still exists.
+      This moves the stage up so the card/evidence are not pushed too low.
     */
-    const bottomPadding = window.innerWidth <= 640 ? 20 : 34;
+    const maxLift = window.innerWidth <= 640 ? 160 : 240;
+    const desiredLift = headerRect.height + 40;
 
-    const cardCurrentTopInsideViewport = cardRect.top - viewportRect.top;
-    const targetTopInsideViewport =
-        viewportRect.height - cardRect.height - bottomPadding;
+    return -Math.min(desiredLift, maxLift);
+  }
 
-    const moveAmount = targetTopInsideViewport - cardCurrentTopInsideViewport;
+  function getCardAnchorY() {
+    const cardRect = cardWrap.getBoundingClientRect();
+    const viewportLift = getViewportLiftY();
 
-    return Math.max(0, moveAmount);
-    }
+    /*
+      Target:
+      - card should be lower than the evidence
+      - card should remain fully visible
+      - card should not sit at the very bottom edge
+    */
+    const bottomPadding = window.innerWidth <= 640 ? 32 : 64;
+
+    const targetTopByRatio =
+      window.innerHeight * (window.innerWidth <= 640 ? 0.5 : 0.54);
+
+    const safeBottomTop =
+      window.innerHeight - cardRect.height - bottomPadding;
+
+    const targetTop = Math.min(targetTopByRatio, safeBottomTop);
+
+    const currentTopAfterViewportLift = cardRect.top + viewportLift;
+    const moveAmount = targetTop - currentTopAfterViewportLift;
+
+    return gsap.utils.clamp(-220, 240, moveAmount);
+  }
 
   function getButtonRect(layer) {
     const rect = layer.button.getBoundingClientRect();
@@ -564,8 +595,6 @@
     };
   }
 
-  /* Gather point now aims slightly above the actual final button slot.
-     This makes the content visibly travel into the correct saved layer. */
   function getLayerGatherPoint(layer) {
     const buttonRect = getButtonRect(layer);
 
@@ -666,13 +695,19 @@
   }
 
   function updateStatus(text) {
-    if (!statusEl) return;
+    if (!statusEl || text === lastStatusText) return;
+
     statusEl.textContent = text;
+    lastStatusText = text;
   }
 
   function buildReducedMotionVersion() {
     gsap.set(header, {
       autoAlpha: 1,
+      y: 0
+    });
+
+    gsap.set(viewport, {
       y: 0
     });
 
