@@ -3261,21 +3261,21 @@ body {
 
 
 /* ============================================================================
-   SECTION 2 — JS ANIMATION MODE PATCH V2
+   SECTION 2 — JS ANIMATION MODE PATCH V3
    ---------------------------------------------------------------------------
    Goal:
    - Start card naturally under title/subtitle.
    - During pinned scroll, move card lower.
    - Keep evidence visible in the open space above the card.
    ============================================================================ */
-
+   
 .section-empty-shelf.is-js-ready .empty-shelf-scroll {
   display: block;
 }
 
 .section-empty-shelf.is-js-ready .stage-viewport {
   position: relative;
-  min-height: clamp(660px, 82vh, 790px);
+  min-height: clamp(720px, 86vh, 840px);
 }
 
 /* Card starts in normal flow under the header.
@@ -3294,7 +3294,8 @@ body {
   right: 0;
   top: 0;
 
-  height: min(390px, 46vh);
+  /* This is the open stage ABOVE the card */
+  height: min(430px, 50vh);
   z-index: 6;
 
   display: flex;

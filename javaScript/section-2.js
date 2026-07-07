@@ -1,5 +1,5 @@
 /* ============================================================================
-   SECTION 2 — SCROLL STORY JS V2
+   SECTION 2 — SCROLL STORY JS V3
    ---------------------------------------------------------------------------
    Main improvement from V1:
    - Card starts naturally below the title/subtitle.
@@ -126,39 +126,45 @@
     });
   }
 
-  function setInitialState() {
+    function setInitialState() {
     gsap.set(header, {
-      autoAlpha: 1,
-      y: 0
+        autoAlpha: 1,
+        y: 0
     });
 
+    /*
+        IMPORTANT:
+        The card should NOT fade in from nothing.
+        It should already be visible in the normal HTML position,
+        right below the title/subtitle.
+    */
     gsap.set(cardWrap, {
-      autoAlpha: 0,
-      y: 26,
-      scale: 0.985,
-      transformOrigin: "center center"
+        autoAlpha: 1,
+        y: 0,
+        scale: 1,
+        transformOrigin: "center center"
     });
 
     gsap.set(card, {
-      transformOrigin: "center center"
+        transformOrigin: "center center"
     });
 
     gsap.set(detailsTray, {
-      autoAlpha: 0,
-      y: 10
+        autoAlpha: 0,
+        y: 10
     });
 
     layers.forEach((layer) => {
-      if (!layer.stage || !layer.button) return;
+        if (!layer.stage || !layer.button) return;
 
-      layer.stage.setAttribute("aria-hidden", "true");
-      layer.stage.classList.remove("is-active");
+        layer.stage.setAttribute("aria-hidden", "true");
+        layer.stage.classList.remove("is-active");
 
-      gsap.set(layer.stage, {
+        gsap.set(layer.stage, {
         autoAlpha: 0
-      });
+        });
 
-      gsap.set(layer.items, {
+        gsap.set(layer.items, {
         autoAlpha: 0,
         x: 0,
         y: 0,
@@ -166,28 +172,28 @@
         rotation: 0,
         filter: "blur(0px)",
         transformOrigin: "center center"
-      });
+        });
 
-      layer.button.classList.remove("is-landed", "depth-button-new");
-      layer.button.setAttribute("aria-hidden", "true");
-      layer.button.tabIndex = -1;
+        layer.button.classList.remove("is-landed", "depth-button-new");
+        layer.button.setAttribute("aria-hidden", "true");
+        layer.button.tabIndex = -1;
 
-      gsap.set(layer.button, {
+        gsap.set(layer.button, {
         autoAlpha: 0,
         y: 8,
         scale: 0.96
-      });
+        });
 
-      gsap.set(layer.proxy, {
+        gsap.set(layer.proxy, {
         autoAlpha: 0,
         x: 0,
         y: 0,
         scale: 0.8,
         rotationX: 0,
         rotationY: 0
-      });
+        });
     });
-  }
+}
 
   function buildMasterTimeline() {
     const tl = gsap.timeline({
@@ -206,57 +212,66 @@
       }
     });
 
-    tl.addLabel("intro");
+    tl.addLabel("natural-card");
 
-    /* 1. Card appears naturally under the header. */
-    tl.to(cardWrap, {
-      autoAlpha: 1,
-      y: 0,
-      scale: 1,
-      duration: 0.7
-    });
+    /*
+    STEP 1:
+    The card is already visible under the title/subtitle.
+    This small hold lets the user understand the normal rating card first.
+    */
+    tl.to({}, { duration: 0.55 });
 
     tl.fromTo(
-      score,
-      {
+    score,
+    {
         boxShadow: "0 8px 22px rgba(44, 36, 22, 0.06)"
-      },
-      {
+    },
+    {
         boxShadow: "0 18px 46px rgba(184, 121, 78, 0.24)",
         duration: 0.22,
         yoyo: true,
         repeat: 1
-      },
-      "-=0.12"
+    }
     );
 
-    tl.to({}, { duration: 0.25 });
+    tl.to({}, { duration: 0.18 });
 
-    /* 2. Header moves away and card anchors lower.
-       This creates the empty visual stage above the card. */
+    /*
+    STEP 2:
+    Now the scroll story begins:
+    - title/subtitle fade upward
+    - card moves down
+    - card anchors near the bottom
+    - empty space opens above the card for evidence
+    */
     tl.addLabel("anchor-card");
 
     tl.to(
-      header,
-      {
+    header,
+    {
         autoAlpha: 0,
-        y: -46,
-        duration: 0.6
-      },
-      "anchor-card"
+        y: -58,
+        duration: 0.75,
+        ease: "power2.inOut"
+    },
+    "anchor-card"
     );
 
     tl.to(
-      cardWrap,
-      {
+    cardWrap,
+    {
         y: () => getCardAnchorY(),
-        duration: 0.75,
+        duration: 0.9,
         ease: "power3.inOut"
-      },
-      "anchor-card"
+    },
+    "anchor-card"
     );
 
-    tl.to({}, { duration: 0.2 });
+    /*
+    Small pause after the card reaches the bottom.
+    This prevents quotes from starting before the card has finished anchoring.
+    */
+    tl.to({}, { duration: 0.22 });
 
     layers.forEach((layer) => {
       addLayerSequence(tl, layer);
@@ -516,16 +531,27 @@
   /* This is the key layout fix.
      Card starts naturally under the header, then JS moves it near the bottom
      of the stage viewport during the pinned animation. */
-  function getCardAnchorY() {
+    function getCardAnchorY() {
     const viewportRect = viewport.getBoundingClientRect();
     const cardRect = cardWrap.getBoundingClientRect();
 
-    const bottomPadding = window.innerWidth <= 640 ? 18 : 28;
-    const availableMove =
-      viewportRect.height - cardRect.height - bottomPadding;
+    /*
+        We want the card to end near the bottom of the stage viewport,
+        but not outside the section.
 
-    return Math.max(0, availableMove);
-  }
+        This calculates how far the card needs to move from its natural
+        starting position to its anchored bottom position.
+    */
+    const bottomPadding = window.innerWidth <= 640 ? 20 : 34;
+
+    const cardCurrentTopInsideViewport = cardRect.top - viewportRect.top;
+    const targetTopInsideViewport =
+        viewportRect.height - cardRect.height - bottomPadding;
+
+    const moveAmount = targetTopInsideViewport - cardCurrentTopInsideViewport;
+
+    return Math.max(0, moveAmount);
+    }
 
   function getButtonRect(layer) {
     const rect = layer.button.getBoundingClientRect();
