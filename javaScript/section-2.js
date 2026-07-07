@@ -1,14 +1,13 @@
 /* ============================================================================
-   SECTION 2 — SCROLL STORY JS V4
+   SECTION 2 — SCROLL STORY JS V5
    ---------------------------------------------------------------------------
-   Behavior:
-   - Card starts visible in the normal HTML position under the title/subtitle.
-   - On scroll, title/subtitle fade upward.
-   - The stage moves upward to reclaim the title space.
-   - The card anchors lower, but stays fully visible.
-   - Quotes / moments / characters / notes / thoughts appear above the card.
-   - Each evidence group gathers into a temporary proxy button.
-   - The proxy button lands into the real button slot.
+   Fixes:
+   - Card starts naturally under title/subtitle.
+   - On scroll, title fades away.
+   - Card anchors lower, near the bottom, but stays fully visible.
+   - Evidence appears above the card.
+   - Evidence gathers into the correct button.
+   - Scrolling back up fully resets the card to the normal starting position.
    ============================================================================ */
 
 (() => {
@@ -143,26 +142,30 @@
   function setInitialState() {
     gsap.set(header, {
       autoAlpha: 1,
-      y: 0
+      y: 0,
+      clearProps: "transform"
     });
 
     gsap.set(viewport, {
-      y: 0
+      y: 0,
+      clearProps: "transform"
     });
 
     /*
-      The card should start visible in normal page position.
-      No fade-in. No fake intro position.
+      Card starts visible in the normal HTML position.
+      It should NOT fade in from below.
     */
     gsap.set(cardWrap, {
       autoAlpha: 1,
       y: 0,
       scale: 1,
+      clearProps: "transform",
       transformOrigin: "center center"
     });
 
     gsap.set(card, {
       y: 0,
+      clearProps: "transform",
       transformOrigin: "center center"
     });
 
@@ -170,6 +173,8 @@
       autoAlpha: 0,
       y: 10
     });
+
+    detailsTray.classList.remove("is-visible");
 
     layers.forEach((layer) => {
       if (!layer.stage || !layer.button) return;
@@ -210,6 +215,88 @@
         rotationY: 0
       });
     });
+
+    updateStatus("");
+    lastAnnouncedIndex = -2;
+  }
+
+  function resetToNaturalStart() {
+    /*
+      This fixes the bug where scrolling back up could leave the card
+      anchored at the wrong place.
+    */
+    gsap.set(header, {
+      autoAlpha: 1,
+      y: 0,
+      clearProps: "transform"
+    });
+
+    gsap.set(viewport, {
+      y: 0,
+      clearProps: "transform"
+    });
+
+    gsap.set(cardWrap, {
+      autoAlpha: 1,
+      y: 0,
+      scale: 1,
+      clearProps: "transform"
+    });
+
+    gsap.set(card, {
+      y: 0,
+      clearProps: "transform"
+    });
+
+    gsap.set(detailsTray, {
+      autoAlpha: 0,
+      y: 10
+    });
+
+    detailsTray.classList.remove("is-visible");
+
+    layers.forEach((layer) => {
+      if (layer.stage) {
+        layer.stage.classList.remove("is-active");
+        layer.stage.setAttribute("aria-hidden", "true");
+
+        gsap.set(layer.stage, {
+          autoAlpha: 0
+        });
+      }
+
+      if (layer.items) {
+        gsap.set(layer.items, {
+          autoAlpha: 0,
+          x: 0,
+          y: 0,
+          scale: 1,
+          rotation: 0,
+          filter: "blur(0px)"
+        });
+      }
+
+      if (layer.button) {
+        layer.button.classList.remove("is-landed", "depth-button-new");
+        layer.button.setAttribute("aria-hidden", "true");
+        layer.button.tabIndex = -1;
+
+        gsap.set(layer.button, {
+          autoAlpha: 0,
+          y: 8,
+          scale: 0.96
+        });
+      }
+
+      if (layer.proxy) {
+        gsap.set(layer.proxy, {
+          autoAlpha: 0
+        });
+      }
+    });
+
+    updateStatus("");
+    lastAnnouncedIndex = -2;
   }
 
   function buildMasterTimeline() {
@@ -225,7 +312,25 @@
         scrub: 0.8,
         anticipatePin: 1,
         invalidateOnRefresh: true,
-        onUpdate: () => syncTimelineState(tl)
+
+        /*
+          Important:
+          Before ScrollTrigger recalculates positions, reset transforms.
+          This prevents wrong measurements after scrolling back/forth.
+        */
+        onRefreshInit: () => {
+          gsap.set([viewport, cardWrap, card], {
+            clearProps: "transform"
+          });
+        },
+
+        onLeaveBack: () => {
+          resetToNaturalStart();
+        },
+
+        onUpdate: () => {
+          syncTimelineState(tl);
+        }
       }
     });
 
@@ -233,7 +338,7 @@
 
     /*
       Step 1:
-      The user sees the normal card under the title/subtitle first.
+      User first sees the normal rating card under the title.
     */
     tl.to({}, { duration: 0.5 });
 
@@ -254,9 +359,9 @@
 
     /*
       Step 2:
-      The header fades away.
-      The stage moves upward to reclaim header space.
-      The card anchors lower, but stays visible.
+      Title fades away.
+      Stage moves up.
+      Card moves lower.
     */
     tl.addLabel("anchor-card");
 
@@ -292,9 +397,9 @@
     );
 
     /*
-      Small pause so quotes do not appear while the card is still moving.
+      Let the card settle before the evidence appears.
     */
-    tl.to({}, { duration: 0.4 });
+    tl.to({}, { duration: 0.42 });
 
     layers.forEach((layer) => {
       addLayerSequence(tl, layer);
@@ -343,9 +448,6 @@
       "<"
     );
 
-    /*
-      Let the evidence stay readable before it gathers.
-    */
     tl.to({}, { duration: getReadDuration(layer) });
 
     tl.to(layer.items, {
@@ -463,7 +565,7 @@
         ...base,
         x: (index) => [-70, 70, -45, 45][index % 4],
         y: (index) => [-28, -22, 32, 36][index % 4],
-        rotation: (index, element) => getElementRotate(element) * 1.5
+        rotation: (_index, element) => getElementRotate(element) * 1.5
       };
     }
 
@@ -473,7 +575,7 @@
         x: (index) => [-85, 85, 0][index % 3],
         y: (index) => [28, 30, 45][index % 3],
         scale: 0.92,
-        rotation: (index, element) => getElementRotate(element) * 1.3
+        rotation: (_index, element) => getElementRotate(element) * 1.3
       };
     }
 
@@ -483,7 +585,7 @@
         x: (index) => [-90, 90, -60, 60, -40, 40, 0][index % 7],
         y: (index) => [18, 18, 34, 34, 22, 28, 42][index % 7],
         scale: 0.9,
-        rotation: (index, element) => getElementRotate(element) * 1.2
+        rotation: (_index, element) => getElementRotate(element) * 1.2
       };
     }
 
@@ -493,7 +595,7 @@
         x: (index) => [-58, 58, 0][index % 3],
         y: (index) => [28, 34, 40][index % 3],
         scale: 0.94,
-        rotation: (index, element) => getElementRotate(element) * 1.5
+        rotation: (_index, element) => getElementRotate(element) * 1.5
       };
     }
 
@@ -549,29 +651,38 @@
     const headerRect = header.getBoundingClientRect();
 
     /*
-      Header fades visually, but its layout space still exists.
-      This moves the stage up so the card/evidence are not pushed too low.
+      Pull the stage up after the title fades.
+      Not too much, or the card will jump upward on reverse.
     */
-    const maxLift = window.innerWidth <= 640 ? 160 : 240;
-    const desiredLift = headerRect.height + 40;
+    const maxLift = window.innerWidth <= 640 ? 150 : 210;
+    const desiredLift = headerRect.height + 30;
 
     return -Math.min(desiredLift, maxLift);
   }
 
   function getCardAnchorY() {
+    /*
+      Measurement fix:
+      Make sure we measure from the natural starting position,
+      not from a previously transformed/anchored position.
+    */
+    const viewportCurrentY = gsap.getProperty(viewport, "y");
+    const cardCurrentY = gsap.getProperty(cardWrap, "y");
+
+    gsap.set(viewport, { y: 0 });
+    gsap.set(cardWrap, { y: 0 });
+
     const cardRect = cardWrap.getBoundingClientRect();
     const viewportLift = getViewportLiftY();
 
     /*
-      Target:
-      - card should be lower than the evidence
-      - card should remain fully visible
-      - card should not sit at the very bottom edge
+      V5:
+      Card should anchor near the bottom, but stay fully visible.
     */
-    const bottomPadding = window.innerWidth <= 640 ? 32 : 64;
+    const bottomPadding = window.innerWidth <= 640 ? 26 : 38;
 
     const targetTopByRatio =
-      window.innerHeight * (window.innerWidth <= 640 ? 0.5 : 0.54);
+      window.innerHeight * (window.innerWidth <= 640 ? 0.56 : 0.62);
 
     const safeBottomTop =
       window.innerHeight - cardRect.height - bottomPadding;
@@ -581,7 +692,10 @@
     const currentTopAfterViewportLift = cardRect.top + viewportLift;
     const moveAmount = targetTop - currentTopAfterViewportLift;
 
-    return gsap.utils.clamp(-220, 240, moveAmount);
+    gsap.set(viewport, { y: viewportCurrentY });
+    gsap.set(cardWrap, { y: cardCurrentY });
+
+    return gsap.utils.clamp(-220, 340, moveAmount);
   }
 
   function getButtonRect(layer) {
