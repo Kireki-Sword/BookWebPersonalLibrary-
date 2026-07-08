@@ -726,3 +726,61 @@ it activate  becase we chose it at opacity 0 */
     padding: 1.35rem;
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+/* ___ HERO CARD DATABASE CHANGE EFFECT ______________________ */
+/* Safe to put at the end. It only affects the inside of the card while JS changes content. */
+
+.card-cover-img {
+  transition:
+    opacity 0.42s ease,
+    filter 0.42s ease,
+    transform 0.1s ease-out;
+}
+
+.card-info-side {
+  transition:
+    opacity 0.42s ease,
+    transform 0.42s ease,
+    filter 0.42s ease;
+}
+
+.card-effect.is-changing .card-cover-img {
+  opacity: 0;
+  filter: blur(10px);
+}
+
+.card-effect.is-changing .card-info-side {
+  opacity: 0;
+  transform: translateY(10px);
+  filter: blur(6px);
+}
+
+.card-effect.is-revealing {
+  animation: cardRevealPulse 0.55s ease;
+}
+
+@keyframes cardRevealPulse {
+  0% {
+    box-shadow: var(--shadow-hero-card);
+  }
+
+  45% {
+    box-shadow:
+      var(--shadow-hero-card),
+      0 0 34px rgba(184, 121, 78, 0.22);
+  }
+
+  100% {
+    box-shadow: var(--shadow-hero-card);
+  }
+}
