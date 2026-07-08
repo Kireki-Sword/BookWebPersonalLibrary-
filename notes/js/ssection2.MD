@@ -4,11 +4,10 @@
    Fixes:
    - Card starts naturally under title/subtitle.
    - On scroll, title fades away.
-   - Card anchors near the bottom of the visible browser viewport.
+   - Card anchors at the real bottom of the viewport while staying fully visible.
    - Evidence appears above the card.
    - Evidence gathers into the correct button.
    - Scrolling back up resets the card to its natural starting position.
-   - Refreshing in the middle of the pinned section is more stable.
    ============================================================================ */
 
 (() => {
@@ -85,7 +84,6 @@
   let lastStatusText = "";
   let trayRevealTime = Number.POSITIVE_INFINITY;
   let resizeTimer = null;
-  let refreshTimer = null;
 
   initSection2();
 
@@ -102,75 +100,23 @@
     }
 
     masterTimeline = buildMasterTimeline();
-    setupSafeRefreshes();
-  }
 
-  function setupSafeRefreshes() {
     window.addEventListener("resize", () => {
       clearTimeout(resizeTimer);
 
       resizeTimer = setTimeout(() => {
-        queueSafeRefresh();
+        ScrollTrigger.refresh();
       }, 150);
     });
-
-    window.addEventListener(
-      "load",
-      () => {
-        queueSafeRefresh(120);
-      },
-      { once: true }
-    );
-
-    if (document.fonts && document.fonts.ready) {
-      document.fonts.ready
-        .then(() => {
-          queueSafeRefresh(120);
-        })
-        .catch(() => {});
-    }
-
-    const images = gsap.utils.toArray(section.querySelectorAll("img"));
-
-    images.forEach((img) => {
-      if (img.complete) return;
-
-      img.addEventListener(
-        "load",
-        () => {
-          queueSafeRefresh(120);
-        },
-        { once: true }
-      );
-
-      img.addEventListener(
-        "error",
-        () => {
-          queueSafeRefresh(120);
-        },
-        { once: true }
-      );
-    });
-  }
-
-  function queueSafeRefresh(delay = 80) {
-    clearTimeout(refreshTimer);
-
-    refreshTimer = setTimeout(() => {
-      ScrollTrigger.refresh(true);
-    }, delay);
   }
 
   function collectLayerElements() {
     layers.forEach((layer, index) => {
       layer.index = index;
-
       layer.stage = section.querySelector(layer.stageSelector);
-
       layer.items = layer.stage
         ? gsap.utils.toArray(layer.stage.querySelectorAll(layer.itemSelector))
         : [];
-
       layer.button = section.querySelector(layer.buttonSelector);
     });
   }
@@ -203,6 +149,10 @@
       y: 0
     });
 
+    /*
+      The card starts visible in its natural HTML position.
+      It should not fade in or start anchored.
+    */
     gsap.set(cardWrap, {
       autoAlpha: 1,
       y: 0,
@@ -357,22 +307,22 @@
           });
         },
 
-        onRefresh: (self) => {
-          syncTimelineState(self.animation);
-        },
-
         onLeaveBack: () => {
           resetToNaturalStart();
         },
 
-        onUpdate: (self) => {
-          syncTimelineState(self.animation);
+        onUpdate: () => {
+          syncTimelineState(tl);
         }
       }
     });
 
     tl.addLabel("natural-card");
 
+    /*
+      Step 1:
+      User first sees the normal rating card under the title.
+    */
     tl.to({}, { duration: 0.5 });
 
     tl.fromTo(
@@ -390,6 +340,12 @@
 
     tl.to({}, { duration: 0.18 });
 
+    /*
+      Step 2:
+      Title fades away.
+      Stage moves up.
+      Card anchors at the true bottom.
+    */
     tl.addLabel("anchor-card");
 
     tl.to(
@@ -423,6 +379,9 @@
       "anchor-card"
     );
 
+    /*
+      Let the card settle before evidence appears.
+    */
     tl.to({}, { duration: 0.42 });
 
     layers.forEach((layer) => {
@@ -672,61 +631,64 @@
   }
 
   function getViewportLiftY() {
-    const headerHeight = header ? header.getBoundingClientRect().height : 0;
+    const headerRect = header.getBoundingClientRect();
 
+    /*
+      The title fades visually, but its layout space still exists.
+      This pulls the stage upward to reclaim part of that empty space.
+    */
     const maxLift = window.innerWidth <= 640 ? 150 : 210;
-    const desiredLift = headerHeight + 30;
+    const desiredLift = headerRect.height + 30;
 
     return -Math.min(desiredLift, maxLift);
   }
 
   function getCardAnchorY() {
     /*
-      VIEWPORT BOTTOM ANCHOR:
-
-      The card should anchor near the bottom of the visible browser viewport.
-
-      The section is only used as a stable measuring reference.
-      The actual bottom target uses window.innerHeight.
+      TRUE BOTTOM ANCHOR:
+      The bottom of the card should sit near the bottom of the browser viewport,
+      while the full card remains visible.
     */
 
     const savedViewportY = gsap.getProperty(viewport, "y");
     const savedCardY = gsap.getProperty(cardWrap, "y");
 
+    /*
+      Measure from the natural position, not from an already-transformed state.
+      This prevents the card from sticking at the wrong place when scrolling up.
+    */
     gsap.set(viewport, { y: 0 });
     gsap.set(cardWrap, { y: 0 });
 
-    const sectionRect = section.getBoundingClientRect();
     const cardRect = cardWrap.getBoundingClientRect();
-
-    const cardTopInsidePinnedSection = cardRect.top - sectionRect.top;
     const viewportLiftY = getViewportLiftY();
 
-    const topGap = window.innerWidth <= 640 ? 12 : 18;
-    const bottomGap = window.innerWidth <= 640 ? 18 : 24;
+    /*
+      Smaller number = closer to the bottom.
+      Increase this if the card feels too low.
+    */
+    const bottomGap = window.innerWidth <= 640 ? 24 : 32;
 
     /*
-      This is the actual visible browser viewport bottom.
-      Not section height.
-      Not page height.
+      Actual bottom anchor:
+      card top = viewport height - card height - bottom gap
     */
-    const targetBottom = window.innerHeight - bottomGap;
+    const targetTop = window.innerHeight - cardRect.height - bottomGap;
 
     /*
-      If the card fits, this makes the bottom sit near the viewport bottom.
-      If the card is too tall on a tiny screen, topGap protects the top.
+      Since the stage itself moves upward, include viewportLiftY.
     */
-    const targetTop = Math.max(topGap, targetBottom - cardRect.height);
+    const currentTopAfterViewportLift = cardRect.top + viewportLiftY;
 
-    const cardTopAfterViewportLift =
-      cardTopInsidePinnedSection + viewportLiftY;
+    const moveAmount = targetTop - currentTopAfterViewportLift;
 
-    const neededCardMove = targetTop - cardTopAfterViewportLift;
-
+    /*
+      Restore current animation state after measuring.
+    */
     gsap.set(viewport, { y: savedViewportY });
     gsap.set(cardWrap, { y: savedCardY });
 
-    return neededCardMove;
+    return Math.max(0, moveAmount);
   }
 
   function getButtonRect(layer) {
