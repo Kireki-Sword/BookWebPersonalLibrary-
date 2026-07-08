@@ -74,7 +74,7 @@ if (cardEffect && cardCoverImg && cardGlare) {
     const rotateY = (x / (rect.width / 2)) * 15;
     const rotateX = -(y / (rect.height / 2)) * 15;
 
-    // Apply the 3D tilt
+    // Apply the 3D tilt to the whole card only
     cardEffect.style.transform = `
       perspective(1000px)
       rotateX(${rotateX}deg)
@@ -82,11 +82,9 @@ if (cardEffect && cardCoverImg && cardGlare) {
       scale(1.02)
     `;
 
-    // Move the cover image slightly opposite direction - parallax depth
-    cardCoverImg.style.transform = `
-      translateX(${-rotateY * 0.8}px)
-      translateY(${rotateX * 0.8}px)
-    `;
+    // IMPORTANT:
+    // Do not move cardCoverImg.
+    // Moving the image exposes the beige cover background during tilt.
 
     // Update the glare position to follow the cursor
     const glareX = ((e.clientX - rect.left) / rect.width) * 100;
@@ -114,9 +112,6 @@ if (cardEffect && cardCoverImg && cardGlare) {
       scale(1)
     `;
 
-    // Reset cover parallax
-    cardCoverImg.style.transform = `translateX(0) translateY(0)`;
-
     // Fade the glare out
     cardGlare.style.background = 'transparent';
   });
@@ -143,7 +138,7 @@ if (heroSection && heroLeftDiv && heroRight) {
       }
     });
   }, {
-    threshold: 0.1 // triggers when only 10% of hero is visible.
+    threshold: 0.1
   });
 
   heroObserver.observe(heroSection);
