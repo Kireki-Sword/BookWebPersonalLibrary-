@@ -224,8 +224,9 @@
   justify-content: center;
   justify-self: end;
   width: 100%;
-  opacity: 0;
-  transform: translateX(30px) translateY(-8px);
+
+  opacity: 1;
+  transform: translateX(0) translateY(-8px);
 }
 
 
@@ -332,35 +333,6 @@
   z-index: 1;
 }
 
-.card-cover-side::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  display: block;
-  background:
-    linear-gradient(
-      90deg,
-      rgba(239, 229, 216, 0.55),
-      rgba(226, 185, 143, 0.38),
-      rgba(239, 229, 216, 0.55)
-    );
-  background-size: 220% 100%;
-  opacity: 0;
-  pointer-events: none;
-  z-index: 3;
-  animation: cardSkeletonShimmer 1.8s ease-in-out infinite;
-}
-
-.card-cover-side:has(.card-cover-img[src=""])::after,
-.card-cover-side:has(.card-cover-img:not([src]))::after {
-  opacity: 1;
-}
-
-.card-cover-side:has(.card-cover-img[src=""]) .card-cover-img,
-.card-cover-side:has(.card-cover-img:not([src])) .card-cover-img {
-  opacity: 0;
-}
-
 .card-cover-img {
   width: 100%;
   height: 100%;
@@ -385,10 +357,11 @@
 /* INFO SIDE */
 
 .card-info-side {
-  flex: 1;
+  flex: 0 0 355px;
   width: 355px;
   height: 360px;
-  min-width: 0;
+  min-width: 355px;
+  max-width: 355px;
   min-height: 360px;
   max-height: 360px;
 
@@ -523,51 +496,6 @@
 }
 
 
-/* EMPTY SKELETONS BEFORE DATABASE LOAD */
-
-.card-type:empty,
-.card-title:empty,
-.card-author:empty,
-#card-score:empty {
-  color: transparent;
-  border-color: transparent;
-  background:
-    linear-gradient(
-      90deg,
-      rgba(184, 121, 78, 0.12),
-      rgba(184, 121, 78, 0.23),
-      rgba(184, 121, 78, 0.12)
-    );
-  background-size: 220% 100%;
-  animation: cardSkeletonShimmer 1.8s ease-in-out infinite;
-}
-
-.card-type:empty {
-  width: 92px;
-  height: 28px;
-  padding: 0;
-}
-
-.card-title:empty {
-  display: block;
-  width: 82%;
-  height: 34px;
-  border-radius: 999px;
-}
-
-.card-author:empty {
-  width: 52%;
-  height: 16px;
-  border-radius: 999px;
-}
-
-#card-score:empty {
-  width: 44px;
-  height: 26px;
-  border-radius: 999px;
-}
-
-
 /* CARD BUTTONS */
 
 .card-buttons {
@@ -678,16 +606,6 @@
   to {
     opacity: 1;
     transform: translateX(0) translateY(-8px);
-  }
-}
-
-@keyframes cardSkeletonShimmer {
-  0% {
-    background-position: 120% 0;
-  }
-
-  100% {
-    background-position: -120% 0;
   }
 }
 
@@ -810,9 +728,13 @@
 
   .card-info-side {
     width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+
     height: 320px;
     min-height: 320px;
     max-height: 320px;
+
     flex: 0 0 320px;
     padding: 1.35rem;
   }

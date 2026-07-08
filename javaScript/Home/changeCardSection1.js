@@ -21,7 +21,7 @@
 
   function startCardDatabaseScript() {
     if (!window.supabase) {
-      console.error('Supabase library is not loaded. Put the Supabase CDN script before changeCardSection1.js');
+      console.error('Supabase library is not loaded. Put the Supabase CDN before changeCardSection1.js');
       return;
     }
 
@@ -37,14 +37,17 @@
     const cardAuthor = document.getElementById('card-author');
     const cardScore = document.getElementById('card-score');
 
-    console.log('Card elements found:', {
-      cardEffect,
-      cardCoverImg,
-      cardType,
-      cardTitleEl,
-      cardAuthor,
-      cardScore
-    });
+    if (!cardEffect || !cardCoverImg || !cardType || !cardTitleEl || !cardAuthor || !cardScore) {
+      console.error('One or more hero card HTML elements are missing:', {
+        cardEffect,
+        cardCoverImg,
+        cardType,
+        cardTitleEl,
+        cardAuthor,
+        cardScore
+      });
+      return;
+    }
 
     // ___ 2. HELPERS ___________________________________
 
@@ -78,9 +81,6 @@
         .from(BUCKET_NAME)
         .getPublicUrl(coverPath);
 
-      console.log('Expected Supabase storage path:', `${BUCKET_NAME}/${coverPath}`);
-      console.log('Generated cover URL:', data.publicUrl);
-
       return data.publicUrl;
     }
 
@@ -98,81 +98,63 @@
       return item.heroScore ?? item.hero_score ?? item.score ?? item.rating ?? '';
     }
 
+    function getCreatorValue(item) {
+      return item.creator ?? item.author ?? item.writer ?? '';
+    }
 
-    // ___ 3. UPDATE HERO CARD ___________________________________
+    // ___ 3. UPDATE HERO CARD WITH EFFECT ______________________
 
     async function updateHeroCard(item) {
-    if (!item) return;
+      if (!item) return;
 
-    const thisChangeId = ++cardChangeId;
-    const coverUrl = getCoverUrlFromId(item.id);
+      const thisChangeId = ++cardChangeId;
+      const coverUrl = getCoverUrlFromId(item.id);
 
-    const imageReady = preloadImage(coverUrl);
+      const imageReady = preloadImage(coverUrl);
 
-    // Fade old card content out
-    if (cardEffect) {
-        cardEffect.classList.add('is-changing');
-        cardEffect.classList.remove('is-revealing');
-    }
+      // Fade old content out
+      cardEffect.classList.add('is-changing');
+      cardEffect.classList.remove('is-revealing');
 
-    await wait(350);
+      await wait(420);
 
-    // Wait for image, but not forever
-    await Promise.race([
+      await Promise.race([
         imageReady,
         wait(1200)
-    ]);
+      ]);
 
-    // Stop if another card update started
-    if (thisChangeId !== cardChangeId) return;
+      if (thisChangeId !== cardChangeId) return;
 
-    // Update type
-    if (cardType) {
-        cardType.textContent = formatType(item.type);
-    }
+      // Update text
+      cardType.textContent = formatType(item.type);
+      cardTitleEl.textContent = item.title || '';
 
-    // Update title
-    if (cardTitleEl) {
-        cardTitleEl.textContent = item.title || '';
-    }
+      const creator = getCreatorValue(item);
+      cardAuthor.textContent = creator ? `by ${creator}` : '';
 
-    // Update author / creator
-    if (cardAuthor) {
-        cardAuthor.textContent = item.creator ? `by ${item.creator}` : '';
-    }
+      cardScore.textContent = getScoreValue(item);
 
-    // Update score
-    if (cardScore) {
-        cardScore.textContent = getScoreValue(item);
-    }
-
-    // Update cover image
-    if (cardCoverImg) {
-        if (coverUrl) {
+      // Update cover
+      if (coverUrl) {
         cardCoverImg.src = coverUrl;
-        cardCoverImg.alt = item.title ? `${item.title} cover` : 'Manga cover';
-        } else {
+        cardCoverImg.alt = item.title ? `${item.title} cover` : 'Story cover';
+      } else {
         cardCoverImg.removeAttribute('src');
         cardCoverImg.alt = '';
-        }
-    }
+      }
 
-    // Reveal new card content
-    requestAnimationFrame(() => {
-        if (cardEffect) {
+      // Reveal new content
+      requestAnimationFrame(() => {
         cardEffect.classList.remove('is-changing');
         cardEffect.classList.add('is-revealing');
-        }
-    });
+      });
 
-    setTimeout(() => {
-        if (cardEffect) {
+      setTimeout(() => {
         cardEffect.classList.remove('is-revealing');
-        }
-    }, 650);
+      }, 650);
     }
 
-    // ___ 4. LOAD FEATURED MANGA FROM SUPABASE ___________________
+    // ___ 4. LOAD FEATURED MANGA FROM SUPABASE _________________
 
     async function loadFeaturedManga() {
       const { data, error } = await supabaseClient
@@ -215,10 +197,7 @@
       }
     }
 
-    testDatabaseValuesOnly();
     loadFeaturedManga();
-
-    console.log('changeCardSection1.js loaded successfully');
   }
 
   if (document.readyState === 'loading') {
