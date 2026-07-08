@@ -783,3 +783,37 @@ it activate  becase we chose it at opacity 0 */
     box-shadow: var(--shadow-hero-card);
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.hero-right {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: translateX(0) translateY(-8px) !important;
+}
+
+.card-effect {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.card-info-side {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.card-cover-img {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
