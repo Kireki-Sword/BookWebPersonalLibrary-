@@ -255,3 +255,6 @@ async function testDatabaseValuesOnly() {
 }
 
 testDatabaseValuesOnly();
+
+
+console.log('hello')
