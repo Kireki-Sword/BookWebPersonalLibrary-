@@ -226,6 +226,7 @@
   width: 100%;
 
   opacity: 1;
+  visibility: visible;
   transform: translateX(0) translateY(-8px);
 }
 
@@ -345,6 +346,10 @@
   color: transparent;
   font-size: 0;
 
+  opacity: 1;
+  visibility: visible;
+  filter: blur(0);
+
   transition:
     opacity 0.42s ease,
     filter 0.42s ease,
@@ -374,6 +379,11 @@
   background: rgba(255, 252, 248, 0.76);
   position: relative;
   z-index: 2;
+
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  filter: blur(0);
 
   transition:
     opacity 0.42s ease,
