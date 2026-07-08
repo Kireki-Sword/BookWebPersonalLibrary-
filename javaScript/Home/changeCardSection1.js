@@ -1,6 +1,4 @@
-// SECTION 1 — HERO
 
-document.addEventListener('DOMContentLoaded', () => {
   // ___ 0. SUPABASE SETUP ___________________________________
 
   const SUPABASE_URL = 'https://hsruxfpslxguhwnccwuj.supabase.co';
@@ -241,80 +239,4 @@ document.addEventListener('DOMContentLoaded', () => {
   loadFeaturedManga();
 
 
-  // ___ 6. 3D TILT EFFECT ___________________________________
-
-  if (cardEffect && cardCoverImg && cardGlare) {
-    cardEffect.addEventListener('mousemove', (e) => {
-      cardEffect.classList.remove('is-resetting');
-
-      const rect = cardEffect.getBoundingClientRect();
-
-      const x = e.clientX - rect.left - rect.width / 2;
-      const y = e.clientY - rect.top - rect.height / 2;
-
-      const rotateY = (x / (rect.width / 2)) * 15;
-      const rotateX = -(y / (rect.height / 2)) * 15;
-
-      cardEffect.style.transform = `
-        perspective(1000px)
-        rotateX(${rotateX}deg)
-        rotateY(${rotateY}deg)
-        scale(1.02)
-      `;
-
-      cardCoverImg.style.transform = `
-        translateX(${-rotateY * 0.8}px)
-        translateY(${rotateX * 0.8}px)
-      `;
-
-      const glareX = ((e.clientX - rect.left) / rect.width) * 100;
-      const glareY = ((e.clientY - rect.top) / rect.height) * 100;
-
-      cardGlare.style.background = `
-        radial-gradient(
-          circle at ${glareX}% ${glareY}%,
-          rgba(255,255,255,0.15) 0%,
-          rgba(255,255,255,0) 60%
-        )
-      `;
-    });
-
-    cardEffect.addEventListener('mouseleave', () => {
-      cardEffect.classList.add('is-resetting');
-
-      cardEffect.style.transform = `
-        perspective(1000px)
-        rotateX(0deg)
-        rotateY(0deg)
-        scale(1)
-      `;
-
-      cardCoverImg.style.transform = 'translateX(0) translateY(0)';
-      cardGlare.style.background = 'transparent';
-    });
-  }
-
-
-  // ___ 7. SCROLL AWAY - HERO FADES WHEN LEAVING VIEWPORT _________
-
-  const heroSection = document.querySelector('.hero');
-  const heroLeftDiv = document.querySelector('.hero-left');
-
-  if (heroSection && heroLeftDiv && heroRight) {
-    const heroObserver = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          heroLeftDiv.classList.remove('hero-exiting');
-          heroRight.classList.remove('hero-exiting');
-        } else {
-          heroLeftDiv.classList.add('hero-exiting');
-          heroRight.classList.add('hero-exiting');
-        }
-      });
-    }, {
-      threshold: 0.1
-    });
-
-    heroObserver.observe(heroSection);
-  }
-});
+  
