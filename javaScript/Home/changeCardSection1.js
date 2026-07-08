@@ -98,87 +98,81 @@
       return item.heroScore ?? item.hero_score ?? item.score ?? item.rating ?? '';
     }
 
+
     // ___ 3. UPDATE HERO CARD ___________________________________
 
     async function updateHeroCard(item) {
-    console.log('updateHeroCard received:', item);
+    if (!item) return;
 
-    if (!item) {
-        console.warn('No item passed into updateHeroCard');
-        return;
-    }
-
-    console.log('Trying to display values:', {
-        title: item.title,
-        creator: item.creator,
-        score: getScoreValue(item),
-        type: item.type,
-        id: item.id
-    });
-
-    if (!cardType) console.error('Missing HTML element: #card-type');
-    if (!cardTitleEl) console.error('Missing HTML element: #card-title');
-    if (!cardAuthor) console.error('Missing HTML element: #card-author');
-    if (!cardScore) console.error('Missing HTML element: #card-score');
-    if (!cardCoverImg) console.error('Missing HTML element: .card-cover-img');
-
+    const thisChangeId = ++cardChangeId;
     const coverUrl = getCoverUrlFromId(item.id);
 
-    // FORCE SHOW CARD, no animation
+    const imageReady = preloadImage(coverUrl);
+
+    // Fade old card content out
     if (cardEffect) {
-        cardEffect.classList.remove('is-changing');
+        cardEffect.classList.add('is-changing');
         cardEffect.classList.remove('is-revealing');
-        cardEffect.style.opacity = '1';
-        cardEffect.style.visibility = 'visible';
-        cardEffect.style.display = '';
     }
 
+    await wait(350);
+
+    // Wait for image, but not forever
+    await Promise.race([
+        imageReady,
+        wait(1200)
+    ]);
+
+    // Stop if another card update started
+    if (thisChangeId !== cardChangeId) return;
+
+    // Update type
     if (cardType) {
         cardType.textContent = formatType(item.type);
     }
 
+    // Update title
     if (cardTitleEl) {
-        cardTitleEl.textContent = item.title || 'NO TITLE FOUND';
+        cardTitleEl.textContent = item.title || '';
     }
 
+    // Update author / creator
     if (cardAuthor) {
-        cardAuthor.textContent = item.creator ? `by ${item.creator}` : 'NO CREATOR FOUND';
+        cardAuthor.textContent = item.creator ? `by ${item.creator}` : '';
     }
 
+    // Update score
     if (cardScore) {
-        cardScore.textContent = getScoreValue(item) || 'NO SCORE FOUND';
+        cardScore.textContent = getScoreValue(item);
     }
 
+    // Update cover image
     if (cardCoverImg) {
+        if (coverUrl) {
         cardCoverImg.src = coverUrl;
         cardCoverImg.alt = item.title ? `${item.title} cover` : 'Manga cover';
-        cardCoverImg.style.opacity = '1';
-        cardCoverImg.style.visibility = 'visible';
-        cardCoverImg.style.display = 'block';
+        } else {
+        cardCoverImg.removeAttribute('src');
+        cardCoverImg.alt = '';
+        }
     }
 
-    console.log('Card update finished.');
+    // Reveal new card content
+    requestAnimationFrame(() => {
+        if (cardEffect) {
+        cardEffect.classList.remove('is-changing');
+        cardEffect.classList.add('is-revealing');
+        }
+    });
+
+    setTimeout(() => {
+        if (cardEffect) {
+        cardEffect.classList.remove('is-revealing');
+        }
+    }, 650);
     }
 
-    // ___ 4. TEST DATABASE VALUES ONLY ___________________________
-
-    async function testDatabaseValuesOnly() {
-      const { data, error } = await supabaseClient
-        .from(TABLE_NAME)
-        .select('*')
-        .limit(5);
-
-      console.log('DATABASE TEST ERROR:', error);
-      console.log('DATABASE TEST DATA:', data);
-
-      if (data && data.length > 0) {
-        console.log('FIRST DATABASE ROW:', data[0]);
-        console.log('DATABASE COLUMN NAMES:', Object.keys(data[0]));
-        console.table(data);
-      }
-    }
-
-    // ___ 5. LOAD FEATURED MANGA FROM SUPABASE ___________________
+    // ___ 4. LOAD FEATURED MANGA FROM SUPABASE ___________________
 
     async function loadFeaturedManga() {
       const { data, error } = await supabaseClient
