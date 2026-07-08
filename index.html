@@ -258,11 +258,14 @@
                 Search any story you are reading or watching. Add it to your library,
                 then choose where it belongs.
             </p>
+
+            <a href="signup.html" class="btn-primary section-3-cta">
+                Start your library
+            </a>
         </div>
 
         <!-- RIGHT SIDE INTERACTIVE DEMO -->
         <div class="section-3-demo" aria-label="Interactive search and save demo">
-
             <div class="demo-window">
 
                 <!-- Window Header -->
@@ -303,32 +306,23 @@
 
                     <!-- Result Area For JavaScript Later -->
                     <div class="demo-result-area" aria-live="polite">
-
-                        <!-- 
-                            Later with JavaScript:
-                            When the user searches, inject the result card here.
-                        -->
-
                         <template id="home-demo-result-template">
                             <article class="demo-result-card">
-
                                 <div class="demo-result-cover">
-                                    <img src="" alt="">
+                                    <img src="./images/vagabond-cover.jpg" alt="Vagabond cover">
                                 </div>
 
                                 <div class="demo-result-info">
-                                    <h3></h3>
-                                    <p class="demo-result-creator"></p>
-                                    <p class="demo-result-type"></p>
+                                    <h3>Vagabond</h3>
+                                    <p class="demo-result-creator">by Takehiko Inoue</p>
+                                    <p class="demo-result-type">Manga</p>
                                 </div>
 
                                 <button class="demo-add-button" type="button">
                                     Add
                                 </button>
-
                             </article>
                         </template>
-
                     </div>
 
                     <!-- Status Picker -->
@@ -336,7 +330,6 @@
                         <legend>Where should it go?</legend>
 
                         <div class="demo-status-options">
-
                             <label>
                                 <input type="radio" name="demo_status" value="reading">
                                 <span>Reading</span>
@@ -361,23 +354,22 @@
                                 <input type="radio" name="demo_status" value="dropped">
                                 <span>Dropped</span>
                             </label>
-
                         </div>
                     </fieldset>
 
                     <!-- Saved Message -->
                     <div class="demo-saved-message" role="status" aria-live="polite" hidden>
                         <i class="ti ti-check"></i>
-                        <span>Saved to your library.</span>
+                        <span>Vagabond saved to Reading.</span>
                     </div>
 
-                </div>
+                </div> <!-- closes demo-window-body -->
 
-            </div>
+            </div> <!-- closes demo-window -->
 
-        </div>
+        </div> <!-- closes section-3-demo -->
 
-    </section> 
+    </section>
 
     <!-- Section 4 Library Organization Demo -->
     <section id="section-4-library" class="section section-library" aria-labelledby="section-4-title">
