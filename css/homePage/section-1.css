@@ -351,11 +351,10 @@
   filter: blur(0);
 
   transition:
-    opacity 0.42s ease,
-    filter 0.42s ease,
-    transform 0.1s ease-out;
+    opacity 0.32s ease,
+    filter 0.32s ease;
 
-  will-change: transform;
+  will-change: opacity, filter;
 }
 
 
@@ -386,9 +385,9 @@
   filter: blur(0);
 
   transition:
-    opacity 0.42s ease,
-    transform 0.42s ease,
-    filter 0.42s ease;
+    opacity 0.32s ease,
+    transform 0.36s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.32s ease;
 }
 
 
@@ -559,32 +558,66 @@
 }
 
 
-/* DATABASE CHANGE EFFECT */
+/* PREMIUM DATABASE SWAP EFFECT */
 
-.card-effect.is-changing .card-cover-img {
-  opacity: 0;
-  filter: blur(10px);
+.card-effect.is-swapping .card-cover-img {
+  opacity: 0.28;
+  filter: blur(3px) saturate(0.92);
 }
 
-.card-effect.is-changing .card-info-side {
-  opacity: 0;
-  transform: translateY(10px);
-  filter: blur(6px);
+.card-effect.is-swapping .card-info-side {
+  opacity: 0.28;
+  filter: blur(3px);
+  transform: translateY(6px);
+}
+
+.card-effect.is-revealing .card-cover-img {
+  animation: coverSettleIn 0.46s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.card-effect.is-revealing .card-info-side {
+  animation: infoSettleIn 0.46s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .card-effect.is-revealing {
-  animation: cardRevealPulse 0.55s ease;
+  animation: cardSoftGlow 0.6s ease;
 }
 
-@keyframes cardRevealPulse {
+@keyframes coverSettleIn {
+  0% {
+    opacity: 0.28;
+    filter: blur(3px) saturate(0.92);
+  }
+
+  100% {
+    opacity: 1;
+    filter: blur(0) saturate(1);
+  }
+}
+
+@keyframes infoSettleIn {
+  0% {
+    opacity: 0.28;
+    filter: blur(3px);
+    transform: translateY(6px);
+  }
+
+  100% {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
+}
+
+@keyframes cardSoftGlow {
   0% {
     box-shadow: var(--shadow-hero-card);
   }
 
-  45% {
+  42% {
     box-shadow:
       var(--shadow-hero-card),
-      0 0 34px rgba(184, 121, 78, 0.22);
+      0 0 30px rgba(184, 121, 78, 0.18);
   }
 
   100% {
@@ -653,9 +686,8 @@
 
 .card-effect.is-resetting .card-cover-img {
   transition:
-    transform 0.5s ease,
-    opacity 0.42s ease,
-    filter 0.42s ease;
+    opacity 0.32s ease,
+    filter 0.32s ease;
 }
 
 

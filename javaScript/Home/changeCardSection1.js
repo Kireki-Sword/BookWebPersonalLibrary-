@@ -15,6 +15,7 @@
   let currentFeaturedIndex = 0;
   let featuredTimer = null;
   let cardChangeId = 0;
+  let hasRenderedFirstCard = false;
 
   function startCardDatabaseScript() {
     if (!window.supabase) {
@@ -32,17 +33,15 @@
     const cardAuthor = document.getElementById('card-author');
     const cardScore = document.getElementById('card-score');
 
-    console.log('SECTION 1 CARD ELEMENTS:', {
-      cardEffect,
-      cardCoverImg,
-      cardType,
-      cardTitleEl,
-      cardAuthor,
-      cardScore
-    });
-
     if (!cardEffect || !cardCoverImg || !cardType || !cardTitleEl || !cardAuthor || !cardScore) {
-      console.error('Missing one or more Section 1 card elements.');
+      console.error('Missing one or more Section 1 card elements.', {
+        cardEffect,
+        cardCoverImg,
+        cardType,
+        cardTitleEl,
+        cardAuthor,
+        cardScore
+      });
       return;
     }
 
@@ -97,23 +96,7 @@
       return item.creator ?? item.author ?? item.writer ?? '';
     }
 
-    async function updateHeroCard(item) {
-      if (!item) return;
-
-      const thisChangeId = ++cardChangeId;
-      const coverUrl = getCoverUrlFromId(item.id);
-
-      console.log('UPDATING SECTION 1 CARD:', item);
-      console.log('COVER URL:', coverUrl);
-
-      cardEffect.classList.add('is-changing');
-      cardEffect.classList.remove('is-revealing');
-
-      await wait(420);
-
-      if (thisChangeId !== cardChangeId) return;
-
-      // IMPORTANT: update text first
+    function applyCardContent(item, coverUrl) {
       cardType.textContent = formatType(item.type);
       cardTitleEl.textContent = item.title || '';
 
@@ -122,7 +105,6 @@
 
       cardScore.textContent = getScoreValue(item);
 
-      // Then update cover
       if (coverUrl) {
         cardCoverImg.src = coverUrl;
         cardCoverImg.alt = item.title ? `${item.title} cover` : 'Story cover';
@@ -130,17 +112,69 @@
         cardCoverImg.removeAttribute('src');
         cardCoverImg.alt = '';
       }
+    }
 
-      // Do not let image loading block the text
-      preloadImage(coverUrl).then((loaded) => {
-        if (!loaded) {
-          console.warn('Cover failed to load:', coverUrl);
-        }
-      });
+    async function updateHeroCard(item) {
+      if (!item) return;
 
-      requestAnimationFrame(() => {
+      const thisChangeId = ++cardChangeId;
+      const coverUrl = getCoverUrlFromId(item.id);
+
+      /*
+        First render:
+        Show immediately. No fade from empty content.
+      */
+      if (!hasRenderedFirstCard) {
+        hasRenderedFirstCard = true;
+
+        applyCardContent(item, coverUrl);
+
+        cardEffect.classList.remove('is-swapping');
         cardEffect.classList.remove('is-changing');
         cardEffect.classList.add('is-revealing');
+
+        preloadImage(coverUrl).then((loaded) => {
+          if (!loaded) {
+            console.warn('Cover failed to load:', coverUrl);
+          }
+        });
+
+        setTimeout(() => {
+          cardEffect.classList.remove('is-revealing');
+        }, 650);
+
+        return;
+      }
+
+      /*
+        Premium swap:
+        Keep old content visible while the next cover preloads.
+        Then softly dim/blur, swap, reveal.
+      */
+      const imageReady = preloadImage(coverUrl);
+
+      await Promise.race([
+        imageReady,
+        wait(1200)
+      ]);
+
+      if (thisChangeId !== cardChangeId) return;
+
+      cardEffect.classList.add('is-swapping');
+      cardEffect.classList.remove('is-changing');
+      cardEffect.classList.remove('is-revealing');
+
+      await wait(260);
+
+      if (thisChangeId !== cardChangeId) return;
+
+      applyCardContent(item, coverUrl);
+
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          cardEffect.classList.remove('is-swapping');
+          cardEffect.classList.add('is-revealing');
+        });
       });
 
       setTimeout(() => {
