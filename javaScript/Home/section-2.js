@@ -645,50 +645,36 @@
 
   function getCardAnchorY() {
     /*
-      TRUE BOTTOM ANCHOR:
-      The bottom of the card should sit near the bottom of the browser viewport,
-      while the full card remains visible.
+      True visual bottom anchor:
+      Measure the card in its natural position, then calculate how far down
+      the card must move so its bottom sits near the bottom of the viewport.
     */
 
     const savedViewportY = gsap.getProperty(viewport, "y");
     const savedCardY = gsap.getProperty(cardWrap, "y");
 
-    /*
-      Measure from the natural position, not from an already-transformed state.
-      This prevents the card from sticking at the wrong place when scrolling up.
-    */
+    // Temporarily reset transforms so measurement is accurate.
     gsap.set(viewport, { y: 0 });
     gsap.set(cardWrap, { y: 0 });
 
     const cardRect = cardWrap.getBoundingClientRect();
     const viewportLiftY = getViewportLiftY();
 
-    /*
-      Smaller number = closer to the bottom.
-      Increase this if the card feels too low.
-    */
-    const bottomGap = window.innerWidth <= 640 ? 24 : 32;
+    // Smaller gap means the card sits closer to the bottom.
+    const bottomGap = window.innerWidth <= 640 ? 18 : 24;
 
-    /*
-      Actual bottom anchor:
-      card top = viewport height - card height - bottom gap
-    */
-    const targetTop = window.innerHeight - cardRect.height - bottomGap;
+    const cardTopAfterLift = cardRect.top + viewportLiftY;
+    const cardBottomAfterLift = cardTopAfterLift + cardRect.height;
 
-    /*
-      Since the stage itself moves upward, include viewportLiftY.
-    */
-    const currentTopAfterViewportLift = cardRect.top + viewportLiftY;
+    const targetBottom = window.innerHeight - bottomGap;
+    const neededCardMove = targetBottom - cardBottomAfterLift;
 
-    const moveAmount = targetTop - currentTopAfterViewportLift;
-
-    /*
-      Restore current animation state after measuring.
-    */
+    // Restore the current animation state.
     gsap.set(viewport, { y: savedViewportY });
     gsap.set(cardWrap, { y: savedCardY });
 
-    return Math.max(0, moveAmount);
+    // Never move the card upward here.
+    return Math.max(0, neededCardMove);
   }
 
   function getButtonRect(layer) {
