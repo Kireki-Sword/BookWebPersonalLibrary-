@@ -738,7 +738,6 @@ it activate  becase we chose it at opacity 0 */
 
 
 /* ___ HERO CARD DATABASE CHANGE EFFECT ______________________ */
-/* Safe to put at the end. It only affects the inside of the card while JS changes content. */
 
 .card-cover-img {
   transition:
