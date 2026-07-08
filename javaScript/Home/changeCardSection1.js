@@ -60,6 +60,14 @@ const cardTitleEl = document.getElementById('card-title');
 const cardAuthor = document.getElementById('card-author');
 const cardScore = document.getElementById('card-score');
 
+console.log('Card elements:', {
+  cardCoverImg,
+  cardType,
+  cardTitleEl,
+  cardAuthor,
+  cardScore
+});
+
 let featuredManga = [];
 let currentFeaturedIndex = 0;
 let featuredTimer = null;
@@ -115,6 +123,81 @@ function formatType(typeValue) {
   return String(typeValue);
 }
 
+// ___ 4. UPDATE CARD CONTENT WITH CHANGE EFFECT ___________
+
+async function updateHeroCard(item) {
+  if (!item) return;
+
+  const thisChangeId = ++cardChangeId;
+  const coverUrl = getCoverUrlFromId(item.id);
+
+  // Start loading image before changing the card
+  const imageReady = preloadImage(coverUrl);
+
+  // Fade/blur old card content out
+  if (cardEffect) {
+    cardEffect.classList.add('is-changing');
+    cardEffect.classList.remove('is-revealing');
+  }
+
+  await wait(350);
+
+  // Wait for image, but not forever
+  await Promise.race([
+    imageReady,
+    wait(1200)
+  ]);
+
+  // Stop if another card change started
+  if (thisChangeId !== cardChangeId) return;
+
+  // Change type
+  if (cardType) {
+    cardType.textContent = formatType(item.type);
+  }
+
+  // Change title
+  if (cardTitleEl) {
+    cardTitleEl.textContent = item.title || '';
+  }
+
+  // Change author/creator
+  if (cardAuthor) {
+    cardAuthor.textContent = item.creator ? `by ${item.creator}` : '';
+  }
+
+  // Change score
+  if (cardScore) {
+    cardScore.textContent = item.heroScore ?? '';
+  }
+
+  // Change cover image
+  if (cardCoverImg) {
+    if (coverUrl) {
+      cardCoverImg.src = coverUrl;
+      cardCoverImg.alt = item.title ? `${item.title} cover` : 'Manga cover';
+    } else {
+      cardCoverImg.removeAttribute('src');
+      cardCoverImg.alt = '';
+    }
+  }
+
+  // Reveal new card content
+  requestAnimationFrame(() => {
+    if (cardEffect) {
+      cardEffect.classList.remove('is-changing');
+      cardEffect.classList.add('is-revealing');
+    }
+  });
+
+  setTimeout(() => {
+    if (cardEffect) {
+      cardEffect.classList.remove('is-revealing');
+    }
+  }, 650);
+}
+
+
 // ___ 5. LOAD FEATURED MANGA FROM SUPABASE ________________
 
 async function loadFeaturedManga() {
@@ -155,3 +238,20 @@ async function loadFeaturedManga() {
 }
 
 loadFeaturedManga();
+
+async function testDatabaseValuesOnly() {
+  const { data, error } = await supabaseClient
+    .from('manga')
+    .select('*')
+    .limit(5);
+
+  console.log('DATABASE ERROR:', error);
+  console.log('DATABASE DATA:', data);
+
+  if (data && data.length > 0) {
+    console.log('FIRST ROW:', data[0]);
+    console.log('COLUMN NAMES:', Object.keys(data[0]));
+  }
+}
+
+testDatabaseValuesOnly();
