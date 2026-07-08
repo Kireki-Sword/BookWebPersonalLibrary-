@@ -1,8 +1,6 @@
 // changeCardSection1.js
 
 (() => {
-  // ___ 0. SUPABASE SETUP ___________________________________
-
   const SUPABASE_URL = 'https://hsruxfpslxguhwnccwuj.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_Z2upBCdemNtdB4j5jry65A_XD_u8BsD';
 
@@ -13,7 +11,6 @@
   const FEATURED_ROTATE_MS = 6000;
 
   let supabaseClient = null;
-
   let featuredManga = [];
   let currentFeaturedIndex = 0;
   let featuredTimer = null;
@@ -21,13 +18,11 @@
 
   function startCardDatabaseScript() {
     if (!window.supabase) {
-      console.error('Supabase library is not loaded. Put the Supabase CDN before changeCardSection1.js');
+      console.error('Supabase library is not loaded.');
       return;
     }
 
     supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-    // ___ 1. CARD ELEMENTS ___________________________________
 
     const cardEffect = document.querySelector('.card-effect');
     const cardCoverImg = document.querySelector('.card-cover-img');
@@ -37,19 +32,19 @@
     const cardAuthor = document.getElementById('card-author');
     const cardScore = document.getElementById('card-score');
 
+    console.log('SECTION 1 CARD ELEMENTS:', {
+      cardEffect,
+      cardCoverImg,
+      cardType,
+      cardTitleEl,
+      cardAuthor,
+      cardScore
+    });
+
     if (!cardEffect || !cardCoverImg || !cardType || !cardTitleEl || !cardAuthor || !cardScore) {
-      console.error('One or more hero card HTML elements are missing:', {
-        cardEffect,
-        cardCoverImg,
-        cardType,
-        cardTitleEl,
-        cardAuthor,
-        cardScore
-      });
+      console.error('Missing one or more Section 1 card elements.');
       return;
     }
-
-    // ___ 2. HELPERS ___________________________________
 
     function wait(ms) {
       return new Promise((resolve) => setTimeout(resolve, ms));
@@ -58,14 +53,14 @@
     function preloadImage(url) {
       return new Promise((resolve) => {
         if (!url) {
-          resolve();
+          resolve(false);
           return;
         }
 
         const img = new Image();
 
-        img.onload = () => resolve();
-        img.onerror = () => resolve();
+        img.onload = () => resolve(true);
+        img.onerror = () => resolve(false);
 
         img.src = url;
       });
@@ -102,30 +97,23 @@
       return item.creator ?? item.author ?? item.writer ?? '';
     }
 
-    // ___ 3. UPDATE HERO CARD WITH EFFECT ______________________
-
     async function updateHeroCard(item) {
       if (!item) return;
 
       const thisChangeId = ++cardChangeId;
       const coverUrl = getCoverUrlFromId(item.id);
 
-      const imageReady = preloadImage(coverUrl);
+      console.log('UPDATING SECTION 1 CARD:', item);
+      console.log('COVER URL:', coverUrl);
 
-      // Fade old content out
       cardEffect.classList.add('is-changing');
       cardEffect.classList.remove('is-revealing');
 
       await wait(420);
 
-      await Promise.race([
-        imageReady,
-        wait(1200)
-      ]);
-
       if (thisChangeId !== cardChangeId) return;
 
-      // Update text
+      // IMPORTANT: update text first
       cardType.textContent = formatType(item.type);
       cardTitleEl.textContent = item.title || '';
 
@@ -134,7 +122,7 @@
 
       cardScore.textContent = getScoreValue(item);
 
-      // Update cover
+      // Then update cover
       if (coverUrl) {
         cardCoverImg.src = coverUrl;
         cardCoverImg.alt = item.title ? `${item.title} cover` : 'Story cover';
@@ -143,7 +131,13 @@
         cardCoverImg.alt = '';
       }
 
-      // Reveal new content
+      // Do not let image loading block the text
+      preloadImage(coverUrl).then((loaded) => {
+        if (!loaded) {
+          console.warn('Cover failed to load:', coverUrl);
+        }
+      });
+
       requestAnimationFrame(() => {
         cardEffect.classList.remove('is-changing');
         cardEffect.classList.add('is-revealing');
@@ -154,16 +148,14 @@
       }, 650);
     }
 
-    // ___ 4. LOAD FEATURED MANGA FROM SUPABASE _________________
-
     async function loadFeaturedManga() {
       const { data, error } = await supabaseClient
         .from(TABLE_NAME)
         .select('*')
         .eq('featured', true);
 
-      console.log('Featured manga data:', data);
-      console.log('Featured manga error:', error);
+      console.log('SECTION 1 FEATURED DATA:', data);
+      console.log('SECTION 1 FEATURED ERROR:', error);
 
       if (error) {
         console.error('Could not load featured manga:', error.message);
@@ -182,7 +174,6 @@
       });
 
       currentFeaturedIndex = 0;
-
       updateHeroCard(featuredManga[currentFeaturedIndex]);
 
       if (featuredTimer) {
