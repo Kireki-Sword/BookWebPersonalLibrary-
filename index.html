@@ -253,8 +253,8 @@
                 <span class="section-label">Your first step</span>
 
                 <h2 id="section-3-title">
-                    Find it. Save
-                    <span>it. Keep going.</span>
+                    Find it. Save it.
+                    <span>Keep going.</span>
                 </h2>
 
                 <p>
@@ -281,8 +281,11 @@
 
                 <div class="flow-search-body">
 
-                    <!-- Search -->
-                    <form class="flow-search-form" action="search.html" method="get">
+                    <!-- Search.
+                        Important:
+                        No action="search.html" here.
+                        This form stays on the homepage and JS renders results inside this card. -->
+                    <form class="flow-search-form" data-flow-search-form novalidate>
                         <label for="home-flow-search">
                             Search your next story
                         </label>
@@ -294,15 +297,24 @@
                                 type="search"
                                 placeholder="Search a book, manga, anime, film, or show"
                                 autocomplete="off"
+                                data-flow-search-input
                             >
 
-                            <button type="submit" aria-label="Search">
+                            <button type="button" aria-label="Search" data-flow-search-button>
                                 <i class="ti ti-search"></i>
                             </button>
                         </div>
                     </form>
 
-                    <!-- Empty State Before Search -->
+                    <!-- Search Suggestions -->
+                    <div
+                        class="flow-suggestions"
+                        data-flow-suggestions
+                        aria-label="Search suggestions"
+                        hidden
+                    ></div>
+
+                    <!-- Empty State / Helper Text -->
                     <div class="flow-search-empty" data-flow-search-empty>
                         <p>Type a title to find it and add it to your library.</p>
                     </div>
@@ -312,7 +324,7 @@
                         <template id="flow-result-template">
                             <article class="flow-result-card" data-flow-result-card>
                                 <div class="flow-result-cover">
-                                    <img src="./images/vagabond-cover.jpg" alt="Vagabond cover">
+                                    <img src="./images/vagabond-cover.jpg" alt="Story cover">
                                 </div>
 
                                 <div class="flow-result-info">
@@ -363,7 +375,7 @@
                     <!-- Saved Message -->
                     <div class="flow-saved-message" data-flow-saved-message role="status" aria-live="polite" hidden>
                         <i class="ti ti-check" aria-hidden="true"></i>
-                        <span>Vagabond saved to Reading.</span>
+                        <span>Saved to Reading.</span>
                     </div>
 
                 </div>
@@ -387,6 +399,7 @@
 
                 <div class="flow-library-body">
 
+                    <!-- Format Filters -->
                     <div class="flow-library-filters" aria-label="Filter by format">
                         <button type="button" class="flow-filter active" data-format-filter="all" aria-pressed="true">
                             All
@@ -401,6 +414,7 @@
                         </button>
                     </div>
 
+                    <!-- Status Filters -->
                     <div class="flow-library-status-filters" aria-label="Filter by status">
                         <button type="button" class="flow-status-filter active" data-status-filter="all" aria-pressed="true">
                             All
@@ -427,6 +441,7 @@
                         </button>
                     </div>
 
+                    <!-- Hidden Header For Future Full Library Table -->
                     <div class="flow-library-list-header" aria-hidden="true">
                         <span class="flow-header-story">Story</span>
                         <span class="flow-header-format">Format</span>
@@ -434,19 +449,22 @@
                         <span class="flow-header-rating">Score</span>
                     </div>
 
+                    <!-- Empty State -->
                     <div class="flow-library-empty" data-library-empty>
                         <p>
                             Search and add something above. Your saved stories will appear here.
                         </p>
                     </div>
 
+                    <!-- Library Rows Render Here -->
                     <div class="flow-library-list" data-library-list aria-live="polite"></div>
 
+                    <!-- Library Row Template -->
                     <template id="flow-library-row-template">
                         <article class="flow-library-row" data-library-row data-format="manga" data-status="in-progress">
 
                             <div class="flow-library-row-cover">
-                                <img data-library-cover src="./images/vagabond-cover.jpg" alt="Vagabond cover">
+                                <img data-library-cover src="./images/vagabond-cover.jpg" alt="Story cover">
                             </div>
 
                             <div class="flow-library-row-info">
