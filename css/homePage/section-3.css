@@ -1,206 +1,112 @@
 /* =========================================================
-   SECTION 3 — LIBRARY FLOW DEMO
-   Clean old hero feeling + compact library preview
+   SECTION 3 — SEARCH DEMO
+   Find it. Save it. Keep going.
 
-   Layout:
-   - Text open on the left, like the old version
-   - Search card on the right
-   - Library preview below both
-   - Desktop fits inside one viewport under the navbar
+   Color direction:
+   - Midnight navy background
+   - Violet / blue search glow
+   - Cyan saved-success glow
    ========================================================= */
 
 
 /* =========================================================
-   SECTION BACKGROUND
+   MAIN SECTION BACKGROUND
    ========================================================= */
 
-.section-library-flow {
-  height: calc(100svh - 64px);
-  min-height: 620px;
-  max-height: 780px;
-
-  padding:
-    clamp(1.1rem, 2.8vh, 2rem)
-    max(2rem, calc((100vw - 1180px) / 2 + 2rem))
-    clamp(1rem, 2.4vh, 1.6rem);
-
+.section-search-demo {
+  min-height: 100vh;
+  padding: 8rem 8%;
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(360px, 1.1fr);
+  align-items: center;
+  gap: 5rem;
   position: relative;
   overflow: hidden;
   isolation: isolate;
 
   background:
-    radial-gradient(circle at 82% 18%, rgba(124, 140, 255, 0.24), transparent 34%),
-    radial-gradient(circle at 15% 30%, rgba(155, 124, 255, 0.15), transparent 36%),
-    radial-gradient(circle at 78% 78%, rgba(116, 215, 255, 0.09), transparent 34%),
-    radial-gradient(circle at 24% 92%, rgba(210, 140, 255, 0.10), transparent 38%),
+    radial-gradient(circle at 82% 24%, rgba(124, 140, 255, 0.24), transparent 34%),
+    radial-gradient(circle at 16% 28%, rgba(155, 124, 255, 0.16), transparent 36%),
+    radial-gradient(circle at 74% 78%, rgba(116, 215, 255, 0.09), transparent 34%),
+    radial-gradient(circle at 28% 88%, rgba(210, 140, 255, 0.10), transparent 38%),
     linear-gradient(135deg, #050611 0%, #080D1F 38%, #0B1024 68%, #050611 100%) !important;
 }
 
-.section-library-flow::before {
+/* Big violet search glow */
+.section-search-demo::before {
   content: "";
   position: absolute;
-  right: -16%;
-  top: -22%;
-  width: 760px;
-  height: 760px;
+  right: -18%;
+  top: 4%;
+  width: 720px;
+  height: 720px;
   border-radius: 50%;
-  pointer-events: none;
-  z-index: -2;
 
   background:
     radial-gradient(
       circle,
-      rgba(124, 140, 255, 0.28) 0%,
-      rgba(155, 124, 255, 0.14) 34%,
-      rgba(124, 140, 255, 0.05) 58%,
-      transparent 74%
+      rgba(124, 140, 255, 0.30) 0%,
+      rgba(155, 124, 255, 0.16) 34%,
+      rgba(124, 140, 255, 0.05) 56%,
+      transparent 72%
     );
 
-  filter: blur(14px);
+  filter: blur(10px);
+  pointer-events: none;
+  z-index: -2;
 }
 
-.section-library-flow::after {
+/* Lower pink/cyan glow */
+.section-search-demo::after {
   content: "";
   position: absolute;
   left: -18%;
-  bottom: -36%;
+  bottom: -28%;
   width: 620px;
   height: 620px;
   border-radius: 50%;
-  pointer-events: none;
-  z-index: -2;
 
   background:
     radial-gradient(
       circle,
-      rgba(210, 140, 255, 0.15) 0%,
-      rgba(116, 215, 255, 0.075) 42%,
-      transparent 74%
+      rgba(210, 140, 255, 0.18) 0%,
+      rgba(116, 215, 255, 0.08) 42%,
+      transparent 72%
     );
 
-  filter: blur(18px);
+  filter: blur(14px);
+  pointer-events: none;
+  z-index: -2;
 }
 
 
 /* =========================================================
-   MAIN GRID
+   LEFT COPY
    ========================================================= */
 
-.flow-grid {
-  width: min(100%, 1180px);
-  height: 100%;
-  margin-inline: auto;
-
-  display: grid;
-  grid-template-columns: minmax(390px, 0.92fr) minmax(500px, 1.08fr);
-  grid-template-rows: minmax(330px, 1fr) 166px;
-  grid-template-areas:
-    "copy search"
-    "library library";
-
-  column-gap: clamp(2.5rem, 5vw, 4.5rem);
-  row-gap: 1rem;
-
+.section-3-copy {
   position: relative;
   z-index: 2;
+  max-width: 570px;
 }
 
-
-/* =========================================================
-   SHARED CARD STYLE
-   Used by search + library.
-   Copy card is intentionally made transparent later.
-   ========================================================= */
-
-.flow-card {
-  position: relative;
-  overflow: hidden;
-  border-radius: 28px;
-
-  background:
-    radial-gradient(circle at 14% 8%, rgba(255, 255, 255, 0.09), transparent 26%),
-    radial-gradient(circle at 92% 10%, rgba(124, 140, 255, 0.17), transparent 34%),
-    radial-gradient(circle at 78% 86%, rgba(116, 215, 255, 0.06), transparent 38%),
-    linear-gradient(135deg, rgba(14, 19, 36, 0.95), rgba(9, 14, 29, 0.95) 52%, rgba(18, 15, 35, 0.94));
-
-  border: 1px solid rgba(184, 192, 255, 0.22);
-
-  box-shadow:
-    0 30px 76px rgba(0, 0, 0, 0.42),
-    0 14px 34px rgba(0, 0, 0, 0.30),
-    0 0 0 1px rgba(184, 192, 255, 0.08),
-    0 0 66px rgba(124, 140, 255, 0.10);
-
-  isolation: isolate;
-}
-
-.flow-card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-
-  background:
-    linear-gradient(
-      120deg,
-      rgba(255, 255, 255, 0.07),
-      transparent 24%,
-      transparent 72%,
-      rgba(255, 255, 255, 0.03)
-    );
-
-  pointer-events: none;
-  z-index: -1;
-}
-
-
-/* =========================================================
-   TOP LEFT — COPY
-   Restores the cleaner old version: no card border around text.
-   ========================================================= */
-
-.flow-copy-card {
-  grid-area: copy;
-
-  min-height: 0;
-  padding: 0;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-}
-
-/* Remove card look from text area */
-.flow-copy-card.flow-card {
-  background: transparent;
-  border: 0;
-  box-shadow: none;
-  border-radius: 0;
-  overflow: visible;
-}
-
-.flow-copy-card.flow-card::before {
-  display: none;
-}
-
-.flow-copy-card .section-label {
+.section-search-demo .section-label {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-
-  margin-bottom: 0.82rem;
+  margin-bottom: 1rem;
 
   color: var(--warm-brown-light);
-  font-size: 0.73rem;
-  font-weight: 850;
+  font-size: 0.78rem;
+  font-weight: 800;
   letter-spacing: 0.15em;
   text-transform: uppercase;
 }
 
-.flow-copy-card .section-label::before {
+.section-search-demo .section-label::before {
   content: "";
-  width: 7px;
-  height: 7px;
+  width: 8px;
+  height: 8px;
   border-radius: 999px;
 
   background: #74D7FF;
@@ -210,143 +116,181 @@
     0 0 36px rgba(124, 140, 255, 0.28);
 }
 
-.flow-copy-card h2 {
+.section-3-copy h2 {
   font-family: var(--font-display);
-  font-size: clamp(3rem, 5.15vw, 4.75rem);
+  font-size: clamp(3.1rem, 6vw, 5.9rem);
   font-weight: 700;
-  line-height: 0.9;
+  line-height: 0.92;
   letter-spacing: -0.065em;
   color: var(--ink);
 
-  max-width: 590px;
-  margin-bottom: 1.15rem;
+  margin-bottom: 1.45rem;
 
   text-shadow:
-    0 18px 55px rgba(0, 0, 0, 0.50),
+    0 18px 55px rgba(0, 0, 0, 0.48),
     0 0 42px rgba(124, 140, 255, 0.13);
 }
 
-.flow-copy-card h2 span {
-  display: block;
-  color: #E7ECFF;
-}
-
-.flow-copy-card p {
+.section-3-copy p {
   color: var(--ink-light);
-  font-size: 0.98rem;
-  line-height: 1.72;
-  max-width: 520px;
-  margin-bottom: 1.35rem;
+  font-size: 1.05rem;
+  line-height: 1.85;
+  max-width: 500px;
+  margin-bottom: 2rem;
 }
 
-.flow-cta {
-  min-height: 48px;
-  padding: 0 1.45rem;
+.section-3-cta {
+  min-height: 54px;
+  padding: 0 1.75rem;
   border-radius: 999px;
   text-decoration: none;
-
   display: inline-flex;
   align-items: center;
   justify-content: center;
 }
 
-.flow-cta::after {
+.section-3-cta::after {
   content: "→";
   margin-left: 0.65rem;
   transition: transform var(--transition);
 }
 
-.flow-cta:hover::after {
+.section-3-cta:hover::after {
   transform: translateX(4px);
 }
 
 
 /* =========================================================
-   TOP RIGHT — SEARCH CARD
+   RIGHT DEMO WRAPPER
    ========================================================= */
 
-.flow-search-card {
-  grid-area: search;
-  min-height: 0;
-  height: 100%;
+.section-3-demo {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: flex-end;
 }
 
-.flow-card-header {
-  min-height: 58px;
-  padding: 0.82rem 1.15rem;
-
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-
-  border-bottom: 1px solid rgba(184, 192, 255, 0.15);
+/* Decorative cyan glow behind demo */
+.section-3-demo::before {
+  content: "";
+  position: absolute;
+  right: -8%;
+  top: 10%;
+  width: 420px;
+  height: 420px;
+  border-radius: 50%;
 
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.065), rgba(255, 255, 255, 0.022));
+    radial-gradient(circle, rgba(116, 215, 255, 0.12), transparent 68%);
+
+  filter: blur(18px);
+  pointer-events: none;
+  z-index: -1;
 }
 
-.flow-eyebrow {
-  display: block;
-  color: var(--warm-brown-light);
-  font-size: 0.62rem;
-  font-weight: 850;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  margin-bottom: 0.2rem;
+
+/* =========================================================
+   DEMO WINDOW
+   ========================================================= */
+
+.demo-window {
+  width: min(100%, 640px);
+  border-radius: 30px;
+  overflow: hidden;
+  position: relative;
+
+  background:
+    radial-gradient(circle at 14% 8%, rgba(255, 255, 255, 0.10), transparent 26%),
+    radial-gradient(circle at 92% 10%, rgba(124, 140, 255, 0.20), transparent 34%),
+    radial-gradient(circle at 78% 86%, rgba(116, 215, 255, 0.08), transparent 38%),
+    linear-gradient(135deg, rgba(14, 19, 36, 0.98), rgba(9, 14, 29, 0.98) 52%, rgba(18, 15, 35, 0.97));
+
+  border: 1px solid rgba(184, 192, 255, 0.28);
+
+  box-shadow:
+    0 46px 120px rgba(0, 0, 0, 0.58),
+    0 20px 52px rgba(0, 0, 0, 0.42),
+    0 0 0 1px rgba(184, 192, 255, 0.10),
+    0 0 90px rgba(124, 140, 255, 0.18),
+    0 0 120px rgba(116, 215, 255, 0.06);
 }
 
-.flow-card-header h3,
-.flow-library-header h3 {
-  color: var(--ink);
-  font-family: var(--font-display);
-  font-size: 1.42rem;
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: -0.035em;
-  margin: 0;
+/* Inner glass shine */
+.demo-window::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  background:
+    linear-gradient(
+      120deg,
+      rgba(255, 255, 255, 0.09),
+      transparent 24%,
+      transparent 72%,
+      rgba(255, 255, 255, 0.04)
+    );
+
+  pointer-events: none;
 }
 
-.flow-window-controls {
+
+/* =========================================================
+   WINDOW HEADER
+   ========================================================= */
+
+.demo-window-header {
+  height: 52px;
   display: flex;
   align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
+  gap: 9px;
+  padding: 0 1.25rem;
+
+  border-bottom: 1px solid rgba(184, 192, 255, 0.16);
+
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.025));
 }
 
-.flow-window-controls span {
-  width: 10px;
-  height: 10px;
+.demo-window-header span {
+  width: 11px;
+  height: 11px;
   border-radius: 999px;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
 }
 
-.flow-window-controls span:nth-child(1) {
+.demo-window-header span:nth-child(1) {
   background: #D28CFF;
-  box-shadow: 0 0 14px rgba(210, 140, 255, 0.48);
+  box-shadow: 0 0 16px rgba(210, 140, 255, 0.48);
 }
 
-.flow-window-controls span:nth-child(2) {
+.demo-window-header span:nth-child(2) {
   background: #7C8CFF;
-  box-shadow: 0 0 14px rgba(124, 140, 255, 0.46);
+  box-shadow: 0 0 16px rgba(124, 140, 255, 0.46);
 }
 
-.flow-window-controls span:nth-child(3) {
+.demo-window-header span:nth-child(3) {
   background: #74D7FF;
-  box-shadow: 0 0 14px rgba(116, 215, 255, 0.44);
+  box-shadow: 0 0 16px rgba(116, 215, 255, 0.44);
 }
 
-.flow-search-body {
-  padding: 1rem 1.1rem 1.1rem;
+
+/* =========================================================
+   WINDOW BODY
+   ========================================================= */
+
+.demo-window-body {
+  position: relative;
+  padding: 1.65rem;
 }
 
-.flow-search-form label,
-.flow-status-picker legend {
+.demo-search-form label,
+.demo-status-picker legend {
   display: block;
   color: var(--ink-mid);
-  font-size: 0.8rem;
+  font-size: 0.86rem;
   font-weight: 750;
-  margin-bottom: 0.52rem;
+  margin-bottom: 0.65rem;
 }
 
 
@@ -354,13 +298,13 @@
    SEARCH BAR
    ========================================================= */
 
-.flow-search-bar {
-  min-height: 54px;
+.demo-search-bar {
+  min-height: 60px;
   display: flex;
   align-items: center;
   overflow: hidden;
 
-  border-radius: 17px;
+  border-radius: 19px;
 
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.04));
@@ -369,29 +313,29 @@
 
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.06),
-    0 14px 28px rgba(0, 0, 0, 0.26),
-    0 0 24px rgba(124, 140, 255, 0.08);
+    0 16px 34px rgba(0, 0, 0, 0.28),
+    0 0 28px rgba(124, 140, 255, 0.08);
 
   transition:
     border-color var(--transition),
     box-shadow var(--transition);
 }
 
-.flow-search-bar:focus-within {
+.demo-search-bar:focus-within {
   border-color: rgba(116, 215, 255, 0.48);
 
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.08),
-    0 16px 34px rgba(0, 0, 0, 0.30),
+    0 18px 38px rgba(0, 0, 0, 0.32),
     0 0 0 4px rgba(116, 215, 255, 0.12),
-    0 0 34px rgba(124, 140, 255, 0.16);
+    0 0 38px rgba(124, 140, 255, 0.16);
 }
 
-.flow-search-bar input {
+.demo-search-bar input {
   flex: 1;
   width: 100%;
-  height: 54px;
-  padding: 0 0.95rem;
+  height: 60px;
+  padding: 0 1rem;
 
   background: transparent;
   border: 0;
@@ -399,18 +343,18 @@
 
   color: var(--ink);
   font-family: var(--font-body);
-  font-size: 0.92rem;
+  font-size: 0.96rem;
   font-weight: 500;
 }
 
-.flow-search-bar input::placeholder {
+.demo-search-bar input::placeholder {
   color: var(--ink-faint);
 }
 
-.flow-search-bar button {
-  width: 56px;
-  height: 54px;
-  flex: 0 0 56px;
+.demo-search-bar button {
+  width: 60px;
+  height: 60px;
+  flex: 0 0 60px;
 
   border: 0;
   border-left: 1px solid rgba(184, 192, 255, 0.13);
@@ -421,7 +365,7 @@
 
   color: var(--ink);
   cursor: pointer;
-  font-size: 1.15rem;
+  font-size: 1.2rem;
 
   transition:
     background var(--transition),
@@ -429,64 +373,63 @@
     box-shadow var(--transition);
 }
 
-.flow-search-bar button:hover {
+.demo-search-bar button:hover {
   background:
     radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.28), transparent 30%),
     linear-gradient(145deg, rgba(210, 140, 255, 0.48), rgba(109, 139, 255, 0.38));
 
   box-shadow:
-    0 0 26px rgba(124, 140, 255, 0.20);
+    0 0 28px rgba(124, 140, 255, 0.20);
 }
 
-.flow-search-bar button:active {
+.demo-search-bar button:active {
   transform: scale(0.96);
 }
 
 
 /* =========================================================
-   SEARCH EMPTY STATE
+   EMPTY STATE
    ========================================================= */
 
-.flow-search-empty {
-  margin-top: 0.78rem;
+.demo-empty-state {
+  margin-top: 1rem;
   color: var(--ink-faint);
-  font-size: 0.82rem;
-  line-height: 1.55;
+  font-size: 0.88rem;
+  line-height: 1.6;
 }
 
-.flow-search-empty p {
+.demo-empty-state p {
   margin: 0;
 }
 
-.section-library-flow.has-result .flow-search-empty,
-.section-library-flow.is-saved .flow-search-empty,
-.flow-search-card.has-result .flow-search-empty,
-.flow-search-card.is-saved .flow-search-empty {
+.demo-window-body.has-result .demo-empty-state,
+.demo-window-body.is-saved .demo-empty-state {
   display: none;
 }
 
 
 /* =========================================================
    RESULT CARD
+   This appears only after JS clones the <template>.
    ========================================================= */
 
-.flow-result-area {
-  margin-top: 0.95rem;
+.demo-result-area {
+  margin-top: 1.2rem;
   min-height: 0;
 }
 
-.flow-result-area:empty {
+.demo-result-area:empty {
   display: none;
 }
 
-.flow-result-card {
+.demo-result-card {
   display: grid;
-  grid-template-columns: 70px minmax(0, 1fr) auto;
+  grid-template-columns: 82px minmax(0, 1fr) auto;
   align-items: center;
-  gap: 0.85rem;
+  gap: 1rem;
 
-  padding: 0.78rem;
-  border-radius: 20px;
+  padding: 0.9rem;
+  border-radius: 23px;
 
   background:
     radial-gradient(circle at 8% 10%, rgba(255, 255, 255, 0.08), transparent 28%),
@@ -497,20 +440,20 @@
       rgba(116, 215, 255, 0.055)
     );
 
-  border: 1px solid rgba(184, 192, 255, 0.20);
+  border: 1px solid rgba(184, 192, 255, 0.22);
 
   box-shadow:
-    0 16px 34px rgba(0, 0, 0, 0.30),
-    0 0 28px rgba(124, 140, 255, 0.09),
+    0 20px 42px rgba(0, 0, 0, 0.34),
+    0 0 34px rgba(124, 140, 255, 0.10),
     inset 0 1px 0 rgba(255, 255, 255, 0.055);
 
-  animation: flowResultIn 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation: section3ResultIn 0.65s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
-.flow-result-cover {
-  width: 70px;
+.demo-result-cover {
+  width: 82px;
   aspect-ratio: 2 / 3;
-  border-radius: 13px;
+  border-radius: 15px;
   overflow: hidden;
 
   background:
@@ -518,52 +461,52 @@
     linear-gradient(145deg, rgba(124, 140, 255, 0.38), rgba(210, 140, 255, 0.24));
 
   box-shadow:
-    0 14px 26px rgba(0, 0, 0, 0.36),
-    0 0 24px rgba(124, 140, 255, 0.12),
+    0 16px 32px rgba(0, 0, 0, 0.40),
+    0 0 28px rgba(124, 140, 255, 0.14),
     0 0 0 1px rgba(255, 255, 255, 0.10) inset;
 }
 
-.flow-result-cover img {
+.demo-result-cover img {
   width: 100%;
   height: 100%;
   display: block;
   object-fit: cover;
 }
 
-.flow-result-info {
+.demo-result-info {
   min-width: 0;
 }
 
-.flow-result-info h4 {
+.demo-result-info h3 {
   font-family: var(--font-display);
   color: var(--ink);
-  font-size: 1.32rem;
+  font-size: 1.55rem;
   font-weight: 700;
   line-height: 1;
   letter-spacing: -0.035em;
-  margin-bottom: 0.32rem;
+  margin-bottom: 0.4rem;
 }
 
-.flow-result-creator {
+.demo-result-creator {
   color: var(--ink-light);
-  font-size: 0.82rem;
-  margin-bottom: 0.38rem;
+  font-size: 0.9rem;
+  margin-bottom: 0.45rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.flow-result-type {
+.demo-result-type {
   display: inline-flex;
   width: fit-content;
   align-items: center;
   justify-content: center;
 
-  padding: 0.22rem 0.6rem;
+  padding: 0.25rem 0.68rem;
   border-radius: 999px;
 
   color: var(--warm-brown-light);
-  font-size: 0.64rem;
+  font-size: 0.7rem;
   font-weight: 850;
   letter-spacing: 0.09em;
   text-transform: uppercase;
@@ -571,7 +514,7 @@
   background:
     linear-gradient(180deg, rgba(124, 140, 255, 0.16), rgba(155, 124, 255, 0.10));
 
-  border: 1px solid rgba(184, 192, 255, 0.20);
+  border: 1px solid rgba(184, 192, 255, 0.22);
 }
 
 
@@ -579,10 +522,10 @@
    ADD BUTTON
    ========================================================= */
 
-.flow-add-button {
-  min-width: 72px;
-  min-height: 40px;
-  padding: 0 0.95rem;
+.demo-add-button {
+  min-width: 76px;
+  min-height: 42px;
+  padding: 0 1rem;
 
   border-radius: 999px;
   border: 1px solid rgba(184, 192, 255, 0.34);
@@ -593,14 +536,14 @@
 
   color: #FFFFFF;
   font-family: var(--font-body);
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   font-weight: 850;
 
   cursor: pointer;
 
   box-shadow:
-    0 14px 28px rgba(0, 0, 0, 0.34),
-    0 0 24px rgba(124, 140, 255, 0.22),
+    0 16px 32px rgba(0, 0, 0, 0.38),
+    0 0 28px rgba(124, 140, 255, 0.24),
     inset 0 1px 0 rgba(255, 255, 255, 0.14);
 
   transition:
@@ -610,7 +553,7 @@
     background var(--transition);
 }
 
-.flow-add-button:hover {
+.demo-add-button:hover {
   transform: translateY(-1px);
   border-color: rgba(184, 192, 255, 0.52);
 
@@ -619,16 +562,16 @@
     linear-gradient(145deg, #D28CFF 0%, #9B7CFF 48%, #6D8BFF 100%);
 
   box-shadow:
-    0 18px 34px rgba(0, 0, 0, 0.42),
-    0 0 34px rgba(155, 124, 255, 0.30),
+    0 20px 40px rgba(0, 0, 0, 0.46),
+    0 0 38px rgba(155, 124, 255, 0.32),
     inset 0 1px 0 rgba(255, 255, 255, 0.16);
 }
 
-.flow-add-button:active {
+.demo-add-button:active {
   transform: translateY(0) scale(0.97);
 }
 
-.flow-add-button.is-added {
+.demo-add-button.is-added {
   pointer-events: none;
   color: rgba(255, 255, 255, 0.78);
 
@@ -636,7 +579,7 @@
     linear-gradient(145deg, rgba(116, 215, 255, 0.28), rgba(124, 140, 255, 0.22));
 }
 
-.flow-add-button.is-added::before {
+.demo-add-button.is-added::before {
   content: "✓ ";
 }
 
@@ -645,8 +588,8 @@
    STATUS PICKER
    ========================================================= */
 
-.flow-status-picker {
-  margin-top: 0.95rem;
+.demo-status-picker {
+  margin-top: 1.35rem;
   padding: 0;
   border: 0;
 
@@ -660,46 +603,45 @@
     transform var(--transition);
 }
 
-.flow-status-picker.is-active,
-.section-library-flow.has-result .flow-status-picker,
-.flow-search-card.has-result .flow-status-picker {
+.demo-status-picker.is-active,
+.demo-window-body.has-result .demo-status-picker {
   opacity: 1;
   filter: saturate(1);
   pointer-events: auto;
 }
 
-.flow-status-picker:disabled {
+.demo-status-picker:disabled {
   opacity: 0.42;
 }
 
-.flow-status-options {
+.demo-status-options {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.48rem;
+  gap: 0.65rem;
 }
 
-.flow-status-options label {
+.demo-status-options label {
   cursor: pointer;
   position: relative;
 }
 
-.flow-status-options input {
+.demo-status-options input {
   position: absolute;
   opacity: 0;
   pointer-events: none;
 }
 
-.flow-status-options span {
-  min-height: 36px;
+.demo-status-options span {
+  min-height: 40px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
 
-  padding: 0 0.78rem;
+  padding: 0 0.95rem;
   border-radius: 999px;
 
   color: var(--ink-mid);
-  font-size: 0.76rem;
+  font-size: 0.82rem;
   font-weight: 750;
 
   background:
@@ -718,13 +660,13 @@
     box-shadow var(--transition);
 }
 
-.flow-status-options input:focus-visible + span {
+.demo-status-options input:focus-visible + span {
   outline: 3px solid rgba(116, 215, 255, 0.28);
   outline-offset: 3px;
 }
 
-.flow-status-options span:hover,
-.flow-status-options input:checked + span {
+.demo-status-options span:hover,
+.demo-status-options input:checked + span {
   color: #FFFFFF;
   border-color: rgba(116, 215, 255, 0.42);
 
@@ -738,17 +680,17 @@
     );
 
   box-shadow:
-    0 10px 22px rgba(0, 0, 0, 0.28),
-    0 0 22px rgba(116, 215, 255, 0.16),
-    0 0 30px rgba(124, 140, 255, 0.10),
+    0 12px 26px rgba(0, 0, 0, 0.30),
+    0 0 24px rgba(116, 215, 255, 0.18),
+    0 0 34px rgba(124, 140, 255, 0.12),
     inset 0 1px 0 rgba(255, 255, 255, 0.09);
 
   transform: translateY(-1px);
 }
 
-.flow-status-options input:checked + span::before {
+.demo-status-options input:checked + span::before {
   content: "✓";
-  margin-right: 0.38rem;
+  margin-right: 0.45rem;
   color: #74D7FF;
   text-shadow: 0 0 12px rgba(116, 215, 255, 0.50);
 }
@@ -758,22 +700,22 @@
    SAVED MESSAGE
    ========================================================= */
 
-.flow-saved-message {
-  margin-top: 0.85rem;
+.demo-saved-message {
+  margin-top: 1.2rem;
 
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.55rem;
 
   width: fit-content;
   max-width: 100%;
 
   color: #F5F7FF;
-  font-size: 0.82rem;
+  font-size: 0.9rem;
   font-weight: 800;
-  line-height: 1.35;
+  line-height: 1.4;
 
-  padding: 0.64rem 0.82rem;
+  padding: 0.78rem 1rem;
   border-radius: 999px;
 
   background:
@@ -783,402 +725,21 @@
   border: 1px solid rgba(116, 215, 255, 0.30);
 
   box-shadow:
-    0 12px 24px rgba(0, 0, 0, 0.24),
-    0 0 24px rgba(116, 215, 255, 0.12),
+    0 14px 30px rgba(0, 0, 0, 0.28),
+    0 0 30px rgba(116, 215, 255, 0.14),
     inset 0 1px 0 rgba(255, 255, 255, 0.07);
 
-  animation: flowSavedIn 0.45s ease both;
+  animation: section3SavedIn 0.5s ease both;
 }
 
-.flow-saved-message[hidden] {
+.demo-saved-message[hidden] {
   display: none;
 }
 
-.flow-saved-message i {
+.demo-saved-message i {
   color: #74D7FF;
-  font-size: 0.95rem;
+  font-size: 1rem;
   text-shadow: 0 0 14px rgba(116, 215, 255, 0.55);
-}
-
-
-/* =========================================================
-   BOTTOM — COMPACT LIBRARY CARD
-   This is a preview strip, not a full second section.
-   ========================================================= */
-
-.flow-library-card {
-  grid-area: library;
-  min-height: 0;
-  height: 166px;
-}
-
-.flow-library-header {
-  height: 48px;
-  padding: 0.62rem 0.95rem;
-
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-
-  border-bottom: 1px solid rgba(184, 192, 255, 0.14);
-
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.065), rgba(255, 255, 255, 0.022));
-}
-
-.flow-library-count {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  min-height: 32px;
-  padding: 0 0.8rem;
-  border-radius: 999px;
-
-  color: var(--ink);
-  font-size: 0.76rem;
-  font-weight: 850;
-
-  background:
-    radial-gradient(circle at 22% 18%, rgba(255, 255, 255, 0.12), transparent 30%),
-    linear-gradient(135deg, rgba(116, 215, 255, 0.14), rgba(124, 140, 255, 0.10));
-
-  border: 1px solid rgba(116, 215, 255, 0.24);
-}
-
-.flow-library-count [data-library-count] {
-  color: #74D7FF;
-  margin-right: 0.22rem;
-}
-
-.flow-library-body {
-  height: calc(100% - 48px);
-  padding: 0.65rem 0.9rem 0.75rem;
-
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(220px, 320px);
-  grid-template-rows: 30px 30px minmax(0, 1fr);
-  grid-template-areas:
-    "format notice"
-    "status notice"
-    "list   list";
-
-  align-items: center;
-  gap: 0.42rem 0.85rem;
-}
-
-
-/* =========================================================
-   LIBRARY FILTERS
-   ========================================================= */
-
-.flow-library-filters,
-.flow-library-status-filters {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.42rem;
-  min-width: 0;
-}
-
-.flow-library-filters {
-  grid-area: format;
-}
-
-.flow-library-status-filters {
-  grid-area: status;
-}
-
-.flow-filter,
-.flow-status-filter {
-  min-height: 28px;
-  padding: 0 0.62rem;
-
-  border: 1px solid rgba(184, 192, 255, 0.16);
-  border-radius: 999px;
-
-  color: var(--ink-mid);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.035));
-
-  font-family: var(--font-body);
-  font-size: 0.68rem;
-  font-weight: 750;
-
-  cursor: pointer;
-
-  transition:
-    background var(--transition),
-    color var(--transition),
-    border-color var(--transition),
-    transform var(--transition),
-    box-shadow var(--transition);
-}
-
-.flow-filter:hover,
-.flow-status-filter:hover,
-.flow-filter.active,
-.flow-status-filter.active {
-  color: #FFFFFF;
-  border-color: rgba(116, 215, 255, 0.38);
-
-  background:
-    radial-gradient(circle at 28% 16%, rgba(255, 255, 255, 0.14), transparent 30%),
-    linear-gradient(145deg, rgba(116, 215, 255, 0.18), rgba(124, 140, 255, 0.22), rgba(155, 124, 255, 0.16));
-
-  box-shadow:
-    0 8px 18px rgba(0, 0, 0, 0.24),
-    0 0 18px rgba(124, 140, 255, 0.11),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
-
-  transform: translateY(-1px);
-}
-
-.flow-filter:focus-visible,
-.flow-status-filter:focus-visible {
-  outline: 3px solid rgba(116, 215, 255, 0.28);
-  outline-offset: 3px;
-}
-
-.flow-library-list-header {
-  display: none;
-}
-
-
-/* =========================================================
-   LIBRARY EMPTY STATE
-   ========================================================= */
-
-.flow-library-empty {
-  grid-area: list;
-
-  min-height: 34px;
-  padding: 0.5rem 0.7rem;
-
-  display: flex;
-  align-items: center;
-
-  color: var(--ink-faint);
-  font-size: 0.76rem;
-  line-height: 1.35;
-
-  border: 1px dashed rgba(184, 192, 255, 0.18);
-  border-radius: 14px;
-
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.02));
-}
-
-.flow-library-empty p {
-  margin: 0;
-}
-
-.section-library-flow.has-library-item .flow-library-empty,
-.flow-library-card.has-library-item .flow-library-empty {
-  display: none;
-}
-
-
-/* =========================================================
-   LIBRARY ROW
-   ========================================================= */
-
-.flow-library-list {
-  grid-area: list;
-
-  display: grid;
-  gap: 0.55rem;
-  min-height: 0;
-}
-
-.flow-library-row {
-  display: grid;
-  grid-template-columns: minmax(250px, 1.4fr) 0.48fr 0.65fr 0.25fr;
-  grid-template-areas:
-    "story format status rating";
-
-  align-items: center;
-  gap: 0.85rem;
-
-  min-height: 50px;
-  padding: 0.5rem 0.65rem;
-
-  border-radius: 16px;
-
-  background:
-    radial-gradient(circle at 8% 10%, rgba(255, 255, 255, 0.075), transparent 28%),
-    linear-gradient(
-      135deg,
-      rgba(124, 140, 255, 0.11),
-      rgba(255, 255, 255, 0.035) 48%,
-      rgba(116, 215, 255, 0.052)
-    );
-
-  border: 1px solid rgba(184, 192, 255, 0.20);
-
-  box-shadow:
-    0 12px 24px rgba(0, 0, 0, 0.22),
-    0 0 24px rgba(124, 140, 255, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.05);
-
-  animation: flowRowIn 0.5s ease both;
-}
-
-.flow-library-row-cover {
-  grid-area: story;
-
-  width: 38px;
-  aspect-ratio: 2 / 3;
-  border-radius: 8px;
-  overflow: hidden;
-
-  background:
-    linear-gradient(145deg, rgba(124, 140, 255, 0.38), rgba(210, 140, 255, 0.24));
-
-  box-shadow:
-    0 8px 16px rgba(0, 0, 0, 0.28),
-    0 0 0 1px rgba(255, 255, 255, 0.08) inset;
-}
-
-.flow-library-row-cover img {
-  width: 100%;
-  height: 100%;
-  display: block;
-  object-fit: cover;
-}
-
-.flow-library-row-info {
-  grid-area: story;
-  min-width: 0;
-  padding-left: 50px;
-}
-
-.flow-library-row-info h4 {
-  margin: 0 0 0.16rem;
-
-  color: var(--ink);
-  font-family: var(--font-display);
-  font-size: 1.02rem;
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: -0.035em;
-
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.flow-library-row-info p {
-  margin: 0;
-
-  color: var(--ink-light);
-  font-size: 0.7rem;
-  line-height: 1.2;
-
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.flow-library-row-format {
-  grid-area: format;
-}
-
-.flow-library-row-status {
-  grid-area: status;
-}
-
-.flow-library-row-rating {
-  grid-area: rating;
-  justify-self: end;
-}
-
-.flow-library-row-format span,
-.flow-library-row-rating span {
-  min-height: 28px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  padding: 0 0.58rem;
-  border-radius: 999px;
-
-  color: var(--warm-brown-light);
-  font-size: 0.62rem;
-  font-weight: 850;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-
-  background:
-    linear-gradient(180deg, rgba(124, 140, 255, 0.16), rgba(155, 124, 255, 0.10));
-
-  border: 1px solid rgba(184, 192, 255, 0.20);
-}
-
-.flow-library-row-status select {
-  min-height: 30px;
-  width: 100%;
-  max-width: 140px;
-
-  padding: 0 1.8rem 0 0.65rem;
-
-  color: var(--ink);
-  font-family: var(--font-body);
-  font-size: 0.68rem;
-  font-weight: 750;
-
-  border-radius: 999px;
-  border: 1px solid rgba(116, 215, 255, 0.26);
-
-  background:
-    linear-gradient(180deg, rgba(116, 215, 255, 0.12), rgba(124, 140, 255, 0.08));
-
-  outline: none;
-  cursor: pointer;
-}
-
-.flow-library-row-status select:focus-visible {
-  outline: 3px solid rgba(116, 215, 255, 0.28);
-  outline-offset: 3px;
-}
-
-
-/* =========================================================
-   SAVE NOTICE
-   ========================================================= */
-
-.flow-library-save-notice {
-  grid-area: notice;
-  align-self: center;
-  justify-self: end;
-
-  margin: 0;
-
-  display: inline-flex;
-  align-items: center;
-  gap: 0.42rem;
-
-  width: fit-content;
-  max-width: 320px;
-
-  color: var(--ink-light);
-  font-size: 0.7rem;
-  font-weight: 700;
-  line-height: 1.28;
-
-  padding: 0.48rem 0.65rem;
-  border-radius: 999px;
-
-  background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.03));
-
-  border: 1px solid rgba(184, 192, 255, 0.14);
-}
-
-.flow-library-save-notice i {
-  color: #74D7FF;
-  text-shadow: 0 0 12px rgba(116, 215, 255, 0.44);
 }
 
 
@@ -1186,10 +747,10 @@
    ANIMATIONS
    ========================================================= */
 
-@keyframes flowResultIn {
+@keyframes section3ResultIn {
   from {
     opacity: 0;
-    transform: translateY(12px) scale(0.985);
+    transform: translateY(14px) scale(0.985);
   }
 
   to {
@@ -1198,120 +759,15 @@
   }
 }
 
-@keyframes flowSavedIn {
+@keyframes section3SavedIn {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(9px);
   }
 
   to {
     opacity: 1;
     transform: translateY(0);
-  }
-}
-
-@keyframes flowRowIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px) scale(0.988);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-
-/* =========================================================
-   COMPACT DESKTOP HEIGHT
-   For shorter laptop screens.
-   ========================================================= */
-
-@media (min-width: 981px) and (max-height: 720px) {
-  .section-library-flow {
-    min-height: calc(100svh - 64px);
-    padding-block: 0.8rem;
-  }
-
-  .flow-grid {
-    grid-template-rows: minmax(300px, 1fr) 150px;
-    row-gap: 0.75rem;
-  }
-
-  .flow-copy-card h2 {
-    font-size: clamp(2.75rem, 4.7vw, 4.05rem);
-    margin-bottom: 0.88rem;
-  }
-
-  .flow-copy-card p {
-    font-size: 0.9rem;
-    line-height: 1.62;
-    margin-bottom: 1rem;
-  }
-
-  .flow-cta {
-    min-height: 44px;
-  }
-
-  .flow-card-header {
-    min-height: 52px;
-  }
-
-  .flow-search-body {
-    padding: 0.82rem 1rem;
-  }
-
-  .flow-search-bar,
-  .flow-search-bar input,
-  .flow-search-bar button {
-    height: 48px;
-    min-height: 48px;
-  }
-
-  .flow-search-empty {
-    margin-top: 0.58rem;
-  }
-
-  .flow-status-picker {
-    margin-top: 0.72rem;
-  }
-
-  .flow-status-options span {
-    min-height: 30px;
-    font-size: 0.68rem;
-  }
-
-  .flow-library-card {
-    height: 150px;
-  }
-
-  .flow-library-header {
-    height: 44px;
-  }
-
-  .flow-library-body {
-    height: calc(100% - 44px);
-    grid-template-rows: 26px 26px minmax(0, 1fr);
-    padding: 0.55rem 0.8rem 0.65rem;
-    gap: 0.34rem 0.75rem;
-  }
-
-  .flow-filter,
-  .flow-status-filter {
-    min-height: 26px;
-    font-size: 0.62rem;
-  }
-
-  .flow-library-empty {
-    min-height: 30px;
-    padding: 0.42rem 0.62rem;
-    font-size: 0.7rem;
-  }
-
-  .flow-library-save-notice {
-    padding: 0.42rem 0.6rem;
-    font-size: 0.66rem;
   }
 }
 
@@ -1321,251 +777,134 @@
    ========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
-  .flow-result-card,
-  .flow-saved-message,
-  .flow-library-row {
+  .demo-result-card,
+  .demo-saved-message {
     animation: none;
   }
 
-  .flow-cta::after,
-  .flow-add-button,
-  .flow-search-bar,
-  .flow-search-bar button,
-  .flow-status-options span,
-  .flow-filter,
-  .flow-status-filter {
+  .section-3-cta::after,
+  .demo-add-button,
+  .demo-search-bar,
+  .demo-search-bar button,
+  .demo-status-options span {
     transition: none;
-  }
-
-  .flow-filter:hover,
-  .flow-status-filter:hover,
-  .flow-status-options span:hover,
-  .flow-status-options input:checked + span,
-  .flow-add-button:hover {
-    transform: none;
   }
 }
 
 
 /* =========================================================
    RESPONSIVE
-   Below desktop, allow normal scrolling.
    ========================================================= */
 
-@media (max-width: 980px) {
-  .section-library-flow {
-    height: auto;
-    min-height: 100vh;
-    max-height: none;
-
-    padding: 6rem 6% 5rem;
-    overflow: visible;
-  }
-
-  .flow-grid {
-    height: auto;
-
+@media (max-width: 1080px) {
+  .section-search-demo {
     grid-template-columns: 1fr;
-    grid-template-rows: auto;
-    grid-template-areas:
-      "copy"
-      "search"
-      "library";
-
-    gap: 1rem;
+    gap: 3.5rem;
+    padding: 7rem 6%;
   }
 
-  .flow-copy-card {
-    padding: 0;
+  .section-3-copy {
+    max-width: 720px;
   }
 
-  .flow-copy-card p {
-    max-width: 680px;
+  .section-3-copy p {
+    max-width: 620px;
   }
 
-  .flow-search-card {
-    min-height: auto;
+  .section-3-demo {
+    justify-content: flex-start;
   }
 
-  .flow-library-card {
-    height: auto;
-  }
-
-  .flow-library-body {
-    height: auto;
-    grid-template-columns: 1fr;
-    grid-template-rows: auto;
-    grid-template-areas:
-      "format"
-      "status"
-      "list"
-      "notice";
-  }
-
-  .flow-library-save-notice {
-    justify-self: start;
+  .demo-window {
+    width: min(100%, 680px);
   }
 }
 
 @media (max-width: 680px) {
-  .section-library-flow {
-    padding: 5.5rem 1rem 4.5rem;
+  .section-search-demo {
+    padding: 5.5rem 1rem;
   }
 
-  .flow-card {
-    border-radius: 24px;
-  }
-
-  .flow-copy-card h2 {
-    font-size: clamp(2.75rem, 13vw, 4.05rem);
+  .section-3-copy h2 {
+    font-size: clamp(3rem, 15vw, 4.2rem);
     letter-spacing: -0.055em;
   }
 
-  .flow-copy-card p {
-    font-size: 0.96rem;
+  .section-3-copy p {
+    font-size: 0.98rem;
   }
 
-  .flow-card-header,
-  .flow-library-header {
-    align-items: flex-start;
+  .demo-window {
+    border-radius: 24px;
   }
 
-  .flow-library-header {
-    height: auto;
-    flex-direction: column;
-  }
-
-  .flow-search-body,
-  .flow-library-body {
+  .demo-window-body {
     padding: 1rem;
   }
 
-  .flow-result-card {
-    grid-template-columns: 64px minmax(0, 1fr);
-    gap: 0.78rem;
-    padding: 0.82rem;
+  .demo-result-card {
+    grid-template-columns: 68px minmax(0, 1fr);
+    gap: 0.85rem;
+    padding: 0.85rem;
   }
 
-  .flow-result-cover {
-    width: 64px;
-    border-radius: 12px;
+  .demo-result-cover {
+    width: 68px;
+    border-radius: 13px;
   }
 
-  .flow-result-info h4 {
-    font-size: 1.25rem;
+  .demo-result-info h3 {
+    font-size: 1.35rem;
   }
 
-  .flow-add-button {
+  .demo-add-button {
     grid-column: 1 / -1;
     width: 100%;
   }
 
-  .flow-status-options,
-  .flow-library-filters,
-  .flow-library-status-filters {
-    gap: 0.46rem;
+  .demo-status-options {
+    gap: 0.5rem;
   }
 
-  .flow-status-options span,
-  .flow-filter,
-  .flow-status-filter {
+  .demo-status-options span {
     min-height: 38px;
     padding: 0 0.78rem;
-    font-size: 0.76rem;
+    font-size: 0.78rem;
   }
 
-  .flow-saved-message,
-  .flow-library-save-notice {
+  .demo-saved-message {
     width: 100%;
     justify-content: center;
     border-radius: 18px;
   }
-
-  .flow-library-list-header {
-    display: none;
-  }
-
-  .flow-library-row {
-    grid-template-columns: 54px minmax(0, 1fr);
-    grid-template-areas:
-      "cover info"
-      "format status"
-      "rating rating";
-
-    align-items: center;
-    gap: 0.75rem;
-
-    min-height: auto;
-    padding: 0.85rem;
-  }
-
-  .flow-library-row-cover {
-    grid-area: cover;
-    width: 54px;
-    border-radius: 11px;
-  }
-
-  .flow-library-row-info {
-    grid-area: info;
-    padding-left: 0;
-  }
-
-  .flow-library-row-info h4 {
-    font-size: 1.25rem;
-  }
-
-  .flow-library-row-format {
-    grid-area: format;
-  }
-
-  .flow-library-row-status {
-    grid-area: status;
-  }
-
-  .flow-library-row-status select {
-    max-width: none;
-  }
-
-  .flow-library-row-rating {
-    grid-area: rating;
-    justify-self: start;
-  }
 }
 
 @media (max-width: 420px) {
-  .section-library-flow {
+  .section-search-demo {
     padding-inline: 0.85rem;
   }
 
-  .flow-window-controls {
-    display: none;
+  .demo-window-header {
+    height: 48px;
   }
 
-  .flow-search-bar,
-  .flow-search-bar input,
-  .flow-search-bar button {
-    min-height: 54px;
-    height: 54px;
+  .demo-search-bar,
+  .demo-search-bar input,
+  .demo-search-bar button {
+    min-height: 56px;
+    height: 56px;
   }
 
-  .flow-search-bar button {
-    width: 54px;
-    flex-basis: 54px;
+  .demo-search-bar button {
+    width: 56px;
+    flex-basis: 56px;
   }
 
-  .flow-result-card {
-    grid-template-columns: 58px minmax(0, 1fr);
+  .demo-result-card {
+    grid-template-columns: 60px minmax(0, 1fr);
   }
 
-  .flow-result-cover {
-    width: 58px;
-  }
-
-  .flow-library-row {
-    grid-template-columns: 50px minmax(0, 1fr);
-  }
-
-  .flow-library-row-cover {
-    width: 50px;
+  .demo-result-cover {
+    width: 60px;
   }
 }
