@@ -1,0 +1,910 @@
+/* =========================================================
+   SECTION 3 — SEARCH DEMO
+   Find it. Save it. Keep going.
+
+   Color direction:
+   - Midnight navy background
+   - Violet / blue search glow
+   - Cyan saved-success glow
+   ========================================================= */
+
+
+/* =========================================================
+   MAIN SECTION BACKGROUND
+   ========================================================= */
+
+.section-search-demo {
+  min-height: 100vh;
+  padding: 8rem 8%;
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(360px, 1.1fr);
+  align-items: center;
+  gap: 5rem;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+
+  background:
+    radial-gradient(circle at 82% 24%, rgba(124, 140, 255, 0.24), transparent 34%),
+    radial-gradient(circle at 16% 28%, rgba(155, 124, 255, 0.16), transparent 36%),
+    radial-gradient(circle at 74% 78%, rgba(116, 215, 255, 0.09), transparent 34%),
+    radial-gradient(circle at 28% 88%, rgba(210, 140, 255, 0.10), transparent 38%),
+    linear-gradient(135deg, #050611 0%, #080D1F 38%, #0B1024 68%, #050611 100%) !important;
+}
+
+/* Big violet search glow */
+.section-search-demo::before {
+  content: "";
+  position: absolute;
+  right: -18%;
+  top: 4%;
+  width: 720px;
+  height: 720px;
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(124, 140, 255, 0.30) 0%,
+      rgba(155, 124, 255, 0.16) 34%,
+      rgba(124, 140, 255, 0.05) 56%,
+      transparent 72%
+    );
+
+  filter: blur(10px);
+  pointer-events: none;
+  z-index: -2;
+}
+
+/* Lower pink/cyan glow */
+.section-search-demo::after {
+  content: "";
+  position: absolute;
+  left: -18%;
+  bottom: -28%;
+  width: 620px;
+  height: 620px;
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(210, 140, 255, 0.18) 0%,
+      rgba(116, 215, 255, 0.08) 42%,
+      transparent 72%
+    );
+
+  filter: blur(14px);
+  pointer-events: none;
+  z-index: -2;
+}
+
+
+/* =========================================================
+   LEFT COPY
+   ========================================================= */
+
+.section-3-copy {
+  position: relative;
+  z-index: 2;
+  max-width: 570px;
+}
+
+.section-search-demo .section-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+
+  color: var(--warm-brown-light);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.section-search-demo .section-label::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+
+  background: #74D7FF;
+
+  box-shadow:
+    0 0 18px rgba(116, 215, 255, 0.65),
+    0 0 36px rgba(124, 140, 255, 0.28);
+}
+
+.section-3-copy h2 {
+  font-family: var(--font-display);
+  font-size: clamp(3.1rem, 6vw, 5.9rem);
+  font-weight: 700;
+  line-height: 0.92;
+  letter-spacing: -0.065em;
+  color: var(--ink);
+
+  margin-bottom: 1.45rem;
+
+  text-shadow:
+    0 18px 55px rgba(0, 0, 0, 0.48),
+    0 0 42px rgba(124, 140, 255, 0.13);
+}
+
+.section-3-copy p {
+  color: var(--ink-light);
+  font-size: 1.05rem;
+  line-height: 1.85;
+  max-width: 500px;
+  margin-bottom: 2rem;
+}
+
+.section-3-cta {
+  min-height: 54px;
+  padding: 0 1.75rem;
+  border-radius: 999px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.section-3-cta::after {
+  content: "→";
+  margin-left: 0.65rem;
+  transition: transform var(--transition);
+}
+
+.section-3-cta:hover::after {
+  transform: translateX(4px);
+}
+
+
+/* =========================================================
+   RIGHT DEMO WRAPPER
+   ========================================================= */
+
+.section-3-demo {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Decorative cyan glow behind demo */
+.section-3-demo::before {
+  content: "";
+  position: absolute;
+  right: -8%;
+  top: 10%;
+  width: 420px;
+  height: 420px;
+  border-radius: 50%;
+
+  background:
+    radial-gradient(circle, rgba(116, 215, 255, 0.12), transparent 68%);
+
+  filter: blur(18px);
+  pointer-events: none;
+  z-index: -1;
+}
+
+
+/* =========================================================
+   DEMO WINDOW
+   ========================================================= */
+
+.demo-window {
+  width: min(100%, 640px);
+  border-radius: 30px;
+  overflow: hidden;
+  position: relative;
+
+  background:
+    radial-gradient(circle at 14% 8%, rgba(255, 255, 255, 0.10), transparent 26%),
+    radial-gradient(circle at 92% 10%, rgba(124, 140, 255, 0.20), transparent 34%),
+    radial-gradient(circle at 78% 86%, rgba(116, 215, 255, 0.08), transparent 38%),
+    linear-gradient(135deg, rgba(14, 19, 36, 0.98), rgba(9, 14, 29, 0.98) 52%, rgba(18, 15, 35, 0.97));
+
+  border: 1px solid rgba(184, 192, 255, 0.28);
+
+  box-shadow:
+    0 46px 120px rgba(0, 0, 0, 0.58),
+    0 20px 52px rgba(0, 0, 0, 0.42),
+    0 0 0 1px rgba(184, 192, 255, 0.10),
+    0 0 90px rgba(124, 140, 255, 0.18),
+    0 0 120px rgba(116, 215, 255, 0.06);
+}
+
+/* Inner glass shine */
+.demo-window::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  background:
+    linear-gradient(
+      120deg,
+      rgba(255, 255, 255, 0.09),
+      transparent 24%,
+      transparent 72%,
+      rgba(255, 255, 255, 0.04)
+    );
+
+  pointer-events: none;
+}
+
+
+/* =========================================================
+   WINDOW HEADER
+   ========================================================= */
+
+.demo-window-header {
+  height: 52px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0 1.25rem;
+
+  border-bottom: 1px solid rgba(184, 192, 255, 0.16);
+
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.025));
+}
+
+.demo-window-header span {
+  width: 11px;
+  height: 11px;
+  border-radius: 999px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.demo-window-header span:nth-child(1) {
+  background: #D28CFF;
+  box-shadow: 0 0 16px rgba(210, 140, 255, 0.48);
+}
+
+.demo-window-header span:nth-child(2) {
+  background: #7C8CFF;
+  box-shadow: 0 0 16px rgba(124, 140, 255, 0.46);
+}
+
+.demo-window-header span:nth-child(3) {
+  background: #74D7FF;
+  box-shadow: 0 0 16px rgba(116, 215, 255, 0.44);
+}
+
+
+/* =========================================================
+   WINDOW BODY
+   ========================================================= */
+
+.demo-window-body {
+  position: relative;
+  padding: 1.65rem;
+}
+
+.demo-search-form label,
+.demo-status-picker legend {
+  display: block;
+  color: var(--ink-mid);
+  font-size: 0.86rem;
+  font-weight: 750;
+  margin-bottom: 0.65rem;
+}
+
+
+/* =========================================================
+   SEARCH BAR
+   ========================================================= */
+
+.demo-search-bar {
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+
+  border-radius: 19px;
+
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.04));
+
+  border: 1px solid rgba(184, 192, 255, 0.22);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 16px 34px rgba(0, 0, 0, 0.28),
+    0 0 28px rgba(124, 140, 255, 0.08);
+
+  transition:
+    border-color var(--transition),
+    box-shadow var(--transition);
+}
+
+.demo-search-bar:focus-within {
+  border-color: rgba(116, 215, 255, 0.48);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 18px 38px rgba(0, 0, 0, 0.32),
+    0 0 0 4px rgba(116, 215, 255, 0.12),
+    0 0 38px rgba(124, 140, 255, 0.16);
+}
+
+.demo-search-bar input {
+  flex: 1;
+  width: 100%;
+  height: 60px;
+  padding: 0 1rem;
+
+  background: transparent;
+  border: 0;
+  outline: 0;
+
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 0.96rem;
+  font-weight: 500;
+}
+
+.demo-search-bar input::placeholder {
+  color: var(--ink-faint);
+}
+
+.demo-search-bar button {
+  width: 60px;
+  height: 60px;
+  flex: 0 0 60px;
+
+  border: 0;
+  border-left: 1px solid rgba(184, 192, 255, 0.13);
+
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.22), transparent 30%),
+    linear-gradient(145deg, rgba(155, 124, 255, 0.42), rgba(109, 139, 255, 0.32));
+
+  color: var(--ink);
+  cursor: pointer;
+  font-size: 1.2rem;
+
+  transition:
+    background var(--transition),
+    transform var(--transition),
+    box-shadow var(--transition);
+}
+
+.demo-search-bar button:hover {
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.28), transparent 30%),
+    linear-gradient(145deg, rgba(210, 140, 255, 0.48), rgba(109, 139, 255, 0.38));
+
+  box-shadow:
+    0 0 28px rgba(124, 140, 255, 0.20);
+}
+
+.demo-search-bar button:active {
+  transform: scale(0.96);
+}
+
+
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
+
+.demo-empty-state {
+  margin-top: 1rem;
+  color: var(--ink-faint);
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
+.demo-empty-state p {
+  margin: 0;
+}
+
+.demo-window-body.has-result .demo-empty-state,
+.demo-window-body.is-saved .demo-empty-state {
+  display: none;
+}
+
+
+/* =========================================================
+   RESULT CARD
+   This appears only after JS clones the <template>.
+   ========================================================= */
+
+.demo-result-area {
+  margin-top: 1.2rem;
+  min-height: 0;
+}
+
+.demo-result-area:empty {
+  display: none;
+}
+
+.demo-result-card {
+  display: grid;
+  grid-template-columns: 82px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 1rem;
+
+  padding: 0.9rem;
+  border-radius: 23px;
+
+  background:
+    radial-gradient(circle at 8% 10%, rgba(255, 255, 255, 0.08), transparent 28%),
+    linear-gradient(
+      135deg,
+      rgba(124, 140, 255, 0.13),
+      rgba(255, 255, 255, 0.035) 46%,
+      rgba(116, 215, 255, 0.055)
+    );
+
+  border: 1px solid rgba(184, 192, 255, 0.22);
+
+  box-shadow:
+    0 20px 42px rgba(0, 0, 0, 0.34),
+    0 0 34px rgba(124, 140, 255, 0.10),
+    inset 0 1px 0 rgba(255, 255, 255, 0.055);
+
+  animation: section3ResultIn 0.65s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.demo-result-cover {
+  width: 82px;
+  aspect-ratio: 2 / 3;
+  border-radius: 15px;
+  overflow: hidden;
+
+  background:
+    radial-gradient(circle at 30% 18%, rgba(255, 255, 255, 0.18), transparent 30%),
+    linear-gradient(145deg, rgba(124, 140, 255, 0.38), rgba(210, 140, 255, 0.24));
+
+  box-shadow:
+    0 16px 32px rgba(0, 0, 0, 0.40),
+    0 0 28px rgba(124, 140, 255, 0.14),
+    0 0 0 1px rgba(255, 255, 255, 0.10) inset;
+}
+
+.demo-result-cover img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.demo-result-info {
+  min-width: 0;
+}
+
+.demo-result-info h3 {
+  font-family: var(--font-display);
+  color: var(--ink);
+  font-size: 1.55rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.035em;
+  margin-bottom: 0.4rem;
+}
+
+.demo-result-creator {
+  color: var(--ink-light);
+  font-size: 0.9rem;
+  margin-bottom: 0.45rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.demo-result-type {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0.25rem 0.68rem;
+  border-radius: 999px;
+
+  color: var(--warm-brown-light);
+  font-size: 0.7rem;
+  font-weight: 850;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+
+  background:
+    linear-gradient(180deg, rgba(124, 140, 255, 0.16), rgba(155, 124, 255, 0.10));
+
+  border: 1px solid rgba(184, 192, 255, 0.22);
+}
+
+
+/* =========================================================
+   ADD BUTTON
+   ========================================================= */
+
+.demo-add-button {
+  min-width: 76px;
+  min-height: 42px;
+  padding: 0 1rem;
+
+  border-radius: 999px;
+  border: 1px solid rgba(184, 192, 255, 0.34);
+
+  background:
+    radial-gradient(circle at 30% 18%, rgba(255, 255, 255, 0.24), transparent 30%),
+    linear-gradient(145deg, #9B7CFF 0%, #6D8BFF 58%, #5B5FE8 100%);
+
+  color: #FFFFFF;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 850;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 16px 32px rgba(0, 0, 0, 0.38),
+    0 0 28px rgba(124, 140, 255, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+
+  transition:
+    transform var(--transition),
+    box-shadow var(--transition),
+    border-color var(--transition),
+    background var(--transition);
+}
+
+.demo-add-button:hover {
+  transform: translateY(-1px);
+  border-color: rgba(184, 192, 255, 0.52);
+
+  background:
+    radial-gradient(circle at 30% 18%, rgba(255, 255, 255, 0.28), transparent 30%),
+    linear-gradient(145deg, #D28CFF 0%, #9B7CFF 48%, #6D8BFF 100%);
+
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.46),
+    0 0 38px rgba(155, 124, 255, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16);
+}
+
+.demo-add-button:active {
+  transform: translateY(0) scale(0.97);
+}
+
+.demo-add-button.is-added {
+  pointer-events: none;
+  color: rgba(255, 255, 255, 0.78);
+
+  background:
+    linear-gradient(145deg, rgba(116, 215, 255, 0.28), rgba(124, 140, 255, 0.22));
+}
+
+.demo-add-button.is-added::before {
+  content: "✓ ";
+}
+
+
+/* =========================================================
+   STATUS PICKER
+   ========================================================= */
+
+.demo-status-picker {
+  margin-top: 1.35rem;
+  padding: 0;
+  border: 0;
+
+  opacity: 0.42;
+  filter: saturate(0.8);
+  pointer-events: none;
+
+  transition:
+    opacity var(--transition),
+    filter var(--transition),
+    transform var(--transition);
+}
+
+.demo-status-picker.is-active,
+.demo-window-body.has-result .demo-status-picker {
+  opacity: 1;
+  filter: saturate(1);
+  pointer-events: auto;
+}
+
+.demo-status-picker:disabled {
+  opacity: 0.42;
+}
+
+.demo-status-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.demo-status-options label {
+  cursor: pointer;
+  position: relative;
+}
+
+.demo-status-options input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.demo-status-options span {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0 0.95rem;
+  border-radius: 999px;
+
+  color: var(--ink-mid);
+  font-size: 0.82rem;
+  font-weight: 750;
+
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.035));
+
+  border: 1px solid rgba(184, 192, 255, 0.16);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.035);
+
+  transition:
+    background var(--transition),
+    color var(--transition),
+    border-color var(--transition),
+    transform var(--transition),
+    box-shadow var(--transition);
+}
+
+.demo-status-options input:focus-visible + span {
+  outline: 3px solid rgba(116, 215, 255, 0.28);
+  outline-offset: 3px;
+}
+
+.demo-status-options span:hover,
+.demo-status-options input:checked + span {
+  color: #FFFFFF;
+  border-color: rgba(116, 215, 255, 0.42);
+
+  background:
+    radial-gradient(circle at 28% 16%, rgba(255, 255, 255, 0.16), transparent 30%),
+    linear-gradient(
+      145deg,
+      rgba(116, 215, 255, 0.22),
+      rgba(124, 140, 255, 0.24),
+      rgba(155, 124, 255, 0.20)
+    );
+
+  box-shadow:
+    0 12px 26px rgba(0, 0, 0, 0.30),
+    0 0 24px rgba(116, 215, 255, 0.18),
+    0 0 34px rgba(124, 140, 255, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.09);
+
+  transform: translateY(-1px);
+}
+
+.demo-status-options input:checked + span::before {
+  content: "✓";
+  margin-right: 0.45rem;
+  color: #74D7FF;
+  text-shadow: 0 0 12px rgba(116, 215, 255, 0.50);
+}
+
+
+/* =========================================================
+   SAVED MESSAGE
+   ========================================================= */
+
+.demo-saved-message {
+  margin-top: 1.2rem;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+
+  width: fit-content;
+  max-width: 100%;
+
+  color: #F5F7FF;
+  font-size: 0.9rem;
+  font-weight: 800;
+  line-height: 1.4;
+
+  padding: 0.78rem 1rem;
+  border-radius: 999px;
+
+  background:
+    radial-gradient(circle at 12% 20%, rgba(255, 255, 255, 0.11), transparent 30%),
+    linear-gradient(135deg, rgba(116, 215, 255, 0.16), rgba(124, 140, 255, 0.10));
+
+  border: 1px solid rgba(116, 215, 255, 0.30);
+
+  box-shadow:
+    0 14px 30px rgba(0, 0, 0, 0.28),
+    0 0 30px rgba(116, 215, 255, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+
+  animation: section3SavedIn 0.5s ease both;
+}
+
+.demo-saved-message[hidden] {
+  display: none;
+}
+
+.demo-saved-message i {
+  color: #74D7FF;
+  font-size: 1rem;
+  text-shadow: 0 0 14px rgba(116, 215, 255, 0.55);
+}
+
+
+/* =========================================================
+   ANIMATIONS
+   ========================================================= */
+
+@keyframes section3ResultIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes section3SavedIn {
+  from {
+    opacity: 0;
+    transform: translateY(9px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .demo-result-card,
+  .demo-saved-message {
+    animation: none;
+  }
+
+  .section-3-cta::after,
+  .demo-add-button,
+  .demo-search-bar,
+  .demo-search-bar button,
+  .demo-status-options span {
+    transition: none;
+  }
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1080px) {
+  .section-search-demo {
+    grid-template-columns: 1fr;
+    gap: 3.5rem;
+    padding: 7rem 6%;
+  }
+
+  .section-3-copy {
+    max-width: 720px;
+  }
+
+  .section-3-copy p {
+    max-width: 620px;
+  }
+
+  .section-3-demo {
+    justify-content: flex-start;
+  }
+
+  .demo-window {
+    width: min(100%, 680px);
+  }
+}
+
+@media (max-width: 680px) {
+  .section-search-demo {
+    padding: 5.5rem 1rem;
+  }
+
+  .section-3-copy h2 {
+    font-size: clamp(3rem, 15vw, 4.2rem);
+    letter-spacing: -0.055em;
+  }
+
+  .section-3-copy p {
+    font-size: 0.98rem;
+  }
+
+  .demo-window {
+    border-radius: 24px;
+  }
+
+  .demo-window-body {
+    padding: 1rem;
+  }
+
+  .demo-result-card {
+    grid-template-columns: 68px minmax(0, 1fr);
+    gap: 0.85rem;
+    padding: 0.85rem;
+  }
+
+  .demo-result-cover {
+    width: 68px;
+    border-radius: 13px;
+  }
+
+  .demo-result-info h3 {
+    font-size: 1.35rem;
+  }
+
+  .demo-add-button {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+
+  .demo-status-options {
+    gap: 0.5rem;
+  }
+
+  .demo-status-options span {
+    min-height: 38px;
+    padding: 0 0.78rem;
+    font-size: 0.78rem;
+  }
+
+  .demo-saved-message {
+    width: 100%;
+    justify-content: center;
+    border-radius: 18px;
+  }
+}
+
+@media (max-width: 420px) {
+  .section-search-demo {
+    padding-inline: 0.85rem;
+  }
+
+  .demo-window-header {
+    height: 48px;
+  }
+
+  .demo-search-bar,
+  .demo-search-bar input,
+  .demo-search-bar button {
+    min-height: 56px;
+    height: 56px;
+  }
+
+  .demo-search-bar button {
+    width: 56px;
+    flex-basis: 56px;
+  }
+
+  .demo-result-card {
+    grid-template-columns: 60px minmax(0, 1fr);
+  }
+
+  .demo-result-cover {
+    width: 60px;
+  }
+}
