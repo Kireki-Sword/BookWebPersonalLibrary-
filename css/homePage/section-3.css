@@ -8,6 +8,7 @@
    SECTION TOKENS + LAYOUT VARIABLES
    ========================================================= */
 
+/* Main section wrapper: sets tokens, viewport height, padding, text color, and background. */
 .section-library-flow {
   --nav-height: 64px;
 
@@ -109,10 +110,12 @@
 
 .section-library-flow *,
 .section-library-flow *::before,
+/* .section-library-flow: section styling for this component/state. */
 .section-library-flow *::after {
   box-sizing: border-box;
 }
 
+/* Background glow: adds the large right-side aurora blur. */
 .section-library-flow::before {
   content: "";
   position: absolute;
@@ -138,6 +141,7 @@
   filter: blur(14px);
 }
 
+/* Background glow: adds the lower-left aurora blur. */
 .section-library-flow::after {
   content: "";
   position: absolute;
@@ -166,6 +170,7 @@
    MAIN GRID
    ========================================================= */
 
+/* Main layout grid: places copy left, search card right, and library at the bottom. */
 .flow-grid {
   position: relative;
   z-index: 2;
@@ -194,6 +199,7 @@
    SHARED CARD STYLE
    ========================================================= */
 
+/* Shared card shell: applies glass background, border, radius, shadow, and blur. */
 .flow-card {
   position: relative;
   overflow: hidden;
@@ -214,6 +220,7 @@
   -webkit-backdrop-filter: blur(18px) saturate(1.15);
 }
 
+/* Shared card shine: adds the subtle inner highlight overlay. */
 .flow-card::before {
   content: "";
   position: absolute;
@@ -236,6 +243,7 @@
    TOP LEFT — COPY
    ========================================================= */
 
+/* Left copy block: positions the headline, paragraph, and CTA. */
 .flow-copy-card {
   grid-area: copy;
 
@@ -250,6 +258,7 @@
   justify-self: start;
 }
 
+/* Small eyebrow label: styles 'Your first step'. */
 .flow-copy-card .section-label {
   display: inline-flex;
   align-items: center;
@@ -265,6 +274,7 @@
   text-transform: uppercase;
 }
 
+/* Eyebrow dot: adds the small glowing cyan dot. */
 .flow-copy-card .section-label::before {
   content: "";
   width: 6px;
@@ -279,6 +289,7 @@
     0 0 32px rgba(124, 140, 255, 0.25);
 }
 
+/* Main headline: controls size, line-height, width, and shadow. */
 .flow-copy-card h2 {
   max-width: var(--flow-title-max-width);
   margin: 0 0 var(--flow-title-margin-bottom);
@@ -295,12 +306,14 @@
     0 0 42px rgba(124, 140, 255, 0.13);
 }
 
+/* Headline second line: keeps the second line together. */
 .flow-copy-card h2 span {
   display: block;
   color: #e7ecff;
   white-space: nowrap;
 }
 
+/* Intro paragraph: controls readable width, color, and spacing. */
 .flow-copy-card p {
   max-width: var(--flow-copy-text-max-width);
   margin: 0 0 var(--flow-copy-text-margin-bottom);
@@ -310,6 +323,7 @@
   line-height: var(--flow-copy-text-line-height);
 }
 
+/* CTA button: sizes and aligns the start button. */
 .flow-cta {
   min-height: var(--flow-cta-height);
   padding: 0 1.12rem;
@@ -324,12 +338,14 @@
   font-weight: 800;
 }
 
+/* CTA arrow: adds the arrow after the button text. */
 .flow-cta::after {
   content: "→";
   margin-left: 0.56rem;
   transition: transform var(--flow-transition);
 }
 
+/* CTA hover arrow: moves the arrow slightly on hover. */
 .flow-cta:hover::after {
   transform: translateX(4px);
 }
@@ -338,6 +354,7 @@
    TOP RIGHT — SEARCH CARD
    ========================================================= */
 
+/* Right search card: controls card width, height, and position. */
 .flow-search-card {
   grid-area: search;
 
@@ -348,6 +365,7 @@
   justify-self: end;
 }
 
+/* Search card top bar: holds the three dots and separator line. */
 .flow-card-header {
   min-height: var(--flow-search-header-height);
   padding: var(--flow-search-header-padding);
@@ -359,6 +377,7 @@
   border-bottom: 1px solid rgba(184, 192, 255, 0.15);
 }
 
+/* Three-dot group: aligns the small window dots. */
 .flow-window-controls {
   display: flex;
   align-items: center;
@@ -366,6 +385,7 @@
   flex-shrink: 0;
 }
 
+/* Three-dot circles: controls dot size and base shape. */
 .flow-window-controls span {
   width: var(--flow-search-dot-size);
   height: var(--flow-search-dot-size);
@@ -374,26 +394,31 @@
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
 }
 
+/* First dot: sets the pink dot color and glow. */
 .flow-window-controls span:nth-child(1) {
   background: var(--flow-pink);
   box-shadow: 0 0 12px rgba(210, 140, 255, 0.48);
 }
 
+/* Second dot: sets the blue dot color and glow. */
 .flow-window-controls span:nth-child(2) {
   background: var(--flow-blue);
   box-shadow: 0 0 12px rgba(124, 140, 255, 0.46);
 }
 
+/* Third dot: sets the cyan dot color and glow. */
 .flow-window-controls span:nth-child(3) {
   background: var(--flow-cyan);
   box-shadow: 0 0 12px rgba(116, 215, 255, 0.44);
 }
 
+/* Search card body: controls inner spacing below the top bar. */
 .flow-search-body {
   padding: var(--flow-search-body-padding);
 }
 
 .flow-search-form label,
+/* .flow-status-picker: section styling for this component/state. */
 .flow-status-picker legend {
   display: block;
 
@@ -409,6 +434,7 @@
    SEARCH BAR
    ========================================================= */
 
+/* Search input shell: controls the full search bar container. */
 .flow-search-bar {
   min-height: var(--flow-search-bar-height);
 
@@ -432,6 +458,7 @@
     box-shadow var(--flow-transition);
 }
 
+/* Search focus state: adds the glow when input is active. */
 .flow-search-bar:focus-within {
   border-color: rgba(116, 215, 255, 0.48);
 
@@ -442,6 +469,7 @@
     0 0 28px rgba(124, 140, 255, 0.14);
 }
 
+/* Search input: controls text size, spacing, and transparent background. */
 .flow-search-bar input {
   flex: 1;
   min-width: 0;
@@ -460,10 +488,12 @@
   outline: 0;
 }
 
+/* Search placeholder: controls muted placeholder color. */
 .flow-search-bar input::placeholder {
   color: var(--flow-ink-faint);
 }
 
+/* Search button: styles the icon button on the right side. */
 .flow-search-bar button {
   width: var(--flow-search-bar-height);
   height: var(--flow-search-bar-height);
@@ -490,6 +520,7 @@
     box-shadow var(--flow-transition);
 }
 
+/* Search button hover: brightens the gradient glow. */
 .flow-search-bar button:hover {
   background:
     radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.28), transparent 30%),
@@ -498,6 +529,7 @@
   box-shadow: 0 0 22px rgba(124, 140, 255, 0.18);
 }
 
+/* Search button active: adds pressed feedback. */
 .flow-search-bar button:active {
   transform: scale(0.96);
 }
@@ -506,6 +538,7 @@
    SEARCH EMPTY / RESULT
    ========================================================= */
 
+/* Search empty text: styles helper text before a result appears. */
 .flow-search-empty {
   margin-top: 0.68rem;
 
@@ -514,6 +547,7 @@
   line-height: 1.5;
 }
 
+/* Search empty paragraph: removes default paragraph margin. */
 .flow-search-empty p {
   margin: 0;
 }
@@ -521,24 +555,29 @@
 .section-library-flow.has-result .flow-search-empty,
 .section-library-flow.is-saved .flow-search-empty,
 .flow-search-card.has-result .flow-search-empty,
+/* .flow-search-card.is-saved: section styling for this component/state. */
 .flow-search-card.is-saved .flow-search-empty {
   display: none;
 }
 
+/* Result area: reserves space only when a result is inserted. */
 .flow-result-area {
   min-height: 0;
   margin-top: 0;
 }
 
+/* Result empty state: hides the result wrapper when no card exists. */
 .flow-result-area:not(:has(> .flow-result-card)) {
   display: none;
 }
 
+/* Result visible state: adds spacing when a result card exists. */
 .flow-result-area:has(> .flow-result-card) {
   display: block;
   margin-top: 0.78rem;
 }
 
+/* Search result card: lays out cover, info, and add button. */
 .flow-result-card {
   display: grid;
   grid-template-columns: 54px minmax(0, 1fr) auto;
@@ -561,6 +600,7 @@
   animation: flowResultIn 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
+/* Result cover: sizes and frames the story cover image. */
 .flow-result-cover {
   width: 54px;
   aspect-ratio: 2 / 3;
@@ -575,6 +615,7 @@
 }
 
 .flow-result-cover img,
+/* .flow-library-row-cover: section styling for this component/state. */
 .flow-library-row-cover img {
   width: 100%;
   height: 100%;
@@ -582,10 +623,12 @@
   object-fit: cover;
 }
 
+/* Result text column: prevents text overflow issues. */
 .flow-result-info {
   min-width: 0;
 }
 
+/* Result title: styles the story title. */
 .flow-result-info h4 {
   margin: 0 0 0.2rem;
 
@@ -597,6 +640,7 @@
   letter-spacing: -0.035em;
 }
 
+/* Result creator: styles and truncates the author/creator line. */
 .flow-result-creator {
   margin: 0 0 0.25rem;
 
@@ -609,6 +653,7 @@
   text-overflow: ellipsis;
 }
 
+/* Result type pill: styles the Manga/Anime type tag. */
 .flow-result-type {
   display: inline-flex;
   align-items: center;
@@ -629,6 +674,7 @@
   background: linear-gradient(180deg, rgba(124, 140, 255, 0.16), rgba(155, 124, 255, 0.10));
 }
 
+/* Add button: styles the button inside the result card. */
 .flow-add-button {
   min-width: 58px;
   min-height: 34px;
@@ -659,6 +705,7 @@
     background var(--flow-transition);
 }
 
+/* Add button hover: gives lift and brighter gradient. */
 .flow-add-button:hover {
   transform: translateY(-1px);
   border-color: rgba(184, 192, 255, 0.48);
@@ -668,16 +715,19 @@
     linear-gradient(145deg, #d28cff 0%, #9b7cff 48%, #6d8bff 100%);
 }
 
+/* Add button active: gives pressed feedback. */
 .flow-add-button:active {
   transform: translateY(0) scale(0.97);
 }
 
+/* Added state: disables the add button after saving. */
 .flow-add-button.is-added {
   pointer-events: none;
   color: rgba(255, 255, 255, 0.78);
   background: linear-gradient(145deg, rgba(116, 215, 255, 0.28), rgba(124, 140, 255, 0.22));
 }
 
+/* Added state icon: inserts the checkmark before text. */
 .flow-add-button.is-added::before {
   content: "✓ ";
 }
@@ -686,6 +736,7 @@
    STATUS PICKER
    ========================================================= */
 
+/* Status picker: styles the status fieldset and disabled state. */
 .flow-status-picker {
   margin: 0.84rem 0 0;
   padding: 0;
@@ -702,27 +753,32 @@
 
 .flow-status-picker.is-active,
 .section-library-flow.has-result .flow-status-picker,
+/* .flow-search-card.has-result: section styling for this component/state. */
 .flow-search-card.has-result .flow-status-picker {
   opacity: 1;
   filter: saturate(1);
   pointer-events: auto;
 }
 
+/* Status disabled state: keeps disabled picker visually muted. */
 .flow-status-picker:disabled {
   opacity: 0.46;
 }
 
+/* Status chip row: wraps and spaces the status chips. */
 .flow-status-options {
   display: flex;
   flex-wrap: wrap;
   gap: 0.48rem;
 }
 
+/* Status labels: makes each chip clickable. */
 .flow-status-options label {
   position: relative;
   cursor: pointer;
 }
 
+/* Hidden status radios: hides native radio inputs. */
 .flow-status-options input {
   position: absolute;
   opacity: 0;
@@ -731,6 +787,7 @@
 
 .flow-status-options span,
 .flow-filter,
+/* .flow-status-filter: section styling for this component/state. */
 .flow-status-filter {
   min-height: var(--flow-status-chip-height);
   display: inline-flex;
@@ -763,6 +820,7 @@
 .flow-filter:hover,
 .flow-status-filter:hover,
 .flow-filter.active,
+/* .flow-status-filter.active: section styling for this component/state. */
 .flow-status-filter.active {
   color: #ffffff;
   border-color: rgba(116, 215, 255, 0.38);
@@ -785,11 +843,13 @@
 .flow-search-bar button:focus-visible,
 .flow-add-button:focus-visible,
 .flow-library-row-status select:focus-visible,
+/* .flow-cta: section styling for this component/state. */
 .flow-cta:focus-visible {
   outline: 3px solid rgba(116, 215, 255, 0.28);
   outline-offset: 3px;
 }
 
+/* Checked chip icon: adds the checkmark to selected status. */
 .flow-status-options input:checked + span::before {
   content: "✓";
   margin-right: 0.32rem;
@@ -797,6 +857,7 @@
   text-shadow: 0 0 10px rgba(116, 215, 255, 0.45);
 }
 
+/* Saved message: styles the confirmation message. */
 .flow-saved-message {
   width: fit-content;
   max-width: 100%;
@@ -827,10 +888,12 @@
   animation: flowSavedIn 0.4s ease both;
 }
 
+/* Saved hidden state: fully hides the saved message when hidden. */
 .flow-saved-message[hidden] {
   display: none;
 }
 
+/* Saved icon: colors the confirmation icon. */
 .flow-saved-message i {
   color: var(--flow-cyan);
 }
@@ -839,6 +902,7 @@
    BOTTOM — LIBRARY CARD
    ========================================================= */
 
+/* Library card: positions the bottom full-width preview card. */
 .flow-library-card {
   grid-area: library;
 
@@ -852,6 +916,7 @@
   border-radius: 20px;
 }
 
+/* Library header: lays out title and saved count. */
 .flow-library-header {
   min-height: var(--flow-library-header-height);
   padding: 0.76rem 1rem;
@@ -867,6 +932,7 @@
     linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.018));
 }
 
+/* Library eyebrow: styles small uppercase labels inside cards. */
 .flow-eyebrow {
   display: block;
   margin: 0 0 0.15rem;
@@ -879,6 +945,7 @@
   text-transform: uppercase;
 }
 
+/* Library title: styles 'My Library'. */
 .flow-library-header h3 {
   margin: 0;
 
@@ -890,6 +957,7 @@
   letter-spacing: -0.035em;
 }
 
+/* Saved count pill: styles the count badge. */
 .flow-library-count {
   min-height: 30px;
   padding: 0 0.78rem;
@@ -910,11 +978,13 @@
     linear-gradient(135deg, rgba(116, 215, 255, 0.14), rgba(124, 140, 255, 0.10));
 }
 
+/* Saved count number: highlights the numeric count. */
 .flow-library-count [data-library-count] {
   color: var(--flow-cyan);
   margin-right: 0.22rem;
 }
 
+/* Library body grid: lays out filters, notice, and list area. */
 .flow-library-body {
   height: calc(100% - var(--flow-library-header-height));
   min-height: 0;
@@ -936,6 +1006,7 @@
 }
 
 .flow-library-filters,
+/* Status filters: places the status filter row. */
 .flow-library-status-filters {
   min-width: 0;
 
@@ -945,23 +1016,28 @@
   gap: 0.46rem;
 }
 
+/* Format filters: places the format filter row. */
 .flow-library-filters {
   grid-area: format;
 }
 
+/* Status filters: places the status filter row. */
 .flow-library-status-filters {
   grid-area: status;
 }
 
 .flow-filter,
+/* .flow-status-filter: section styling for this component/state. */
 .flow-status-filter {
   cursor: pointer;
 }
 
+/* List header: hidden because this compact preview does not need columns. */
 .flow-library-list-header {
   display: none;
 }
 
+/* Library empty state: styles the dashed empty list box. */
 .flow-library-empty {
   grid-area: list;
 
@@ -982,15 +1058,18 @@
     linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.02));
 }
 
+/* Library empty paragraph: removes default paragraph spacing. */
 .flow-library-empty p {
   margin: 0;
 }
 
 .section-library-flow.has-library-item .flow-library-empty,
+/* .flow-library-card.has-library-item: section styling for this component/state. */
 .flow-library-card.has-library-item .flow-library-empty {
   display: none;
 }
 
+/* Library list: contains generated library rows and scrolls if needed. */
 .flow-library-list {
   grid-area: list;
   min-height: 0;
@@ -1003,6 +1082,7 @@
   scrollbar-color: rgba(184, 192, 255, 0.28) transparent;
 }
 
+/* Library row: lays out one saved story row. */
 .flow-library-row {
   min-height: 58px;
   padding: 0.56rem 0.72rem;
@@ -1027,6 +1107,7 @@
   animation: flowRowIn 0.45s ease both;
 }
 
+/* Library cover: sizes the small cover thumbnail. */
 .flow-library-row-cover {
   grid-area: story;
   width: 38px;
@@ -1043,12 +1124,14 @@
     0 0 0 1px rgba(255, 255, 255, 0.08) inset;
 }
 
+/* Library row text: positions title and creator beside the cover. */
 .flow-library-row-info {
   grid-area: story;
   min-width: 0;
   padding-left: 50px;
 }
 
+/* Library row title: styles and truncates the story title. */
 .flow-library-row-info h4 {
   margin: 0 0 0.1rem;
 
@@ -1064,6 +1147,7 @@
   text-overflow: ellipsis;
 }
 
+/* Library row creator: styles and truncates the creator line. */
 .flow-library-row-info p {
   margin: 0;
 
@@ -1076,20 +1160,24 @@
   text-overflow: ellipsis;
 }
 
+/* Library format cell: positions the format pill. */
 .flow-library-row-format {
   grid-area: format;
 }
 
+/* Library status cell: positions the status dropdown. */
 .flow-library-row-status {
   grid-area: status;
 }
 
+/* Library rating cell: positions the score placeholder. */
 .flow-library-row-rating {
   grid-area: rating;
   justify-self: end;
 }
 
 .flow-library-row-format span,
+/* .flow-library-row-rating: section styling for this component/state. */
 .flow-library-row-rating span {
   min-height: 24px;
   padding: 0 0.5rem;
@@ -1111,6 +1199,7 @@
     linear-gradient(180deg, rgba(124, 140, 255, 0.16), rgba(155, 124, 255, 0.10));
 }
 
+/* Status dropdown: styles the row status select. */
 .flow-library-row-status select {
   width: 100%;
   max-width: 118px;
@@ -1132,6 +1221,7 @@
   cursor: pointer;
 }
 
+/* Save notice: styles the account reminder pill. */
 .flow-library-save-notice {
   grid-area: notice;
   justify-self: end;
@@ -1158,6 +1248,7 @@
     linear-gradient(135deg, rgba(255, 255, 255, 0.052), rgba(255, 255, 255, 0.03));
 }
 
+/* Save notice icon: colors the lock icon. */
 .flow-library-save-notice i {
   color: var(--flow-cyan);
   text-shadow: 0 0 10px rgba(116, 215, 255, 0.44);
@@ -1167,36 +1258,51 @@
    ANIMATIONS
    ========================================================= */
 
+/* Animation: fades and slides in a search result. */
 @keyframes flowResultIn {
+/* Animation step: defines the from state. */
+  /* Animation start state. */
   from {
     opacity: 0;
     transform: translateY(10px) scale(0.99);
   }
 
+/* Animation step: defines the to state. */
+  /* Animation end state. */
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
   }
 }
 
+/* Animation: fades and slides in the saved confirmation. */
 @keyframes flowSavedIn {
+/* Animation step: defines the from state. */
+  /* Animation start state. */
   from {
     opacity: 0;
     transform: translateY(8px);
   }
 
+/* Animation step: defines the to state. */
+  /* Animation end state. */
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
+/* Animation: fades and slides in a library row. */
 @keyframes flowRowIn {
+/* Animation step: defines the from state. */
+  /* Animation start state. */
   from {
     opacity: 0;
     transform: translateY(8px) scale(0.99);
   }
 
+/* Animation step: defines the to state. */
+  /* Animation end state. */
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -1209,7 +1315,9 @@
    change variables instead of redefining the same element.
    ========================================================= */
 
+/* Large desktop breakpoint: gives the top and library rows more breathing room. */
 @media (min-width: 981px) and (min-height: 860px) {
+/* Main section wrapper: sets tokens, viewport height, padding, text color, and background. */
   .section-library-flow {
     --flow-grid-top-row: minmax(380px, 1fr);
     --flow-grid-library-row: clamp(240px, 29vh, 300px);
@@ -1217,7 +1325,9 @@
   }
 }
 
+/* Medium desktop breakpoint: slightly narrows layout variables. */
 @media (min-width: 981px) and (max-width: 1320px) {
+/* Main section wrapper: sets tokens, viewport height, padding, text color, and background. */
   .section-library-flow {
     --flow-grid-width: 1240px;
     --flow-grid-left-col: minmax(455px, 0.94fr);
@@ -1232,7 +1342,9 @@
   }
 }
 
+/* Short laptop breakpoint: compresses vertical sizes so the section fits. */
 @media (min-width: 981px) and (max-height: 760px) {
+/* Main section wrapper: sets tokens, viewport height, padding, text color, and background. */
   .section-library-flow {
     --flow-section-padding:
       clamp(1.05rem, 3vh, 1.8rem)
@@ -1269,7 +1381,9 @@
   }
 }
 
+/* Very short viewport breakpoint: hides notice and compresses the card further. */
 @media (min-width: 981px) and (max-height: 610px) {
+/* Main section wrapper: sets tokens, viewport height, padding, text color, and background. */
   .section-library-flow {
     --flow-grid-top-row: minmax(210px, 1fr);
     --flow-grid-library-row: 164px;
@@ -1284,10 +1398,12 @@
     --flow-search-label-size: 0.56rem;
   }
 
+/* Save notice: styles the account reminder pill. */
   .flow-library-save-notice {
     display: none;
   }
 
+/* Library body grid: lays out filters, notice, and list area. */
   .flow-library-body {
     grid-template-columns: 1fr;
     grid-template-areas:
@@ -1297,7 +1413,9 @@
   }
 }
 
+/* Narrow desktop breakpoint: adjusts grid columns and search card width. */
 @media (max-width: 1080px) and (min-width: 981px) {
+/* Main section wrapper: sets tokens, viewport height, padding, text color, and background. */
   .section-library-flow {
     --flow-grid-width: 1060px;
     --flow-grid-left-col: minmax(290px, 0.9fr);
@@ -1307,7 +1425,9 @@
   }
 }
 
+/* Tablet breakpoint: stacks copy, search, and library vertically. */
 @media (max-width: 980px) {
+/* Main section wrapper: sets tokens, viewport height, padding, text color, and background. */
   .section-library-flow {
     --flow-section-padding: 5.2rem 6% 4rem;
     --flow-title-size: clamp(3rem, 10vw, 4.5rem);
@@ -1320,6 +1440,7 @@
     overflow: visible;
   }
 
+/* Main layout grid: places copy left, search card right, and library at the bottom. */
   .flow-grid {
     height: auto;
 
@@ -1333,15 +1454,18 @@
     gap: 1rem;
   }
 
+/* Left copy block: positions the headline, paragraph, and CTA. */
   .flow-copy-card {
     max-width: 680px;
   }
 
+/* Intro paragraph: controls readable width, color, and spacing. */
   .flow-copy-card p {
     max-width: 600px;
   }
 
   .flow-search-card,
+/* Library card: positions the bottom full-width preview card. */
   .flow-library-card {
     width: 100%;
     height: auto;
@@ -1349,10 +1473,12 @@
     justify-self: stretch;
   }
 
+/* Right search card: controls card width, height, and position. */
   .flow-search-card {
     max-width: var(--flow-search-card-width);
   }
 
+/* Library body grid: lays out filters, notice, and list area. */
   .flow-library-body {
     height: auto;
 
@@ -1365,12 +1491,15 @@
       "list";
   }
 
+/* Save notice: styles the account reminder pill. */
   .flow-library-save-notice {
     justify-self: start;
   }
 }
 
+/* Mobile breakpoint: improves tap sizes and changes library rows to card layout. */
 @media (max-width: 680px) {
+/* Main section wrapper: sets tokens, viewport height, padding, text color, and background. */
   .section-library-flow {
     --flow-section-padding: 4.8rem 1rem 3.6rem;
     --flow-title-size: clamp(2.68rem, 12.8vw, 4rem);
@@ -1383,23 +1512,28 @@
   }
 
   .flow-search-card,
+/* Library card: positions the bottom full-width preview card. */
   .flow-library-card {
     border-radius: 18px;
   }
 
+/* Search card top bar: holds the three dots and separator line. */
   .flow-card-header {
     min-height: 34px;
   }
 
+/* Search result card: lays out cover, info, and add button. */
   .flow-result-card {
     grid-template-columns: 58px minmax(0, 1fr);
     gap: 0.72rem;
   }
 
+/* Result cover: sizes and frames the story cover image. */
   .flow-result-cover {
     width: 58px;
   }
 
+/* Add button: styles the button inside the result card. */
   .flow-add-button {
     grid-column: 1 / -1;
     width: 100%;
@@ -1408,22 +1542,26 @@
 
   .flow-status-options,
   .flow-library-filters,
+/* Status filters: places the status filter row. */
   .flow-library-status-filters {
     gap: 0.42rem;
   }
 
+/* Library header: lays out title and saved count. */
   .flow-library-header {
     align-items: flex-start;
     flex-direction: column;
   }
 
   .flow-saved-message,
+/* Save notice: styles the account reminder pill. */
   .flow-library-save-notice {
     width: 100%;
     justify-content: center;
     border-radius: 14px;
   }
 
+/* Library row: lays out one saved story row. */
   .flow-library-row {
     grid-template-columns: 50px minmax(0, 1fr);
     grid-template-areas:
@@ -1435,64 +1573,78 @@
     padding: 0.78rem;
   }
 
+/* Library cover: sizes the small cover thumbnail. */
   .flow-library-row-cover {
     grid-area: cover;
     width: 50px;
     border-radius: 10px;
   }
 
+/* Library row text: positions title and creator beside the cover. */
   .flow-library-row-info {
     grid-area: info;
     padding-left: 0;
   }
 
+/* Library row title: styles and truncates the story title. */
   .flow-library-row-info h4 {
     font-size: 1.16rem;
   }
 
+/* Library row creator: styles and truncates the creator line. */
   .flow-library-row-info p {
     font-size: 0.74rem;
   }
 
+/* Library format cell: positions the format pill. */
   .flow-library-row-format {
     grid-area: format;
   }
 
+/* Library status cell: positions the status dropdown. */
   .flow-library-row-status {
     grid-area: status;
   }
 
+/* Status dropdown: styles the row status select. */
   .flow-library-row-status select {
     max-width: none;
     min-height: 34px;
     font-size: 0.72rem;
   }
 
+/* Library rating cell: positions the score placeholder. */
   .flow-library-row-rating {
     grid-area: rating;
     justify-self: start;
   }
 }
 
+/* Small mobile breakpoint: tightens spacing and thumbnail sizes. */
 @media (max-width: 420px) {
+/* Main section wrapper: sets tokens, viewport height, padding, text color, and background. */
   .section-library-flow {
     --flow-section-padding: 4.8rem 0.85rem 3.6rem;
     --flow-title-size: clamp(2.42rem, 14vw, 3.35rem);
     --flow-search-dot-size: 6px;
   }
 
+/* Search result card: lays out cover, info, and add button. */
   .flow-result-card {
     grid-template-columns: 54px minmax(0, 1fr);
   }
 
+/* Result cover: sizes and frames the story cover image. */
   .flow-result-cover {
     width: 54px;
   }
 
+/* Library row: lays out one saved story row. */
   .flow-library-row {
     grid-template-columns: 46px minmax(0, 1fr);
   }
 
+/* Library cover: sizes the small cover thumbnail. */
   .flow-library-row-cover {
     width: 46px;
   }
@@ -1502,9 +1654,11 @@
    REDUCED MOTION
    ========================================================= */
 
+/* Reduced motion: removes animations and movement for users who request it. */
 @media (prefers-reduced-motion: reduce) {
   .flow-result-card,
   .flow-saved-message,
+/* Library row: lays out one saved story row. */
   .flow-library-row {
     animation: none;
   }
@@ -1515,6 +1669,7 @@
   .flow-search-bar button,
   .flow-status-options span,
   .flow-filter,
+/* .flow-status-filter: section styling for this component/state. */
   .flow-status-filter {
     transition: none;
   }
@@ -1523,6 +1678,7 @@
   .flow-status-filter:hover,
   .flow-status-options span:hover,
   .flow-status-options input:checked + span,
+/* Add button hover: gives lift and brighter gradient. */
   .flow-add-button:hover {
     transform: none;
   }
