@@ -1,171 +1,167 @@
 /* =========================================================
-   SECTION 3 — LIBRARY FLOW DEMO
-   Find it. Save it. Watch your library build.
-
-   Desktop layout:
-   - Text open on the left
-   - Search card on the right
-   - Library preview across the bottom
-   - Section fills the viewport under the navbar
+   SECTION 3 — LIBRARY FLOW DEMO / POLISHED REVISION
+   Drop-in replacement for your current Section 3 CSS.
+   Keeps your existing HTML class names and data attributes.
    ========================================================= */
 
-
 /* =========================================================
-   SECTION BACKGROUND
+   SECTION TOKENS
    ========================================================= */
 
 .section-library-flow {
   --nav-height: 64px;
 
+  /* Local fallbacks so the section still looks right even if
+     some global variables are missing. */
+  --flow-font-body: var(--font-body, Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+  --flow-font-display: var(--font-display, Georgia, "Times New Roman", serif);
+
+  --flow-bg-0: #050713;
+  --flow-bg-1: #080c1d;
+  --flow-bg-2: #101634;
+
+  --flow-surface-0: rgba(13, 18, 35, 0.88);
+  --flow-surface-1: rgba(22, 27, 49, 0.78);
+  --flow-surface-2: rgba(31, 38, 68, 0.72);
+  --flow-surface-3: rgba(50, 58, 96, 0.58);
+
+  --flow-line-soft: rgba(193, 203, 255, 0.13);
+  --flow-line: rgba(193, 203, 255, 0.22);
+  --flow-line-strong: rgba(193, 203, 255, 0.36);
+
+  --flow-text: var(--ink, #f6f7ff);
+  --flow-text-soft: var(--ink-light, #c9d2ef);
+  --flow-text-muted: var(--ink-mid, #9da8c9);
+  --flow-text-faint: #7f8bad;
+
+  --flow-accent: #7c8cff;
+  --flow-accent-2: #74d7ff;
+  --flow-accent-3: #d28cff;
+  --flow-accent-soft: rgba(124, 140, 255, 0.18);
+  --flow-accent-cyan-soft: rgba(116, 215, 255, 0.14);
+
+  --flow-radius-xl: 28px;
+  --flow-radius-lg: 22px;
+  --flow-radius-md: 16px;
+  --flow-radius-pill: 999px;
+
+  --flow-shadow-card: 0 26px 70px rgba(0, 0, 0, 0.38), 0 8px 24px rgba(0, 0, 0, 0.26);
+  --flow-shadow-soft: 0 14px 34px rgba(0, 0, 0, 0.28);
+  --flow-shadow-focus: 0 0 0 4px rgba(116, 215, 255, 0.18);
+
+  --flow-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --flow-speed: 180ms;
+
   box-sizing: border-box;
-
-  height: calc(100vh - var(--nav-height));
-  height: calc(100dvh - var(--nav-height));
-
-  min-height: calc(100vh - var(--nav-height));
-  min-height: calc(100dvh - var(--nav-height));
-
-  max-height: none;
-
-  padding:
-    clamp(1.6rem, 3.2vh, 2.6rem)
-    clamp(2rem, 5.2vw, 5.5rem)
-    clamp(1.5rem, 3vh, 2.4rem);
-
   position: relative;
-  overflow: hidden;
   isolation: isolate;
+  overflow: clip;
+
+  min-height: calc(100svh - var(--nav-height));
+  padding:
+    clamp(2rem, 4.2vh, 4rem)
+    clamp(1.25rem, 5.5vw, 5.75rem)
+    clamp(2rem, 4vh, 3.5rem);
+
+  color: var(--flow-text);
+  font-family: var(--flow-font-body);
 
   background:
-    radial-gradient(circle at 82% 18%, rgba(124, 140, 255, 0.24), transparent 34%),
-    radial-gradient(circle at 15% 30%, rgba(155, 124, 255, 0.15), transparent 36%),
-    radial-gradient(circle at 78% 78%, rgba(116, 215, 255, 0.09), transparent 34%),
-    radial-gradient(circle at 24% 92%, rgba(210, 140, 255, 0.10), transparent 38%),
-    linear-gradient(135deg, #050611 0%, #080D1F 38%, #0B1024 68%, #050611 100%) !important;
+    radial-gradient(circle at 86% 18%, rgba(124, 140, 255, 0.28), transparent 32%),
+    radial-gradient(circle at 16% 38%, rgba(154, 116, 255, 0.13), transparent 34%),
+    radial-gradient(circle at 75% 92%, rgba(116, 215, 255, 0.08), transparent 36%),
+    linear-gradient(135deg, var(--flow-bg-0) 0%, var(--flow-bg-1) 44%, var(--flow-bg-2) 100%) !important;
 }
 
-.section-library-flow::before {
-  content: "";
-  position: absolute;
-  right: -16%;
-  top: -22%;
-  width: 760px;
-  height: 760px;
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: -2;
-
-  background:
-    radial-gradient(
-      circle,
-      rgba(124, 140, 255, 0.28) 0%,
-      rgba(155, 124, 255, 0.14) 34%,
-      rgba(124, 140, 255, 0.05) 58%,
-      transparent 74%
-    );
-
-  filter: blur(14px);
+.section-library-flow *,
+.section-library-flow *::before,
+.section-library-flow *::after {
+  box-sizing: border-box;
 }
 
+.section-library-flow::before,
 .section-library-flow::after {
   content: "";
   position: absolute;
-  left: -18%;
-  bottom: -36%;
-  width: 620px;
-  height: 620px;
-  border-radius: 50%;
   pointer-events: none;
   z-index: -2;
-
-  background:
-    radial-gradient(
-      circle,
-      rgba(210, 140, 255, 0.15) 0%,
-      rgba(116, 215, 255, 0.075) 42%,
-      transparent 74%
-    );
-
-  filter: blur(18px);
+  border-radius: 999px;
 }
 
+.section-library-flow::before {
+  width: min(46vw, 760px);
+  aspect-ratio: 1;
+  right: -14%;
+  top: -28%;
+  background: radial-gradient(circle, rgba(124, 140, 255, 0.34), rgba(124, 140, 255, 0.08) 55%, transparent 72%);
+  filter: blur(12px);
+}
+
+.section-library-flow::after {
+  width: min(38vw, 620px);
+  aspect-ratio: 1;
+  left: -16%;
+  bottom: -34%;
+  background: radial-gradient(circle, rgba(210, 140, 255, 0.16), rgba(116, 215, 255, 0.07) 46%, transparent 72%);
+  filter: blur(16px);
+}
 
 /* =========================================================
    MAIN GRID
    ========================================================= */
 
 .flow-grid {
-  width: min(100%, 1360px);
-  height: 100%;
+  position: relative;
+  z-index: 2;
+
+  width: min(100%, 1400px);
+  min-height: calc(100svh - var(--nav-height) - clamp(4rem, 8vh, 7.5rem));
   margin-inline: auto;
 
   display: grid;
-  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
-
-  grid-template-rows:
-    minmax(0, 1fr)
-    clamp(230px, 28vh, 300px);
-
+  grid-template-columns: minmax(360px, 0.92fr) minmax(420px, 1.08fr);
+  grid-template-rows: minmax(380px, 1fr) minmax(280px, 0.58fr);
   grid-template-areas:
     "copy search"
     "library library";
-
-  column-gap: clamp(3.5rem, 7vw, 7rem);
-  row-gap: clamp(1.2rem, 2.4vh, 1.8rem);
-
   align-items: stretch;
-
-  position: relative;
-  z-index: 2;
+  gap: clamp(1.25rem, 2.5vw, 2.75rem) clamp(2rem, 5vw, 5.5rem);
 }
-
 
 /* =========================================================
    SHARED CARD STYLE
-   Used by search + library.
-   Copy area becomes transparent later.
    ========================================================= */
 
 .flow-card {
   position: relative;
   overflow: hidden;
-  border-radius: 28px;
+  border-radius: var(--flow-radius-xl);
+  border: 1px solid var(--flow-line);
 
   background:
-    radial-gradient(circle at 14% 8%, rgba(255, 255, 255, 0.09), transparent 26%),
-    radial-gradient(circle at 92% 10%, rgba(124, 140, 255, 0.17), transparent 34%),
-    radial-gradient(circle at 78% 86%, rgba(116, 215, 255, 0.06), transparent 38%),
-    linear-gradient(135deg, rgba(14, 19, 36, 0.95), rgba(9, 14, 29, 0.95) 52%, rgba(18, 15, 35, 0.94));
+    linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.018)),
+    radial-gradient(circle at 14% 0%, rgba(255, 255, 255, 0.055), transparent 28%),
+    linear-gradient(135deg, var(--flow-surface-1), var(--flow-surface-0));
 
-  border: 1px solid rgba(184, 192, 255, 0.22);
-
-  box-shadow:
-    0 30px 76px rgba(0, 0, 0, 0.42),
-    0 14px 34px rgba(0, 0, 0, 0.30),
-    0 0 0 1px rgba(184, 192, 255, 0.08),
-    0 0 66px rgba(124, 140, 255, 0.10);
-
-  isolation: isolate;
+  box-shadow: var(--flow-shadow-card);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
 }
 
 .flow-card::before {
   content: "";
   position: absolute;
   inset: 0;
-
-  background:
-    linear-gradient(
-      120deg,
-      rgba(255, 255, 255, 0.07),
-      transparent 24%,
-      transparent 72%,
-      rgba(255, 255, 255, 0.03)
-    );
-
   pointer-events: none;
-  z-index: -1;
+  z-index: 0;
+  border-radius: inherit;
+  background: linear-gradient(120deg, rgba(255, 255, 255, 0.075), transparent 22%, transparent 78%, rgba(255, 255, 255, 0.035));
 }
 
+.flow-card > * {
+  position: relative;
+  z-index: 1;
+}
 
 /* =========================================================
    TOP LEFT — COPY AREA
@@ -173,22 +169,22 @@
 
 .flow-copy-card {
   grid-area: copy;
-
-  min-height: 0;
-  padding: 0;
-
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
+  min-height: 0;
+  padding: clamp(0.25rem, 1vw, 1rem) 0;
 }
 
 .flow-copy-card.flow-card {
   background: transparent;
   border: 0;
-  box-shadow: none;
   border-radius: 0;
+  box-shadow: none;
   overflow: visible;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 .flow-copy-card.flow-card::before {
@@ -198,14 +194,14 @@
 .flow-copy-card .section-label {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.58rem;
+  margin: 0 0 0.85rem;
 
-  margin-bottom: 0.82rem;
-
-  color: var(--warm-brown-light);
-  font-size: 0.73rem;
+  color: #b8c5ff;
+  font-size: 0.74rem;
   font-weight: 850;
   letter-spacing: 0.15em;
+  line-height: 1;
   text-transform: uppercase;
 }
 
@@ -213,65 +209,90 @@
   content: "";
   width: 7px;
   height: 7px;
-  border-radius: 999px;
-
-  background: #74D7FF;
-
-  box-shadow:
-    0 0 18px rgba(116, 215, 255, 0.65),
-    0 0 36px rgba(124, 140, 255, 0.28);
+  border-radius: 50%;
+  background: var(--flow-accent-2);
+  box-shadow: 0 0 18px rgba(116, 215, 255, 0.66);
 }
 
 .flow-copy-card h2 {
-  font-family: var(--font-display);
-  font-size: clamp(3.15rem, 5.25vw, 4.95rem);
-  font-weight: 700;
-  line-height: 0.9;
-  letter-spacing: -0.065em;
-  color: var(--ink);
+  max-width: 640px;
+  margin: 0 0 1.25rem;
 
-  max-width: 620px;
-  margin-bottom: 1.25rem;
+  color: var(--flow-text);
+  font-family: var(--flow-font-display);
+  font-size: clamp(3.05rem, 5.25vw, 5.15rem);
+  font-weight: 720;
+  line-height: 0.94;
+  letter-spacing: -0.052em;
+  text-wrap: balance;
 
-  text-shadow:
-    0 18px 55px rgba(0, 0, 0, 0.50),
-    0 0 42px rgba(124, 140, 255, 0.13);
+  text-shadow: 0 18px 52px rgba(0, 0, 0, 0.44);
 }
 
 .flow-copy-card h2 span {
   display: block;
-  color: #E7ECFF;
+  color: #e8edff;
 }
 
 .flow-copy-card p {
-  color: var(--ink-light);
-  font-size: 1rem;
-  line-height: 1.76;
-  max-width: 560px;
-  margin-bottom: 1.45rem;
+  max-width: 555px;
+  margin: 0 0 1.55rem;
+
+  color: var(--flow-text-soft);
+  font-size: clamp(0.98rem, 1.05vw, 1.08rem);
+  line-height: 1.72;
 }
 
 .flow-cta {
-  min-height: 48px;
-  padding: 0 1.45rem;
-  border-radius: 999px;
+  min-height: 46px;
+  padding: 0 1.35rem;
+  border-radius: 14px;
   text-decoration: none;
 
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 0.6rem;
+
+  color: #ffffff;
+  font-weight: 850;
+  letter-spacing: -0.01em;
+
+  background: linear-gradient(135deg, #8d7cff, #6d8bff);
+  box-shadow: 0 16px 34px rgba(79, 95, 230, 0.26), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+
+  transition: transform var(--flow-speed) var(--flow-ease), box-shadow var(--flow-speed) var(--flow-ease), border-color var(--flow-speed) var(--flow-ease);
 }
 
 .flow-cta::after {
   content: "→";
-  margin-left: 0.65rem;
-  transition: transform var(--transition);
+  transform: translateY(-1px);
+  transition: transform var(--flow-speed) var(--flow-ease);
+}
+
+.flow-cta:hover {
+  transform: translateY(-1px);
+  border-color: rgba(255, 255, 255, 0.28);
+  box-shadow: 0 20px 42px rgba(79, 95, 230, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .flow-cta:hover::after {
-  transform: translateX(4px);
+  transform: translate(4px, -1px);
 }
 
+.flow-cta:focus-visible,
+.flow-search-bar input:focus-visible,
+.flow-search-bar button:focus-visible,
+.flow-add-button:focus-visible,
+.flow-filter:focus-visible,
+.flow-status-filter:focus-visible,
+.flow-status-options input:focus-visible + span,
+.flow-library-row-status select:focus-visible {
+  outline: 2px solid var(--flow-accent-2);
+  outline-offset: 3px;
+  box-shadow: var(--flow-shadow-focus);
+}
 
 /* =========================================================
    TOP RIGHT — SEARCH CARD
@@ -279,47 +300,48 @@
 
 .flow-search-card {
   grid-area: search;
-
   align-self: center;
-
-  height: min(100%, 455px);
-  min-height: 355px;
+  justify-self: end;
+  width: min(100%, 650px);
+  min-height: 430px;
+  display: flex;
+  flex-direction: column;
 }
 
 .flow-card-header {
-  min-height: 58px;
-  padding: 0.82rem 1.15rem;
+  min-height: 64px;
+  padding: 1rem 1.2rem;
 
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
 
-  border-bottom: 1px solid rgba(184, 192, 255, 0.15);
-
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.065), rgba(255, 255, 255, 0.022));
+  border-bottom: 1px solid var(--flow-line-soft);
+  background: rgba(255, 255, 255, 0.026);
 }
 
 .flow-eyebrow {
   display: block;
-  color: var(--warm-brown-light);
+  margin: 0 0 0.25rem;
+
+  color: #b8c5ff;
   font-size: 0.62rem;
   font-weight: 850;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.15em;
+  line-height: 1;
   text-transform: uppercase;
-  margin-bottom: 0.2rem;
 }
 
 .flow-card-header h3,
 .flow-library-header h3 {
-  color: var(--ink);
-  font-family: var(--font-display);
-  font-size: 1.42rem;
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: -0.035em;
   margin: 0;
+  color: var(--flow-text);
+  font-family: var(--flow-font-display);
+  font-size: clamp(1.32rem, 1.6vw, 1.62rem);
+  font-weight: 720;
+  line-height: 1.02;
+  letter-spacing: -0.035em;
 }
 
 .flow-window-controls {
@@ -332,38 +354,30 @@
 .flow-window-controls span {
   width: 10px;
   height: 10px;
-  border-radius: 999px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  border-radius: 50%;
+  opacity: 0.95;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22);
 }
 
-.flow-window-controls span:nth-child(1) {
-  background: #D28CFF;
-  box-shadow: 0 0 14px rgba(210, 140, 255, 0.48);
-}
-
-.flow-window-controls span:nth-child(2) {
-  background: #7C8CFF;
-  box-shadow: 0 0 14px rgba(124, 140, 255, 0.46);
-}
-
-.flow-window-controls span:nth-child(3) {
-  background: #74D7FF;
-  box-shadow: 0 0 14px rgba(116, 215, 255, 0.44);
-}
+.flow-window-controls span:nth-child(1) { background: var(--flow-accent-3); }
+.flow-window-controls span:nth-child(2) { background: var(--flow-accent); }
+.flow-window-controls span:nth-child(3) { background: var(--flow-accent-2); }
 
 .flow-search-body {
-  padding: 1.15rem 1.25rem 1.25rem;
+  flex: 1;
+  padding: 1.22rem;
+  display: flex;
+  flex-direction: column;
 }
 
 .flow-search-form label,
 .flow-status-picker legend {
   display: block;
-  color: var(--ink-mid);
-  font-size: 0.8rem;
-  font-weight: 750;
-  margin-bottom: 0.52rem;
+  margin: 0 0 0.58rem;
+  color: var(--flow-text-soft);
+  font-size: 0.82rem;
+  font-weight: 780;
 }
-
 
 /* =========================================================
    SEARCH BAR
@@ -374,52 +388,41 @@
   display: flex;
   align-items: center;
   overflow: hidden;
+  border-radius: 16px;
 
-  border-radius: 17px;
+  background: rgba(255, 255, 255, 0.055);
+  border: 1px solid var(--flow-line);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 12px 26px rgba(0, 0, 0, 0.2);
 
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.04));
-
-  border: 1px solid rgba(184, 192, 255, 0.22);
-
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.06),
-    0 14px 28px rgba(0, 0, 0, 0.26),
-    0 0 24px rgba(124, 140, 255, 0.08);
-
-  transition:
-    border-color var(--transition),
-    box-shadow var(--transition);
+  transition: border-color var(--flow-speed) var(--flow-ease), background var(--flow-speed) var(--flow-ease), box-shadow var(--flow-speed) var(--flow-ease);
 }
 
 .flow-search-bar:focus-within {
+  background: rgba(255, 255, 255, 0.074);
   border-color: rgba(116, 215, 255, 0.48);
-
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.08),
-    0 16px 34px rgba(0, 0, 0, 0.30),
-    0 0 0 4px rgba(116, 215, 255, 0.12),
-    0 0 34px rgba(124, 140, 255, 0.16);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.075), 0 14px 30px rgba(0, 0, 0, 0.22), var(--flow-shadow-focus);
 }
 
 .flow-search-bar input {
   flex: 1;
   width: 100%;
+  min-width: 0;
   height: 56px;
-  padding: 0 0.95rem;
+  padding: 0 1rem;
+
+  color: var(--flow-text);
+  font-family: var(--flow-font-body);
+  font-size: 0.95rem;
+  font-weight: 560;
 
   background: transparent;
   border: 0;
   outline: 0;
-
-  color: var(--ink);
-  font-family: var(--font-body);
-  font-size: 0.92rem;
-  font-weight: 500;
 }
 
 .flow-search-bar input::placeholder {
-  color: var(--ink-faint);
+  color: #9aa5c8;
+  opacity: 0.82;
 }
 
 .flow-search-bar button {
@@ -427,45 +430,37 @@
   height: 56px;
   flex: 0 0 56px;
 
-  border: 0;
-  border-left: 1px solid rgba(184, 192, 255, 0.13);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 
-  background:
-    radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.22), transparent 30%),
-    linear-gradient(145deg, rgba(155, 124, 255, 0.42), rgba(109, 139, 255, 0.32));
-
-  color: var(--ink);
+  color: #ffffff;
+  font-size: 1.14rem;
   cursor: pointer;
-  font-size: 1.15rem;
 
-  transition:
-    background var(--transition),
-    transform var(--transition),
-    box-shadow var(--transition);
+  border: 0;
+  border-left: 1px solid var(--flow-line-soft);
+  background: linear-gradient(135deg, rgba(124, 140, 255, 0.92), rgba(90, 111, 226, 0.92));
+
+  transition: transform var(--flow-speed) var(--flow-ease), filter var(--flow-speed) var(--flow-ease), background var(--flow-speed) var(--flow-ease);
 }
 
 .flow-search-bar button:hover {
-  background:
-    radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.28), transparent 30%),
-    linear-gradient(145deg, rgba(210, 140, 255, 0.48), rgba(109, 139, 255, 0.38));
-
-  box-shadow:
-    0 0 26px rgba(124, 140, 255, 0.20);
+  filter: brightness(1.07);
 }
 
 .flow-search-bar button:active {
-  transform: scale(0.96);
+  transform: scale(0.97);
 }
-
 
 /* =========================================================
    SEARCH EMPTY STATE
    ========================================================= */
 
 .flow-search-empty {
-  margin-top: 0.78rem;
-  color: var(--ink-faint);
-  font-size: 0.82rem;
+  margin-top: 0.8rem;
+  color: var(--flow-text-muted);
+  font-size: 0.84rem;
   line-height: 1.55;
 }
 
@@ -480,13 +475,12 @@
   display: none;
 }
 
-
 /* =========================================================
    RESULT CARD
    ========================================================= */
 
 .flow-result-area {
-  margin-top: 0.95rem;
+  margin-top: 1rem;
   min-height: 0;
 }
 
@@ -496,46 +490,27 @@
 
 .flow-result-card {
   display: grid;
-  grid-template-columns: 70px minmax(0, 1fr) auto;
+  grid-template-columns: 68px minmax(0, 1fr) auto;
   align-items: center;
-  gap: 0.85rem;
+  gap: 0.95rem;
 
   padding: 0.78rem;
-  border-radius: 20px;
+  border-radius: 18px;
+  border: 1px solid var(--flow-line);
 
-  background:
-    radial-gradient(circle at 8% 10%, rgba(255, 255, 255, 0.08), transparent 28%),
-    linear-gradient(
-      135deg,
-      rgba(124, 140, 255, 0.13),
-      rgba(255, 255, 255, 0.035) 46%,
-      rgba(116, 215, 255, 0.055)
-    );
+  background: linear-gradient(135deg, rgba(124, 140, 255, 0.14), rgba(255, 255, 255, 0.04) 58%, rgba(116, 215, 255, 0.06));
+  box-shadow: var(--flow-shadow-soft), inset 0 1px 0 rgba(255, 255, 255, 0.06);
 
-  border: 1px solid rgba(184, 192, 255, 0.20);
-
-  box-shadow:
-    0 16px 34px rgba(0, 0, 0, 0.30),
-    0 0 28px rgba(124, 140, 255, 0.09),
-    inset 0 1px 0 rgba(255, 255, 255, 0.055);
-
-  animation: flowResultIn 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation: flowResultIn 420ms var(--flow-ease) both;
 }
 
 .flow-result-cover {
-  width: 70px;
+  width: 68px;
   aspect-ratio: 2 / 3;
-  border-radius: 13px;
   overflow: hidden;
-
-  background:
-    radial-gradient(circle at 30% 18%, rgba(255, 255, 255, 0.18), transparent 30%),
-    linear-gradient(145deg, rgba(124, 140, 255, 0.38), rgba(210, 140, 255, 0.24));
-
-  box-shadow:
-    0 14px 26px rgba(0, 0, 0, 0.36),
-    0 0 24px rgba(124, 140, 255, 0.12),
-    0 0 0 1px rgba(255, 255, 255, 0.10) inset;
+  border-radius: 12px;
+  background: linear-gradient(145deg, rgba(124, 140, 255, 0.32), rgba(210, 140, 255, 0.18));
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.34), 0 0 0 1px rgba(255, 255, 255, 0.08) inset;
 }
 
 .flow-result-cover img {
@@ -550,19 +525,20 @@
 }
 
 .flow-result-info h4 {
-  font-family: var(--font-display);
-  color: var(--ink);
-  font-size: 1.32rem;
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: -0.035em;
-  margin-bottom: 0.32rem;
+  margin: 0 0 0.28rem;
+  color: var(--flow-text);
+  font-family: var(--flow-font-display);
+  font-size: 1.26rem;
+  font-weight: 720;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
 }
 
 .flow-result-creator {
-  color: var(--ink-light);
-  font-size: 0.82rem;
-  margin-bottom: 0.38rem;
+  margin: 0 0 0.4rem;
+  color: var(--flow-text-soft);
+  font-size: 0.84rem;
+  line-height: 1.3;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -570,109 +546,79 @@
 
 .flow-result-type {
   display: inline-flex;
-  width: fit-content;
   align-items: center;
   justify-content: center;
+  width: fit-content;
+  min-height: 24px;
+  padding: 0 0.58rem;
+  border-radius: var(--flow-radius-pill);
 
-  padding: 0.22rem 0.6rem;
-  border-radius: 999px;
-
-  color: var(--warm-brown-light);
+  color: #c7d4ff;
   font-size: 0.64rem;
   font-weight: 850;
   letter-spacing: 0.09em;
   text-transform: uppercase;
 
-  background:
-    linear-gradient(180deg, rgba(124, 140, 255, 0.16), rgba(155, 124, 255, 0.10));
-
-  border: 1px solid rgba(184, 192, 255, 0.20);
+  background: rgba(124, 140, 255, 0.13);
+  border: 1px solid var(--flow-line-soft);
 }
-
 
 /* =========================================================
    ADD BUTTON
    ========================================================= */
 
 .flow-add-button {
-  min-width: 72px;
+  min-width: 74px;
   min-height: 40px;
-  padding: 0 0.95rem;
+  padding: 0 1rem;
+  border-radius: 13px;
 
-  border-radius: 999px;
-  border: 1px solid rgba(184, 192, 255, 0.34);
-
-  background:
-    radial-gradient(circle at 30% 18%, rgba(255, 255, 255, 0.24), transparent 30%),
-    linear-gradient(145deg, #9B7CFF 0%, #6D8BFF 58%, #5B5FE8 100%);
-
-  color: #FFFFFF;
-  font-family: var(--font-body);
-  font-size: 0.8rem;
+  color: #ffffff;
+  font-family: var(--flow-font-body);
+  font-size: 0.82rem;
   font-weight: 850;
-
   cursor: pointer;
 
-  box-shadow:
-    0 14px 28px rgba(0, 0, 0, 0.34),
-    0 0 24px rgba(124, 140, 255, 0.22),
-    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  background: linear-gradient(135deg, #8d7cff, #6d8bff);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 12px 26px rgba(79, 95, 230, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.15);
 
-  transition:
-    transform var(--transition),
-    box-shadow var(--transition),
-    border-color var(--transition),
-    background var(--transition);
+  transition: transform var(--flow-speed) var(--flow-ease), box-shadow var(--flow-speed) var(--flow-ease), filter var(--flow-speed) var(--flow-ease);
 }
 
 .flow-add-button:hover {
   transform: translateY(-1px);
-  border-color: rgba(184, 192, 255, 0.52);
-
-  background:
-    radial-gradient(circle at 30% 18%, rgba(255, 255, 255, 0.28), transparent 30%),
-    linear-gradient(145deg, #D28CFF 0%, #9B7CFF 48%, #6D8BFF 100%);
-
-  box-shadow:
-    0 18px 34px rgba(0, 0, 0, 0.42),
-    0 0 34px rgba(155, 124, 255, 0.30),
-    inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  filter: brightness(1.06);
+  box-shadow: 0 16px 30px rgba(79, 95, 230, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.18);
 }
 
 .flow-add-button:active {
-  transform: translateY(0) scale(0.97);
+  transform: translateY(0) scale(0.98);
 }
 
 .flow-add-button.is-added {
   pointer-events: none;
-  color: rgba(255, 255, 255, 0.78);
-
-  background:
-    linear-gradient(145deg, rgba(116, 215, 255, 0.28), rgba(124, 140, 255, 0.22));
+  color: rgba(255, 255, 255, 0.82);
+  background: linear-gradient(135deg, rgba(116, 215, 255, 0.28), rgba(124, 140, 255, 0.24));
 }
 
 .flow-add-button.is-added::before {
   content: "✓ ";
 }
 
-
 /* =========================================================
    STATUS PICKER
    ========================================================= */
 
 .flow-status-picker {
-  margin-top: 0.95rem;
+  margin: 1.05rem 0 0;
   padding: 0;
   border: 0;
 
-  opacity: 0.42;
-  filter: saturate(0.8);
+  opacity: 0.58;
+  filter: saturate(0.88);
   pointer-events: none;
-
-  transition:
-    opacity var(--transition),
-    filter var(--transition),
-    transform var(--transition);
+  transition: opacity var(--flow-speed) var(--flow-ease), filter var(--flow-speed) var(--flow-ease);
 }
 
 .flow-status-picker.is-active,
@@ -684,18 +630,18 @@
 }
 
 .flow-status-picker:disabled {
-  opacity: 0.42;
+  opacity: 0.58;
 }
 
 .flow-status-options {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.48rem;
+  gap: 0.5rem;
 }
 
 .flow-status-options label {
-  cursor: pointer;
   position: relative;
+  cursor: pointer;
 }
 
 .flow-status-options input {
@@ -704,105 +650,71 @@
   pointer-events: none;
 }
 
-.flow-status-options span {
+.flow-status-options span,
+.flow-filter,
+.flow-status-filter {
   min-height: 36px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
 
-  padding: 0 0.78rem;
-  border-radius: 999px;
+  padding: 0 0.82rem;
+  border-radius: var(--flow-radius-pill);
+  border: 1px solid var(--flow-line-soft);
 
-  color: var(--ink-mid);
+  color: var(--flow-text-soft);
+  background: rgba(255, 255, 255, 0.045);
+  font-family: var(--flow-font-body);
   font-size: 0.76rem;
-  font-weight: 750;
+  font-weight: 780;
 
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.035));
-
-  border: 1px solid rgba(184, 192, 255, 0.16);
-
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.035);
-
-  transition:
-    background var(--transition),
-    color var(--transition),
-    border-color var(--transition),
-    transform var(--transition),
-    box-shadow var(--transition);
-}
-
-.flow-status-options input:focus-visible + span {
-  outline: 3px solid rgba(116, 215, 255, 0.28);
-  outline-offset: 3px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  transition: transform var(--flow-speed) var(--flow-ease), background var(--flow-speed) var(--flow-ease), border-color var(--flow-speed) var(--flow-ease), color var(--flow-speed) var(--flow-ease), box-shadow var(--flow-speed) var(--flow-ease);
 }
 
 .flow-status-options span:hover,
-.flow-status-options input:checked + span {
-  color: #FFFFFF;
-  border-color: rgba(116, 215, 255, 0.42);
-
-  background:
-    radial-gradient(circle at 28% 16%, rgba(255, 255, 255, 0.16), transparent 30%),
-    linear-gradient(
-      145deg,
-      rgba(116, 215, 255, 0.22),
-      rgba(124, 140, 255, 0.24),
-      rgba(155, 124, 255, 0.20)
-    );
-
-  box-shadow:
-    0 10px 22px rgba(0, 0, 0, 0.28),
-    0 0 22px rgba(116, 215, 255, 0.16),
-    0 0 30px rgba(124, 140, 255, 0.10),
-    inset 0 1px 0 rgba(255, 255, 255, 0.09);
-
+.flow-status-options input:checked + span,
+.flow-filter:hover,
+.flow-status-filter:hover,
+.flow-filter.active,
+.flow-status-filter.active {
+  color: #ffffff;
+  border-color: rgba(116, 215, 255, 0.38);
+  background: linear-gradient(135deg, rgba(116, 215, 255, 0.14), rgba(124, 140, 255, 0.18));
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.07);
   transform: translateY(-1px);
 }
 
 .flow-status-options input:checked + span::before {
   content: "✓";
-  margin-right: 0.38rem;
-  color: #74D7FF;
-  text-shadow: 0 0 12px rgba(116, 215, 255, 0.50);
+  margin-right: 0.4rem;
+  color: var(--flow-accent-2);
 }
-
 
 /* =========================================================
    SAVED MESSAGE
    ========================================================= */
 
 .flow-saved-message {
-  margin-top: 0.85rem;
-
+  margin-top: 0.9rem;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-
   width: fit-content;
   max-width: 100%;
+  padding: 0.66rem 0.85rem;
+  border-radius: var(--flow-radius-pill);
 
-  color: #F5F7FF;
-  font-size: 0.82rem;
-  font-weight: 800;
+  color: #f7f9ff;
+  font-size: 0.84rem;
+  font-weight: 820;
   line-height: 1.35;
 
-  padding: 0.64rem 0.82rem;
-  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(116, 215, 255, 0.16), rgba(124, 140, 255, 0.10));
+  border: 1px solid rgba(116, 215, 255, 0.28);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.06);
 
-  background:
-    radial-gradient(circle at 12% 20%, rgba(255, 255, 255, 0.11), transparent 30%),
-    linear-gradient(135deg, rgba(116, 215, 255, 0.16), rgba(124, 140, 255, 0.10));
-
-  border: 1px solid rgba(116, 215, 255, 0.30);
-
-  box-shadow:
-    0 12px 24px rgba(0, 0, 0, 0.24),
-    0 0 24px rgba(116, 215, 255, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.07);
-
-  animation: flowSavedIn 0.45s ease both;
+  animation: flowSavedIn 360ms var(--flow-ease) both;
 }
 
 .flow-saved-message[hidden] {
@@ -810,11 +722,9 @@
 }
 
 .flow-saved-message i {
-  color: #74D7FF;
+  color: var(--flow-accent-2);
   font-size: 0.95rem;
-  text-shadow: 0 0 14px rgba(116, 215, 255, 0.55);
 }
-
 
 /* =========================================================
    BOTTOM — LIBRARY CARD
@@ -822,72 +732,58 @@
 
 .flow-library-card {
   grid-area: library;
+  min-height: 280px;
   height: 100%;
-  min-height: 0;
 }
 
 .flow-library-header {
-  height: 58px;
-  padding: 0.8rem 1.15rem;
+  min-height: 64px;
+  padding: 1rem 1.2rem;
 
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
 
-  border-bottom: 1px solid rgba(184, 192, 255, 0.14);
-
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.065), rgba(255, 255, 255, 0.022));
+  border-bottom: 1px solid var(--flow-line-soft);
+  background: rgba(255, 255, 255, 0.026);
 }
 
 .flow-library-count {
+  min-height: 34px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  padding: 0 0.84rem;
+  border-radius: var(--flow-radius-pill);
 
-  min-height: 32px;
-  padding: 0 0.8rem;
-  border-radius: 999px;
-
-  color: var(--ink);
-  font-size: 0.76rem;
+  color: var(--flow-text);
+  font-size: 0.78rem;
   font-weight: 850;
 
-  background:
-    radial-gradient(circle at 22% 18%, rgba(255, 255, 255, 0.12), transparent 30%),
-    linear-gradient(135deg, rgba(116, 215, 255, 0.14), rgba(124, 140, 255, 0.10));
-
+  background: rgba(116, 215, 255, 0.11);
   border: 1px solid rgba(116, 215, 255, 0.24);
 }
 
 .flow-library-count [data-library-count] {
-  color: #74D7FF;
+  color: var(--flow-accent-2);
   margin-right: 0.22rem;
 }
 
 .flow-library-body {
-  height: calc(100% - 58px);
-
-  padding: 1rem 1.15rem 1.15rem;
+  min-height: calc(100% - 64px);
+  padding: 1.05rem 1.2rem 1.2rem;
 
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(260px, 360px);
-
-  grid-template-rows:
-    34px
-    38px
-    minmax(72px, 1fr);
-
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 360px);
+  grid-template-rows: auto auto minmax(78px, 1fr);
   grid-template-areas:
     "format notice"
     "status notice"
     "list   list";
-
   align-items: center;
   gap: 0.72rem 1.1rem;
 }
-
 
 /* =========================================================
    LIBRARY FILTERS
@@ -895,76 +791,25 @@
 
 .flow-library-filters,
 .flow-library-status-filters {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.55rem;
   min-width: 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.52rem;
 }
 
-.flow-library-filters {
-  grid-area: format;
-}
-
-.flow-library-status-filters {
-  grid-area: status;
-}
+.flow-library-filters { grid-area: format; }
+.flow-library-status-filters { grid-area: status; }
 
 .flow-filter,
 .flow-status-filter {
-  min-height: 32px;
-  padding: 0 0.78rem;
-
-  border: 1px solid rgba(184, 192, 255, 0.16);
-  border-radius: 999px;
-
-  color: var(--ink-mid);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.035));
-
-  font-family: var(--font-body);
-  font-size: 0.72rem;
-  font-weight: 750;
-
+  min-height: 34px;
   cursor: pointer;
-
-  transition:
-    background var(--transition),
-    color var(--transition),
-    border-color var(--transition),
-    transform var(--transition),
-    box-shadow var(--transition);
-}
-
-.flow-filter:hover,
-.flow-status-filter:hover,
-.flow-filter.active,
-.flow-status-filter.active {
-  color: #FFFFFF;
-  border-color: rgba(116, 215, 255, 0.38);
-
-  background:
-    radial-gradient(circle at 28% 16%, rgba(255, 255, 255, 0.14), transparent 30%),
-    linear-gradient(145deg, rgba(116, 215, 255, 0.18), rgba(124, 140, 255, 0.22), rgba(155, 124, 255, 0.16));
-
-  box-shadow:
-    0 8px 18px rgba(0, 0, 0, 0.24),
-    0 0 18px rgba(124, 140, 255, 0.11),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
-
-  transform: translateY(-1px);
-}
-
-.flow-filter:focus-visible,
-.flow-status-filter:focus-visible {
-  outline: 3px solid rgba(116, 215, 255, 0.28);
-  outline-offset: 3px;
 }
 
 .flow-library-list-header {
   display: none;
 }
-
 
 /* =========================================================
    LIBRARY EMPTY STATE
@@ -972,22 +817,18 @@
 
 .flow-library-empty {
   grid-area: list;
-
-  min-height: 58px;
-  padding: 0.85rem 0.95rem;
-
+  min-height: 68px;
   display: flex;
   align-items: center;
+  padding: 0.9rem 1rem;
 
-  color: var(--ink-faint);
-  font-size: 0.82rem;
-  line-height: 1.35;
+  color: var(--flow-text-muted);
+  font-size: 0.84rem;
+  line-height: 1.45;
 
-  border: 1px dashed rgba(184, 192, 255, 0.18);
+  border: 1px dashed rgba(193, 203, 255, 0.24);
   border-radius: 16px;
-
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.02));
+  background: rgba(255, 255, 255, 0.034);
 }
 
 .flow-library-empty p {
@@ -999,66 +840,42 @@
   display: none;
 }
 
-
 /* =========================================================
    LIBRARY ROW
    ========================================================= */
 
 .flow-library-list {
   grid-area: list;
-
-  display: grid;
-  gap: 0.55rem;
   min-height: 0;
+  display: grid;
+  gap: 0.58rem;
 }
 
 .flow-library-row {
+  min-height: 76px;
   display: grid;
-  grid-template-columns: minmax(250px, 1.4fr) 0.48fr 0.65fr 0.25fr;
-  grid-template-areas:
-    "story format status rating";
-
+  grid-template-columns: minmax(260px, 1.35fr) minmax(92px, 0.42fr) minmax(130px, 0.58fr) minmax(56px, 0.22fr);
+  grid-template-areas: "story format status rating";
   align-items: center;
-  gap: 0.85rem;
+  gap: 0.9rem;
 
-  min-height: 72px;
-  padding: 0.7rem 0.85rem;
-
+  padding: 0.72rem 0.9rem;
   border-radius: 18px;
+  border: 1px solid var(--flow-line);
+  background: linear-gradient(135deg, rgba(124, 140, 255, 0.11), rgba(255, 255, 255, 0.038) 58%, rgba(116, 215, 255, 0.052));
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.05);
 
-  background:
-    radial-gradient(circle at 8% 10%, rgba(255, 255, 255, 0.075), transparent 28%),
-    linear-gradient(
-      135deg,
-      rgba(124, 140, 255, 0.11),
-      rgba(255, 255, 255, 0.035) 48%,
-      rgba(116, 215, 255, 0.052)
-    );
-
-  border: 1px solid rgba(184, 192, 255, 0.20);
-
-  box-shadow:
-    0 12px 24px rgba(0, 0, 0, 0.22),
-    0 0 24px rgba(124, 140, 255, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.05);
-
-  animation: flowRowIn 0.5s ease both;
+  animation: flowRowIn 380ms var(--flow-ease) both;
 }
 
 .flow-library-row-cover {
   grid-area: story;
-
   width: 48px;
   aspect-ratio: 2 / 3;
-  border-radius: 8px;
   overflow: hidden;
-
-  background:
-    linear-gradient(145deg, rgba(124, 140, 255, 0.38), rgba(210, 140, 255, 0.24));
-
-  box-shadow:
-    0 8px 16px rgba(0, 0, 0, 0.28),
-    0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+  border-radius: 9px;
+  background: linear-gradient(145deg, rgba(124, 140, 255, 0.30), rgba(210, 140, 255, 0.18));
+  box-shadow: 0 9px 18px rgba(0, 0, 0, 0.28), 0 0 0 1px rgba(255, 255, 255, 0.08) inset;
 }
 
 .flow-library-row-cover img {
@@ -1071,19 +888,17 @@
 .flow-library-row-info {
   grid-area: story;
   min-width: 0;
-  padding-left: 60px;
+  padding-left: 62px;
 }
 
 .flow-library-row-info h4 {
-  margin: 0 0 0.16rem;
-
-  color: var(--ink);
-  font-family: var(--font-display);
+  margin: 0 0 0.18rem;
+  color: var(--flow-text);
+  font-family: var(--flow-font-display);
   font-size: 1.16rem;
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: -0.035em;
-
+  font-weight: 720;
+  line-height: 1.04;
+  letter-spacing: -0.028em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1091,24 +906,16 @@
 
 .flow-library-row-info p {
   margin: 0;
-
-  color: var(--ink-light);
-  font-size: 0.76rem;
-  line-height: 1.2;
-
+  color: var(--flow-text-soft);
+  font-size: 0.78rem;
+  line-height: 1.25;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.flow-library-row-format {
-  grid-area: format;
-}
-
-.flow-library-row-status {
-  grid-area: status;
-}
-
+.flow-library-row-format { grid-area: format; }
+.flow-library-row-status { grid-area: status; }
 .flow-library-row-rating {
   grid-area: rating;
   justify-self: end;
@@ -1116,53 +923,40 @@
 
 .flow-library-row-format span,
 .flow-library-row-rating span {
-  min-height: 28px;
+  min-height: 30px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  padding: 0 0.62rem;
+  border-radius: var(--flow-radius-pill);
 
-  padding: 0 0.58rem;
-  border-radius: 999px;
-
-  color: var(--warm-brown-light);
+  color: #c7d4ff;
   font-size: 0.62rem;
   font-weight: 850;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 
-  background:
-    linear-gradient(180deg, rgba(124, 140, 255, 0.16), rgba(155, 124, 255, 0.10));
-
-  border: 1px solid rgba(184, 192, 255, 0.20);
+  background: rgba(124, 140, 255, 0.13);
+  border: 1px solid var(--flow-line-soft);
 }
 
 .flow-library-row-status select {
-  min-height: 30px;
   width: 100%;
-  max-width: 140px;
+  max-width: 145px;
+  min-height: 34px;
+  padding: 0 1.85rem 0 0.72rem;
+  border-radius: var(--flow-radius-pill);
 
-  padding: 0 1.8rem 0 0.65rem;
+  color: var(--flow-text);
+  font-family: var(--flow-font-body);
+  font-size: 0.74rem;
+  font-weight: 780;
 
-  color: var(--ink);
-  font-family: var(--font-body);
-  font-size: 0.68rem;
-  font-weight: 750;
-
-  border-radius: 999px;
-  border: 1px solid rgba(116, 215, 255, 0.26);
-
-  background:
-    linear-gradient(180deg, rgba(116, 215, 255, 0.12), rgba(124, 140, 255, 0.08));
-
-  outline: none;
+  background: rgba(116, 215, 255, 0.10);
+  border: 1px solid rgba(116, 215, 255, 0.28);
+  outline: 0;
   cursor: pointer;
 }
-
-.flow-library-row-status select:focus-visible {
-  outline: 3px solid rgba(116, 215, 255, 0.28);
-  outline-offset: 3px;
-}
-
 
 /* =========================================================
    SAVE NOTICE
@@ -1170,78 +964,48 @@
 
 .flow-library-save-notice {
   grid-area: notice;
-  align-self: center;
   justify-self: end;
-
-  margin: 0;
-
-  display: inline-flex;
-  align-items: center;
-  gap: 0.42rem;
+  align-self: center;
 
   width: fit-content;
   max-width: 360px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.46rem;
+  padding: 0.68rem 0.88rem;
+  border-radius: 18px;
 
-  color: var(--ink-light);
-  font-size: 0.74rem;
-  font-weight: 700;
-  line-height: 1.35;
+  color: var(--flow-text-soft);
+  font-size: 0.76rem;
+  font-weight: 730;
+  line-height: 1.38;
 
-  padding: 0.62rem 0.85rem;
-  border-radius: 999px;
-
-  background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.03));
-
-  border: 1px solid rgba(184, 192, 255, 0.14);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--flow-line-soft);
 }
 
 .flow-library-save-notice i {
-  color: #74D7FF;
-  text-shadow: 0 0 12px rgba(116, 215, 255, 0.44);
+  color: var(--flow-accent-2);
 }
-
 
 /* =========================================================
    ANIMATIONS
    ========================================================= */
 
 @keyframes flowResultIn {
-  from {
-    opacity: 0;
-    transform: translateY(12px) scale(0.985);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+  from { opacity: 0; transform: translateY(10px) scale(0.99); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 @keyframes flowSavedIn {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes flowRowIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px) scale(0.988);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+  from { opacity: 0; transform: translateY(10px) scale(0.99); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
-
 
 /* =========================================================
    SHORT LAPTOP VIEWPORT FIX
@@ -1250,27 +1014,25 @@
 @media (min-width: 981px) and (max-height: 760px) {
   .section-library-flow {
     padding:
-      1.15rem
-      clamp(2rem, 5vw, 5rem)
-      1.1rem;
+      1.2rem
+      clamp(1.25rem, 4.8vw, 5rem)
+      1.2rem;
   }
 
   .flow-grid {
-    grid-template-rows:
-      minmax(0, 1fr)
-      clamp(205px, 28vh, 255px);
-
+    min-height: calc(100svh - var(--nav-height) - 2.4rem);
+    grid-template-rows: minmax(320px, 1fr) minmax(232px, 0.58fr);
     row-gap: 0.95rem;
   }
 
   .flow-copy-card h2 {
-    font-size: clamp(2.85rem, 4.85vw, 4.25rem);
+    font-size: clamp(2.75rem, 4.8vw, 4.25rem);
     margin-bottom: 0.95rem;
   }
 
   .flow-copy-card p {
-    font-size: 0.92rem;
-    line-height: 1.62;
+    font-size: 0.94rem;
+    line-height: 1.58;
     margin-bottom: 1rem;
   }
 
@@ -1279,115 +1041,76 @@
   }
 
   .flow-search-card {
-    height: min(100%, 410px);
-    min-height: 320px;
+    min-height: 340px;
   }
 
-  .flow-card-header {
-    min-height: 52px;
+  .flow-card-header,
+  .flow-library-header {
+    min-height: 54px;
+    padding-block: 0.82rem;
   }
 
   .flow-search-body {
-    padding: 0.82rem 1rem;
+    padding: 0.92rem 1rem;
   }
 
   .flow-search-bar,
   .flow-search-bar input,
   .flow-search-bar button {
-    height: 48px;
-    min-height: 48px;
-  }
-
-  .flow-search-empty {
-    margin-top: 0.58rem;
-  }
-
-  .flow-status-picker {
-    margin-top: 0.72rem;
-  }
-
-  .flow-status-options span {
-    min-height: 30px;
-    font-size: 0.68rem;
-  }
-
-  .flow-library-header {
-    height: 52px;
-  }
-
-  .flow-library-body {
-    height: calc(100% - 52px);
-    padding: 0.8rem 1rem 0.9rem;
-
-    grid-template-rows:
-      30px
-      34px
-      minmax(58px, 1fr);
-  }
-
-  .flow-library-empty {
     min-height: 50px;
-  }
-}
-
-
-/* =========================================================
-   REDUCED MOTION
-   ========================================================= */
-
-@media (prefers-reduced-motion: reduce) {
-  .flow-result-card,
-  .flow-saved-message,
-  .flow-library-row {
-    animation: none;
+    height: 50px;
   }
 
-  .flow-cta::after,
-  .flow-add-button,
-  .flow-search-bar,
-  .flow-search-bar button,
+  .flow-search-bar button {
+    width: 50px;
+    flex-basis: 50px;
+  }
+
   .flow-status-options span,
   .flow-filter,
   .flow-status-filter {
-    transition: none;
+    min-height: 31px;
+    font-size: 0.7rem;
   }
 
-  .flow-filter:hover,
-  .flow-status-filter:hover,
-  .flow-status-options span:hover,
-  .flow-status-options input:checked + span,
-  .flow-add-button:hover {
-    transform: none;
+  .flow-library-body {
+    min-height: calc(100% - 54px);
+    padding: 0.82rem 1rem 0.95rem;
+    gap: 0.58rem 1rem;
+  }
+
+  .flow-library-empty {
+    min-height: 54px;
   }
 }
 
-
 /* =========================================================
    RESPONSIVE
-   Below desktop, allow normal scrolling.
    ========================================================= */
+
+@media (max-width: 1100px) {
+  .flow-grid {
+    grid-template-columns: minmax(0, 0.92fr) minmax(390px, 1.08fr);
+    column-gap: clamp(1.6rem, 3.5vw, 3rem);
+  }
+}
 
 @media (max-width: 980px) {
   .section-library-flow {
-    height: auto;
-    min-height: 100vh;
-    max-height: none;
-
-    padding: 6rem 6% 5rem;
     overflow: visible;
+    min-height: 100svh;
+    padding: 5.5rem 6% 4.5rem;
   }
 
   .flow-grid {
-    height: auto;
-
+    min-height: auto;
     grid-template-columns: 1fr;
     grid-template-rows: auto;
     grid-template-areas:
       "copy"
       "search"
       "library";
-
-    gap: 1rem;
+    gap: 1.1rem;
   }
 
   .flow-copy-card {
@@ -1398,25 +1121,26 @@
     max-width: 680px;
   }
 
-  .flow-search-card {
+  .flow-search-card,
+  .flow-library-card {
+    width: 100%;
     min-height: auto;
     height: auto;
   }
 
-  .flow-library-card {
-    height: auto;
-    min-height: auto;
+  .flow-search-card {
+    justify-self: stretch;
   }
 
   .flow-library-body {
-    height: auto;
+    min-height: 0;
     grid-template-columns: 1fr;
     grid-template-rows: auto;
     grid-template-areas:
       "format"
       "status"
-      "list"
-      "notice";
+      "notice"
+      "list";
   }
 
   .flow-library-save-notice {
@@ -1426,20 +1150,22 @@
 
 @media (max-width: 680px) {
   .section-library-flow {
-    padding: 5.5rem 1rem 4.5rem;
+    padding: 5rem 1rem 4rem;
   }
 
   .flow-card {
-    border-radius: 24px;
+    border-radius: 22px;
   }
 
   .flow-copy-card h2 {
-    font-size: clamp(2.75rem, 13vw, 4.05rem);
-    letter-spacing: -0.055em;
+    font-size: clamp(2.65rem, 12vw, 4.05rem);
+    line-height: 0.96;
+    letter-spacing: -0.045em;
   }
 
   .flow-copy-card p {
     font-size: 0.96rem;
+    line-height: 1.62;
   }
 
   .flow-card-header,
@@ -1448,7 +1174,6 @@
   }
 
   .flow-library-header {
-    height: auto;
     flex-direction: column;
   }
 
@@ -1458,23 +1183,18 @@
   }
 
   .flow-result-card {
-    grid-template-columns: 64px minmax(0, 1fr);
+    grid-template-columns: 62px minmax(0, 1fr);
     gap: 0.78rem;
-    padding: 0.82rem;
   }
 
   .flow-result-cover {
-    width: 64px;
-    border-radius: 12px;
-  }
-
-  .flow-result-info h4 {
-    font-size: 1.25rem;
+    width: 62px;
   }
 
   .flow-add-button {
     grid-column: 1 / -1;
     width: 100%;
+    min-height: 44px;
   }
 
   .flow-status-options,
@@ -1486,20 +1206,14 @@
   .flow-status-options span,
   .flow-filter,
   .flow-status-filter {
-    min-height: 38px;
+    min-height: 40px;
     padding: 0 0.78rem;
-    font-size: 0.76rem;
   }
 
   .flow-saved-message,
   .flow-library-save-notice {
     width: 100%;
     justify-content: center;
-    border-radius: 18px;
-  }
-
-  .flow-library-list-header {
-    display: none;
   }
 
   .flow-library-row {
@@ -1508,18 +1222,14 @@
       "cover info"
       "format status"
       "rating rating";
-
-    align-items: center;
     gap: 0.75rem;
-
     min-height: auto;
-    padding: 0.85rem;
+    padding: 0.86rem;
   }
 
   .flow-library-row-cover {
     grid-area: cover;
     width: 54px;
-    border-radius: 11px;
   }
 
   .flow-library-row-info {
@@ -1528,24 +1238,19 @@
   }
 
   .flow-library-row-info h4 {
-    font-size: 1.25rem;
+    font-size: 1.2rem;
   }
 
-  .flow-library-row-format {
-    grid-area: format;
-  }
-
-  .flow-library-row-status {
-    grid-area: status;
+  .flow-library-row-format { grid-area: format; }
+  .flow-library-row-status { grid-area: status; }
+  .flow-library-row-rating {
+    grid-area: rating;
+    justify-self: start;
   }
 
   .flow-library-row-status select {
     max-width: none;
-  }
-
-  .flow-library-row-rating {
-    grid-area: rating;
-    justify-self: start;
+    min-height: 38px;
   }
 }
 
@@ -1574,15 +1279,36 @@
     grid-template-columns: 58px minmax(0, 1fr);
   }
 
-  .flow-result-cover {
-    width: 58px;
+  .flow-result-cover,
+  .flow-library-row-cover {
+    width: 50px;
   }
 
   .flow-library-row {
     grid-template-columns: 50px minmax(0, 1fr);
   }
+}
 
-  .flow-library-row-cover {
-    width: 50px;
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .section-library-flow *,
+  .section-library-flow *::before,
+  .section-library-flow *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .flow-filter:hover,
+  .flow-status-filter:hover,
+  .flow-status-options span:hover,
+  .flow-status-options input:checked + span,
+  .flow-add-button:hover,
+  .flow-cta:hover {
+    transform: none;
   }
 }
