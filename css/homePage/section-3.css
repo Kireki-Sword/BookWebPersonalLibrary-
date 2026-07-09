@@ -1540,3 +1540,349 @@
     transform: none;
   }
 }
+
+
+/* =========================================================
+   FINAL DESKTOP SPACING FIX
+   Fixes:
+   - wider desktop grid so the layout breathes
+   - moves content farther toward the page sides
+   - bigger right search card
+   - prevents bad headline break: "it. Keep" / "going."
+   - keeps the library at the bottom inside the viewport
+   ========================================================= */
+
+@media (min-width: 981px) {
+  .section-library-flow {
+    height: calc(100svh - var(--nav-height));
+    min-height: calc(100svh - var(--nav-height));
+
+    padding:
+      clamp(2rem, 4.4vh, 4.25rem)
+      clamp(1.75rem, 4.25vw, 4.75rem)
+      clamp(0.85rem, 2vh, 1.35rem);
+  }
+
+  .flow-grid {
+    width: min(100%, 1460px);
+
+    grid-template-columns:
+      minmax(540px, 0.94fr)
+      minmax(540px, 1.06fr);
+
+    grid-template-rows:
+      minmax(330px, 1fr)
+      clamp(220px, 29vh, 285px);
+
+    column-gap: clamp(4rem, 6.2vw, 7.25rem);
+    row-gap: clamp(1rem, 2.2vh, 1.55rem);
+
+    align-items: center;
+  }
+
+  .flow-copy-card {
+    max-width: 640px;
+    justify-self: start;
+  }
+
+  .flow-copy-card .section-label {
+    margin-bottom: 0.72rem;
+    font-size: clamp(0.66rem, 0.78vw, 0.76rem);
+  }
+
+  .flow-copy-card h2 {
+    max-width: 640px;
+    margin-bottom: 1.05rem;
+
+    font-size: clamp(3.25rem, 4.9vw, 5.15rem);
+    line-height: 0.9;
+    letter-spacing: -0.064em;
+  }
+
+  .flow-copy-card h2 span {
+    white-space: nowrap;
+  }
+
+  .flow-copy-card p {
+    max-width: 535px;
+    margin-bottom: 1.25rem;
+
+    font-size: clamp(0.9rem, 1vw, 1rem);
+    line-height: 1.7;
+  }
+
+  .flow-cta {
+    min-height: 40px;
+    padding-inline: 1.12rem;
+    font-size: clamp(0.76rem, 0.84vw, 0.86rem);
+  }
+
+  .flow-search-card {
+    width: min(100%, 560px);
+    min-height: 280px;
+
+    justify-self: end;
+  }
+
+  .flow-card-header {
+    min-height: 42px;
+    padding: 0.86rem 1rem 0;
+  }
+
+  .flow-window-controls {
+    gap: 7px;
+  }
+
+  .flow-window-controls span {
+    width: 8px;
+    height: 8px;
+  }
+
+  .flow-search-body {
+    padding: 0.82rem 1rem 1.08rem;
+  }
+
+  .flow-search-form label,
+  .flow-status-picker legend {
+    margin-bottom: 0.56rem;
+    font-size: clamp(0.7rem, 0.82vw, 0.8rem);
+  }
+
+  .flow-search-bar,
+  .flow-search-bar input,
+  .flow-search-bar button {
+    height: 48px;
+    min-height: 48px;
+  }
+
+  .flow-search-bar {
+    border-radius: 10px;
+  }
+
+  .flow-search-bar input {
+    padding-inline: 0.95rem;
+    font-size: clamp(0.76rem, 0.88vw, 0.9rem);
+  }
+
+  .flow-search-bar button {
+    width: 48px;
+    flex-basis: 48px;
+    font-size: 1.05rem;
+  }
+
+  .flow-search-empty {
+    margin-top: 0.68rem;
+    font-size: clamp(0.68rem, 0.78vw, 0.78rem);
+  }
+
+  .flow-status-picker {
+    margin-top: 0.84rem;
+  }
+
+  .flow-status-options {
+    gap: 0.48rem;
+  }
+
+  .flow-status-options span,
+  .flow-filter,
+  .flow-status-filter {
+    min-height: 30px;
+    padding-inline: 0.7rem;
+    font-size: clamp(0.62rem, 0.72vw, 0.7rem);
+  }
+
+  .flow-library-card {
+    width: 100%;
+    height: 100%;
+    justify-self: stretch;
+    align-self: end;
+  }
+
+  .flow-library-header {
+    min-height: 52px;
+    padding: 0.76rem 1rem;
+  }
+
+  .flow-library-body {
+    height: calc(100% - 52px);
+    padding: 0.78rem 1rem 0.9rem;
+
+    grid-template-columns: minmax(0, 1fr) minmax(260px, 360px);
+    grid-template-rows:
+      auto
+      auto
+      minmax(58px, 1fr);
+
+    gap: 0.58rem 1rem;
+  }
+
+  .flow-library-empty {
+    min-height: 56px;
+  }
+}
+
+@media (min-width: 981px) and (min-height: 860px) {
+  .flow-grid {
+    grid-template-rows:
+      minmax(380px, 1fr)
+      clamp(240px, 29vh, 300px);
+  }
+
+  .flow-search-card {
+    min-height: 295px;
+  }
+}
+
+@media (min-width: 981px) and (max-width: 1320px) {
+  .flow-grid {
+    width: min(100%, 1240px);
+
+    grid-template-columns:
+      minmax(455px, 0.94fr)
+      minmax(500px, 1.06fr);
+
+    column-gap: clamp(2.75rem, 5vw, 4.8rem);
+  }
+
+  .flow-copy-card,
+  .flow-copy-card h2 {
+    max-width: 570px;
+  }
+
+  .flow-copy-card h2 {
+    font-size: clamp(3rem, 4.7vw, 4.65rem);
+  }
+
+  .flow-search-card {
+    width: min(100%, 520px);
+  }
+}
+
+@media (min-width: 981px) and (max-height: 760px) {
+  .section-library-flow {
+    padding:
+      clamp(1.05rem, 3vh, 1.8rem)
+      clamp(1.75rem, 4vw, 4.5rem)
+      clamp(0.65rem, 1.6vh, 1rem);
+  }
+
+  .flow-grid {
+    width: min(100%, 1440px);
+
+    grid-template-rows:
+      minmax(250px, 1fr)
+      clamp(180px, 27vh, 225px);
+
+    row-gap: clamp(0.72rem, 1.6vh, 1rem);
+  }
+
+  .flow-copy-card,
+  .flow-copy-card h2 {
+    max-width: 600px;
+  }
+
+  .flow-copy-card h2 {
+    margin-bottom: 0.82rem;
+    font-size: clamp(2.75rem, 4.55vw, 4.15rem);
+    line-height: 0.9;
+  }
+
+  .flow-copy-card p {
+    max-width: 490px;
+    margin-bottom: 0.92rem;
+    font-size: 0.82rem;
+    line-height: 1.58;
+  }
+
+  .flow-cta {
+    min-height: 36px;
+  }
+
+  .flow-search-card {
+    width: min(100%, 540px);
+    min-height: 238px;
+  }
+
+  .flow-card-header {
+    min-height: 36px;
+    padding-top: 0.72rem;
+  }
+
+  .flow-search-body {
+    padding: 0.68rem 0.9rem 0.88rem;
+  }
+
+  .flow-search-bar,
+  .flow-search-bar input,
+  .flow-search-bar button {
+    height: 44px;
+    min-height: 44px;
+  }
+
+  .flow-search-bar button {
+    width: 44px;
+    flex-basis: 44px;
+  }
+
+  .flow-status-picker {
+    margin-top: 0.68rem;
+  }
+
+  .flow-status-options span,
+  .flow-filter,
+  .flow-status-filter {
+    min-height: 26px;
+    padding-inline: 0.58rem;
+    font-size: 0.58rem;
+  }
+
+  .flow-library-header {
+    min-height: 46px;
+  }
+
+  .flow-library-body {
+    height: calc(100% - 46px);
+    padding: 0.6rem 0.88rem 0.72rem;
+
+    grid-template-rows:
+      auto
+      auto
+      minmax(42px, 1fr);
+
+    gap: 0.42rem 0.85rem;
+  }
+}
+
+@media (min-width: 981px) and (max-height: 610px) {
+  .flow-grid {
+    grid-template-rows:
+      minmax(210px, 1fr)
+      164px;
+  }
+
+  .flow-copy-card h2 {
+    font-size: clamp(2.45rem, 4.1vw, 3.45rem);
+  }
+
+  .flow-copy-card p {
+    font-size: 0.74rem;
+    line-height: 1.48;
+  }
+
+  .flow-search-card {
+    width: min(100%, 510px);
+    min-height: 198px;
+  }
+
+  .flow-search-bar,
+  .flow-search-bar input,
+  .flow-search-bar button {
+    height: 38px;
+    min-height: 38px;
+  }
+
+  .flow-search-bar button {
+    width: 38px;
+    flex-basis: 38px;
+  }
+}
