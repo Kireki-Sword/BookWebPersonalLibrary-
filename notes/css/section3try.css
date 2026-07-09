@@ -1,112 +1,218 @@
 /* =========================================================
-   SECTION 3 — SEARCH DEMO
-   Find it. Save it. Keep going.
+   SECTION 3 — LIBRARY FLOW DEMO
+   Find it. Save it. Watch your library build.
 
-   Color direction:
-   - Midnight navy background
-   - Violet / blue search glow
-   - Cyan saved-success glow
+   Desktop layout:
+   - Text open on the left
+   - Search card on the right
+   - Library preview across the bottom
+   - Section fills the viewport under the navbar
    ========================================================= */
 
 
 /* =========================================================
-   MAIN SECTION BACKGROUND
+   SECTION BACKGROUND
    ========================================================= */
 
-.section-search-demo {
-  min-height: 100vh;
-  padding: 8rem 8%;
-  display: grid;
-  grid-template-columns: minmax(0, 0.9fr) minmax(360px, 1.1fr);
-  align-items: center;
-  gap: 5rem;
+.section-library-flow {
+  --nav-height: 64px;
+
+  height: calc(100vh - var(--nav-height));
+  height: calc(100dvh - var(--nav-height));
+
+  min-height: calc(100vh - var(--nav-height));
+  min-height: calc(100dvh - var(--nav-height));
+
+  max-height: none;
+
+  padding:
+    clamp(1.6rem, 3.2vh, 2.6rem)
+    clamp(2rem, 5.2vw, 5.5rem)
+    clamp(1.5rem, 3vh, 2.4rem);
+
   position: relative;
   overflow: hidden;
   isolation: isolate;
 
   background:
-    radial-gradient(circle at 82% 24%, rgba(124, 140, 255, 0.24), transparent 34%),
-    radial-gradient(circle at 16% 28%, rgba(155, 124, 255, 0.16), transparent 36%),
-    radial-gradient(circle at 74% 78%, rgba(116, 215, 255, 0.09), transparent 34%),
-    radial-gradient(circle at 28% 88%, rgba(210, 140, 255, 0.10), transparent 38%),
+    radial-gradient(circle at 82% 18%, rgba(124, 140, 255, 0.24), transparent 34%),
+    radial-gradient(circle at 15% 30%, rgba(155, 124, 255, 0.15), transparent 36%),
+    radial-gradient(circle at 78% 78%, rgba(116, 215, 255, 0.09), transparent 34%),
+    radial-gradient(circle at 24% 92%, rgba(210, 140, 255, 0.10), transparent 38%),
     linear-gradient(135deg, #050611 0%, #080D1F 38%, #0B1024 68%, #050611 100%) !important;
 }
 
-/* Big violet search glow */
-.section-search-demo::before {
+.section-library-flow::before {
   content: "";
   position: absolute;
-  right: -18%;
-  top: 4%;
-  width: 720px;
-  height: 720px;
+  right: -16%;
+  top: -22%;
+  width: 760px;
+  height: 760px;
   border-radius: 50%;
-
-  background:
-    radial-gradient(
-      circle,
-      rgba(124, 140, 255, 0.30) 0%,
-      rgba(155, 124, 255, 0.16) 34%,
-      rgba(124, 140, 255, 0.05) 56%,
-      transparent 72%
-    );
-
-  filter: blur(10px);
   pointer-events: none;
   z-index: -2;
-}
-
-/* Lower pink/cyan glow */
-.section-search-demo::after {
-  content: "";
-  position: absolute;
-  left: -18%;
-  bottom: -28%;
-  width: 620px;
-  height: 620px;
-  border-radius: 50%;
 
   background:
     radial-gradient(
       circle,
-      rgba(210, 140, 255, 0.18) 0%,
-      rgba(116, 215, 255, 0.08) 42%,
-      transparent 72%
+      rgba(124, 140, 255, 0.28) 0%,
+      rgba(155, 124, 255, 0.14) 34%,
+      rgba(124, 140, 255, 0.05) 58%,
+      transparent 74%
     );
 
   filter: blur(14px);
+}
+
+.section-library-flow::after {
+  content: "";
+  position: absolute;
+  left: -18%;
+  bottom: -36%;
+  width: 620px;
+  height: 620px;
+  border-radius: 50%;
   pointer-events: none;
   z-index: -2;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(210, 140, 255, 0.15) 0%,
+      rgba(116, 215, 255, 0.075) 42%,
+      transparent 74%
+    );
+
+  filter: blur(18px);
 }
 
 
 /* =========================================================
-   LEFT COPY
+   MAIN GRID
    ========================================================= */
 
-.section-3-copy {
+.flow-grid {
+  width: min(100%, 1360px);
+  height: 100%;
+  margin-inline: auto;
+
+  display: grid;
+  grid-template-columns: minmax(420px, 0.95fr) minmax(540px, 1.05fr);
+
+  grid-template-rows:
+    minmax(0, 1fr)
+    clamp(220px, 27vh, 285px);
+
+  grid-template-areas:
+    "copy search"
+    "library library";
+
+  column-gap: clamp(3.5rem, 7vw, 7rem);
+  row-gap: clamp(1.2rem, 2.4vh, 1.8rem);
+
+  align-items: stretch;
+
   position: relative;
   z-index: 2;
-  max-width: 570px;
 }
 
-.section-search-demo .section-label {
+
+/* =========================================================
+   SHARED CARD STYLE
+   Used by search + library.
+   Copy area becomes transparent later.
+   ========================================================= */
+
+.flow-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 28px;
+
+  background:
+    radial-gradient(circle at 14% 8%, rgba(255, 255, 255, 0.09), transparent 26%),
+    radial-gradient(circle at 92% 10%, rgba(124, 140, 255, 0.17), transparent 34%),
+    radial-gradient(circle at 78% 86%, rgba(116, 215, 255, 0.06), transparent 38%),
+    linear-gradient(135deg, rgba(14, 19, 36, 0.95), rgba(9, 14, 29, 0.95) 52%, rgba(18, 15, 35, 0.94));
+
+  border: 1px solid rgba(184, 192, 255, 0.22);
+
+  box-shadow:
+    0 30px 76px rgba(0, 0, 0, 0.42),
+    0 14px 34px rgba(0, 0, 0, 0.30),
+    0 0 0 1px rgba(184, 192, 255, 0.08),
+    0 0 66px rgba(124, 140, 255, 0.10);
+
+  isolation: isolate;
+}
+
+.flow-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  background:
+    linear-gradient(
+      120deg,
+      rgba(255, 255, 255, 0.07),
+      transparent 24%,
+      transparent 72%,
+      rgba(255, 255, 255, 0.03)
+    );
+
+  pointer-events: none;
+  z-index: -1;
+}
+
+
+/* =========================================================
+   TOP LEFT — COPY AREA
+   This restores the clean old version.
+   ========================================================= */
+
+.flow-copy-card {
+  grid-area: copy;
+
+  min-height: 0;
+  padding: 0;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+/* Remove card chrome from text area */
+.flow-copy-card.flow-card {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  border-radius: 0;
+  overflow: visible;
+}
+
+.flow-copy-card.flow-card::before {
+  display: none;
+}
+
+.flow-copy-card .section-label {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  margin-bottom: 1rem;
+
+  margin-bottom: 0.82rem;
 
   color: var(--warm-brown-light);
-  font-size: 0.78rem;
-  font-weight: 800;
+  font-size: 0.73rem;
+  font-weight: 850;
   letter-spacing: 0.15em;
   text-transform: uppercase;
 }
 
-.section-search-demo .section-label::before {
+.flow-copy-card .section-label::before {
   content: "";
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border-radius: 999px;
 
   background: #74D7FF;
@@ -116,181 +222,146 @@
     0 0 36px rgba(124, 140, 255, 0.28);
 }
 
-.section-3-copy h2 {
+.flow-copy-card h2 {
   font-family: var(--font-display);
-  font-size: clamp(3.1rem, 6vw, 5.9rem);
+  font-size: clamp(3.15rem, 5.25vw, 4.95rem);
   font-weight: 700;
-  line-height: 0.92;
+  line-height: 0.9;
   letter-spacing: -0.065em;
   color: var(--ink);
 
-  margin-bottom: 1.45rem;
+  max-width: 620px;
+  margin-bottom: 1.25rem;
 
   text-shadow:
-    0 18px 55px rgba(0, 0, 0, 0.48),
+    0 18px 55px rgba(0, 0, 0, 0.50),
     0 0 42px rgba(124, 140, 255, 0.13);
 }
 
-.section-3-copy p {
-  color: var(--ink-light);
-  font-size: 1.05rem;
-  line-height: 1.85;
-  max-width: 500px;
-  margin-bottom: 2rem;
+.flow-copy-card h2 span {
+  display: block;
+  color: #E7ECFF;
 }
 
-.section-3-cta {
-  min-height: 54px;
-  padding: 0 1.75rem;
+.flow-copy-card p {
+  color: var(--ink-light);
+  font-size: 1rem;
+  line-height: 1.76;
+  max-width: 560px;
+  margin-bottom: 1.45rem;
+}
+
+.flow-cta {
+  min-height: 48px;
+  padding: 0 1.45rem;
   border-radius: 999px;
   text-decoration: none;
+
   display: inline-flex;
   align-items: center;
   justify-content: center;
 }
 
-.section-3-cta::after {
+.flow-cta::after {
   content: "→";
   margin-left: 0.65rem;
   transition: transform var(--transition);
 }
 
-.section-3-cta:hover::after {
+.flow-cta:hover::after {
   transform: translateX(4px);
 }
 
 
 /* =========================================================
-   RIGHT DEMO WRAPPER
+   TOP RIGHT — SEARCH CARD
    ========================================================= */
 
-.section-3-demo {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  justify-content: flex-end;
+.flow-search-card {
+  grid-area: search;
+
+  align-self: center;
+
+  height: min(100%, 455px);
+  min-height: 355px;
 }
 
-/* Decorative cyan glow behind demo */
-.section-3-demo::before {
-  content: "";
-  position: absolute;
-  right: -8%;
-  top: 10%;
-  width: 420px;
-  height: 420px;
-  border-radius: 50%;
+.flow-card-header {
+  min-height: 58px;
+  padding: 0.82rem 1.15rem;
 
-  background:
-    radial-gradient(circle, rgba(116, 215, 255, 0.12), transparent 68%);
-
-  filter: blur(18px);
-  pointer-events: none;
-  z-index: -1;
-}
-
-
-/* =========================================================
-   DEMO WINDOW
-   ========================================================= */
-
-.demo-window {
-  width: min(100%, 640px);
-  border-radius: 30px;
-  overflow: hidden;
-  position: relative;
-
-  background:
-    radial-gradient(circle at 14% 8%, rgba(255, 255, 255, 0.10), transparent 26%),
-    radial-gradient(circle at 92% 10%, rgba(124, 140, 255, 0.20), transparent 34%),
-    radial-gradient(circle at 78% 86%, rgba(116, 215, 255, 0.08), transparent 38%),
-    linear-gradient(135deg, rgba(14, 19, 36, 0.98), rgba(9, 14, 29, 0.98) 52%, rgba(18, 15, 35, 0.97));
-
-  border: 1px solid rgba(184, 192, 255, 0.28);
-
-  box-shadow:
-    0 46px 120px rgba(0, 0, 0, 0.58),
-    0 20px 52px rgba(0, 0, 0, 0.42),
-    0 0 0 1px rgba(184, 192, 255, 0.10),
-    0 0 90px rgba(124, 140, 255, 0.18),
-    0 0 120px rgba(116, 215, 255, 0.06);
-}
-
-/* Inner glass shine */
-.demo-window::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-
-  background:
-    linear-gradient(
-      120deg,
-      rgba(255, 255, 255, 0.09),
-      transparent 24%,
-      transparent 72%,
-      rgba(255, 255, 255, 0.04)
-    );
-
-  pointer-events: none;
-}
-
-
-/* =========================================================
-   WINDOW HEADER
-   ========================================================= */
-
-.demo-window-header {
-  height: 52px;
   display: flex;
   align-items: center;
-  gap: 9px;
-  padding: 0 1.25rem;
+  justify-content: space-between;
+  gap: 1rem;
 
-  border-bottom: 1px solid rgba(184, 192, 255, 0.16);
+  border-bottom: 1px solid rgba(184, 192, 255, 0.15);
 
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.025));
+    linear-gradient(180deg, rgba(255, 255, 255, 0.065), rgba(255, 255, 255, 0.022));
 }
 
-.demo-window-header span {
-  width: 11px;
-  height: 11px;
+.flow-eyebrow {
+  display: block;
+  color: var(--warm-brown-light);
+  font-size: 0.62rem;
+  font-weight: 850;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 0.2rem;
+}
+
+.flow-card-header h3,
+.flow-library-header h3 {
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 1.42rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.035em;
+  margin: 0;
+}
+
+.flow-window-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.flow-window-controls span {
+  width: 10px;
+  height: 10px;
   border-radius: 999px;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
 }
 
-.demo-window-header span:nth-child(1) {
+.flow-window-controls span:nth-child(1) {
   background: #D28CFF;
-  box-shadow: 0 0 16px rgba(210, 140, 255, 0.48);
+  box-shadow: 0 0 14px rgba(210, 140, 255, 0.48);
 }
 
-.demo-window-header span:nth-child(2) {
+.flow-window-controls span:nth-child(2) {
   background: #7C8CFF;
-  box-shadow: 0 0 16px rgba(124, 140, 255, 0.46);
+  box-shadow: 0 0 14px rgba(124, 140, 255, 0.46);
 }
 
-.demo-window-header span:nth-child(3) {
+.flow-window-controls span:nth-child(3) {
   background: #74D7FF;
-  box-shadow: 0 0 16px rgba(116, 215, 255, 0.44);
+  box-shadow: 0 0 14px rgba(116, 215, 255, 0.44);
 }
 
-
-/* =========================================================
-   WINDOW BODY
-   ========================================================= */
-
-.demo-window-body {
-  position: relative;
-  padding: 1.65rem;
+.flow-search-body {
+  padding: 1.15rem 1.25rem 1.25rem;
 }
 
-.demo-search-form label,
-.demo-status-picker legend {
+.flow-search-form label,
+.flow-status-picker legend {
   display: block;
   color: var(--ink-mid);
-  font-size: 0.86rem;
+  font-size: 0.8rem;
   font-weight: 750;
-  margin-bottom: 0.65rem;
+  margin-bottom: 0.52rem;
 }
 
 
@@ -298,13 +369,13 @@
    SEARCH BAR
    ========================================================= */
 
-.demo-search-bar {
-  min-height: 60px;
+.flow-search-bar {
+  min-height: 56px;
   display: flex;
   align-items: center;
   overflow: hidden;
 
-  border-radius: 19px;
+  border-radius: 17px;
 
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.04));
@@ -313,29 +384,29 @@
 
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.06),
-    0 16px 34px rgba(0, 0, 0, 0.28),
-    0 0 28px rgba(124, 140, 255, 0.08);
+    0 14px 28px rgba(0, 0, 0, 0.26),
+    0 0 24px rgba(124, 140, 255, 0.08);
 
   transition:
     border-color var(--transition),
     box-shadow var(--transition);
 }
 
-.demo-search-bar:focus-within {
+.flow-search-bar:focus-within {
   border-color: rgba(116, 215, 255, 0.48);
 
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.08),
-    0 18px 38px rgba(0, 0, 0, 0.32),
+    0 16px 34px rgba(0, 0, 0, 0.30),
     0 0 0 4px rgba(116, 215, 255, 0.12),
-    0 0 38px rgba(124, 140, 255, 0.16);
+    0 0 34px rgba(124, 140, 255, 0.16);
 }
 
-.demo-search-bar input {
+.flow-search-bar input {
   flex: 1;
   width: 100%;
-  height: 60px;
-  padding: 0 1rem;
+  height: 56px;
+  padding: 0 0.95rem;
 
   background: transparent;
   border: 0;
@@ -343,18 +414,18 @@
 
   color: var(--ink);
   font-family: var(--font-body);
-  font-size: 0.96rem;
+  font-size: 0.92rem;
   font-weight: 500;
 }
 
-.demo-search-bar input::placeholder {
+.flow-search-bar input::placeholder {
   color: var(--ink-faint);
 }
 
-.demo-search-bar button {
-  width: 60px;
-  height: 60px;
-  flex: 0 0 60px;
+.flow-search-bar button {
+  width: 56px;
+  height: 56px;
+  flex: 0 0 56px;
 
   border: 0;
   border-left: 1px solid rgba(184, 192, 255, 0.13);
@@ -365,7 +436,7 @@
 
   color: var(--ink);
   cursor: pointer;
-  font-size: 1.2rem;
+  font-size: 1.15rem;
 
   transition:
     background var(--transition),
@@ -373,63 +444,64 @@
     box-shadow var(--transition);
 }
 
-.demo-search-bar button:hover {
+.flow-search-bar button:hover {
   background:
     radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.28), transparent 30%),
     linear-gradient(145deg, rgba(210, 140, 255, 0.48), rgba(109, 139, 255, 0.38));
 
   box-shadow:
-    0 0 28px rgba(124, 140, 255, 0.20);
+    0 0 26px rgba(124, 140, 255, 0.20);
 }
 
-.demo-search-bar button:active {
+.flow-search-bar button:active {
   transform: scale(0.96);
 }
 
 
 /* =========================================================
-   EMPTY STATE
+   SEARCH EMPTY STATE
    ========================================================= */
 
-.demo-empty-state {
-  margin-top: 1rem;
+.flow-search-empty {
+  margin-top: 0.78rem;
   color: var(--ink-faint);
-  font-size: 0.88rem;
-  line-height: 1.6;
+  font-size: 0.82rem;
+  line-height: 1.55;
 }
 
-.demo-empty-state p {
+.flow-search-empty p {
   margin: 0;
 }
 
-.demo-window-body.has-result .demo-empty-state,
-.demo-window-body.is-saved .demo-empty-state {
+.section-library-flow.has-result .flow-search-empty,
+.section-library-flow.is-saved .flow-search-empty,
+.flow-search-card.has-result .flow-search-empty,
+.flow-search-card.is-saved .flow-search-empty {
   display: none;
 }
 
 
 /* =========================================================
    RESULT CARD
-   This appears only after JS clones the <template>.
    ========================================================= */
 
-.demo-result-area {
-  margin-top: 1.2rem;
+.flow-result-area {
+  margin-top: 0.95rem;
   min-height: 0;
 }
 
-.demo-result-area:empty {
+.flow-result-area:empty {
   display: none;
 }
 
-.demo-result-card {
+.flow-result-card {
   display: grid;
-  grid-template-columns: 82px minmax(0, 1fr) auto;
+  grid-template-columns: 70px minmax(0, 1fr) auto;
   align-items: center;
-  gap: 1rem;
+  gap: 0.85rem;
 
-  padding: 0.9rem;
-  border-radius: 23px;
+  padding: 0.78rem;
+  border-radius: 20px;
 
   background:
     radial-gradient(circle at 8% 10%, rgba(255, 255, 255, 0.08), transparent 28%),
@@ -440,20 +512,20 @@
       rgba(116, 215, 255, 0.055)
     );
 
-  border: 1px solid rgba(184, 192, 255, 0.22);
+  border: 1px solid rgba(184, 192, 255, 0.20);
 
   box-shadow:
-    0 20px 42px rgba(0, 0, 0, 0.34),
-    0 0 34px rgba(124, 140, 255, 0.10),
+    0 16px 34px rgba(0, 0, 0, 0.30),
+    0 0 28px rgba(124, 140, 255, 0.09),
     inset 0 1px 0 rgba(255, 255, 255, 0.055);
 
-  animation: section3ResultIn 0.65s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation: flowResultIn 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
-.demo-result-cover {
-  width: 82px;
+.flow-result-cover {
+  width: 70px;
   aspect-ratio: 2 / 3;
-  border-radius: 15px;
+  border-radius: 13px;
   overflow: hidden;
 
   background:
@@ -461,52 +533,52 @@
     linear-gradient(145deg, rgba(124, 140, 255, 0.38), rgba(210, 140, 255, 0.24));
 
   box-shadow:
-    0 16px 32px rgba(0, 0, 0, 0.40),
-    0 0 28px rgba(124, 140, 255, 0.14),
+    0 14px 26px rgba(0, 0, 0, 0.36),
+    0 0 24px rgba(124, 140, 255, 0.12),
     0 0 0 1px rgba(255, 255, 255, 0.10) inset;
 }
 
-.demo-result-cover img {
+.flow-result-cover img {
   width: 100%;
   height: 100%;
   display: block;
   object-fit: cover;
 }
 
-.demo-result-info {
+.flow-result-info {
   min-width: 0;
 }
 
-.demo-result-info h3 {
+.flow-result-info h4 {
   font-family: var(--font-display);
   color: var(--ink);
-  font-size: 1.55rem;
+  font-size: 1.32rem;
   font-weight: 700;
   line-height: 1;
   letter-spacing: -0.035em;
-  margin-bottom: 0.4rem;
+  margin-bottom: 0.32rem;
 }
 
-.demo-result-creator {
+.flow-result-creator {
   color: var(--ink-light);
-  font-size: 0.9rem;
-  margin-bottom: 0.45rem;
+  font-size: 0.82rem;
+  margin-bottom: 0.38rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.demo-result-type {
+.flow-result-type {
   display: inline-flex;
   width: fit-content;
   align-items: center;
   justify-content: center;
 
-  padding: 0.25rem 0.68rem;
+  padding: 0.22rem 0.6rem;
   border-radius: 999px;
 
   color: var(--warm-brown-light);
-  font-size: 0.7rem;
+  font-size: 0.64rem;
   font-weight: 850;
   letter-spacing: 0.09em;
   text-transform: uppercase;
@@ -514,7 +586,7 @@
   background:
     linear-gradient(180deg, rgba(124, 140, 255, 0.16), rgba(155, 124, 255, 0.10));
 
-  border: 1px solid rgba(184, 192, 255, 0.22);
+  border: 1px solid rgba(184, 192, 255, 0.20);
 }
 
 
@@ -522,10 +594,10 @@
    ADD BUTTON
    ========================================================= */
 
-.demo-add-button {
-  min-width: 76px;
-  min-height: 42px;
-  padding: 0 1rem;
+.flow-add-button {
+  min-width: 72px;
+  min-height: 40px;
+  padding: 0 0.95rem;
 
   border-radius: 999px;
   border: 1px solid rgba(184, 192, 255, 0.34);
@@ -536,14 +608,14 @@
 
   color: #FFFFFF;
   font-family: var(--font-body);
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   font-weight: 850;
 
   cursor: pointer;
 
   box-shadow:
-    0 16px 32px rgba(0, 0, 0, 0.38),
-    0 0 28px rgba(124, 140, 255, 0.24),
+    0 14px 28px rgba(0, 0, 0, 0.34),
+    0 0 24px rgba(124, 140, 255, 0.22),
     inset 0 1px 0 rgba(255, 255, 255, 0.14);
 
   transition:
@@ -553,7 +625,7 @@
     background var(--transition);
 }
 
-.demo-add-button:hover {
+.flow-add-button:hover {
   transform: translateY(-1px);
   border-color: rgba(184, 192, 255, 0.52);
 
@@ -562,16 +634,16 @@
     linear-gradient(145deg, #D28CFF 0%, #9B7CFF 48%, #6D8BFF 100%);
 
   box-shadow:
-    0 20px 40px rgba(0, 0, 0, 0.46),
-    0 0 38px rgba(155, 124, 255, 0.32),
+    0 18px 34px rgba(0, 0, 0, 0.42),
+    0 0 34px rgba(155, 124, 255, 0.30),
     inset 0 1px 0 rgba(255, 255, 255, 0.16);
 }
 
-.demo-add-button:active {
+.flow-add-button:active {
   transform: translateY(0) scale(0.97);
 }
 
-.demo-add-button.is-added {
+.flow-add-button.is-added {
   pointer-events: none;
   color: rgba(255, 255, 255, 0.78);
 
@@ -579,7 +651,7 @@
     linear-gradient(145deg, rgba(116, 215, 255, 0.28), rgba(124, 140, 255, 0.22));
 }
 
-.demo-add-button.is-added::before {
+.flow-add-button.is-added::before {
   content: "✓ ";
 }
 
@@ -588,8 +660,8 @@
    STATUS PICKER
    ========================================================= */
 
-.demo-status-picker {
-  margin-top: 1.35rem;
+.flow-status-picker {
+  margin-top: 0.95rem;
   padding: 0;
   border: 0;
 
@@ -603,45 +675,46 @@
     transform var(--transition);
 }
 
-.demo-status-picker.is-active,
-.demo-window-body.has-result .demo-status-picker {
+.flow-status-picker.is-active,
+.section-library-flow.has-result .flow-status-picker,
+.flow-search-card.has-result .flow-status-picker {
   opacity: 1;
   filter: saturate(1);
   pointer-events: auto;
 }
 
-.demo-status-picker:disabled {
+.flow-status-picker:disabled {
   opacity: 0.42;
 }
 
-.demo-status-options {
+.flow-status-options {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.65rem;
+  gap: 0.48rem;
 }
 
-.demo-status-options label {
+.flow-status-options label {
   cursor: pointer;
   position: relative;
 }
 
-.demo-status-options input {
+.flow-status-options input {
   position: absolute;
   opacity: 0;
   pointer-events: none;
 }
 
-.demo-status-options span {
-  min-height: 40px;
+.flow-status-options span {
+  min-height: 36px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
 
-  padding: 0 0.95rem;
+  padding: 0 0.78rem;
   border-radius: 999px;
 
   color: var(--ink-mid);
-  font-size: 0.82rem;
+  font-size: 0.76rem;
   font-weight: 750;
 
   background:
@@ -660,13 +733,13 @@
     box-shadow var(--transition);
 }
 
-.demo-status-options input:focus-visible + span {
+.flow-status-options input:focus-visible + span {
   outline: 3px solid rgba(116, 215, 255, 0.28);
   outline-offset: 3px;
 }
 
-.demo-status-options span:hover,
-.demo-status-options input:checked + span {
+.flow-status-options span:hover,
+.flow-status-options input:checked + span {
   color: #FFFFFF;
   border-color: rgba(116, 215, 255, 0.42);
 
@@ -680,17 +753,17 @@
     );
 
   box-shadow:
-    0 12px 26px rgba(0, 0, 0, 0.30),
-    0 0 24px rgba(116, 215, 255, 0.18),
-    0 0 34px rgba(124, 140, 255, 0.12),
+    0 10px 22px rgba(0, 0, 0, 0.28),
+    0 0 22px rgba(116, 215, 255, 0.16),
+    0 0 30px rgba(124, 140, 255, 0.10),
     inset 0 1px 0 rgba(255, 255, 255, 0.09);
 
   transform: translateY(-1px);
 }
 
-.demo-status-options input:checked + span::before {
+.flow-status-options input:checked + span::before {
   content: "✓";
-  margin-right: 0.45rem;
+  margin-right: 0.38rem;
   color: #74D7FF;
   text-shadow: 0 0 12px rgba(116, 215, 255, 0.50);
 }
@@ -700,22 +773,22 @@
    SAVED MESSAGE
    ========================================================= */
 
-.demo-saved-message {
-  margin-top: 1.2rem;
+.flow-saved-message {
+  margin-top: 0.85rem;
 
   display: inline-flex;
   align-items: center;
-  gap: 0.55rem;
+  gap: 0.5rem;
 
   width: fit-content;
   max-width: 100%;
 
   color: #F5F7FF;
-  font-size: 0.9rem;
+  font-size: 0.82rem;
   font-weight: 800;
-  line-height: 1.4;
+  line-height: 1.35;
 
-  padding: 0.78rem 1rem;
+  padding: 0.64rem 0.82rem;
   border-radius: 999px;
 
   background:
@@ -725,21 +798,408 @@
   border: 1px solid rgba(116, 215, 255, 0.30);
 
   box-shadow:
-    0 14px 30px rgba(0, 0, 0, 0.28),
-    0 0 30px rgba(116, 215, 255, 0.14),
+    0 12px 24px rgba(0, 0, 0, 0.24),
+    0 0 24px rgba(116, 215, 255, 0.12),
     inset 0 1px 0 rgba(255, 255, 255, 0.07);
 
-  animation: section3SavedIn 0.5s ease both;
+  animation: flowSavedIn 0.45s ease both;
 }
 
-.demo-saved-message[hidden] {
+.flow-saved-message[hidden] {
   display: none;
 }
 
-.demo-saved-message i {
+.flow-saved-message i {
   color: #74D7FF;
-  font-size: 1rem;
+  font-size: 0.95rem;
   text-shadow: 0 0 14px rgba(116, 215, 255, 0.55);
+}
+
+
+/* =========================================================
+   BOTTOM — LIBRARY CARD
+   This should breathe, but still fit inside the viewport.
+   ========================================================= */
+
+.flow-library-card {
+  grid-area: library;
+  min-height: clamp(220px, 27vh, 285px);
+  height: auto;
+}
+
+.flow-library-header {
+  height: 58px;
+  padding: 0.8rem 1.15rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+
+  border-bottom: 1px solid rgba(184, 192, 255, 0.14);
+
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.065), rgba(255, 255, 255, 0.022));
+}
+
+.flow-library-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 32px;
+  padding: 0 0.8rem;
+  border-radius: 999px;
+
+  color: var(--ink);
+  font-size: 0.76rem;
+  font-weight: 850;
+
+  background:
+    radial-gradient(circle at 22% 18%, rgba(255, 255, 255, 0.12), transparent 30%),
+    linear-gradient(135deg, rgba(116, 215, 255, 0.14), rgba(124, 140, 255, 0.10));
+
+  border: 1px solid rgba(116, 215, 255, 0.24);
+}
+
+.flow-library-count [data-library-count] {
+  color: #74D7FF;
+  margin-right: 0.22rem;
+}
+
+.flow-library-body {
+  height: calc(100% - 58px);
+
+  padding: 1rem 1.15rem 1.15rem;
+
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 360px);
+
+  grid-template-rows:
+    34px
+    38px
+    minmax(72px, 1fr);
+
+  grid-template-areas:
+    "format notice"
+    "status notice"
+    "list   list";
+
+  align-items: center;
+  gap: 0.72rem 1.1rem;
+}
+
+
+/* =========================================================
+   LIBRARY FILTERS
+   ========================================================= */
+
+.flow-library-filters,
+.flow-library-status-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.55rem;
+  min-width: 0;
+}
+
+.flow-library-filters {
+  grid-area: format;
+}
+
+.flow-library-status-filters {
+  grid-area: status;
+}
+
+.flow-filter,
+.flow-status-filter {
+  min-height: 32px;
+  padding: 0 0.78rem;
+
+  border: 1px solid rgba(184, 192, 255, 0.16);
+  border-radius: 999px;
+
+  color: var(--ink-mid);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.035));
+
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 750;
+
+  cursor: pointer;
+
+  transition:
+    background var(--transition),
+    color var(--transition),
+    border-color var(--transition),
+    transform var(--transition),
+    box-shadow var(--transition);
+}
+
+.flow-filter:hover,
+.flow-status-filter:hover,
+.flow-filter.active,
+.flow-status-filter.active {
+  color: #FFFFFF;
+  border-color: rgba(116, 215, 255, 0.38);
+
+  background:
+    radial-gradient(circle at 28% 16%, rgba(255, 255, 255, 0.14), transparent 30%),
+    linear-gradient(145deg, rgba(116, 215, 255, 0.18), rgba(124, 140, 255, 0.22), rgba(155, 124, 255, 0.16));
+
+  box-shadow:
+    0 8px 18px rgba(0, 0, 0, 0.24),
+    0 0 18px rgba(124, 140, 255, 0.11),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+
+  transform: translateY(-1px);
+}
+
+.flow-filter:focus-visible,
+.flow-status-filter:focus-visible {
+  outline: 3px solid rgba(116, 215, 255, 0.28);
+  outline-offset: 3px;
+}
+
+.flow-library-list-header {
+  display: none;
+}
+
+
+/* =========================================================
+   LIBRARY EMPTY STATE
+   ========================================================= */
+
+.flow-library-empty {
+  grid-area: list;
+
+  min-height: 58px;
+  padding: 0.85rem 0.95rem;
+
+  display: flex;
+  align-items: center;
+
+  color: var(--ink-faint);
+  font-size: 0.82rem;
+  line-height: 1.35;
+
+  border: 1px dashed rgba(184, 192, 255, 0.18);
+  border-radius: 16px;
+
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.02));
+}
+
+.flow-library-empty p {
+  margin: 0;
+}
+
+.section-library-flow.has-library-item .flow-library-empty,
+.flow-library-card.has-library-item .flow-library-empty {
+  display: none;
+}
+
+
+/* =========================================================
+   LIBRARY ROW
+   ========================================================= */
+
+.flow-library-list {
+  grid-area: list;
+
+  display: grid;
+  gap: 0.55rem;
+  min-height: 0;
+}
+
+.flow-library-row {
+  display: grid;
+  grid-template-columns: minmax(250px, 1.4fr) 0.48fr 0.65fr 0.25fr;
+  grid-template-areas:
+    "story format status rating";
+
+  align-items: center;
+  gap: 0.85rem;
+
+  min-height: 72px;
+  padding: 0.7rem 0.85rem;
+
+  border-radius: 18px;
+
+  background:
+    radial-gradient(circle at 8% 10%, rgba(255, 255, 255, 0.075), transparent 28%),
+    linear-gradient(
+      135deg,
+      rgba(124, 140, 255, 0.11),
+      rgba(255, 255, 255, 0.035) 48%,
+      rgba(116, 215, 255, 0.052)
+    );
+
+  border: 1px solid rgba(184, 192, 255, 0.20);
+
+  box-shadow:
+    0 12px 24px rgba(0, 0, 0, 0.22),
+    0 0 24px rgba(124, 140, 255, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+
+  animation: flowRowIn 0.5s ease both;
+}
+
+.flow-library-row-cover {
+  grid-area: story;
+
+  width: 48px;
+  aspect-ratio: 2 / 3;
+  border-radius: 8px;
+  overflow: hidden;
+
+  background:
+    linear-gradient(145deg, rgba(124, 140, 255, 0.38), rgba(210, 140, 255, 0.24));
+
+  box-shadow:
+    0 8px 16px rgba(0, 0, 0, 0.28),
+    0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+}
+
+.flow-library-row-cover img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.flow-library-row-info {
+  grid-area: story;
+  min-width: 0;
+  padding-left: 60px;
+}
+
+.flow-library-row-info h4 {
+  margin: 0 0 0.16rem;
+
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 1.16rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.035em;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.flow-library-row-info p {
+  margin: 0;
+
+  color: var(--ink-light);
+  font-size: 0.76rem;
+  line-height: 1.2;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.flow-library-row-format {
+  grid-area: format;
+}
+
+.flow-library-row-status {
+  grid-area: status;
+}
+
+.flow-library-row-rating {
+  grid-area: rating;
+  justify-self: end;
+}
+
+.flow-library-row-format span,
+.flow-library-row-rating span {
+  min-height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0 0.58rem;
+  border-radius: 999px;
+
+  color: var(--warm-brown-light);
+  font-size: 0.62rem;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+
+  background:
+    linear-gradient(180deg, rgba(124, 140, 255, 0.16), rgba(155, 124, 255, 0.10));
+
+  border: 1px solid rgba(184, 192, 255, 0.20);
+}
+
+.flow-library-row-status select {
+  min-height: 30px;
+  width: 100%;
+  max-width: 140px;
+
+  padding: 0 1.8rem 0 0.65rem;
+
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 0.68rem;
+  font-weight: 750;
+
+  border-radius: 999px;
+  border: 1px solid rgba(116, 215, 255, 0.26);
+
+  background:
+    linear-gradient(180deg, rgba(116, 215, 255, 0.12), rgba(124, 140, 255, 0.08));
+
+  outline: none;
+  cursor: pointer;
+}
+
+.flow-library-row-status select:focus-visible {
+  outline: 3px solid rgba(116, 215, 255, 0.28);
+  outline-offset: 3px;
+}
+
+
+/* =========================================================
+   SAVE NOTICE
+   ========================================================= */
+
+.flow-library-save-notice {
+  grid-area: notice;
+  align-self: center;
+  justify-self: end;
+
+  margin: 0;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 0.42rem;
+
+  width: fit-content;
+  max-width: 360px;
+
+  color: var(--ink-light);
+  font-size: 0.74rem;
+  font-weight: 700;
+  line-height: 1.35;
+
+  padding: 0.62rem 0.85rem;
+  border-radius: 999px;
+
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.03));
+
+  border: 1px solid rgba(184, 192, 255, 0.14);
+}
+
+.flow-library-save-notice i {
+  color: #74D7FF;
+  text-shadow: 0 0 12px rgba(116, 215, 255, 0.44);
 }
 
 
@@ -747,10 +1207,10 @@
    ANIMATIONS
    ========================================================= */
 
-@keyframes section3ResultIn {
+@keyframes flowResultIn {
   from {
     opacity: 0;
-    transform: translateY(14px) scale(0.985);
+    transform: translateY(12px) scale(0.985);
   }
 
   to {
@@ -759,15 +1219,120 @@
   }
 }
 
-@keyframes section3SavedIn {
+@keyframes flowSavedIn {
   from {
     opacity: 0;
-    transform: translateY(9px);
+    transform: translateY(8px);
   }
 
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes flowRowIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.988);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+
+/* =========================================================
+   SHORT LAPTOP VIEWPORT FIX
+   Keeps everything inside the viewport but still breathable.
+   ========================================================= */
+
+@media (min-width: 981px) and (max-height: 760px) {
+  .section-library-flow {
+    padding:
+      1.15rem
+      clamp(2rem, 5vw, 5rem)
+      1.1rem;
+  }
+
+  .flow-grid {
+    grid-template-rows:
+      minmax(0, 1fr)
+      clamp(205px, 27vh, 245px);
+
+    row-gap: 0.95rem;
+  }
+
+  .flow-copy-card h2 {
+    font-size: clamp(2.85rem, 4.85vw, 4.25rem);
+    margin-bottom: 0.95rem;
+  }
+
+  .flow-copy-card p {
+    font-size: 0.92rem;
+    line-height: 1.62;
+    margin-bottom: 1rem;
+  }
+
+  .flow-cta {
+    min-height: 44px;
+  }
+
+  .flow-search-card {
+    height: min(100%, 410px);
+    min-height: 320px;
+  }
+
+  .flow-card-header {
+    min-height: 52px;
+  }
+
+  .flow-search-body {
+    padding: 0.82rem 1rem;
+  }
+
+  .flow-search-bar,
+  .flow-search-bar input,
+  .flow-search-bar button {
+    height: 48px;
+    min-height: 48px;
+  }
+
+  .flow-search-empty {
+    margin-top: 0.58rem;
+  }
+
+  .flow-status-picker {
+    margin-top: 0.72rem;
+  }
+
+  .flow-status-options span {
+    min-height: 30px;
+    font-size: 0.68rem;
+  }
+
+  .flow-library-card {
+    min-height: clamp(205px, 27vh, 245px);
+  }
+
+  .flow-library-header {
+    height: 52px;
+  }
+
+  .flow-library-body {
+    height: calc(100% - 52px);
+    padding: 0.8rem 1rem 0.9rem;
+
+    grid-template-rows:
+      30px
+      34px
+      minmax(58px, 1fr);
+  }
+
+  .flow-library-empty {
+    min-height: 50px;
   }
 }
 
@@ -777,134 +1342,253 @@
    ========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
-  .demo-result-card,
-  .demo-saved-message {
+  .flow-result-card,
+  .flow-saved-message,
+  .flow-library-row {
     animation: none;
   }
 
-  .section-3-cta::after,
-  .demo-add-button,
-  .demo-search-bar,
-  .demo-search-bar button,
-  .demo-status-options span {
+  .flow-cta::after,
+  .flow-add-button,
+  .flow-search-bar,
+  .flow-search-bar button,
+  .flow-status-options span,
+  .flow-filter,
+  .flow-status-filter {
     transition: none;
+  }
+
+  .flow-filter:hover,
+  .flow-status-filter:hover,
+  .flow-status-options span:hover,
+  .flow-status-options input:checked + span,
+  .flow-add-button:hover {
+    transform: none;
   }
 }
 
 
 /* =========================================================
    RESPONSIVE
+   Below desktop, allow normal scrolling.
    ========================================================= */
 
-@media (max-width: 1080px) {
-  .section-search-demo {
+@media (max-width: 980px) {
+  .section-library-flow {
+    height: auto;
+    min-height: 100vh;
+    max-height: none;
+
+    padding: 6rem 6% 5rem;
+    overflow: visible;
+  }
+
+  .flow-grid {
+    height: auto;
+
     grid-template-columns: 1fr;
-    gap: 3.5rem;
-    padding: 7rem 6%;
+    grid-template-rows: auto;
+    grid-template-areas:
+      "copy"
+      "search"
+      "library";
+
+    gap: 1rem;
   }
 
-  .section-3-copy {
-    max-width: 720px;
+  .flow-copy-card {
+    padding: 0;
   }
 
-  .section-3-copy p {
-    max-width: 620px;
+  .flow-copy-card p {
+    max-width: 680px;
   }
 
-  .section-3-demo {
-    justify-content: flex-start;
+  .flow-search-card {
+    min-height: auto;
+    height: auto;
   }
 
-  .demo-window {
-    width: min(100%, 680px);
+  .flow-library-card {
+    height: auto;
+    min-height: auto;
+  }
+
+  .flow-library-body {
+    height: auto;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    grid-template-areas:
+      "format"
+      "status"
+      "list"
+      "notice";
+  }
+
+  .flow-library-save-notice {
+    justify-self: start;
   }
 }
 
 @media (max-width: 680px) {
-  .section-search-demo {
-    padding: 5.5rem 1rem;
+  .section-library-flow {
+    padding: 5.5rem 1rem 4.5rem;
   }
 
-  .section-3-copy h2 {
-    font-size: clamp(3rem, 15vw, 4.2rem);
-    letter-spacing: -0.055em;
-  }
-
-  .section-3-copy p {
-    font-size: 0.98rem;
-  }
-
-  .demo-window {
+  .flow-card {
     border-radius: 24px;
   }
 
-  .demo-window-body {
+  .flow-copy-card h2 {
+    font-size: clamp(2.75rem, 13vw, 4.05rem);
+    letter-spacing: -0.055em;
+  }
+
+  .flow-copy-card p {
+    font-size: 0.96rem;
+  }
+
+  .flow-card-header,
+  .flow-library-header {
+    align-items: flex-start;
+  }
+
+  .flow-library-header {
+    height: auto;
+    flex-direction: column;
+  }
+
+  .flow-search-body,
+  .flow-library-body {
     padding: 1rem;
   }
 
-  .demo-result-card {
-    grid-template-columns: 68px minmax(0, 1fr);
-    gap: 0.85rem;
-    padding: 0.85rem;
+  .flow-result-card {
+    grid-template-columns: 64px minmax(0, 1fr);
+    gap: 0.78rem;
+    padding: 0.82rem;
   }
 
-  .demo-result-cover {
-    width: 68px;
-    border-radius: 13px;
+  .flow-result-cover {
+    width: 64px;
+    border-radius: 12px;
   }
 
-  .demo-result-info h3 {
-    font-size: 1.35rem;
+  .flow-result-info h4 {
+    font-size: 1.25rem;
   }
 
-  .demo-add-button {
+  .flow-add-button {
     grid-column: 1 / -1;
     width: 100%;
   }
 
-  .demo-status-options {
-    gap: 0.5rem;
+  .flow-status-options,
+  .flow-library-filters,
+  .flow-library-status-filters {
+    gap: 0.46rem;
   }
 
-  .demo-status-options span {
+  .flow-status-options span,
+  .flow-filter,
+  .flow-status-filter {
     min-height: 38px;
     padding: 0 0.78rem;
-    font-size: 0.78rem;
+    font-size: 0.76rem;
   }
 
-  .demo-saved-message {
+  .flow-saved-message,
+  .flow-library-save-notice {
     width: 100%;
     justify-content: center;
     border-radius: 18px;
   }
+
+  .flow-library-list-header {
+    display: none;
+  }
+
+  .flow-library-row {
+    grid-template-columns: 54px minmax(0, 1fr);
+    grid-template-areas:
+      "cover info"
+      "format status"
+      "rating rating";
+
+    align-items: center;
+    gap: 0.75rem;
+
+    min-height: auto;
+    padding: 0.85rem;
+  }
+
+  .flow-library-row-cover {
+    grid-area: cover;
+    width: 54px;
+    border-radius: 11px;
+  }
+
+  .flow-library-row-info {
+    grid-area: info;
+    padding-left: 0;
+  }
+
+  .flow-library-row-info h4 {
+    font-size: 1.25rem;
+  }
+
+  .flow-library-row-format {
+    grid-area: format;
+  }
+
+  .flow-library-row-status {
+    grid-area: status;
+  }
+
+  .flow-library-row-status select {
+    max-width: none;
+  }
+
+  .flow-library-row-rating {
+    grid-area: rating;
+    justify-self: start;
+  }
 }
 
 @media (max-width: 420px) {
-  .section-search-demo {
+  .section-library-flow {
     padding-inline: 0.85rem;
   }
 
-  .demo-window-header {
-    height: 48px;
+  .flow-window-controls {
+    display: none;
   }
 
-  .demo-search-bar,
-  .demo-search-bar input,
-  .demo-search-bar button {
-    min-height: 56px;
-    height: 56px;
+  .flow-search-bar,
+  .flow-search-bar input,
+  .flow-search-bar button {
+    min-height: 54px;
+    height: 54px;
   }
 
-  .demo-search-bar button {
-    width: 56px;
-    flex-basis: 56px;
+  .flow-search-bar button {
+    width: 54px;
+    flex-basis: 54px;
   }
 
-  .demo-result-card {
-    grid-template-columns: 60px minmax(0, 1fr);
+  .flow-result-card {
+    grid-template-columns: 58px minmax(0, 1fr);
   }
 
-  .demo-result-cover {
-    width: 60px;
+  .flow-result-cover {
+    width: 58px;
+  }
+
+  .flow-library-row {
+    grid-template-columns: 50px minmax(0, 1fr);
+  }
+
+  .flow-library-row-cover {
+    width: 50px;
   }
 }
