@@ -1,13 +1,13 @@
 // =========================================================
 // SECTION 3 — MINI SEARCH → LIBRARY DEMO
-// Homepage preview only: search suggestions → selected result → add → status → mini library.
-// Load after the Supabase browser library and after the Section 3 HTML.
+// Search suggestions → selected result → choose status → add → mini library.
+// Load after Supabase and after the Section 3 HTML.
 // =========================================================
 
 (() => {
   // ---------------------------------------------------------
   // DATABASE CONFIG
-  // Same project/table/bucket pattern as your Section 1 script.
+  // Same Supabase setup as your Section 1 script.
   // ---------------------------------------------------------
 
   const SUPABASE_URL = 'https://hsruxfpslxguhwnccwuj.supabase.co';
@@ -17,10 +17,7 @@
   const BUCKET_NAME = 'img';
   const COVER_FOLDER = 'covers';
 
-  // Homepage card should stay small. Use 3 for clean UI. Change to 5 later if the card has room.
   const SEARCH_RESULT_LIMIT = 3;
-
-  // Stops the script from searching the database instantly on every typed letter.
   const SEARCH_DEBOUNCE_MS = 260;
 
   const DEFAULT_STATUS = 'in-progress';
@@ -33,7 +30,6 @@
     dropped: 'Dropped'
   };
 
-  // Fallback result for local testing if Supabase is not loaded.
   const FALLBACK_ITEMS = [
     {
       id: 'berserk-1989',
@@ -57,7 +53,7 @@
 
   let currentSuggestions = [];
   let selectedResult = null;
-  let pendingAddItem = null;
+  let selectedStatus = DEFAULT_STATUS;
 
   let libraryItems = [];
   let activeFormatFilter = 'all';
@@ -87,13 +83,12 @@
       console.warn('Supabase library is not loaded. Section 3 will use fallback demo data.');
     }
 
-    injectSuggestionStyles();
     bindSearchEvents(elements);
     bindStatusPickerEvents(elements);
     bindLibraryFilterEvents(elements);
 
+    hideStatusPicker(elements);
     setSearchMessage(elements, 'Type a title to find it and add it to your library.');
-    setStatusPickerEnabled(elements, false);
     renderSuggestions(elements);
     renderLibrary(elements);
   }
@@ -102,8 +97,8 @@
     return {
       section,
 
-      searchForm: section.querySelector('[data-flow-search-form]') || section.querySelector('.flow-search-form'),
-      searchInput: section.querySelector('[data-flow-search-input]') || section.querySelector('#home-flow-search'),
+      searchForm: section.querySelector('[data-flow-search-form]'),
+      searchInput: section.querySelector('[data-flow-search-input]'),
       searchButton: section.querySelector('[data-flow-search-button]'),
       suggestions: section.querySelector('[data-flow-suggestions]'),
       searchMessage: section.querySelector('[data-flow-search-empty]'),
@@ -113,8 +108,6 @@
 
       statusPicker: section.querySelector('[data-flow-status-picker]'),
       statusRadios: [...section.querySelectorAll('input[name="flow_status"]')],
-
-      savedMessage: section.querySelector('[data-flow-saved-message]'),
 
       libraryCard: section.querySelector('.flow-library-card'),
       libraryEmpty: section.querySelector('[data-library-empty]'),
@@ -138,7 +131,6 @@
       elements.resultArea &&
       elements.resultTemplate &&
       elements.statusPicker &&
-      elements.savedMessage &&
       elements.libraryList &&
       elements.libraryRowTemplate &&
       elements.libraryCount
@@ -150,7 +142,6 @@
   // ---------------------------------------------------------
 
   function bindSearchEvents(elements) {
-    // This is the key fix: the homepage form must never open search.html.
     elements.searchForm.addEventListener('submit', (event) => {
       event.preventDefault();
       runSearchFromInput(elements, { autoSelectFirst: true });
@@ -160,16 +151,21 @@
       runSearchFromInput(elements, { autoSelectFirst: true });
     });
 
+    elements.searchInput.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter') {
+        return;
+      }
+
+      event.preventDefault();
+      runSearchFromInput(elements, { autoSelectFirst: true });
+    });
+
     elements.searchInput.addEventListener('input', () => {
       const query = elements.searchInput.value.trim();
 
-      selectedResult = null;
-      pendingAddItem = null;
-
       clearSelectedResult(elements);
-      clearSavedMessage(elements);
-      clearStatusSelection(elements);
-      setStatusPickerEnabled(elements, false);
+      hideStatusPicker(elements);
+      selectedResult = null;
 
       window.clearTimeout(searchTimer);
 
@@ -185,15 +181,6 @@
       searchTimer = window.setTimeout(() => {
         searchStories(query, elements);
       }, SEARCH_DEBOUNCE_MS);
-    });
-
-    elements.searchInput.addEventListener('keydown', (event) => {
-      if (event.key !== 'Enter') {
-        return;
-      }
-
-      event.preventDefault();
-      runSearchFromInput(elements, { autoSelectFirst: true });
     });
   }
 
@@ -246,7 +233,7 @@
         return;
       }
 
-      setSearchMessage(elements, 'Search is unavailable right now. Please try again later.');
+      setSearchMessage(elements, 'Search is unavailable right now.');
     }
   }
 
@@ -296,13 +283,13 @@
         const title = String(item.title || '').toLowerCase();
         const creator = String(item.creator || '').toLowerCase();
         const types = getTypeList(item).join(' ').toLowerCase();
-        const altTitles = getArrayValue(item.alternativeTitles).join(' ').toLowerCase();
+        const alternativeTitles = getArrayValue(item.alternativeTitles).join(' ').toLowerCase();
 
         return (
           title.includes(normalizedQuery) ||
           creator.includes(normalizedQuery) ||
           types.includes(normalizedQuery) ||
-          altTitles.includes(normalizedQuery)
+          alternativeTitles.includes(normalizedQuery)
         );
       })
     ).slice(0, SEARCH_RESULT_LIMIT);
@@ -311,16 +298,20 @@
   function normalizeSearchResults(items) {
     return items
       .filter((item) => item && item.id && item.title)
-      .map((item) => ({
-        id: String(item.id),
-        title: String(item.title || ''),
-        creator: getCreatorValue(item),
-        type: getTypeList(item),
-        cover: getCoverUrl(item),
-        score: getScoreValue(item),
-        genres: getArrayValue(item.genres),
-        raw: item
-      }));
+      .map((item) => {
+        const coverCandidates = getCoverCandidates(item);
+
+        return {
+          id: String(item.id),
+          title: String(item.title || ''),
+          creator: getCreatorValue(item),
+          type: getTypeList(item),
+          coverCandidates,
+          score: getScoreValue(item),
+          genres: getArrayValue(item.genres),
+          raw: item
+        };
+      });
   }
 
   // ---------------------------------------------------------
@@ -339,22 +330,31 @@
 
     currentSuggestions.forEach((item) => {
       const button = document.createElement('button');
+      const cover = document.createElement('span');
+      const img = document.createElement('img');
+      const info = document.createElement('span');
+      const title = document.createElement('strong');
+      const meta = document.createElement('small');
 
       button.type = 'button';
       button.className = 'flow-suggestion';
       button.setAttribute('data-story-id', item.id);
       button.setAttribute('aria-label', `Preview ${item.title}`);
 
-      button.innerHTML = `
-        <span class="flow-suggestion-cover">
-          ${item.cover ? `<img src="${escapeAttribute(item.cover)}" alt="">` : ''}
-        </span>
+      cover.className = 'flow-suggestion-cover';
+      info.className = 'flow-suggestion-info';
 
-        <span class="flow-suggestion-info">
-          <strong>${escapeHTML(item.title)}</strong>
-          <small>${escapeHTML(getSuggestionMeta(item))}</small>
-        </span>
-      `;
+      title.textContent = item.title;
+      meta.textContent = getSuggestionMeta(item);
+
+      setImageWithFallback(img, item, '');
+
+      cover.appendChild(img);
+      info.appendChild(title);
+      info.appendChild(meta);
+
+      button.appendChild(cover);
+      button.appendChild(info);
 
       button.addEventListener('click', () => {
         selectSuggestion(item, elements);
@@ -366,19 +366,25 @@
 
   function selectSuggestion(item, elements) {
     selectedResult = item;
-    pendingAddItem = null;
+    selectedStatus = DEFAULT_STATUS;
 
     elements.searchInput.value = item.title;
 
     currentSuggestions = [];
     renderSuggestions(elements);
 
-    clearSavedMessage(elements);
-    clearStatusSelection(elements);
-    setStatusPickerEnabled(elements, false);
-
     renderSelectedResult(item, elements);
-    setSearchMessage(elements, 'Result selected. Add it, then choose a status.');
+
+    const existingItem = findLibraryItem(item.id);
+
+    if (existingItem) {
+      hideStatusPicker(elements);
+      setSearchMessage(elements, 'This story is already in your library.');
+      return;
+    }
+
+    showStatusPicker(elements);
+    setSearchMessage(elements, 'Choose a status, then add it to your library.');
   }
 
   // ---------------------------------------------------------
@@ -405,13 +411,7 @@
     card.setAttribute('data-story-id', item.id);
 
     if (coverImg) {
-      if (item.cover) {
-        coverImg.src = item.cover;
-        coverImg.alt = `${item.title} cover`;
-      } else {
-        coverImg.removeAttribute('src');
-        coverImg.alt = '';
-      }
+      setImageWithFallback(coverImg, item, `${item.title} cover`);
     }
 
     if (title) {
@@ -433,12 +433,12 @@
       addButton.classList.add('is-added');
       addButton.disabled = true;
     } else {
-      addButton.textContent = 'Add';
       addButton.classList.remove('is-added');
       addButton.disabled = false;
+      addButton.textContent = `Add to ${getStatusLabel(selectedStatus)}`;
 
       addButton.addEventListener('click', () => {
-        beginAddFlow(item, elements, addButton);
+        addSelectedResultToLibrary(elements);
       });
     }
 
@@ -451,17 +451,18 @@
       .forEach((card) => card.remove());
   }
 
-  function beginAddFlow(item, elements, addButton) {
-    pendingAddItem = item;
+  function getCurrentAddButton(elements) {
+    return elements.resultArea.querySelector('[data-flow-add-button]');
+  }
 
-    setStatusPickerEnabled(elements, true);
-    clearStatusSelection(elements);
-    clearSavedMessage(elements);
+  function updateAddButtonText(elements) {
+    const addButton = getCurrentAddButton(elements);
 
-    addButton.textContent = 'Choose status';
-    addButton.disabled = true;
+    if (!addButton || addButton.disabled) {
+      return;
+    }
 
-    setSearchMessage(elements, 'Choose where this story belongs.');
+    addButton.textContent = `Add to ${getStatusLabel(selectedStatus)}`;
   }
 
   // ---------------------------------------------------------
@@ -475,60 +476,73 @@
           return;
         }
 
-        if (!pendingAddItem && !selectedResult) {
-          return;
-        }
-
-        const item = pendingAddItem || selectedResult;
-        const status = radio.value || DEFAULT_STATUS;
-
-        saveItemToLibrary(item, status, elements);
+        selectedStatus = radio.value || DEFAULT_STATUS;
+        updateAddButtonText(elements);
       });
     });
   }
 
-  function setStatusPickerEnabled(elements, isEnabled) {
-    elements.statusPicker.disabled = !isEnabled;
-    elements.statusPicker.classList.toggle('is-active', isEnabled);
-    elements.section.classList.toggle('has-result', Boolean(selectedResult));
+  function showStatusPicker(elements) {
+    elements.statusPicker.hidden = false;
+    elements.statusPicker.disabled = false;
+    elements.statusPicker.classList.add('is-active');
+
+    selectedStatus = DEFAULT_STATUS;
+
+    elements.statusRadios.forEach((radio) => {
+      radio.checked = radio.value === selectedStatus;
+    });
+
+    elements.section.classList.add('has-result');
+    updateAddButtonText(elements);
   }
 
-  function clearStatusSelection(elements) {
+  function hideStatusPicker(elements) {
+    elements.statusPicker.hidden = true;
+    elements.statusPicker.disabled = true;
+    elements.statusPicker.classList.remove('is-active');
+
     elements.statusRadios.forEach((radio) => {
-      radio.checked = false;
+      radio.checked = radio.value === DEFAULT_STATUS;
     });
+
+    elements.section.classList.remove('has-result');
   }
 
   // ---------------------------------------------------------
   // LIBRARY SAVE / UPDATE
   // ---------------------------------------------------------
 
-  function saveItemToLibrary(item, status, elements) {
-    const existingItem = findLibraryItem(item.id);
-
-    if (existingItem) {
-      existingItem.status = status;
-      showSavedMessage(elements, `${item.title} moved to ${getStatusLabel(status)}.`);
-    } else {
-      libraryItems.push({
-        id: item.id,
-        title: item.title,
-        creator: item.creator,
-        type: item.type,
-        cover: item.cover,
-        score: item.score,
-        genres: item.genres,
-        status
-      });
-
-      showSavedMessage(elements, `${item.title} added to ${getStatusLabel(status)}.`);
+  function addSelectedResultToLibrary(elements) {
+    if (!selectedResult) {
+      return;
     }
 
-    pendingAddItem = null;
+    const existingItem = findLibraryItem(selectedResult.id);
 
-    renderSelectedResult(item, elements);
+    if (existingItem) {
+      renderSelectedResult(selectedResult, elements);
+      hideStatusPicker(elements);
+      setSearchMessage(elements, 'This story is already in your library.');
+      return;
+    }
+
+    libraryItems.push({
+      id: selectedResult.id,
+      title: selectedResult.title,
+      creator: selectedResult.creator,
+      type: selectedResult.type,
+      coverCandidates: selectedResult.coverCandidates,
+      score: selectedResult.score,
+      genres: selectedResult.genres,
+      status: selectedStatus
+    });
+
+    renderSelectedResult(selectedResult, elements);
+    hideStatusPicker(elements);
     renderLibrary(elements);
-    setStatusPickerEnabled(elements, false);
+
+    setSearchMessage(elements, `${selectedResult.title} was added to your library.`);
   }
 
   function findLibraryItem(id) {
@@ -544,7 +558,7 @@
 
     item.status = status;
 
-    showSavedMessage(elements, `${item.title} moved to ${getStatusLabel(status)}.`);
+    // Silent update. No extra "moved to completed" label.
     renderLibrary(elements);
   }
 
@@ -639,13 +653,7 @@
     row.dataset.status = item.status;
 
     if (coverImg) {
-      if (item.cover) {
-        coverImg.src = item.cover;
-        coverImg.alt = `${item.title} cover`;
-      } else {
-        coverImg.removeAttribute('src');
-        coverImg.alt = '';
-      }
+      setImageWithFallback(coverImg, item, `${item.title} cover`);
     }
 
     if (title) {
@@ -692,7 +700,88 @@
   }
 
   // ---------------------------------------------------------
-  // TEXT / UI HELPERS
+  // IMAGE LOADING
+  // ---------------------------------------------------------
+
+  function setImageWithFallback(img, item, altText) {
+    const candidates = item.coverCandidates || getCoverCandidates(item);
+    let index = 0;
+
+    img.hidden = false;
+    img.alt = altText || '';
+
+    if (candidates.length === 0) {
+      img.hidden = true;
+      img.removeAttribute('src');
+      return;
+    }
+
+    img.onerror = () => {
+      index += 1;
+
+      if (index >= candidates.length) {
+        img.hidden = true;
+        img.removeAttribute('src');
+        return;
+      }
+
+      img.src = candidates[index];
+    };
+
+    img.src = candidates[index];
+  }
+
+  function getCoverCandidates(item) {
+    const candidates = [];
+    const rawCover = String(item.cover || '').trim();
+
+    addCoverCandidate(candidates, rawCover);
+
+    if (item.id) {
+      addCoverCandidate(candidates, `${COVER_FOLDER}/${item.id}.jpg`);
+      addCoverCandidate(candidates, `${COVER_FOLDER}/manga-${item.id}.jpg`);
+    }
+
+    return [...new Set(candidates.filter(Boolean))];
+  }
+
+  function addCoverCandidate(candidates, coverPath) {
+    if (!coverPath) {
+      return;
+    }
+
+    if (coverPath.startsWith('http://') || coverPath.startsWith('https://')) {
+      candidates.push(coverPath);
+      return;
+    }
+
+    if (!supabaseClient) {
+      candidates.push(coverPath);
+      return;
+    }
+
+    let storagePath = coverPath;
+
+    if (storagePath.startsWith(`${BUCKET_NAME}/`)) {
+      storagePath = storagePath.slice(BUCKET_NAME.length + 1);
+    }
+
+    if (storagePath.startsWith('/')) {
+      storagePath = storagePath.slice(1);
+    }
+
+    const { data } = supabaseClient
+      .storage
+      .from(BUCKET_NAME)
+      .getPublicUrl(storagePath);
+
+    if (data?.publicUrl) {
+      candidates.push(data.publicUrl);
+    }
+  }
+
+  // ---------------------------------------------------------
+  // TEXT HELPERS
   // ---------------------------------------------------------
 
   function setSearchMessage(elements, text) {
@@ -703,20 +792,6 @@
     }
 
     elements.searchMessage.hidden = false;
-  }
-
-  function showSavedMessage(elements, text) {
-    const textElement = elements.savedMessage.querySelector('span');
-
-    if (textElement) {
-      textElement.textContent = text;
-    }
-
-    elements.savedMessage.hidden = false;
-  }
-
-  function clearSavedMessage(elements) {
-    elements.savedMessage.hidden = true;
   }
 
   function getSuggestionMeta(item) {
@@ -782,7 +857,7 @@
           return parsed;
         }
       } catch {
-        // Not JSON, so use it as one value.
+        // Not JSON. Use the string as one value.
       }
 
       return [trimmed];
@@ -805,180 +880,6 @@
       .filter(Boolean)
       .map((type) => type.charAt(0).toUpperCase() + type.slice(1).toLowerCase())
       .join(' / ');
-  }
-
-  function getCoverUrl(item) {
-    const cover = String(item.cover || '').trim();
-
-    if (cover.startsWith('http://') || cover.startsWith('https://')) {
-      return cover;
-    }
-
-    if (!supabaseClient) {
-      return cover || '';
-    }
-
-    let coverPath = cover;
-
-    // Your database example uses paths like: img/covers/manga-berserk-1989.jpg
-    // Storage bucket is already "img", so remove "img/" before getPublicUrl.
-    if (coverPath.startsWith(`${BUCKET_NAME}/`)) {
-      coverPath = coverPath.slice(BUCKET_NAME.length + 1);
-    }
-
-    if (coverPath.startsWith('/')) {
-      coverPath = coverPath.slice(1);
-    }
-
-    // Fallback if the cover column is empty.
-    if (!coverPath && item.id) {
-      coverPath = `${COVER_FOLDER}/${item.id}.jpg`;
-    }
-
-    if (!coverPath) {
-      return '';
-    }
-
-    const { data } = supabaseClient
-      .storage
-      .from(BUCKET_NAME)
-      .getPublicUrl(coverPath);
-
-    return data?.publicUrl || '';
-  }
-
-  function escapeHTML(value) {
-    return String(value ?? '')
-      .replaceAll('&', '&amp;')
-      .replaceAll('<', '&lt;')
-      .replaceAll('>', '&gt;')
-      .replaceAll('"', '&quot;')
-      .replaceAll("'", '&#039;');
-  }
-
-  function escapeAttribute(value) {
-    return escapeHTML(value);
-  }
-
-  // ---------------------------------------------------------
-  // SUGGESTION STYLES
-  // This means CSS does not need to be fixed right now.
-  // You can move this into section-3.css later if you want cleaner files.
-  // ---------------------------------------------------------
-
-  function injectSuggestionStyles() {
-    if (document.getElementById('section-3-flow-suggestion-styles')) {
-      return;
-    }
-
-    const style = document.createElement('style');
-
-    style.id = 'section-3-flow-suggestion-styles';
-    style.textContent = `
-      .flow-suggestions {
-        margin-top: 0.7rem;
-        display: grid;
-        gap: 0.45rem;
-      }
-
-      .flow-suggestions[hidden] {
-        display: none;
-      }
-
-      .flow-suggestion {
-        width: 100%;
-        min-height: 52px;
-        padding: 0.48rem;
-
-        display: grid;
-        grid-template-columns: 34px minmax(0, 1fr);
-        align-items: center;
-        gap: 0.62rem;
-
-        border: 1px solid rgba(184, 192, 255, 0.16);
-        border-radius: 12px;
-
-        color: var(--flow-ink, #f5f7ff);
-        font: inherit;
-        text-align: left;
-        cursor: pointer;
-
-        background:
-          linear-gradient(135deg, rgba(255, 255, 255, 0.052), rgba(255, 255, 255, 0.025)),
-          rgba(255, 255, 255, 0.02);
-
-        transition:
-          transform var(--flow-transition, 0.25s ease),
-          border-color var(--flow-transition, 0.25s ease),
-          background var(--flow-transition, 0.25s ease);
-      }
-
-      .flow-suggestion:hover,
-      .flow-suggestion:focus-visible {
-        transform: translateY(-1px);
-        border-color: rgba(116, 215, 255, 0.32);
-
-        background:
-          linear-gradient(135deg, rgba(116, 215, 255, 0.10), rgba(124, 140, 255, 0.08)),
-          rgba(255, 255, 255, 0.03);
-
-        outline: none;
-      }
-
-      .flow-suggestion:focus-visible {
-        box-shadow: 0 0 0 3px rgba(116, 215, 255, 0.16);
-      }
-
-      .flow-suggestion-cover {
-        width: 34px;
-        aspect-ratio: 2 / 3;
-        overflow: hidden;
-
-        border-radius: 7px;
-        background: linear-gradient(145deg, rgba(124, 140, 255, 0.35), rgba(210, 140, 255, 0.22));
-
-        box-shadow:
-          0 7px 14px rgba(0, 0, 0, 0.24),
-          inset 0 0 0 1px rgba(255, 255, 255, 0.08);
-      }
-
-      .flow-suggestion-cover img {
-        width: 100%;
-        height: 100%;
-        display: block;
-        object-fit: cover;
-      }
-
-      .flow-suggestion-info {
-        min-width: 0;
-        display: grid;
-        gap: 0.12rem;
-      }
-
-      .flow-suggestion-info strong {
-        color: var(--flow-ink, #f5f7ff);
-        font-family: var(--flow-font-display, Georgia, serif);
-        font-size: 0.92rem;
-        line-height: 1;
-        letter-spacing: -0.025em;
-
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-
-      .flow-suggestion-info small {
-        color: var(--flow-ink-light, #9ca8c4);
-        font-size: 0.62rem;
-        line-height: 1.25;
-
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-    `;
-
-    document.head.appendChild(style);
   }
 
   // ---------------------------------------------------------

@@ -253,8 +253,8 @@
                 <span class="section-label">Your first step</span>
 
                 <h2 id="section-3-title">
-                    Find it. Save it.
-                    <span>Keep going.</span>
+                    Find it. Save
+                    <span>it. Keep going.</span>
                 </h2>
 
                 <p>
@@ -281,10 +281,7 @@
 
                 <div class="flow-search-body">
 
-                    <!-- Search.
-                        Important:
-                        No action="search.html" here.
-                        This form stays on the homepage and JS renders results inside this card. -->
+                    <!-- Search stays inside this homepage card. It does not open search.html. -->
                     <form class="flow-search-form" data-flow-search-form novalidate>
                         <label for="home-flow-search">
                             Search your next story
@@ -306,7 +303,7 @@
                         </div>
                     </form>
 
-                    <!-- Search Suggestions -->
+                    <!-- Search suggestions render here -->
                     <div
                         class="flow-suggestions"
                         data-flow-suggestions
@@ -314,22 +311,22 @@
                         hidden
                     ></div>
 
-                    <!-- Empty State / Helper Text -->
+                    <!-- Helper text -->
                     <div class="flow-search-empty" data-flow-search-empty>
                         <p>Type a title to find it and add it to your library.</p>
                     </div>
 
-                    <!-- Search Result Area -->
+                    <!-- Selected result renders here -->
                     <div class="flow-result-area" data-flow-result-area aria-live="polite">
                         <template id="flow-result-template">
                             <article class="flow-result-card" data-flow-result-card>
                                 <div class="flow-result-cover">
-                                    <img src="./images/vagabond-cover.jpg" alt="Story cover">
+                                    <img src="" alt="Story cover">
                                 </div>
 
                                 <div class="flow-result-info">
-                                    <h4>Vagabond</h4>
-                                    <p class="flow-result-creator">by Takehiko Inoue</p>
+                                    <h4>Story title</h4>
+                                    <p class="flow-result-creator">Creator</p>
                                     <p class="flow-result-type">Manga</p>
                                 </div>
 
@@ -340,13 +337,16 @@
                         </template>
                     </div>
 
-                    <!-- Status Picker -->
-                    <fieldset class="flow-status-picker" data-flow-status-picker disabled>
+                    <!-- Status picker.
+                        Hidden at first.
+                        Shows after a result is selected.
+                        User chooses status BEFORE pressing Add. -->
+                    <fieldset class="flow-status-picker" data-flow-status-picker hidden>
                         <legend>Where should it go?</legend>
 
                         <div class="flow-status-options">
                             <label>
-                                <input type="radio" name="flow_status" value="in-progress">
+                                <input type="radio" name="flow_status" value="in-progress" checked>
                                 <span>Reading</span>
                             </label>
 
@@ -372,12 +372,6 @@
                         </div>
                     </fieldset>
 
-                    <!-- Saved Message -->
-                    <div class="flow-saved-message" data-flow-saved-message role="status" aria-live="polite" hidden>
-                        <i class="ti ti-check" aria-hidden="true"></i>
-                        <span>Saved to Reading.</span>
-                    </div>
-
                 </div>
 
             </article>
@@ -399,7 +393,7 @@
 
                 <div class="flow-library-body">
 
-                    <!-- Format Filters -->
+                    <!-- Format filters -->
                     <div class="flow-library-filters" aria-label="Filter by format">
                         <button type="button" class="flow-filter active" data-format-filter="all" aria-pressed="true">
                             All
@@ -414,7 +408,7 @@
                         </button>
                     </div>
 
-                    <!-- Status Filters -->
+                    <!-- Status filters -->
                     <div class="flow-library-status-filters" aria-label="Filter by status">
                         <button type="button" class="flow-status-filter active" data-status-filter="all" aria-pressed="true">
                             All
@@ -441,35 +435,27 @@
                         </button>
                     </div>
 
-                    <!-- Hidden Header For Future Full Library Table -->
-                    <div class="flow-library-list-header" aria-hidden="true">
-                        <span class="flow-header-story">Story</span>
-                        <span class="flow-header-format">Format</span>
-                        <span class="flow-header-status">Status</span>
-                        <span class="flow-header-rating">Score</span>
-                    </div>
-
-                    <!-- Empty State -->
+                    <!-- Empty state -->
                     <div class="flow-library-empty" data-library-empty>
                         <p>
                             Search and add something above. Your saved stories will appear here.
                         </p>
                     </div>
 
-                    <!-- Library Rows Render Here -->
+                    <!-- Library rows render here -->
                     <div class="flow-library-list" data-library-list aria-live="polite"></div>
 
-                    <!-- Library Row Template -->
+                    <!-- Library row template -->
                     <template id="flow-library-row-template">
-                        <article class="flow-library-row" data-library-row data-format="manga" data-status="in-progress">
+                        <article class="flow-library-row" data-library-row>
 
                             <div class="flow-library-row-cover">
-                                <img data-library-cover src="./images/vagabond-cover.jpg" alt="Story cover">
+                                <img data-library-cover src="" alt="Story cover">
                             </div>
 
                             <div class="flow-library-row-info">
-                                <h4 data-library-title>Vagabond</h4>
-                                <p data-library-creator>by Takehiko Inoue</p>
+                                <h4 data-library-title>Story title</h4>
+                                <p data-library-creator>Creator</p>
                             </div>
 
                             <div class="flow-library-row-format">
@@ -478,7 +464,7 @@
 
                             <div class="flow-library-row-status">
                                 <select name="library_status" data-library-status aria-label="Change status">
-                                    <option value="in-progress" selected>Reading</option>
+                                    <option value="in-progress">Reading</option>
                                     <option value="completed">Completed</option>
                                     <option value="planned">Planned</option>
                                     <option value="paused">Paused</option>

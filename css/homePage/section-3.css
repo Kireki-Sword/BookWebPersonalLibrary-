@@ -1683,3 +1683,397 @@
     transform: none;
   }
 }
+
+
+
+
+/* =========================================================
+   SECTION 3 UX FIX PATCH
+   Paste this at the very bottom of your Section 3 CSS.
+   Fixes:
+   - search suggestions styling
+   - broken cover fallback display
+   - cleaner status picker behavior
+   - taller bottom library
+   - scrollable library rows
+   - row overlap
+   - readable dropdown colors
+   ========================================================= */
+
+/* Search suggestions under the search bar. */
+.flow-suggestions {
+  margin-top: 0.7rem;
+  display: grid;
+  gap: 0.45rem;
+}
+
+/* Hide suggestions when there are no results. */
+.flow-suggestions[hidden] {
+  display: none !important;
+}
+
+/* One small clickable search suggestion. */
+.flow-suggestion {
+  width: 100%;
+  min-height: 52px;
+  padding: 0.48rem;
+
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  align-items: center;
+  gap: 0.62rem;
+
+  border: 1px solid rgba(184, 192, 255, 0.16);
+  border-radius: 12px;
+
+  color: var(--flow-ink, #f5f7ff);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.052), rgba(255, 255, 255, 0.025)),
+    rgba(255, 255, 255, 0.02);
+
+  transition:
+    transform var(--flow-transition, 0.25s ease),
+    border-color var(--flow-transition, 0.25s ease),
+    background var(--flow-transition, 0.25s ease);
+}
+
+/* Suggestion hover/focus state. */
+.flow-suggestion:hover,
+.flow-suggestion:focus-visible {
+  transform: translateY(-1px);
+  border-color: rgba(116, 215, 255, 0.32);
+
+  background:
+    linear-gradient(135deg, rgba(116, 215, 255, 0.10), rgba(124, 140, 255, 0.08)),
+    rgba(255, 255, 255, 0.03);
+
+  outline: none;
+}
+
+/* Keyboard focus ring for suggestions. */
+.flow-suggestion:focus-visible {
+  box-shadow: 0 0 0 3px rgba(116, 215, 255, 0.16);
+}
+
+/* Small cover holder in suggestion rows. */
+.flow-suggestion-cover {
+  width: 34px;
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+
+  border-radius: 7px;
+
+  background:
+    linear-gradient(145deg, rgba(124, 140, 255, 0.35), rgba(210, 140, 255, 0.22));
+
+  box-shadow:
+    0 7px 14px rgba(0, 0, 0, 0.24),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+/* Suggestion image sizing. */
+.flow-suggestion-cover img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+/* Suggestion text column. */
+.flow-suggestion-info {
+  min-width: 0;
+  display: grid;
+  gap: 0.12rem;
+}
+
+/* Suggestion title. */
+.flow-suggestion-info strong {
+  color: var(--flow-ink, #f5f7ff);
+  font-family: var(--flow-font-display, Georgia, serif);
+  font-size: 0.92rem;
+  line-height: 1;
+  letter-spacing: -0.025em;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Suggestion meta text. */
+.flow-suggestion-info small {
+  color: var(--flow-ink-light, #9ca8c4);
+  font-size: 0.62rem;
+  line-height: 1.25;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Hide broken image elements cleanly after JS fallback fails. */
+.flow-result-cover img[hidden],
+.flow-library-row-cover img[hidden],
+.flow-suggestion-cover img[hidden] {
+  display: none !important;
+}
+
+/* Status picker is hidden until a result is selected. */
+.flow-status-picker[hidden] {
+  display: none !important;
+}
+
+/* Status picker is fully clickable once shown. */
+.flow-status-picker.is-active {
+  opacity: 1;
+  filter: saturate(1);
+  pointer-events: auto;
+}
+
+/* The selected result should have enough room. */
+.flow-result-card {
+  grid-template-columns: 58px minmax(0, 1fr) auto;
+  gap: 0.82rem;
+}
+
+/* Keep result text from colliding with Add button. */
+.flow-result-info {
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* Prevent title and creator overflow. */
+.flow-result-info h4,
+.flow-result-creator {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Make Add button more readable. */
+.flow-add-button {
+  white-space: nowrap;
+  min-width: 108px;
+}
+
+/* Desktop library layout fixes. */
+@media (min-width: 981px) {
+  /* Make bottom library area taller. */
+  .section-library-flow {
+    --flow-grid-library-row: clamp(300px, 36vh, 390px);
+  }
+
+  /* Keep the library card contained. */
+  .flow-library-card {
+    min-height: 300px;
+    overflow: hidden;
+  }
+
+  /* Make filters and list use separate rows, not overlap. */
+  .flow-library-body {
+    height: calc(100% - var(--flow-library-header-height, 52px));
+    min-height: 0;
+
+    align-items: start;
+
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 380px);
+    grid-template-rows:
+      auto
+      auto
+      minmax(145px, 1fr);
+
+    grid-template-areas:
+      "format notice"
+      "status notice"
+      "list   list";
+
+    gap: 0.72rem 1rem;
+
+    overflow: hidden;
+  }
+
+  /* Keep filter chips above the row list. */
+  .flow-library-filters,
+  .flow-library-status-filters,
+  .flow-library-save-notice {
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Real scroll area for library rows. */
+  .flow-library-list {
+    grid-area: list;
+
+    min-height: 0;
+    max-height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    padding-right: 0.35rem;
+
+    align-content: start;
+    position: relative;
+    z-index: 1;
+
+    scrollbar-width: thin;
+    scrollbar-color: rgba(116, 215, 255, 0.38) rgba(255, 255, 255, 0.05);
+  }
+
+  /* Scrollbar for Chrome/Edge/Safari. */
+  .flow-library-list::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .flow-library-list::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 999px;
+  }
+
+  .flow-library-list::-webkit-scrollbar-thumb {
+    background: rgba(116, 215, 255, 0.38);
+    border-radius: 999px;
+  }
+
+  /* Fix row columns so title does not go behind buttons. */
+  .flow-library-row {
+    min-height: 66px;
+
+    grid-template-columns:
+      minmax(360px, 1.35fr)
+      minmax(120px, 0.36fr)
+      minmax(160px, 0.48fr)
+      minmax(58px, 0.18fr);
+
+    gap: 0.85rem;
+
+    overflow: visible;
+  }
+
+  /* Give title text room beside cover. */
+  .flow-library-row-info {
+    min-width: 0;
+    padding-left: 54px;
+    overflow: hidden;
+  }
+
+  /* Prevent title text from overlapping controls. */
+  .flow-library-row-info h4,
+  .flow-library-row-info p {
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Keep format pill centered in its own column. */
+  .flow-library-row-format {
+    justify-self: start;
+    min-width: 0;
+  }
+
+  /* Keep dropdown in its own column. */
+  .flow-library-row-status {
+    justify-self: stretch;
+    min-width: 150px;
+  }
+
+  /* Keep rating/score at the end. */
+  .flow-library-row-rating {
+    justify-self: end;
+  }
+}
+
+/* Dark readable dropdown. */
+.flow-library-row-status select {
+  width: 100%;
+  max-width: 160px;
+  min-height: 34px;
+
+  color-scheme: dark;
+
+  color: #f5f7ff;
+  background-color: #111a33;
+
+  border: 1px solid rgba(116, 215, 255, 0.34);
+  border-radius: 999px;
+
+  font-family: var(--flow-font-body, Inter, system-ui, sans-serif);
+  font-size: 0.68rem;
+  font-weight: 800;
+
+  cursor: pointer;
+}
+
+/* Dropdown options need their own colors or they can become white-on-white. */
+.flow-library-row-status select option {
+  color: #f5f7ff;
+  background-color: #111a33;
+}
+
+/* Hover/focus for dropdown. */
+.flow-library-row-status select:hover,
+.flow-library-row-status select:focus {
+  border-color: rgba(116, 215, 255, 0.62);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(116, 215, 255, 0.14);
+}
+
+/* Tablet/mobile library rows should stack cleanly. */
+@media (max-width: 980px) {
+  .flow-library-card {
+    min-height: auto;
+  }
+
+  .flow-library-body {
+    overflow: visible;
+  }
+
+  .flow-library-list {
+    max-height: 360px;
+    overflow-y: auto;
+    padding-right: 0.25rem;
+  }
+}
+
+/* Mobile row layout. */
+@media (max-width: 680px) {
+  .flow-library-row {
+    grid-template-columns: 52px minmax(0, 1fr);
+    grid-template-areas:
+      "cover info"
+      "format status"
+      "rating rating";
+
+    gap: 0.68rem;
+  }
+
+  .flow-library-row-cover {
+    grid-area: cover;
+  }
+
+  .flow-library-row-info {
+    grid-area: info;
+    padding-left: 0;
+  }
+
+  .flow-library-row-format {
+    grid-area: format;
+  }
+
+  .flow-library-row-status {
+    grid-area: status;
+    min-width: 0;
+  }
+
+  .flow-library-row-status select {
+    max-width: none;
+  }
+
+  .flow-library-row-rating {
+    grid-area: rating;
+    justify-self: start;
+  }
+}
