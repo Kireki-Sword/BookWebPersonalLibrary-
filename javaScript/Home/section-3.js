@@ -30,6 +30,8 @@
     dropped: 'Dropped'
   };
 
+  // Local fallback only if Supabase is not loaded.
+  // Cover path rule: img/covers/id.jpg
   const FALLBACK_ITEMS = [
     {
       id: 'berserk-1989',
@@ -37,7 +39,7 @@
       alternativeTitles: ['Beruseruku', 'ベルセルク'],
       type: ['manga', 'anime'],
       creator: 'Kentaro Miura',
-      cover: 'img/covers/manga-berserk-1989.jpg',
+      cover: 'img/covers/berserk-1989.jpg',
       heroScore: 9.5,
       genres: ['Action', 'Drama', 'Fantasy', 'Seinen']
     }
@@ -735,11 +737,14 @@
     const candidates = [];
     const rawCover = String(item.cover || '').trim();
 
+    // Database cover example:
+    // img/covers/berserk-1989.jpg
     addCoverCandidate(candidates, rawCover);
 
+    // Fallback if the cover column is missing.
+    // Final rule: covers/id.jpg inside the img bucket.
     if (item.id) {
       addCoverCandidate(candidates, `${COVER_FOLDER}/${item.id}.jpg`);
-      addCoverCandidate(candidates, `${COVER_FOLDER}/manga-${item.id}.jpg`);
     }
 
     return [...new Set(candidates.filter(Boolean))];
@@ -762,6 +767,10 @@
 
     let storagePath = coverPath;
 
+    // Your database stores cover like:
+    // img/covers/berserk-1989.jpg
+    // The bucket is already "img", so Supabase needs:
+    // covers/berserk-1989.jpg
     if (storagePath.startsWith(`${BUCKET_NAME}/`)) {
       storagePath = storagePath.slice(BUCKET_NAME.length + 1);
     }
