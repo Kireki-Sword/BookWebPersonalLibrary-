@@ -17,6 +17,8 @@
 .section-library-flow {
   --nav-height: 64px;
 
+  box-sizing: border-box;
+
   height: calc(100vh - var(--nav-height));
   height: calc(100dvh - var(--nav-height));
 
@@ -98,11 +100,11 @@
   margin-inline: auto;
 
   display: grid;
-  grid-template-columns: minmax(420px, 0.95fr) minmax(540px, 1.05fr);
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
 
   grid-template-rows:
     minmax(0, 1fr)
-    clamp(220px, 27vh, 285px);
+    clamp(230px, 28vh, 300px);
 
   grid-template-areas:
     "copy search"
@@ -167,7 +169,6 @@
 
 /* =========================================================
    TOP LEFT — COPY AREA
-   This restores the clean old version.
    ========================================================= */
 
 .flow-copy-card {
@@ -182,7 +183,6 @@
   align-items: flex-start;
 }
 
-/* Remove card chrome from text area */
 .flow-copy-card.flow-card {
   background: transparent;
   border: 0;
@@ -818,13 +818,12 @@
 
 /* =========================================================
    BOTTOM — LIBRARY CARD
-   This should breathe, but still fit inside the viewport.
    ========================================================= */
 
 .flow-library-card {
   grid-area: library;
-  min-height: clamp(220px, 27vh, 285px);
-  height: auto;
+  height: 100%;
+  min-height: 0;
 }
 
 .flow-library-header {
@@ -1246,7 +1245,6 @@
 
 /* =========================================================
    SHORT LAPTOP VIEWPORT FIX
-   Keeps everything inside the viewport but still breathable.
    ========================================================= */
 
 @media (min-width: 981px) and (max-height: 760px) {
@@ -1260,7 +1258,7 @@
   .flow-grid {
     grid-template-rows:
       minmax(0, 1fr)
-      clamp(205px, 27vh, 245px);
+      clamp(205px, 28vh, 255px);
 
     row-gap: 0.95rem;
   }
@@ -1311,10 +1309,6 @@
   .flow-status-options span {
     min-height: 30px;
     font-size: 0.68rem;
-  }
-
-  .flow-library-card {
-    min-height: clamp(205px, 27vh, 245px);
   }
 
   .flow-library-header {
