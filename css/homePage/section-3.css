@@ -92,8 +92,8 @@
   isolation: isolate;
   overflow: hidden;
 
-  height: calc(100svh - var(--nav-height));
-  min-height: calc(100svh - var(--nav-height));
+  height: calc(110svh - var(--nav-height));
+  min-height: calc(110svh - var(--nav-height));
 
   padding: var(--flow-section-padding);
 
