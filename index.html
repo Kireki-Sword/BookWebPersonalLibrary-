@@ -243,50 +243,58 @@
 
     </section>
 
-    <!-- Section 3 Search Demo -->
-    <section id="section-3-search-demo" class="section section-search-demo" aria-labelledby="section-3-title">
+    <!-- Section 3 Combined Library Flow Demo -->
+    <section id="section-3-library-flow" class="section section-library-flow" aria-labelledby="section-3-title">
 
-        <!-- LEFT SIDE TEXT -->
-        <div class="section-3-copy">
-            <span class="section-label">Your first step</span>
+        <div class="flow-grid">
 
-            <h2 id="section-3-title">
-                Find it. Save it. Keep going.
-            </h2>
+            <!-- TOP LEFT: TEXT CARD -->
+            <article class="flow-card flow-copy-card">
+                <span class="section-label">Your first step</span>
 
-            <p>
-                Search any story you are reading or watching. Add it to your library,
-                then choose where it belongs.
-            </p>
+                <h2 id="section-3-title">
+                    Find it. Save it.
+                    <span>Watch your library build.</span>
+                </h2>
 
-            <a href="signup.html" class="btn-primary section-3-cta">
-                Start your library
-            </a>
-        </div>
+                <p>
+                    Search any story you are reading or watching. Add it once,
+                    choose a status, and see it appear in your library instantly.
+                </p>
 
-        <!-- RIGHT SIDE INTERACTIVE DEMO -->
-        <div class="section-3-demo" aria-label="Interactive search and save demo">
-            <div class="demo-window">
+                <a href="signup.html" class="btn-primary flow-cta">
+                    Start your library
+                </a>
+            </article>
 
-                <!-- Window Header -->
-                <div class="demo-window-header" aria-hidden="true">
-                    <span></span>
-                    <span></span>
-                    <span></span>
+
+            <!-- TOP RIGHT: SEARCH / ADD CARD -->
+            <article class="flow-card flow-search-card" aria-label="Search and add demo">
+
+                <div class="flow-card-header">
+                    <div>
+                        <span class="flow-eyebrow">Search</span>
+                        <h3>Add your next story</h3>
+                    </div>
+
+                    <div class="flow-window-controls" aria-hidden="true">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
                 </div>
 
-                <!-- Demo Body -->
-                <div class="demo-window-body">
+                <div class="flow-search-body">
 
                     <!-- Search -->
-                    <form class="demo-search-form" action="search.html" method="get">
-                        <label for="home-demo-search">
+                    <form class="flow-search-form" action="search.html" method="get">
+                        <label for="home-flow-search">
                             Search your next story
                         </label>
 
-                        <div class="demo-search-bar">
+                        <div class="flow-search-bar">
                             <input
-                                id="home-demo-search"
+                                id="home-flow-search"
                                 name="q"
                                 type="search"
                                 placeholder="Search a book, manga, anime, film, or show"
@@ -300,25 +308,25 @@
                     </form>
 
                     <!-- Empty State Before Search -->
-                    <div class="demo-empty-state">
+                    <div class="flow-search-empty" data-flow-search-empty>
                         <p>Type a title to find it and add it to your library.</p>
                     </div>
 
-                    <!-- Result Area For JavaScript Later -->
-                    <div class="demo-result-area" aria-live="polite">
-                        <template id="home-demo-result-template">
-                            <article class="demo-result-card">
-                                <div class="demo-result-cover">
+                    <!-- Search Result Area -->
+                    <div class="flow-result-area" data-flow-result-area aria-live="polite">
+                        <template id="flow-result-template">
+                            <article class="flow-result-card" data-flow-result-card>
+                                <div class="flow-result-cover">
                                     <img src="./images/vagabond-cover.jpg" alt="Vagabond cover">
                                 </div>
 
-                                <div class="demo-result-info">
-                                    <h3>Vagabond</h3>
-                                    <p class="demo-result-creator">by Takehiko Inoue</p>
-                                    <p class="demo-result-type">Manga</p>
+                                <div class="flow-result-info">
+                                    <h4>Vagabond</h4>
+                                    <p class="flow-result-creator">by Takehiko Inoue</p>
+                                    <p class="flow-result-type">Manga</p>
                                 </div>
 
-                                <button class="demo-add-button" type="button">
+                                <button class="flow-add-button" type="button" data-flow-add-button>
                                     Add
                                 </button>
                             </article>
@@ -326,188 +334,146 @@
                     </div>
 
                     <!-- Status Picker -->
-                    <fieldset class="demo-status-picker" disabled>
+                    <fieldset class="flow-status-picker" data-flow-status-picker disabled>
                         <legend>Where should it go?</legend>
 
-                        <div class="demo-status-options">
+                        <div class="flow-status-options">
                             <label>
-                                <input type="radio" name="demo_status" value="reading">
+                                <input type="radio" name="flow_status" value="in-progress">
                                 <span>Reading</span>
                             </label>
 
                             <label>
-                                <input type="radio" name="demo_status" value="completed">
+                                <input type="radio" name="flow_status" value="completed">
                                 <span>Completed</span>
                             </label>
 
                             <label>
-                                <input type="radio" name="demo_status" value="planned">
+                                <input type="radio" name="flow_status" value="planned">
                                 <span>Planned</span>
                             </label>
 
                             <label>
-                                <input type="radio" name="demo_status" value="paused">
+                                <input type="radio" name="flow_status" value="paused">
                                 <span>Paused</span>
                             </label>
 
                             <label>
-                                <input type="radio" name="demo_status" value="dropped">
+                                <input type="radio" name="flow_status" value="dropped">
                                 <span>Dropped</span>
                             </label>
                         </div>
                     </fieldset>
 
                     <!-- Saved Message -->
-                    <div class="demo-saved-message" role="status" aria-live="polite" hidden>
-                        <i class="ti ti-check"></i>
+                    <div class="flow-saved-message" data-flow-saved-message role="status" aria-live="polite" hidden>
+                        <i class="ti ti-check" aria-hidden="true"></i>
                         <span>Vagabond saved to Reading.</span>
                     </div>
 
-                </div> <!-- closes demo-window-body -->
-
-            </div> <!-- closes demo-window -->
-
-        </div> <!-- closes section-3-demo -->
-
-    </section>
-
-    <!-- Section 4 Library Organization Demo -->
-    <section id="section-4-library" class="section section-library" aria-labelledby="section-4-title">
-
-        <!-- LEFT SIDE TEXT -->
-        <div class="section-4-copy">
-            <span class="section-label">Your library</span>
-
-            <h2 id="section-4-title">
-                Build your library.
-            </h2>
-
-            <p>
-                Everything you add has a place. Filter by format, switch between
-                statuses, and keep your library organized as you go.
-            </p>
-        </div>
-
-        <!-- RIGHT SIDE LIBRARY DEMO -->
-        <div class="section-4-demo" aria-label="Library organization preview">
-
-            <div class="library-window">
-
-                <!-- WINDOW HEADER -->
-                <div class="library-window-header">
-                    <div class="library-window-controls" aria-hidden="true">
-                        <span class="library-window-dot"></span>
-                        <span class="library-window-dot"></span>
-                        <span class="library-window-dot"></span>
-                    </div>
-
-                    <div class="library-window-heading">
-                        <span class="library-window-title">My Library</span>
-                        <span class="library-window-count">
-                            <span data-library-count>0</span> saved
-                        </span>
-                    </div>
                 </div>
 
-                <!-- LIBRARY BODY -->
-                <div class="library-window-body">
+            </article>
 
-                    <!-- FORMAT FILTERS -->
-                    <div class="library-filter-group" aria-label="Filter by format">
-                        <button type="button" class="library-filter active" data-format-filter="all" aria-pressed="true">
+
+            <!-- BOTTOM FULL WIDTH: LIBRARY CARD -->
+            <article class="flow-card flow-library-card" aria-label="Library preview">
+
+                <!-- Library Header -->
+                <div class="flow-library-header">
+                    <div>
+                        <span class="flow-eyebrow">Your library</span>
+                        <h3>My Library</h3>
+                    </div>
+
+                    <span class="flow-library-count">
+                        <span data-library-count>0</span> saved
+                    </span>
+                </div>
+
+                <!-- Library Body -->
+                <div class="flow-library-body">
+
+                    <!-- Format Filters -->
+                    <div class="flow-library-filters" aria-label="Filter by format">
+                        <button type="button" class="flow-filter active" data-format-filter="all" aria-pressed="true">
                             All
                         </button>
 
-                        <button type="button" class="library-filter" data-format-filter="book" aria-pressed="false">
-                            Books
-                        </button>
-
-                        <button type="button" class="library-filter" data-format-filter="comic" aria-pressed="false">
-                            Comics
-                        </button>
-
-                        <button type="button" class="library-filter" data-format-filter="manga" aria-pressed="false">
+                        <button type="button" class="flow-filter" data-format-filter="manga" aria-pressed="false">
                             Manga
                         </button>
 
-                        <button type="button" class="library-filter" data-format-filter="anime" aria-pressed="false">
+                        <button type="button" class="flow-filter" data-format-filter="anime" aria-pressed="false">
                             Anime
-                        </button>
-
-                        <button type="button" class="library-filter" data-format-filter="show" aria-pressed="false">
-                            Shows
-                        </button>
-
-                        <button type="button" class="library-filter" data-format-filter="movie" aria-pressed="false">
-                            Movies
                         </button>
                     </div>
 
-                    <!-- STATUS FILTERS -->
-                    <div class="library-status-group" aria-label="Filter by status">
-                        <button type="button" class="library-status-filter active" data-status-filter="all" aria-pressed="true">
+                    <!-- Status Filters -->
+                    <div class="flow-library-status-filters" aria-label="Filter by status">
+                        <button type="button" class="flow-status-filter active" data-status-filter="all" aria-pressed="true">
                             All
                         </button>
 
-                        <button type="button" class="library-status-filter" data-status-filter="in-progress" aria-pressed="false">
-                            In Progress
+                        <button type="button" class="flow-status-filter" data-status-filter="in-progress" aria-pressed="false">
+                            Reading
                         </button>
 
-                        <button type="button" class="library-status-filter" data-status-filter="completed" aria-pressed="false">
+                        <button type="button" class="flow-status-filter" data-status-filter="completed" aria-pressed="false">
                             Completed
                         </button>
 
-                        <button type="button" class="library-status-filter" data-status-filter="planned" aria-pressed="false">
+                        <button type="button" class="flow-status-filter" data-status-filter="planned" aria-pressed="false">
                             Planned
                         </button>
 
-                        <button type="button" class="library-status-filter" data-status-filter="paused" aria-pressed="false">
+                        <button type="button" class="flow-status-filter" data-status-filter="paused" aria-pressed="false">
                             Paused
                         </button>
 
-                        <button type="button" class="library-status-filter" data-status-filter="dropped" aria-pressed="false">
+                        <button type="button" class="flow-status-filter" data-status-filter="dropped" aria-pressed="false">
                             Dropped
                         </button>
                     </div>
 
-                    <!-- LIST HEADER -->
-                    <div class="library-list-header" aria-hidden="true">
-                        <span class="library-header-story">Story</span>
-                        <span class="library-header-format">Format</span>
-                        <span class="library-header-status">Status</span>
-                        <span class="library-header-rating">Score</span>
+                    <!-- List Header -->
+                    <div class="flow-library-list-header" aria-hidden="true">
+                        <span class="flow-header-story">Story</span>
+                        <span class="flow-header-format">Format</span>
+                        <span class="flow-header-status">Status</span>
+                        <span class="flow-header-rating">Score</span>
                     </div>
 
-                    <!-- EMPTY STATE -->
-                    <div class="library-empty-state" data-library-empty>
+                    <!-- Empty State -->
+                    <div class="flow-library-empty" data-library-empty>
                         <p>
                             Search and add something above. Your saved stories will appear here.
                         </p>
                     </div>
 
-                    <!-- ITEMS ADDED FROM SECTION 3 GO HERE -->
-                    <div class="library-list" data-library-list aria-live="polite"></div>
+                    <!-- Library Rows Added By JavaScript -->
+                    <div class="flow-library-list" data-library-list aria-live="polite"></div>
 
-                    <!-- REUSABLE ROW TEMPLATE FOR JAVASCRIPT -->
-                    <template id="library-row-template">
-                        <article class="library-row" data-library-row data-format="" data-status="">
+                    <!-- Reusable Library Row Template -->
+                    <template id="flow-library-row-template">
+                        <article class="flow-library-row" data-library-row data-format="manga" data-status="in-progress">
 
-                            <div class="library-row-cover">
-                                <img data-library-cover src="" alt="">
+                            <div class="flow-library-row-cover">
+                                <img data-library-cover src="./images/vagabond-cover.jpg" alt="Vagabond cover">
                             </div>
 
-                            <div class="library-row-info">
-                                <h3 data-library-title></h3>
-                                <p data-library-creator></p>
+                            <div class="flow-library-row-info">
+                                <h4 data-library-title>Vagabond</h4>
+                                <p data-library-creator>by Takehiko Inoue</p>
                             </div>
 
-                            <div class="library-row-format">
-                                <span data-library-format></span>
+                            <div class="flow-library-row-format">
+                                <span data-library-format>Manga</span>
                             </div>
 
-                            <div class="library-row-status">
+                            <div class="flow-library-row-status">
                                 <select name="library_status" data-library-status aria-label="Change status">
-                                    <option value="in-progress">In Progress</option>
+                                    <option value="in-progress" selected>Reading</option>
                                     <option value="completed">Completed</option>
                                     <option value="planned">Planned</option>
                                     <option value="paused">Paused</option>
@@ -515,22 +481,22 @@
                                 </select>
                             </div>
 
-                            <div class="library-row-rating">
+                            <div class="flow-library-row-rating">
                                 <span data-library-rating>—</span>
                             </div>
 
                         </article>
                     </template>
 
-                    <!-- SAVE NOTICE -->
-                    <div class="library-save-notice" role="status">
+                    <!-- Save Notice -->
+                    <div class="flow-library-save-notice" role="status">
                         <i class="ti ti-lock" aria-hidden="true"></i>
                         <span>Create an account to save changes to your real library.</span>
                     </div>
 
                 </div>
 
-            </div>
+            </article>
 
         </div>
 

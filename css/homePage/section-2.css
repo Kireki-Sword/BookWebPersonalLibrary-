@@ -432,6 +432,7 @@
   grid-area: info;
   min-width: 0;
   align-self: end;
+  pointer-events: none;
 }
 
 .media-row-info h3 {
@@ -443,6 +444,11 @@
   color: var(--ink);
   letter-spacing: -0.045em;
   line-height: 1;
+
+  display: inline-block;
+  width: fit-content;
+  max-width: 100%;
+  pointer-events: auto;
 
   text-decoration: none;
   cursor: default;
@@ -461,6 +467,11 @@
   font-weight: 500;
   color: var(--ink-mid);
   line-height: 1.35;
+
+  display: inline-block;
+  width: fit-content;
+  max-width: 100%;
+  pointer-events: auto;
 
   text-decoration: none;
   cursor: default;
@@ -1494,6 +1505,7 @@
   grid-area: info;
   align-self: end;
   padding-top: 0.15rem;
+  pointer-events: none;
 }
 
 .media-row-format,
@@ -1864,6 +1876,7 @@
   align-self: end;
   min-width: 0;
   padding-top: 0.25rem;
+  pointer-events: none;
 }
 
 .media-row-format,
@@ -2367,6 +2380,7 @@
   align-self: end;
   min-width: 0;
   padding-top: 0.35rem;
+  pointer-events: none;
 }
 
 .media-row-format,
@@ -2596,19 +2610,19 @@
    ============================================================================ */
 
 :root {
-  --page-base: #fbf3e8;
-  --page-warm: #f7ead9;
-  --page-depth: #efd8bc;
+  --page-base: #060814;
+  --page-warm: #0A1024;
+  --page-depth: #050611;
 
-  --card-surface: rgba(255, 250, 242, 0.9);
-  --card-surface-hover: rgba(255, 252, 247, 0.96);
-  --card-border: rgba(128, 78, 39, 0.18);
-  --card-border-hover: rgba(128, 78, 39, 0.3);
+  --card-surface: rgba(16, 22, 36, 0.96);
+  --card-surface-hover: rgba(20, 27, 46, 0.98);
+  --card-border: rgba(184, 192, 255, 0.20);
+  --card-border-hover: rgba(184, 192, 255, 0.34);
 
-  --object-glow-soft: rgba(176, 99, 42, 0.14);
-  --object-glow-medium: rgba(176, 99, 42, 0.22);
-  --object-glow-strong: rgba(166, 88, 35, 0.3);
-  --warm-shadow: rgba(78, 43, 18, 0.15);
+  --object-glow-soft: rgba(124, 140, 255, 0.14);
+  --object-glow-medium: rgba(155, 124, 255, 0.22);
+  --object-glow-strong: rgba(124, 140, 255, 0.30);
+  --warm-shadow: rgba(0, 0, 0, 0.42);
 
   --section-2-row-width-final: 1020px;
   --section-2-cover-width-final: 180px;
@@ -2619,14 +2633,13 @@
 html,
 body {
   min-height: 100%;
+  background-color: #060814 !important;
   background:
-    radial-gradient(circle at 50% 0%, rgba(255, 250, 241, 0.62), transparent 32%),
-    linear-gradient(
-      180deg,
-      var(--page-base) 0%,
-      var(--page-warm) 42%,
-      var(--page-base) 100%
-    ) !important;
+    radial-gradient(circle at 78% 16%, rgba(124, 140, 255, 0.22), transparent 30%),
+    radial-gradient(circle at 18% 28%, rgba(155, 124, 255, 0.16), transparent 32%),
+    radial-gradient(circle at 82% 68%, rgba(116, 215, 255, 0.10), transparent 30%),
+    radial-gradient(circle at 34% 92%, rgba(210, 140, 255, 0.12), transparent 34%),
+    linear-gradient(135deg, #060814 0%, #0A1024 42%, #0D1022 68%, #050611 100%) !important;
 }
 
 body {
@@ -2919,6 +2932,7 @@ body {
   align-self: end;
   min-width: 0;
   padding-top: 0.25rem;
+  pointer-events: none;
 }
 
 .media-row-info h3 {
@@ -2926,6 +2940,11 @@ body {
   font-size: clamp(30px, 2.05vw, 34px) !important;
   line-height: 0.98 !important;
   letter-spacing: -0.045em;
+  display: inline-block !important;
+  width: fit-content !important;
+  max-width: 100% !important;
+  pointer-events: auto;
+
   text-decoration: none !important;
   cursor: default;
 }
@@ -2934,6 +2953,11 @@ body {
   margin-top: 0.38rem !important;
   font-size: 16px !important;
   line-height: 1.35 !important;
+  display: inline-block !important;
+  width: fit-content !important;
+  max-width: 100% !important;
+  pointer-events: auto;
+
   text-decoration: none !important;
   cursor: default;
 }
