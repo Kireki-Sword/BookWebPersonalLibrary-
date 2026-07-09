@@ -248,18 +248,18 @@
 
         <div class="flow-grid">
 
-            <!-- TOP LEFT: TEXT CARD -->
-            <article class="flow-card flow-copy-card">
+            <!-- TOP LEFT: TEXT -->
+            <article class="flow-copy-card">
                 <span class="section-label">Your first step</span>
 
                 <h2 id="section-3-title">
-                    Find it. Save it.
-                    <span>Watch your library build.</span>
+                    Find it. Save
+                    <span>it. Keep going.</span>
                 </h2>
 
                 <p>
-                    Search any story you are reading or watching. Add it once,
-                    choose a status, and see it appear in your library instantly.
+                    Search any story you are reading or watching. Add it to your
+                    library, then choose where it belongs.
                 </p>
 
                 <a href="signup.html" class="btn-primary flow-cta">
@@ -271,13 +271,8 @@
             <!-- TOP RIGHT: SEARCH / ADD CARD -->
             <article class="flow-card flow-search-card" aria-label="Search and add demo">
 
-                <div class="flow-card-header">
-                    <div>
-                        <span class="flow-eyebrow">Search</span>
-                        <h3>Add your next story</h3>
-                    </div>
-
-                    <div class="flow-window-controls" aria-hidden="true">
+                <div class="flow-card-header" aria-hidden="true">
+                    <div class="flow-window-controls">
                         <span></span>
                         <span></span>
                         <span></span>
@@ -379,7 +374,6 @@
             <!-- BOTTOM FULL WIDTH: LIBRARY CARD -->
             <article class="flow-card flow-library-card" aria-label="Library preview">
 
-                <!-- Library Header -->
                 <div class="flow-library-header">
                     <div>
                         <span class="flow-eyebrow">Your library</span>
@@ -391,10 +385,8 @@
                     </span>
                 </div>
 
-                <!-- Library Body -->
                 <div class="flow-library-body">
 
-                    <!-- Format Filters -->
                     <div class="flow-library-filters" aria-label="Filter by format">
                         <button type="button" class="flow-filter active" data-format-filter="all" aria-pressed="true">
                             All
@@ -409,7 +401,6 @@
                         </button>
                     </div>
 
-                    <!-- Status Filters -->
                     <div class="flow-library-status-filters" aria-label="Filter by status">
                         <button type="button" class="flow-status-filter active" data-status-filter="all" aria-pressed="true">
                             All
@@ -436,7 +427,6 @@
                         </button>
                     </div>
 
-                    <!-- List Header -->
                     <div class="flow-library-list-header" aria-hidden="true">
                         <span class="flow-header-story">Story</span>
                         <span class="flow-header-format">Format</span>
@@ -444,17 +434,14 @@
                         <span class="flow-header-rating">Score</span>
                     </div>
 
-                    <!-- Empty State -->
                     <div class="flow-library-empty" data-library-empty>
                         <p>
                             Search and add something above. Your saved stories will appear here.
                         </p>
                     </div>
 
-                    <!-- Library Rows Added By JavaScript -->
                     <div class="flow-library-list" data-library-list aria-live="polite"></div>
 
-                    <!-- Reusable Library Row Template -->
                     <template id="flow-library-row-template">
                         <article class="flow-library-row" data-library-row data-format="manga" data-status="in-progress">
 
@@ -488,7 +475,6 @@
                         </article>
                     </template>
 
-                    <!-- Save Notice -->
                     <div class="flow-library-save-notice" role="status">
                         <i class="ti ti-lock" aria-hidden="true"></i>
                         <span>Create an account to save changes to your real library.</span>
@@ -501,6 +487,7 @@
         </div>
 
     </section>
+
 
     <!-- Section 4  Cover Rain + Same Story Different Souls -->
     <section id="section-5" class="section section-cover-rain">
