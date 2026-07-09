@@ -492,221 +492,188 @@
 
     </section>
 
+    <!-- Section 4 — Featured Anime/Manga Cover Rain + Same Story Different Souls -->
+    <section id="section-4" class="section section-cover-rain" aria-labelledby="section-4-title" data-section-cover-rain>
 
-    <!-- Section 4  Cover Rain + Same Story Different Souls -->
-    <section id="section-5" class="section section-cover-rain">
+        <!-- PHASE 1: database covers rain on both sides -->
+        <div class="rain-wrapper" data-rain-wrapper>
 
-        <!-- PHASE 1  Two columns of covers -->
-        <div class="rain-wrapper" id="rain-wrapper">
+            <!-- Left side: covers float upward -->
+            <div class="rain-col rain-col-left" data-rain-left aria-hidden="true"></div>
 
-            <!-- LEFT COLUMN  floats UP -->
-            <div class="rain-col rain-col-left" id="rain-left">
-                <div class="rain-item" style="--rotation: -6deg; --scale: 0.95;">
-                    <img src="assets/covers/brothers-karamazov.jpg" alt="The Brothers Karamazov">
-                </div>
-                <div class="rain-item" style="--rotation: 4deg; --scale: 1.05;">
-                    <img src="assets/covers/siddhartha.jpg" alt="Siddhartha">
-                </div>
-                <div class="rain-item" style="--rotation: -3deg; --scale: 0.9;">
-                    <img src="assets/covers/count-monte-cristo.jpg" alt="The Count of Monte Cristo">
-                </div>
-                <div class="rain-item" style="--rotation: 7deg; --scale: 1.0;">
-                    <img src="assets/covers/great-gatsby.jpg" alt="The Great Gatsby">
-                </div>
-                <div class="rain-item" style="--rotation: -5deg; --scale: 1.05;">
-                    <img src="assets/covers/red-rising.jpg" alt="Red Rising">
-                </div>
-                <div class="rain-item" style="--rotation: 3deg; --scale: 0.95;">
-                    <img src="assets/covers/zarathustra.jpg" alt="Thus Spoke Zarathustra">
-                </div>
-                <div class="rain-item" style="--rotation: -8deg; --scale: 1.0;">
-                    <img src="assets/covers/a-silent-voice.jpg" alt="A Silent Voice">
-                </div>
-                <div class="rain-item" style="--rotation: 5deg; --scale: 0.9;">
-                    <img src="assets/covers/interstellar.jpg" alt="Interstellar">
-                </div>
-                <div class="rain-item" style="--rotation: -4deg; --scale: 1.05;">
-                    <img src="assets/covers/parasite.jpg" alt="Parasite">
-                </div>
-                <div class="rain-item" style="--rotation: 6deg; --scale: 0.95;">
-                    <img src="assets/covers/grave-of-fireflies.jpg" alt="Grave of the Fireflies">
-                </div>
-                <div class="rain-item" style="--rotation: -2deg; --scale: 1.0;">
-                    <img src="assets/covers/the-green-mile.jpg" alt="The Green Mile">
-                </div>
-                <div class="rain-item" style="--rotation: 8deg; --scale: 0.9;">
-                    <img src="assets/covers/hereditary.jpg" alt="Hereditary">
-                </div>
-            </div>
+            <!-- Right side: covers fall downward -->
+            <div class="rain-col rain-col-right" data-rain-right aria-hidden="true"></div>
 
-            <!-- RIGHT COLUMN  falls DOWN -->
-            <div class="rain-col rain-col-right" id="rain-right">
-                <div class="rain-item" style="--rotation: 5deg; --scale: 1.0;">
-                    <img src="assets/covers/brothers-karamazov.jpg" alt="The Brothers Karamazov">
-                </div>
-                <div class="rain-item" style="--rotation: -7deg; --scale: 0.95;">
-                    <img src="assets/covers/breaking-bad.jpg" alt="Breaking Bad">
-                </div>
-                <div class="rain-item" style="--rotation: 3deg; --scale: 1.05;">
-                    <img src="assets/covers/supernatural.jpg" alt="Supernatural">
-                </div>
-                <div class="rain-item" style="--rotation: -5deg; --scale: 0.9;">
-                    <img src="assets/covers/doctor-who.jpg" alt="Doctor Who">
-                </div>
-                <div class="rain-item" style="--rotation: 6deg; --scale: 1.0;">
-                    <img src="assets/covers/true-detective.jpg" alt="True Detective">
-                </div>
-                <div class="rain-item" style="--rotation: -4deg; --scale: 0.95;">
-                    <img src="assets/covers/dark.jpg" alt="Dark">
-                </div>
-                <div class="rain-item" style="--rotation: 8deg; --scale: 1.05;">
-                    <img src="assets/covers/berserk.jpg" alt="Berserk">
-                </div>
-                <div class="rain-item" style="--rotation: -3deg; --scale: 0.9;">
-                    <img src="assets/covers/one-piece.jpg" alt="One Piece">
-                </div>
-                <div class="rain-item" style="--rotation: 5deg; --scale: 1.0;">
-                    <img src="assets/covers/billy-bat.jpg" alt="Billy Bat">
-                </div>
-                <div class="rain-item" style="--rotation: -6deg; --scale: 0.95;">
-                    <img src="assets/covers/tokyo-ghoul-re.jpg" alt="Tokyo Ghoul:re">
-                </div>
-                <div class="rain-item" style="--rotation: 4deg; --scale: 1.05;">
-                    <img src="assets/covers/vinland-saga.jpg" alt="Vinland Saga">
-                </div>
-                <div class="rain-item" style="--rotation: -8deg; --scale: 0.9;">
-                    <img src="assets/covers/the-climber.jpg" alt="The Climber">
-                </div>
-            </div>
-
-            <!-- CENTER LABEL  fades in over the rain -->
-            <div class="rain-label" id="rain-label">
+            <!-- Center copy over cover rain -->
+            <div class="rain-center-copy" data-rain-label>
                 <span class="section-label">Every story finds its reader</span>
-                <h2>Some books find you.<br>Others you find.</h2>
-                <p>Keep scrolling</p>
+
+                <h2 id="section-4-title">
+                    Same story.
+                    <span>Different souls.</span>
+                </h2>
+
+                <p>Scroll to see how one anime or manga can live differently in two libraries.</p>
             </div>
 
         </div>
 
-        <!-- TRANSITION  Brothers Karamazov rises to center -->
-        <div class="transition-book" id="transition-book" aria-hidden="true">
-            <img src="assets/covers/brothers-karamazov.jpg" alt="The Brothers Karamazov">
+
+        <!-- TRANSITION: selected featured cover rises into place -->
+        <div class="feature-book-float" data-transition-book aria-hidden="true">
+            <div class="feature-book-cover-shell">
+                <img data-feature-cover src="" alt="">
+                <div class="cover-fallback" data-feature-cover-fallback></div>
+            </div>
         </div>
 
-        <!-- PHASE 2 Same book different souls -->
-        <div class="souls-section" id="souls-section">
 
-            <!-- Shared book anchored at top center -->
-            <div class="souls-book" id="souls-book">
-                <img src="assets/covers/brothers-karamazov.jpg" alt="The Brothers Karamazov">
+        <!-- PHASE 2: same anime/manga, two different users -->
+        <div class="souls-section" data-souls-section>
+
+            <!-- Shared story cover at the top center -->
+            <div class="souls-book" data-souls-book>
+                <div class="souls-book-cover-shell">
+                    <img data-souls-book-cover src="" alt="">
+                    <div class="cover-fallback" data-souls-book-fallback></div>
+                </div>
+
                 <div class="souls-book-info">
-                    <h3 class="souls-book-title">The Brothers Karamazov</h3>
-                    <p class="souls-book-author">Fyodor Dostoevsky</p>
+                    <span class="souls-book-kicker">Shared featured story</span>
+                    <h3 data-souls-book-title>Featured story</h3>
+                    <p data-souls-book-creator>From your database</p>
                 </div>
             </div>
 
-            <!-- Section label -->
-            <div class="souls-label">
-                <span class="section-label">Same story. Different souls.</span>
-                <p>Two readers. One book. See what each took from it.</p>
+
+            <!-- Phase 2 intro -->
+            <div class="souls-intro" data-souls-intro>
+                <span class="section-label">One title. Two inner worlds.</span>
+                <p>The same anime or manga can become completely different memories for different people.</p>
             </div>
 
-            <!-- Two columns  always revealed simultaneously -->
+
+            <!-- Two profile cards -->
             <div class="souls-columns">
 
-                <!-- LEFT  Marcus -->
-                <div class="souls-col souls-col-left">
+                <!-- LEFT PROFILE -->
+                <article class="souls-profile-card souls-profile-left" data-souls-card-left>
 
-                    <!-- Person header -->
-                    <div class="souls-person">
-                        <img class="souls-avatar" src="assets/avatars/marcus.jpg" alt="Marcus">
-                        <span class="souls-name">Marcus</span>
-                    </div>
+                    <header class="souls-person" data-souls-person>
+                        <div class="souls-avatar" aria-hidden="true">K</div>
 
-                    <!-- ROUND 1  Quote -->
-                    <div class="souls-round souls-round-quote" data-round="1">
-                        <span class="souls-round-label">Favourite Quote</span>
-                        <blockquote class="souls-quote">
-                            "Above all, don't lie to yourself. The man who lies to himself and listens to his own lie comes to a point that he cannot distinguish the truth."
-                        </blockquote>
-                    </div>
+                        <div>
+                            <span class="souls-name">kai.reads</span>
+                            <p class="souls-subtitle">saves emotions first</p>
+                        </div>
+                    </header>
 
-                    <!-- ROUND 2  Moment -->
-                    <div class="souls-round souls-round-moment" data-round="2">
-                        <span class="souls-round-label">Favourite Moment</span>
-                        <p class="souls-moment">
-                            Dmitri breaking down in the courtroom. All that rage and pride finally crumbling. I had to put the book down and sit with it for a while.
+                    <!-- JS fills these rows with featured anime/manga from the database -->
+                    <div class="souls-mini-library" data-souls-library-left aria-label="Kai featured library preview"></div>
+
+                    <section class="souls-round souls-round-quote" data-round="quote">
+                        <span class="souls-round-label">Saved line</span>
+                        <p class="souls-quote">
+                            “I saved this because it made the whole story feel personal.”
                         </p>
-                    </div>
+                    </section>
 
-                    <!-- ROUND 3  Character -->
-                    <div class="souls-round souls-round-character" data-round="3">
-                        <span class="souls-round-label">Favourite Character</span>
-                        <p class="souls-character-name">Dmitri Karamazov</p>
-                        <p class="souls-character-note">
-                            The most human character I have ever read. Flawed, loud, irrational — and somehow the most honest of all three brothers.
+                    <section class="souls-round souls-round-moment" data-round="moment">
+                        <span class="souls-round-label">Moment</span>
+                        <p>
+                            Kai remembers the quiet pause after the biggest turning point, when everything felt heavier than before.
                         </p>
-                    </div>
+                    </section>
 
-                    <!-- ROUND 4  Thoughts -->
-                    <div class="souls-round souls-round-thoughts" data-round="4">
+                    <section class="souls-round souls-round-character" data-round="character">
+                        <span class="souls-round-label">Character</span>
+
+                        <div class="souls-character">
+                            <div class="souls-character-mark" aria-hidden="true">A</div>
+
+                            <div>
+                                <strong>The one they understand most</strong>
+                                <p>messy, human, and hard to stop thinking about</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="souls-round souls-round-thoughts" data-round="thoughts">
                         <span class="souls-round-label">Thoughts</span>
-                        <p class="souls-thoughts" id="thoughts-marcus">
-                            This book made me sit with guilt in a way I never had before. Dmitri's rage, Ivan's doubt, Alyosha's quiet faith — I saw parts of myself in all three brothers and that was deeply uncomfortable. Dostoevsky doesn't let you pick a side. He makes you live inside all of them.
+
+                        <p class="souls-thoughts" data-type-thought>
+                            Kai reads this story like a memory about pressure, loyalty, and the strange way a fictional scene can explain something real.
                         </p>
-                    </div>
+                    </section>
 
-                </div>
+                </article>
 
-                <!-- Vertical divider -->
+
                 <div class="souls-divider" aria-hidden="true"></div>
 
-                <!-- RIGHT Lena -->
-                <div class="souls-col souls-col-right">
 
-                    <!-- Person header -->
-                    <div class="souls-person">
-                        <img class="souls-avatar" src="assets/avatars/lena.jpg" alt="Lena">
-                        <span class="souls-name">Lena</span>
-                    </div>
+                <!-- RIGHT PROFILE -->
+                <article class="souls-profile-card souls-profile-right" data-souls-card-right>
 
-                    <!-- ROUND 1 Quote -->
-                    <div class="souls-round souls-round-quote" data-round="1">
-                        <span class="souls-round-label">Favourite Quote</span>
-                        <blockquote class="souls-quote">
-                            "It's not miracles that produce faith, but faith that produces miracles."
-                        </blockquote>
-                    </div>
+                    <header class="souls-person" data-souls-person>
+                        <div class="souls-avatar" aria-hidden="true">N</div>
 
-                    <!-- ROUND 2  Moment -->
-                    <div class="souls-round souls-round-moment" data-round="2">
-                        <span class="souls-round-label">Favourite Moment</span>
-                        <p class="souls-moment">
-                            Alyosha holding the dying boy at the end. No words. Just presence. The quietest and most devastating scene in the whole book.
+                        <div>
+                            <span class="souls-name">nova.pages</span>
+                            <p class="souls-subtitle">tracks themes and meaning</p>
+                        </div>
+                    </header>
+
+                    <!-- JS fills these rows with featured anime/manga from the database -->
+                    <div class="souls-mini-library" data-souls-library-right aria-label="Nova featured library preview"></div>
+
+                    <section class="souls-round souls-round-quote" data-round="quote">
+                        <span class="souls-round-label">Saved line</span>
+                        <p class="souls-quote">
+                            “I saved this because it changed how I saw the character.”
                         </p>
-                    </div>
+                    </section>
 
-                    <!-- ROUND 3  Character -->
-                    <div class="souls-round souls-round-character" data-round="3">
-                        <span class="souls-round-label">Favourite Character</span>
-                        <p class="souls-character-name">Ivan Karamazov</p>
-                        <p class="souls-character-note">
-                            Ivan broke me. His rebellion against God isn't atheism — it's grief. The Grand Inquisitor is the most honest thing I've ever read about doubt.
+                    <section class="souls-round souls-round-moment" data-round="moment">
+                        <span class="souls-round-label">Moment</span>
+                        <p>
+                            Nova remembers the scene where the story stops rushing and finally lets the meaning catch up.
                         </p>
-                    </div>
+                    </section>
 
-                    <!-- ROUND 4  Thoughts -->
-                    <div class="souls-round souls-round-thoughts" data-round="4">
+                    <section class="souls-round souls-round-character" data-round="character">
+                        <span class="souls-round-label">Character</span>
+
+                        <div class="souls-character">
+                            <div class="souls-character-mark" aria-hidden="true">B</div>
+
+                            <div>
+                                <strong>The one they question most</strong>
+                                <p>complicated, symbolic, and impossible to ignore</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="souls-round souls-round-thoughts" data-round="thoughts">
                         <span class="souls-round-label">Thoughts</span>
-                        <p class="souls-thoughts" id="thoughts-lena">
-                            I came for the philosophy and stayed for the grief. The Grand Inquisitor chapter alone changed how I think about freedom and faith. I've never felt so intellectually shattered by a single chapter. And then Alyosha just quietly keeps loving everyone anyway. That contrast destroyed me.
-                        </p>
-                    </div>
 
-                </div>
+                        <p class="souls-thoughts" data-type-thought>
+                            Nova reads this story like a question about identity, choice, and why two people can finish the same title with different feelings.
+                        </p>
+                    </section>
+
+                </article>
 
             </div>
 
+        </div>
+
+
+        <!-- Static message appears only if there are no featured anime/manga rows -->
+        <div class="section-4-empty" data-section-4-empty hidden>
+            <span class="section-label">Featured stories needed</span>
+            <h3>Add featured anime or manga in Supabase</h3>
+            <p>Set <strong>featured = true</strong> on a few anime or manga rows so this section can build the cover rain.</p>
         </div>
 
     </section>
