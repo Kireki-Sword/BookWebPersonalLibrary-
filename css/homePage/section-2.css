@@ -1,45 +1,61 @@
 /* ============================================================================
-   SECTION 2 — PART 1b: PREMIUM DEPTH PASS
-   ------------------------------------------------------------------------
-   Follow-up to the first premium pass: the card read as flat, so this
-   adds layered depth — a soft halo behind each stage, a richer card
-   surface, a light 2.5D hover (not a full 3D tilt), a cover with its
-   own direct-hover shine, and a score capsule that stays visually
-   stable while a floating "but why?" popover + aura appear around it
-   instead of inside it. Debug stage label is now hidden by default.
-
-   Contents:
-     1. Section container + background (calm continuation of Section 1)
-     2. Header (label / title / subtitle)
-     3. Scroll wrapper
-     4. Stage halo + hidden-by-default debug label (preview mode)
-     5. Card shell (surface, border, shadow, highlight)
-     6. Card inner grid (cover | text | score)
-     7. Cover (fallback, border, direct-hover shine vs row-hover baseline)
-     8. Title / author
-     9. Meta chips
-     10. Score capsule (aura + floating "but why?" popover)
-     11. Row hover (2.5D lift, shadow, sheen)
-     12. Mobile layout
-     13. Button tray
-     14-19. Evidence cards (quotes/moments/characters/notes/thoughts)
-     20. Responsive — evidence + button tray
-     21. Reduced motion safety net
+   SECTION 2 — FINAL CLEAN PRODUCTION CSS
+   ----------------------------------------------------------------------------
+   What this file fixes:
+   - Removes old preview-mode CSS.
+   - Removes repeated override blocks fighting each other.
+   - Keeps each main component in one clean zone.
+   - Makes quotes use the full available width.
+   - Makes moments and character cards much bigger.
+   - Keeps the Vagabond card smaller and centered under the evidence.
+   - Keeps the dark premium Inkwell style from your screenshots.
    ============================================================================ */
 
 
 /* ============================================================================
-   1. SECTION CONTAINER + BACKGROUND
-   ------------------------------------------------------------------------
-   Warmed up from the flatter first pass: section-level radial glows,
-   a large blurred ambient warmth layer (::before), and a very faint
-   paper-grain layer (::after). This makes the whole section behind the
-   card and evidence cards feel alive, not just the card itself.
+   1. SECTION ROOT
+   ----------------------------------------------------------------------------
+   This is the control center for Section 2.
+
+   Main sizing variables:
+   - --section-2-row-width controls the Vagabond card width.
+   - --section-2-evidence-width controls the quote/moment/character width.
+     Evidence is intentionally much wider than the card so it uses the empty
+     side space on large screens.
    ============================================================================ */
 
 #section-2-empty-shelf,
 .section-empty-shelf {
-  --section-2-row-width: 940px;
+  --section-2-row-width: 980px;
+  --section-2-cover-width: 132px;
+  --section-2-card-gap: 1.9rem;
+
+  --section-2-evidence-width: min(
+    1540px,
+    calc(100vw - clamp(32px, 5vw, 96px))
+  );
+
+  --s2-bg-top: #0a0d1a;
+  --s2-bg-mid: #141a36;
+  --s2-bg-bottom: #080c18;
+
+  --s2-card-bg: rgba(9, 14, 28, 0.94);
+  --s2-card-bg-strong: rgba(12, 18, 34, 0.98);
+
+  --s2-panel-bg: rgba(8, 12, 26, 0.96);
+  --s2-panel-bg-strong: rgba(15, 20, 36, 0.98);
+
+  --s2-border: rgba(170, 183, 255, 0.18);
+  --s2-border-strong: rgba(190, 200, 255, 0.42);
+
+  --s2-text: #f5f1ff;
+  --s2-text-mid: #c9cde2;
+  --s2-text-muted: #8f96b3;
+  --s2-text-faint: #6f7692;
+
+  --s2-accent: #7c8cff;
+  --s2-accent-soft: rgba(124, 140, 255, 0.18);
+  --s2-accent-strong: rgba(155, 124, 255, 0.28);
 
   position: relative;
   width: 100%;
@@ -50,51 +66,59 @@
     max(1.5rem, calc((100vw - 1220px) / 2 + 1.5rem))
     6rem;
 
-  color: var(--ink);
+  color: var(--s2-text);
 
-  /* Full-section warmth: this continues the blurry, alive atmosphere from
-     section 1 instead of leaving the quote/card area flat. */
   background:
-    radial-gradient(circle at 50% 18%, rgba(196, 122, 58, 0.12), transparent 34%),
-    radial-gradient(circle at 48% 58%, rgba(151, 91, 42, 0.10), transparent 42%),
-    radial-gradient(circle at 50% 100%, rgba(222, 165, 98, 0.16), transparent 45%),
-    linear-gradient(180deg, #fbf4ea 0%, #f4e4d1 100%);
+    radial-gradient(circle at 50% 20%, rgba(89, 101, 205, 0.18), transparent 34%),
+    radial-gradient(circle at 52% 62%, rgba(124, 90, 196, 0.13), transparent 44%),
+    linear-gradient(180deg, var(--s2-bg-top) 0%, var(--s2-bg-mid) 46%, var(--s2-bg-bottom) 100%);
 }
 
-/* Large section-level ambient glow — this belongs to the section, not to the
-   card. It fills the empty space behind the main card and evidence cards so
-   the area feels warm, blurry, and alive. */
+/* Main background glow behind the whole scene. */
 #section-2-empty-shelf::before,
 .section-empty-shelf::before {
   content: "";
   position: absolute;
-  inset: 120px 8% auto 8%;
-  height: 520px;
+  left: 50%;
+  top: 8rem;
   z-index: 0;
+
+  width: min(1180px, 76vw);
+  height: 560px;
+
   pointer-events: none;
+  border-radius: 999px;
 
   background:
-    radial-gradient(ellipse at center, rgba(166, 95, 42, 0.16), transparent 68%);
-  filter: blur(60px);
+    radial-gradient(
+      ellipse at center,
+      rgba(124, 140, 255, 0.18),
+      rgba(124, 140, 255, 0.07) 44%,
+      transparent 76%
+    );
+
+  filter: blur(64px);
   opacity: 0.9;
+  transform: translateX(-50%);
 }
 
-/* Very faint paper grain / atmosphere. Kept low-opacity so it reads as
-   warmth and texture, not as a visible pattern. */
+/* Very faint texture so the background does not feel flat. */
 #section-2-empty-shelf::after,
 .section-empty-shelf::after {
   content: "";
   position: absolute;
   inset: 0;
   z-index: 0;
+
   pointer-events: none;
 
   background-image:
-    radial-gradient(rgba(97, 58, 31, 0.045) 0.7px, transparent 0.7px);
+    radial-gradient(rgba(255, 255, 255, 0.06) 0.7px, transparent 0.7px);
   background-size: 4px 4px;
-  opacity: 0.18;
+  opacity: 0.08;
 }
 
+/* Keeps real content above the section background layers. */
 #section-2-empty-shelf > *,
 .section-empty-shelf > * {
   position: relative;
@@ -103,12 +127,44 @@
 
 
 /* ============================================================================
-   2. SECTION HEADER
+   2. ACCESSIBILITY
+   ----------------------------------------------------------------------------
+   This hides the live status text visually.
+
+   Important:
+   The status text should still exist for screen readers, but it should never
+   appear on screen behind the quote/moment cards.
+   ============================================================================ */
+
+.sr-only,
+#section-2-status {
+  position: absolute !important;
+
+  width: 1px !important;
+  height: 1px !important;
+
+  padding: 0 !important;
+  margin: -1px !important;
+
+  overflow: hidden !important;
+  white-space: nowrap !important;
+
+  clip: rect(0 0 0 0) !important;
+  clip-path: inset(50%) !important;
+
+  border: 0 !important;
+}
+
+
+/* ============================================================================
+   3. SECTION HEADER
+   ----------------------------------------------------------------------------
+   The title starts visible at the top. JS fades it away when the card anchors.
    ============================================================================ */
 
 .section-2-header {
   max-width: 880px;
-  margin: 0 auto 4rem; /* header-to-card gap lives here, see plan section 2 */
+  margin: 0 auto 4rem;
   text-align: center;
 }
 
@@ -116,23 +172,25 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+
   margin-bottom: 0.8rem;
 
-  font-family: var(--font-body);
+  font-family: var(--font-body, system-ui, sans-serif);
   font-size: 0.78rem;
-  font-weight: 700;
-  color: var(--warm-brown-dark);
+  font-weight: 800;
+  color: var(--s2-text-muted);
   text-transform: uppercase;
   letter-spacing: 0.18em;
 }
 
 .section-2-header h2 {
+  max-width: 820px;
   margin: 0 auto;
 
-  font-family: var(--font-display);
+  font-family: var(--font-display, Georgia, serif);
   font-size: clamp(3rem, 5.8vw, 5.25rem);
-  font-weight: 650;
-  color: var(--ink);
+  font-weight: 700;
+  color: var(--s2-text);
   letter-spacing: -0.055em;
   line-height: 0.94;
 }
@@ -141,15 +199,25 @@
   max-width: 680px;
   margin: 1.15rem auto 0;
 
-  font-family: var(--font-body);
+  font-family: var(--font-body, system-ui, sans-serif);
   font-size: 1.05rem;
-  color: var(--ink-light);
+  color: var(--s2-text-mid);
   line-height: 1.7;
 }
 
 
 /* ============================================================================
-   3. SCROLL WRAPPER
+   4. SCROLL STRUCTURE
+   ----------------------------------------------------------------------------
+   .empty-shelf-scroll:
+   Basic wrapper.
+
+   .stage-viewport:
+   The pinned visual area. JS moves this area upward, then anchors the card
+   near the bottom of the visible browser viewport.
+
+   .scroll-stage:
+   Each evidence stage lives above the card. JS activates one stage at a time.
    ============================================================================ */
 
 .empty-shelf-scroll {
@@ -157,72 +225,101 @@
   z-index: 1;
 }
 
+.stage-viewport {
+  position: relative;
+  width: 100%;
+  overflow: visible;
+}
 
-/* ============================================================================
-   4. STAGE VISIBILITY — PREVIEW MODE
-   ------------------------------------------------------------------------
-   TEMPORARY: showing every stage stacked in normal page flow so you can
-   scroll through and review/edit all 11 at once. This is NOT the final
-   behavior — once GSAP comes back, only one stage should show at a time
-   again. To restore that later, delete this block and un-comment the
-   one below it.
-
-   Also adds a small CSS-only label above each stage (using its
-   data-stage attribute, no JS) so you can tell which block is which —
-   several of these stages reuse the same "Vagabond" row, so without a
-   label they're hard to tell apart while scrolling past quickly.
-   ============================================================================ */
-
-.empty-shelf-scroll {
-  display: flex;
-  flex-direction: column;
-  gap: 5rem;
+/* JS-ready layout: evidence is absolute and can use the full screen width. */
+.section-empty-shelf.is-js-ready .stage-viewport {
+  min-height: clamp(790px, 92vh, 960px);
 }
 
 .scroll-stage {
   position: relative;
-  isolation: isolate; /* keeps the halo below (section 4b) contained to its own stacking context */
+  isolation: isolate;
 
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.75rem;
+
+  overflow: visible;
 }
 
-/* Warm aura hugging the book card only — this replaces the old broad
-   stage glow. The aura is constrained to the card row width, sits behind
-   the card, and becomes warmer on card hover. Evidence stages do not get
-   this aura, so the background no longer feels washed with glow. */
+/* Production stage behavior. Only the active JS stage becomes visible. */
+.section-empty-shelf.is-js-ready .scroll-stage {
+  position: absolute;
+  left: 50%;
+  top: clamp(72px, 10vh, 118px);
+  z-index: 20;
+
+  width: var(--section-2-evidence-width);
+  height: clamp(430px, 50vh, 545px);
+
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+
+  transform: translateX(-50%);
+}
+
+/* JS toggles this class while scrolling. */
+.section-empty-shelf.is-js-ready .scroll-stage.is-active {
+  visibility: visible;
+  pointer-events: auto;
+}
+
+
+/* ============================================================================
+   5. CARD WRAPPER
+   ----------------------------------------------------------------------------
+   .card-wrap:
+   Holds the persistent Vagabond card and its local aura.
+
+   The card stays narrower than the evidence above it. That contrast is what
+   makes the quotes/moments/characters feel like they are expanding beyond a
+   simple rating.
+   ============================================================================ */
+
 .card-wrap {
   position: relative;
+  z-index: 12;
+
   width: min(var(--section-2-row-width), 100%);
   margin-inline: auto;
+
   isolation: isolate;
   perspective: 1200px;
+
+  will-change: transform, opacity;
 }
 
-.card-wrap::before,
-.scroll-stage:not(:has(.card-wrap)):has(.media-library-row)::before {
+/* Local glow around the main card only. */
+.card-wrap::before {
   content: "";
   position: absolute;
   left: 50%;
   top: 50%;
   z-index: -1;
+
+  width: min(calc(var(--section-2-row-width) + 120px), calc(100% + 120px));
+  height: calc(100% + 100px);
+
   pointer-events: none;
+  border-radius: 48px;
 
-  width: min(calc(var(--section-2-row-width) + 70px), calc(100% + 70px));
-  height: calc(100% + 72px);
-  border-radius: 46px;
+  background:
+    radial-gradient(
+      ellipse at 50% 58%,
+      rgba(124, 140, 255, 0.2),
+      rgba(124, 140, 255, 0.1) 42%,
+      transparent 74%
+    );
 
-  background: radial-gradient(
-    ellipse at 50% 58%,
-    rgba(194, 111, 47, 0.24),
-    rgba(194, 111, 47, 0.10) 38%,
-    transparent 72%
-  );
-  filter: blur(26px);
-  opacity: 0.72;
+  filter: blur(32px);
+  opacity: 0.84;
+
   transform: translate(-50%, -50%) scale(1);
 
   transition:
@@ -231,71 +328,61 @@
     background 240ms ease;
 }
 
-.card-wrap:hover::before,
-.scroll-stage:not(:has(.card-wrap)):has(.media-library-row:hover)::before {
+.card-wrap:hover::before {
   opacity: 1;
   transform: translate(-50%, -50%) scale(1.025);
-  background: radial-gradient(
-    ellipse at 50% 58%,
-    rgba(207, 121, 49, 0.34),
-    rgba(207, 121, 49, 0.16) 40%,
-    transparent 74%
-  );
 }
-
-/* Dev-only label, OFF by default. To see which stage is which while
-   editing, add class="debug-labels" to #section-2-empty-shelf in the
-   HTML temporarily — don't ship it turned on. */
-.section-empty-shelf.debug-labels .scroll-stage::after {
-  content: "STAGE — " attr(data-stage);
-  font-family: var(--font-body);
-  font-size: 0.68rem;
-  font-weight: 800;
-  color: rgba(184, 121, 78, 0.55);
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-}
-
-/* PRODUCTION RULE — re-enable this (and remove the preview block above)
-   once GSAP is driving stage switching again:
-
-.scroll-stage[aria-hidden="true"] {
-  display: none;
-}
-
-*/
 
 
 /* ============================================================================
-   5. CARD SHELL — surface, border, shadow, highlight
-   ------------------------------------------------------------------------
-   This is where the "physical object on a desk" feeling comes from: a
-   faint top-to-bottom gradient (not flat cream), two-layer shadow (a
-   big soft ambient one + a tighter contact one), and a 1px inner
-   highlight that catches the light like polished paper.
+   6. MAIN MEDIA CARD
+   ----------------------------------------------------------------------------
+   .media-library-row:
+   The persistent Vagabond card.
+
+   It uses one grid:
+   - cover column
+   - info/chips/details column
+   - score column
+
+   This removes the old need for repeated wrapper/grid overrides.
    ============================================================================ */
 
 .media-library-row {
-  width: min(var(--section-2-row-width), 100%);
-  min-height: 250px;
-  margin-inline: auto;
+  position: relative;
 
+  width: min(var(--section-2-row-width), 100%);
+  min-height: 350px;
+  margin-inline: auto;
   padding: 30px;
 
+  display: grid;
+  grid-template-columns: var(--section-2-cover-width) minmax(0, 1fr) auto;
+  grid-template-areas:
+    "cover info    score"
+    "cover chips   score"
+    "cover details details";
+  grid-template-rows: minmax(96px, 1fr) auto auto;
+  column-gap: var(--section-2-card-gap);
+  row-gap: 0.7rem;
+  align-items: center;
+
+  overflow: hidden;
+
   background:
-    linear-gradient(180deg, rgba(255, 253, 249, 0.96) 0%, rgba(255, 247, 236, 0.94) 100%);
-  border: 1px solid rgba(184, 121, 78, 0.22);
+    radial-gradient(circle at 76% 50%, rgba(124, 140, 255, 0.12), transparent 34%),
+    linear-gradient(180deg, rgba(13, 19, 36, 0.96), rgba(8, 13, 28, 0.96));
+
+  border: 1px solid var(--s2-border);
   border-radius: 30px;
 
   box-shadow:
-    0 28px 74px rgba(87, 49, 22, 0.12),
-    0 10px 24px rgba(87, 49, 22, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.78);
-
-  position: relative;
-  overflow: hidden; /* keeps the sheen sweep (section 11) contained */
+    0 34px 90px rgba(0, 0, 0, 0.46),
+    0 14px 34px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
 
   transform: perspective(900px) translateZ(0);
+
   transition:
     transform 240ms cubic-bezier(0.22, 1, 0.36, 1),
     border-color 220ms ease,
@@ -303,60 +390,98 @@
     box-shadow 240ms ease;
 }
 
-.media-library-row:has(.media-row-details) {
-  min-height: 330px;
+/* Soft sheen that sweeps across the card on hover. */
+.media-library-row::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -85%;
+  z-index: 0;
+
+  width: 55%;
+  height: 200%;
+
+  pointer-events: none;
+
+  background:
+    linear-gradient(
+      105deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.06) 35%,
+      rgba(255, 255, 255, 0.16) 48%,
+      rgba(255, 255, 255, 0.06) 61%,
+      transparent 100%
+    );
+
+  opacity: 0;
+  transform: translateX(0) rotate(8deg);
+
+  transition:
+    transform 700ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 220ms ease;
 }
 
+.media-library-row:hover {
+  transform: perspective(900px) rotateX(0.6deg) translateY(-5px);
 
-/* ============================================================================
-   6. CARD INNER GRID — cover | text | score
-   ============================================================================ */
+  border-color: var(--s2-border-strong);
 
-.media-row-main {
-  position: relative;
-  z-index: 1; /* sits above the sheen sweep in section 11 */
+  background:
+    radial-gradient(circle at 76% 50%, rgba(124, 140, 255, 0.16), transparent 34%),
+    linear-gradient(180deg, rgba(15, 22, 42, 0.98), rgba(9, 14, 30, 0.98));
 
-  display: grid;
-  grid-template-columns: 124px minmax(0, 1fr) auto;
-  grid-template-areas:
-    "cover info  score"
-    "cover chips score";
-  grid-template-rows: auto auto;
-  min-height: 190px;
-  column-gap: 1.6rem;
-  row-gap: 0.72rem;
-  align-content: center;
-  align-items: center;
+  box-shadow:
+    0 42px 108px rgba(0, 0, 0, 0.56),
+    0 18px 42px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.09);
+}
+
+.media-library-row:hover::before {
+  opacity: 1;
+  transform: translateX(310%) rotate(8deg);
+}
+
+.media-library-row:focus-visible {
+  outline: 2px solid rgba(184, 192, 255, 0.68);
+  outline-offset: 5px;
 }
 
 
 /* ============================================================================
    7. COVER
-   ------------------------------------------------------------------------
-   Fallback gradient means even a missing/broken image still reads as an
-   intentional object, never a broken-icon moment.
+   ----------------------------------------------------------------------------
+   .media-row-cover:
+   Full-height manga cover inside the card.
+
+   It spans all rows so the cover does not get visually cut by the details tray.
    ============================================================================ */
 
 .media-row-cover {
   grid-area: cover;
-  grid-row: 1 / -1;
+  align-self: stretch;
+  justify-self: start;
 
-  position: relative; /* positioning context for the shine sweep below */
-  width: 124px;
-  aspect-ratio: 2 / 3;
+  position: relative;
+  z-index: 1;
 
-  border: 1px solid rgba(184, 121, 78, 0.16);
-  border-radius: 17px;
+  width: var(--section-2-cover-width);
+  height: 100%;
+  min-height: 278px;
+  max-height: 305px;
+
   overflow: hidden;
 
+  border: 1px solid rgba(184, 192, 255, 0.18);
+  border-radius: 18px;
+
   background:
-    radial-gradient(circle at 30% 22%, rgba(255, 255, 255, 0.30), transparent 32%),
-    linear-gradient(150deg, rgba(44, 36, 22, 0.12), rgba(184, 121, 78, 0.26)),
-    var(--cream-dark);
+    radial-gradient(circle at 30% 22%, rgba(255, 255, 255, 0.18), transparent 32%),
+    linear-gradient(150deg, rgba(255, 255, 255, 0.08), rgba(124, 140, 255, 0.18)),
+    rgba(255, 255, 255, 0.04);
 
   box-shadow:
-    0 14px 30px rgba(44, 36, 22, 0.16),
-    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    0 18px 36px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
 
   transition:
     transform 280ms cubic-bezier(0.22, 1, 0.36, 1),
@@ -366,171 +491,185 @@
 .media-row-cover img {
   width: 100%;
   height: 100%;
+
   display: block;
   object-fit: cover;
 
-  color: transparent; /* hides alt text if the path 404s */
+  color: transparent;
   font-size: 0;
 
   transition: filter 280ms ease;
 }
 
-/* Diagonal shine — a proper "book jacket catching light" moment, but
-   ONLY when the cover itself is hovered directly, not just the row. */
+/* Cover shine. Only appears when directly hovering the cover. */
 .media-row-cover::after {
   content: "";
   position: absolute;
   top: -60%;
   left: -85%;
   z-index: 2;
+
   width: 50%;
   height: 220%;
+
   pointer-events: none;
 
-  background: linear-gradient(105deg, transparent, rgba(255, 255, 255, 0.55), transparent);
-  transform: rotate(12deg) translateX(0);
-  opacity: 0;
+  background:
+    linear-gradient(
+      105deg,
+      transparent,
+      rgba(255, 255, 255, 0.42),
+      transparent
+    );
 
-  transition: transform 520ms cubic-bezier(0.22, 1, 0.36, 1), opacity 200ms ease;
+  opacity: 0;
+  transform: rotate(12deg) translateX(0);
+
+  transition:
+    transform 520ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 200ms ease;
 }
 
-/* BASELINE reaction — hovering anywhere on the row gives the cover a
-   small, stable lift. This intentionally has the same specificity as
-   the direct-hover rule below it (2 classes + 1 pseudo each) so source
-   order decides the tie — direct hover comes second and wins. */
 .media-library-row:hover .media-row-cover {
   transform: translateY(-3px) rotate(-1deg);
-  box-shadow: 0 18px 36px rgba(44, 36, 22, 0.20), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+
+  box-shadow:
+    0 22px 44px rgba(0, 0, 0, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
 }
 
 .media-library-row:hover .media-row-cover img {
   filter: saturate(1.05) contrast(1.04);
 }
 
-/* DIRECT hover — mouse specifically over the cover: lifts a bit more
-   than the baseline and adds the shine sweep. */
-.media-library-row .media-row-cover:hover {
+.media-row-cover:hover {
   transform: translateY(-5px) rotate(-1.5deg);
-  box-shadow: 0 22px 44px rgba(44, 36, 22, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.45);
 }
 
-.media-library-row .media-row-cover:hover img {
-  filter: saturate(1.08) contrast(1.06);
-}
-
-.media-library-row .media-row-cover:hover::after {
+.media-row-cover:hover::after {
   opacity: 1;
   transform: rotate(12deg) translateX(260%);
 }
 
 
 /* ============================================================================
-   8. TITLE / AUTHOR
+   8. TITLE AND AUTHOR
+   ----------------------------------------------------------------------------
+   .media-row-info:
+   Holds "Vagabond" and "Takehiko Inoue".
    ============================================================================ */
 
 .media-row-info {
   grid-area: info;
-  min-width: 0;
   align-self: end;
-  pointer-events: none;
+
+  position: relative;
+  z-index: 1;
+
+  min-width: 0;
+  padding-top: 0.15rem;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.3rem;
 }
 
 .media-row-info h3 {
+  display: block;
+
   margin: 0;
 
-  font-family: var(--font-display);
-  font-size: clamp(1.8rem, 2.35vw, 2.08rem);
-  font-weight: 700;
-  color: var(--ink);
+  font-family: var(--font-display, Georgia, serif);
+  font-size: clamp(1.9rem, 2.35vw, 2.2rem);
+  font-weight: 760;
+  color: var(--s2-text);
   letter-spacing: -0.045em;
   line-height: 1;
 
-  display: inline-block;
-  width: fit-content;
-  max-width: 100%;
-  pointer-events: auto;
-
-  text-decoration: none;
   cursor: default;
 
   transition:
     color 180ms ease,
-    text-shadow 180ms ease,
-    opacity 180ms ease;
+    text-shadow 180ms ease;
 }
 
 .media-row-info p {
-  margin-top: 0.3rem;
+  display: block;
 
-  font-family: var(--font-body);
-  font-size: 0.95rem;
-  font-weight: 500;
-  color: var(--ink-mid);
+  margin: 0;
+
+  font-family: var(--font-body, system-ui, sans-serif);
+  font-size: 0.96rem;
+  font-weight: 650;
+  color: var(--s2-text-mid);
   line-height: 1.35;
 
-  display: inline-block;
-  width: fit-content;
-  max-width: 100%;
-  pointer-events: auto;
-
-  text-decoration: none;
   cursor: default;
 
   transition:
     color 180ms ease,
-    text-shadow 180ms ease,
-    opacity 180ms ease;
+    text-shadow 180ms ease;
 }
 
-.media-row-info h3:hover {
-  color: #3d2114;
-  text-shadow: 0 10px 28px rgba(148, 78, 32, 0.14);
-}
-
+.media-row-info h3:hover,
 .media-row-info p:hover {
-  color: var(--warm-brown-dark);
-  text-shadow: 0 8px 22px rgba(148, 78, 32, 0.10);
+  color: #ffffff;
+  text-shadow: 0 10px 28px rgba(124, 140, 255, 0.2);
 }
 
 
 /* ============================================================================
    9. META CHIPS
+   ----------------------------------------------------------------------------
+   .media-row-format and .media-row-status:
+   These are separate HTML elements, so they share the same grid area.
+   The status chip is offset to sit beside the format chip.
    ============================================================================ */
 
 .media-row-format,
 .media-row-status {
   grid-area: chips;
   align-self: start;
-  margin-top: 0.8rem;
+
+  position: relative;
+  z-index: 1;
+
+  margin-top: 0.72rem;
 }
 
-/* These two items share the same grid area in the current markup, so the
-   second chip is offset to sit beside the first without requiring HTML
-   changes. If you later add a dedicated .media-row-chips wrapper, move
-   both chips into that wrapper and replace this offset with gap: 0.65rem. */
 .media-row-status {
-  margin-left: calc(0.65rem + 4.65rem);
+  margin-left: calc(0.75rem + 4.9rem);
 }
 
 .media-row-format span,
 .media-row-status span {
+  min-height: 34px;
+  padding: 0 0.78rem;
+
   display: inline-flex;
   align-items: center;
-  min-height: 32px;
-  padding: 0 0.75rem;
+  justify-content: center;
 
-  background: linear-gradient(180deg, rgba(255, 250, 240, 0.95), rgba(184, 121, 78, 0.08));
-  border: 1px solid rgba(184, 121, 78, 0.24);
+  background:
+    linear-gradient(
+      180deg,
+      rgba(124, 140, 255, 0.16),
+      rgba(124, 140, 255, 0.08)
+    );
+
+  border: 1px solid rgba(184, 192, 255, 0.28);
   border-radius: 999px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.62);
 
-  font-family: var(--font-body);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+
+  font-family: var(--font-body, system-ui, sans-serif);
   font-size: 0.78rem;
-  font-weight: 700;
-  color: var(--warm-brown-dark);
+  font-weight: 800;
+  color: var(--s2-text-mid);
   white-space: nowrap;
 
-  text-decoration: none;
   cursor: pointer;
 
   transition:
@@ -543,129 +682,145 @@
 
 .media-row-format span:hover,
 .media-row-status span:hover {
-  background: linear-gradient(180deg, rgba(255, 252, 246, 1), rgba(207, 121, 49, 0.16));
-  border-color: rgba(155, 90, 50, 0.34);
-  color: #6e3b20;
   transform: translateY(-1px);
-  box-shadow:
-    0 8px 18px rgba(90, 48, 22, 0.10),
-    inset 0 1px 0 rgba(255, 255, 255, 0.72);
-}
 
-.media-row-format span:focus:not(:focus-visible),
-.media-row-status span:focus:not(:focus-visible) {
-  outline: none;
+  color: var(--s2-text);
+  border-color: rgba(184, 192, 255, 0.44);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(124, 140, 255, 0.24),
+      rgba(124, 140, 255, 0.12)
+    );
+
+  box-shadow:
+    0 10px 22px rgba(0, 0, 0, 0.26),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .media-row-format span:focus-visible,
 .media-row-status span:focus-visible {
-  outline: 2px solid rgba(155, 90, 50, 0.55);
+  outline: 2px solid rgba(184, 192, 255, 0.68);
   outline-offset: 4px;
 }
 
 
 /* ============================================================================
-   10. SCORE CAPSULE — aura + floating "but why?" popover
-   ------------------------------------------------------------------------
-   The capsule shape itself never changes on hover anymore — no shifting
-   padding, no text jumping upward. Instead, two separate things appear
-   around it: a soft warm aura (::before) and a small floating popover
-   (::after) that reads as a thought appearing next to the score, not a
-   layout change. Popover sits BELOW the capsule rather than above — the
-   row has generous bottom padding for this (see section 5's comment),
-   whereas the top edge is tighter on stages with no button tray beneath
-   to buffer it.
+   10. SCORE CAPSULE
+   ----------------------------------------------------------------------------
+   .media-row-score:
+   The score stays stable. Hover adds aura and the "but why?" popover without
+   shifting layout.
    ============================================================================ */
 
 .media-row-score {
   grid-area: score;
-  grid-row: 1 / -1;
+  grid-row: 1 / 3;
   align-self: center;
   justify-self: end;
 
   position: relative;
   z-index: 1;
-  min-width: 84px;
-  height: 56px;
+
+  min-width: 90px;
+  height: 60px;
+  padding: 0 1.15rem;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  padding: 0 1.1rem;
-
-  background: rgba(255, 252, 248, 0.92);
-  border: 1px solid rgba(184, 121, 78, 0.24);
+  background: rgba(124, 140, 255, 0.1);
+  border: 1px solid rgba(184, 192, 255, 0.26);
   border-radius: 999px;
-  box-shadow: 0 8px 22px rgba(44, 36, 22, 0.06);
+
+  box-shadow:
+    0 10px 26px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
 
   cursor: default;
 
-  transition: border-color 240ms ease, box-shadow 240ms ease, background 240ms ease;
+  transition:
+    border-color 240ms ease,
+    box-shadow 240ms ease,
+    background 240ms ease;
 }
 
 .media-row-score span {
-  font-family: var(--font-display);
-  font-size: 1.45rem;
-  font-weight: 700;
-  color: var(--ink);
+  font-family: var(--font-display, Georgia, serif);
+  font-size: 1.55rem;
+  font-weight: 800;
+  color: var(--s2-text);
   letter-spacing: -0.02em;
   line-height: 1;
 }
 
-/* AURA — soft warm ring behind the capsule, the "score as conceptual
-   trigger of the whole section" feeling. */
 .media-row-score::before {
   content: "";
   position: absolute;
-  inset: -14px;
+  inset: -16px;
   z-index: -1;
+
   border-radius: 999px;
   pointer-events: none;
 
-  background: radial-gradient(circle, rgba(226, 185, 143, 0.38), transparent 70%);
+  background:
+    radial-gradient(
+      circle,
+      rgba(124, 140, 255, 0.34),
+      transparent 70%
+    );
+
   opacity: 0;
   transform: scale(0.85);
 
-  transition: opacity 260ms ease, transform 260ms ease;
+  transition:
+    opacity 260ms ease,
+    transform 260ms ease;
 }
 
-/* POPOVER — "but why?" as its own small floating pill below the score,
-   connected only by proximity and a matching shadow language, not a
-   literal pointer (kept deliberately simple/robust in plain CSS). */
 .media-row-score::after {
   content: "but why?";
   position: absolute;
   left: 50%;
   top: calc(100% + 8px);
-  transform: translateX(-50%) translateY(-4px);
-  white-space: nowrap;
 
-  padding: 0.32rem 0.65rem;
+  padding: 0.34rem 0.68rem;
 
-  background: rgba(255, 252, 248, 0.98);
-  border: 1px solid rgba(184, 121, 78, 0.3);
+  background: rgba(10, 15, 30, 0.98);
+  border: 1px solid rgba(184, 192, 255, 0.34);
   border-radius: 999px;
-  box-shadow: 0 8px 18px rgba(44, 36, 22, 0.12);
 
-  font-family: var(--font-body);
+  box-shadow:
+    0 10px 22px rgba(0, 0, 0, 0.34);
+
+  font-family: var(--font-body, system-ui, sans-serif);
   font-size: 0.62rem;
-  font-weight: 800;
-  color: var(--warm-brown-dark);
+  font-weight: 850;
+  color: var(--s2-text-mid);
   text-transform: uppercase;
   letter-spacing: 0.08em;
+  white-space: nowrap;
 
   opacity: 0;
   pointer-events: none;
 
-  transition: opacity 220ms ease, transform 220ms ease;
+  transform: translateX(-50%) translateY(-4px);
+
+  transition:
+    opacity 220ms ease,
+    transform 220ms ease;
 }
 
 .media-row-score:hover,
 .media-row-score:focus-visible {
-  border-color: rgba(184, 121, 78, 0.4);
-  background: rgba(255, 252, 248, 1);
-  box-shadow: 0 14px 30px rgba(127, 75, 47, 0.14);
+  background: rgba(124, 140, 255, 0.16);
+  border-color: rgba(184, 192, 255, 0.46);
+
+  box-shadow:
+    0 18px 44px rgba(0, 0, 0, 0.34),
+    0 0 34px rgba(124, 140, 255, 0.18);
 }
 
 .media-row-score:hover::before,
@@ -680,218 +835,87 @@
   transform: translateX(-50%) translateY(0);
 }
 
-
-/* ============================================================================
-   11. ROW HOVER — lift, deeper shadow, warmer border, soft sheen
-   ------------------------------------------------------------------------
-   The sheen is a slow (700ms) diagonal highlight, deliberately subtle —
-   this should read as polished paper catching light, not glossy plastic.
-   ============================================================================ */
-
-.media-library-row::before {
-  content: "";
-  position: absolute;
-  top: -50%;
-  left: -85%;
-  z-index: 0;
-  width: 55%;
-  height: 200%;
-  pointer-events: none;
-
-  background: linear-gradient(
-    105deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.10) 35%,
-    rgba(255, 255, 255, 0.30) 48%,
-    rgba(255, 255, 255, 0.10) 61%,
-    transparent 100%
-  );
-
-  transform: translateX(0) rotate(8deg);
-  opacity: 0;
-
-  transition: transform 700ms cubic-bezier(0.22, 1, 0.36, 1), opacity 220ms ease;
-}
-
-.media-library-row:hover {
-  transform: perspective(900px) rotateX(0.7deg) translateY(-6px);
-  border-color: rgba(127, 75, 47, 0.34);
-  background:
-    linear-gradient(180deg, rgba(255, 254, 251, 0.99) 0%, rgba(255, 249, 240, 0.98) 100%);
-
-  box-shadow:
-    0 36px 92px rgba(87, 49, 22, 0.17),
-    0 14px 30px rgba(87, 49, 22, 0.11),
-    inset 0 1px 0 rgba(255, 255, 255, 0.86);
-}
-
-.media-library-row:hover::before {
-  opacity: 1;
-  transform: translateX(310%) rotate(8deg);
-}
-
-.media-library-row:focus:not(:focus-visible) {
-  outline: none;
-}
-
-.media-library-row:focus-visible {
-  outline: 2px solid rgba(155, 90, 50, 0.55);
-  outline-offset: 5px;
+.media-row-score:focus-visible {
+  outline: 2px solid rgba(184, 192, 255, 0.68);
+  outline-offset: 4px;
 }
 
 
 /* ============================================================================
-   12. MOBILE LAYOUT
-   ============================================================================ */
-
-@media (max-width: 900px) {
-  #section-2-empty-shelf,
-  .section-empty-shelf {
-    padding: 4.5rem max(1.25rem, calc((100vw - 760px) / 2 + 1.25rem)) 5rem;
-  }
-
-  .media-library-row {
-    width: min(860px, 100%);
-  }
-
-  .media-row-main {
-    grid-template-columns: 112px minmax(0, 1fr) auto;
-    min-height: 170px;
-    column-gap: 1.35rem;
-  }
-
-  .media-row-cover {
-    width: 112px;
-  }
-
-  .media-row-details {
-    width: calc(100% - 112px - 1.35rem);
-    margin-left: calc(112px + 1.35rem);
-  }
-
-  .media-row-format,
-  .media-row-status {
-    grid-area: chips;
-  }
-}
-
-@media (max-width: 640px) {
-  #section-2-empty-shelf,
-  .section-empty-shelf {
-    padding: 4rem 1.1rem 4.5rem;
-  }
-
-  .section-2-header {
-    margin-bottom: 2.75rem;
-  }
-
-  .section-2-header h2 {
-    font-size: clamp(2.15rem, 9vw, 2.6rem);
-  }
-
-  .section-2-header p {
-    font-size: 0.95rem;
-  }
-
-  .media-library-row {
-    padding: 1.15rem 1.2rem;
-    border-radius: 22px;
-  }
-
-  .media-row-main {
-    grid-template-columns: 82px minmax(0, 1fr) auto;
-    min-height: 124px;
-    column-gap: 0.9rem;
-  }
-
-  .media-row-cover {
-    width: 82px;
-    border-radius: 12px;
-  }
-
-  .media-row-info h3 {
-    font-size: 1.35rem;
-  }
-
-  .media-row-status {
-    margin-left: calc(0.4rem + 3.6rem);
-  }
-
-  .media-row-score {
-    min-width: 74px;
-    height: 46px;
-    padding: 0 0.8rem;
-  }
-
-  .media-row-score span {
-    font-size: 1.2rem;
-  }
-
-  /* Hover-dependent reveal doesn't work well on touch — keep the score
-     legible without ever needing a hover on mobile. */
-  .media-row-score::after {
-    display: none;
-  }
-}
-
-
-/* ============================================================================
-   13. BUTTON TRAY — "Saved layers" + depth buttons
-   ------------------------------------------------------------------------
-   Appears inside the card for every stage from row-with-quotes onward.
-   Sits below the cover/info/score grid, separated by a thin warm rule.
-   Still no landing animation here — that's GSAP's job later. This is
-   just what the tray and buttons look like at rest and on hover.
+   11. SAVED LAYERS TRAY
+   ----------------------------------------------------------------------------
+   .media-row-details:
+   The tray is reserved inside the card but starts invisible.
+   JS reveals it when the first evidence layer lands.
    ============================================================================ */
 
 .media-row-details {
+  grid-area: details;
+
   position: relative;
-  z-index: 1;
+  z-index: 3;
+
+  width: 100%;
+  margin: 1.15rem 0 0;
+  padding-top: 1.15rem;
 
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 0.55rem;
 
-  /* Divider and saved layers belong only to the right content column.
-     They intentionally start after the cover so the cover can own the
-     full vertical top area without being visually cut by the line. */
-  width: calc(100% - 124px - 1.6rem);
-  margin-top: 1.15rem;
-  margin-left: calc(124px + 1.6rem);
-  padding-top: 1.15rem;
-  border-top: 1px solid rgba(184, 121, 78, 0.15);
+  border-top: 1px solid rgba(184, 192, 255, 0.14);
+
+  opacity: 0;
+  visibility: hidden;
+
+  transition:
+    opacity 220ms ease,
+    visibility 220ms ease;
+}
+
+.media-row-details.is-visible {
+  opacity: 1;
+  visibility: visible;
 }
 
 .media-row-details::before {
   content: "Saved layers";
+
   flex-basis: 100%;
   margin-bottom: 0.1rem;
 
-  font-family: var(--font-body);
+  font-family: var(--font-body, system-ui, sans-serif);
   font-size: 0.68rem;
-  font-weight: 800;
-  color: rgba(155, 135, 114, 0.9);
+  font-weight: 850;
+  color: var(--s2-text-muted);
   text-transform: uppercase;
   letter-spacing: 0.11em;
 }
 
 .depth-button {
-  min-height: 38px;
-  padding: 0 0.95rem;
-
-  background: rgba(184, 121, 78, 0.07);
-  border: 1px solid rgba(184, 121, 78, 0.26);
-  border-radius: 999px;
-
-  font-family: var(--font-body);
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: var(--ink-mid);
+  min-height: 40px;
+  padding: 0 1rem;
 
   display: inline-flex;
   align-items: center;
   justify-content: center;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(124, 140, 255, 0.16),
+      rgba(124, 140, 255, 0.08)
+    );
+
+  border: 1px solid rgba(184, 192, 255, 0.3);
+  border-radius: 999px;
+
+  font-family: var(--font-body, system-ui, sans-serif);
+  font-size: 0.8rem;
+  font-weight: 820;
+  color: var(--s2-text-mid);
+
   cursor: pointer;
 
   transition:
@@ -903,11 +927,21 @@
 }
 
 .depth-button:hover {
-  background: rgba(207, 121, 49, 0.14);
-  border-color: rgba(155, 90, 50, 0.38);
-  color: var(--ink);
   transform: translateY(-1px);
-  box-shadow: 0 8px 18px rgba(90, 48, 22, 0.11);
+
+  color: var(--s2-text);
+  border-color: rgba(184, 192, 255, 0.48);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(124, 140, 255, 0.26),
+      rgba(124, 140, 255, 0.13)
+    );
+
+  box-shadow:
+    0 10px 22px rgba(0, 0, 0, 0.28),
+    0 0 24px rgba(124, 140, 255, 0.12);
 }
 
 .depth-button:active {
@@ -915,3229 +949,48 @@
   box-shadow: none;
 }
 
-.depth-button:focus:not(:focus-visible) {
-  outline: none;
-}
-
 .depth-button:focus-visible {
-  outline: 2px solid rgba(155, 90, 50, 0.55);
+  outline: 2px solid rgba(184, 192, 255, 0.68);
   outline-offset: 4px;
 }
 
-/* Slightly warmer fill — visually marks "the layer this stage just added"
-   even before GSAP gives it an actual landing animation. */
+/* JS adds this to the most recently landed layer button. */
 .depth-button-new {
-  background: rgba(184, 121, 78, 0.13);
-  border-color: rgba(184, 121, 78, 0.4);
-  color: var(--ink);
-}
-
-
-/* ============================================================================
-   14. EVIDENCE STAGE CONTAINERS
-   ------------------------------------------------------------------------
-   Each cloud (quotes/moments/characters/notes/thoughts) replaces the row
-   entirely for its stage. For now these lay out as calm, responsive
-   grids — no absolute scatter/rotation yet, since that's tied to the
-   GSAP phase. Same max-width as the row card so the whole section keeps
-   one consistent column, even as the content swaps.
-   ============================================================================ */
-
-.falling-quotes,
-.moving-moments,
-.character-cloud,
-.notes-cloud,
-.thoughts-cloud {
-  display: grid;
-  gap: 1.1rem;
-  width: min(var(--section-2-row-width), 100%);
-  margin-inline: auto;
-}
-
-.falling-quotes,
-.notes-cloud {
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-}
-
-.moving-moments {
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-}
-
-.character-cloud {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-}
-
-.thoughts-cloud {
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-}
-
-
-/* ============================================================================
-   15. QUOTES — paper strips
-   ============================================================================ */
-
-.falling-quote {
-  padding: 1.1rem 1.25rem;
-
-  background: linear-gradient(180deg, #fffdfa 0%, #fff8f0 100%);
-  border: 1px solid rgba(127, 75, 47, 0.18);
-  border-radius: 18px;
-  box-shadow: 0 18px 42px rgba(44, 36, 22, 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.6);
-
-  font-family: var(--font-display);
-  font-size: 1.05rem;
-  line-height: 1.5;
-  color: var(--ink-mid);
-  cursor: default;
-
-  transition: transform 240ms ease, box-shadow 240ms ease, border-color 240ms ease, color 240ms ease;
-}
-
-.falling-quote:hover {
-  transform: translateY(-5px);
-  color: var(--ink);
-  border-color: rgba(184, 121, 78, 0.36);
-  box-shadow: 0 26px 56px rgba(44, 36, 22, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.7);
-}
-
-
-/* ============================================================================
-   16. MOMENTS — manga panels
-   ============================================================================ */
-
-.moment-frame {
-  margin: 0;
-  padding: 0.6rem;
-
-  background: linear-gradient(180deg, #fffdfa 0%, #fff4e6 100%);
-  border: 1px solid rgba(44, 36, 22, 0.22);
-  border-radius: 16px;
-  box-shadow: 0 22px 50px rgba(44, 36, 22, 0.14);
-
-  cursor: default;
-  transition: transform 240ms ease, box-shadow 240ms ease, border-color 240ms ease;
-}
-
-.moment-frame img {
-  width: 100%;
-  aspect-ratio: 16 / 10;
-  display: block;
-  object-fit: cover;
-  border-radius: 10px;
-
-  background: var(--cream-dark);
-  color: transparent;
-  font-size: 0;
-
-  transition: transform 380ms ease, filter 240ms ease;
-}
-
-.moment-frame figcaption {
-  margin-top: 0.5rem;
-  padding: 0 0.15rem;
-
-  font-family: var(--font-body);
-  font-size: 0.78rem;
-  font-weight: 650;
-  color: var(--ink-faint);
-  line-height: 1.35;
-
-  transition: color 240ms ease;
-}
-
-.moment-frame:hover {
-  transform: translateY(-5px);
-  border-color: rgba(44, 36, 22, 0.36);
-  box-shadow: 0 30px 66px rgba(44, 36, 22, 0.20);
-}
-
-.moment-frame:hover img {
-  transform: scale(1.03);
-  filter: saturate(1.06) contrast(1.05);
-}
-
-.moment-frame:hover figcaption {
-  color: var(--ink-mid);
-}
-
-
-/* ============================================================================
-   17. CHARACTERS — portrait cards
-   ------------------------------------------------------------------------
-   Musashi (character-1) is the protagonist, so it spans two grid columns
-   to read as the lead card among supporting characters.
-   ============================================================================ */
-
-.character-name {
-  margin: 0;
-  overflow: hidden;
-
-  background: linear-gradient(180deg, #fffdfa 0%, #fff8f0 100%);
-  border: 1px solid rgba(127, 75, 47, 0.18);
-  border-radius: 20px;
-  box-shadow: 0 20px 46px rgba(44, 36, 22, 0.12);
-
-  cursor: default;
-  transition: transform 240ms ease, box-shadow 240ms ease, border-color 240ms ease;
-}
-
-.character-name img {
-  width: 100%;
-  aspect-ratio: 3 / 4;
-  display: block;
-  object-fit: cover;
-
-  background: var(--cream-dark);
-  color: transparent;
-  font-size: 0;
-
-  transition: transform 380ms ease, filter 240ms ease;
-}
-
-.character-name figcaption {
-  padding: 0.7rem 0.8rem;
-
-  background: linear-gradient(180deg, rgba(255, 252, 248, 0.94), rgba(250, 246, 239, 0.9));
-
-  font-family: var(--font-body);
-  font-size: 0.82rem;
-  font-weight: 750;
-  color: var(--ink);
-  line-height: 1.25;
-
-  transition: background 240ms ease, color 240ms ease;
-}
-
-.character-1 {
-  grid-column: span 2;
-}
-
-.character-name:hover {
-  transform: translateY(-5px) scale(1.01);
-  border-color: rgba(184, 121, 78, 0.36);
-  box-shadow: 0 28px 60px rgba(44, 36, 22, 0.18);
-}
-
-.character-name:hover img {
-  transform: scale(1.03);
-  filter: saturate(1.06) contrast(1.04);
-}
-
-.character-name:hover figcaption {
-  color: var(--warm-brown-dark);
-  background: linear-gradient(180deg, #fffdfa, rgba(226, 185, 143, 0.16));
-}
-
-
-/* ============================================================================
-   18. NOTES — sticky notes
-   ============================================================================ */
-
-.note-card {
-  position: relative;
-  min-height: 130px;
-  padding: 1.05rem;
-
-  background: linear-gradient(180deg, #fffdfa 0%, #fff4e6 100%);
-  border: 1px solid rgba(127, 75, 47, 0.18);
-  border-radius: 15px;
-  box-shadow: 0 18px 40px rgba(44, 36, 22, 0.10);
-
-  font-family: var(--font-body);
-  font-size: 0.9rem;
-  line-height: 1.6;
-  color: var(--ink-mid);
-  cursor: default;
-
-  transition: transform 240ms ease, box-shadow 240ms ease, border-color 240ms ease, color 240ms ease;
-}
-
-/* Small "tape mark" at the top — the sticky-note tell. */
-.note-card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 18px;
-  right: 18px;
-  height: 6px;
-  border-radius: 0 0 999px 999px;
-  background: rgba(184, 121, 78, 0.20);
-  transition: background 240ms ease, height 240ms ease;
-}
-
-.note-card:hover {
-  transform: translateY(-5px);
-  color: var(--ink);
-  border-color: rgba(184, 121, 78, 0.36);
-  box-shadow: 0 26px 54px rgba(44, 36, 22, 0.16);
-}
-
-.note-card:hover::before {
-  height: 8px;
-  background: rgba(184, 121, 78, 0.28);
-}
-
-
-/* ============================================================================
-   19. THOUGHTS — journal pages
-   ------------------------------------------------------------------------
-   The deepest evidence category, so it's calmer than the rest: bigger,
-   more whitespace, softer hover, no rotation anywhere.
-   ============================================================================ */
-
-.thought-card {
-  padding: 1.5rem 1.6rem;
-
-  background: linear-gradient(180deg, #fffdfa 0%, #fff8f0 100%);
-  border: 1px solid rgba(127, 75, 47, 0.18);
-  border-radius: 24px;
-  box-shadow: 0 22px 52px rgba(44, 36, 22, 0.12);
-
-  font-family: var(--font-display);
-  font-size: 1.08rem;
-  line-height: 1.55;
-  color: var(--ink-mid);
-  cursor: default;
-
-  transition: transform 260ms ease, box-shadow 260ms ease, border-color 260ms ease, color 260ms ease;
-}
-
-.thought-card:hover {
-  transform: translateY(-4px);
-  color: var(--ink);
-  border-color: rgba(184, 121, 78, 0.32);
-  box-shadow: 0 28px 60px rgba(44, 36, 22, 0.16);
-}
-
-
-/* ============================================================================
-   20. RESPONSIVE — evidence + button tray
-   ============================================================================ */
-
-@media (max-width: 900px) {
-  .character-cloud {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .character-1 {
-    grid-column: span 2;
-  }
-}
-
-@media (max-width: 640px) {
-  .media-row-details {
-    width: 100%;
-    margin-top: 1rem;
-    margin-left: 0;
-    padding-top: 0.85rem;
-    gap: 0.45rem;
-  }
-
-  .depth-button {
-    flex: 1 1 calc(50% - 0.45rem);
-    min-height: 40px;
-    padding-inline: 0.75rem;
-  }
-
-  .falling-quotes,
-  .moving-moments,
-  .notes-cloud,
-  .thoughts-cloud {
-    grid-template-columns: 1fr;
-  }
-
-  .character-cloud {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.85rem;
-  }
-
-  .character-1 {
-    grid-column: span 2;
-  }
-
-  /* touch devices don't hover — keep the resting state calm and legible,
-     hover-only lifts are a bonus on devices that support them, not a
-     requirement to read the content */
-}
-
-
-/* ============================================================================
-   21. REDUCED MOTION — safety net for this pass's new motion
-   ------------------------------------------------------------------------
-   Turns off every transform-based hover added in this pass (row lift,
-   perspective/rotateX, cover shine sweep, aura scale) while keeping the
-   informational reveals (the "but why?" popover, aura visibility)
-   working via an instant opacity change instead of an animated one —
-   the content still becomes available on hover/focus, it just doesn't
-   move to get there.
-   ============================================================================ */
-
-@media (prefers-reduced-motion: reduce) {
-  .card-wrap::before,
-  .scroll-stage:not(:has(.card-wrap)):has(.media-library-row)::before,
-  .media-library-row,
-  .media-library-row::before,
-  .media-row-format span,
-  .media-row-status span,
-  .depth-button,
-  .media-row-info h3,
-  .media-row-info p,
-  .media-row-cover,
-  .media-row-cover::after,
-  .media-row-score,
-  .media-row-score::before,
-  .media-row-score::after,
-  .falling-quote,
-  .moment-frame,
-  .moment-frame img,
-  .character-name,
-  .character-name img,
-  .note-card,
-  .thought-card {
-    transition: none !important;
-  }
-
-  .media-library-row:hover,
-  .media-row-format span:hover,
-  .media-row-status span:hover,
-  .depth-button:hover,
-  .media-library-row:hover .media-row-cover,
-  .media-library-row .media-row-cover:hover,
-  .falling-quote:hover,
-  .moment-frame:hover,
-  .character-name:hover,
-  .note-card:hover,
-  .thought-card:hover {
-    transform: none !important;
-  }
-
-  .media-library-row:hover::before,
-  .media-library-row .media-row-cover:hover::after {
-    opacity: 0 !important; /* sheen/shine sweeps are pure motion — just skip them */
-  }
-
-  .media-row-score:hover::before,
-  .media-row-score:focus-visible::before {
-    transform: none;
-  }
-}
-/* ============================================================================
-   FINAL CORRECTION — FULL-HEIGHT COVER + LOCALIZED OBJECT GLOWS
-   ------------------------------------------------------------------------
-   This override fixes two issues:
-   1) The cover now owns the full vertical space of the whole card, from near
-      the top padding to near the bottom padding. The divider/details live only
-      in the right column and never shrink/cut the cover.
-   2) Section 2 no longer uses a heavy full-section tan wash. Warmth is mostly
-      localized around the active card / quote objects, like Section 1.
-   ============================================================================ */
-
-#section-2-empty-shelf,
-.section-empty-shelf {
-  --section-2-row-width: 940px;
-  --section-2-cover-width: 128px;
-  --section-2-card-gap: 1.8rem;
-
-  /* Keep the base calm and near-paper. The warmth should come from local
-     glows around objects, not from tinting the entire section orange. */
-  background:
-    radial-gradient(circle at 50% 0%, rgba(255, 250, 241, 0.78), transparent 36%),
-    linear-gradient(180deg, #fbf6ee 0%, #faf1e7 42%, #fbf6ee 100%);
-}
-
-/* Remove the previous broad section wash. It was making the lower area look
-   uniformly tan instead of warmly lit around the actual content. */
-#section-2-empty-shelf::before,
-.section-empty-shelf::before {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 8rem;
-  width: min(980px, 72vw);
-  height: 420px;
-  z-index: 0;
-  pointer-events: none;
-  border-radius: 999px;
-  background:
-    radial-gradient(
-      ellipse at center,
-      rgba(166, 95, 42, 0.10) 0%,
-      rgba(166, 95, 42, 0.055) 42%,
-      transparent 72%
-    );
-  filter: blur(58px);
-  opacity: 0.62;
-  transform: translateX(-50%);
-}
-
-/* Keep the paper texture extremely subtle. */
-#section-2-empty-shelf::after,
-.section-empty-shelf::after {
-  opacity: 0.10;
-}
-
-/* Local atmospheric warmth for every stage. This is the main fix for the
-   bottom feeling flat: the glow follows the object group instead of coloring
-   the entire background evenly. */
-.scroll-stage::before {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  z-index: -2;
-  width: min(1020px, 78vw);
-  height: min(520px, calc(100% + 230px));
-  pointer-events: none;
-  border-radius: 999px;
-  background:
-    radial-gradient(
-      ellipse at 50% 52%,
-      rgba(177, 99, 42, 0.16) 0%,
-      rgba(177, 99, 42, 0.075) 40%,
-      transparent 72%
-    );
-  filter: blur(60px);
-  opacity: 0.78;
-  transform: translate(-50%, -50%);
-}
-
-/* Extra localized warmth around evidence cards. This keeps quotes/moments from
-   sitting on a dead flat background while avoiding a full-page tan wash. */
-.falling-quotes,
-.moving-moments,
-.character-cloud,
-.notes-cloud,
-.thoughts-cloud {
-  position: relative;
-  isolation: isolate;
-}
-
-.falling-quotes::before,
-.moving-moments::before,
-.character-cloud::before,
-.notes-cloud::before,
-.thoughts-cloud::before {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  z-index: -1;
-  width: min(980px, 105%);
-  height: calc(100% + 180px);
-  pointer-events: none;
-  border-radius: 999px;
-  background:
-    radial-gradient(
-      ellipse at center,
-      rgba(174, 99, 44, 0.14),
-      rgba(174, 99, 44, 0.06) 44%,
-      transparent 74%
-    );
-  filter: blur(54px);
-  opacity: 0.82;
-  transform: translate(-50%, -50%);
-}
-
-/* Card becomes a real two-column object:
-   - left column: cover spanning every row
-   - right columns: info/chips/score/details
-   The cover is no longer trapped inside only the top row. */
-.media-library-row {
-  width: min(var(--section-2-row-width), 100%);
-  min-height: 320px;
-  padding: 30px;
-
-  display: grid;
-  grid-template-columns: var(--section-2-cover-width) minmax(0, 1fr) auto;
-  grid-template-areas:
-    "cover info    score"
-    "cover chips   score"
-    "cover details details";
-  grid-template-rows: minmax(86px, 1fr) auto auto;
-  column-gap: var(--section-2-card-gap);
-  row-gap: 0.7rem;
-  align-items: center;
-}
-
-.media-library-row:has(.media-row-details) {
-  min-height: 350px;
-}
-
-/* Flatten the old inner grid so its children can be placed by the card grid.
-   This is the key code issue: the old `.media-row-main` grid kept the cover
-   inside a separate top-only area, so the details row could never share the
-   same vertical cover column. */
-.media-row-main {
-  display: contents;
-}
-
-.media-row-cover,
-.media-row-info,
-.media-row-format,
-.media-row-status,
-.media-row-score,
-.media-row-details {
-  position: relative;
-  z-index: 1;
-}
-
-.media-row-cover {
-  grid-area: cover;
-  align-self: stretch;
-  justify-self: start;
-
-  width: var(--section-2-cover-width);
-  height: 100%;
-  min-height: 270px;
-  max-height: 295px;
-  aspect-ratio: auto;
-
-  border-radius: 18px;
-}
-
-.media-row-cover img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.media-row-info {
-  grid-area: info;
-  align-self: end;
-  padding-top: 0.15rem;
-  pointer-events: none;
-}
-
-.media-row-format,
-.media-row-status {
-  grid-area: chips;
-  align-self: start;
-  margin-top: 0.68rem;
-}
-
-.media-row-status {
-  margin-left: calc(0.7rem + 4.8rem);
-}
-
-.media-row-score {
-  grid-area: score;
-  grid-row: 1 / 3;
-  align-self: center;
-  justify-self: end;
-}
-
-/* Divider and saved layers are now truly right-column-only because the whole
-   element lives in the `details` grid area, not offset with margins. */
-.media-row-details {
-  grid-area: details;
-  width: 100%;
-  margin: 1.15rem 0 0;
-  padding-top: 1.15rem;
-  border-top: 1px solid rgba(184, 121, 78, 0.15);
-}
-
-/* The card-only aura remains, but it is tucked to the object instead of being
-   confused with the section background. */
-.card-wrap::before,
-.scroll-stage:not(:has(.card-wrap)):has(.media-library-row)::before {
-  background: radial-gradient(
-    ellipse at 50% 58%,
-    rgba(194, 111, 47, 0.22),
-    rgba(194, 111, 47, 0.09) 38%,
-    transparent 72%
-  );
-  opacity: 0.7;
-}
-
-.card-wrap:hover::before,
-.scroll-stage:not(:has(.card-wrap)):has(.media-library-row:hover)::before {
-  background: radial-gradient(
-    ellipse at 50% 58%,
-    rgba(207, 121, 49, 0.32),
-    rgba(207, 121, 49, 0.14) 40%,
-    transparent 74%
-  );
-  opacity: 0.98;
-}
-
-/* Responsive: keep the same idea, but reduce the cover instead of changing
-   the meaning of the layout. */
-@media (max-width: 900px) {
-  #section-2-empty-shelf,
-  .section-empty-shelf {
-    --section-2-cover-width: 116px;
-    --section-2-card-gap: 1.35rem;
-  }
-
-  .media-library-row {
-    grid-template-columns: var(--section-2-cover-width) minmax(0, 1fr) auto;
-    min-height: 310px;
-  }
-
-  .media-library-row:has(.media-row-details) {
-    min-height: 330px;
-  }
-
-  .media-row-cover {
-    min-height: 242px;
-    max-height: 272px;
-  }
-
-  .media-row-status {
-    margin-left: calc(0.65rem + 4.65rem);
-  }
-}
-
-@media (max-width: 640px) {
-  .media-library-row {
-    display: grid;
-    grid-template-columns: 82px minmax(0, 1fr);
-    grid-template-areas:
-      "cover info"
-      "cover chips"
-      "score score"
-      "details details";
-    grid-template-rows: auto auto auto auto;
-    min-height: auto;
-    row-gap: 0.75rem;
-  }
-
-  .media-library-row:has(.media-row-details) {
-    min-height: auto;
-  }
-
-  .media-row-cover {
-    width: 82px;
-    min-height: 124px;
-    max-height: 150px;
-    align-self: stretch;
-  }
-
-  .media-row-score {
-    grid-area: score;
-    grid-row: auto;
-    justify-self: start;
-    align-self: center;
-    margin-top: 0.45rem;
-  }
-
-  .media-row-details {
-    grid-area: details;
-    width: 100%;
-    margin: 0.75rem 0 0;
-  }
-}
-
-/* ============================================================================
-   FINAL OBJECT-LOCAL ATMOSPHERE FIX — NO FULL-SECTION TAN WASH
-   ------------------------------------------------------------------------
-   This is the final override for the issue shown in the screenshots:
-   - The background must stay calm and paper-like.
-   - Warmth must appear close to objects: the book card, quote cards,
-     moments, characters, notes, and thoughts.
-   - The cover must span from the card's top padding to its bottom padding,
-     while the divider/details live only in the right content column.
-   ============================================================================ */
-
-#section-2-empty-shelf,
-.section-empty-shelf {
-  --section-2-row-width: 940px;
-  --section-2-cover-width: 132px;
-  --section-2-card-gap: 1.85rem;
-
-  position: relative;
-  overflow: hidden;
-
-  /* Calm base only. Do not tint the whole section tan/orange. */
-  background:
-    radial-gradient(circle at 50% 0%, rgba(255, 252, 246, 0.68), transparent 34%),
-    linear-gradient(180deg, #fbf7f1 0%, #faf4ec 46%, #fbf7f1 100%) !important;
-}
-
-/* Remove the broad section glow. It was the main cause of the whole lower
-   section becoming homogenous tan instead of warm only near objects. */
-#section-2-empty-shelf::before,
-.section-empty-shelf::before {
-  content: none !important;
-  display: none !important;
-}
-
-/* Keep only a barely visible paper grain. This adds texture without changing
-   the perceived background color. */
-#section-2-empty-shelf::after,
-.section-empty-shelf::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background-image: radial-gradient(rgba(97, 58, 31, 0.035) 0.65px, transparent 0.65px);
-  background-size: 4px 4px;
-  opacity: 0.075 !important;
-}
-
-#section-2-empty-shelf > *,
-.section-empty-shelf > * {
-  position: relative;
-  z-index: 1;
-}
-
-/* No generic stage glow. A glow on every .scroll-stage is too large and stacks
-   vertically, which makes the whole scrolled area look like one flat warm wash. */
-.scroll-stage::before {
-  content: none !important;
-  display: none !important;
-}
-
-/* The stage itself should be a neutral positioning container. */
-.scroll-stage {
-  position: relative;
-  isolation: isolate;
-}
-
-/* -------------------------------------------------------------------------
-   CARD-ONLY LOCAL AURA
-   ------------------------------------------------------------------------- */
-
-.card-wrap {
-  position: relative;
-  width: min(var(--section-2-row-width), 100%);
-  margin-inline: auto;
-  isolation: isolate;
-  perspective: 1200px;
-}
-
-.card-wrap::before {
-  content: "" !important;
-  display: block !important;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  z-index: -1;
-  pointer-events: none;
-
-  width: min(calc(100% + 96px), calc(var(--section-2-row-width) + 96px));
-  height: calc(100% + 92px);
-  border-radius: 52px;
-
-  background:
-    radial-gradient(
-      ellipse at 50% 58%,
-      rgba(194, 111, 47, 0.25),
-      rgba(194, 111, 47, 0.105) 39%,
-      transparent 72%
-    );
-  filter: blur(30px);
-  opacity: 0.76;
-  transform: translate(-50%, -50%) scale(1);
-
-  transition:
-    opacity 240ms ease,
-    transform 240ms ease,
-    background 240ms ease;
-}
-
-.card-wrap:hover::before {
-  opacity: 1;
-  transform: translate(-50%, -50%) scale(1.026);
-  background:
-    radial-gradient(
-      ellipse at 50% 58%,
-      rgba(207, 121, 49, 0.35),
-      rgba(207, 121, 49, 0.155) 40%,
-      transparent 74%
-    );
-}
-
-/* Fallback when the markup does not include .card-wrap around a media row.
-   This is still local to the card object, not the whole stage. */
-.scroll-stage:not(:has(.card-wrap)):has(.media-library-row)::before {
-  content: "" !important;
-  display: block !important;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  z-index: -1;
-  pointer-events: none;
-
-  width: min(calc(var(--section-2-row-width) + 96px), calc(100% + 96px));
-  height: calc(100% + 92px);
-  border-radius: 52px;
-  background:
-    radial-gradient(
-      ellipse at 50% 58%,
-      rgba(194, 111, 47, 0.24),
-      rgba(194, 111, 47, 0.10) 39%,
-      transparent 72%
-    );
-  filter: blur(30px);
-  opacity: 0.74;
-  transform: translate(-50%, -50%) scale(1);
-  transition: opacity 240ms ease, transform 240ms ease, background 240ms ease;
-}
-
-.scroll-stage:not(:has(.card-wrap)):has(.media-library-row:hover)::before {
-  opacity: 1;
-  transform: translate(-50%, -50%) scale(1.026);
-  background:
-    radial-gradient(
-      ellipse at 50% 58%,
-      rgba(207, 121, 49, 0.34),
-      rgba(207, 121, 49, 0.15) 40%,
-      transparent 74%
-    );
-}
-
-/* -------------------------------------------------------------------------
-   FULL-HEIGHT COVER CARD GRID
-   ------------------------------------------------------------------------- */
-
-.media-library-row {
-  width: min(var(--section-2-row-width), 100%);
-  min-height: 348px;
-  margin-inline: auto;
-  padding: 28px;
-
-  display: grid !important;
-  grid-template-columns: var(--section-2-cover-width) minmax(0, 1fr) auto;
-  grid-template-areas:
-    "cover info    score"
-    "cover chips   score"
-    "cover details details";
-  grid-template-rows: minmax(104px, 1fr) auto minmax(96px, auto);
-  column-gap: var(--section-2-card-gap);
-  row-gap: 0.72rem;
-  align-items: stretch;
-
-  background:
-    linear-gradient(180deg, rgba(255, 253, 249, 0.97) 0%, rgba(255, 248, 238, 0.955) 100%);
-  border: 1px solid rgba(184, 121, 78, 0.22);
-  border-radius: 30px;
-  box-shadow:
-    0 30px 74px rgba(87, 49, 22, 0.13),
-    0 11px 24px rgba(87, 49, 22, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.80);
-
-  position: relative;
-  overflow: hidden;
-  transform: perspective(900px) translateZ(0);
-  transition:
-    transform 240ms cubic-bezier(0.22, 1, 0.36, 1),
-    border-color 220ms ease,
-    background 220ms ease,
-    box-shadow 240ms ease;
-}
-
-.media-library-row:has(.media-row-details) {
-  min-height: 348px !important;
-}
-
-/* Flatten old inner grid so all card children join the parent grid. */
-.media-row-main {
-  display: contents !important;
-}
-
-.media-row-cover,
-.media-row-info,
-.media-row-format,
-.media-row-status,
-.media-row-score,
-.media-row-details {
-  position: relative;
-  z-index: 1;
-}
-
-/* This is the cover fix: the cover spans every grid row in the left column,
-   from the top padding to the bottom padding. It is not controlled by the
-   divider or by the saved-layer row anymore. */
-.media-row-cover {
-  grid-area: cover !important;
-  align-self: stretch !important;
-  justify-self: start;
-
-  width: var(--section-2-cover-width) !important;
-  height: 100% !important;
-  min-height: 0 !important;
-  max-height: none !important;
-  aspect-ratio: auto !important;
-
-  border-radius: 18px;
-}
-
-.media-row-cover img {
-  width: 100% !important;
-  height: 100% !important;
-  display: block;
-  object-fit: cover;
-}
-
-.media-row-info {
-  grid-area: info !important;
-  align-self: end;
-  min-width: 0;
-  padding-top: 0.25rem;
-  pointer-events: none;
-}
-
-.media-row-format,
-.media-row-status {
-  grid-area: chips !important;
-  align-self: start;
-  margin-top: 0.65rem;
-}
-
-.media-row-status {
-  margin-left: calc(0.72rem + 4.85rem);
-}
-
-.media-row-score {
-  grid-area: score !important;
-  grid-row: 1 / 3 !important;
-  align-self: center;
-  justify-self: end;
-}
-
-/* Divider + Saved Layers live only in the right content column. It never runs
-   under the cover and never affects cover height. */
-.media-row-details {
-  grid-area: details !important;
-  align-self: stretch;
-  width: 100% !important;
-  margin: 1rem 0 0 !important;
-  padding-top: 1.05rem;
-  border-top: 1px solid rgba(184, 121, 78, 0.15);
-
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  gap: 0.55rem;
-}
-
-.media-row-details::before {
-  flex-basis: 100%;
-}
-
-/* -------------------------------------------------------------------------
-   EVIDENCE / OBJECT-LOCAL GLOWS
-   ------------------------------------------------------------------------- */
-
-.falling-quotes,
-.moving-moments,
-.character-cloud,
-.notes-cloud,
-.thoughts-cloud {
-  position: relative;
-  isolation: isolate;
-}
-
-/* Glow stays tight to each evidence group. It is wide enough to make the
-   objects feel warm, but not tall/wide enough to recolor the whole section. */
-.falling-quotes::before,
-.moving-moments::before,
-.character-cloud::before,
-.notes-cloud::before,
-.thoughts-cloud::before {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  z-index: -1;
-  width: min(calc(100% + 90px), calc(var(--section-2-row-width) + 90px));
-  height: calc(100% + 110px);
-  pointer-events: none;
-  border-radius: 999px;
-  background:
-    radial-gradient(
-      ellipse at center,
-      rgba(174, 99, 44, 0.13),
-      rgba(174, 99, 44, 0.052) 42%,
-      transparent 72%
-    );
-  filter: blur(42px);
-  opacity: 0.78;
-  transform: translate(-50%, -50%);
-}
-
-/* Slight individual contact warmth so the glow feels attached to the objects,
-   not painted on the page behind everything. */
-.falling-quote,
-.moment-frame,
-.character-name,
-.note-card,
-.thought-card {
-  box-shadow:
-    0 20px 48px rgba(44, 36, 22, 0.105),
-    0 4px 14px rgba(155, 90, 50, 0.055),
-    inset 0 1px 0 rgba(255, 255, 255, 0.62);
-}
-
-.falling-quote:hover,
-.moment-frame:hover,
-.character-name:hover,
-.note-card:hover,
-.thought-card:hover {
-  box-shadow:
-    0 30px 64px rgba(44, 36, 22, 0.16),
-    0 8px 22px rgba(155, 90, 50, 0.085),
-    inset 0 1px 0 rgba(255, 255, 255, 0.70);
-}
-
-/* Keep the whole-card hover premium but not dramatic. */
-.media-library-row:hover {
-  transform: perspective(900px) rotateX(0.65deg) translateY(-6px);
-  border-color: rgba(127, 75, 47, 0.34);
-  background:
-    linear-gradient(180deg, rgba(255, 254, 251, 0.99) 0%, rgba(255, 250, 241, 0.982) 100%);
-  box-shadow:
-    0 38px 92px rgba(87, 49, 22, 0.17),
-    0 15px 32px rgba(87, 49, 22, 0.11),
-    inset 0 1px 0 rgba(255, 255, 255, 0.86);
-}
-
-/* -------------------------------------------------------------------------
-   RESPONSIVE SAFETY
-   ------------------------------------------------------------------------- */
-
-@media (max-width: 900px) {
-  #section-2-empty-shelf,
-  .section-empty-shelf {
-    --section-2-cover-width: 116px;
-    --section-2-card-gap: 1.35rem;
-  }
-
-  .media-library-row {
-    min-height: 326px;
-    grid-template-columns: var(--section-2-cover-width) minmax(0, 1fr) auto;
-    grid-template-rows: minmax(92px, 1fr) auto minmax(92px, auto);
-  }
-
-  .media-library-row:has(.media-row-details) {
-    min-height: 326px !important;
-  }
-
-  .media-row-cover {
-    width: var(--section-2-cover-width) !important;
-    height: 100% !important;
-    min-height: 0 !important;
-    max-height: none !important;
-  }
-
-  .media-row-status {
-    margin-left: calc(0.65rem + 4.65rem);
-  }
-}
-
-@media (max-width: 640px) {
-  .media-library-row {
-    display: grid !important;
-    grid-template-columns: 86px minmax(0, 1fr);
-    grid-template-areas:
-      "cover info"
-      "cover chips"
-      "score score"
-      "details details";
-    grid-template-rows: auto auto auto auto;
-    min-height: auto !important;
-    row-gap: 0.75rem;
-  }
-
-  .media-library-row:has(.media-row-details) {
-    min-height: auto !important;
-  }
-
-  .media-row-cover {
-    width: 86px !important;
-    height: auto !important;
-    min-height: 132px !important;
-    max-height: 160px !important;
-    align-self: stretch !important;
-  }
-
-  .media-row-score {
-    grid-area: score !important;
-    grid-row: auto !important;
-    justify-self: start;
-    align-self: center;
-    margin-top: 0.45rem;
-  }
-
-  .media-row-details {
-    grid-area: details !important;
-    width: 100% !important;
-    margin: 0.75rem 0 0 !important;
-  }
-
-  .card-wrap::before,
-  .scroll-stage:not(:has(.card-wrap)):has(.media-library-row)::before,
-  .falling-quotes::before,
-  .moving-moments::before,
-  .character-cloud::before,
-  .notes-cloud::before,
-  .thoughts-cloud::before {
-    width: calc(100% + 42px);
-    height: calc(100% + 56px);
-    filter: blur(30px);
-    opacity: 0.58;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .card-wrap::before,
-  .scroll-stage:not(:has(.card-wrap)):has(.media-library-row)::before,
-  .falling-quotes::before,
-  .moving-moments::before,
-  .character-cloud::before,
-  .notes-cloud::before,
-  .thoughts-cloud::before {
-    transition: none !important;
-  }
-}
-
-/* ============================================================================
-   FINAL PASS — MANGA COVER PROPORTION + STRONGER OBJECT-LOCAL ATMOSPHERE
-   ------------------------------------------------------------------------
-   Fixes from latest review:
-   1) The cover was vertically correct, but horizontally too narrow for a manga
-      cover. A manga cover is usually close to a 2:3 portrait ratio, so if the
-      card content height is around 300px, the cover width should be around
-      190px, not 132px.
-   2) The background warmth was correctly localized, but the glow radius and
-      warmth were too weak. This keeps the page base calm while making warmth
-      stronger only around actual objects: the book card, quote groups, moments,
-      character/notes/thoughts groups.
-   ============================================================================ */
-
-#section-2-empty-shelf,
-.section-empty-shelf {
-  /* Wider card so the larger manga-proportion cover does not squeeze content. */
-  --section-2-row-width: 1020px;
-  --section-2-cover-width: 194px;
-  --section-2-card-gap: 2.05rem;
-
-  position: relative;
-  overflow: hidden;
-
-  /* Calm paper base only. The warmth comes from object glows below, not from a
-     full-page tan/orange wash. */
-  background:
-    radial-gradient(circle at 50% 0%, rgba(255, 252, 246, 0.58), transparent 28%),
-    linear-gradient(180deg, #fbf8f3 0%, #faf5ee 46%, #fbf8f3 100%) !important;
-}
-
-/* Prevent section-level color wash from returning. */
-#section-2-empty-shelf::before,
-.section-empty-shelf::before,
-.scroll-stage::before {
-  content: none !important;
-  display: none !important;
-}
-
-/* Keep paper texture extremely quiet, so it does not read as a full-color wash. */
-#section-2-empty-shelf::after,
-.section-empty-shelf::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background-image: radial-gradient(rgba(97, 58, 31, 0.03) 0.65px, transparent 0.65px);
-  background-size: 4px 4px;
-  opacity: 0.065 !important;
-}
-
-#section-2-empty-shelf > *,
-.section-empty-shelf > * {
-  position: relative;
-  z-index: 1;
-}
-
-/* -------------------------------------------------------------------------
-   Stronger, larger CARD-LOCAL glow.
-   This should feel like the first hero card atmosphere: warm around the object,
-   but not a uniform background color.
-   ------------------------------------------------------------------------- */
-
-.card-wrap {
-  position: relative;
-  width: min(var(--section-2-row-width), calc(100vw - 48px));
-  margin-inline: auto;
-  isolation: isolate;
-  perspective: 1200px;
-}
-
-.card-wrap::before {
-  content: "" !important;
-  display: block !important;
-  position: absolute;
-  left: 50%;
-  top: 54%;
-  z-index: -2;
-  pointer-events: none;
-
-  width: min(calc(100% + 280px), calc(var(--section-2-row-width) + 280px));
-  height: calc(100% + 250px);
-  border-radius: 64px;
-
-  background:
-    radial-gradient(
-      ellipse at 50% 56%,
-      rgba(185, 92, 29, 0.36) 0%,
-      rgba(205, 122, 48, 0.22) 34%,
-      rgba(205, 122, 48, 0.095) 56%,
-      transparent 78%
-    );
-  filter: blur(54px);
-  opacity: 0.92;
-  transform: translate(-50%, -50%) scale(1);
-  transition:
-    opacity 240ms ease,
-    transform 240ms ease,
-    background 240ms ease,
-    filter 240ms ease;
-}
-
-/* Contact shadow directly beneath the card. This makes the card feel grounded
-   without tinting the whole section. */
-.card-wrap::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  bottom: -62px;
-  z-index: -1;
-  pointer-events: none;
-  width: min(88%, 880px);
-  height: 132px;
-  border-radius: 999px;
-  background:
-    radial-gradient(
-      ellipse at center,
-      rgba(83, 45, 19, 0.20),
-      rgba(127, 70, 28, 0.105) 38%,
-      transparent 72%
-    );
-  filter: blur(26px);
-  opacity: 0.72;
-  transform: translateX(-50%);
-  transition: opacity 240ms ease, transform 240ms ease;
-}
-
-.card-wrap:hover::before {
-  opacity: 1;
-  filter: blur(58px);
-  transform: translate(-50%, -50%) scale(1.035);
-  background:
-    radial-gradient(
-      ellipse at 50% 56%,
-      rgba(197, 96, 28, 0.46) 0%,
-      rgba(221, 134, 51, 0.28) 35%,
-      rgba(221, 134, 51, 0.12) 58%,
-      transparent 80%
-    );
-}
-
-.card-wrap:hover::after {
-  opacity: 0.86;
-  transform: translateX(-50%) scaleX(1.03);
-}
-
-/* Fallback only for markup where the media row is not wrapped by .card-wrap.
-   This is object-sized, not stage-sized. */
-.scroll-stage:not(:has(.card-wrap)):has(.media-library-row)::before {
-  content: "" !important;
-  display: block !important;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  z-index: -2;
-  pointer-events: none;
-  width: min(calc(var(--section-2-row-width) + 280px), calc(100% + 220px));
-  height: 590px;
-  border-radius: 64px;
-  background:
-    radial-gradient(
-      ellipse at 50% 56%,
-      rgba(185, 92, 29, 0.32),
-      rgba(205, 122, 48, 0.19) 34%,
-      rgba(205, 122, 48, 0.085) 56%,
-      transparent 78%
-    );
-  filter: blur(54px);
-  opacity: 0.86;
-  transform: translate(-50%, -50%);
-}
-
-.scroll-stage:not(:has(.card-wrap)):has(.media-library-row:hover)::before {
-  opacity: 1;
-  background:
-    radial-gradient(
-      ellipse at 50% 56%,
-      rgba(197, 96, 28, 0.42),
-      rgba(221, 134, 51, 0.25) 35%,
-      rgba(221, 134, 51, 0.11) 58%,
-      transparent 80%
-    );
-}
-
-/* -------------------------------------------------------------------------
-   MANGA-PROPORTION FULL-HEIGHT COVER CARD GRID
-   ------------------------------------------------------------------------- */
-
-.media-library-row {
-  width: min(var(--section-2-row-width), calc(100vw - 48px));
-  min-height: 364px !important;
-  margin-inline: auto;
-  padding: 30px;
-
-  display: grid !important;
-  grid-template-columns: var(--section-2-cover-width) minmax(0, 1fr) auto;
-  grid-template-areas:
-    "cover info    score"
-    "cover chips   score"
-    "cover details details";
-
-  /* Content height is about 304px after padding. With a 194px cover width,
-     this gives a manga-like portrait ratio instead of the too-skinny 132px look. */
-  grid-template-rows: minmax(126px, 1fr) auto minmax(104px, auto);
-  column-gap: var(--section-2-card-gap);
-  row-gap: 0.78rem;
-  align-items: stretch;
-
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-
-  border-radius: 32px;
-  border: 1px solid rgba(184, 121, 78, 0.24);
-  background:
-    radial-gradient(circle at 18% 48%, rgba(226, 173, 111, 0.09), transparent 36%),
-    linear-gradient(180deg, rgba(255, 253, 249, 0.985) 0%, rgba(255, 248, 238, 0.97) 100%);
-  box-shadow:
-    0 34px 86px rgba(87, 49, 22, 0.15),
-    0 12px 26px rgba(87, 49, 22, 0.09),
-    inset 0 1px 0 rgba(255, 255, 255, 0.84);
-
-  transform: perspective(900px) translateZ(0);
-  transition:
-    transform 240ms cubic-bezier(0.22, 1, 0.36, 1),
-    border-color 220ms ease,
-    background 220ms ease,
-    box-shadow 240ms ease;
-}
-
-.media-library-row:has(.media-row-details) {
-  min-height: 364px !important;
-}
-
-/* Flatten the old internal row wrapper so the cover can span the full card,
-   not just the top mini-row. */
-.media-row-main {
-  display: contents !important;
-}
-
-.media-row-cover,
-.media-row-info,
-.media-row-format,
-.media-row-status,
-.media-row-score,
-.media-row-details {
-  position: relative;
-  z-index: 1;
-}
-
-/* Key cover fix: wider manga-cover proportion + full vertical span from near
-   top border to near bottom border. The divider/details do not affect it. */
-.media-row-cover {
-  grid-area: cover !important;
-  align-self: stretch !important;
-  justify-self: start !important;
-
-  width: var(--section-2-cover-width) !important;
-  height: 100% !important;
-  min-height: 292px !important;
-  max-height: none !important;
-  aspect-ratio: auto !important;
-
-  border-radius: 18px;
-  overflow: hidden;
-  background: linear-gradient(145deg, #d7b999 0%, #ead5bd 55%, #cfae8c 100%);
-  border: 1px solid rgba(126, 78, 45, 0.22);
-  box-shadow:
-    0 24px 42px rgba(72, 42, 21, 0.18),
-    0 7px 16px rgba(72, 42, 21, 0.11),
-    inset 0 1px 0 rgba(255, 255, 255, 0.50);
-}
-
-.media-row-cover img {
-  width: 100% !important;
-  height: 100% !important;
-  display: block;
-  object-fit: cover;
-  object-position: center top;
-}
-
-.media-row-info {
-  grid-area: info !important;
-  align-self: end;
-  min-width: 0;
-  padding-top: 0.35rem;
-  pointer-events: none;
-}
-
-.media-row-format,
-.media-row-status {
-  grid-area: chips !important;
-  align-self: start;
-  margin-top: 0.7rem;
-}
-
-.media-row-status {
-  margin-left: calc(0.75rem + 4.95rem);
-}
-
-.media-row-score {
-  grid-area: score !important;
-  grid-row: 1 / 3 !important;
-  align-self: center;
-  justify-self: end;
-}
-
-/* Divider and Saved Layers stay only in the right column. */
-.media-row-details {
-  grid-area: details !important;
-  align-self: stretch;
-  width: 100% !important;
-  margin: 1.08rem 0 0 !important;
-  padding-top: 1.08rem;
-  border-top: 1px solid rgba(184, 121, 78, 0.17);
-
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  gap: 0.58rem;
-}
-
-.media-row-details::before {
-  flex-basis: 100%;
-}
-
-.media-library-row:hover {
-  transform: perspective(900px) rotateX(0.65deg) translateY(-6px);
-  border-color: rgba(127, 75, 47, 0.38);
-  background:
-    radial-gradient(circle at 18% 48%, rgba(234, 177, 107, 0.13), transparent 38%),
-    linear-gradient(180deg, rgba(255, 254, 251, 0.995) 0%, rgba(255, 250, 241, 0.986) 100%);
-  box-shadow:
-    0 44px 104px rgba(87, 49, 22, 0.19),
-    0 16px 34px rgba(87, 49, 22, 0.115),
-    inset 0 1px 0 rgba(255, 255, 255, 0.88);
-}
-
-/* -------------------------------------------------------------------------
-   OBJECT-LOCAL GLOWS FOR QUOTES / MOMENTS / CHARACTERS / NOTES / THOUGHTS
-   ------------------------------------------------------------------------- */
-
-.falling-quotes,
-.moving-moments,
-.character-cloud,
-.notes-cloud,
-.thoughts-cloud {
-  position: relative;
-  isolation: isolate;
-}
-
-.falling-quotes::before,
-.moving-moments::before,
-.character-cloud::before,
-.notes-cloud::before,
-.thoughts-cloud::before {
-  content: "" !important;
-  display: block !important;
-  position: absolute;
-  left: 50%;
-  top: 52%;
-  z-index: -1;
-  pointer-events: none;
-
-  width: min(calc(100% + 260px), calc(var(--section-2-row-width) + 260px));
-  height: calc(100% + 230px);
-  border-radius: 999px;
-
-  background:
-    radial-gradient(
-      ellipse at center,
-      rgba(185, 97, 35, 0.24) 0%,
-      rgba(214, 137, 61, 0.135) 40%,
-      rgba(214, 137, 61, 0.06) 58%,
-      transparent 78%
-    );
-  filter: blur(56px);
-  opacity: 0.88;
-  transform: translate(-50%, -50%);
-}
-
-/* Warmer local contact shadows on the actual objects. */
-.falling-quote,
-.moment-frame,
-.character-name,
-.note-card,
-.thought-card {
-  background-color: rgba(255, 251, 245, 0.94);
-  border-color: rgba(184, 121, 78, 0.18);
-  box-shadow:
-    0 26px 58px rgba(62, 42, 22, 0.13),
-    0 7px 18px rgba(155, 90, 50, 0.075),
-    inset 0 1px 0 rgba(255, 255, 255, 0.66);
-}
-
-.falling-quote:hover,
-.moment-frame:hover,
-.character-name:hover,
-.note-card:hover,
-.thought-card:hover {
-  box-shadow:
-    0 34px 72px rgba(62, 42, 22, 0.18),
-    0 10px 26px rgba(155, 90, 50, 0.11),
-    inset 0 1px 0 rgba(255, 255, 255, 0.72);
-}
-
-/* -------------------------------------------------------------------------
-   RESPONSIVE COVER PROPORTIONS
-   ------------------------------------------------------------------------- */
-
-@media (max-width: 1050px) {
-  #section-2-empty-shelf,
-  .section-empty-shelf {
-    --section-2-row-width: 940px;
-    --section-2-cover-width: 176px;
-    --section-2-card-gap: 1.65rem;
-  }
-
-  .media-library-row {
-    min-height: 344px !important;
-    grid-template-rows: minmax(116px, 1fr) auto minmax(98px, auto);
-  }
-
-  .media-library-row:has(.media-row-details) {
-    min-height: 344px !important;
-  }
-
-  .media-row-cover {
-    min-height: 276px !important;
-  }
-}
-
-@media (max-width: 760px) {
-  #section-2-empty-shelf,
-  .section-empty-shelf {
-    --section-2-cover-width: 118px;
-    --section-2-card-gap: 1rem;
-  }
-
-  .media-library-row {
-    width: min(100%, calc(100vw - 32px));
-    min-height: auto !important;
-    padding: 22px;
-    grid-template-columns: var(--section-2-cover-width) minmax(0, 1fr);
-    grid-template-areas:
-      "cover info"
-      "cover chips"
-      "score score"
-      "details details";
-    grid-template-rows: auto auto auto auto;
-  }
-
-  .media-row-cover {
-    width: var(--section-2-cover-width) !important;
-    min-height: 178px !important;
-    height: auto !important;
-    align-self: stretch !important;
-  }
-
-  .media-row-score {
-    grid-area: score !important;
-    grid-row: auto !important;
-    justify-self: start;
-    align-self: center;
-    margin-top: 0.35rem;
-  }
-
-  .media-row-details {
-    grid-area: details !important;
-    margin-top: 0.8rem !important;
-  }
-
-  .card-wrap::before,
-  .scroll-stage:not(:has(.card-wrap)):has(.media-library-row)::before,
-  .falling-quotes::before,
-  .moving-moments::before,
-  .character-cloud::before,
-  .notes-cloud::before,
-  .thoughts-cloud::before {
-    width: calc(100% + 78px);
-    height: calc(100% + 92px);
-    filter: blur(36px);
-    opacity: 0.74;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .card-wrap::before,
-  .card-wrap::after,
-  .scroll-stage:not(:has(.card-wrap)):has(.media-library-row)::before,
-  .falling-quotes::before,
-  .moving-moments::before,
-  .character-cloud::before,
-  .notes-cloud::before,
-  .thoughts-cloud::before,
-  .media-library-row {
-    transition: none !important;
-  }
-
-  .media-library-row:hover {
-    transform: none !important;
-  }
-}
-
-/* ============================================================================
-   FINAL CANONICAL PASS — SHARED LIGHT-TAN PAGE + BALANCED OBJECT GLOWS
-   ------------------------------------------------------------------------
-   Use this block as the final source of truth for the current design decision:
-   - Whole page: very light warm paper tan, consistent between Section 1 and 2.
-   - Objects: stronger darker tan glow around cards/quotes/etc.
-   - Cards: light ivory/cream so they still pop from the tan page.
-   - Cover: manga-like proportion, not too skinny and not too wide.
-   - Aura: balanced around all card sides + separate softer bottom contact shadow.
-   ============================================================================ */
-
-:root {
-  --page-base: #060814;
-  --page-warm: #0A1024;
-  --page-depth: #050611;
-
-  --card-surface: rgba(16, 22, 36, 0.96);
-  --card-surface-hover: rgba(20, 27, 46, 0.98);
-  --card-border: rgba(184, 192, 255, 0.20);
-  --card-border-hover: rgba(184, 192, 255, 0.34);
-
-  --object-glow-soft: rgba(124, 140, 255, 0.14);
-  --object-glow-medium: rgba(155, 124, 255, 0.22);
-  --object-glow-strong: rgba(124, 140, 255, 0.30);
-  --warm-shadow: rgba(0, 0, 0, 0.42);
-
-  --section-2-row-width-final: 1020px;
-  --section-2-cover-width-final: 180px;
-  --section-2-card-gap-final: 38px;
-  --section-2-card-radius-final: 32px;
-}
-
-html,
-body {
-  min-height: 100%;
-  background-color: #060814 !important;
-  background:
-    radial-gradient(circle at 78% 16%, rgba(124, 140, 255, 0.22), transparent 30%),
-    radial-gradient(circle at 18% 28%, rgba(155, 124, 255, 0.16), transparent 32%),
-    radial-gradient(circle at 82% 68%, rgba(116, 215, 255, 0.10), transparent 30%),
-    radial-gradient(circle at 34% 92%, rgba(210, 140, 255, 0.12), transparent 34%),
-    linear-gradient(135deg, #060814 0%, #0A1024 42%, #0D1022 68%, #050611 100%) !important;
-}
-
-body {
-  color: var(--ink);
-}
-
-/* Let the shared body background connect the page. Sections should not create
-   a hard white/cream reset between Section 1 and Section 2. */
-.hero-section,
-.section-hero,
-.landing-hero,
-#hero,
-#section-1,
-#section-2-empty-shelf,
-.section-empty-shelf {
-  position: relative;
-  overflow: hidden;
-  background: transparent !important;
-}
-
-/* Section 2 keeps layout/padding, but no longer paints its own full tan wash. */
-#section-2-empty-shelf,
-.section-empty-shelf {
-  --section-2-row-width: var(--section-2-row-width-final);
-  --section-2-cover-width: var(--section-2-cover-width-final);
-  --section-2-card-gap: var(--section-2-card-gap-final);
-
-  color: var(--ink);
-}
-
-/* Remove broad section/stage washes. Warmth should belong to objects, not the
-   whole empty background. */
-#section-2-empty-shelf::before,
-.section-empty-shelf::before {
-  content: none !important;
-  display: none !important;
-}
-
-/* Very faint paper texture only. It should not read as a separate color layer. */
-#section-2-empty-shelf::after,
-.section-empty-shelf::after {
-  content: "" !important;
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background-image: radial-gradient(rgba(97, 58, 31, 0.026) 0.65px, transparent 0.65px);
-  background-size: 4px 4px;
-  opacity: 0.055 !important;
-}
-
-#section-2-empty-shelf > *,
-.section-empty-shelf > * {
-  position: relative;
-  z-index: 1;
-}
-
-.empty-shelf-scroll {
-  position: relative;
-  z-index: 1;
-}
-
-.scroll-stage {
-  position: relative;
-  isolation: isolate;
-}
-
-.scroll-stage::before {
-  content: none !important;
-  display: none !important;
-}
-
-/* -------------------------------------------------------------------------
-   CARD WRAPPER — balanced aura on all sides + separate bottom shadow
-   ------------------------------------------------------------------------- */
-
-.card-wrap {
-  position: relative;
-  width: min(var(--section-2-row-width-final), calc(100vw - 48px));
-  margin-inline: auto;
-  isolation: isolate;
-  perspective: 1200px;
-}
-
-.card-wrap::before {
-  content: "" !important;
-  display: block !important;
-  position: absolute;
-  inset: -72px;
-  z-index: -2;
-  pointer-events: none;
-  border-radius: 86px;
-  background:
-    radial-gradient(
-      ellipse at center,
-      rgba(170, 92, 38, 0.25) 0%,
-      rgba(188, 116, 55, 0.145) 38%,
-      rgba(188, 116, 55, 0.06) 57%,
-      transparent 74%
-    );
-  filter: blur(54px);
-  opacity: 0.9;
-  transform: scale(1);
-  transition:
-    opacity 240ms ease,
-    transform 240ms ease,
-    background 240ms ease,
-    filter 240ms ease;
-}
-
-.card-wrap::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  bottom: -58px;
-  z-index: -1;
-  pointer-events: none;
-  width: min(86%, 880px);
-  height: 124px;
-  border-radius: 999px;
-  background:
-    radial-gradient(
-      ellipse at center,
-      rgba(83, 45, 19, 0.18),
-      rgba(127, 70, 28, 0.095) 38%,
-      transparent 72%
-    );
-  filter: blur(26px);
-  opacity: 0.74;
-  transform: translateX(-50%);
-  transition: opacity 240ms ease, transform 240ms ease;
-}
-
-.card-wrap:hover::before {
-  opacity: 1;
-  transform: scale(1.035);
-  filter: blur(58px);
-  background:
-    radial-gradient(
-      ellipse at center,
-      rgba(157, 78, 31, 0.33) 0%,
-      rgba(190, 112, 48, 0.19) 40%,
-      rgba(190, 112, 48, 0.08) 59%,
-      transparent 76%
-    );
-}
-
-.card-wrap:hover::after {
-  opacity: 0.88;
-  transform: translateX(-50%) scaleX(1.035);
-}
-
-/* Fallback when the card is not wrapped in .card-wrap. This is still local to
-   the media row, not a generic stage background. */
-.scroll-stage:has(> .media-library-row):not(:has(.card-wrap))::before,
-.scroll-stage:not(:has(.card-wrap)):has(.media-library-row)::before {
-  content: "" !important;
-  display: block !important;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  z-index: -2;
-  pointer-events: none;
-  width: min(calc(var(--section-2-row-width-final) + 144px), calc(100% + 144px));
-  height: calc(100% + 144px);
-  border-radius: 86px;
-  background:
-    radial-gradient(
-      ellipse at center,
-      rgba(170, 92, 38, 0.23) 0%,
-      rgba(188, 116, 55, 0.135) 38%,
-      rgba(188, 116, 55, 0.055) 57%,
-      transparent 74%
-    );
-  filter: blur(54px);
-  opacity: 0.84;
-  transform: translate(-50%, -50%);
-}
-
-.scroll-stage:not(:has(.card-wrap)):has(.media-library-row:hover)::before {
-  opacity: 1;
-  background:
-    radial-gradient(
-      ellipse at center,
-      rgba(157, 78, 31, 0.31) 0%,
-      rgba(190, 112, 48, 0.18) 40%,
-      rgba(190, 112, 48, 0.075) 59%,
-      transparent 76%
-    );
-}
-
-/* -------------------------------------------------------------------------
-   BOOK CARD — proportions, grid, surface
-   ------------------------------------------------------------------------- */
-
-.media-library-row {
-  width: min(var(--section-2-row-width-final), calc(100vw - 48px)) !important;
-  min-height: 344px !important;
-  margin-inline: auto;
-  padding: 32px !important;
-
-  display: grid !important;
-  grid-template-columns: var(--section-2-cover-width-final) minmax(0, 1fr) auto;
-  grid-template-areas:
-    "cover info    score"
-    "cover chips   score"
-    "cover details details";
-  grid-template-rows: minmax(118px, 1fr) auto minmax(96px, auto);
-  column-gap: var(--section-2-card-gap-final);
-  row-gap: 0.75rem;
-  align-items: stretch;
-
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-
-  border-radius: var(--section-2-card-radius-final) !important;
-  border: 1px solid var(--card-border) !important;
-  background:
-    radial-gradient(circle at 19% 50%, rgba(226, 173, 111, 0.075), transparent 35%),
-    linear-gradient(180deg, rgba(255, 253, 249, 0.985) 0%, var(--card-surface) 100%) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.86),
-    0 18px 38px rgba(84, 47, 22, 0.10),
-    0 42px 80px rgba(84, 47, 22, 0.13) !important;
-
-  transform: perspective(900px) translateZ(0);
-  transition:
-    transform 240ms cubic-bezier(0.22, 1, 0.36, 1),
-    border-color 220ms ease,
-    background 220ms ease,
-    box-shadow 240ms ease;
-}
-
-.media-library-row:has(.media-row-details) {
-  min-height: 344px !important;
-}
-
-.media-row-main {
-  display: contents !important;
-}
-
-.media-row-cover,
-.media-row-info,
-.media-row-format,
-.media-row-status,
-.media-row-score,
-.media-row-details {
-  position: relative;
-  z-index: 1;
-}
-
-/* Manga-like proportion. The cover spans from the card's top padding to bottom
-   padding, while the divider/details live only in the right column. */
-.media-row-cover {
-  grid-area: cover !important;
-  align-self: stretch !important;
-  justify-self: start !important;
-
-  width: var(--section-2-cover-width-final) !important;
-  height: 100% !important;
-  min-height: 260px !important;
-  max-height: 280px !important;
-  aspect-ratio: auto !important;
-
-  border-radius: 20px !important;
-  overflow: hidden;
-  background:
-    radial-gradient(circle at 30% 22%, rgba(255, 255, 255, 0.24), transparent 32%),
-    linear-gradient(145deg, #d7b999 0%, #ead5bd 55%, #cfae8c 100%) !important;
-  border: 1px solid rgba(126, 78, 45, 0.22) !important;
-  box-shadow:
-    0 24px 42px rgba(72, 42, 21, 0.18),
-    0 7px 16px rgba(72, 42, 21, 0.11),
-    inset 0 1px 0 rgba(255, 255, 255, 0.50) !important;
-}
-
-.media-row-cover img {
-  width: 100% !important;
-  height: 100% !important;
-  display: block;
-  object-fit: cover;
-  object-position: center top;
-  color: transparent;
-  font-size: 0;
-}
-
-.media-row-info {
-  grid-area: info !important;
-  align-self: end;
-  min-width: 0;
-  padding-top: 0.25rem;
-  pointer-events: none;
-}
-
-.media-row-info h3 {
-  margin: 0 !important;
-  font-size: clamp(30px, 2.05vw, 34px) !important;
-  line-height: 0.98 !important;
-  letter-spacing: -0.045em;
-  display: inline-block !important;
-  width: fit-content !important;
-  max-width: 100% !important;
-  pointer-events: auto;
-
-  text-decoration: none !important;
-  cursor: default;
-}
-
-.media-row-info p {
-  margin-top: 0.38rem !important;
-  font-size: 16px !important;
-  line-height: 1.35 !important;
-  display: inline-block !important;
-  width: fit-content !important;
-  max-width: 100% !important;
-  pointer-events: auto;
-
-  text-decoration: none !important;
-  cursor: default;
-}
-
-.media-row-info h3:hover {
-  color: #3d2114;
-  text-shadow: 0 10px 28px rgba(148, 78, 32, 0.14);
-  text-decoration: none !important;
-}
-
-.media-row-info p:hover {
-  color: var(--warm-brown-dark);
-  text-shadow: 0 8px 22px rgba(148, 78, 32, 0.10);
-  text-decoration: none !important;
-}
-
-.media-row-format,
-.media-row-status {
-  grid-area: chips !important;
-  align-self: start;
-  margin-top: 0.72rem !important;
-}
-
-.media-row-status {
-  margin-left: calc(0.78rem + 5.1rem) !important;
-}
-
-.media-row-format span,
-.media-row-status span {
-  min-height: 32px !important;
-  padding: 0 14px !important;
-  font-size: 13px !important;
-  font-weight: 650 !important;
-  border-radius: 999px;
-  background: linear-gradient(180deg, rgba(255, 250, 240, 0.96), rgba(184, 121, 78, 0.075)) !important;
-  border: 1px solid rgba(184, 121, 78, 0.24) !important;
-  color: var(--warm-brown-dark);
-  text-decoration: none !important;
-  cursor: pointer;
-}
-
-.media-row-format span:hover,
-.media-row-status span:hover {
-  transform: translateY(-1px);
-  background: linear-gradient(180deg, rgba(255, 252, 246, 1), rgba(207, 121, 49, 0.16)) !important;
-  border-color: rgba(155, 90, 50, 0.34) !important;
-  box-shadow:
-    0 8px 18px rgba(90, 48, 22, 0.10),
-    inset 0 1px 0 rgba(255, 255, 255, 0.72) !important;
-}
-
-.media-row-score {
-  grid-area: score !important;
-  grid-row: 1 / 3 !important;
-  align-self: center;
-  justify-self: end;
-
-  min-width: 82px !important;
-  height: 58px !important;
-  padding: 0 1.08rem !important;
-  background: rgba(255, 252, 248, 0.93) !important;
-  border: 1px solid rgba(184, 121, 78, 0.24) !important;
-  box-shadow: 0 8px 22px rgba(44, 36, 22, 0.06) !important;
-}
-
-.media-row-score span {
-  font-size: 25px !important;
-  line-height: 1 !important;
-}
-
-.media-row-details {
-  grid-area: details !important;
-  align-self: stretch;
-  width: 100% !important;
-  margin: 1.08rem 0 0 !important;
-  padding-top: 1.08rem !important;
-  border-top: 1px solid rgba(184, 121, 78, 0.17) !important;
-
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  gap: 0.62rem !important;
-}
-
-.media-row-details::before {
-  flex-basis: 100%;
-  margin-bottom: 0.16rem;
-  font-size: 0.7rem !important;
-  letter-spacing: 0.12em;
-}
-
-.depth-button {
-  min-height: 38px !important;
-  padding: 0 18px !important;
-  font-size: 14px !important;
-  font-weight: 680 !important;
-  border-radius: 999px;
-  background: rgba(184, 121, 78, 0.075) !important;
-  border: 1px solid rgba(184, 121, 78, 0.27) !important;
-}
-
-.depth-button:hover {
-  transform: translateY(-1px);
-  background: rgba(207, 121, 49, 0.15) !important;
-  border-color: rgba(155, 90, 50, 0.4) !important;
-  box-shadow: 0 8px 18px rgba(90, 48, 22, 0.11) !important;
-}
-
-.depth-button:focus:not(:focus-visible),
-.media-row-format span:focus:not(:focus-visible),
-.media-row-status span:focus:not(:focus-visible) {
-  outline: none !important;
-}
-
-.depth-button:focus-visible,
-.media-row-format span:focus-visible,
-.media-row-status span:focus-visible,
-.media-library-row:focus-visible {
-  outline: 2px solid rgba(155, 90, 50, 0.55) !important;
-  outline-offset: 4px;
-}
-
-.media-library-row:hover {
-  transform: perspective(900px) rotateX(0.65deg) translateY(-6px) !important;
-  border-color: var(--card-border-hover) !important;
-  background:
-    radial-gradient(circle at 19% 50%, rgba(234, 177, 107, 0.11), transparent 37%),
-    linear-gradient(180deg, rgba(255, 254, 251, 0.995) 0%, var(--card-surface-hover) 100%) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.88),
-    0 22px 44px rgba(84, 47, 22, 0.125),
-    0 54px 104px rgba(84, 47, 22, 0.17) !important;
-}
-
-/* -------------------------------------------------------------------------
-   OBJECT-LOCAL GLOWS FOR QUOTES / MOMENTS / CHARACTERS / NOTES / THOUGHTS
-   ------------------------------------------------------------------------- */
-
-.falling-quotes,
-.moving-moments,
-.character-cloud,
-.notes-cloud,
-.thoughts-cloud {
-  position: relative;
-  isolation: isolate;
-}
-
-.falling-quotes::before,
-.moving-moments::before,
-.character-cloud::before,
-.notes-cloud::before,
-.thoughts-cloud::before {
-  content: "" !important;
-  display: block !important;
-  position: absolute;
-  inset: -64px -82px;
-  z-index: -1;
-  pointer-events: none;
-  border-radius: 999px;
-  background:
-    radial-gradient(
-      ellipse at center,
-      rgba(176, 99, 42, 0.19) 0%,
-      rgba(176, 99, 42, 0.105) 42%,
-      rgba(176, 99, 42, 0.045) 58%,
-      transparent 74%
-    );
-  filter: blur(52px);
-  opacity: 0.82;
-  transform: none !important;
-}
-
-.falling-quote,
-.moment-frame,
-.character-name,
-.note-card,
-.thought-card {
-  background-color: rgba(255, 251, 245, 0.94);
-  border-color: rgba(184, 121, 78, 0.18);
-  box-shadow:
-    0 24px 54px rgba(62, 42, 22, 0.12),
-    0 6px 16px rgba(155, 90, 50, 0.07),
-    inset 0 1px 0 rgba(255, 255, 255, 0.66) !important;
-}
-
-.falling-quote:hover,
-.moment-frame:hover,
-.character-name:hover,
-.note-card:hover,
-.thought-card:hover {
-  box-shadow:
-    0 34px 72px rgba(62, 42, 22, 0.18),
-    0 10px 26px rgba(155, 90, 50, 0.11),
-    inset 0 1px 0 rgba(255, 255, 255, 0.72) !important;
-}
-
-/* -------------------------------------------------------------------------
-   RESPONSIVE PROPORTIONS
-   ------------------------------------------------------------------------- */
-
-@media (max-width: 1080px) {
-  :root {
-    --section-2-row-width-final: 960px;
-    --section-2-cover-width-final: 170px;
-    --section-2-card-gap-final: 34px;
-  }
-
-  .media-library-row {
-    min-height: 334px !important;
-    grid-template-rows: minmax(112px, 1fr) auto minmax(92px, auto);
-  }
-
-  .media-library-row:has(.media-row-details) {
-    min-height: 334px !important;
-  }
-
-  .media-row-cover {
-    min-height: 250px !important;
-    max-height: 270px !important;
-  }
-}
-
-@media (max-width: 760px) {
-  :root {
-    --section-2-cover-width-final: 118px;
-    --section-2-card-gap-final: 1rem;
-  }
-
-  .card-wrap,
-  .media-library-row {
-    width: min(100%, calc(100vw - 32px)) !important;
-  }
-
-  .media-library-row {
-    min-height: auto !important;
-    padding: 22px !important;
-    grid-template-columns: var(--section-2-cover-width-final) minmax(0, 1fr);
-    grid-template-areas:
-      "cover info"
-      "cover chips"
-      "score score"
-      "details details";
-    grid-template-rows: auto auto auto auto;
-    row-gap: 0.75rem;
-  }
-
-  .media-library-row:has(.media-row-details) {
-    min-height: auto !important;
-  }
-
-  .media-row-cover {
-    width: var(--section-2-cover-width-final) !important;
-    height: auto !important;
-    min-height: 178px !important;
-    max-height: 186px !important;
-    align-self: stretch !important;
-  }
-
-  .media-row-score {
-    grid-area: score !important;
-    grid-row: auto !important;
-    justify-self: start;
-    align-self: center;
-    margin-top: 0.35rem;
-  }
-
-  .media-row-details {
-    grid-area: details !important;
-    margin-top: 0.8rem !important;
-  }
-
-  .card-wrap::before,
-  .scroll-stage:has(> .media-library-row):not(:has(.card-wrap))::before,
-  .scroll-stage:not(:has(.card-wrap)):has(.media-library-row)::before,
-  .falling-quotes::before,
-  .moving-moments::before,
-  .character-cloud::before,
-  .notes-cloud::before,
-  .thoughts-cloud::before {
-    filter: blur(34px);
-    opacity: 0.7;
-  }
-
-  .card-wrap::before {
-    inset: -42px;
-  }
-
-  .card-wrap::after {
-    bottom: -38px;
-    height: 86px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .card-wrap::before,
-  .card-wrap::after,
-  .scroll-stage:has(> .media-library-row):not(:has(.card-wrap))::before,
-  .scroll-stage:not(:has(.card-wrap)):has(.media-library-row)::before,
-  .falling-quotes::before,
-  .moving-moments::before,
-  .character-cloud::before,
-  .notes-cloud::before,
-  .thoughts-cloud::before,
-  .media-library-row,
-  .media-row-cover,
-  .media-row-format span,
-  .media-row-status span,
-  .depth-button {
-    transition: none !important;
-  }
-
-  .media-library-row:hover,
-  .media-row-cover:hover,
-  .media-row-format span:hover,
-  .media-row-status span:hover,
-  .depth-button:hover {
-    transform: none !important;
-  }
-}
-
-
-
-
-
-
-
-/* ============================================================================
-   SECTION 2 — JS ANIMATION MODE PATCH V5
-   ---------------------------------------------------------------------------
-   Goal:
-   - Card starts naturally below title/subtitle.
-   - During pinned scroll, title fades away.
-   - Stage moves upward to reclaim title space.
-   - Card anchors lower, but remains fully visible.
-   - Evidence appears clearly above the card.
-   ============================================================================ */
-
-.section-empty-shelf.is-js-ready .empty-shelf-scroll {
-  display: block;
-}
-
-.section-empty-shelf.is-js-ready .stage-viewport {
-  position: relative;
-  min-height: clamp(640px, 78vh, 760px);
-}
-
-/* Card starts in normal flow under the header.
-   JS later moves it down with transform. */
-.section-empty-shelf.is-js-ready .card-wrap {
-  position: relative;
-  z-index: 10;
-  margin-inline: auto;
-  will-change: transform, opacity;
-}
-
-/* Evidence stage sits above the anchored card. */
-.section-empty-shelf.is-js-ready .scroll-stage {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: clamp(8px, 2.5vh, 28px);
-
-  height: clamp(240px, 30vh, 285px);
-  z-index: 6;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-}
-
-.section-empty-shelf.is-js-ready .scroll-stage.is-active {
-  visibility: visible;
-  pointer-events: auto;
-}
-
-/* Shared evidence sizing */
-.section-empty-shelf.is-js-ready .falling-quotes,
-.section-empty-shelf.is-js-ready .moving-moments,
-.section-empty-shelf.is-js-ready .character-cloud,
-.section-empty-shelf.is-js-ready .notes-cloud,
-.section-empty-shelf.is-js-ready .thoughts-cloud {
-  width: min(860px, 100%);
-  margin-inline: auto;
-}
-
-/* Quotes: clean 2x2 group */
-.section-empty-shelf.is-js-ready .falling-quotes {
-  max-width: 700px;
-  grid-template-columns: repeat(2, minmax(240px, 1fr));
-  gap: 0.9rem;
-}
-
-/* Moments: cinematic 3-panel row */
-.section-empty-shelf.is-js-ready .moving-moments {
-  max-width: 800px;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.9rem;
-}
-
-/* Characters: compact cast row */
-.section-empty-shelf.is-js-ready .character-cloud {
-  max-width: 860px;
-  grid-template-columns: repeat(7, minmax(82px, 1fr));
-  gap: 0.7rem;
-  align-items: end;
-}
-
-.section-empty-shelf.is-js-ready .character-1 {
-  grid-column: span 1;
-}
-
-.section-empty-shelf.is-js-ready .character-name img {
-  aspect-ratio: 3 / 3.5;
-}
-
-.section-empty-shelf.is-js-ready .character-name figcaption {
-  padding: 0.5rem 0.55rem;
-  font-size: 0.68rem;
-}
-
-/* Notes: balanced 3-note row */
-.section-empty-shelf.is-js-ready .notes-cloud {
-  max-width: 760px;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.9rem;
-}
-
-/* Thoughts: two large cards, centered */
-.section-empty-shelf.is-js-ready .thoughts-cloud {
-  max-width: 820px;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1rem;
-}
-
-/* Tray starts hidden. JS reveals it after Quotes lands. */
-.section-empty-shelf.is-js-ready .media-row-details {
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(10px);
-}
-
-.section-empty-shelf.is-js-ready .media-row-details.is-visible {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
-}
-
-.section-empty-shelf.is-js-ready .depth-button {
-  pointer-events: none;
-}
-
-.section-empty-shelf.is-js-ready .depth-button.is-landed {
-  pointer-events: auto;
-}
-
-/* Temporary flying button created by JS */
-.depth-button-proxy {
-  position: fixed;
-  left: 0;
-  top: 0;
-  z-index: 999;
-
-  min-height: 38px;
-  padding: 0 0.95rem;
-  box-sizing: border-box;
-
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  background: rgba(255, 252, 248, 0.98);
-  border: 1px solid rgba(184, 121, 78, 0.34);
-  border-radius: 999px;
-
-  box-shadow:
-    0 16px 34px rgba(90, 48, 22, 0.16),
-    inset 0 1px 0 rgba(255, 255, 255, 0.72);
-
-  font-family: var(--font-body);
-  font-size: 0.8rem;
-  font-weight: 800;
-  color: var(--ink);
-
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  white-space: nowrap;
-  transform-style: preserve-3d;
-}
-
-/* Tablet */
-@media (max-width: 900px) {
-  .section-empty-shelf.is-js-ready .stage-viewport {
-    min-height: clamp(620px, 80vh, 740px);
-  }
-
-  .section-empty-shelf.is-js-ready .scroll-stage {
-    top: 18px;
-    height: 300px;
-  }
-
-  .section-empty-shelf.is-js-ready .falling-quotes,
-  .section-empty-shelf.is-js-ready .moving-moments,
-  .section-empty-shelf.is-js-ready .notes-cloud,
-  .section-empty-shelf.is-js-ready .thoughts-cloud {
-    max-width: 100%;
-  }
-
-  .section-empty-shelf.is-js-ready .character-cloud {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-}
-
-/* Mobile */
-@media (max-width: 640px) {
-  .section-empty-shelf.is-js-ready .stage-viewport {
-    min-height: 680px;
-  }
-
-  .section-empty-shelf.is-js-ready .scroll-stage {
-    top: 16px;
-    height: 300px;
-  }
-
-  .section-empty-shelf.is-js-ready .falling-quotes,
-  .section-empty-shelf.is-js-ready .moving-moments,
-  .section-empty-shelf.is-js-ready .notes-cloud,
-  .section-empty-shelf.is-js-ready .thoughts-cloud {
-    grid-template-columns: 1fr;
-  }
-
-  .section-empty-shelf.is-js-ready .character-cloud {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-/* ============================================================================
-   SECTION 2 — EVIDENCE SIZE BOOST
-   Makes quotes, moments, characters, notes, and thoughts a bit bigger.
-   ============================================================================ */
-
-/* Quotes */
-.section-empty-shelf.is-js-ready .falling-quote {
-  padding: 1.25rem 1.45rem;
-  font-size: 1.16rem;
-}
-
-/* Moments */
-.section-empty-shelf.is-js-ready .moment-frame {
-  padding: 0.72rem;
-}
-
-.section-empty-shelf.is-js-ready .moment-frame figcaption {
-  font-size: 0.86rem;
-}
-
-/* Characters */
-.section-empty-shelf.is-js-ready .character-cloud {
-  grid-template-columns: repeat(7, minmax(96px, 1fr));
-  max-width: 980px;
-  gap: 0.82rem;
-}
-
-.section-empty-shelf.is-js-ready .character-name figcaption {
-  font-size: 0.76rem;
-  padding: 0.58rem 0.62rem;
-}
-
-/* Notes */
-.section-empty-shelf.is-js-ready .note-card {
-  min-height: 150px;
-  padding: 1.2rem;
-  font-size: 0.98rem;
-}
-
-/* Thoughts */
-.section-empty-shelf.is-js-ready .thoughts-cloud {
-  max-width: 940px;
-}
-
-.section-empty-shelf.is-js-ready .thought-card {
-  padding: 1.7rem 1.8rem;
-  font-size: 1.18rem;
-}
-
-/* ============================================================================
-   SECTION 2 — QUOTES + MOMENTS FIX
-   Paste this at the very bottom of section-2.css
-   ============================================================================ */
-
-#section-2-empty-shelf,
-.section-empty-shelf {
-  --section-2-row-width: 980px;
-  --section-2-evidence-width: 1120px;
-  --s2-panel-bg: rgba(10, 14, 28, 0.96);
-  --s2-panel-bg-2: rgba(16, 22, 36, 0.98);
-  --s2-panel-border: rgba(184, 192, 255, 0.22);
-  --s2-panel-border-strong: rgba(184, 192, 255, 0.42);
-  --s2-text: #f4f1ff;
-  --s2-text-mid: #c5c9df;
-  --s2-text-faint: #858ba5;
-  --s2-glow: rgba(124, 140, 255, 0.18);
-
-  overflow: hidden;
-}
-
-/* Fix the visible “Quotes saved to Vagabond” / “Moments saved...” text. */
-.sr-only,
-#section-2-status {
-  position: absolute !important;
-  width: 1px !important;
-  height: 1px !important;
-  padding: 0 !important;
-  margin: -1px !important;
-  overflow: hidden !important;
-  clip: rect(0 0 0 0) !important;
-  clip-path: inset(50%) !important;
-  white-space: nowrap !important;
-  border: 0 !important;
-}
-
-/* More vertical room for the evidence above the card. */
-.section-empty-shelf.is-js-ready .stage-viewport {
-  position: relative;
-  min-height: clamp(760px, 88vh, 920px);
-  overflow: visible;
-}
-
-.section-empty-shelf.is-js-ready .card-wrap {
-  position: relative;
-  z-index: 12;
-  margin-inline: auto;
-  will-change: transform, opacity;
-}
-
-.section-empty-shelf.is-js-ready .scroll-stage {
-  position: absolute;
-  left: 50%;
-  top: clamp(0px, 1.5vh, 18px);
-  width: min(var(--section-2-evidence-width), 96vw);
-  height: clamp(430px, 45vh, 540px);
-  z-index: 20;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  overflow: visible;
-  transform: translateX(-50%);
-}
-
-.section-empty-shelf.is-js-ready .scroll-stage.is-active {
-  visibility: visible;
-  pointer-events: auto;
-}
-
-/* Shared evidence object glow */
-.falling-quotes,
-.moving-moments {
-  position: relative;
-  isolation: isolate;
-}
-
-.falling-quotes::before,
-.moving-moments::before {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  z-index: -1;
-  width: min(1120px, 108%);
-  height: calc(100% + 160px);
-  border-radius: 999px;
-  pointer-events: none;
-  background:
-    radial-gradient(
-      ellipse at center,
-      rgba(124, 140, 255, 0.22),
-      rgba(155, 124, 255, 0.11) 45%,
-      transparent 76%
-    );
-  filter: blur(56px);
-  opacity: 0.9;
-  transform: translate(-50%, -50%);
-}
-
-/* ============================================================================
-   QUOTES — 9 cards, bigger area, hover expands to top layer
-   ============================================================================ */
-
-.section-empty-shelf.is-js-ready .falling-quotes {
-  width: min(var(--section-2-evidence-width), 96vw);
-  max-width: 1120px;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(230px, 1fr));
-  gap: clamp(0.7rem, 1vw, 1rem);
-  align-items: start;
-  overflow: visible;
-}
-
-.falling-quote {
-  position: relative;
-  z-index: 1;
-  min-height: 104px;
-  max-height: 132px;
-  margin: 0;
-  padding: 1.05rem 1.1rem 1rem 1.25rem;
-  overflow: hidden;
-
-  background:
-    linear-gradient(
-      180deg,
-      var(--s2-panel-bg-2) 0%,
-      var(--s2-panel-bg) 100%
-    );
-  border: 1px solid var(--s2-panel-border);
-  border-radius: 18px;
-  box-shadow:
-    0 22px 50px rgba(0, 0, 0, 0.40),
-    0 0 32px rgba(124, 140, 255, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.075);
-
-  font-family: var(--font-display, Georgia, serif);
-  font-size: clamp(0.78rem, 0.84vw, 0.95rem);
-  line-height: 1.38;
-  color: var(--s2-text-mid);
-
-  cursor: default;
-  transform-origin: center center;
-  transition:
-    transform 220ms ease,
-    max-height 220ms ease,
-    box-shadow 220ms ease,
-    border-color 220ms ease,
-    color 220ms ease,
-    background 220ms ease;
-}
-
-.falling-quote::before {
-  content: attr(data-quote-number);
-  display: block;
-  margin-bottom: 0.38rem;
-
-  font-family: var(--font-body, system-ui, sans-serif);
-  font-size: 0.62rem;
-  font-weight: 850;
-  letter-spacing: 0.14em;
-  color: rgba(184, 192, 255, 0.56);
-}
-
-.falling-quote:hover,
-.falling-quote:focus-visible,
-.falling-quote.is-top-layer {
-  z-index: 99;
-  max-height: 310px;
-  overflow: auto;
   color: var(--s2-text);
-  border-color: var(--s2-panel-border-strong);
+  border-color: rgba(184, 192, 255, 0.54);
+
   background:
     linear-gradient(
       180deg,
-      rgba(23, 30, 52, 0.99) 0%,
-      rgba(11, 16, 32, 0.99) 100%
+      rgba(124, 140, 255, 0.32),
+      rgba(124, 140, 255, 0.16)
     );
-  box-shadow:
-    0 36px 82px rgba(0, 0, 0, 0.58),
-    0 0 58px rgba(155, 124, 255, 0.18),
-    inset 0 1px 0 rgba(255, 255, 255, 0.11);
 }
 
-.falling-quote:focus-visible {
-  outline: 2px solid rgba(184, 192, 255, 0.65);
-  outline-offset: 4px;
-}
-
-/* Small offset so the 9 cards feel alive, not like a plain table. */
-.quote-2,
-.quote-5,
-.quote-8 {
-  margin-top: 0.7rem;
-}
-
-.quote-3,
-.quote-6,
-.quote-9 {
-  margin-top: 0.25rem;
-}
 
 /* ============================================================================
-   MOMENTS — 8 cards: 3 square, 1 horizontal, 4 vertical manga panels
+   12. SHARED EVIDENCE STYLES
+   ----------------------------------------------------------------------------
+   These rules apply to the evidence groups above the card.
+
+   The evidence width is larger than the card width, which fixes the empty-side
+   problem from your screenshots.
    ============================================================================ */
 
-.section-empty-shelf.is-js-ready .moving-moments {
-  width: min(var(--section-2-evidence-width), 96vw);
-  height: clamp(430px, 45vh, 540px);
-  max-width: 1120px;
-  display: block;
-  overflow: visible;
-}
-
-.moment-frame {
-  position: absolute;
-  z-index: 1;
-  left: var(--x);
-  top: var(--y);
-  width: var(--w);
-  aspect-ratio: var(--ratio);
-  margin: 0;
-  padding: 0.55rem;
-
-  background:
-    linear-gradient(
-      180deg,
-      var(--s2-panel-bg-2) 0%,
-      var(--s2-panel-bg) 100%
-    );
-  border: 1px solid var(--s2-panel-border);
-  border-radius: 18px;
-  box-shadow:
-    0 24px 54px rgba(0, 0, 0, 0.42),
-    0 0 38px rgba(124, 140, 255, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.075);
-
-  cursor: default;
-  overflow: hidden;
-  transform-origin: center center;
-  transition:
-    transform 240ms ease,
-    box-shadow 240ms ease,
-    border-color 240ms ease,
-    filter 240ms ease;
-}
-
-.moment-frame img {
-  width: 100%;
-  height: calc(100% - 2rem);
-  display: block;
-  object-fit: cover;
-  border-radius: 12px;
-
-  background: rgba(255, 255, 255, 0.04);
-  color: transparent;
-  font-size: 0;
-}
-
-.moment-frame figcaption {
-  height: 1.65rem;
-  margin: 0.42rem 0 0;
-  padding: 0 0.1rem;
-
-  font-family: var(--font-body, system-ui, sans-serif);
-  font-size: clamp(0.68rem, 0.78vw, 0.82rem);
-  font-weight: 750;
-  line-height: 1.1;
-  color: var(--s2-text-faint);
-  overflow: hidden;
-}
-
-.moment-square {
-  --ratio: 1 / 1;
-}
-
-.moment-wide {
-  --ratio: 16 / 9;
-}
-
-.moment-vertical {
-  --ratio: 2 / 3;
-}
-
-/* 3 square cards */
-.moment-frame-1 {
-  --x: 2%;
-  --y: 7%;
-  --w: 17%;
-}
-
-.moment-frame-2 {
-  --x: 15.5%;
-  --y: 25%;
-  --w: 16%;
-}
-
-.moment-frame-3 {
-  --x: 29%;
-  --y: 8%;
-  --w: 17%;
-}
-
-/* 1 horizontal card */
-.moment-frame-4 {
-  --x: 29%;
-  --y: 57%;
-  --w: 32%;
-}
-
-/* 4 vertical manga-panel cards */
-.moment-frame-5 {
-  --x: 49%;
-  --y: 4%;
-  --w: 14%;
-}
-
-.moment-frame-6 {
-  --x: 62%;
-  --y: 18%;
-  --w: 14%;
-}
-
-.moment-frame-7 {
-  --x: 75%;
-  --y: 6%;
-  --w: 14%;
-}
-
-.moment-frame-8 {
-  --x: 86%;
-  --y: 23%;
-  --w: 14%;
-}
-
-/* Hover/focus brings the hovered panel to the front. */
-.moment-frame:hover,
-.moment-frame:focus-visible,
-.moment-frame.is-top-layer {
-  z-index: 99;
-  border-color: var(--s2-panel-border-strong);
-  box-shadow:
-    0 38px 86px rgba(0, 0, 0, 0.60),
-    0 0 62px rgba(155, 124, 255, 0.20),
-    inset 0 1px 0 rgba(255, 255, 255, 0.12);
-  filter: saturate(1.08) contrast(1.05);
-}
-
-.moment-frame:hover img,
-.moment-frame:focus-visible img,
-.moment-frame.is-top-layer img {
-  transform: scale(1.025);
-}
-
-.moment-frame:focus-visible {
-  outline: 2px solid rgba(184, 192, 255, 0.65);
-  outline-offset: 4px;
-}
-
-/* Keep the button tray above the card surface, but below active evidence hover cards. */
-.media-row-details {
+.falling-quotes,
+.moving-moments,
+.character-cloud,
+.notes-cloud,
+.thoughts-cloud {
   position: relative;
-  z-index: 3;
-}
-
-/* Temporary flying button created by JS */
-.depth-button-proxy {
-  position: fixed;
-  left: 0;
-  top: 0;
-  z-index: 999;
-  min-height: 38px;
-  padding: 0 0.95rem;
-  box-sizing: border-box;
-
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  background:
-    linear-gradient(
-      180deg,
-      rgba(16, 22, 36, 0.98),
-      rgba(10, 14, 28, 0.98)
-    );
-  border: 1px solid rgba(184, 192, 255, 0.34);
-  border-radius: 999px;
-  box-shadow:
-    0 18px 38px rgba(0, 0, 0, 0.48),
-    0 0 28px rgba(124, 140, 255, 0.16),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
-
-  font-family: var(--font-body, system-ui, sans-serif);
-  font-size: 0.8rem;
-  font-weight: 800;
-  color: var(--s2-text);
-
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  white-space: nowrap;
-  transform-style: preserve-3d;
-}
-
-/* Responsive layout */
-@media (max-width: 900px) {
-  .section-empty-shelf.is-js-ready .stage-viewport {
-    min-height: 840px;
-  }
-
-  .section-empty-shelf.is-js-ready .scroll-stage {
-    height: 480px;
-  }
-
-  .section-empty-shelf.is-js-ready .falling-quotes {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .falling-quote {
-    min-height: 110px;
-  }
-
-  .section-empty-shelf.is-js-ready .moving-moments {
-    height: 500px;
-  }
-
-  .moment-frame-1 { --x: 2%; --y: 4%; --w: 24%; }
-  .moment-frame-2 { --x: 24%; --y: 15%; --w: 23%; }
-  .moment-frame-3 { --x: 46%; --y: 5%; --w: 24%; }
-  .moment-frame-4 { --x: 8%; --y: 58%; --w: 46%; }
-  .moment-frame-5 { --x: 67%; --y: 7%; --w: 18%; }
-  .moment-frame-6 { --x: 78%; --y: 24%; --w: 18%; }
-  .moment-frame-7 { --x: 55%; --y: 42%; --w: 18%; }
-  .moment-frame-8 { --x: 73%; --y: 55%; --w: 18%; }
-}
-
-@media (max-width: 640px) {
-  .section-empty-shelf.is-js-ready .stage-viewport {
-    min-height: 980px;
-  }
-
-  .section-empty-shelf.is-js-ready .scroll-stage {
-    width: 100%;
-    height: 560px;
-  }
-
-  .section-empty-shelf.is-js-ready .falling-quotes {
-    grid-template-columns: 1fr;
-    max-height: 560px;
-    overflow-y: auto;
-    padding-right: 0.3rem;
-  }
-
-  .falling-quote {
-    max-height: none;
-  }
-
-  .section-empty-shelf.is-js-ready .moving-moments {
-    height: 560px;
-  }
-
-  .moment-frame {
-    padding: 0.45rem;
-  }
-
-  .moment-frame figcaption {
-    font-size: 0.68rem;
-  }
-
-  .moment-frame-1 { --x: 1%; --y: 2%; --w: 31%; }
-  .moment-frame-2 { --x: 34%; --y: 3%; --w: 31%; }
-  .moment-frame-3 { --x: 67%; --y: 2%; --w: 31%; }
-  .moment-frame-4 { --x: 6%; --y: 37%; --w: 58%; }
-  .moment-frame-5 { --x: 66%; --y: 31%; --w: 30%; }
-  .moment-frame-6 { --x: 2%; --y: 64%; --w: 29%; }
-  .moment-frame-7 { --x: 34%; --y: 64%; --w: 29%; }
-  .moment-frame-8 { --x: 67%; --y: 64%; --w: 29%; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .falling-quote,
-  .moment-frame,
-  .moment-frame img {
-    transition: none !important;
-  }
-
-  .falling-quote:hover,
-  .falling-quote:focus-visible,
-  .falling-quote.is-top-layer,
-  .moment-frame:hover,
-  .moment-frame:focus-visible,
-  .moment-frame.is-top-layer {
-    transform: none !important;
-  }
-}
-
-/* ============================================================================
-   SECTION 2 — FINAL WIDE EVIDENCE LAYOUT
-   Quotes: 9-card mosaic
-   Moments: 8-card full-width manga spread
-   Characters: large full-width portrait spread
-   ============================================================================ */
-
-#section-2-empty-shelf,
-.section-empty-shelf {
-  --section-2-row-width: 980px;
-  --section-2-evidence-width: min(1540px, calc(100vw - clamp(32px, 5vw, 96px)));
-
-  --s2-panel-bg: rgba(8, 12, 26, 0.96);
-  --s2-panel-bg-2: rgba(15, 20, 36, 0.98);
-  --s2-panel-border: rgba(184, 192, 255, 0.22);
-  --s2-panel-border-strong: rgba(184, 192, 255, 0.46);
-  --s2-text: #f4f1ff;
-  --s2-text-mid: #c7cbe0;
-  --s2-text-faint: #878da7;
-  --s2-glow: rgba(124, 140, 255, 0.2);
-
-  overflow: hidden;
-}
-
-/* Hide status text visually. It stays available to screen readers. */
-.sr-only,
-#section-2-status {
-  position: absolute !important;
-  width: 1px !important;
-  height: 1px !important;
-  padding: 0 !important;
-  margin: -1px !important;
-  overflow: hidden !important;
-  clip: rect(0 0 0 0) !important;
-  clip-path: inset(50%) !important;
-  white-space: nowrap !important;
-  border: 0 !important;
-}
-
-/* Bigger pinned space so evidence can breathe above the card. */
-.section-empty-shelf.is-js-ready .stage-viewport {
-  position: relative;
-  min-height: clamp(790px, 92vh, 960px);
-  overflow: visible;
-}
-
-.section-empty-shelf.is-js-ready .card-wrap {
-  position: relative;
-  z-index: 12;
-  width: min(var(--section-2-row-width), 100%);
-  margin-inline: auto;
-  will-change: transform, opacity;
-}
-
-/* Every evidence stage uses almost the whole browser width. */
-.section-empty-shelf.is-js-ready .scroll-stage {
-  position: absolute;
-  left: 50%;
-  top: clamp(72px, 10vh, 118px);
-  z-index: 20;
+  isolation: isolate;
 
   width: var(--section-2-evidence-width);
-  height: clamp(430px, 50vh, 545px);
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  overflow: visible;
-
-  transform: translateX(-50%);
+  max-width: 1540px;
+  margin-inline: auto;
 }
 
-.section-empty-shelf.is-js-ready .scroll-stage.is-active {
-  visibility: visible;
-  pointer-events: auto;
-}
-
-/* Shared atmospheric glow for evidence groups. */
-.falling-quotes,
-.moving-moments,
-.character-cloud,
-.notes-cloud,
-.thoughts-cloud {
-  position: relative;
-  isolation: isolate;
-}
-
+/* One shared glow behind evidence. */
 .falling-quotes::before,
 .moving-moments::before,
 .character-cloud::before,
@@ -4168,26 +1021,32 @@ body {
   transform: translate(-50%, -50%);
 }
 
+
 /* ============================================================================
-   QUOTES — 9-CARD MOSAIC
+   13. QUOTES — 9-CARD MOSAIC
+   ----------------------------------------------------------------------------
+   .falling-quotes:
+   12-column mosaic. Long quotes get bigger cells. Short quotes get smaller
+   cells. This uses the side space instead of forcing everything into the same
+   tiny 3-column grid.
+
+   .falling-quote:
+   The actual quote card. No max-height. No clipping. Text should fit naturally.
    ============================================================================ */
 
 .section-empty-shelf.is-js-ready .falling-quotes {
-  width: var(--section-2-evidence-width);
-  max-width: 1540px;
-
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
-  grid-template-rows: repeat(5, minmax(68px, auto));
-  gap: clamp(0.55rem, 0.8vw, 0.85rem);
+  grid-template-rows: repeat(5, minmax(84px, auto));
+  gap: clamp(0.6rem, 0.78vw, 0.9rem);
 
   align-items: stretch;
   overflow: visible;
 }
 
 .falling-quote {
-  --quote-size: clamp(0.72rem, 0.72vw, 0.9rem);
-  --quote-leading: 1.26;
+  --quote-size: clamp(0.66rem, 0.68vw, 0.86rem);
+  --quote-leading: 1.24;
 
   position: relative;
   z-index: 1;
@@ -4195,7 +1054,9 @@ body {
   height: 100%;
   min-height: 0;
   margin: 0;
-  padding: clamp(0.78rem, 0.82vw, 1rem) clamp(0.9rem, 1vw, 1.15rem);
+  padding:
+    clamp(0.78rem, 0.82vw, 1rem)
+    clamp(0.9rem, 1vw, 1.15rem);
 
   display: flex;
   flex-direction: column;
@@ -4206,11 +1067,11 @@ body {
   background:
     linear-gradient(
       180deg,
-      var(--s2-panel-bg-2) 0%,
+      var(--s2-panel-bg-strong) 0%,
       var(--s2-panel-bg) 100%
     );
 
-  border: 1px solid var(--s2-panel-border);
+  border: 1px solid var(--s2-border);
   border-radius: clamp(16px, 1.1vw, 22px);
 
   box-shadow:
@@ -4227,7 +1088,6 @@ body {
   transform-origin: center center;
 
   transition:
-    transform 220ms ease,
     box-shadow 220ms ease,
     border-color 220ms ease,
     color 220ms ease,
@@ -4237,6 +1097,7 @@ body {
 
 .falling-quote::before {
   content: attr(data-quote-number);
+
   display: block;
   margin-bottom: 0.34rem;
 
@@ -4248,82 +1109,13 @@ body {
   color: rgba(184, 192, 255, 0.58);
 }
 
-.quote-text {
-  display: block;
-}
-
-.quote-short {
-  --quote-size: clamp(0.82rem, 0.82vw, 1rem);
-  --quote-leading: 1.3;
-}
-
-.quote-medium {
-  --quote-size: clamp(0.76rem, 0.76vw, 0.92rem);
-  --quote-leading: 1.28;
-}
-
-.quote-long {
-  --quote-size: clamp(0.66rem, 0.68vw, 0.82rem);
-  --quote-leading: 1.24;
-}
-
-.quote-xl {
-  --quote-size: clamp(0.6rem, 0.64vw, 0.76rem);
-  --quote-leading: 1.22;
-}
-
-/* Custom quote placement. Long quotes get bigger areas. */
-.quote-1 {
-  grid-column: 1 / span 4;
-  grid-row: 1 / span 2;
-}
-
-.quote-2 {
-  grid-column: 5 / span 4;
-  grid-row: 1 / span 2;
-}
-
-.quote-3 {
-  grid-column: 9 / span 4;
-  grid-row: 1 / span 3;
-}
-
-.quote-4 {
-  grid-column: 1 / span 3;
-  grid-row: 3 / span 1;
-}
-
-.quote-5 {
-  grid-column: 4 / span 5;
-  grid-row: 3 / span 2;
-}
-
-.quote-6 {
-  grid-column: 9 / span 2;
-  grid-row: 4 / span 1;
-}
-
-.quote-7 {
-  grid-column: 11 / span 2;
-  grid-row: 4 / span 2;
-}
-
-.quote-8 {
-  grid-column: 1 / span 5;
-  grid-row: 5 / span 1;
-}
-
-.quote-9 {
-  grid-column: 6 / span 5;
-  grid-row: 5 / span 1;
-}
-
 .falling-quote:hover,
 .falling-quote:focus-visible,
 .falling-quote.is-top-layer {
   z-index: 999;
+
   color: var(--s2-text);
-  border-color: var(--s2-panel-border-strong);
+  border-color: var(--s2-border-strong);
 
   background:
     linear-gradient(
@@ -4345,14 +1137,94 @@ body {
   outline-offset: 4px;
 }
 
+/* Span helper classes for quote text length. */
+.quote-text {
+  display: block;
+}
+
+.quote-short {
+  --quote-size: clamp(0.82rem, 0.82vw, 1rem);
+  --quote-leading: 1.3;
+}
+
+.quote-medium {
+  --quote-size: clamp(0.74rem, 0.74vw, 0.92rem);
+  --quote-leading: 1.28;
+}
+
+.quote-long {
+  --quote-size: clamp(0.64rem, 0.66vw, 0.82rem);
+  --quote-leading: 1.24;
+}
+
+.quote-xl {
+  --quote-size: clamp(0.58rem, 0.62vw, 0.76rem);
+  --quote-leading: 1.22;
+}
+
+/* Quote mosaic placement. */
+.quote-1 {
+  grid-column: 1 / span 4;
+  grid-row: 1 / span 2;
+}
+
+.quote-2 {
+  grid-column: 5 / span 4;
+  grid-row: 1 / span 2;
+}
+
+.quote-3 {
+  grid-column: 9 / span 4;
+  grid-row: 1 / span 3;
+}
+
+.quote-4 {
+  grid-column: 1 / span 2;
+  grid-row: 3 / span 1;
+}
+
+.quote-5 {
+  grid-column: 3 / span 5;
+  grid-row: 3 / span 2;
+}
+
+.quote-6 {
+  grid-column: 8 / span 2;
+  grid-row: 3 / span 1;
+}
+
+.quote-7 {
+  grid-column: 10 / span 3;
+  grid-row: 4 / span 2;
+}
+
+.quote-8 {
+  grid-column: 1 / span 5;
+  grid-row: 5 / span 1;
+}
+
+.quote-9 {
+  grid-column: 6 / span 4;
+  grid-row: 5 / span 1;
+}
+
+
 /* ============================================================================
-   MOMENTS — 8 BIG CARDS USING FULL WIDTH
+   14. MOMENTS — 8 BIG MANGA PANELS
+   ----------------------------------------------------------------------------
+   .moving-moments:
+   Uses absolute positioning so the panels can overlap slightly and fill the
+   available width like a manga spread.
+
+   Required layout:
+   - 3 square cards
+   - 1 horizontal card
+   - 4 vertical manga-panel cards
    ============================================================================ */
 
 .section-empty-shelf.is-js-ready .moving-moments {
-  width: var(--section-2-evidence-width);
   height: clamp(445px, 52vh, 560px);
-  max-width: 1540px;
+
   display: block;
   overflow: visible;
 }
@@ -4363,20 +1235,23 @@ body {
 
   left: var(--x);
   top: var(--y);
+
   width: var(--w);
   aspect-ratio: var(--ratio);
 
   margin: 0;
   padding: clamp(0.45rem, 0.65vw, 0.68rem);
 
+  overflow: hidden;
+
   background:
     linear-gradient(
       180deg,
-      var(--s2-panel-bg-2) 0%,
+      var(--s2-panel-bg-strong) 0%,
       var(--s2-panel-bg) 100%
     );
 
-  border: 1px solid var(--s2-panel-border);
+  border: 1px solid var(--s2-border);
   border-radius: clamp(16px, 1vw, 22px);
 
   box-shadow:
@@ -4385,11 +1260,9 @@ body {
     inset 0 1px 0 rgba(255, 255, 255, 0.08);
 
   cursor: default;
-  overflow: hidden;
   transform-origin: center center;
 
   transition:
-    transform 240ms ease,
     box-shadow 240ms ease,
     border-color 240ms ease,
     filter 240ms ease;
@@ -4401,9 +1274,11 @@ body {
 
   display: block;
   object-fit: cover;
+
   border-radius: clamp(11px, 0.75vw, 15px);
 
   background: rgba(255, 255, 255, 0.045);
+
   color: transparent;
   font-size: 0;
 
@@ -4421,9 +1296,36 @@ body {
   font-size: clamp(0.68rem, 0.74vw, 0.86rem);
   font-weight: 780;
   line-height: 1.12;
-  color: var(--s2-text-faint);
+  color: var(--s2-text-muted);
 
   overflow: hidden;
+}
+
+.moment-frame:hover,
+.moment-frame:focus-visible,
+.moment-frame.is-top-layer {
+  z-index: 999;
+
+  border-color: var(--s2-border-strong);
+
+  box-shadow:
+    0 42px 96px rgba(0, 0, 0, 0.66),
+    0 0 70px rgba(155, 124, 255, 0.23),
+    inset 0 1px 0 rgba(255, 255, 255, 0.13);
+
+  filter: saturate(1.08) contrast(1.05);
+}
+
+.moment-frame:hover img,
+.moment-frame:focus-visible img,
+.moment-frame.is-top-layer img {
+  transform: scale(1.025);
+  filter: saturate(1.08) contrast(1.05);
+}
+
+.moment-frame:focus-visible {
+  outline: 2px solid rgba(184, 192, 255, 0.68);
+  outline-offset: 4px;
 }
 
 .moment-square {
@@ -4438,7 +1340,7 @@ body {
   --ratio: 2 / 3;
 }
 
-/* 3 square panels */
+/* Desktop moment placement. */
 .moment-frame-1 {
   --x: 0%;
   --y: 8%;
@@ -4457,14 +1359,12 @@ body {
   --w: 15.5%;
 }
 
-/* 1 wide panel */
 .moment-frame-4 {
   --x: 27%;
   --y: 55%;
   --w: 35%;
 }
 
-/* 4 vertical manga panels */
 .moment-frame-5 {
   --x: 46.5%;
   --y: 4%;
@@ -4489,40 +1389,19 @@ body {
   --w: 13%;
 }
 
-.moment-frame:hover,
-.moment-frame:focus-visible,
-.moment-frame.is-top-layer {
-  z-index: 999;
-  border-color: var(--s2-panel-border-strong);
-
-  box-shadow:
-    0 42px 96px rgba(0, 0, 0, 0.66),
-    0 0 70px rgba(155, 124, 255, 0.23),
-    inset 0 1px 0 rgba(255, 255, 255, 0.13);
-
-  filter: saturate(1.08) contrast(1.05);
-}
-
-.moment-frame:hover img,
-.moment-frame:focus-visible img,
-.moment-frame.is-top-layer img {
-  transform: scale(1.025);
-  filter: saturate(1.08) contrast(1.05);
-}
-
-.moment-frame:focus-visible {
-  outline: 2px solid rgba(184, 192, 255, 0.68);
-  outline-offset: 4px;
-}
 
 /* ============================================================================
-   CHARACTERS — LARGE FULL-WIDTH PORTRAIT SPREAD
+   15. CHARACTERS — LARGE FULL-WIDTH PORTRAITS
+   ----------------------------------------------------------------------------
+   .character-cloud:
+   Uses the same wide stage as moments.
+
+   .character-name:
+   Bigger portrait cards spread across the available width.
    ============================================================================ */
 
 .section-empty-shelf.is-js-ready .character-cloud {
-  width: var(--section-2-evidence-width);
   height: clamp(390px, 47vh, 520px);
-  max-width: 1540px;
 
   display: block;
   overflow: visible;
@@ -4534,20 +1413,23 @@ body {
 
   left: var(--x);
   top: var(--y);
+
   width: var(--w);
   aspect-ratio: 2 / 3;
 
   margin: 0;
   padding: clamp(0.42rem, 0.6vw, 0.65rem);
 
+  overflow: hidden;
+
   background:
     linear-gradient(
       180deg,
-      var(--s2-panel-bg-2) 0%,
+      var(--s2-panel-bg-strong) 0%,
       var(--s2-panel-bg) 100%
     );
 
-  border: 1px solid var(--s2-panel-border);
+  border: 1px solid var(--s2-border);
   border-radius: clamp(16px, 1vw, 22px);
 
   box-shadow:
@@ -4556,11 +1438,9 @@ body {
     inset 0 1px 0 rgba(255, 255, 255, 0.08);
 
   cursor: default;
-  overflow: hidden;
   transform-origin: center center;
 
   transition:
-    transform 240ms ease,
     box-shadow 240ms ease,
     border-color 240ms ease,
     filter 240ms ease;
@@ -4574,7 +1454,9 @@ body {
   object-fit: cover;
 
   border-radius: clamp(10px, 0.75vw, 15px);
+
   background: rgba(255, 255, 255, 0.045);
+
   color: transparent;
   font-size: 0;
 
@@ -4596,6 +1478,34 @@ body {
   overflow: hidden;
 }
 
+.character-name:hover,
+.character-name:focus-visible,
+.character-name.is-top-layer {
+  z-index: 999;
+
+  border-color: var(--s2-border-strong);
+
+  box-shadow:
+    0 42px 96px rgba(0, 0, 0, 0.66),
+    0 0 70px rgba(155, 124, 255, 0.23),
+    inset 0 1px 0 rgba(255, 255, 255, 0.13);
+
+  filter: saturate(1.08) contrast(1.05);
+}
+
+.character-name:hover img,
+.character-name:focus-visible img,
+.character-name.is-top-layer img {
+  transform: scale(1.025);
+  filter: saturate(1.08) contrast(1.05);
+}
+
+.character-name:focus-visible {
+  outline: 2px solid rgba(184, 192, 255, 0.68);
+  outline-offset: 4px;
+}
+
+/* Desktop character placement. */
 .character-1 {
   --x: 0%;
   --y: 9%;
@@ -4638,47 +1548,202 @@ body {
   --w: 14.8%;
 }
 
-.character-name:hover,
-.character-name:focus-visible,
-.character-name.is-top-layer {
-  z-index: 999;
-  border-color: var(--s2-panel-border-strong);
+
+/* ============================================================================
+   16. NOTES
+   ----------------------------------------------------------------------------
+   .notes-cloud:
+   Simple wide grid for note cards.
+
+   .note-card:
+   Sticky-note style evidence card.
+   ============================================================================ */
+
+.notes-cloud {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(220px, 1fr));
+  gap: clamp(0.8rem, 1vw, 1.1rem);
+}
+
+.note-card {
+  position: relative;
+  z-index: 1;
+
+  min-height: 150px;
+  margin: 0;
+  padding: 1.05rem;
+
+  background:
+    linear-gradient(
+      180deg,
+      var(--s2-panel-bg-strong) 0%,
+      var(--s2-panel-bg) 100%
+    );
+
+  border: 1px solid var(--s2-border);
+  border-radius: 16px;
 
   box-shadow:
-    0 42px 96px rgba(0, 0, 0, 0.66),
-    0 0 70px rgba(155, 124, 255, 0.23),
-    inset 0 1px 0 rgba(255, 255, 255, 0.13);
+    0 22px 52px rgba(0, 0, 0, 0.42),
+    0 0 34px rgba(124, 140, 255, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
 
-  filter: saturate(1.08) contrast(1.05);
+  font-family: var(--font-body, system-ui, sans-serif);
+  font-size: 0.94rem;
+  line-height: 1.6;
+  color: var(--s2-text-mid);
+
+  cursor: default;
+  transform-origin: center center;
+
+  transition:
+    box-shadow 220ms ease,
+    border-color 220ms ease,
+    color 220ms ease,
+    background 220ms ease,
+    filter 220ms ease;
 }
 
-.character-name:hover img,
-.character-name:focus-visible img,
-.character-name.is-top-layer img {
-  transform: scale(1.025);
-  filter: saturate(1.08) contrast(1.05);
+.note-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 18px;
+  right: 18px;
+
+  height: 6px;
+  border-radius: 0 0 999px 999px;
+
+  background: rgba(124, 140, 255, 0.3);
+
+  transition:
+    background 220ms ease,
+    height 220ms ease;
 }
 
-.character-name:focus-visible {
+.note-card:hover,
+.note-card:focus-visible,
+.note-card.is-top-layer {
+  z-index: 999;
+
+  color: var(--s2-text);
+  border-color: var(--s2-border-strong);
+
+  box-shadow:
+    0 36px 82px rgba(0, 0, 0, 0.58),
+    0 0 58px rgba(155, 124, 255, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.11);
+
+  filter: saturate(1.06) contrast(1.04);
+}
+
+.note-card:hover::before,
+.note-card:focus-visible::before,
+.note-card.is-top-layer::before {
+  height: 8px;
+  background: rgba(124, 140, 255, 0.45);
+}
+
+.note-card:focus-visible {
   outline: 2px solid rgba(184, 192, 255, 0.68);
   outline-offset: 4px;
 }
 
-/* Make tray stay above card surface, but below hovered evidence cards. */
-.media-row-details {
-  position: relative;
-  z-index: 3;
+
+/* ============================================================================
+   17. THOUGHTS
+   ----------------------------------------------------------------------------
+   .thoughts-cloud:
+   Two large journal-style cards.
+
+   .thought-card:
+   Calmer than quotes/moments because this is the deepest evidence layer.
+   ============================================================================ */
+
+.thoughts-cloud {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(320px, 1fr));
+  gap: clamp(0.9rem, 1.2vw, 1.25rem);
 }
 
-/* Flying button proxy. */
+.thought-card {
+  position: relative;
+  z-index: 1;
+
+  min-height: 180px;
+  margin: 0;
+  padding: 1.5rem 1.6rem;
+
+  background:
+    linear-gradient(
+      180deg,
+      var(--s2-panel-bg-strong) 0%,
+      var(--s2-panel-bg) 100%
+    );
+
+  border: 1px solid var(--s2-border);
+  border-radius: 24px;
+
+  box-shadow:
+    0 26px 62px rgba(0, 0, 0, 0.44),
+    0 0 38px rgba(124, 140, 255, 0.09),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+
+  font-family: var(--font-display, Georgia, serif);
+  font-size: clamp(1rem, 1vw, 1.12rem);
+  line-height: 1.56;
+  color: var(--s2-text-mid);
+
+  cursor: default;
+  transform-origin: center center;
+
+  transition:
+    box-shadow 240ms ease,
+    border-color 240ms ease,
+    color 240ms ease,
+    background 240ms ease,
+    filter 240ms ease;
+}
+
+.thought-card:hover,
+.thought-card:focus-visible,
+.thought-card.is-top-layer {
+  z-index: 999;
+
+  color: var(--s2-text);
+  border-color: var(--s2-border-strong);
+
+  box-shadow:
+    0 38px 88px rgba(0, 0, 0, 0.62),
+    0 0 64px rgba(155, 124, 255, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+
+  filter: saturate(1.04) contrast(1.03);
+}
+
+.thought-card:focus-visible {
+  outline: 2px solid rgba(184, 192, 255, 0.68);
+  outline-offset: 4px;
+}
+
+
+/* ============================================================================
+   18. FLYING BUTTON PROXY
+   ----------------------------------------------------------------------------
+   .depth-button-proxy:
+   JS creates this temporary button while evidence gathers into the tray.
+   It is fixed to the viewport so it can fly from the evidence area to the real
+   button position.
+   ============================================================================ */
+
 .depth-button-proxy {
   position: fixed;
   left: 0;
   top: 0;
   z-index: 9999;
 
-  min-height: 38px;
-  padding: 0 0.95rem;
+  min-height: 40px;
+  padding: 0 1rem;
   box-sizing: border-box;
 
   display: inline-flex;
@@ -4702,7 +1767,7 @@ body {
 
   font-family: var(--font-body, system-ui, sans-serif);
   font-size: 0.8rem;
-  font-weight: 800;
+  font-weight: 830;
   color: var(--s2-text);
 
   opacity: 0;
@@ -4713,8 +1778,16 @@ body {
   transform-style: preserve-3d;
 }
 
+
 /* ============================================================================
-   RESPONSIVE
+   19. TABLET RESPONSIVE
+   ----------------------------------------------------------------------------
+   This is the only place where placement classes repeat.
+
+   Reason:
+   Absolute mosaic layouts need different coordinates on smaller screens.
+   The base classes stay clean above; this area only changes responsive
+   positions and widths.
    ============================================================================ */
 
 @media (max-width: 1100px) {
@@ -4729,60 +1802,262 @@ body {
 
   .section-empty-shelf.is-js-ready .falling-quotes {
     grid-template-columns: repeat(6, minmax(0, 1fr));
-    grid-template-rows: repeat(7, minmax(66px, auto));
+    grid-template-rows: repeat(7, minmax(76px, auto));
   }
 
-  .quote-1 { grid-column: 1 / span 3; grid-row: 1 / span 2; }
-  .quote-2 { grid-column: 4 / span 3; grid-row: 1 / span 2; }
-  .quote-3 { grid-column: 1 / span 4; grid-row: 3 / span 3; }
-  .quote-4 { grid-column: 5 / span 2; grid-row: 3 / span 1; }
-  .quote-5 { grid-column: 5 / span 2; grid-row: 4 / span 2; }
-  .quote-6 { grid-column: 1 / span 2; grid-row: 6 / span 1; }
-  .quote-7 { grid-column: 3 / span 2; grid-row: 6 / span 2; }
-  .quote-8 { grid-column: 5 / span 2; grid-row: 6 / span 1; }
-  .quote-9 { grid-column: 5 / span 2; grid-row: 7 / span 1; }
+  .quote-1 {
+    grid-column: 1 / span 3;
+    grid-row: 1 / span 2;
+  }
 
-  .moment-frame-1 { --x: 0%; --y: 4%; --w: 23%; }
-  .moment-frame-2 { --x: 21%; --y: 18%; --w: 22%; }
-  .moment-frame-3 { --x: 42%; --y: 5%; --w: 23%; }
-  .moment-frame-4 { --x: 4%; --y: 58%; --w: 48%; }
-  .moment-frame-5 { --x: 64%; --y: 5%; --w: 17%; }
-  .moment-frame-6 { --x: 79%; --y: 20%; --w: 17%; }
-  .moment-frame-7 { --x: 55%; --y: 42%; --w: 17%; }
-  .moment-frame-8 { --x: 73%; --y: 55%; --w: 17%; }
+  .quote-2 {
+    grid-column: 4 / span 3;
+    grid-row: 1 / span 2;
+  }
 
-  .character-1 { --x: 0%; --y: 7%; --w: 21%; }
-  .character-2 { --x: 18%; --y: 17%; --w: 19%; }
-  .character-3 { --x: 34%; --y: 10%; --w: 19%; }
-  .character-4 { --x: 50%; --y: 6%; --w: 20%; }
-  .character-5 { --x: 66%; --y: 16%; --w: 19%; }
-  .character-6 { --x: 3%; --y: 56%; --w: 18%; }
-  .character-7 { --x: 78%; --y: 52%; --w: 18%; }
+  .quote-3 {
+    grid-column: 1 / span 4;
+    grid-row: 3 / span 3;
+  }
+
+  .quote-4 {
+    grid-column: 5 / span 2;
+    grid-row: 3 / span 1;
+  }
+
+  .quote-5 {
+    grid-column: 5 / span 2;
+    grid-row: 4 / span 2;
+  }
+
+  .quote-6 {
+    grid-column: 1 / span 2;
+    grid-row: 6 / span 1;
+  }
+
+  .quote-7 {
+    grid-column: 3 / span 2;
+    grid-row: 6 / span 2;
+  }
+
+  .quote-8 {
+    grid-column: 5 / span 2;
+    grid-row: 6 / span 1;
+  }
+
+  .quote-9 {
+    grid-column: 5 / span 2;
+    grid-row: 7 / span 1;
+  }
+
+  .moment-frame-1 {
+    --x: 0%;
+    --y: 4%;
+    --w: 23%;
+  }
+
+  .moment-frame-2 {
+    --x: 21%;
+    --y: 18%;
+    --w: 22%;
+  }
+
+  .moment-frame-3 {
+    --x: 42%;
+    --y: 5%;
+    --w: 23%;
+  }
+
+  .moment-frame-4 {
+    --x: 4%;
+    --y: 58%;
+    --w: 48%;
+  }
+
+  .moment-frame-5 {
+    --x: 64%;
+    --y: 5%;
+    --w: 17%;
+  }
+
+  .moment-frame-6 {
+    --x: 79%;
+    --y: 20%;
+    --w: 17%;
+  }
+
+  .moment-frame-7 {
+    --x: 55%;
+    --y: 42%;
+    --w: 17%;
+  }
+
+  .moment-frame-8 {
+    --x: 73%;
+    --y: 55%;
+    --w: 17%;
+  }
+
+  .character-1 {
+    --x: 0%;
+    --y: 7%;
+    --w: 21%;
+  }
+
+  .character-2 {
+    --x: 18%;
+    --y: 17%;
+    --w: 19%;
+  }
+
+  .character-3 {
+    --x: 34%;
+    --y: 10%;
+    --w: 19%;
+  }
+
+  .character-4 {
+    --x: 50%;
+    --y: 6%;
+    --w: 20%;
+  }
+
+  .character-5 {
+    --x: 66%;
+    --y: 16%;
+    --w: 19%;
+  }
+
+  .character-6 {
+    --x: 3%;
+    --y: 56%;
+    --w: 18%;
+  }
+
+  .character-7 {
+    --x: 78%;
+    --y: 52%;
+    --w: 18%;
+  }
 }
 
+
+/* ============================================================================
+   20. MOBILE RESPONSIVE
+   ----------------------------------------------------------------------------
+   On phones:
+   - Quotes become a vertical scroll list so long text stays readable.
+   - Moment and character cards still use a collage layout.
+   - The main card becomes more compact.
+   ============================================================================ */
+
 @media (max-width: 640px) {
+  #section-2-empty-shelf,
+  .section-empty-shelf {
+    padding: 4rem 1.1rem 4.5rem;
+
+    --section-2-cover-width: 86px;
+    --section-2-card-gap: 0.95rem;
+  }
+
+  .section-2-header {
+    margin-bottom: 2.75rem;
+  }
+
+  .section-2-header h2 {
+    font-size: clamp(2.15rem, 9vw, 2.6rem);
+  }
+
+  .section-2-header p {
+    font-size: 0.95rem;
+  }
+
   .section-empty-shelf.is-js-ready .stage-viewport {
     min-height: 1040px;
   }
 
   .section-empty-shelf.is-js-ready .scroll-stage {
     top: 64px;
+
     width: calc(100vw - 24px);
     height: 620px;
+  }
+
+  .media-library-row {
+    min-height: 300px;
+    padding: 1.15rem 1.2rem;
+
+    grid-template-columns: var(--section-2-cover-width) minmax(0, 1fr) auto;
+    border-radius: 22px;
+  }
+
+  .media-row-cover {
+    min-height: 190px;
+    max-height: 220px;
+    border-radius: 13px;
+  }
+
+  .media-row-info h3 {
+    font-size: 1.38rem;
+  }
+
+  .media-row-info p {
+    display: block;
+    margin: 0.25rem 0 0;
+    font-size: 0.82rem;
+  }
+
+  .media-row-status {
+    margin-left: calc(0.45rem + 3.75rem);
+  }
+
+  .media-row-format span,
+  .media-row-status span {
+    min-height: 30px;
+    padding: 0 0.62rem;
+    font-size: 0.7rem;
+  }
+
+  .media-row-score {
+    min-width: 72px;
+    height: 46px;
+    padding: 0 0.8rem;
+  }
+
+  .media-row-score span {
+    font-size: 1.2rem;
+  }
+
+  .media-row-score::after {
+    display: none;
+  }
+
+  .media-row-details {
+    gap: 0.45rem;
+    margin-top: 1rem;
+    padding-top: 0.9rem;
+  }
+
+  .depth-button {
+    flex: 1 1 calc(50% - 0.45rem);
+    min-height: 40px;
+    padding-inline: 0.75rem;
   }
 
   .section-empty-shelf.is-js-ready .falling-quotes {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
+
     max-height: 620px;
-    overflow-y: auto;
     padding-right: 0.25rem;
+
+    overflow-y: auto;
   }
 
   .falling-quote {
-    min-height: auto;
     height: auto;
+    min-height: auto;
     font-size: 0.82rem;
   }
 
@@ -4791,685 +2066,149 @@ body {
     height: 620px;
   }
 
-  .moment-frame-1 { --x: 0%; --y: 0%; --w: 31%; }
-  .moment-frame-2 { --x: 34%; --y: 0%; --w: 31%; }
-  .moment-frame-3 { --x: 68%; --y: 0%; --w: 31%; }
-  .moment-frame-4 { --x: 4%; --y: 35%; --w: 62%; }
-  .moment-frame-5 { --x: 68%; --y: 33%; --w: 29%; }
-  .moment-frame-6 { --x: 0%; --y: 65%; --w: 29%; }
-  .moment-frame-7 { --x: 35%; --y: 65%; --w: 29%; }
-  .moment-frame-8 { --x: 70%; --y: 65%; --w: 29%; }
+  .moment-frame-1 {
+    --x: 0%;
+    --y: 0%;
+    --w: 31%;
+  }
 
-  .character-1 { --x: 0%; --y: 0%; --w: 31%; }
-  .character-2 { --x: 34%; --y: 0%; --w: 31%; }
-  .character-3 { --x: 68%; --y: 0%; --w: 31%; }
-  .character-4 { --x: 0%; --y: 48%; --w: 31%; }
-  .character-5 { --x: 34%; --y: 48%; --w: 31%; }
-  .character-6 { --x: 68%; --y: 48%; --w: 31%; }
-  .character-7 { --x: 34%; --y: 24%; --w: 31%; }
+  .moment-frame-2 {
+    --x: 34%;
+    --y: 0%;
+    --w: 31%;
+  }
+
+  .moment-frame-3 {
+    --x: 68%;
+    --y: 0%;
+    --w: 31%;
+  }
+
+  .moment-frame-4 {
+    --x: 4%;
+    --y: 35%;
+    --w: 62%;
+  }
+
+  .moment-frame-5 {
+    --x: 68%;
+    --y: 33%;
+    --w: 29%;
+  }
+
+  .moment-frame-6 {
+    --x: 0%;
+    --y: 65%;
+    --w: 29%;
+  }
+
+  .moment-frame-7 {
+    --x: 35%;
+    --y: 65%;
+    --w: 29%;
+  }
+
+  .moment-frame-8 {
+    --x: 70%;
+    --y: 65%;
+    --w: 29%;
+  }
+
+  .character-1 {
+    --x: 0%;
+    --y: 0%;
+    --w: 31%;
+  }
+
+  .character-2 {
+    --x: 34%;
+    --y: 0%;
+    --w: 31%;
+  }
+
+  .character-3 {
+    --x: 68%;
+    --y: 0%;
+    --w: 31%;
+  }
+
+  .character-4 {
+    --x: 0%;
+    --y: 48%;
+    --w: 31%;
+  }
+
+  .character-5 {
+    --x: 34%;
+    --y: 48%;
+    --w: 31%;
+  }
+
+  .character-6 {
+    --x: 68%;
+    --y: 48%;
+    --w: 31%;
+  }
+
+  .character-7 {
+    --x: 34%;
+    --y: 24%;
+    --w: 31%;
+  }
+
+  .notes-cloud,
+  .thoughts-cloud {
+    grid-template-columns: 1fr;
+  }
 }
 
+
+/* ============================================================================
+   21. REDUCED MOTION
+   ----------------------------------------------------------------------------
+   Removes decorative movement for users who prefer reduced motion.
+   The content still works; it just does not animate heavily.
+   ============================================================================ */
+
 @media (prefers-reduced-motion: reduce) {
+  .card-wrap::before,
+  .media-library-row,
+  .media-library-row::before,
+  .media-row-cover,
+  .media-row-cover::after,
+  .media-row-info h3,
+  .media-row-info p,
+  .media-row-format span,
+  .media-row-status span,
+  .media-row-score,
+  .media-row-score::before,
+  .media-row-score::after,
+  .media-row-details,
+  .depth-button,
   .falling-quote,
   .moment-frame,
   .moment-frame img,
   .character-name,
-  .character-name img {
+  .character-name img,
+  .note-card,
+  .note-card::before,
+  .thought-card {
     transition: none !important;
   }
 
-  .falling-quote:hover,
-  .falling-quote:focus-visible,
-  .falling-quote.is-top-layer,
-  .moment-frame:hover,
-  .moment-frame:focus-visible,
-  .moment-frame.is-top-layer,
-  .character-name:hover,
-  .character-name:focus-visible,
-  .character-name.is-top-layer {
+  .media-library-row:hover,
+  .media-library-row:hover .media-row-cover,
+  .media-row-cover:hover,
+  .depth-button:hover,
+  .media-row-format span:hover,
+  .media-row-status span:hover,
+  .moment-frame:hover img,
+  .character-name:hover img {
     transform: none !important;
   }
-}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* ============================================================================
-   SECTION 2 — MIDNIGHT AURORA COLOR PALETTE ONLY
-   Paste at the VERY BOTTOM of section-2.css
-   No layout / size / spacing changes.
-   ============================================================================ */
-
-
-/* SECTION BACKGROUND */
-
-#section-2-empty-shelf,
-.section-empty-shelf {
-  color: var(--ink) !important;
-
-  background:
-    radial-gradient(circle at 50% 18%, rgba(124, 140, 255, 0.18), transparent 34%),
-    radial-gradient(circle at 48% 58%, rgba(155, 124, 255, 0.14), transparent 42%),
-    radial-gradient(circle at 70% 36%, rgba(116, 215, 255, 0.08), transparent 36%),
-    radial-gradient(circle at 50% 100%, rgba(210, 140, 255, 0.12), transparent 45%),
-    linear-gradient(180deg, #060814 0%, #0A1024 58%, #050611 100%) !important;
-}
-
-#section-2-empty-shelf::before,
-.section-empty-shelf::before {
-  background:
-    radial-gradient(
-      ellipse at center,
-      rgba(124, 140, 255, 0.18),
-      rgba(155, 124, 255, 0.10) 45%,
-      transparent 68%
-    ) !important;
-}
-
-#section-2-empty-shelf::after,
-.section-empty-shelf::after {
-  background-image:
-    radial-gradient(rgba(255, 255, 255, 0.055) 0.7px, transparent 0.7px) !important;
-  opacity: 0.16 !important;
-}
-
-
-/* SECTION HEADER */
-
-.section-2-header .section-label {
-  color: var(--warm-brown-light) !important;
-}
-
-.section-2-header h2 {
-  color: var(--ink) !important;
-  text-shadow:
-    0 18px 55px rgba(0, 0, 0, 0.42),
-    0 0 42px rgba(124, 140, 255, 0.12) !important;
-}
-
-.section-2-header p {
-  color: var(--ink-light) !important;
-}
-
-
-/* STAGE LABEL / CARD HALO */
-
-.section-empty-shelf.debug-labels .scroll-stage::after {
-  color: rgba(184, 192, 255, 0.58) !important;
-}
-
-.card-wrap::before,
-.scroll-stage:not(:has(.card-wrap)):has(.media-library-row)::before {
-  background:
-    radial-gradient(
-      ellipse at 50% 58%,
-      rgba(124, 140, 255, 0.24),
-      rgba(155, 124, 255, 0.12) 38%,
-      transparent 72%
-    ) !important;
-}
-
-.card-wrap:hover::before,
-.scroll-stage:not(:has(.card-wrap)):has(.media-library-row:hover)::before {
-  background:
-    radial-gradient(
-      ellipse at 50% 58%,
-      rgba(155, 124, 255, 0.30),
-      rgba(124, 140, 255, 0.16) 40%,
-      transparent 74%
-    ) !important;
-}
-
-
-/* MAIN CARD */
-
-.media-library-row {
-  background:
-    linear-gradient(
-      180deg,
-      rgba(16, 22, 36, 0.96) 0%,
-      rgba(10, 14, 28, 0.98) 100%
-    ) !important;
-
-  border-color: rgba(184, 192, 255, 0.20) !important;
-
-  box-shadow:
-    0 28px 74px rgba(0, 0, 0, 0.42),
-    0 10px 24px rgba(0, 0, 0, 0.30),
-    0 0 60px rgba(124, 140, 255, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
-}
-
-.media-library-row:hover {
-  background:
-    linear-gradient(
-      180deg,
-      rgba(20, 27, 46, 0.98) 0%,
-      rgba(11, 16, 32, 0.99) 100%
-    ) !important;
-
-  border-color: rgba(184, 192, 255, 0.34) !important;
-
-  box-shadow:
-    0 34px 88px rgba(0, 0, 0, 0.52),
-    0 14px 30px rgba(0, 0, 0, 0.36),
-    0 0 80px rgba(155, 124, 255, 0.14),
-    inset 0 1px 0 rgba(255, 255, 255, 0.10) !important;
-}
-
-
-/* COVER FRAME COLORS ONLY */
-
-.media-row-cover {
-  border-color: rgba(184, 192, 255, 0.20) !important;
-
-  background:
-    radial-gradient(circle at 30% 22%, rgba(255, 255, 255, 0.16), transparent 32%),
-    linear-gradient(150deg, rgba(8, 11, 24, 0.95), rgba(124, 140, 255, 0.16)),
-    var(--cream-dark) !important;
-
-  box-shadow:
-    0 14px 30px rgba(0, 0, 0, 0.36),
-    0 0 22px rgba(124, 140, 255, 0.10),
-    inset 0 1px 0 rgba(255, 255, 255, 0.10) !important;
-}
-
-.media-row-cover::after {
-  background:
-    linear-gradient(
-      105deg,
-      transparent,
-      rgba(255, 255, 255, 0.46),
-      transparent
-    ) !important;
-}
-
-.media-library-row:hover .media-row-cover {
-  box-shadow:
-    0 18px 36px rgba(0, 0, 0, 0.42),
-    0 0 28px rgba(124, 140, 255, 0.14),
-    inset 0 1px 0 rgba(255, 255, 255, 0.10) !important;
-}
-
-.media-library-row .media-row-cover:hover {
-  box-shadow:
-    0 22px 44px rgba(0, 0, 0, 0.48),
-    0 0 34px rgba(155, 124, 255, 0.18),
-    inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
-}
-
-
-/* TITLE / AUTHOR */
-
-.media-row-info h3 {
-  color: var(--ink) !important;
-}
-
-.media-row-info p {
-  color: var(--ink-mid) !important;
-}
-
-.media-row-info h3:hover {
-  color: var(--warm-brown-light) !important;
-  text-shadow:
-    0 10px 28px rgba(124, 140, 255, 0.18),
-    0 0 24px rgba(155, 124, 255, 0.12) !important;
-}
-
-.media-row-info p:hover {
-  color: var(--accent-cyan) !important;
-  text-shadow:
-    0 8px 22px rgba(116, 215, 255, 0.12) !important;
-}
-
-
-/* META CHIPS */
-
-.media-row-format span,
-.media-row-status span {
-  background:
-    linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.07),
-      rgba(124, 140, 255, 0.10)
-    ) !important;
-
-  border-color: rgba(184, 192, 255, 0.24) !important;
-  color: var(--warm-brown-light) !important;
-
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
-}
-
-.media-row-format span:hover,
-.media-row-status span:hover {
-  background:
-    linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.10),
-      rgba(155, 124, 255, 0.16)
-    ) !important;
-
-  border-color: rgba(184, 192, 255, 0.40) !important;
-  color: var(--ink) !important;
-
-  box-shadow:
-    0 8px 18px rgba(0, 0, 0, 0.30),
-    0 0 20px rgba(124, 140, 255, 0.14),
-    inset 0 1px 0 rgba(255, 255, 255, 0.10) !important;
-}
-
-.media-row-format span:focus-visible,
-.media-row-status span:focus-visible {
-  outline-color: rgba(184, 192, 255, 0.58) !important;
-}
-
-
-/* SCORE CAPSULE */
-
-.media-row-score {
-  background:
-    linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.075),
-      rgba(124, 140, 255, 0.09)
-    ) !important;
-
-  border-color: rgba(184, 192, 255, 0.24) !important;
-
-  box-shadow:
-    0 8px 22px rgba(0, 0, 0, 0.32),
-    0 0 24px rgba(124, 140, 255, 0.10) !important;
-}
-
-.media-row-score span {
-  color: var(--ink) !important;
-}
-
-.media-row-score::before {
-  background:
-    radial-gradient(circle, rgba(155, 124, 255, 0.28), transparent 70%) !important;
-}
-
-.media-row-score::after {
-  background: rgba(8, 11, 24, 0.98) !important;
-  border-color: rgba(184, 192, 255, 0.30) !important;
-  color: var(--warm-brown-light) !important;
-
-  box-shadow:
-    0 12px 26px rgba(0, 0, 0, 0.42),
-    0 0 22px rgba(124, 140, 255, 0.16) !important;
-}
-
-.media-row-score:hover,
-.media-row-score:focus-visible {
-  background:
-    linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.10),
-      rgba(155, 124, 255, 0.13)
-    ) !important;
-
-  border-color: rgba(184, 192, 255, 0.42) !important;
-
-  box-shadow:
-    0 14px 32px rgba(0, 0, 0, 0.40),
-    0 0 34px rgba(155, 124, 255, 0.18) !important;
-}
-
-
-/* ROW HOVER SHEEN */
-
-.media-library-row::before {
-  background:
-    linear-gradient(
-      105deg,
-      transparent,
-      rgba(255, 255, 255, 0.08),
-      transparent
-    ) !important;
-}
-
-
-/* BUTTON TRAY / DEPTH BUTTONS */
-
-.media-row-details {
-  border-top-color: rgba(184, 192, 255, 0.14) !important;
-}
-
-.media-row-details::before {
-  color: rgba(203, 211, 234, 0.70) !important;
-}
-
-.depth-button {
-  background: rgba(255, 255, 255, 0.055) !important;
-  border-color: rgba(184, 192, 255, 0.22) !important;
-  color: var(--ink-mid) !important;
-
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.055),
-    0 6px 16px rgba(0, 0, 0, 0.20) !important;
-}
-
-.depth-button:hover {
-  background: rgba(124, 140, 255, 0.12) !important;
-  border-color: rgba(184, 192, 255, 0.38) !important;
-  color: var(--ink) !important;
-
-  box-shadow:
-    0 8px 20px rgba(0, 0, 0, 0.32),
-    0 0 20px rgba(124, 140, 255, 0.14) !important;
-}
-
-.depth-button-new {
-  background:
-    linear-gradient(
-      180deg,
-      rgba(155, 124, 255, 0.22),
-      rgba(124, 140, 255, 0.13)
-    ) !important;
-
-  border-color: rgba(184, 192, 255, 0.42) !important;
-  color: var(--ink) !important;
-}
-
-
-/* EVIDENCE GLOWS */
-
-.falling-quotes::before,
-.moving-moments::before,
-.character-cloud::before,
-.notes-cloud::before,
-.thoughts-cloud::before {
-  background:
-    radial-gradient(
-      ellipse at center,
-      rgba(124, 140, 255, 0.20) 0%,
-      rgba(155, 124, 255, 0.105) 42%,
-      rgba(116, 215, 255, 0.045) 60%,
-      transparent 76%
-    ) !important;
-}
-
-
-/* QUOTES */
-
-.falling-quote {
-  background:
-    linear-gradient(
-      180deg,
-      rgba(16, 22, 36, 0.96) 0%,
-      rgba(10, 14, 28, 0.98) 100%
-    ) !important;
-
-  border-color: rgba(184, 192, 255, 0.18) !important;
-  color: var(--ink-mid) !important;
-
-  box-shadow:
-    0 24px 54px rgba(0, 0, 0, 0.40),
-    0 0 38px rgba(124, 140, 255, 0.07),
-    inset 0 1px 0 rgba(255, 255, 255, 0.07) !important;
-}
-
-.falling-quote:hover {
-  color: var(--ink) !important;
-  border-color: rgba(184, 192, 255, 0.34) !important;
-
-  box-shadow:
-    0 34px 72px rgba(0, 0, 0, 0.48),
-    0 0 48px rgba(155, 124, 255, 0.13),
-    inset 0 1px 0 rgba(255, 255, 255, 0.10) !important;
-}
-
-
-/* MOMENTS */
-
-.moment-frame {
-  background:
-    linear-gradient(
-      180deg,
-      rgba(16, 22, 36, 0.96) 0%,
-      rgba(10, 14, 28, 0.98) 100%
-    ) !important;
-
-  border-color: rgba(184, 192, 255, 0.18) !important;
-
-  box-shadow:
-    0 24px 54px rgba(0, 0, 0, 0.42),
-    0 0 38px rgba(124, 140, 255, 0.07),
-    inset 0 1px 0 rgba(255, 255, 255, 0.07) !important;
-}
-
-.moment-frame figcaption {
-  color: var(--ink-faint) !important;
-}
-
-.moment-frame:hover {
-  border-color: rgba(184, 192, 255, 0.34) !important;
-
-  box-shadow:
-    0 34px 72px rgba(0, 0, 0, 0.50),
-    0 0 50px rgba(155, 124, 255, 0.13),
-    inset 0 1px 0 rgba(255, 255, 255, 0.10) !important;
-}
-
-.moment-frame:hover figcaption {
-  color: var(--ink-mid) !important;
-}
-
-
-/* CHARACTERS */
-
-.character-name {
-  background:
-    linear-gradient(
-      180deg,
-      rgba(16, 22, 36, 0.96) 0%,
-      rgba(10, 14, 28, 0.98) 100%
-    ) !important;
-
-  border-color: rgba(184, 192, 255, 0.18) !important;
-
-  box-shadow:
-    0 24px 54px rgba(0, 0, 0, 0.40),
-    0 0 38px rgba(124, 140, 255, 0.07),
-    inset 0 1px 0 rgba(255, 255, 255, 0.07) !important;
-}
-
-.character-name figcaption {
-  background:
-    linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.07),
-      rgba(124, 140, 255, 0.055)
-    ) !important;
-
-  color: var(--ink-mid) !important;
-}
-
-.character-name:hover {
-  border-color: rgba(184, 192, 255, 0.34) !important;
-
-  box-shadow:
-    0 34px 72px rgba(0, 0, 0, 0.48),
-    0 0 50px rgba(155, 124, 255, 0.13),
-    inset 0 1px 0 rgba(255, 255, 255, 0.10) !important;
-}
-
-.character-name:hover figcaption {
-  color: var(--warm-brown-light) !important;
-
-  background:
-    linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.10),
-      rgba(155, 124, 255, 0.12)
-    ) !important;
-}
-
-
-/* NOTES */
-
-.note-card {
-  background:
-    linear-gradient(
-      180deg,
-      rgba(16, 22, 36, 0.96) 0%,
-      rgba(10, 14, 28, 0.98) 100%
-    ) !important;
-
-  border-color: rgba(184, 192, 255, 0.18) !important;
-  color: var(--ink-mid) !important;
-
-  box-shadow:
-    0 24px 54px rgba(0, 0, 0, 0.40),
-    0 0 38px rgba(124, 140, 255, 0.07),
-    inset 0 1px 0 rgba(255, 255, 255, 0.07) !important;
-}
-
-.note-card::before {
-  background:
-    linear-gradient(
-      180deg,
-      rgba(155, 124, 255, 0.28),
-      rgba(124, 140, 255, 0.18)
-    ) !important;
-}
-
-.note-card:hover {
-  color: var(--ink) !important;
-  border-color: rgba(184, 192, 255, 0.34) !important;
-
-  box-shadow:
-    0 34px 72px rgba(0, 0, 0, 0.48),
-    0 0 50px rgba(155, 124, 255, 0.13),
-    inset 0 1px 0 rgba(255, 255, 255, 0.10) !important;
-}
-
-
-/* THOUGHTS */
-
-.thought-card {
-  background:
-    linear-gradient(
-      180deg,
-      rgba(16, 22, 36, 0.96) 0%,
-      rgba(10, 14, 28, 0.98) 100%
-    ) !important;
-
-  border-color: rgba(184, 192, 255, 0.18) !important;
-  color: var(--ink-mid) !important;
-
-  box-shadow:
-    0 24px 54px rgba(0, 0, 0, 0.40),
-    0 0 38px rgba(124, 140, 255, 0.07),
-    inset 0 1px 0 rgba(255, 255, 255, 0.07) !important;
-}
-
-.thought-card:hover {
-  color: var(--ink) !important;
-  border-color: rgba(184, 192, 255, 0.34) !important;
-
-  box-shadow:
-    0 34px 72px rgba(0, 0, 0, 0.48),
-    0 0 50px rgba(155, 124, 255, 0.13),
-    inset 0 1px 0 rgba(255, 255, 255, 0.10) !important;
-}
-
-
-/* FLYING DEPTH BUTTON FROM JS */
-
-.depth-button-proxy {
-  background:
-    linear-gradient(
-      180deg,
-      rgba(16, 22, 36, 0.98),
-      rgba(10, 14, 28, 0.98)
-    ) !important;
-
-  border-color: rgba(184, 192, 255, 0.34) !important;
-  color: var(--ink) !important;
-
-  box-shadow:
-    0 18px 38px rgba(0, 0, 0, 0.48),
-    0 0 28px rgba(124, 140, 255, 0.16),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
-}
-
-
-/* FOCUS STATES */
-
-.depth-button:focus-visible,
-.media-row-format span:focus-visible,
-.media-row-status span:focus-visible,
-.media-library-row:focus-visible {
-  outline-color: rgba(184, 192, 255, 0.58) !important;
+  .media-library-row:hover::before,
+  .media-row-cover:hover::after {
+    opacity: 0 !important;
+  }
 }
