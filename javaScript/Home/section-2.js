@@ -1,19 +1,15 @@
 /* ============================================================================
-   SECTION 2 — SCROLL STORY JS FINAL
-   ---------------------------------------------------------------------------
-   Fixes:
-   - Card starts naturally under title/subtitle.
-   - On scroll, title fades away.
-   - Card anchors near the bottom of the visible browser viewport.
-   - Evidence appears above the card.
-   - Evidence gathers into the correct button.
-   - Scrolling back up resets the card to its natural starting position.
-   - Refreshing in the middle of the pinned section is more stable.
+   SECTION 2 — SCROLL STORY JS
+   Updated for:
+   - 9 quotes
+   - 8 moments
+   - bigger evidence area
+   - hover/focus top-layer behavior
+   - hidden visual status text
    ============================================================================ */
 
 (() => {
   const section = document.querySelector("#section-2-empty-shelf");
-
   if (!section) return;
 
   const hasGSAP = window.gsap && window.ScrollTrigger;
@@ -86,6 +82,7 @@
   let trayRevealTime = Number.POSITIVE_INFINITY;
   let resizeTimer = null;
   let refreshTimer = null;
+  let topLayerZ = 100;
 
   initSection2();
 
@@ -94,6 +91,7 @@
 
     collectLayerElements();
     createButtonProxies();
+    enableTopLayerHover();
     setInitialState();
 
     if (prefersReducedMotion) {
@@ -105,66 +103,9 @@
     setupSafeRefreshes();
   }
 
-  function setupSafeRefreshes() {
-    window.addEventListener("resize", () => {
-      clearTimeout(resizeTimer);
-
-      resizeTimer = setTimeout(() => {
-        queueSafeRefresh();
-      }, 150);
-    });
-
-    window.addEventListener(
-      "load",
-      () => {
-        queueSafeRefresh(120);
-      },
-      { once: true }
-    );
-
-    if (document.fonts && document.fonts.ready) {
-      document.fonts.ready
-        .then(() => {
-          queueSafeRefresh(120);
-        })
-        .catch(() => {});
-    }
-
-    const images = gsap.utils.toArray(section.querySelectorAll("img"));
-
-    images.forEach((img) => {
-      if (img.complete) return;
-
-      img.addEventListener(
-        "load",
-        () => {
-          queueSafeRefresh(120);
-        },
-        { once: true }
-      );
-
-      img.addEventListener(
-        "error",
-        () => {
-          queueSafeRefresh(120);
-        },
-        { once: true }
-      );
-    });
-  }
-
-  function queueSafeRefresh(delay = 80) {
-    clearTimeout(refreshTimer);
-
-    refreshTimer = setTimeout(() => {
-      ScrollTrigger.refresh(true);
-    }, delay);
-  }
-
   function collectLayerElements() {
     layers.forEach((layer, index) => {
       layer.index = index;
-
       layer.stage = section.querySelector(layer.stageSelector);
 
       layer.items = layer.stage
@@ -193,16 +134,70 @@
     });
   }
 
+  function enableTopLayerHover() {
+    const liftableItems = section.querySelectorAll(
+      ".falling-quote, .moment-frame, .character-name, .note-card, .thought-card"
+    );
+
+    liftableItems.forEach((item) => {
+      const raise = () => {
+        topLayerZ += 1;
+        item.style.zIndex = String(topLayerZ);
+        item.classList.add("is-top-layer");
+      };
+
+      const lower = () => {
+        item.classList.remove("is-top-layer");
+      };
+
+      item.addEventListener("pointerenter", raise);
+      item.addEventListener("focusin", raise);
+      item.addEventListener("pointerleave", lower);
+      item.addEventListener("focusout", lower);
+    });
+  }
+
+  function setupSafeRefreshes() {
+    window.addEventListener("resize", () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => queueSafeRefresh(), 150);
+    });
+
+    window.addEventListener(
+      "load",
+      () => {
+        queueSafeRefresh(120);
+      },
+      { once: true }
+    );
+
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready
+        .then(() => queueSafeRefresh(120))
+        .catch(() => {});
+    }
+
+    const images = gsap.utils.toArray(section.querySelectorAll("img"));
+
+    images.forEach((img) => {
+      if (img.complete) return;
+
+      img.addEventListener("load", () => queueSafeRefresh(120), { once: true });
+      img.addEventListener("error", () => queueSafeRefresh(120), { once: true });
+    });
+  }
+
+  function queueSafeRefresh(delay = 80) {
+    clearTimeout(refreshTimer);
+
+    refreshTimer = setTimeout(() => {
+      ScrollTrigger.refresh(true);
+    }, delay);
+  }
+
   function setInitialState() {
-    gsap.set(header, {
-      autoAlpha: 1,
-      y: 0
-    });
-
-    gsap.set(viewport, {
-      y: 0
-    });
-
+    gsap.set(header, { autoAlpha: 1, y: 0 });
+    gsap.set(viewport, { y: 0 });
     gsap.set(cardWrap, {
       autoAlpha: 1,
       y: 0,
@@ -228,9 +223,7 @@
       layer.stage.setAttribute("aria-hidden", "true");
       layer.stage.classList.remove("is-active");
 
-      gsap.set(layer.stage, {
-        autoAlpha: 0
-      });
+      gsap.set(layer.stage, { autoAlpha: 0 });
 
       gsap.set(layer.items, {
         autoAlpha: 0,
@@ -267,29 +260,11 @@
   }
 
   function resetToNaturalStart() {
-    gsap.set(header, {
-      autoAlpha: 1,
-      y: 0
-    });
-
-    gsap.set(viewport, {
-      y: 0
-    });
-
-    gsap.set(cardWrap, {
-      autoAlpha: 1,
-      y: 0,
-      scale: 1
-    });
-
-    gsap.set(card, {
-      y: 0
-    });
-
-    gsap.set(detailsTray, {
-      autoAlpha: 0,
-      y: 10
-    });
+    gsap.set(header, { autoAlpha: 1, y: 0 });
+    gsap.set(viewport, { y: 0 });
+    gsap.set(cardWrap, { autoAlpha: 1, y: 0, scale: 1 });
+    gsap.set(card, { y: 0 });
+    gsap.set(detailsTray, { autoAlpha: 0, y: 10 });
 
     detailsTray.classList.remove("is-visible");
 
@@ -297,10 +272,7 @@
       if (layer.stage) {
         layer.stage.classList.remove("is-active");
         layer.stage.setAttribute("aria-hidden", "true");
-
-        gsap.set(layer.stage, {
-          autoAlpha: 0
-        });
+        gsap.set(layer.stage, { autoAlpha: 0 });
       }
 
       if (layer.items) {
@@ -327,9 +299,7 @@
       }
 
       if (layer.proxy) {
-        gsap.set(layer.proxy, {
-          autoAlpha: 0
-        });
+        gsap.set(layer.proxy, { autoAlpha: 0 });
       }
     });
 
@@ -339,35 +309,23 @@
 
   function buildMasterTimeline() {
     const tl = gsap.timeline({
-      defaults: {
-        ease: "power2.out"
-      },
+      defaults: { ease: "power2.out" },
       scrollTrigger: {
         trigger: section,
         start: "top top",
-        end: () => "+=" + Math.max(window.innerHeight * 7, 6200),
+        end: () => "+=" + Math.max(window.innerHeight * 8.5, 7600),
         pin: true,
         scrub: 0.8,
         anticipatePin: 1,
         invalidateOnRefresh: true,
 
         onRefreshInit: () => {
-          gsap.set([viewport, cardWrap, card], {
-            y: 0
-          });
+          gsap.set([viewport, cardWrap, card], { y: 0 });
         },
 
-        onRefresh: (self) => {
-          syncTimelineState(self.animation);
-        },
-
-        onLeaveBack: () => {
-          resetToNaturalStart();
-        },
-
-        onUpdate: (self) => {
-          syncTimelineState(self.animation);
-        }
+        onRefresh: (self) => syncTimelineState(self.animation),
+        onUpdate: (self) => syncTimelineState(self.animation),
+        onLeaveBack: () => resetToNaturalStart()
       }
     });
 
@@ -378,10 +336,11 @@
     tl.fromTo(
       score,
       {
-        boxShadow: "0 8px 22px rgba(44, 36, 22, 0.06)"
+        boxShadow: "0 8px 22px rgba(0, 0, 0, 0.28)"
       },
       {
-        boxShadow: "0 18px 46px rgba(184, 121, 78, 0.24)",
+        boxShadow:
+          "0 18px 46px rgba(155, 124, 255, 0.24), 0 0 34px rgba(124, 140, 255, 0.18)",
         duration: 0.22,
         yoyo: true,
         repeat: 1
@@ -477,15 +436,15 @@
     tl.to(layer.items, {
       x: (_index, element) => getGatherDelta(element, layer).x,
       y: (_index, element) => getGatherDelta(element, layer).y,
-      scale: 0.28,
+      scale: getGatherScale(layer),
       rotation: 0,
       autoAlpha: 0.55,
       filter: "blur(1.5px)",
       stagger: {
-        each: 0.035,
+        each: 0.028,
         from: "center"
       },
-      duration: 0.5,
+      duration: 0.55,
       ease: "power2.inOut"
     });
 
@@ -580,15 +539,15 @@
   function getEvidenceEnterFrom(layer) {
     const base = {
       autoAlpha: 0,
-      scale: 0.96,
+      scale: 0.94,
       filter: "blur(6px)"
     };
 
     if (layer.key === "quotes") {
       return {
         ...base,
-        x: (index) => [-70, 70, -45, 45][index % 4],
-        y: (index) => [-28, -22, 32, 36][index % 4],
+        x: (index) => [-120, -65, 80, -95, 35, 115, -70, 55, 0][index % 9],
+        y: (index) => [-34, -24, -36, 34, 46, 28, 70, 64, 82][index % 9],
         rotation: (_index, element) => getElementRotate(element) * 1.5
       };
     }
@@ -596,10 +555,10 @@
     if (layer.key === "moments") {
       return {
         ...base,
-        x: (index) => [-85, 85, 0][index % 3],
-        y: (index) => [28, 30, 45][index % 3],
-        scale: 0.92,
-        rotation: (_index, element) => getElementRotate(element) * 1.3
+        x: (index) => [-120, -70, -20, 45, 95, 135, 170, 210][index % 8],
+        y: (index) => [35, 58, 28, 80, 18, 48, 25, 70][index % 8],
+        scale: 0.9,
+        rotation: (_index, element) => getElementRotate(element) * 1.35
       };
     }
 
@@ -649,19 +608,31 @@
     };
   }
 
+  function getGatherScale(layer) {
+    if (layer.key === "quotes") return 0.2;
+    if (layer.key === "moments") return 0.22;
+    return 0.28;
+  }
+
   function getEnterDuration(layer) {
+    if (layer.key === "quotes") return 0.7;
+    if (layer.key === "moments") return 0.72;
     if (layer.key === "thoughts") return 0.72;
     if (layer.key === "characters") return 0.6;
     return 0.55;
   }
 
   function getEnterStagger(layer) {
+    if (layer.key === "quotes") return 0.035;
+    if (layer.key === "moments") return 0.04;
     if (layer.key === "characters") return 0.045;
     if (layer.key === "thoughts") return 0.12;
     return 0.065;
   }
 
   function getReadDuration(layer) {
+    if (layer.key === "quotes") return 0.95;
+    if (layer.key === "moments") return 0.82;
     if (layer.key === "thoughts") return 0.6;
     if (layer.key === "characters") return 0.48;
     return 0.44;
@@ -673,23 +644,13 @@
 
   function getViewportLiftY() {
     const headerHeight = header ? header.getBoundingClientRect().height : 0;
-
-    const maxLift = window.innerWidth <= 640 ? 150 : 210;
-    const desiredLift = headerHeight + 30;
+    const maxLift = window.innerWidth <= 640 ? 160 : 230;
+    const desiredLift = headerHeight + 34;
 
     return -Math.min(desiredLift, maxLift);
   }
 
   function getCardAnchorY() {
-    /*
-      VIEWPORT BOTTOM ANCHOR:
-
-      The card should anchor near the bottom of the visible browser viewport.
-
-      The section is only used as a stable measuring reference.
-      The actual bottom target uses window.innerHeight.
-    */
-
     const savedViewportY = gsap.getProperty(viewport, "y");
     const savedCardY = gsap.getProperty(cardWrap, "y");
 
@@ -705,17 +666,7 @@
     const topGap = window.innerWidth <= 640 ? 12 : 18;
     const bottomGap = window.innerWidth <= 640 ? 18 : 24;
 
-    /*
-      This is the actual visible browser viewport bottom.
-      Not section height.
-      Not page height.
-    */
     const targetBottom = window.innerHeight - bottomGap;
-
-    /*
-      If the card fits, this makes the bottom sit near the viewport bottom.
-      If the card is too tall on a tiny screen, topGap protects the top.
-    */
     const targetTop = Math.max(topGap, targetBottom - cardRect.height);
 
     const cardTopAfterViewportLift =
@@ -782,8 +733,8 @@
     if (!tl) return;
 
     const time = tl.time();
-
     const trayIsVisible = time >= trayRevealTime;
+
     detailsTray.classList.toggle("is-visible", trayIsVisible);
 
     let highestLandedIndex = -1;
@@ -847,25 +798,10 @@
   }
 
   function buildReducedMotionVersion() {
-    gsap.set(header, {
-      autoAlpha: 1,
-      y: 0
-    });
-
-    gsap.set(viewport, {
-      y: 0
-    });
-
-    gsap.set(cardWrap, {
-      autoAlpha: 1,
-      y: 0,
-      scale: 1
-    });
-
-    gsap.set(detailsTray, {
-      autoAlpha: 1,
-      y: 0
-    });
+    gsap.set(header, { autoAlpha: 1, y: 0 });
+    gsap.set(viewport, { y: 0 });
+    gsap.set(cardWrap, { autoAlpha: 1, y: 0, scale: 1 });
+    gsap.set(detailsTray, { autoAlpha: 1, y: 0 });
 
     detailsTray.classList.add("is-visible");
 
@@ -873,10 +809,7 @@
       if (layer.stage) {
         layer.stage.setAttribute("aria-hidden", "true");
         layer.stage.classList.remove("is-active");
-
-        gsap.set(layer.stage, {
-          autoAlpha: 0
-        });
+        gsap.set(layer.stage, { autoAlpha: 0 });
       }
 
       if (layer.button) {
@@ -892,9 +825,7 @@
       }
 
       if (layer.proxy) {
-        gsap.set(layer.proxy, {
-          autoAlpha: 0
-        });
+        gsap.set(layer.proxy, { autoAlpha: 0 });
       }
     });
 
