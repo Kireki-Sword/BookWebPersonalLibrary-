@@ -1,11 +1,10 @@
 /* ============================================================================
-   SECTION 2 — SCROLL STORY JS
+   SECTION 2 — FINAL SCROLL STORY JS
    Updated for:
-   - 9 quotes
-   - 8 moments
-   - bigger evidence area
-   - hover/focus top-layer behavior
-   - hidden visual status text
+   - 9 quote cards
+   - 8 moment cards
+   - full-width evidence stages
+   - top-layer hover/focus behavior
    ============================================================================ */
 
 (() => {
@@ -82,7 +81,7 @@
   let trayRevealTime = Number.POSITIVE_INFINITY;
   let resizeTimer = null;
   let refreshTimer = null;
-  let topLayerZ = 100;
+  let topLayerZ = 1000;
 
   initSection2();
 
@@ -196,8 +195,15 @@
   }
 
   function setInitialState() {
-    gsap.set(header, { autoAlpha: 1, y: 0 });
-    gsap.set(viewport, { y: 0 });
+    gsap.set(header, {
+      autoAlpha: 1,
+      y: 0
+    });
+
+    gsap.set(viewport, {
+      y: 0
+    });
+
     gsap.set(cardWrap, {
       autoAlpha: 1,
       y: 0,
@@ -223,7 +229,9 @@
       layer.stage.setAttribute("aria-hidden", "true");
       layer.stage.classList.remove("is-active");
 
-      gsap.set(layer.stage, { autoAlpha: 0 });
+      gsap.set(layer.stage, {
+        autoAlpha: 0
+      });
 
       gsap.set(layer.items, {
         autoAlpha: 0,
@@ -260,11 +268,29 @@
   }
 
   function resetToNaturalStart() {
-    gsap.set(header, { autoAlpha: 1, y: 0 });
-    gsap.set(viewport, { y: 0 });
-    gsap.set(cardWrap, { autoAlpha: 1, y: 0, scale: 1 });
-    gsap.set(card, { y: 0 });
-    gsap.set(detailsTray, { autoAlpha: 0, y: 10 });
+    gsap.set(header, {
+      autoAlpha: 1,
+      y: 0
+    });
+
+    gsap.set(viewport, {
+      y: 0
+    });
+
+    gsap.set(cardWrap, {
+      autoAlpha: 1,
+      y: 0,
+      scale: 1
+    });
+
+    gsap.set(card, {
+      y: 0
+    });
+
+    gsap.set(detailsTray, {
+      autoAlpha: 0,
+      y: 10
+    });
 
     detailsTray.classList.remove("is-visible");
 
@@ -272,7 +298,10 @@
       if (layer.stage) {
         layer.stage.classList.remove("is-active");
         layer.stage.setAttribute("aria-hidden", "true");
-        gsap.set(layer.stage, { autoAlpha: 0 });
+
+        gsap.set(layer.stage, {
+          autoAlpha: 0
+        });
       }
 
       if (layer.items) {
@@ -299,7 +328,9 @@
       }
 
       if (layer.proxy) {
-        gsap.set(layer.proxy, { autoAlpha: 0 });
+        gsap.set(layer.proxy, {
+          autoAlpha: 0
+        });
       }
     });
 
@@ -309,7 +340,9 @@
 
   function buildMasterTimeline() {
     const tl = gsap.timeline({
-      defaults: { ease: "power2.out" },
+      defaults: {
+        ease: "power2.out"
+      },
       scrollTrigger: {
         trigger: section,
         start: "top top",
@@ -320,12 +353,22 @@
         invalidateOnRefresh: true,
 
         onRefreshInit: () => {
-          gsap.set([viewport, cardWrap, card], { y: 0 });
+          gsap.set([viewport, cardWrap, card], {
+            y: 0
+          });
         },
 
-        onRefresh: (self) => syncTimelineState(self.animation),
-        onUpdate: (self) => syncTimelineState(self.animation),
-        onLeaveBack: () => resetToNaturalStart()
+        onRefresh: (self) => {
+          syncTimelineState(self.animation);
+        },
+
+        onUpdate: (self) => {
+          syncTimelineState(self.animation);
+        },
+
+        onLeaveBack: () => {
+          resetToNaturalStart();
+        }
       }
     });
 
@@ -546,27 +589,33 @@
     if (layer.key === "quotes") {
       return {
         ...base,
-        x: (index) => [-120, -65, 80, -95, 35, 115, -70, 55, 0][index % 9],
-        y: (index) => [-34, -24, -36, 34, 46, 28, 70, 64, 82][index % 9],
-        rotation: (_index, element) => getElementRotate(element) * 1.5
+        x: (index) =>
+          [-130, -70, 95, -100, 45, 130, -80, 70, 20][index % 9],
+        y: (index) =>
+          [-42, -28, -44, 38, 52, 34, 72, 68, 82][index % 9],
+        rotation: (_index, element) => getElementRotate(element) * 1.35
       };
     }
 
     if (layer.key === "moments") {
       return {
         ...base,
-        x: (index) => [-120, -70, -20, 45, 95, 135, 170, 210][index % 8],
-        y: (index) => [35, 58, 28, 80, 18, 48, 25, 70][index % 8],
+        x: (index) =>
+          [-140, -92, -36, 48, 108, 152, 194, 236][index % 8],
+        y: (index) =>
+          [40, 64, 34, 92, 20, 54, 28, 78][index % 8],
         scale: 0.9,
-        rotation: (_index, element) => getElementRotate(element) * 1.35
+        rotation: (_index, element) => getElementRotate(element) * 1.25
       };
     }
 
     if (layer.key === "characters") {
       return {
         ...base,
-        x: (index) => [-90, 90, -60, 60, -40, 40, 0][index % 7],
-        y: (index) => [18, 18, 34, 34, 22, 28, 42][index % 7],
+        x: (index) =>
+          [-160, -100, -48, 32, 88, 142, 198][index % 7],
+        y: (index) =>
+          [30, 52, 38, 24, 52, 34, 46][index % 7],
         scale: 0.9,
         rotation: (_index, element) => getElementRotate(element) * 1.2
       };
@@ -609,32 +658,33 @@
   }
 
   function getGatherScale(layer) {
-    if (layer.key === "quotes") return 0.2;
-    if (layer.key === "moments") return 0.22;
+    if (layer.key === "quotes") return 0.18;
+    if (layer.key === "moments") return 0.2;
+    if (layer.key === "characters") return 0.2;
     return 0.28;
   }
 
   function getEnterDuration(layer) {
-    if (layer.key === "quotes") return 0.7;
-    if (layer.key === "moments") return 0.72;
+    if (layer.key === "quotes") return 0.72;
+    if (layer.key === "moments") return 0.74;
+    if (layer.key === "characters") return 0.7;
     if (layer.key === "thoughts") return 0.72;
-    if (layer.key === "characters") return 0.6;
     return 0.55;
   }
 
   function getEnterStagger(layer) {
-    if (layer.key === "quotes") return 0.035;
-    if (layer.key === "moments") return 0.04;
-    if (layer.key === "characters") return 0.045;
+    if (layer.key === "quotes") return 0.032;
+    if (layer.key === "moments") return 0.036;
+    if (layer.key === "characters") return 0.04;
     if (layer.key === "thoughts") return 0.12;
     return 0.065;
   }
 
   function getReadDuration(layer) {
-    if (layer.key === "quotes") return 0.95;
-    if (layer.key === "moments") return 0.82;
+    if (layer.key === "quotes") return 1.08;
+    if (layer.key === "moments") return 0.92;
+    if (layer.key === "characters") return 0.78;
     if (layer.key === "thoughts") return 0.6;
-    if (layer.key === "characters") return 0.48;
     return 0.44;
   }
 
@@ -644,7 +694,7 @@
 
   function getViewportLiftY() {
     const headerHeight = header ? header.getBoundingClientRect().height : 0;
-    const maxLift = window.innerWidth <= 640 ? 160 : 230;
+    const maxLift = window.innerWidth <= 640 ? 160 : 235;
     const desiredLift = headerHeight + 34;
 
     return -Math.min(desiredLift, maxLift);
@@ -696,7 +746,7 @@
 
     return {
       x: buttonRect.left + buttonRect.width / 2,
-      y: buttonRect.top - 42
+      y: buttonRect.top - 44
     };
   }
 
@@ -798,10 +848,25 @@
   }
 
   function buildReducedMotionVersion() {
-    gsap.set(header, { autoAlpha: 1, y: 0 });
-    gsap.set(viewport, { y: 0 });
-    gsap.set(cardWrap, { autoAlpha: 1, y: 0, scale: 1 });
-    gsap.set(detailsTray, { autoAlpha: 1, y: 0 });
+    gsap.set(header, {
+      autoAlpha: 1,
+      y: 0
+    });
+
+    gsap.set(viewport, {
+      y: 0
+    });
+
+    gsap.set(cardWrap, {
+      autoAlpha: 1,
+      y: 0,
+      scale: 1
+    });
+
+    gsap.set(detailsTray, {
+      autoAlpha: 1,
+      y: 0
+    });
 
     detailsTray.classList.add("is-visible");
 
@@ -809,7 +874,10 @@
       if (layer.stage) {
         layer.stage.setAttribute("aria-hidden", "true");
         layer.stage.classList.remove("is-active");
-        gsap.set(layer.stage, { autoAlpha: 0 });
+
+        gsap.set(layer.stage, {
+          autoAlpha: 0
+        });
       }
 
       if (layer.button) {
@@ -825,7 +893,9 @@
       }
 
       if (layer.proxy) {
-        gsap.set(layer.proxy, { autoAlpha: 0 });
+        gsap.set(layer.proxy, {
+          autoAlpha: 0
+        });
       }
     });
 
