@@ -226,8 +226,9 @@
   position: absolute;
   left: 50%;
 
-  /* Strong upward pull. This is the important fix. */
-  top: clamp(-260px, -22vh, -190px);
+  /* Softer upward pull. Just enough to sit above the card,
+     clear of the fixed nav bar at the top of the viewport. */
+  top: clamp(-120px, -9vh, -40px);
 
   z-index: 20;
 
@@ -406,20 +407,26 @@
 
 /* ============================================================================
    7. COVER
+   ----------------------------------------------------------------------------
+   Fixed: cover was 132px wide against a 278–305px tall box (~0.45 ratio),
+   which is far too narrow/tall for a manga volume cover and forced the art
+   to look stretched. Standard tankōbon cover proportions are close to 2:3
+   (0.667). Now the box locks to that ratio off the existing width variable,
+   so it's never distorted regardless of screen size, and it's vertically
+   centered in the cover cell instead of force-stretched to fill it.
    ============================================================================ */
 
 .media-row-cover {
   grid-area: cover;
-  align-self: stretch;
+  align-self: center;
   justify-self: start;
 
   position: relative;
   z-index: 1;
 
   width: var(--section-2-cover-width);
-  height: 100%;
-  min-height: 278px;
-  max-height: 305px;
+  aspect-ratio: 2 / 3;
+  height: auto;
 
   overflow: hidden;
 
@@ -1704,7 +1711,7 @@
   }
 
   .section-empty-shelf.is-js-ready .scroll-stage {
-    top: clamp(-210px, -19vh, -150px);
+    top: clamp(-90px, -7vh, -30px);
   }
 
   .section-empty-shelf.is-js-ready .falling-quotes {
@@ -1898,8 +1905,6 @@
   }
 
   .media-row-cover {
-    min-height: 190px;
-    max-height: 220px;
     border-radius: 13px;
   }
 
@@ -2111,87 +2116,5 @@
   .media-library-row:hover::before,
   .media-row-cover:hover::after {
     opacity: 0 !important;
-  }
-}
-
-/* ============================================================================
-   FINAL FIXES
-   ----------------------------------------------------------------------------
-   1. Keep all evidence-card sizes and layouts unchanged.
-   2. Move the complete evidence scenes lower above the Vagabond card.
-   3. Correct the manga cover to a natural 2:3 proportion.
-   ============================================================================ */
-
-
-/* ============================================================================
-   COVER PROPORTION
-   ============================================================================ */
-
-#section-2-empty-shelf .media-row-cover,
-.section-empty-shelf .media-row-cover {
-  align-self: center;
-
-  /* Keep the existing width, but calculate the correct height. */
-  height: auto;
-  min-height: 0;
-  max-height: none;
-  aspect-ratio: 2 / 3;
-}
-
-#section-2-empty-shelf .media-row-cover img,
-.section-empty-shelf .media-row-cover img {
-  width: 100%;
-  height: 100%;
-
-  display: block;
-
-  object-fit: cover;
-  object-position: center top;
-}
-
-
-/* ============================================================================
-   EVIDENCE POSITION — DESKTOP
-   ----------------------------------------------------------------------------
-   This moves the entire scene lower.
-
-   It does not change:
-   - Quote sizes
-   - Moment sizes
-   - Character sizes
-   - Notes or Thoughts sizes
-   - Grid columns
-   - Individual card positions
-   - Internal gaps or proportions
-   ============================================================================ */
-
-#section-2-empty-shelf.is-js-ready .scroll-stage,
-.section-empty-shelf.is-js-ready .scroll-stage {
-  top: clamp(-130px, -12vh, -90px);
-}
-
-
-/* ============================================================================
-   EVIDENCE POSITION — TABLET
-   ============================================================================ */
-
-@media (max-width: 1100px) {
-  #section-2-empty-shelf.is-js-ready .scroll-stage,
-  .section-empty-shelf.is-js-ready .scroll-stage {
-    top: clamp(-100px, -10vh, -70px);
-  }
-}
-
-
-/* ============================================================================
-   EVIDENCE POSITION — MOBILE
-   ----------------------------------------------------------------------------
-   Preserve your current mobile position.
-   ============================================================================ */
-
-@media (max-width: 640px) {
-  #section-2-empty-shelf.is-js-ready .scroll-stage,
-  .section-empty-shelf.is-js-ready .scroll-stage {
-    top: 24px;
   }
 }
