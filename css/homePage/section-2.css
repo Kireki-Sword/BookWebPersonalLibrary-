@@ -2,11 +2,12 @@
    SECTION 2 — FINAL CLEAN CSS
    ----------------------------------------------------------------------------
    Final revision:
-   - Persistent Vagabond card reduced by about 12% in width and 18% in height.
+   - Persistent Vagabond card reduced to create more room above it.
    - Cover keeps a correct 2:3 manga proportion.
-   - Seven Moment cards use a controlled two-tier gallery above the card.
-   - No low Moment row overlaps the persistent card.
-   - HTML structure and GSAP JavaScript remain unchanged.
+   - Seven Moment cards use balanced square and vertical image-only panels.
+   - Square and vertical Moment cards cover almost the same visual area.
+   - Moment images fill each card because figcaption elements were removed.
+   - HTML and JavaScript do not need changes.
    ============================================================================ */
 
 
@@ -72,6 +73,7 @@
 #section-2-empty-shelf::before,
 .section-empty-shelf::before {
   content: "";
+
   position: absolute;
   left: 50%;
   top: 7rem;
@@ -93,12 +95,14 @@
 
   filter: blur(64px);
   opacity: 0.9;
+
   transform: translateX(-50%);
 }
 
 #section-2-empty-shelf::after,
 .section-empty-shelf::after {
   content: "";
+
   position: absolute;
   inset: 0;
   z-index: 0;
@@ -153,6 +157,7 @@
 .section-2-header {
   max-width: 880px;
   margin: 0 auto 4rem;
+
   text-align: center;
 }
 
@@ -166,6 +171,7 @@
   font-family: var(--font-body, system-ui, sans-serif);
   font-size: 0.78rem;
   font-weight: 800;
+
   color: var(--s2-text-muted);
 
   text-transform: uppercase;
@@ -179,6 +185,7 @@
   font-family: var(--font-display, Georgia, serif);
   font-size: clamp(3rem, 5.8vw, 5.25rem);
   font-weight: 700;
+
   color: var(--s2-text);
 
   letter-spacing: -0.055em;
@@ -191,6 +198,7 @@
 
   font-family: var(--font-body, system-ui, sans-serif);
   font-size: 1.05rem;
+
   color: var(--s2-text-mid);
   line-height: 1.7;
 }
@@ -207,6 +215,7 @@
 
 .stage-viewport {
   position: relative;
+
   width: 100%;
   overflow: visible;
 }
@@ -229,9 +238,7 @@
 .section-empty-shelf.is-js-ready .scroll-stage {
   position: absolute;
   left: 50%;
-
   top: clamp(-120px, -9vh, -40px);
-
   z-index: 20;
 
   width: var(--section-2-evidence-width);
@@ -269,6 +276,7 @@
 
 .card-wrap::before {
   content: "";
+
   position: absolute;
   left: 50%;
   top: 50%;
@@ -305,7 +313,10 @@
 
 .card-wrap:hover::before {
   opacity: 1;
-  transform: translate(-50%, -50%) scale(1.025);
+
+  transform:
+    translate(-50%, -50%)
+    scale(1.025);
 }
 
 
@@ -510,7 +521,8 @@
   color: transparent;
   font-size: 0;
 
-  transition: filter 280ms ease;
+  transition:
+    filter 280ms ease;
 }
 
 .media-row-cover::after {
@@ -693,15 +705,11 @@
       rgba(124, 140, 255, 0.08)
     );
 
-  border:
-    1px solid
-    rgba(184, 192, 255, 0.28);
-
+  border: 1px solid rgba(184, 192, 255, 0.28);
   border-radius: 999px;
 
   box-shadow:
-    inset 0 1px 0
-    rgba(255, 255, 255, 0.08);
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
 
   font-family: var(--font-body, system-ui, sans-serif);
   font-size: 0.78rem;
@@ -725,9 +733,7 @@
   transform: translateY(-1px);
 
   color: var(--s2-text);
-
-  border-color:
-    rgba(184, 192, 255, 0.44);
+  border-color: rgba(184, 192, 255, 0.44);
 
   background:
     linear-gradient(
@@ -743,10 +749,7 @@
 
 .media-row-format span:focus-visible,
 .media-row-status span:focus-visible {
-  outline:
-    2px solid
-    rgba(184, 192, 255, 0.68);
-
+  outline: 2px solid rgba(184, 192, 255, 0.68);
   outline-offset: 4px;
 }
 
@@ -774,13 +777,9 @@
   align-items: center;
   justify-content: center;
 
-  background:
-    rgba(124, 140, 255, 0.1);
+  background: rgba(124, 140, 255, 0.1);
 
-  border:
-    1px solid
-    rgba(184, 192, 255, 0.26);
-
+  border: 1px solid rgba(184, 192, 255, 0.26);
   border-radius: 999px;
 
   box-shadow:
@@ -840,13 +839,9 @@
 
   padding: 0.34rem 0.68rem;
 
-  background:
-    rgba(10, 15, 30, 0.98);
+  background: rgba(10, 15, 30, 0.98);
 
-  border:
-    1px solid
-    rgba(184, 192, 255, 0.34);
-
+  border: 1px solid rgba(184, 192, 255, 0.34);
   border-radius: 999px;
 
   box-shadow:
@@ -876,11 +871,8 @@
 
 .media-row-score:hover,
 .media-row-score:focus-visible {
-  background:
-    rgba(124, 140, 255, 0.16);
-
-  border-color:
-    rgba(184, 192, 255, 0.46);
+  background: rgba(124, 140, 255, 0.16);
+  border-color: rgba(184, 192, 255, 0.46);
 
   box-shadow:
     0 18px 44px rgba(0, 0, 0, 0.34),
@@ -903,10 +895,7 @@
 }
 
 .media-row-score:focus-visible {
-  outline:
-    2px solid
-    rgba(184, 192, 255, 0.68);
-
+  outline: 2px solid rgba(184, 192, 255, 0.68);
   outline-offset: 4px;
 }
 
@@ -932,9 +921,7 @@
 
   gap: 0.55rem;
 
-  border-top:
-    1px solid
-    rgba(184, 192, 255, 0.14);
+  border-top: 1px solid rgba(184, 192, 255, 0.14);
 
   opacity: 0;
   visibility: hidden;
@@ -980,10 +967,7 @@
       rgba(124, 140, 255, 0.08)
     );
 
-  border:
-    1px solid
-    rgba(184, 192, 255, 0.3);
-
+  border: 1px solid rgba(184, 192, 255, 0.3);
   border-radius: 999px;
 
   font-family: var(--font-body, system-ui, sans-serif);
@@ -1006,9 +990,7 @@
   transform: translateY(-1px);
 
   color: var(--s2-text);
-
-  border-color:
-    rgba(184, 192, 255, 0.48);
+  border-color: rgba(184, 192, 255, 0.48);
 
   background:
     linear-gradient(
@@ -1028,18 +1010,13 @@
 }
 
 .depth-button:focus-visible {
-  outline:
-    2px solid
-    rgba(184, 192, 255, 0.68);
-
+  outline: 2px solid rgba(184, 192, 255, 0.68);
   outline-offset: 4px;
 }
 
 .depth-button-new {
   color: var(--s2-text);
-
-  border-color:
-    rgba(184, 192, 255, 0.54);
+  border-color: rgba(184, 192, 255, 0.54);
 
   background:
     linear-gradient(
@@ -1118,17 +1095,14 @@
     minmax(82px, auto)
     minmax(82px, auto);
 
-  gap:
-    clamp(0.55rem, 0.72vw, 0.82rem);
+  gap: clamp(0.55rem, 0.72vw, 0.82rem);
 
   align-items: stretch;
   overflow: visible;
 }
 
 .falling-quote {
-  --quote-size:
-    clamp(0.64rem, 0.66vw, 0.84rem);
-
+  --quote-size: clamp(0.64rem, 0.66vw, 0.84rem);
   --quote-leading: 1.23;
 
   position: relative;
@@ -1156,29 +1130,19 @@
       var(--s2-panel-bg) 100%
     );
 
-  border:
-    1px solid
-    var(--s2-border);
-
-  border-radius:
-    clamp(16px, 1.1vw, 22px);
+  border: 1px solid var(--s2-border);
+  border-radius: clamp(16px, 1.1vw, 22px);
 
   box-shadow:
     0 24px 56px rgba(0, 0, 0, 0.42),
     0 0 36px rgba(124, 140, 255, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.075);
 
-  font-family:
-    var(--font-display, Georgia, serif);
+  font-family: var(--font-display, Georgia, serif);
+  font-size: var(--quote-size);
 
-  font-size:
-    var(--quote-size);
-
-  line-height:
-    var(--quote-leading);
-
-  color:
-    var(--s2-text-mid);
+  line-height: var(--quote-leading);
+  color: var(--s2-text-mid);
 
   cursor: default;
   transform-origin: center center;
@@ -1192,23 +1156,19 @@
 }
 
 .falling-quote::before {
-  content:
-    attr(data-quote-number);
+  content: attr(data-quote-number);
 
   display: block;
   margin-bottom: 0.32rem;
 
-  font-family:
-    var(--font-body, system-ui, sans-serif);
-
+  font-family: var(--font-body, system-ui, sans-serif);
   font-size: 0.56rem;
   font-weight: 850;
 
   letter-spacing: 0.15em;
   line-height: 1;
 
-  color:
-    rgba(184, 192, 255, 0.58);
+  color: rgba(184, 192, 255, 0.58);
 }
 
 .falling-quote:hover,
@@ -1216,11 +1176,8 @@
 .falling-quote.is-top-layer {
   z-index: 999;
 
-  color:
-    var(--s2-text);
-
-  border-color:
-    var(--s2-border-strong);
+  color: var(--s2-text);
+  border-color: var(--s2-border-strong);
 
   background:
     linear-gradient(
@@ -1240,10 +1197,7 @@
 }
 
 .falling-quote:focus-visible {
-  outline:
-    2px solid
-    rgba(184, 192, 255, 0.68);
-
+  outline: 2px solid rgba(184, 192, 255, 0.68);
   outline-offset: 4px;
 }
 
@@ -1252,30 +1206,22 @@
 }
 
 .quote-short {
-  --quote-size:
-    clamp(0.82rem, 0.82vw, 1rem);
-
+  --quote-size: clamp(0.82rem, 0.82vw, 1rem);
   --quote-leading: 1.3;
 }
 
 .quote-medium {
-  --quote-size:
-    clamp(0.72rem, 0.74vw, 0.9rem);
-
+  --quote-size: clamp(0.72rem, 0.74vw, 0.9rem);
   --quote-leading: 1.27;
 }
 
 .quote-long {
-  --quote-size:
-    clamp(0.62rem, 0.64vw, 0.8rem);
-
+  --quote-size: clamp(0.62rem, 0.64vw, 0.8rem);
   --quote-leading: 1.23;
 }
 
 .quote-xl {
-  --quote-size:
-    clamp(0.56rem, 0.6vw, 0.74rem);
-
+  --quote-size: clamp(0.56rem, 0.6vw, 0.74rem);
   --quote-leading: 1.21;
 }
 
@@ -1326,22 +1272,39 @@
 
 
 /* ============================================================================
-   14. MOMENTS — CONTROLLED TIERED GALLERY
+   14. MOMENTS — IMAGE-ONLY BALANCED GALLERY
+   ----------------------------------------------------------------------------
+   The Moment HTML no longer contains figcaption elements.
+
+   The square cards use 19% width.
+   The vertical cards use 15.5% width with a 0.64 / 1 ratio.
+
+   This makes the vertical-card image area slightly larger than the square-card
+   image area, while retaining the different shape.
    ============================================================================ */
 
 .section-empty-shelf.is-js-ready .moving-moments {
-  height:
-    clamp(420px, 48vh, 500px);
+  position: relative;
+
+  width: var(--section-2-evidence-width);
+  max-width: 1560px;
+  height: clamp(460px, 52vh, 540px);
+
+  margin-inline: auto;
 
   display: block;
   overflow: visible;
 }
 
+/* Move only the Moments scene into the available space above the main card. */
+
 .section-empty-shelf.is-js-ready
 .scroll-stage[data-stage="moments-move"] {
-  top:
-    clamp(-58px, -4vh, -24px);
+  top: clamp(-58px, -4vh, -24px);
 }
+
+
+/* Moment image panel. */
 
 .moment-frame {
   position: absolute;
@@ -1351,35 +1314,28 @@
   top: var(--y);
 
   width: var(--w);
-
-  aspect-ratio:
-    var(--ratio);
+  aspect-ratio: var(--ratio);
 
   margin: 0;
+  padding: clamp(4px, 0.32vw, 7px);
 
-  padding:
-    clamp(0.48rem, 0.6vw, 0.66rem);
-
+  display: block;
   overflow: hidden;
 
   background:
     linear-gradient(
-      180deg,
-      var(--s2-panel-bg-strong) 0%,
-      var(--s2-panel-bg) 100%
+      145deg,
+      rgba(30, 37, 61, 0.99),
+      rgba(8, 12, 26, 0.99)
     );
 
-  border:
-    1px solid
-    var(--s2-border);
-
-  border-radius:
-    clamp(16px, 1vw, 22px);
+  border: 1px solid rgba(184, 192, 255, 0.24);
+  border-radius: clamp(14px, 0.9vw, 20px);
 
   box-shadow:
     0 26px 62px rgba(0, 0, 0, 0.46),
     0 0 42px rgba(124, 140, 255, 0.09),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
 
   cursor: default;
   transform-origin: center center;
@@ -1387,95 +1343,96 @@
   transition:
     box-shadow 240ms ease,
     border-color 240ms ease,
-    filter 240ms ease;
+    filter 240ms ease,
+    background 240ms ease;
 }
+
+/* Thin decorative cornice around the full image. */
+
+.moment-frame::after {
+  content: "";
+
+  position: absolute;
+  inset: clamp(4px, 0.32vw, 7px);
+  z-index: 2;
+
+  border: 1px solid rgba(224, 228, 255, 0.12);
+  border-radius: clamp(10px, 0.68vw, 15px);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 0 20px rgba(6, 10, 23, 0.12);
+
+  pointer-events: none;
+}
+
+/* Image fills the complete card. */
 
 .moment-frame img {
   width: 100%;
-
-  height:
-    calc(
-      100% -
-      clamp(1.55rem, 1.8vw, 2rem)
-    );
+  height: 100%;
 
   display: block;
 
   object-fit: cover;
   object-position: center;
 
-  border-radius:
-    clamp(11px, 0.75vw, 15px);
+  border-radius: clamp(10px, 0.68vw, 15px);
 
-  background:
-    rgba(255, 255, 255, 0.045);
+  background: rgba(255, 255, 255, 0.045);
 
   color: transparent;
   font-size: 0;
 
   transition:
-    transform 300ms ease,
-    filter 220ms ease;
+    transform 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 240ms ease;
 }
 
-.moment-frame figcaption {
-  height:
-    clamp(1.3rem, 1.55vw, 1.75rem);
 
-  margin: 0.42rem 0 0;
-  padding-inline: 0.05rem;
-
-  font-family:
-    var(--font-body, system-ui, sans-serif);
-
-  font-size:
-    clamp(0.66rem, 0.7vw, 0.82rem);
-
-  font-weight: 780;
-  line-height: 1.12;
-
-  color:
-    var(--s2-text-muted);
-
-  overflow: hidden;
-}
+/* Moment hover and keyboard-focus state. */
 
 .moment-frame:hover,
 .moment-frame:focus-visible,
 .moment-frame.is-top-layer {
   z-index: 999;
 
-  border-color:
-    var(--s2-border-strong);
+  border-color: rgba(200, 207, 255, 0.48);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(39, 47, 77, 0.99),
+      rgba(10, 15, 31, 0.99)
+    );
 
   box-shadow:
     0 42px 96px rgba(0, 0, 0, 0.66),
     0 0 70px rgba(155, 124, 255, 0.23),
-    inset 0 1px 0 rgba(255, 255, 255, 0.13);
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
 
   filter:
-    saturate(1.08)
-    contrast(1.05);
+    saturate(1.06)
+    contrast(1.04);
 }
 
 .moment-frame:hover img,
 .moment-frame:focus-visible img,
 .moment-frame.is-top-layer img {
-  transform:
-    scale(1.025);
+  transform: scale(1.035);
 
   filter:
     saturate(1.08)
-    contrast(1.05);
+    contrast(1.06);
 }
 
 .moment-frame:focus-visible {
-  outline:
-    2px solid
-    rgba(184, 192, 255, 0.68);
-
+  outline: 2px solid rgba(184, 192, 255, 0.68);
   outline-offset: 4px;
 }
+
+
+/* Moment shapes. */
 
 .moment-square {
   --ratio: 1 / 1;
@@ -1486,63 +1443,80 @@
 }
 
 
-/* Left tier: three square cards */
+/* ============================================================================
+   DESKTOP MOMENT POSITIONS
+   ----------------------------------------------------------------------------
+   --x controls horizontal position.
+   --y controls vertical position.
+   --w controls card width.
+   ============================================================================ */
+
+/* Square 1 */
 
 .moment-frame-1 {
   --x: 0%;
-  --y: 4%;
-  --w: 20%;
+  --y: 5%;
+  --w: 19%;
 
   z-index: 5;
 }
 
+/* Square 2 */
+
 .moment-frame-2 {
-  --x: 17.5%;
+  --x: 17%;
   --y: 27%;
-  --w: 20%;
+  --w: 19%;
 
   z-index: 3;
 }
 
+/* Square 3 */
+
 .moment-frame-3 {
-  --x: 35%;
+  --x: 34%;
   --y: 6%;
-  --w: 20%;
+  --w: 19%;
 
   z-index: 6;
 }
 
-
-/* Right tier: four vertical cards */
+/* Vertical 1 */
 
 .moment-frame-5 {
-  --x: 55.5%;
+  --x: 51.5%;
   --y: 1%;
-  --w: 12.5%;
+  --w: 15.5%;
 
   z-index: 7;
 }
 
+/* Vertical 2 */
+
 .moment-frame-6 {
-  --x: 66%;
-  --y: 23%;
-  --w: 12.5%;
+  --x: 62.5%;
+  --y: 20%;
+  --w: 15.5%;
 
   z-index: 4;
 }
 
+/* Vertical 3 */
+
 .moment-frame-7 {
-  --x: 76.5%;
+  --x: 73.5%;
   --y: 3%;
-  --w: 12.5%;
+  --w: 15.5%;
 
   z-index: 6;
 }
 
+/* Vertical 4 */
+
 .moment-frame-8 {
-  --x: 87.5%;
-  --y: 21%;
-  --w: 12.5%;
+  --x: 84.5%;
+  --y: 19%;
+  --w: 15.5%;
 
   z-index: 3;
 }
@@ -1553,8 +1527,7 @@
    ============================================================================ */
 
 .section-empty-shelf.is-js-ready .character-cloud {
-  height:
-    clamp(500px, 56vh, 620px);
+  height: clamp(500px, 56vh, 620px);
 
   display: block;
   overflow: visible;
@@ -1568,14 +1541,10 @@
   top: var(--y);
 
   width: var(--w);
-
-  aspect-ratio:
-    2 / 3;
+  aspect-ratio: 2 / 3;
 
   margin: 0;
-
-  padding:
-    clamp(0.42rem, 0.6vw, 0.65rem);
+  padding: clamp(0.42rem, 0.6vw, 0.65rem);
 
   overflow: hidden;
 
@@ -1586,12 +1555,8 @@
       var(--s2-panel-bg) 100%
     );
 
-  border:
-    1px solid
-    var(--s2-border);
-
-  border-radius:
-    clamp(16px, 1vw, 22px);
+  border: 1px solid var(--s2-border);
+  border-radius: clamp(16px, 1vw, 22px);
 
   box-shadow:
     0 26px 62px rgba(0, 0, 0, 0.46),
@@ -1609,21 +1574,14 @@
 
 .character-name img {
   width: 100%;
-
-  height:
-    calc(
-      100% -
-      clamp(2.1rem, 2.4vw, 2.75rem)
-    );
+  height: calc(100% - clamp(2.1rem, 2.4vw, 2.75rem));
 
   display: block;
   object-fit: cover;
 
-  border-radius:
-    clamp(10px, 0.75vw, 15px);
+  border-radius: clamp(10px, 0.75vw, 15px);
 
-  background:
-    rgba(255, 255, 255, 0.045);
+  background: rgba(255, 255, 255, 0.045);
 
   color: transparent;
   font-size: 0;
@@ -1634,22 +1592,15 @@
 }
 
 .character-name figcaption {
-  min-height:
-    clamp(1.9rem, 2.3vw, 2.5rem);
-
+  min-height: clamp(1.9rem, 2.3vw, 2.5rem);
   padding-top: 0.5rem;
 
-  font-family:
-    var(--font-body, system-ui, sans-serif);
-
-  font-size:
-    clamp(0.66rem, 0.78vw, 0.9rem);
-
+  font-family: var(--font-body, system-ui, sans-serif);
+  font-size: clamp(0.66rem, 0.78vw, 0.9rem);
   font-weight: 820;
-  line-height: 1.08;
 
-  color:
-    var(--s2-text-mid);
+  line-height: 1.08;
+  color: var(--s2-text-mid);
 
   overflow: hidden;
 }
@@ -1659,8 +1610,7 @@
 .character-name.is-top-layer {
   z-index: 999;
 
-  border-color:
-    var(--s2-border-strong);
+  border-color: var(--s2-border-strong);
 
   box-shadow:
     0 42px 96px rgba(0, 0, 0, 0.66),
@@ -1675,8 +1625,7 @@
 .character-name:hover img,
 .character-name:focus-visible img,
 .character-name.is-top-layer img {
-  transform:
-    scale(1.025);
+  transform: scale(1.025);
 
   filter:
     saturate(1.08)
@@ -1684,10 +1633,7 @@
 }
 
 .character-name:focus-visible {
-  outline:
-    2px solid
-    rgba(184, 192, 255, 0.68);
-
+  outline: 2px solid rgba(184, 192, 255, 0.68);
   outline-offset: 4px;
 }
 
@@ -1745,11 +1691,9 @@
     repeat(4, minmax(220px, 280px));
 
   justify-content: center;
-
-  gap:
-    clamp(0.75rem, 1vw, 1rem);
-
   align-items: stretch;
+
+  gap: clamp(0.75rem, 1vw, 1rem);
 }
 
 .note-card {
@@ -1768,10 +1712,7 @@
       var(--s2-panel-bg) 100%
     );
 
-  border:
-    1px solid
-    var(--s2-border);
-
+  border: 1px solid var(--s2-border);
   border-radius: 17px;
 
   box-shadow:
@@ -1779,14 +1720,11 @@
     0 0 34px rgba(124, 140, 255, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.08);
 
-  font-family:
-    var(--font-body, system-ui, sans-serif);
-
+  font-family: var(--font-body, system-ui, sans-serif);
   font-size: 0.9rem;
-  line-height: 1.55;
 
-  color:
-    var(--s2-text-mid);
+  line-height: 1.55;
+  color: var(--s2-text-mid);
 
   cursor: default;
   transform-origin: center center;
@@ -1812,8 +1750,7 @@
   border-radius:
     0 0 999px 999px;
 
-  background:
-    rgba(124, 140, 255, 0.3);
+  background: rgba(124, 140, 255, 0.3);
 
   transition:
     background 220ms ease,
@@ -1825,11 +1762,8 @@
 .note-card.is-top-layer {
   z-index: 999;
 
-  color:
-    var(--s2-text);
-
-  border-color:
-    var(--s2-border-strong);
+  color: var(--s2-text);
+  border-color: var(--s2-border-strong);
 
   box-shadow:
     0 36px 82px rgba(0, 0, 0, 0.58),
@@ -1851,10 +1785,7 @@
 }
 
 .note-card:focus-visible {
-  outline:
-    2px solid
-    rgba(184, 192, 255, 0.68);
-
+  outline: 2px solid rgba(184, 192, 255, 0.68);
   outline-offset: 4px;
 }
 
@@ -1871,8 +1802,7 @@
 
   justify-content: center;
 
-  gap:
-    clamp(0.9rem, 1.2vw, 1.25rem);
+  gap: clamp(0.9rem, 1.2vw, 1.25rem);
 }
 
 .thought-card {
@@ -1891,10 +1821,7 @@
       var(--s2-panel-bg) 100%
     );
 
-  border:
-    1px solid
-    var(--s2-border);
-
+  border: 1px solid var(--s2-border);
   border-radius: 24px;
 
   box-shadow:
@@ -1902,16 +1829,11 @@
     0 0 38px rgba(124, 140, 255, 0.09),
     inset 0 1px 0 rgba(255, 255, 255, 0.08);
 
-  font-family:
-    var(--font-display, Georgia, serif);
-
-  font-size:
-    clamp(1rem, 1vw, 1.12rem);
+  font-family: var(--font-display, Georgia, serif);
+  font-size: clamp(1rem, 1vw, 1.12rem);
 
   line-height: 1.56;
-
-  color:
-    var(--s2-text-mid);
+  color: var(--s2-text-mid);
 
   cursor: default;
   transform-origin: center center;
@@ -1929,11 +1851,8 @@
 .thought-card.is-top-layer {
   z-index: 999;
 
-  color:
-    var(--s2-text);
-
-  border-color:
-    var(--s2-border-strong);
+  color: var(--s2-text);
+  border-color: var(--s2-border-strong);
 
   box-shadow:
     0 38px 88px rgba(0, 0, 0, 0.62),
@@ -1946,10 +1865,7 @@
 }
 
 .thought-card:focus-visible {
-  outline:
-    2px solid
-    rgba(184, 192, 255, 0.68);
-
+  outline: 2px solid rgba(184, 192, 255, 0.68);
   outline-offset: 4px;
 }
 
@@ -1962,7 +1878,6 @@
   position: fixed;
   left: 0;
   top: 0;
-
   z-index: 9999;
 
   min-height: 40px;
@@ -1981,10 +1896,7 @@
       rgba(9, 13, 28, 0.99)
     );
 
-  border:
-    1px solid
-    rgba(184, 192, 255, 0.36);
-
+  border: 1px solid rgba(184, 192, 255, 0.36);
   border-radius: 999px;
 
   box-shadow:
@@ -1992,14 +1904,11 @@
     0 0 32px rgba(124, 140, 255, 0.18),
     inset 0 1px 0 rgba(255, 255, 255, 0.09);
 
-  font-family:
-    var(--font-body, system-ui, sans-serif);
-
+  font-family: var(--font-body, system-ui, sans-serif);
   font-size: 0.8rem;
   font-weight: 830;
 
-  color:
-    var(--s2-text);
+  color: var(--s2-text);
 
   opacity: 0;
   visibility: hidden;
@@ -2027,8 +1936,7 @@
   }
 
   .section-empty-shelf.is-js-ready .scroll-stage {
-    top:
-      clamp(-90px, -7vh, -30px);
+    top: clamp(-90px, -7vh, -30px);
   }
 
   .section-empty-shelf.is-js-ready .falling-quotes {
@@ -2085,56 +1993,54 @@
   }
 
   .section-empty-shelf.is-js-ready .moving-moments {
-    height:
-      clamp(420px, 50vh, 500px);
+    height: clamp(450px, 52vh, 520px);
   }
 
   .section-empty-shelf.is-js-ready
   .scroll-stage[data-stage="moments-move"] {
-    top:
-      clamp(-52px, -3.5vh, -20px);
+    top: clamp(-52px, -3.5vh, -20px);
   }
 
   .moment-frame-1 {
     --x: 0%;
     --y: 5%;
-    --w: 22%;
+    --w: 20%;
   }
 
   .moment-frame-2 {
-    --x: 19%;
-    --y: 25%;
-    --w: 22%;
+    --x: 18%;
+    --y: 26%;
+    --w: 20%;
   }
 
   .moment-frame-3 {
-    --x: 38%;
+    --x: 36%;
     --y: 6%;
-    --w: 22%;
+    --w: 20%;
   }
 
   .moment-frame-5 {
-    --x: 56%;
+    --x: 53.5%;
     --y: 1%;
-    --w: 13.5%;
+    --w: 16%;
   }
 
   .moment-frame-6 {
-    --x: 66.2%;
+    --x: 64%;
     --y: 21%;
-    --w: 13.5%;
+    --w: 16%;
   }
 
   .moment-frame-7 {
-    --x: 76.4%;
+    --x: 74.5%;
     --y: 3%;
-    --w: 13.5%;
+    --w: 16%;
   }
 
   .moment-frame-8 {
-    --x: 86.5%;
+    --x: 84%;
     --y: 20%;
-    --w: 13.5%;
+    --w: 16%;
   }
 
   .character-1 {
@@ -2222,9 +2128,7 @@
   .section-empty-shelf.is-js-ready .scroll-stage {
     top: 24px;
 
-    width:
-      calc(100vw - 24px);
-
+    width: calc(100vw - 24px);
     height: 620px;
   }
 
@@ -2329,46 +2233,65 @@
     height: 620px;
   }
 
+  .section-empty-shelf.is-js-ready
+  .scroll-stage[data-stage="moments-move"] {
+    top: 24px;
+  }
+
+  .moment-frame {
+    padding: 4px;
+    border-radius: 13px;
+  }
+
+  .moment-frame::after {
+    inset: 4px;
+    border-radius: 9px;
+  }
+
+  .moment-frame img {
+    border-radius: 9px;
+  }
+
   .moment-frame-1 {
     --x: 0%;
     --y: 2%;
-    --w: 31%;
+    --w: 30%;
   }
 
   .moment-frame-2 {
-    --x: 34.5%;
+    --x: 35%;
     --y: 8%;
-    --w: 31%;
+    --w: 30%;
   }
 
   .moment-frame-3 {
-    --x: 69%;
+    --x: 70%;
     --y: 2%;
-    --w: 31%;
+    --w: 30%;
   }
 
   .moment-frame-5 {
-    --x: 1%;
-    --y: 40%;
-    --w: 24%;
+    --x: 0%;
+    --y: 39%;
+    --w: 24.5%;
   }
 
   .moment-frame-6 {
-    --x: 26%;
-    --y: 46%;
-    --w: 24%;
+    --x: 25%;
+    --y: 45%;
+    --w: 24.5%;
   }
 
   .moment-frame-7 {
-    --x: 51%;
-    --y: 40%;
-    --w: 24%;
+    --x: 50.5%;
+    --y: 39%;
+    --w: 24.5%;
   }
 
   .moment-frame-8 {
-    --x: 76%;
-    --y: 46%;
-    --w: 24%;
+    --x: 75.5%;
+    --y: 45%;
+    --w: 24.5%;
   }
 
   .character-1 {
@@ -2447,8 +2370,7 @@
   .note-card,
   .note-card::before,
   .thought-card {
-    transition:
-      none !important;
+    transition: none !important;
   }
 
   .media-library-row:hover,
@@ -2459,13 +2381,11 @@
   .media-row-status span:hover,
   .moment-frame:hover img,
   .character-name:hover img {
-    transform:
-      none !important;
+    transform: none !important;
   }
 
   .media-library-row:hover::before,
   .media-row-cover:hover::after {
-    opacity:
-      0 !important;
+    opacity: 0 !important;
   }
 }
