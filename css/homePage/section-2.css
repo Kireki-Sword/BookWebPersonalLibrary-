@@ -2113,3 +2113,85 @@
     opacity: 0 !important;
   }
 }
+
+/* ============================================================================
+   FINAL FIXES
+   ----------------------------------------------------------------------------
+   1. Keep all evidence-card sizes and layouts unchanged.
+   2. Move the complete evidence scenes lower above the Vagabond card.
+   3. Correct the manga cover to a natural 2:3 proportion.
+   ============================================================================ */
+
+
+/* ============================================================================
+   COVER PROPORTION
+   ============================================================================ */
+
+#section-2-empty-shelf .media-row-cover,
+.section-empty-shelf .media-row-cover {
+  align-self: center;
+
+  /* Keep the existing width, but calculate the correct height. */
+  height: auto;
+  min-height: 0;
+  max-height: none;
+  aspect-ratio: 2 / 3;
+}
+
+#section-2-empty-shelf .media-row-cover img,
+.section-empty-shelf .media-row-cover img {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: cover;
+  object-position: center top;
+}
+
+
+/* ============================================================================
+   EVIDENCE POSITION — DESKTOP
+   ----------------------------------------------------------------------------
+   This moves the entire scene lower.
+
+   It does not change:
+   - Quote sizes
+   - Moment sizes
+   - Character sizes
+   - Notes or Thoughts sizes
+   - Grid columns
+   - Individual card positions
+   - Internal gaps or proportions
+   ============================================================================ */
+
+#section-2-empty-shelf.is-js-ready .scroll-stage,
+.section-empty-shelf.is-js-ready .scroll-stage {
+  top: clamp(-130px, -12vh, -90px);
+}
+
+
+/* ============================================================================
+   EVIDENCE POSITION — TABLET
+   ============================================================================ */
+
+@media (max-width: 1100px) {
+  #section-2-empty-shelf.is-js-ready .scroll-stage,
+  .section-empty-shelf.is-js-ready .scroll-stage {
+    top: clamp(-100px, -10vh, -70px);
+  }
+}
+
+
+/* ============================================================================
+   EVIDENCE POSITION — MOBILE
+   ----------------------------------------------------------------------------
+   Preserve your current mobile position.
+   ============================================================================ */
+
+@media (max-width: 640px) {
+  #section-2-empty-shelf.is-js-ready .scroll-stage,
+  .section-empty-shelf.is-js-ready .scroll-stage {
+    top: 24px;
+  }
+}
