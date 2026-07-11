@@ -22,7 +22,7 @@
 #section-2-empty-shelf,
 .section-empty-shelf {
   --section-2-row-width: 980px;
-  --section-2-cover-width: 132px;
+  --section-2-cover-width: 194px;
   --section-2-card-gap: 1.9rem;
 
   --section-2-evidence-width: min(
@@ -408,25 +408,24 @@
 /* ============================================================================
    7. COVER
    ----------------------------------------------------------------------------
-   Fixed: cover was 132px wide against a 278–305px tall box (~0.45 ratio),
-   which is far too narrow/tall for a manga volume cover and forced the art
-   to look stretched. Standard tankōbon cover proportions are close to 2:3
-   (0.667). Now the box locks to that ratio off the existing width variable,
-   so it's never distorted regardless of screen size, and it's vertically
-   centered in the cover cell instead of force-stretched to fill it.
+   Height stays the tall size from the original design (278–305px, stretched
+   to the row). The fix is on the horizontal axis: --section-2-cover-width
+   grows from 132px to 194px, which is the correct 2:3 width for that height
+   — so the proportion is fixed without shrinking the cover you already liked.
    ============================================================================ */
 
 .media-row-cover {
   grid-area: cover;
-  align-self: center;
+  align-self: stretch;
   justify-self: start;
 
   position: relative;
   z-index: 1;
 
   width: var(--section-2-cover-width);
-  aspect-ratio: 2 / 3;
-  height: auto;
+  height: 100%;
+  min-height: 278px;
+  max-height: 305px;
 
   overflow: hidden;
 
@@ -546,7 +545,8 @@
 
   transition:
     color 180ms ease,
-    text-shadow 180ms ease;
+    text-shadow 180ms ease,
+    transform 180ms ease;
 }
 
 .media-row-info p {
@@ -564,13 +564,25 @@
 
   transition:
     color 180ms ease,
-    text-shadow 180ms ease;
+    text-shadow 180ms ease,
+    transform 180ms ease;
 }
 
 .media-row-info h3:hover,
 .media-row-info p:hover {
-  color: #ffffff;
-  text-shadow: 0 10px 28px rgba(124, 140, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+.media-row-info h3:hover {
+  color: #cfc6ff;
+  text-shadow:
+    0 0 22px rgba(155, 124, 255, 0.55),
+    0 10px 30px rgba(124, 140, 255, 0.28);
+}
+
+.media-row-info p:hover {
+  color: #e7e9ff;
+  text-shadow: 0 0 16px rgba(155, 124, 255, 0.35);
 }
 
 
@@ -1257,73 +1269,61 @@
   outline-offset: 4px;
 }
 
-/* Base ratios. */
+/* Base ratios.
+   The wide horizontal card is gone — the set is now
+   3 squares + 4 matching vertical rectangles, all sized up
+   to fill the space the old 8-card set used to occupy. */
 .moment-square {
   --ratio: 1 / 1;
-}
-
-.moment-wide {
-  --ratio: 1.39 / 1;
 }
 
 .moment-vertical {
   --ratio: 0.64 / 1;
 }
 
-/* One wider vertical card, matching your big field example. */
-.moment-frame-8 {
-  --ratio: 0.78 / 1;
-}
-
-/* 3 large square panels. */
+/* 3 large square panels, staggered left to right. */
 .moment-frame-1 {
   --x: 0%;
-  --y: 3%;
-  --w: 20%;
+  --y: 2%;
+  --w: 23%;
 }
 
 .moment-frame-2 {
-  --x: 15.5%;
-  --y: 18%;
-  --w: 20%;
+  --x: 19%;
+  --y: 17%;
+  --w: 23%;
 }
 
 .moment-frame-3 {
-  --x: 31%;
-  --y: 3%;
-  --w: 20%;
+  --x: 38%;
+  --y: 2%;
+  --w: 23%;
 }
 
-/* 1 horizontal panel. Bigger, but not so huge that it destroys the layout. */
-.moment-frame-4 {
-  --x: 24%;
-  --y: 28%;
-  --w: 31%;
-}
-
-/* 4 vertical manga panels. */
+/* 4 vertical panels, same ratio, spread across the remaining width
+   and staggered in height so all 7 cards stay clear of each other. */
 .moment-frame-5 {
-  --x: 52%;
+  --x: 61%;
   --y: 0%;
-  --w: 14.8%;
+  --w: 16%;
 }
 
 .moment-frame-6 {
-  --x: 63.5%;
-  --y: 9%;
-  --w: 14.8%;
+  --x: 76%;
+  --y: 12%;
+  --w: 16%;
 }
 
 .moment-frame-7 {
-  --x: 75%;
-  --y: 0%;
-  --w: 14.8%;
+  --x: 8%;
+  --y: 47%;
+  --w: 16%;
 }
 
 .moment-frame-8 {
-  --x: 86.5%;
-  --y: 8%;
-  --w: 13.5%;
+  --x: 26%;
+  --y: 52%;
+  --w: 16%;
 }
 
 
@@ -1767,49 +1767,43 @@
   .moment-frame-1 {
     --x: 0%;
     --y: 1%;
-    --w: 23%;
+    --w: 26%;
   }
 
   .moment-frame-2 {
-    --x: 20%;
-    --y: 14%;
-    --w: 23%;
+    --x: 22%;
+    --y: 15%;
+    --w: 26%;
   }
 
   .moment-frame-3 {
-    --x: 40%;
-    --y: 2%;
-    --w: 23%;
-  }
-
-  .moment-frame-4 {
-    --x: 5%;
-    --y: 38%;
-    --w: 42%;
+    --x: 44%;
+    --y: 1%;
+    --w: 26%;
   }
 
   .moment-frame-5 {
-    --x: 62%;
+    --x: 72%;
     --y: 0%;
-    --w: 17.5%;
+    --w: 19%;
   }
 
   .moment-frame-6 {
-    --x: 78%;
-    --y: 11%;
-    --w: 17.5%;
+    --x: 88%;
+    --y: 32%;
+    --w: 19%;
   }
 
   .moment-frame-7 {
-    --x: 54%;
-    --y: 32%;
-    --w: 17.5%;
+    --x: 6%;
+    --y: 46%;
+    --w: 19%;
   }
 
   .moment-frame-8 {
-    --x: 72%;
-    --y: 40%;
-    --w: 17%;
+    --x: 25%;
+    --y: 52%;
+    --w: 19%;
   }
 
   .character-1 {
@@ -1869,7 +1863,7 @@
   .section-empty-shelf {
     padding: 4rem 1.1rem 4.5rem;
 
-    --section-2-cover-width: 86px;
+    --section-2-cover-width: 135px;
     --section-2-card-gap: 0.95rem;
   }
 
@@ -1978,49 +1972,43 @@
   .moment-frame-1 {
     --x: 0%;
     --y: 0%;
-    --w: 31%;
+    --w: 32%;
   }
 
   .moment-frame-2 {
     --x: 34%;
     --y: 0%;
-    --w: 31%;
+    --w: 32%;
   }
 
   .moment-frame-3 {
     --x: 68%;
     --y: 0%;
-    --w: 31%;
-  }
-
-  .moment-frame-4 {
-    --x: 4%;
-    --y: 34%;
-    --w: 62%;
+    --w: 32%;
   }
 
   .moment-frame-5 {
-    --x: 68%;
-    --y: 32%;
-    --w: 29%;
+    --x: 4%;
+    --y: 48%;
+    --w: 30%;
   }
 
   .moment-frame-6 {
-    --x: 0%;
-    --y: 64%;
-    --w: 29%;
+    --x: 37%;
+    --y: 44%;
+    --w: 30%;
   }
 
   .moment-frame-7 {
-    --x: 35%;
-    --y: 64%;
-    --w: 29%;
+    --x: 70%;
+    --y: 48%;
+    --w: 30%;
   }
 
   .moment-frame-8 {
-    --x: 70%;
-    --y: 64%;
-    --w: 29%;
+    --x: 20%;
+    --y: 78%;
+    --w: 30%;
   }
 
   .character-1 {

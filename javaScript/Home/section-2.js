@@ -601,9 +601,9 @@
       return {
         ...base,
         x: (index) =>
-          [-140, -92, -36, 48, 108, 152, 194, 236][index % 8],
+          [-140, -92, -36, 108, 152, 194, 236][index % 7],
         y: (index) =>
-          [40, 64, 34, 92, 20, 54, 28, 78][index % 8],
+          [40, 64, 34, 20, 54, 28, 78][index % 7],
         scale: 0.9,
         rotation: (_index, element) => getElementRotate(element) * 1.25
       };
