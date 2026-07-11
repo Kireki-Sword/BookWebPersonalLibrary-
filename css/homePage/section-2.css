@@ -227,7 +227,7 @@
   left: 50%;
 
   /* Strong upward pull. This is the important fix. */
-  top: clamp(-260px, -22vh, -190px);
+  top: clamp(-300px, calc(-22vh - 40px), -230px);
 
   z-index: 20;
 
@@ -1272,51 +1272,51 @@
 .moment-frame-1 {
   --x: 0%;
   --y: 3%;
-  --w: 20%;
+  --w: 35%;
 }
 
 .moment-frame-2 {
   --x: 15.5%;
   --y: 18%;
-  --w: 20%;
+  --w: 35%;
 }
 
 .moment-frame-3 {
   --x: 31%;
   --y: 3%;
-  --w: 20%;
+  --w: 35%;
 }
 
 /* 1 horizontal panel. Bigger, but not so huge that it destroys the layout. */
 .moment-frame-4 {
   --x: 24%;
   --y: 28%;
-  --w: 31%;
+  --w: 54.25%;
 }
 
 /* 4 vertical manga panels. */
 .moment-frame-5 {
   --x: 52%;
   --y: 0%;
-  --w: 14.8%;
+  --w: 25.9%;
 }
 
 .moment-frame-6 {
   --x: 63.5%;
   --y: 9%;
-  --w: 14.8%;
+  --w: 25.9%;
 }
 
 .moment-frame-7 {
   --x: 75%;
   --y: 0%;
-  --w: 14.8%;
+  --w: 25.9%;
 }
 
 .moment-frame-8 {
   --x: 86.5%;
   --y: 8%;
-  --w: 13.5%;
+  --w: 23.625%;
 }
 
 
