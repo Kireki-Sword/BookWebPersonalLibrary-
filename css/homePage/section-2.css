@@ -227,7 +227,7 @@
   left: 50%;
 
   /* Strong upward pull. This is the important fix. */
-  top: clamp(-280px, calc(-22vh - 20px), -210px);
+  top: clamp(-270px, calc(-22vh - 10px), -200px);
 
   z-index: 20;
 
