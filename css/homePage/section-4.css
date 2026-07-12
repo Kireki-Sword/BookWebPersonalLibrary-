@@ -1,129 +1,150 @@
 /* ============================================================================
    SECTION 4 — SAME STORY, DIFFERENT SOULS
 
-   CSS MAP
-   1. Main edit variables
-   2. Section shell
-   3. Shared cover styles
-   4. Rain and merge
-   5. Final layout
-   6. Small profile selectors
-   7. One shared story card
-   8. Saved-layer content
-   9. Fallback and responsive rules
+   CSS ORGANIZATION
 
-   The main card is edited only in section 7.
-   Responsive overrides are grouped together at the bottom.
+   1. Main variables and section root
+   2. Accessibility and shared helpers
+   3. Pinned cinematic
+   4. Cover rain and selected covers
+   5. Normal final content
+   6. Shared story card
+   7. Split reader showcase
+   8. Quote, character, and thought content
+   9. Empty and static states
+   10. Responsive and reduced-motion rules
+
+   EDITING RULE
+
+   Each main component is defined in one place.
+   Responsive changes are kept together at the bottom.
    ============================================================================ */
 
 
 /* ============================================================================
-   1. MAIN EDIT VARIABLES
+   1. MAIN VARIABLES AND SECTION ROOT
+
+   These variables are the easiest way to change the overall section.
    ============================================================================ */
 
 .section-cover-rain {
   /*
-    Increase this when your fixed navbar is taller.
+    Change this value to match the height of your fixed navigation bar.
   */
-  --s4-nav-offset: 64px;
+  --s4-nav-height: 64px;
 
   /*
-    Increase this value to move the final profiles
-    and the shared card lower.
+    Width of the Attack on Titan card.
   */
-  --s4-final-top-space: clamp(36px, 5vh, 66px);
+  --s4-card-width:
+    min(900px, calc(100vw - 48px));
 
   /*
-    Main final width and shared card measurements.
+    Maximum width of the two-reader comparison area.
   */
-  --s4-content-width:
-    min(1080px, calc(100vw - 48px));
-
-  --s4-cover-width:
-    clamp(142px, 14vw, 184px);
-
-  --s4-card-radius: 27px;
-
-  --s4-card-padding:
-    clamp(18px, 2vw, 26px);
-
-  --s4-card-gap:
-    clamp(18px, 2.2vw, 30px);
+  --s4-compare-width:
+    min(1420px, calc(100vw - 56px));
 
   /*
-    Height of the scrollable Quotes / Characters / Thoughts area.
+    Width of the cover inside the main card.
   */
-  --s4-panel-height:
-    clamp(240px, 32vh, 350px);
+  --s4-cover-width: 156px;
 
-  --s4-bg-0: #050611;
-  --s4-bg-1: #090d20;
-  --s4-bg-2: #111634;
+  /*
+    Space between the card cover and card information.
+  */
+  --s4-card-gap: 1.4rem;
 
-  --s4-card:
-    rgba(8, 13, 29, 0.96);
+  /* Main background colours. */
 
-  --s4-card-strong:
-    rgba(15, 21, 42, 0.98);
+  --s4-bg-top: #080b18;
+  --s4-bg-mid: #121934;
+  --s4-bg-bottom: #070b17;
+
+  /* Card and evidence-panel colours. */
+
+  --s4-panel:
+    rgba(8, 13, 28, 0.96);
+
+  --s4-panel-strong:
+    rgba(15, 21, 40, 0.98);
+
+  /* Border colours. */
 
   --s4-border:
-    rgba(181, 191, 255, 0.18);
+    rgba(170, 183, 255, 0.18);
 
   --s4-border-strong:
     rgba(190, 200, 255, 0.44);
 
-  --s4-text: #f6f3ff;
-  --s4-text-mid: #cbd0e7;
-  --s4-text-muted: #8f98b8;
-  --s4-text-faint: #66708d;
+  /* Text colours. */
+
+  --s4-text: #f5f1ff;
+  --s4-text-mid: #c9cde2;
+  --s4-text-muted: #8f96b3;
+  --s4-text-faint: #636d8b;
+
+  /* Accent colours. */
+
+  --s4-purple: #9b7cff;
+  --s4-blue: #718cff;
   --s4-cyan: #78d8ff;
+  --s4-warm: #c8a46b;
 
   position: relative;
   isolation: isolate;
 
   width: 100%;
-  height: 100svh;
-  min-height: 760px;
 
-  overflow: hidden;
+  /*
+    This must remain visible.
+
+    Do not add overflow-y:auto to the section or final content.
+    The browser page must control vertical scrolling.
+  */
+  overflow: visible;
 
   color: var(--s4-text);
 
   background:
     radial-gradient(
-      circle at 50% 0%,
-      rgba(124, 140, 255, 0.23),
+      circle at 50% 8%,
+      rgba(89, 101, 205, 0.2),
       transparent 34%
     ),
     radial-gradient(
-      circle at 12% 46%,
-      rgba(155, 124, 255, 0.15),
-      transparent 36%
+      circle at 16% 54%,
+      rgba(124, 90, 196, 0.13),
+      transparent 40%
     ),
     radial-gradient(
-      circle at 88% 56%,
-      rgba(116, 215, 255, 0.11),
-      transparent 34%
+      circle at 84% 56%,
+      rgba(80, 132, 210, 0.11),
+      transparent 38%
     ),
     linear-gradient(
-      135deg,
-      var(--s4-bg-0),
-      var(--s4-bg-1) 43%,
-      var(--s4-bg-2) 73%,
-      var(--s4-bg-0)
+      180deg,
+      var(--s4-bg-top) 0%,
+      var(--s4-bg-mid) 46%,
+      var(--s4-bg-bottom) 100%
     );
 }
 
 
-/* ============================================================================
-   2. SECTION SHELL
-   ============================================================================ */
+/*
+  Give every Section 4 element predictable box sizing.
+*/
 
 .section-cover-rain *,
 .section-cover-rain *::before,
 .section-cover-rain *::after {
   box-sizing: border-box;
 }
+
+
+/*
+  Decorative grid and grain layers.
+*/
 
 .section-cover-rain::before,
 .section-cover-rain::after {
@@ -138,7 +159,7 @@
 .section-cover-rain::before {
   z-index: 0;
 
-  opacity: 0.3;
+  opacity: 0.2;
 
   background-image:
     linear-gradient(
@@ -155,15 +176,15 @@
 
   -webkit-mask-image:
     radial-gradient(
-      circle at 50% 44%,
-      #000,
+      circle at 50% 35%,
+      black,
       transparent 78%
     );
 
   mask-image:
     radial-gradient(
-      circle at 50% 44%,
-      #000,
+      circle at 50% 35%,
+      black,
       transparent 78%
     );
 }
@@ -175,20 +196,57 @@
 
   background-image:
     radial-gradient(
-      rgba(255, 255, 255, 0.2) 0.65px,
+      rgba(255, 255, 255, 0.14) 0.65px,
       transparent 0.65px
     );
 
   background-size: 4px 4px;
 }
 
-.s4-rain-scene,
-.s4-merge-stage,
-.s4-final-scene,
-.s4-empty {
-  position: absolute;
-  inset: 0;
+
+/*
+  Keep the real section content above the decorative backgrounds.
+*/
+
+.section-cover-rain > * {
+  position: relative;
+  z-index: 1;
 }
+
+
+/* ============================================================================
+   2. ACCESSIBILITY AND SHARED HELPERS
+   ============================================================================ */
+
+
+/*
+  Invisible live-status element.
+
+  Screen readers can hear its text, but sighted visitors do not see it.
+*/
+
+.s4-status {
+  position: absolute !important;
+
+  width: 1px !important;
+  height: 1px !important;
+
+  padding: 0 !important;
+  margin: -1px !important;
+
+  overflow: hidden !important;
+  white-space: nowrap !important;
+
+  clip: rect(0 0 0 0) !important;
+  clip-path: inset(50%) !important;
+
+  border: 0 !important;
+}
+
+
+/*
+  Small uppercase section labels.
+*/
 
 .s4-section-label {
   display: inline-flex;
@@ -197,13 +255,13 @@
 
   gap: 0.5rem;
 
-  color: #bcc4ff;
+  color: #b9c2ff;
 
   font-family:
     var(--font-body, system-ui, sans-serif);
 
   font-size:
-    clamp(0.68rem, 0.72vw, 0.78rem);
+    clamp(0.66rem, 0.72vw, 0.78rem);
 
   font-weight: 850;
   line-height: 1;
@@ -229,9 +287,9 @@
 }
 
 
-/* ============================================================================
-   3. SHARED COVER STYLES
-   ============================================================================ */
+/*
+  Shared styling for every cover shell.
+*/
 
 [data-cover-shell] {
   position: relative;
@@ -241,9 +299,14 @@
   margin: 0;
 
   background:
+    radial-gradient(
+      circle at 28% 18%,
+      rgba(255, 255, 255, 0.17),
+      transparent 30%
+    ),
     linear-gradient(
       145deg,
-      rgba(124, 140, 255, 0.38),
+      rgba(124, 140, 255, 0.42),
       rgba(155, 124, 255, 0.16)
     );
 }
@@ -256,12 +319,20 @@
 
   object-fit: cover;
   object-position: center top;
+
+  color: transparent;
+  font-size: 0;
 }
 
 [data-cover-shell] > img[hidden],
 .s4-cover-fallback[hidden] {
   display: none !important;
 }
+
+
+/*
+  Gradient placeholder shown when the database cover cannot load.
+*/
 
 .s4-cover-fallback {
   position: absolute;
@@ -279,7 +350,7 @@
     var(--font-display, Georgia, serif);
 
   font-size:
-    clamp(0.68rem, 0.9vw, 0.96rem);
+    clamp(0.66rem, 0.9vw, 0.96rem);
 
   font-weight: 800;
   line-height: 1.05;
@@ -296,94 +367,42 @@
       145deg,
       rgba(124, 140, 255, 0.66),
       rgba(155, 124, 255, 0.3),
-      rgba(5, 6, 17, 0.95)
+      rgba(5, 6, 17, 0.96)
     );
 }
 
 
 /* ============================================================================
-   4. RAIN AND MERGE
+   3. PINNED CINEMATIC
    ============================================================================ */
 
-.s4-rain-scene {
-  z-index: 2;
 
-  pointer-events: none;
-}
+/*
+  ScrollTrigger pins only this element.
+*/
 
-.s4-rain-lane {
-  position: absolute;
+.s4-cinematic {
+  position: relative;
+  isolation: isolate;
 
-  top: 0;
-  bottom: 0;
-
-  width:
-    min(26vw, 360px);
-}
-
-.s4-rain-lane-left {
-  left:
-    clamp(0.6rem, 3vw, 3.5rem);
-}
-
-.s4-rain-lane-right {
-  right:
-    clamp(0.6rem, 3vw, 3.5rem);
-}
-
-.s4-rain-item {
-  position: absolute;
-
-  width:
-    clamp(72px, 7.2vw, 116px);
-
-  aspect-ratio: 2 / 3;
-
-  margin: 0;
+  width: 100%;
+  height: 100svh;
+  min-height: 760px;
 
   overflow: hidden;
-
-  border:
-    1px solid rgba(255, 255, 255, 0.12);
-
-  border-radius: 15px;
-
-  box-shadow:
-    0 24px 48px rgba(0, 0, 0, 0.46),
-    0 0 34px rgba(124, 140, 255, 0.12);
-
-  transform-origin: center;
-
-  will-change:
-    transform,
-    opacity;
 }
 
-.s4-rain-item::after,
-.s4-main-cover::after,
-.s4-merge-cover::after {
-  content: "";
 
-  position: absolute;
-  inset: 0;
+/*
+  Opening title in the middle of the cinematic.
+*/
 
-  pointer-events: none;
-
-  background:
-    linear-gradient(
-      130deg,
-      rgba(255, 255, 255, 0.12),
-      transparent 26%,
-      transparent 72%,
-      rgba(255, 255, 255, 0.05)
-    );
-}
-
-.s4-rain-copy {
+.s4-cinematic-copy {
   position: absolute;
 
   left: 50%;
   top: 50%;
+  z-index: 4;
 
   width:
     min(760px, 72vw);
@@ -398,7 +417,7 @@
     opacity;
 }
 
-.s4-rain-copy h2 {
+.s4-cinematic-copy h2 {
   margin:
     0.9rem 0 0;
 
@@ -409,27 +428,27 @@
     var(--font-display, Georgia, serif);
 
   font-size:
-    clamp(4rem, 8.2vw, 8.7rem);
+    clamp(4rem, 8vw, 8.5rem);
 
   font-weight: 800;
-  line-height: 0.86;
+  line-height: 0.87;
 
   letter-spacing: -0.07em;
 
   text-shadow:
-    0 28px 75px rgba(0, 0, 0, 0.54),
+    0 28px 75px rgba(0, 0, 0, 0.55),
     0 0 48px rgba(124, 140, 255, 0.16);
 }
 
-.s4-rain-copy h2 span {
+.s4-cinematic-copy h2 span {
   display: block;
 
-  color: #e6ebff;
+  color: #e7ebff;
 }
 
-.s4-rain-copy p {
+.s4-cinematic-copy p {
   width:
-    min(550px, 94%);
+    min(560px, 94%);
 
   margin:
     1.1rem auto 0;
@@ -446,6 +465,11 @@
   font-weight: 650;
   line-height: 1.65;
 }
+
+
+/*
+  Small scroll instruction.
+*/
 
 .s4-scroll-cue {
   display: inline-flex;
@@ -482,136 +506,249 @@
     );
 }
 
-.s4-merge-stage {
-  z-index: 4;
 
-  pointer-events: none;
-}
+/*
+  Labels used during and after the merge.
+*/
 
-.s4-merge-cover {
+.s4-selection-copy,
+.s4-continue-cue {
   position: absolute;
 
   left: 50%;
-  top: 50%;
-
-  width:
-    clamp(150px, 13.5vw, 205px);
-
-  aspect-ratio: 2 / 3;
-
-  border:
-    1px solid rgba(190, 200, 255, 0.2);
-
-  border-radius: 18px;
-
-  box-shadow:
-    0 30px 72px rgba(0, 0, 0, 0.5),
-    0 0 46px rgba(124, 140, 255, 0.14);
+  z-index: 6;
 
   opacity: 0;
 
+  pointer-events: none;
+
   transform:
-    translate(-50%, -50%);
+    translateX(-50%);
 
   will-change:
     transform,
     opacity;
 }
 
-.s4-merge-cover-one {
-  z-index: 3;
-}
-
-.s4-merge-caption {
-  position: absolute;
-
-  left: 50%;
-
+.s4-selection-copy {
   top:
     calc(
-      50% + clamp(132px, 19vw, 190px)
+      50% + clamp(142px, 19vw, 205px)
     );
 
+  display: grid;
+
+  gap: 0.28rem;
+
+  text-align: center;
+}
+
+.s4-selection-copy span,
+.s4-continue-cue {
   color:
-    rgba(240, 214, 163, 0.9);
+    var(--s4-text-muted);
 
   font-family:
     var(--font-body, system-ui, sans-serif);
 
-  font-size: 0.72rem;
-  font-weight: 900;
-  line-height: 1;
+  font-size: 0.62rem;
+  font-weight: 850;
 
-  letter-spacing: 0.16em;
+  letter-spacing: 0.13em;
   text-transform: uppercase;
+}
 
-  opacity: 0;
+.s4-selection-copy strong {
+  color: #f0d6a3;
 
-  transform:
-    translateX(-50%);
+  font-family:
+    var(--font-display, Georgia, serif);
+
+  font-size:
+    clamp(1rem, 1.4vw, 1.35rem);
+}
+
+.s4-continue-cue {
+  bottom:
+    clamp(34px, 5vh, 60px);
+
+  padding:
+    0.62rem 0.9rem;
+
+  border:
+    1px solid rgba(184, 192, 255, 0.18);
+
+  border-radius: 999px;
+
+  background:
+    rgba(8, 13, 28, 0.72);
+
+  backdrop-filter:
+    blur(12px);
 }
 
 
 /* ============================================================================
-   5. FINAL LAYOUT
-
-   This section controls the position of the final interface.
-   The variables at the top move the card lower.
+   4. COVER RAIN AND SELECTED COVERS
    ============================================================================ */
 
-.s4-final-scene {
-  z-index: 3;
 
-  overflow-y: auto;
-  overscroll-behavior: contain;
+/*
+  The rain occupies only the left and right edges.
 
-  padding:
-    calc(
-      var(--s4-nav-offset) +
-      var(--s4-final-top-space)
-    )
-    24px
-    48px;
+  The middle remains open for the heading and cover merge.
+*/
 
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
+.s4-rain-lane {
+  position: absolute;
 
-  scrollbar-width: thin;
+  top: 0;
+  bottom: 0;
+  z-index: 2;
 
-  scrollbar-color:
-    rgba(124, 140, 255, 0.5)
-    transparent;
-}
-
-.s4-final-scene::-webkit-scrollbar {
-  width: 8px;
-}
-
-.s4-final-scene::-webkit-scrollbar-thumb {
-  border-radius: 999px;
-
-  background:
-    rgba(124, 140, 255, 0.45);
-}
-
-.s4-final-intro {
   width:
-    min(680px, 100%);
+    min(27vw, 390px);
 
-  margin:
-    0 auto;
+  pointer-events: none;
+}
 
-  text-align: center;
+.s4-rain-lane-left {
+  left:
+    clamp(0.6rem, 3vw, 3.5rem);
+}
 
-  opacity: 0;
+.s4-rain-lane-right {
+  right:
+    clamp(0.6rem, 3vw, 3.5rem);
+}
+
+
+/*
+  Individual database cover inside the rain.
+*/
+
+.s4-rain-item {
+  position: absolute;
+
+  top: 0;
+
+  width:
+    clamp(72px, 7.2vw, 116px);
+
+  aspect-ratio: 2 / 3;
+
+  border:
+    1px solid rgba(255, 255, 255, 0.12);
+
+  border-radius: 15px;
+
+  box-shadow:
+    0 24px 48px rgba(0, 0, 0, 0.46),
+    0 0 34px rgba(124, 140, 255, 0.12);
+
+  transform-origin: center;
 
   will-change:
     transform,
     opacity;
 }
 
-.s4-final-intro p {
+.s4-rain-item::after,
+.s4-card-cover::after {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+
+  pointer-events: none;
+
+  background:
+    linear-gradient(
+      130deg,
+      rgba(255, 255, 255, 0.12),
+      transparent 26%,
+      transparent 72%,
+      rgba(255, 255, 255, 0.05)
+    );
+}
+
+
+/*
+  Attack on Titan exists as a chosen item in BOTH rain lanes.
+
+  These selected elements receive a higher layer so they can move over the
+  other covers and into the centre.
+*/
+
+.s4-rain-item.is-chosen-story {
+  z-index: 20 !important;
+
+  border-color:
+    rgba(216, 221, 255, 0.34);
+
+  box-shadow:
+    0 34px 78px rgba(0, 0, 0, 0.56),
+    0 0 52px rgba(155, 124, 255, 0.22),
+    0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+
+/* ============================================================================
+   5. NORMAL FINAL CONTENT
+   ============================================================================ */
+
+
+/*
+  This area follows normal page flow.
+
+  Do not add:
+  overflow-y: auto;
+  height: 100vh;
+
+  Those rules can create a second scrolling area and trap the mouse wheel.
+*/
+
+.s4-story-content {
+  position: relative;
+  z-index: 3;
+
+  min-height: 100svh;
+
+  padding:
+    calc(
+      var(--s4-nav-height) +
+      clamp(28px, 5vh, 58px)
+    )
+    0
+    clamp(90px, 12vh, 150px);
+
+  overflow: visible;
+}
+
+.s4-story-content-inner {
+  width: 100%;
+
+  margin-inline: auto;
+}
+
+
+/*
+  Introduction below the main card.
+*/
+
+.s4-content-intro {
+  width:
+    min(700px, calc(100vw - 36px));
+
+  margin:
+    clamp(1.5rem, 3vh, 2.4rem)
+    auto
+    0;
+
+  text-align: center;
+}
+
+.s4-content-intro p {
   margin:
     0.65rem 0 0;
 
@@ -622,59 +759,896 @@
     var(--font-body, system-ui, sans-serif);
 
   font-size:
-    clamp(0.8rem, 0.9vw, 0.94rem);
+    clamp(0.8rem, 0.9vw, 0.95rem);
 
-  line-height: 1.5;
-}
-
-.s4-final-shell {
-  width:
-    var(--s4-content-width);
-
-  margin:
-    clamp(1.35rem, 2.5vh, 2rem)
-    auto
-    0;
+  line-height: 1.55;
 }
 
 
 /* ============================================================================
-   6. SMALL PROFILE SELECTORS
+   6. ONE SHARED STORY CARD
 
-   Edit profile text and images in the PROFILES object in JavaScript.
+   Edit the main card in this section.
    ============================================================================ */
 
-.s4-profile-switcher {
+.s4-shared-card {
+  position: relative;
+  isolation: isolate;
+
+  width:
+    var(--s4-card-width);
+
+  min-height: 286px;
+
+  margin-inline: auto;
+
+  padding:
+    24px 26px;
+
   display: grid;
 
   grid-template-columns:
-    minmax(210px, 260px)
-    minmax(100px, 1fr)
-    minmax(210px, 260px);
+    var(--s4-cover-width)
+    minmax(0, 1fr)
+    auto;
+
+  grid-template-areas:
+    "cover info score"
+    "cover meta score"
+    "cover layers layers";
+
+  grid-template-rows:
+    minmax(76px, 1fr)
+    auto
+    auto;
+
+  column-gap:
+    var(--s4-card-gap);
+
+  row-gap: 0.55rem;
 
   align-items: center;
 
-  gap:
-    clamp(14px, 2vw, 28px);
+  overflow: hidden;
+
+  border:
+    1px solid var(--s4-border);
+
+  border-radius: 26px;
+
+  background:
+    radial-gradient(
+      circle at 76% 50%,
+      rgba(124, 140, 255, 0.12),
+      transparent 34%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(13, 19, 36, 0.97),
+      rgba(8, 13, 28, 0.97)
+    );
+
+  box-shadow:
+    0 34px 90px rgba(0, 0, 0, 0.46),
+    0 14px 34px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+
+  transform:
+    perspective(900px)
+    translateZ(0);
+
+  transition:
+    transform 240ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 220ms ease,
+    background 220ms ease,
+    box-shadow 240ms ease;
 }
 
-.s4-profile-selector {
+
+/*
+  Soft glow behind the card.
+*/
+
+.s4-shared-card::after {
+  content: "";
+
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+  z-index: -2;
+
+  width:
+    calc(100% + 120px);
+
+  height:
+    calc(100% + 100px);
+
+  pointer-events: none;
+
+  border-radius: 48px;
+
+  background:
+    radial-gradient(
+      ellipse at 50% 58%,
+      rgba(124, 140, 255, 0.2),
+      rgba(124, 140, 255, 0.1) 42%,
+      transparent 74%
+    );
+
+  filter:
+    blur(32px);
+
+  opacity: 0.84;
+
+  transform:
+    translate(-50%, -50%)
+    scale(1);
+
+  transition:
+    opacity 240ms ease,
+    transform 240ms ease;
+}
+
+
+/*
+  Moving light sweep across the whole card.
+*/
+
+.s4-shared-card::before {
+  content: "";
+
+  position: absolute;
+
+  top: -50%;
+  left: -85%;
+  z-index: 0;
+
+  width: 55%;
+  height: 200%;
+
+  pointer-events: none;
+
+  opacity: 0;
+
+  background:
+    linear-gradient(
+      105deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.06) 35%,
+      rgba(255, 255, 255, 0.16) 48%,
+      rgba(255, 255, 255, 0.06) 61%,
+      transparent 100%
+    );
+
+  transform:
+    rotate(8deg);
+
+  transition:
+    transform 700ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 220ms ease;
+}
+
+
+/*
+  Main card hover and keyboard-focus state.
+*/
+
+.s4-shared-card:hover,
+.s4-shared-card:focus-visible {
+  transform:
+    perspective(900px)
+    rotateX(0.6deg)
+    translateY(-5px);
+
+  border-color:
+    var(--s4-border-strong);
+
+  background:
+    radial-gradient(
+      circle at 76% 50%,
+      rgba(124, 140, 255, 0.16),
+      transparent 34%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(15, 22, 42, 0.99),
+      rgba(9, 14, 30, 0.99)
+    );
+
+  box-shadow:
+    0 42px 108px rgba(0, 0, 0, 0.56),
+    0 18px 42px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.09);
+}
+
+.s4-shared-card:hover::before,
+.s4-shared-card:focus-visible::before {
+  opacity: 1;
+
+  transform:
+    translateX(310%)
+    rotate(8deg);
+}
+
+.s4-shared-card:hover::after,
+.s4-shared-card:focus-visible::after {
+  opacity: 1;
+
+  transform:
+    translate(-50%, -50%)
+    scale(1.025);
+}
+
+.s4-shared-card:focus-visible {
+  outline:
+    2px solid rgba(184, 192, 255, 0.68);
+
+  outline-offset: 5px;
+}
+
+
+/*
+  Keep all real card content above the moving light sweep.
+*/
+
+.s4-card-cover,
+.s4-card-info,
+.s4-card-score,
+.s4-card-meta,
+.s4-card-layers {
+  position: relative;
+  z-index: 1;
+}
+
+
+/* ------------------------------
+   Card cover
+   ------------------------------ */
+
+.s4-card-cover {
+  grid-area: cover;
+
+  align-self: center;
+
+  width:
+    var(--s4-cover-width);
+
+  aspect-ratio: 2 / 3;
+
+  border:
+    1px solid rgba(184, 192, 255, 0.18);
+
+  border-radius: 18px;
+
+  box-shadow:
+    0 18px 36px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+
+  transition:
+    transform 280ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 280ms ease;
+}
+
+
+/*
+  Shine that moves across the cover when the cover is hovered.
+*/
+
+.s4-card-cover::before {
+  content: "";
+
+  position: absolute;
+
+  top: -60%;
+  left: -85%;
+  z-index: 3;
+
+  width: 50%;
+  height: 220%;
+
+  pointer-events: none;
+
+  opacity: 0;
+
+  background:
+    linear-gradient(
+      105deg,
+      transparent,
+      rgba(255, 255, 255, 0.42),
+      transparent
+    );
+
+  transform:
+    rotate(12deg);
+
+  transition:
+    transform 520ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 200ms ease;
+}
+
+.s4-shared-card:hover .s4-card-cover,
+.s4-card-cover:hover {
+  transform:
+    translateY(-4px)
+    rotate(-1.2deg);
+
+  box-shadow:
+    0 22px 44px rgba(0, 0, 0, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+.s4-card-cover:hover::before {
+  opacity: 1;
+
+  transform:
+    rotate(12deg)
+    translateX(260%);
+}
+
+.s4-card-cover img {
+  transition:
+    filter 280ms ease,
+    transform 280ms ease;
+}
+
+.s4-shared-card:hover .s4-card-cover img {
+  filter:
+    saturate(1.05)
+    contrast(1.04);
+}
+
+
+/* ------------------------------
+   Card title and creator
+   ------------------------------ */
+
+.s4-card-info {
+  grid-area: info;
+
+  align-self: end;
+
   min-width: 0;
-  min-height: 70px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  gap: 0.3rem;
+}
+
+.s4-card-info h3,
+.s4-card-info p {
+  margin: 0;
+
+  cursor: default;
+
+  transition:
+    color 180ms ease,
+    text-shadow 180ms ease,
+    transform 180ms ease;
+}
+
+.s4-card-info h3 {
+  color:
+    var(--s4-text);
+
+  font-family:
+    var(--font-display, Georgia, serif);
+
+  font-size:
+    clamp(2rem, 3.2vw, 3.35rem);
+
+  font-weight: 760;
+  line-height: 0.95;
+
+  letter-spacing: -0.055em;
+}
+
+.s4-card-info p {
+  color:
+    var(--s4-text-mid);
+
+  font-family:
+    var(--font-body, system-ui, sans-serif);
+
+  font-size: 0.96rem;
+  font-weight: 650;
+
+  line-height: 1.35;
+}
+
+.s4-card-info h3:hover,
+.s4-card-info p:hover {
+  transform:
+    translateY(-1px);
+}
+
+.s4-card-info h3:hover {
+  color: #cfc6ff;
+
+  text-shadow:
+    0 0 22px rgba(155, 124, 255, 0.55),
+    0 10px 30px rgba(124, 140, 255, 0.28);
+}
+
+.s4-card-info p:hover {
+  color: #e7e9ff;
+
+  text-shadow:
+    0 0 16px rgba(155, 124, 255, 0.35);
+}
+
+
+/* ------------------------------
+   Score capsule
+   ------------------------------ */
+
+.s4-card-score {
+  grid-area: score;
+  grid-row: 1 / 3;
+
+  align-self: center;
+  justify-self: end;
+
+  min-width: 92px;
+  height: 56px;
 
   padding:
-    10px 12px;
+    0 1.1rem;
+
+  display: grid;
+  place-items: center;
+
+  color:
+    var(--s4-text);
+
+  border:
+    1px solid rgba(184, 192, 255, 0.26);
+
+  border-radius: 999px;
+
+  background:
+    rgba(124, 140, 255, 0.1);
+
+  box-shadow:
+    0 10px 26px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+
+  cursor: default;
+
+  transition:
+    border-color 240ms ease,
+    box-shadow 240ms ease,
+    background 240ms ease;
+}
+
+.s4-card-score span {
+  font-family:
+    var(--font-display, Georgia, serif);
+
+  font-size: 1.4rem;
+  font-weight: 800;
+
+  line-height: 1;
+}
+
+.s4-card-score::before {
+  content: "";
+
+  position: absolute;
+  inset: -16px;
+  z-index: -1;
+
+  border-radius: 999px;
+
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(124, 140, 255, 0.34),
+      transparent 70%
+    );
+
+  opacity: 0;
+
+  transform:
+    scale(0.85);
+
+  transition:
+    opacity 260ms ease,
+    transform 260ms ease;
+}
+
+.s4-card-score::after {
+  content: "reader scores";
+
+  position: absolute;
+
+  left: 50%;
+  top: calc(100% + 8px);
+
+  padding:
+    0.34rem 0.68rem;
+
+  color:
+    var(--s4-text-mid);
+
+  font-family:
+    var(--font-body, system-ui, sans-serif);
+
+  font-size: 0.58rem;
+  font-weight: 850;
+
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+
+  border:
+    1px solid rgba(184, 192, 255, 0.34);
+
+  border-radius: 999px;
+
+  background:
+    rgba(10, 15, 30, 0.98);
+
+  box-shadow:
+    0 10px 22px rgba(0, 0, 0, 0.34);
+
+  opacity: 0;
+
+  pointer-events: none;
+
+  transform:
+    translateX(-50%)
+    translateY(-4px);
+
+  transition:
+    opacity 220ms ease,
+    transform 220ms ease;
+}
+
+.s4-card-score:hover,
+.s4-card-score:focus-visible {
+  background:
+    rgba(124, 140, 255, 0.16);
+
+  border-color:
+    rgba(184, 192, 255, 0.46);
+
+  box-shadow:
+    0 18px 44px rgba(0, 0, 0, 0.34),
+    0 0 34px rgba(124, 140, 255, 0.18);
+}
+
+.s4-card-score:hover::before,
+.s4-card-score:focus-visible::before {
+  opacity: 1;
+
+  transform:
+    scale(1);
+}
+
+.s4-card-score:hover::after,
+.s4-card-score:focus-visible::after {
+  opacity: 0.95;
+
+  transform:
+    translateX(-50%)
+    translateY(0);
+}
+
+.s4-card-score:focus-visible {
+  outline:
+    2px solid rgba(184, 192, 255, 0.68);
+
+  outline-offset: 4px;
+}
+
+
+/* ------------------------------
+   Type and status chips
+   ------------------------------ */
+
+.s4-card-meta {
+  grid-area: meta;
+
+  align-self: start;
+
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: 0.7rem;
+
+  margin-top: 0.72rem;
+}
+
+.s4-card-meta span,
+.s4-layer-button {
+  min-height: 34px;
+
+  padding:
+    0 0.82rem;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  color:
+    var(--s4-text-mid);
+
+  font-family:
+    var(--font-body, system-ui, sans-serif);
+
+  font-size: 0.76rem;
+  font-weight: 820;
+  line-height: 1;
+
+  border:
+    1px solid rgba(184, 192, 255, 0.28);
+
+  border-radius: 999px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(124, 140, 255, 0.16),
+      rgba(124, 140, 255, 0.08)
+    );
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+
+  transition:
+    background 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease,
+    transform 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.s4-card-meta span:hover {
+  transform:
+    translateY(-1px);
+
+  color:
+    var(--s4-text);
+
+  border-color:
+    rgba(184, 192, 255, 0.44);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(124, 140, 255, 0.24),
+      rgba(124, 140, 255, 0.12)
+    );
+
+  box-shadow:
+    0 10px 22px rgba(0, 0, 0, 0.26),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+
+/* ------------------------------
+   Saved-layer controls
+   ------------------------------ */
+
+.s4-card-layers {
+  grid-area: layers;
+
+  width: 100%;
+
+  margin-top: 0.78rem;
+  padding-top: 0.78rem;
+
+  border-top:
+    1px solid rgba(184, 192, 255, 0.14);
+}
+
+.s4-layers-label {
+  display: block;
+
+  margin-bottom: 0.55rem;
+
+  color:
+    var(--s4-text-muted);
+
+  font-family:
+    var(--font-body, system-ui, sans-serif);
+
+  font-size: 0.68rem;
+  font-weight: 850;
+  line-height: 1;
+
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.s4-layer-buttons {
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: 0.55rem;
+}
+
+.s4-layer-button {
+  cursor: pointer;
+}
+
+.s4-layer-button:hover,
+.s4-layer-button.is-active {
+  transform:
+    translateY(-1px);
+
+  color:
+    var(--s4-text);
+
+  border-color:
+    rgba(184, 192, 255, 0.52);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(124, 140, 255, 0.3),
+      rgba(124, 140, 255, 0.15)
+    );
+
+  box-shadow:
+    0 10px 22px rgba(0, 0, 0, 0.28),
+    0 0 24px rgba(124, 140, 255, 0.12);
+}
+
+.s4-layer-button:focus-visible {
+  outline:
+    2px solid rgba(184, 192, 255, 0.68);
+
+  outline-offset: 4px;
+}
+
+
+/*
+  Disabled empty layers.
+*/
+
+.s4-layer-button.is-empty,
+.s4-layer-button:disabled {
+  color:
+    rgba(143, 152, 184, 0.36);
+
+  border-color:
+    rgba(143, 152, 184, 0.1);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.024),
+      rgba(255, 255, 255, 0.01)
+    );
+
+  box-shadow: none;
+
+  cursor: not-allowed;
+
+  opacity: 0.72;
+
+  transform: none;
+}
+
+
+/* ============================================================================
+   7. SPLIT READER SHOWCASE
+   ============================================================================ */
+
+.s4-compare-stage {
+  width:
+    var(--s4-compare-width);
+
+  margin:
+    clamp(1.5rem, 3vh, 2.6rem)
+    auto
+    0;
 
   display: grid;
 
   grid-template-columns:
-    44px
+    minmax(0, 1fr)
+    72px
+    minmax(0, 1fr);
+
+  gap:
+    clamp(1rem, 2vw, 2rem);
+
+  align-items: start;
+
+  transition:
+    grid-template-columns 320ms
+    cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+
+/*
+  When Kai is focused, the left column becomes larger.
+*/
+
+.s4-compare-stage[data-focus="left"] {
+  grid-template-columns:
+    minmax(0, 1.28fr)
+    72px
+    minmax(260px, 0.72fr);
+}
+
+
+/*
+  When Nova is focused, the right column becomes larger.
+*/
+
+.s4-compare-stage[data-focus="right"] {
+  grid-template-columns:
+    minmax(260px, 0.72fr)
+    72px
+    minmax(0, 1.28fr);
+}
+
+.s4-reader-side {
+  min-width: 0;
+
+  transition:
+    opacity 260ms ease,
+    filter 260ms ease,
+    transform 260ms ease;
+}
+
+
+/*
+  Dim the side that is not focused.
+*/
+
+.s4-compare-stage[data-focus="left"]
+.s4-reader-side-right,
+.s4-compare-stage[data-focus="right"]
+.s4-reader-side-left {
+  opacity: 0.38;
+
+  filter:
+    saturate(0.66);
+
+  transform:
+    scale(0.985);
+}
+
+.s4-compare-stage[data-focus="left"]
+.s4-reader-side-right
+.s4-reader-content,
+.s4-compare-stage[data-focus="right"]
+.s4-reader-side-left
+.s4-reader-content {
+  pointer-events: none;
+}
+
+
+/* ------------------------------
+   Small reader profile cards
+   ------------------------------ */
+
+.s4-profile-card {
+  width: 100%;
+  min-height: 74px;
+
+  padding:
+    11px 13px;
+
+  display: grid;
+
+  grid-template-columns:
+    46px
     minmax(0, 1fr)
     auto;
 
   align-items: center;
 
-  gap: 10px;
+  gap: 0.75rem;
 
   color:
     var(--s4-text-mid);
@@ -687,10 +1661,15 @@
   border-radius: 18px;
 
   background:
+    radial-gradient(
+      circle at 16% 10%,
+      rgba(255, 255, 255, 0.06),
+      transparent 28%
+    ),
     linear-gradient(
       145deg,
-      rgba(18, 24, 46, 0.86),
-      rgba(8, 12, 27, 0.82)
+      rgba(18, 24, 46, 0.9),
+      rgba(8, 12, 27, 0.86)
     );
 
   box-shadow:
@@ -699,12 +1678,6 @@
 
   cursor: pointer;
 
-  opacity: 0;
-
-  will-change:
-    transform,
-    opacity;
-
   transition:
     transform 180ms ease,
     border-color 180ms ease,
@@ -712,19 +1685,25 @@
     box-shadow 180ms ease;
 }
 
-.s4-profile-selector:hover,
-.s4-profile-selector.is-active {
+.s4-profile-card:hover,
+.s4-profile-card.is-active,
+.s4-profile-card[aria-pressed="true"] {
   transform:
     translateY(-2px);
 
   border-color:
-    rgba(190, 200, 255, 0.46);
+    rgba(190, 200, 255, 0.48);
 
   background:
+    radial-gradient(
+      circle at 16% 10%,
+      rgba(255, 255, 255, 0.09),
+      transparent 28%
+    ),
     linear-gradient(
       145deg,
-      rgba(27, 35, 66, 0.96),
-      rgba(10, 15, 32, 0.92)
+      rgba(27, 35, 66, 0.97),
+      rgba(10, 15, 32, 0.94)
     );
 
   box-shadow:
@@ -733,28 +1712,27 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
-.s4-profile-selector:focus-visible {
+.s4-profile-card:focus-visible,
+.s4-compare-both:focus-visible {
   outline:
     2px solid rgba(190, 200, 255, 0.76);
 
   outline-offset: 4px;
 }
 
+
+/* Reader avatar. */
+
 .s4-profile-avatar {
   position: relative;
 
-  width: 44px;
-  height: 44px;
+  width: 46px;
+  height: 46px;
 
   display: grid;
   place-items: center;
 
   overflow: hidden;
-
-  border:
-    1px solid rgba(190, 200, 255, 0.25);
-
-  border-radius: 13px;
 
   color: #ffffff;
 
@@ -764,20 +1742,29 @@
   font-size: 0.82rem;
   font-weight: 900;
 
+  border:
+    1px solid rgba(190, 200, 255, 0.25);
+
+  border-radius: 13px;
+
   background:
     linear-gradient(
       145deg,
-      rgba(155, 124, 255, 0.88),
-      rgba(109, 139, 255, 0.7)
+      rgba(155, 124, 255, 0.9),
+      rgba(109, 139, 255, 0.72)
     );
 }
 
-.s4-profile-selector[data-profile-select="nova"]
-.s4-profile-avatar {
+
+/*
+  Give Nova a slightly different avatar gradient.
+*/
+
+.s4-reader-side-right .s4-profile-avatar {
   background:
     linear-gradient(
       145deg,
-      rgba(116, 215, 255, 0.78),
+      rgba(116, 215, 255, 0.82),
       rgba(109, 139, 255, 0.72)
     );
 }
@@ -796,12 +1783,15 @@
   display: none;
 }
 
-.s4-profile-copy {
+
+/* Profile name and short biography. */
+
+.s4-profile-text {
   min-width: 0;
 }
 
-.s4-profile-copy strong,
-.s4-profile-copy small {
+.s4-profile-text strong,
+.s4-profile-text small {
   display: block;
 
   overflow: hidden;
@@ -810,20 +1800,18 @@
   white-space: nowrap;
 }
 
-.s4-profile-copy strong {
+.s4-profile-text strong {
   color:
     var(--s4-text);
 
   font-family:
     var(--font-body, system-ui, sans-serif);
 
-  font-size: 0.82rem;
+  font-size: 0.84rem;
   font-weight: 900;
-
-  line-height: 1.2;
 }
 
-.s4-profile-copy small {
+.s4-profile-text small {
   margin-top: 0.16rem;
 
   color:
@@ -832,19 +1820,12 @@
   font-family:
     var(--font-body, system-ui, sans-serif);
 
-  font-size: 0.64rem;
-
-  line-height: 1.2;
+  font-size: 0.66rem;
 }
 
-.s4-profile-action {
+.s4-profile-command {
   padding:
-    0.3rem 0.55rem;
-
-  border:
-    1px solid rgba(184, 192, 255, 0.18);
-
-  border-radius: 999px;
+    0.34rem 0.58rem;
 
   color:
     var(--s4-text-faint);
@@ -857,10 +1838,15 @@
 
   letter-spacing: 0.08em;
   text-transform: uppercase;
+
+  border:
+    1px solid rgba(184, 192, 255, 0.18);
+
+  border-radius: 999px;
 }
 
-.s4-profile-selector.is-active
-.s4-profile-action {
+.s4-profile-card[aria-pressed="true"]
+.s4-profile-command {
   color: #ffffff;
 
   border-color:
@@ -870,361 +1856,50 @@
     rgba(124, 140, 255, 0.16);
 }
 
-.s4-profile-connector {
-  display: flex;
-  align-items: center;
-  justify-content: center;
 
-  min-width: 0;
+/* ------------------------------
+   Centre divider
+   ------------------------------ */
+
+.s4-compare-divider {
+  align-self: stretch;
+
+  min-height: 100%;
+
+  display: grid;
+
+  grid-template-rows:
+    minmax(40px, 1fr)
+    auto
+    minmax(40px, 1fr);
+
+  justify-items: center;
+
+  gap: 0.75rem;
 }
 
-.s4-profile-connector::before,
-.s4-profile-connector::after {
-  content: "";
+.s4-divider-line {
+  width: 1px;
+  min-height: 80px;
 
-  flex: 1;
-
-  height: 1px;
-}
-
-.s4-profile-connector::before {
   background:
     linear-gradient(
-      90deg,
       transparent,
-      rgba(184, 192, 255, 0.28)
-    );
-}
-
-.s4-profile-connector::after {
-  background:
-    linear-gradient(
-      90deg,
-      rgba(184, 192, 255, 0.28),
+      rgba(184, 192, 255, 0.26),
+      rgba(200, 164, 107, 0.28),
+      rgba(184, 192, 255, 0.26),
       transparent
     );
 }
 
-.s4-profile-connector span {
-  margin:
-    0 0.8rem;
-
-  color:
-    var(--s4-text-faint);
-
-  font-family:
-    var(--font-body, system-ui, sans-serif);
-
-  font-size: 0.58rem;
-  font-weight: 850;
-
-  line-height: 1;
-
-  letter-spacing: 0.11em;
-  text-transform: uppercase;
-}
-
-
-/* ============================================================================
-   7. ONE SHARED STORY CARD
-
-   Main editing area for the final card.
-
-   Width:
-   --s4-content-width
-
-   Cover width:
-   --s4-cover-width
-
-   Padding:
-   --s4-card-padding
-
-   Radius:
-   --s4-card-radius
-
-   Gap:
-   --s4-card-gap
-   ============================================================================ */
-
-.s4-library-card {
-  position: relative;
-
-  width: 100%;
-  min-width: 0;
-
-  margin-top:
-    clamp(16px, 2vh, 24px);
-
-  padding:
-    var(--s4-card-padding);
-
-  display: grid;
-
-  grid-template-columns:
-    var(--s4-cover-width)
-    minmax(0, 1fr);
-
-  gap:
-    var(--s4-card-gap);
-
-  align-items: stretch;
-
-  overflow: hidden;
-
-  border:
-    1px solid var(--s4-border);
-
-  border-radius:
-    var(--s4-card-radius);
-
-  background:
-    radial-gradient(
-      circle at 82% 14%,
-      rgba(124, 140, 255, 0.13),
-      transparent 30%
-    ),
-    linear-gradient(
-      180deg,
-      var(--s4-card-strong),
-      var(--s4-card)
-    );
-
-  box-shadow:
-    0 32px 84px rgba(0, 0, 0, 0.45),
-    inset 0 1px 0 rgba(255, 255, 255, 0.06);
-
-  opacity: 0;
-
-  will-change:
-    transform,
-    opacity;
-
-  transition:
-    border-color 220ms ease,
-    box-shadow 240ms ease;
-}
-
-.s4-library-card::before {
-  content: "";
-
-  position: absolute;
-
-  top: -50%;
-  left: -70%;
-
-  width: 42%;
-  height: 200%;
-
-  pointer-events: none;
-
-  opacity: 0;
-
-  background:
-    linear-gradient(
-      105deg,
-      transparent,
-      rgba(255, 255, 255, 0.09),
-      transparent
-    );
-
-  transform:
-    rotate(8deg);
-
-  transition:
-    left 760ms cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 200ms ease;
-}
-
-.s4-library-card:hover {
-  border-color:
-    var(--s4-border-strong);
-
-  box-shadow:
-    0 38px 96px rgba(0, 0, 0, 0.52),
-    0 0 44px rgba(124, 140, 255, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
-}
-
-.s4-library-card:hover::before {
-  left: 138%;
-
-  opacity: 1;
-}
-
-.s4-main-cover {
-  align-self: start;
-
-  width: 100%;
-
-  aspect-ratio: 2 / 3;
-
-  border:
-    1px solid rgba(190, 200, 255, 0.2);
-
-  border-radius: 18px;
-
-  box-shadow:
-    0 22px 48px rgba(0, 0, 0, 0.42),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
-}
-
-.s4-card-body {
-  min-width: 0;
-
-  display: flex;
-  flex-direction: column;
-}
-
-.s4-card-heading-row {
-  display: grid;
-
-  grid-template-columns:
-    minmax(0, 1fr)
-    auto;
-
-  align-items: center;
-
-  gap: 1rem;
-}
-
-.s4-card-title-group {
-  min-width: 0;
-}
-
-.s4-card-title-group h3 {
-  margin: 0;
-
-  overflow: hidden;
-
-  color:
-    var(--s4-text);
-
-  font-family:
-    var(--font-display, Georgia, serif);
-
-  font-size:
-    clamp(2rem, 3.4vw, 3.35rem);
-
-  font-weight: 780;
-  line-height: 0.96;
-
-  letter-spacing: -0.055em;
-
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.s4-card-title-group p {
-  margin:
-    0.45rem 0 0;
-
-  color:
-    var(--s4-text-mid);
-
-  font-family:
-    var(--font-body, system-ui, sans-serif);
-
-  font-size:
-    clamp(0.78rem, 0.9vw, 0.94rem);
-
-  font-weight: 680;
-  line-height: 1.3;
-}
-
-.s4-reader-score {
-  min-width: 82px;
-  height: 54px;
-
-  padding:
-    0 1rem;
+.s4-compare-both {
+  width: 68px;
+  min-height: 68px;
+
+  padding: 0.5rem;
 
   display: grid;
   place-items: center;
-
-  border:
-    1px solid rgba(184, 192, 255, 0.28);
-
-  border-radius: 999px;
-
-  background:
-    rgba(124, 140, 255, 0.11);
-
-  box-shadow:
-    0 10px 26px rgba(0, 0, 0, 0.22),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
-}
-
-.s4-reader-score span {
-  font-family:
-    var(--font-display, Georgia, serif);
-
-  font-size: 1.45rem;
-  font-weight: 800;
-
-  line-height: 1;
-}
-
-.s4-story-meta {
-  display: flex;
-  flex-wrap: wrap;
-
-  gap: 0.55rem;
-
-  margin-top: 0.9rem;
-}
-
-.s4-story-meta span {
-  min-height: 32px;
-
-  padding:
-    0 0.78rem;
-
-  display: inline-flex;
-  align-items: center;
-
-  border:
-    1px solid rgba(184, 192, 255, 0.26);
-
-  border-radius: 999px;
-
-  color:
-    var(--s4-text-mid);
-
-  font-family:
-    var(--font-body, system-ui, sans-serif);
-
-  font-size: 0.7rem;
-  font-weight: 820;
-
-  line-height: 1;
-
-  background:
-    linear-gradient(
-      180deg,
-      rgba(124, 140, 255, 0.16),
-      rgba(124, 140, 255, 0.07)
-    );
-}
-
-
-/* ============================================================================
-   8. SAVED-LAYER CONTENT
-   ============================================================================ */
-
-.s4-saved-layers {
-  min-width: 0;
-
-  margin-top: 1rem;
-  padding-top: 0.88rem;
-
-  border-top:
-    1px solid rgba(184, 192, 255, 0.14);
-}
-
-.s4-layers-label {
-  display: block;
-
-  margin-bottom: 0.6rem;
 
   color:
     var(--s4-text-muted);
@@ -1232,173 +1907,75 @@
   font-family:
     var(--font-body, system-ui, sans-serif);
 
-  font-size: 0.64rem;
-  font-weight: 850;
+  font-size: 0.54rem;
+  font-weight: 900;
+  line-height: 1.18;
 
-  line-height: 1;
-
-  letter-spacing: 0.12em;
+  letter-spacing: 0.06em;
+  text-align: center;
   text-transform: uppercase;
-}
-
-.s4-layer-tabs {
-  display: flex;
-  flex-wrap: wrap;
-
-  gap: 0.5rem;
-}
-
-.s4-layer-tab {
-  min-height: 36px;
-
-  padding:
-    0 0.88rem;
 
   border:
-    1px solid rgba(184, 192, 255, 0.3);
+    1px solid rgba(184, 192, 255, 0.18);
 
   border-radius: 999px;
 
-  color:
-    var(--s4-text-mid);
-
-  font-family:
-    var(--font-body, system-ui, sans-serif);
-
-  font-size: 0.72rem;
-  font-weight: 820;
-
-  line-height: 1;
-
   background:
-    linear-gradient(
-      180deg,
-      rgba(124, 140, 255, 0.16),
-      rgba(124, 140, 255, 0.08)
-    );
+    rgba(10, 15, 30, 0.84);
 
   cursor: pointer;
 
   transition:
-    transform 180ms ease,
     color 180ms ease,
     border-color 180ms ease,
     background 180ms ease,
-    box-shadow 180ms ease;
+    box-shadow 180ms ease,
+    transform 180ms ease;
 }
 
-.s4-layer-tab:hover,
-.s4-layer-tab.is-active {
-  transform:
-    translateY(-1px);
-
+.s4-compare-both:hover,
+.s4-compare-both[aria-pressed="true"] {
   color: #ffffff;
 
   border-color:
-    rgba(190, 200, 255, 0.56);
+    rgba(190, 200, 255, 0.46);
 
   background:
-    linear-gradient(
-      180deg,
-      rgba(124, 140, 255, 0.34),
-      rgba(124, 140, 255, 0.16)
-    );
+    rgba(124, 140, 255, 0.16);
 
   box-shadow:
-    0 8px 20px rgba(0, 0, 0, 0.24),
     0 0 24px rgba(124, 140, 255, 0.12);
+
+  transform:
+    scale(1.03);
 }
 
-.s4-layer-tab:focus-visible,
-.s4-layer-content:focus-visible {
-  outline:
-    2px solid rgba(190, 200, 255, 0.78);
-
-  outline-offset: 4px;
-}
 
 /*
-  Dark empty buttons:
-  still visible but not clickable.
+  Container where JavaScript inserts evidence.
 */
-.s4-layer-tab.is-empty,
-.s4-layer-tab:disabled {
-  color:
-    rgba(143, 152, 184, 0.42);
 
-  border-color:
-    rgba(143, 152, 184, 0.1);
+.s4-reader-content {
+  min-height: 300px;
 
-  background:
-    linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.025),
-      rgba(255, 255, 255, 0.012)
-    );
+  margin-top: 1rem;
 
-  box-shadow: none;
-
-  cursor: not-allowed;
-
-  opacity: 0.72;
-
-  transform: none;
+  transition:
+    opacity 220ms ease,
+    transform 220ms ease;
 }
 
-.s4-layer-content {
-  min-width: 0;
 
-  height:
-    var(--s4-panel-height);
+/* ============================================================================
+   8. QUOTE, CHARACTER, AND THOUGHT CONTENT
+   ============================================================================ */
 
-  margin-top: 0.72rem;
-
-  padding:
-    clamp(12px, 1.4vw, 18px);
-
-  overflow-y: auto;
-
-  border:
-    1px solid rgba(184, 192, 255, 0.13);
-
-  border-radius: 18px;
-
-  background:
-    radial-gradient(
-      circle at 88% 12%,
-      rgba(124, 140, 255, 0.08),
-      transparent 28%
-    ),
-    linear-gradient(
-      135deg,
-      rgba(255, 255, 255, 0.04),
-      rgba(255, 255, 255, 0.018)
-    );
-
-  scrollbar-width: thin;
-
-  scrollbar-color:
-    rgba(124, 140, 255, 0.45)
-    transparent;
-}
-
-.s4-layer-content::-webkit-scrollbar {
-  width: 7px;
-}
-
-.s4-layer-content::-webkit-scrollbar-thumb {
-  border-radius: 999px;
-
-  background:
-    rgba(124, 140, 255, 0.42);
-}
-
-.s4-content-heading {
+.s4-evidence-header {
   margin-bottom: 0.85rem;
 }
 
-.s4-content-heading span,
-.s4-quote-number,
+.s4-evidence-header span,
+.s4-card-number,
 .s4-character-rank {
   color:
     rgba(184, 192, 255, 0.66);
@@ -1408,16 +1985,15 @@
 
   font-size: 0.58rem;
   font-weight: 900;
-
   line-height: 1;
 
   letter-spacing: 0.11em;
   text-transform: uppercase;
 }
 
-.s4-content-heading h4 {
+.s4-evidence-header h4 {
   margin:
-    0.35rem 0 0;
+    0.38rem 0 0;
 
   color:
     var(--s4-text);
@@ -1426,55 +2002,108 @@
     var(--font-display, Georgia, serif);
 
   font-size:
-    clamp(1.15rem, 1.7vw, 1.55rem);
+    clamp(1.35rem, 2vw, 2rem);
 
   font-weight: 700;
-  line-height: 1.05;
+  line-height: 1.04;
 
-  letter-spacing: -0.035em;
+  letter-spacing: -0.04em;
 }
 
-.s4-content-grid {
+
+/* Quotes and character rankings use two columns per reader. */
+
+.s4-quote-grid,
+.s4-character-grid {
   display: grid;
 
   grid-template-columns:
-    repeat(
-      auto-fit,
-      minmax(min(100%, 220px), 1fr)
-    );
+    repeat(2, minmax(0, 1fr));
 
-  gap: 0.72rem;
+  gap: 0.75rem;
 }
+
+
+/*
+  Shared evidence-card styling.
+*/
 
 .s4-quote-card,
 .s4-character-card,
-.s4-thoughts-card {
-  border:
-    1px solid rgba(184, 192, 255, 0.12);
+.s4-thought-card {
+  position: relative;
 
-  border-radius: 15px;
+  overflow: hidden;
+
+  border:
+    1px solid var(--s4-border);
+
+  border-radius: 17px;
 
   background:
     linear-gradient(
-      145deg,
-      rgba(16, 22, 42, 0.86),
-      rgba(8, 12, 27, 0.8)
+      180deg,
+      var(--s4-panel-strong) 0%,
+      var(--s4-panel) 100%
     );
 
   box-shadow:
-    0 14px 30px rgba(0, 0, 0, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    0 22px 52px rgba(0, 0, 0, 0.38),
+    0 0 34px rgba(124, 140, 255, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+
+  transform-origin: center;
+
+  transition:
+    transform 220ms ease,
+    box-shadow 220ms ease,
+    border-color 220ms ease,
+    color 220ms ease,
+    background 220ms ease;
 }
 
-.s4-quote-card {
-  min-height: 132px;
+.s4-quote-card:hover,
+.s4-character-card:hover,
+.s4-thought-card:hover {
+  z-index: 2;
 
-  padding: 0.85rem;
+  transform:
+    translateY(-3px);
+
+  border-color:
+    var(--s4-border-strong);
+
+  box-shadow:
+    0 34px 78px rgba(0, 0, 0, 0.52),
+    0 0 48px rgba(155, 124, 255, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+
+/* ------------------------------
+   Quote cards
+   ------------------------------ */
+
+.s4-quote-card {
+  min-height: 150px;
+
+  padding: 1rem;
+}
+
+
+/*
+  The first quote is larger and spans the full reader width.
+*/
+
+.s4-quote-card.is-featured {
+  grid-column: 1 / -1;
+
+  min-height: 170px;
 }
 
 .s4-quote-card blockquote {
   margin:
-    0.45rem 0 0;
+    0.55rem 0 0;
 
   color:
     var(--s4-text);
@@ -1483,65 +2112,80 @@
     var(--font-display, Georgia, serif);
 
   font-size:
-    clamp(0.86rem, 1vw, 1rem);
+    clamp(0.95rem, 1.15vw, 1.2rem);
 
   font-weight: 700;
-  line-height: 1.34;
+  line-height: 1.32;
 }
 
 .s4-quote-card p,
-.s4-character-copy p {
-  margin:
-    0.55rem 0 0;
-
+.s4-character-copy p,
+.s4-thought-copy p {
   color:
     var(--s4-text-muted);
 
   font-family:
     var(--font-body, system-ui, sans-serif);
-
-  font-size: 0.67rem;
-
-  line-height: 1.45;
 }
 
-.s4-character-card {
-  min-height: 112px;
+.s4-quote-card p {
+  margin:
+    0.65rem 0 0;
 
-  padding: 0.82rem;
+  font-size: 0.7rem;
+
+  line-height: 1.5;
+}
+
+
+/* ------------------------------
+   Character cards
+   ------------------------------ */
+
+.s4-character-card {
+  min-height: 126px;
+
+  padding: 0.9rem;
 
   display: grid;
 
   grid-template-columns:
-    38px
+    42px
     minmax(0, 1fr);
 
-  gap: 0.72rem;
+  gap: 0.75rem;
 
   align-items: start;
 }
 
+
+/*
+  The reader's first-ranked character spans the full width.
+*/
+
+.s4-character-card.is-featured {
+  grid-column: 1 / -1;
+}
+
 .s4-character-badge {
-  width: 38px;
-  height: 38px;
+  width: 42px;
+  height: 42px;
 
   display: grid;
   place-items: center;
-
-  border:
-    1px solid rgba(190, 200, 255, 0.23);
-
-  border-radius: 12px;
 
   color: #ffffff;
 
   font-family:
     var(--font-display, Georgia, serif);
 
-  font-size: 0.95rem;
+  font-size: 1rem;
   font-weight: 800;
 
-  line-height: 1;
+  border:
+    1px solid rgba(190, 200, 255, 0.23);
+
+  border-radius: 12px;
 
   background:
     rgba(124, 140, 255, 0.15);
@@ -1553,7 +2197,7 @@
 
 .s4-character-copy h5 {
   margin:
-    0.25rem 0 0;
+    0.28rem 0 0;
 
   color:
     var(--s4-text);
@@ -1561,26 +2205,36 @@
   font-family:
     var(--font-body, system-ui, sans-serif);
 
-  font-size: 0.8rem;
+  font-size: 0.84rem;
   font-weight: 900;
 
   line-height: 1.2;
 }
 
 .s4-character-copy p {
-  margin-top: 0.28rem;
+  margin:
+    0.32rem 0 0;
+
+  font-size: 0.68rem;
+
+  line-height: 1.48;
 }
 
-.s4-thoughts-card {
+
+/* ------------------------------
+   Long thought cards
+   ------------------------------ */
+
+.s4-thought-card {
   padding:
-    clamp(16px, 2vw, 24px);
+    clamp(1.25rem, 2vw, 2rem);
 }
 
-.s4-thoughts-card h4 {
+.s4-thought-card h4 {
   max-width: 760px;
 
   margin:
-    0.38rem 0 0;
+    0.5rem 0 0;
 
   color:
     var(--s4-text);
@@ -1589,48 +2243,43 @@
     var(--font-display, Georgia, serif);
 
   font-size:
-    clamp(1.35rem, 2.4vw, 2rem);
+    clamp(1.5rem, 2.5vw, 2.3rem);
 
   font-weight: 700;
   line-height: 1.08;
 
-  letter-spacing: -0.04em;
+  letter-spacing: -0.045em;
 }
 
-.s4-thoughts-copy {
-  margin-top: 0.9rem;
-
-  column-count: 2;
-
-  column-gap:
-    clamp(1.3rem, 3vw, 2.6rem);
+.s4-thought-copy {
+  margin-top: 1rem;
 }
 
-.s4-thoughts-copy p {
+.s4-thought-copy p {
   margin:
-    0 0 0.9rem;
-
-  break-inside: avoid;
-
-  color:
-    var(--s4-text-mid);
-
-  font-family:
-    var(--font-body, system-ui, sans-serif);
+    0 0 1rem;
 
   font-size:
-    clamp(0.72rem, 0.82vw, 0.84rem);
+    clamp(0.78rem, 0.9vw, 0.92rem);
 
-  line-height: 1.66;
+  line-height: 1.72;
 }
 
 
 /* ============================================================================
-   9. FALLBACK AND RESPONSIVE RULES
+   9. EMPTY AND STATIC STATES
    ============================================================================ */
 
+
+/*
+  Database error screen.
+*/
+
 .s4-empty {
-  z-index: 10;
+  position: absolute !important;
+
+  inset: 0;
+  z-index: 30 !important;
 
   place-content: center;
 
@@ -1639,7 +2288,7 @@
   text-align: center;
 
   background:
-    rgba(5, 6, 17, 0.94);
+    rgba(5, 6, 17, 0.96);
 }
 
 .s4-empty:not([hidden]) {
@@ -1650,13 +2299,15 @@
   margin:
     0.9rem 0 0;
 
+  color:
+    var(--s4-text);
+
   font-family:
     var(--font-display, Georgia, serif);
 
   font-size:
     clamp(2rem, 5vw, 4rem);
 
-  font-weight: 700;
   line-height: 1;
 }
 
@@ -1669,170 +2320,255 @@
   color:
     var(--s4-text-muted);
 
+  font-family:
+    var(--font-body, system-ui, sans-serif);
+
   line-height: 1.6;
-}
-
-.s4-status {
-  position: absolute !important;
-
-  width: 1px !important;
-  height: 1px !important;
-
-  padding: 0 !important;
-  margin: -1px !important;
-
-  overflow: hidden !important;
-  white-space: nowrap !important;
-
-  clip:
-    rect(0 0 0 0) !important;
-
-  clip-path:
-    inset(50%) !important;
-
-  border: 0 !important;
-}
-
-.section-cover-rain.is-static {
-  height: auto;
-  min-height: 0;
-
-  overflow: visible;
-}
-
-.section-cover-rain.is-static
-.s4-rain-scene,
-.section-cover-rain.is-static
-.s4-merge-stage {
-  display: none;
-}
-
-.section-cover-rain.is-static
-.s4-final-scene {
-  position: relative;
-  inset: auto;
-
-  min-height: 100svh;
-
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
-}
-
-.section-cover-rain.is-static
-.s4-final-intro,
-.section-cover-rain.is-static
-.s4-profile-selector,
-.section-cover-rain.is-static
-.s4-library-card {
-  opacity: 1;
-
-  transform: none !important;
 }
 
 
 /*
-  All responsive overrides remain together here.
+  Static fallback for mobile, short screens, reduced motion,
+  or missing GSAP.
+
+  The cinematic disappears and the final content remains available.
 */
-@media (max-width: 820px) {
+
+.section-cover-rain.is-static .s4-cinematic {
+  display: none;
+}
+
+.section-cover-rain.is-static .s4-story-content {
+  min-height: 100svh;
+}
+
+
+/* ============================================================================
+   10. RESPONSIVE AND REDUCED-MOTION RULES
+   ============================================================================ */
+
+
+/* ------------------------------
+   Tablet and narrow desktop
+   ------------------------------ */
+
+@media (max-width: 1050px) {
   .section-cover-rain {
-    --s4-content-width:
-      min(100%, calc(100vw - 28px));
+    --s4-card-width:
+      min(900px, calc(100vw - 32px));
 
-    --s4-cover-width:
-      clamp(108px, 30vw, 142px);
-
-    --s4-panel-height:
-      min(390px, 45vh);
+    --s4-compare-width:
+      min(820px, calc(100vw - 32px));
   }
 
-  .s4-profile-switcher {
+  /*
+    Stack the two readers vertically on tablets.
+  */
+
+  .s4-compare-stage,
+  .s4-compare-stage[data-focus="left"],
+  .s4-compare-stage[data-focus="right"] {
+    grid-template-columns: 1fr;
+
+    gap: 1.25rem;
+  }
+
+  /*
+    Turn the vertical centre divider into a horizontal divider.
+  */
+
+  .s4-compare-divider {
+    min-height: 0;
+
     grid-template-columns:
-      1fr 1fr;
+      1fr
+      auto
+      1fr;
 
-    gap: 0.75rem;
+    grid-template-rows: auto;
+
+    align-items: center;
   }
 
-  .s4-profile-connector {
-    display: none;
+  .s4-divider-line {
+    width: 100%;
+    height: 1px;
+    min-height: 0;
+
+    background:
+      linear-gradient(
+        90deg,
+        transparent,
+        rgba(184, 192, 255, 0.26),
+        rgba(200, 164, 107, 0.28),
+        rgba(184, 192, 255, 0.26),
+        transparent
+      );
   }
 
-  .s4-profile-selector {
-    grid-template-columns:
-      40px
-      minmax(0, 1fr);
+  .s4-compare-stage[data-focus="left"]
+  .s4-reader-side-right,
+  .s4-compare-stage[data-focus="right"]
+  .s4-reader-side-left {
+    opacity: 0.5;
 
-    min-height: 66px;
-  }
-
-  .s4-profile-action {
-    display: none;
-  }
-
-  .s4-card-title-group h3 {
-    white-space: normal;
-  }
-
-  .s4-thoughts-copy {
-    column-count: 1;
+    transform: none;
   }
 }
 
-@media (max-width: 590px) {
+
+/* ------------------------------
+   Mobile
+   ------------------------------ */
+
+@media (max-width: 680px) {
   .section-cover-rain {
-    --s4-nav-offset: 56px;
-    --s4-final-top-space: 28px;
-    --s4-card-padding: 14px;
-    --s4-card-gap: 14px;
-    --s4-cover-width: 108px;
+    --s4-nav-height: 56px;
+
+    --s4-card-width:
+      calc(100vw - 24px);
+
+    --s4-compare-width:
+      calc(100vw - 24px);
+
+    --s4-cover-width: 116px;
+    --s4-card-gap: 0.95rem;
   }
 
-  .s4-final-scene {
-    padding-left: 14px;
-    padding-right: 14px;
+  .s4-cinematic {
+    min-height: 700px;
   }
 
-  .s4-profile-switcher {
-    grid-template-columns: 1fr;
+  .s4-rain-lane {
+    width: 36vw;
   }
 
-  .s4-library-card {
-    grid-template-columns: 1fr;
-  }
-
-  .s4-main-cover {
+  .s4-cinematic-copy {
     width:
-      var(--s4-cover-width);
+      min(92vw, 520px);
   }
 
-  .s4-card-heading-row {
-    grid-template-columns: 1fr;
+  .s4-cinematic-copy h2 {
+    font-size:
+      clamp(3.2rem, 16vw, 5.5rem);
   }
 
-  .s4-reader-score {
+  .s4-story-content {
+    padding-top:
+      calc(
+        var(--s4-nav-height) +
+        28px
+      );
+  }
+
+  /*
+    Reorganize the main card for a narrow display.
+  */
+
+  .s4-shared-card {
+    min-height: 0;
+
+    padding: 1rem;
+
+    grid-template-columns:
+      var(--s4-cover-width)
+      minmax(0, 1fr);
+
+    grid-template-areas:
+      "cover info"
+      "cover score"
+      "meta meta"
+      "layers layers";
+
+    grid-template-rows:
+      auto
+      auto
+      auto
+      auto;
+
+    border-radius: 22px;
+  }
+
+  .s4-card-cover {
+    align-self: start;
+
+    border-radius: 14px;
+  }
+
+  .s4-card-info h3 {
+    font-size:
+      clamp(1.55rem, 8vw, 2.25rem);
+
+    line-height: 0.98;
+  }
+
+  .s4-card-info p {
+    font-size: 0.82rem;
+  }
+
+  .s4-card-score {
+    grid-row: auto;
+
     justify-self: start;
 
-    min-width: 70px;
-    height: 44px;
+    min-width: 76px;
+    height: 46px;
   }
 
-  .s4-reader-score span {
+  .s4-card-score span {
     font-size: 1.15rem;
   }
 
-  .s4-layer-tabs {
+  .s4-card-score::after {
+    display: none;
+  }
+
+  .s4-card-meta {
+    margin-top: 0.2rem;
+  }
+
+  /*
+    Display the layer buttons in a grid.
+  */
+
+  .s4-layer-buttons {
     display: grid;
 
     grid-template-columns:
       repeat(3, minmax(0, 1fr));
   }
 
-  .s4-layer-tab {
+  .s4-layer-button {
     width: 100%;
 
     padding-inline: 0.5rem;
   }
+
+  .s4-profile-card {
+    grid-template-columns:
+      44px
+      minmax(0, 1fr);
+  }
+
+  .s4-profile-command {
+    display: none;
+  }
+
+  .s4-quote-grid,
+  .s4-character-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .s4-quote-card.is-featured,
+  .s4-character-card.is-featured {
+    grid-column: auto;
+  }
 }
+
+
+/* ------------------------------
+   Reduced motion
+   ------------------------------ */
 
 @media (prefers-reduced-motion: reduce) {
   .section-cover-rain *,
@@ -1848,5 +2584,22 @@
 
     transition-duration:
       0.001ms !important;
+  }
+
+  .s4-shared-card:hover,
+  .s4-shared-card:focus-visible,
+  .s4-shared-card:hover .s4-card-cover,
+  .s4-card-cover:hover,
+  .s4-profile-card:hover,
+  .s4-quote-card:hover,
+  .s4-character-card:hover,
+  .s4-thought-card:hover {
+    transform: none !important;
+  }
+
+  .s4-shared-card:hover::before,
+  .s4-shared-card:focus-visible::before,
+  .s4-card-cover:hover::before {
+    opacity: 0 !important;
   }
 }
