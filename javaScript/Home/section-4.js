@@ -25,20 +25,14 @@
   ];
 
   /*
-    Each side can contain up to ten covers total.
+    Every unique database title is used.
 
-    Attack on Titan uses one position on each side. All other titles are
-    unique and are not reused on the opposite side.
+    Ordinary titles are divided evenly between the left and right streams.
 
-    When the database contains fewer stories, both sides are reduced to the
-    same size.
-  */
-  const MAX_RAIN_ITEMS_PER_SIDE =
-    10;
+    Attack on Titan appears once in each stream.
 
-  /*
-    A longer distance gives the covers enough scrolling time to enter,
-    cross the screen, and exit.
+    The animation distance remains fixed, so adding more titles makes the
+    rain denser without making the scrolling animation longer.
   */
   const PIN_DISTANCE =
     4200;
@@ -142,15 +136,8 @@
         title:
           'Freedom matters most when fear is no longer making every decision.',
 
-        paragraphs: [
-          'Kai remembers the series through small emotional decisions inside enormous events. A pause before answering, a promise under pressure, or the moment someone moves while still afraid can matter more than the scale around it.',
-
-          'Freedom is not presented as a simple place that can finally be reached. Every character carries fear, love, guilt, expectation, or responsibility with them, and those pressures can remain even after an external wall disappears.',
-
-          'The relationships matter because courage is rarely created alone. Characters borrow confidence from one another, disappoint one another, and sometimes continue because another person believed they could.',
-
-          'Kai leaves the story thinking about how easily fear can make decisions for someone without them noticing. Real freedom begins when a person recognizes that pressure and still chooses what kind of person to become.'
-        ]
+        text:
+          'Kai remembers the series through small emotional decisions inside enormous events: a pause before answering, a promise made under pressure, or the moment someone moves while still afraid. Freedom is never presented as a simple place that can finally be reached, because every character carries fear, love, guilt, expectation, and responsibility with them even after an external wall disappears. The relationships matter because courage is rarely created alone; characters borrow confidence from one another, disappoint one another, and sometimes continue only because another person believed they could. Kai leaves the story thinking about how easily fear can make decisions for someone without them noticing, and how real freedom begins when a person recognizes that pressure and still chooses what kind of person to become.'
       }
     },
 
@@ -249,15 +236,8 @@
         title:
           'The most dangerous wall is the story that makes cruelty feel necessary.',
 
-        paragraphs: [
-          'Nova reads the series as a study of systems rather than only individual heroes and enemies. Every personal decision happens inside inherited histories, institutions, military structures, and repeated stories about who deserves safety.',
-
-          'Perspective changes the meaning of nearly everything. The same event can become liberation, invasion, revenge, protection, or tragedy depending on who remembers it and who is allowed to explain it.',
-
-          'Responsibility becomes difficult because people can cause harm while also being shaped by forces larger than themselves. Understanding those forces is necessary, but it cannot become an automatic excuse.',
-
-          'The lasting question is what a person should do after learning that their identity, duty, enemy, and history were built from incomplete information. Nova sees that realization as the beginning of responsibility, not the end of the argument.'
-        ]
+        text:
+          'Nova reads the series as a study of systems rather than only individual heroes and enemies, because every personal decision happens inside inherited histories, institutions, military structures, and repeated stories about who deserves safety. Perspective changes the meaning of nearly everything: the same event can become liberation, invasion, revenge, protection, or tragedy depending on who remembers it and who is allowed to explain it. Responsibility becomes difficult because people can cause harm while also being shaped by forces larger than themselves, so understanding those forces is necessary without allowing understanding to become an automatic excuse. The lasting question is what a person should do after learning that their identity, duty, enemy, and history were built from incomplete information, and Nova sees that realization as the beginning of responsibility rather than the end of the argument.'
       }
     }
   };
@@ -448,9 +428,24 @@
           '[data-formation-cover]'
         ),
 
+      formationLayers:
+        section.querySelector(
+          '.s4-card-formation-layers'
+        ),
+
       continueCue:
         section.querySelector(
           '[data-continue-cue]'
+        ),
+
+      storyContent:
+        section.querySelector(
+          '[data-story-content]'
+        ),
+
+      contentIntro:
+        section.querySelector(
+          '.s4-content-intro'
         ),
 
       sharedCard:
@@ -518,7 +513,7 @@
       await supabaseClient
         .from(TABLE_NAME)
         .select('*')
-        .limit(200);
+        .limit(500);
 
     if (
       result.error
@@ -841,33 +836,20 @@
     elements.rainRight.innerHTML =
       '';
 
+    const chosenKey =
+      storyKey(
+        chosenStory
+      );
+
     const ordinaryPool =
       dedupeStories(
         storyPool.filter(
           (story) => {
             return (
               storyKey(story) !==
-              storyKey(
-                chosenStory
-              )
+              chosenKey
             );
           }
-        )
-      );
-
-    /*
-      Both sides receive the same number of ordinary covers.
-
-      The first half is used on the left and the second half is used on the
-      right, so an ordinary title cannot appear on both sides.
-    */
-    const ordinaryPerSide =
-      Math.min(
-        MAX_RAIN_ITEMS_PER_SIDE -
-        1,
-        Math.floor(
-          ordinaryPool.length /
-          2
         )
       );
 
@@ -875,48 +857,60 @@
       seededShuffle(
         ordinaryPool,
         hashString(
-          `${chosenStory.title}-rain-v4`
+          `${chosenStory.title}-all-rain-v5`
         )
+      );
+
+    /*
+      Every ordinary title is used exactly once.
+
+      When the ordinary title count is odd, the left side receives one
+      additional ordinary cover.
+    */
+    const leftOrdinaryCount =
+      Math.ceil(
+        shuffled.length /
+        2
       );
 
     const leftOrdinary =
       shuffled.slice(
         0,
-        ordinaryPerSide
+        leftOrdinaryCount
       );
 
     const rightOrdinary =
       shuffled.slice(
-        ordinaryPerSide,
-        ordinaryPerSide *
-        2
+        leftOrdinaryCount
       );
 
-    /*
-      Attack on Titan is inserted between ordinary covers instead of being
-      placed separately after the rain has started.
-    */
     const chosenLeftIndex =
-      Math.max(
-        1,
-        Math.floor(
-          (
-            leftOrdinary.length +
-            1
-          ) *
-          0.42
+      Math.min(
+        leftOrdinary.length,
+        Math.max(
+          1,
+          Math.floor(
+            (
+              leftOrdinary.length +
+              1
+            ) *
+            0.44
+          )
         )
       );
 
     const chosenRightIndex =
-      Math.max(
-        1,
-        Math.floor(
-          (
-            rightOrdinary.length +
-            1
-          ) *
-          0.58
+      Math.min(
+        rightOrdinary.length,
+        Math.max(
+          1,
+          Math.floor(
+            (
+              rightOrdinary.length +
+              1
+            ) *
+            0.56
+          )
         )
       );
 
@@ -939,16 +933,15 @@
         story,
         index
       ) => {
-        elements.rainLeft
+        elements
+          .rainLeft
           .appendChild(
             createRainItem(
               story,
               'left',
               index,
               storyKey(story) ===
-                storyKey(
-                  chosenStory
-                )
+                chosenKey
             )
           );
       }
@@ -959,16 +952,15 @@
         story,
         index
       ) => {
-        elements.rainRight
+        elements
+          .rainRight
           .appendChild(
             createRainItem(
               story,
               'right',
               index,
               storyKey(story) ===
-                storyKey(
-                  chosenStory
-                )
+                chosenKey
             )
           );
       }
@@ -1010,7 +1002,9 @@
     return (stories || [])
       .filter((story) => {
         const key =
-          storyKey(story);
+          storyKey(
+            story
+          );
 
         if (
           !key ||
@@ -1019,7 +1013,9 @@
           return false;
         }
 
-        seen.add(key);
+        seen.add(
+          key
+        );
 
         return true;
       });
@@ -1028,11 +1024,8 @@
   function storyKey(
     story
   ) {
-    return String(
-      story?.id ||
-      normalizeText(
-        story?.title
-      )
+    return normalizeText(
+      story?.title
     );
   }
 
@@ -1112,7 +1105,10 @@
         );
     }
 
-    return hash >>> 0;
+    return (
+      hash >>>
+      0
+    );
   }
 
   function createRainItem(
@@ -1137,46 +1133,51 @@
       );
 
     /*
-      These values keep the streams closer together and allow controlled
-      overlap instead of spreading covers across the entire screen edge.
+      Compact repeating positions deliberately create controlled overlap.
     */
     const leftPositions = [
-      7,
+      8,
+      28,
+      46,
+      17,
+      38,
+      24,
+      52,
+      12,
       34,
-      56,
-      18,
-      47,
-      27,
-      61,
-      11,
-      40,
-      22
+      43,
+      20,
+      49
     ];
 
     const rightPositions = [
-      55,
-      28,
-      8,
-      45,
+      48,
+      29,
+      9,
+      40,
       18,
-      59,
-      32,
-      12,
-      49,
-      24
+      51,
+      33,
+      13,
+      44,
+      23,
+      37,
+      7
     ];
 
     const coverWidths = [
-      94,
-      104,
-      98,
-      108,
       92,
-      102,
-      110,
+      100,
       96,
+      104,
+      90,
+      98,
       106,
-      100
+      94,
+      102,
+      97,
+      108,
+      93
     ];
 
     const positions =
@@ -1197,7 +1198,9 @@
       side;
 
     figure.dataset.rainIndex =
-      String(itemIndex);
+      String(
+        itemIndex
+      );
 
     if (
       isChosen
@@ -1229,7 +1232,7 @@
         2 +
         (
           itemIndex %
-          4
+          5
         )
       );
 
@@ -1942,15 +1945,9 @@
         </h4>
 
         <div class="s4-thought-copy">
-          ${reader.thoughts.paragraphs
-            .map((paragraph) => {
-              return `
-                <p>
-                  ${escapeHtml(paragraph)}
-                </p>
-              `;
-            })
-            .join('')}
+          <p>
+            ${escapeHtml(reader.thoughts.text)}
+          </p>
         </div>
       </article>
     `;
@@ -2178,13 +2175,143 @@
           'is-static'
         );
 
-        return createPinnedTimeline(
-          section,
-          elements,
-          gsap
-        );
+        const rainCleanup =
+          createPinnedTimeline(
+            section,
+            elements,
+            gsap
+          );
+
+        const contentCleanup =
+          createContentReveal(
+            elements,
+            gsap
+          );
+
+        return () => {
+          rainCleanup?.();
+          contentCleanup?.();
+        };
       }
     );
+  }
+
+  function createContentReveal(
+    elements,
+    gsap
+  ) {
+    const reveal =
+      gsap.timeline({
+        scrollTrigger: {
+          trigger:
+            elements.storyContent,
+
+          start:
+            'top 94%',
+
+          once:
+            true
+        }
+      });
+
+    reveal.fromTo(
+      elements.sharedCard,
+      {
+        autoAlpha: 0,
+
+        y: 34,
+
+        scale: 0.94
+      },
+      {
+        autoAlpha: 1,
+
+        y: 0,
+
+        scale: 1,
+
+        duration: 0.56,
+
+        ease:
+          'power2.out'
+      }
+    );
+
+    reveal.fromTo(
+      elements.contentIntro,
+      {
+        autoAlpha: 0,
+
+        y: 14
+      },
+      {
+        autoAlpha: 1,
+
+        y: 0,
+
+        duration: 0.34,
+
+        ease:
+          'power2.out'
+      },
+      '-=0.28'
+    );
+
+    reveal.fromTo(
+      elements.profileButtons,
+      {
+        autoAlpha: 0,
+
+        y: 22,
+
+        scale: 0.98
+      },
+      {
+        autoAlpha: 1,
+
+        y: 0,
+
+        scale: 1,
+
+        duration: 0.4,
+
+        stagger: 0.08,
+
+        ease:
+          'power2.out'
+      },
+      '-=0.16'
+    );
+
+    reveal.fromTo(
+      elements.readerContents,
+      {
+        autoAlpha: 0,
+
+        y: 26
+      },
+      {
+        autoAlpha: 1,
+
+        y: 0,
+
+        duration: 0.5,
+
+        stagger: 0.08,
+
+        ease:
+          'power2.out'
+      },
+      '-=0.22'
+    );
+
+    return () => {
+      reveal
+        .scrollTrigger
+        ?.kill();
+
+      reveal.kill();
+    };
   }
 
   function createPinnedTimeline(
@@ -2249,6 +2376,13 @@
         }
       );
 
+    const maxStreamCount =
+      Math.max(
+        leftItems.length,
+        rightItems.length,
+        1
+      );
+
     const viewportHeight =
       () => {
         return (
@@ -2257,6 +2391,52 @@
             .clientHeight
         );
       };
+
+    /*
+      Adding more covers decreases the stagger.
+
+      The overall animation duration and PIN_DISTANCE remain unchanged.
+    */
+    const rainStart =
+      0.12;
+
+    const rainWindowEnd =
+      2.72;
+
+    const travelDuration =
+      1.24;
+
+    const availableStaggerWindow =
+      rainWindowEnd -
+      rainStart -
+      travelDuration;
+
+    const streamStagger =
+      maxStreamCount > 1
+        ? Math.min(
+            0.16,
+            Math.max(
+              0.006,
+              availableStaggerWindow /
+              (
+                maxStreamCount -
+                1
+              )
+            )
+          )
+        : 0;
+
+    const chosenArrivalTime =
+      2.76;
+
+    const mergeTime =
+      3.68;
+
+    const formationTime =
+      3.92;
+
+    const dockTime =
+      4.48;
 
     const timeline =
       gsap.timeline({
@@ -2292,80 +2472,115 @@
         }
       });
 
-    /*
-      The CSS also hides the covers, preventing a flash before GSAP sets
-      their starting positions.
-    */
     gsap.set(
       [
         ...leftItems,
         ...rightItems
       ],
       {
-        autoAlpha: 0
+        autoAlpha:
+          0
       }
     );
 
     gsap.set(
       elements.selectionCopy,
       {
-        autoAlpha: 0,
+        autoAlpha:
+          0,
 
-        y: 12
+        y:
+          12
       }
     );
 
     gsap.set(
       elements.continueCue,
       {
-        autoAlpha: 0,
+        autoAlpha:
+          0,
 
-        y: 12
+        y:
+          12
       }
     );
 
     gsap.set(
       elements.cardFormation,
       {
-        autoAlpha: 0,
+        autoAlpha:
+          0,
 
-        xPercent: -50,
+        xPercent:
+          -50,
 
-        yPercent: -50,
+        yPercent:
+          -50,
 
-        y: 20,
+        y:
+          18,
 
-        scale: 0.84
+        scale:
+          0.86
       }
     );
 
     gsap.set(
       elements.formationCover,
       {
-        autoAlpha: 0,
+        autoAlpha:
+          0,
 
-        scale: 1.08,
+        scale:
+          1.08,
 
-        rotation: -2
+        rotation:
+          -2
       }
     );
 
-    /*
-      LEFT STREAM
+    if (
+      elements.formationLayers
+    ) {
+      gsap.set(
+        elements.formationLayers,
+        {
+          autoAlpha:
+            0,
 
-      Every ordinary left cover begins above the viewport. Each cover starts
-      at a different timeline position and travels downward until it leaves
-      below the viewport.
-    */
+          y:
+            10
+        }
+      );
+    }
+
+    function streamStartTime(
+      item
+    ) {
+      const itemIndex =
+        Number(
+          item
+            .dataset
+            .rainIndex ||
+          0
+        );
+
+      return (
+        rainStart +
+        itemIndex *
+        streamStagger
+      );
+    }
+
     regularLeft.forEach(
       (
         item,
         index
       ) => {
         const startTime =
-          0.18 +
-          index *
-          0.24;
+          streamStartTime(
+            item
+          );
 
         const rotation =
           -8 +
@@ -2373,7 +2588,7 @@
             index %
             5
           ) *
-          3.5;
+          3.4;
 
         timeline.fromTo(
           item,
@@ -2381,48 +2596,51 @@
             y: () => {
               return (
                 -item.offsetHeight -
-                120 -
+                90 -
                 (
                   index %
-                  3
+                  4
                 ) *
-                80
+                34
               );
             },
 
             rotation,
 
             scale:
-              0.88 +
+              0.9 +
               (
                 index %
                 3
               ) *
-              0.05,
+              0.045,
 
-            autoAlpha: 0
+            autoAlpha:
+              0
           },
           {
             y: () => {
               return (
                 viewportHeight() +
                 item.offsetHeight +
-                160 +
+                105 +
                 (
                   index %
-                  3
+                  4
                 ) *
-                80
+                34
               );
             },
 
             rotation:
               -rotation *
-              0.55,
+              0.5,
 
-            autoAlpha: 1,
+            autoAlpha:
+              1,
 
-            duration: 1.42,
+            duration:
+              travelDuration,
 
             ease:
               'none'
@@ -2433,31 +2651,28 @@
         timeline.to(
           item,
           {
-            autoAlpha: 0,
+            autoAlpha:
+              0,
 
-            duration: 0.16
+            duration:
+              0.12
           },
           startTime +
-          1.26
+          travelDuration -
+          0.1
         );
       }
     );
 
-    /*
-      RIGHT STREAM
-
-      Every ordinary right cover begins below the viewport and travels
-      upward until it leaves above the viewport.
-    */
     regularRight.forEach(
       (
         item,
         index
       ) => {
         const startTime =
-          0.18 +
-          index *
-          0.24;
+          streamStartTime(
+            item
+          );
 
         const rotation =
           8 -
@@ -2465,7 +2680,7 @@
             index %
             5
           ) *
-          3.5;
+          3.4;
 
         timeline.fromTo(
           item,
@@ -2474,47 +2689,50 @@
               return (
                 viewportHeight() +
                 item.offsetHeight +
-                120 +
+                90 +
                 (
                   index %
-                  3
+                  4
                 ) *
-                80
+                34
               );
             },
 
             rotation,
 
             scale:
-              0.88 +
+              0.9 +
               (
                 index %
                 3
               ) *
-              0.05,
+              0.045,
 
-            autoAlpha: 0
+            autoAlpha:
+              0
           },
           {
             y: () => {
               return (
                 -item.offsetHeight -
-                160 -
+                105 -
                 (
                   index %
-                  3
+                  4
                 ) *
-                80
+                34
               );
             },
 
             rotation:
               -rotation *
-              0.55,
+              0.5,
 
-            autoAlpha: 1,
+            autoAlpha:
+              1,
 
-            duration: 1.42,
+            duration:
+              travelDuration,
 
             ease:
               'none'
@@ -2525,28 +2743,28 @@
         timeline.to(
           item,
           {
-            autoAlpha: 0,
+            autoAlpha:
+              0,
 
-            duration: 0.16
+            duration:
+              0.12
           },
           startTime +
-          1.26
+          travelDuration -
+          0.1
         );
       }
     );
 
-    /*
-      ATTACK ON TITAN
+    const chosenLeftStart =
+      streamStartTime(
+        chosenLeft
+      );
 
-      The left copy follows the downward stream. The right copy follows the
-      upward stream. Both enter after the rain has started and are selected
-      near the middle before they can leave the screen.
-    */
-    const chosenEntryTime =
-      1.02;
-
-    const chosenArrivalTime =
-      2.22;
+    const chosenRightStart =
+      streamStartTime(
+        chosenRight
+      );
 
     timeline.fromTo(
       chosenLeft,
@@ -2554,15 +2772,18 @@
         y: () => {
           return (
             -chosenLeft.offsetHeight -
-            170
+            120
           );
         },
 
-        rotation: -7,
+        rotation:
+          -7,
 
-        scale: 0.92,
+        scale:
+          0.92,
 
-        autoAlpha: 0
+        autoAlpha:
+          0
       },
       {
         y: () => {
@@ -2574,20 +2795,26 @@
           );
         },
 
-        rotation: -3,
+        rotation:
+          -3,
 
-        scale: 1,
+        scale:
+          1,
 
-        autoAlpha: 1,
+        autoAlpha:
+          1,
 
         duration:
-          chosenArrivalTime -
-          chosenEntryTime,
+          Math.max(
+            0.55,
+            chosenArrivalTime -
+            chosenLeftStart
+          ),
 
         ease:
           'none'
       },
-      chosenEntryTime
+      chosenLeftStart
     );
 
     timeline.fromTo(
@@ -2597,15 +2824,18 @@
           return (
             viewportHeight() +
             chosenRight.offsetHeight +
-            170
+            120
           );
         },
 
-        rotation: 7,
+        rotation:
+          7,
 
-        scale: 0.92,
+        scale:
+          0.92,
 
-        autoAlpha: 0
+        autoAlpha:
+          0
       },
       {
         y: () => {
@@ -2617,32 +2847,41 @@
           );
         },
 
-        rotation: 3,
+        rotation:
+          3,
 
-        scale: 1,
+        scale:
+          1,
 
-        autoAlpha: 1,
+        autoAlpha:
+          1,
 
         duration:
-          chosenArrivalTime -
-          chosenEntryTime,
+          Math.max(
+            0.55,
+            chosenArrivalTime -
+            chosenRightStart
+          ),
 
         ease:
           'none'
       },
-      chosenEntryTime
+      chosenRightStart
     );
 
     timeline.to(
       elements.cinematicCopy,
       {
-        autoAlpha: 0,
+        autoAlpha:
+          0,
 
-        y: -42,
+        y:
+          -42,
 
-        duration: 0.4
+        duration:
+          0.38
       },
-      1.55
+      1.62
     );
 
     timeline.to(
@@ -2651,16 +2890,16 @@
         ...regularRight
       ],
       {
-        autoAlpha: 0.16,
+        autoAlpha:
+          0.1,
 
-        duration: 0.32
+        duration:
+          0.28
       },
-      2.05
+      chosenArrivalTime -
+      0.12
     );
 
-    /*
-      Pickup glow.
-    */
     timeline.to(
       [
         chosenLeft,
@@ -2668,14 +2907,16 @@
       ],
       {
         borderColor:
-          'rgba(225,229,255,0.82)',
+          'rgba(225,229,255,0.84)',
 
         boxShadow:
-          '0 38px 90px rgba(0,0,0,.62), 0 0 72px rgba(155,124,255,.42), 0 0 0 2px rgba(255,255,255,.12)',
+          '0 38px 90px rgba(0,0,0,.62), 0 0 72px rgba(155,124,255,.44), 0 0 0 2px rgba(255,255,255,.12)',
 
-        scale: 1.12,
+        scale:
+          1.13,
 
-        duration: 0.22,
+        duration:
+          0.22,
 
         ease:
           'power2.out'
@@ -2683,9 +2924,6 @@
       chosenArrivalTime
     );
 
-    /*
-      Move both selected rain covers to the exact center.
-    */
     timeline.to(
       [
         chosenLeft,
@@ -2712,11 +2950,14 @@
           ).y;
         },
 
-        rotation: 0,
+        rotation:
+          0,
 
-        scale: 1.26,
+        scale:
+          1.25,
 
-        duration: 0.72,
+        duration:
+          0.68,
 
         ease:
           'power2.inOut'
@@ -2728,172 +2969,249 @@
     timeline.to(
       elements.selectionCopy,
       {
-        autoAlpha: 1,
+        autoAlpha:
+          1,
 
-        y: 0,
+        y:
+          0,
 
-        duration: 0.24
+        duration:
+          0.22
       },
       chosenArrivalTime +
-      0.56
+      0.48
     );
 
-    /*
-      Merge both selected covers into one.
-    */
     timeline.to(
       chosenRight,
       {
-        autoAlpha: 0,
+        autoAlpha:
+          0,
 
-        scale: 1.38,
+        scale:
+          1.38,
 
-        duration: 0.2
+        duration:
+          0.18
       },
-      chosenArrivalTime +
-      0.94
+      mergeTime
     );
 
     timeline.fromTo(
       chosenLeft,
       {
-        scale: 1.26
+        scale:
+          1.25
       },
       {
-        scale: 1.42,
+        scale:
+          1.42,
 
-        duration: 0.15,
+        duration:
+          0.14,
 
         ease:
           'power2.out'
       },
-      chosenArrivalTime +
-      0.94
+      mergeTime
     );
 
     timeline.to(
       chosenLeft,
       {
-        scale: 1.3,
+        scale:
+          1.3,
 
-        duration: 0.18,
+        duration:
+          0.16,
 
         ease:
           'power2.inOut'
       },
-      chosenArrivalTime +
-      1.09
+      mergeTime +
+      0.14
     );
 
     timeline.to(
       elements.selectionCopy,
       {
-        autoAlpha: 0,
+        autoAlpha:
+          0,
 
-        y: -10,
+        y:
+          -10,
 
-        duration: 0.18
+        duration:
+          0.16
       },
-      chosenArrivalTime +
-      1.11
+      mergeTime +
+      0.08
     );
 
-    /*
-      The formation card contains its own cover image. This avoids the
-      stacking-layer issue where the moving rain cover appeared behind a
-      dark placeholder.
-    */
     timeline.to(
       elements.cardFormation,
       {
-        autoAlpha: 1,
+        autoAlpha:
+          1,
 
-        y: 0,
+        y:
+          0,
 
-        scale: 1,
+        scale:
+          1,
 
-        duration: 0.46,
+        duration:
+          0.42,
 
         ease:
           'power2.out'
       },
-      chosenArrivalTime +
-      1.13
+      formationTime
     );
 
     timeline.to(
       elements.formationCover,
       {
-        autoAlpha: 1,
+        autoAlpha:
+          1,
 
-        scale: 1,
+        scale:
+          1,
 
-        rotation: 0,
+        rotation:
+          0,
 
-        duration: 0.36,
+        duration:
+          0.32,
 
         ease:
           'power2.out'
       },
-      chosenArrivalTime +
-      1.18
+      formationTime +
+      0.06
     );
 
     timeline.to(
       chosenLeft,
       {
-        autoAlpha: 0,
+        autoAlpha:
+          0,
 
-        scale: 1.46,
+        scale:
+          1.46,
 
-        duration: 0.24,
+        duration:
+          0.22,
 
         ease:
           'power2.out'
       },
-      chosenArrivalTime +
-      1.13
+      formationTime
     );
 
-    timeline.to(
-      elements.continueCue,
-      {
-        autoAlpha: 1,
+    if (
+      elements.formationLayers
+    ) {
+      timeline.to(
+        elements.formationLayers,
+        {
+          autoAlpha:
+            1,
 
-        y: 0,
+          y:
+            0,
 
-        duration: 0.24
-      },
-      chosenArrivalTime +
-      1.58
-    );
+          duration:
+            0.28,
 
+          ease:
+            'power2.out'
+        },
+        formationTime +
+        0.22
+      );
+    }
+
+    /*
+      The formed card moves toward the top and stays visible instead of
+      disappearing.
+    */
     timeline.to(
       elements.cardFormation,
       {
-        autoAlpha: 0,
+        y: () => {
+          return getDockY(
+            elements.cardFormation,
+            elements.cinematic
+          );
+        },
 
-        y: -12,
+        scale:
+          0.9,
 
-        scale: 0.985,
+        borderRadius:
+          21,
 
-        duration: 0.26
+        duration:
+          dockTime -
+          formationTime,
+
+        ease:
+          'power2.inOut'
       },
-      chosenArrivalTime +
-      2.12
+      formationTime
     );
 
     timeline.to(
       elements.continueCue,
       {
-        autoAlpha: 0,
+        autoAlpha:
+          1,
 
-        y: -8,
+        y:
+          0,
 
-        duration: 0.16
+        duration:
+          0.24
       },
-      chosenArrivalTime +
-      2.12
+      dockTime -
+      0.02
+    );
+
+    /*
+      Hold the card on screen until the pinned scene ends.
+    */
+    timeline.to(
+      elements.cardFormation,
+      {
+        autoAlpha:
+          1,
+
+        scale:
+          0.9,
+
+        duration:
+          1.08,
+
+        ease:
+          'none'
+      },
+      dockTime
+    );
+
+    timeline.to(
+      elements.continueCue,
+      {
+        autoAlpha:
+          0.88,
+
+        duration:
+          1.02,
+
+        ease:
+          'none'
+      },
+      dockTime
     );
 
     return () => {
@@ -2903,6 +3221,22 @@
 
       timeline.kill();
     };
+  }
+
+  function getDockY(
+    card,
+    stage
+  ) {
+    const navOffset =
+      82;
+
+    return (
+      navOffset +
+      card.offsetHeight /
+      2 -
+      stage.clientHeight /
+      2
+    );
   }
 
   function getCenterTarget(
