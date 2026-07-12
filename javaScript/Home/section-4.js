@@ -1,60 +1,368 @@
-/* =========================================================
+/* ============================================================================
    SECTION 4 — SAME STORY, DIFFERENT SOULS
 
-   Requires:
-   - Supabase
-   - GSAP
-   - ScrollTrigger
+   WHAT TO EDIT MOST OFTEN
 
-   Replace the old Section 4 JavaScript with this file.
-   ========================================================= */
+   1. Put the exact Attack on Titan database ID in CHOSEN_STORY_ID.
+
+   2. Edit names, bios, avatar URLs, scores, quotes, characters,
+      and thoughts inside the PROFILES object.
+
+   3. Change RAIN_COVER_COUNT for more or fewer falling covers.
+
+   4. Change PIN_DISTANCE for a shorter or longer scroll animation.
+
+   DATABASE RULE
+
+   This uses the same rule as Section 1:
+
+   public bucket "img"
+   -> covers folder
+   -> database-id.jpg
+   ============================================================================ */
 
 (() => {
   'use strict';
 
-  const CONFIG = {
-    supabaseUrl:
-      'https://hsruxfpslxguhwnccwuj.supabase.co',
+  /* ==========================================================================
+     1. DATABASE CONFIG
+     ========================================================================== */
 
-    supabaseKey:
-      'sb_publishable_Z2upBCdemNtdB4j5jry65A_XD_u8BsD',
+  const SUPABASE_URL =
+    'https://hsruxfpslxguhwnccwuj.supabase.co';
 
-    table:
-      'manga',
+  const SUPABASE_KEY =
+    'sb_publishable_Z2upBCdemNtdB4j5jry65A_XD_u8BsD';
 
-    bucket:
-      'img',
+  const TABLE_NAME =
+    'manga';
 
-    coverFolder:
-      'covers',
+  const BUCKET_NAME =
+    'img';
 
-    /*
-      Add the exact Attack on Titan database ID here
-      when you know it.
+  const COVER_FOLDER =
+    'covers';
 
-      Example:
-      chosenStoryId: 'attack-on-titan-2013'
-    */
-    chosenStoryId: '',
+  /*
+    Recommended:
 
-    chosenStoryTitle:
-      'Attack on Titan',
+    Replace the empty string with the exact
+    Attack on Titan database row ID.
 
-    chosenStoryAliases: [
-      'Attack on Titan',
-      'Shingeki no Kyojin'
-    ],
+    Example:
 
-    rainCoverCount:
-      28,
+    const CHOSEN_STORY_ID = 'attack-on-titan-2013';
+  */
+  const CHOSEN_STORY_ID = '';
 
-    pinDistance:
-      4800
+  const CHOSEN_STORY_ALIASES = [
+    'Attack on Titan',
+    'Shingeki no Kyojin'
+  ];
+
+  /*
+    Number of visual cover objects used in the rain.
+  */
+  const RAIN_COVER_COUNT = 28;
+
+  /*
+    Total scroll distance of the pinned animation.
+  */
+  const PIN_DISTANCE = 4700;
+
+  let supabaseClient = null;
+
+
+  /* ==========================================================================
+     2. EDIT THE TWO READER PROFILES HERE
+
+     avatarUrl:
+
+     - Leave it empty to show the colored initial.
+     - Add a path such as "images/kai-avatar.jpg"
+       to show a real profile picture.
+
+     quotes:
+
+     - Every object becomes one quote card.
+     - Add or remove objects freely.
+
+     characters:
+
+     - Every object becomes one ranked character card.
+     - This version uses a Top 5.
+
+     thoughts:
+
+     - One long article using all paragraphs.
+     ========================================================================== */
+
+  const PROFILES = {
+    kai: {
+      name:
+        'kai.reads',
+
+      bio:
+        'saves emotions first',
+
+      initial:
+        'K',
+
+      /*
+        Add a real image path here when ready.
+
+        Example:
+        avatarUrl: 'images/kai-avatar.jpg'
+      */
+      avatarUrl:
+        '',
+
+      score:
+        '9/10',
+
+      status:
+        'Completed',
+
+      quotes: [
+        {
+          text:
+            'Even inside fear, there is still a choice.',
+
+          note:
+            'Kai saved this idea because it turns a huge conflict into a personal question about courage.'
+        },
+        {
+          text:
+            'Freedom can become another kind of pressure.',
+
+          note:
+            'Wanting freedom and understanding freedom are not always the same thing.'
+        },
+        {
+          text:
+            'People become braver when someone believes they can.',
+
+          note:
+            'Kai connects this to the quiet support characters give one another before difficult decisions.'
+        },
+        {
+          text:
+            'Fear does not disappear just because you move forward.',
+
+          note:
+            'For Kai, courage means acting while the fear is still present.'
+        },
+        {
+          text:
+            'A dream can save someone and still hurt them.',
+
+          note:
+            'Many characters are driven by hopes that also make their lives heavier.'
+        }
+      ],
+
+      characters: [
+        {
+          rank: 1,
+
+          name:
+            'Armin Arlert',
+
+          reason:
+            'His curiosity, empathy, and quiet bravery make intelligence feel deeply human.'
+        },
+        {
+          rank: 2,
+
+          name:
+            'Mikasa Ackerman',
+
+          reason:
+            'Kai connects with her loyalty and the emotional cost of protecting someone.'
+        },
+        {
+          rank: 3,
+
+          name:
+            'Levi Ackerman',
+
+          reason:
+            'His discipline matters, but Kai is more interested in the grief hidden beneath it.'
+        },
+        {
+          rank: 4,
+
+          name:
+            'Hange Zoë',
+
+          reason:
+            'Their curiosity brings warmth and movement into a world shaped by fear.'
+        },
+        {
+          rank: 5,
+
+          name:
+            'Jean Kirstein',
+
+          reason:
+            'Ordinary doubt slowly becomes responsibility and courage.'
+        }
+      ],
+
+      thoughts: {
+        title:
+          'Freedom means less when fear is making every decision for you.',
+
+        paragraphs: [
+          'Kai remembers the story first as an emotional experience. The scale is enormous, but the moments that remain are usually small: a pause before a decision, a look between two people, or a character choosing to continue when nothing feels certain.',
+
+          'For Kai, the story is not only about escaping a wall or defeating an enemy. It is about the pressure created by love, loyalty, fear, and expectation. Characters often believe they are moving toward freedom while carrying invisible obligations with them.',
+
+          'The most meaningful part is the way courage changes from character to character. Sometimes courage is loud. Sometimes it is simply admitting doubt, listening to another person, or taking responsibility after making the wrong choice.',
+
+          'Kai leaves the story thinking about how easily fear can choose a life for someone. Real freedom begins when a person can recognize that fear and still decide what kind of person they want to become.'
+        ]
+      }
+    },
+
+    nova: {
+      name:
+        'nova.pages',
+
+      bio:
+        'tracks themes and meaning',
+
+      initial:
+        'N',
+
+      /*
+        Add a real image path here when ready.
+
+        Example:
+        avatarUrl: 'images/nova-avatar.jpg'
+      */
+      avatarUrl:
+        '',
+
+      score:
+        '10/10',
+
+      status:
+        'Completed',
+
+      quotes: [
+        {
+          text:
+            'The world changes when the story around it changes.',
+
+          note:
+            'Information and perspective repeatedly reshape what every character believes is true.'
+        },
+        {
+          text:
+            'Understanding a side does not erase what that side has done.',
+
+          note:
+            'For Nova, empathy and accountability must exist together.'
+        },
+        {
+          text:
+            'History can become a weapon when only one voice controls it.',
+
+          note:
+            'This captures Nova’s interest in memory, inherited conflict, and political storytelling.'
+        },
+        {
+          text:
+            'An enemy can be created long before two people ever meet.',
+
+          note:
+            'Fear can be taught and passed from one generation to another.'
+        },
+        {
+          text:
+            'A person can be both responsible and trapped.',
+
+          note:
+            'The story rarely allows guilt, duty, identity, or survival to stay simple.'
+        }
+      ],
+
+      characters: [
+        {
+          rank: 1,
+
+          name:
+            'Reiner Braun',
+
+          reason:
+            'Nova is drawn to the conflict between duty, identity, guilt, and survival.'
+        },
+        {
+          rank: 2,
+
+          name:
+            'Erwin Smith',
+
+          reason:
+            'His leadership raises difficult questions about sacrifice, truth, and obsession.'
+        },
+        {
+          rank: 3,
+
+          name:
+            'Zeke Yeager',
+
+          reason:
+            'His worldview turns pain into a complete political philosophy.'
+        },
+        {
+          rank: 4,
+
+          name:
+            'Historia Reiss',
+
+          reason:
+            'Her growth explores identity, inherited roles, and self-determination.'
+        },
+        {
+          rank: 5,
+
+          name:
+            'Gabi Braun',
+
+          reason:
+            'Her perspective demonstrates the construction and collapse of prejudice.'
+        }
+      ],
+
+      thoughts: {
+        title:
+          'The most dangerous wall is the story that makes cruelty feel necessary.',
+
+        paragraphs: [
+          'Nova reads the series as a study of systems. Individual choices matter, but those choices happen inside histories, institutions, inherited fears, and repeated stories about who deserves safety and who deserves blame.',
+
+          'The same event can produce completely different meanings depending on who remembers it, who records it, and who benefits from the accepted version. That makes truth feel unstable without making truth meaningless.',
+
+          'Nova is especially interested in characters who are both responsible for harm and shaped by forces larger than themselves. The story asks the viewer to understand those forces without turning understanding into an excuse.',
+
+          'The lasting question is not simply who is right. It is how a person should act after realizing that their identity, enemy, duty, and history were built from incomplete information.'
+        ]
+      }
+    }
   };
+
+
+  /* ==========================================================================
+     3. FALLBACK STORY
+
+     This is shown when the database row cannot be found.
+     ========================================================================== */
 
   const FALLBACK_STORY = {
     id:
-      'attack-on-titan-fallback',
+      '',
 
     title:
       'Attack on Titan',
@@ -62,27 +370,30 @@
     creator:
       'Hajime Isayama',
 
-    types: [
-      'anime',
-      'manga'
-    ],
-
-    coverCandidates: []
+    type: [
+      'Manga',
+      'Anime'
+    ]
   };
 
-  let client = null;
+
+  /* ==========================================================================
+     4. STARTUP
+     ========================================================================== */
 
   if (document.readyState === 'loading') {
     document.addEventListener(
       'DOMContentLoaded',
-      init,
-      { once: true }
+      startSection4,
+      {
+        once: true
+      }
     );
   } else {
-    init();
+    startSection4();
   }
 
-  async function init() {
+  async function startSection4() {
     const section =
       document.querySelector(
         '[data-section-cover-rain]'
@@ -90,82 +401,83 @@
 
     if (
       !section ||
-      section.dataset.s4Ready === 'true'
+      section.dataset.section4Ready === 'true'
     ) {
       return;
     }
 
-    section.dataset.s4Ready = 'true';
+    section.dataset.section4Ready =
+      'true';
 
     const elements =
       collectElements(section);
 
-    setupSynchronizedTabs(section);
+    /*
+      Build the reader/layer click interaction before
+      loading the database.
+
+      This allows the final card to continue working
+      even when animation libraries fail.
+    */
+    createContentController(elements);
 
     if (!window.supabase?.createClient) {
       console.error(
         'Section 4: Supabase is not loaded.'
       );
 
-      showDatabaseError(
-        elements,
-        'Supabase is not loaded.'
+      renderStory(
+        section,
+        FALLBACK_STORY
       );
 
-      showStatic(
+      showStaticLayout(
         section,
         elements
+      );
+
+      setStatus(
+        elements,
+        'Supabase is not loaded. Showing the static fallback.'
       );
 
       return;
     }
 
-    client =
+    supabaseClient =
       window.supabase.createClient(
-        CONFIG.supabaseUrl,
-        CONFIG.supabaseKey
+        SUPABASE_URL,
+        SUPABASE_KEY
       );
 
     setStatus(
       elements,
-      'Loading featured stories.'
+      'Loading featured anime and manga.'
     );
 
     try {
       const featuredStories =
         await loadFeaturedAnimeManga();
 
-      if (!featuredStories.length) {
-        showDatabaseError(
-          elements,
-          'No featured anime or manga rows were found.'
-        );
-
-        showStatic(
-          section,
-          elements
-        );
-
-        return;
-      }
-
       const chosenStory =
         await findChosenStory(
           featuredStories
         );
 
-      const rainPool =
-        repeatStories(
-          featuredStories,
-          CONFIG.rainCoverCount
-        );
+      const rainStories =
+        featuredStories.length
+          ? featuredStories
+          : [chosenStory];
 
       renderRain(
         elements,
-        rainPool
+        repeatStories(
+          rainStories,
+          RAIN_COVER_COUNT
+        )
       );
 
-      renderChosenStory(
+      renderStory(
         section,
         chosenStory
       );
@@ -176,15 +488,20 @@
       );
 
       requestAnimationFrame(() => {
-        setupMotion(
+        setupSectionAnimation(
           section,
           elements
         );
       });
     } catch (error) {
       console.error(
-        'Section 4 failed:',
+        'Section 4 failed to load:',
         error
+      );
+
+      renderStory(
+        section,
+        FALLBACK_STORY
       );
 
       showDatabaseError(
@@ -192,22 +509,22 @@
         'Featured stories could not be loaded.'
       );
 
-      showStatic(
+      showStaticLayout(
         section,
         elements
       );
     }
   }
 
+
+  /* ==========================================================================
+     5. DOM REFERENCES
+
+     All query selectors are kept in this one function.
+     ========================================================================== */
+
   function collectElements(section) {
     return {
-      section,
-
-      rainScene:
-        section.querySelector(
-          '[data-rain-scene]'
-        ),
-
       rainLeft:
         section.querySelector(
           '[data-rain-left]'
@@ -223,24 +540,19 @@
           '[data-rain-copy]'
         ),
 
-      mergeStage:
-        section.querySelector(
-          '[data-merge-stage]'
-        ),
-
       mergeLeft:
         section.querySelector(
-          '[data-merge-copy-left]'
+          '[data-merge-cover-left]'
         ),
 
       mergeRight:
         section.querySelector(
-          '[data-merge-copy-right]'
+          '[data-merge-cover-right]'
         ),
 
       mergeOne:
         section.querySelector(
-          '[data-merge-copy-one]'
+          '[data-merge-cover-one]'
         ),
 
       mergeCaption:
@@ -253,24 +565,51 @@
           '[data-final-scene]'
         ),
 
-      sharedStory:
+      finalIntro:
         section.querySelector(
-          '[data-shared-story]'
+          '[data-final-intro]'
         ),
 
-      finalHeading:
+      profileSwitcher:
         section.querySelector(
-          '[data-final-heading]'
+          '[data-profile-switcher]'
         ),
 
-      cardLeft:
+      profileButtons: [
+        ...section.querySelectorAll(
+          '[data-profile-select]'
+        )
+      ],
+
+      mainCard:
         section.querySelector(
-          '[data-soul-card="left"]'
+          '[data-main-card]'
         ),
 
-      cardRight:
+      layerTabs:
         section.querySelector(
-          '[data-soul-card="right"]'
+          '[data-layer-tabs]'
+        ),
+
+      layerButtons: [
+        ...section.querySelectorAll(
+          '[data-layer-select]'
+        )
+      ],
+
+      layerContent:
+        section.querySelector(
+          '[data-layer-content]'
+        ),
+
+      readerScore:
+        section.querySelector(
+          '[data-reader-score]'
+        ),
+
+      readerStatus:
+        section.querySelector(
+          '[data-reader-status]'
         ),
 
       empty:
@@ -285,16 +624,17 @@
     };
   }
 
-  /* =======================================================
-     DATABASE
-     ======================================================= */
+
+  /* ==========================================================================
+     6. DATABASE
+     ========================================================================== */
 
   async function loadFeaturedAnimeManga() {
     const {
       data,
       error
-    } = await client
-      .from(CONFIG.table)
+    } = await supabaseClient
+      .from(TABLE_NAME)
       .select('*')
       .eq('featured', true);
 
@@ -303,18 +643,23 @@
     }
 
     return (data || [])
-      .filter((row) => {
+      .filter((item) => {
         return (
-          row &&
-          row.id != null &&
-          row.title
+          item &&
+          item.id != null &&
+          item.title
         );
       })
       .map(normalizeStory)
       .filter((story) => {
+        const types =
+          story.type
+            .join(' ')
+            .toLowerCase();
+
         return (
-          story.types.includes('anime') ||
-          story.types.includes('manga')
+          types.includes('anime') ||
+          types.includes('manga')
         );
       });
   }
@@ -322,68 +667,78 @@
   async function findChosenStory(
     featuredStories
   ) {
-    const matchingId =
-      CONFIG.chosenStoryId
-        ? featuredStories.find((story) => {
-            return (
-              String(story.id) ===
-              String(CONFIG.chosenStoryId)
-            );
-          })
-        : null;
-
-    if (matchingId) {
-      return matchingId;
-    }
-
-    const aliases =
-      CONFIG.chosenStoryAliases.map(
-        normalizeText
-      );
-
-    const exactFeatured =
-      featuredStories.find((story) => {
-        return aliases.includes(
-          normalizeText(story.title)
-        );
-      });
-
-    if (exactFeatured) {
-      return exactFeatured;
-    }
-
     /*
-      Attack on Titan may not be marked featured,
-      so search for it separately.
+      First choice:
+      exact configured database ID.
     */
-    if (CONFIG.chosenStoryId) {
+    if (CHOSEN_STORY_ID) {
+      const featuredMatch =
+        featuredStories.find((story) => {
+          return (
+            String(story.id) ===
+            String(CHOSEN_STORY_ID)
+          );
+        });
+
+      if (featuredMatch) {
+        return featuredMatch;
+      }
+
       const {
-        data
-      } = await client
-        .from(CONFIG.table)
+        data,
+        error
+      } = await supabaseClient
+        .from(TABLE_NAME)
         .select('*')
         .eq(
           'id',
-          CONFIG.chosenStoryId
+          CHOSEN_STORY_ID
         )
         .limit(1);
 
-      if (data?.[0]) {
+      if (
+        !error &&
+        data?.[0]
+      ) {
         return normalizeStory(
           data[0]
         );
       }
     }
 
+    /*
+      Second choice:
+      exact title inside featured rows.
+    */
+    const aliases =
+      CHOSEN_STORY_ALIASES.map(
+        normalizeText
+      );
+
+    const featuredTitleMatch =
+      featuredStories.find((story) => {
+        return aliases.includes(
+          normalizeText(story.title)
+        );
+      });
+
+    if (featuredTitleMatch) {
+      return featuredTitleMatch;
+    }
+
+    /*
+      Third choice:
+      search the complete table by title.
+    */
     for (
       const alias of
-      CONFIG.chosenStoryAliases
+      CHOSEN_STORY_ALIASES
     ) {
       const {
         data,
         error
-      } = await client
-        .from(CONFIG.table)
+      } = await supabaseClient
+        .from(TABLE_NAME)
         .select('*')
         .ilike(
           'title',
@@ -413,82 +768,53 @@
       }
     }
 
-    /*
-      Keep Attack on Titan selected even when
-      the database row is missing.
-    */
     return {
       ...FALLBACK_STORY
     };
   }
 
-  function normalizeStory(row) {
+  function normalizeStory(item) {
     return {
       id:
-        String(row.id),
+        String(item.id ?? ''),
 
       title:
         String(
-          row.title ||
+          item.title ||
           'Untitled story'
         ),
 
       creator:
-        getCreator(row),
-
-      types:
-        getTypeList(
-          row.type ??
-          row.types ??
-          row.format
+        String(
+          item.creator ??
+          item.author ??
+          item.writer ??
+          item.artist ??
+          ''
         ),
 
-      coverCandidates:
-        getCoverCandidates(row),
-
-      raw:
-        row
+      type:
+        getTypeList(
+          item.type
+        )
     };
-  }
-
-  function getCreator(row) {
-    return String(
-      row.creator ||
-      row.author ||
-      row.writer ||
-      row.artist ||
-      row.studio ||
-      'Unknown creator'
-    );
   }
 
   function getTypeList(value) {
     if (Array.isArray(value)) {
       return value
-        .map((item) => {
-          return normalizeText(item);
-        })
+        .map(String)
         .filter(Boolean);
     }
 
-    if (
-      value &&
-      typeof value === 'object'
-    ) {
-      return Object
-        .values(value)
-        .map((item) => {
-          return normalizeText(item);
-        })
-        .filter(Boolean);
+    if (!value) {
+      return [
+        'Manga'
+      ];
     }
 
     const text =
-      String(value || '').trim();
-
-    if (!text) {
-      return [];
-    }
+      String(value).trim();
 
     try {
       const parsed =
@@ -496,139 +822,61 @@
 
       if (Array.isArray(parsed)) {
         return parsed
-          .map((item) => {
-            return normalizeText(item);
-          })
+          .map(String)
           .filter(Boolean);
       }
     } catch (_) {
       /*
-        A normal comma-separated string
-        is expected most of the time.
+        Normal text is expected most of the time.
       */
     }
 
     return text
       .split(/[,/|]+/)
-      .map((item) => {
-        return normalizeText(item);
+      .map((part) => {
+        return part.trim();
       })
       .filter(Boolean);
   }
 
-  function getCoverCandidates(row) {
-    const candidates = [];
-
-    const rawValues = [
-      row.cover,
-      row.cover_url,
-      row.coverUrl,
-      row.image,
-      row.image_url,
-      row.poster,
-      row.poster_url
-    ].filter(Boolean);
-
-    rawValues.forEach((value) => {
-      addCoverValue(
-        candidates,
-        String(value)
-      );
-    });
-
-    [
-      'jpg',
-      'jpeg',
-      'png',
-      'webp'
-    ].forEach((extension) => {
-      addStoragePath(
-        candidates,
-        `${CONFIG.coverFolder}/${row.id}.${extension}`
-      );
-    });
-
-    return [
-      ...new Set(candidates)
-    ];
-  }
-
-  function addCoverValue(
-    candidates,
-    value
-  ) {
-    const clean =
-      value.trim();
-
-    if (!clean) {
-      return;
+  /*
+    This is the same cover rule used by Section 1.
+  */
+  function getCoverUrlFromId(id) {
+    if (!id) {
+      return '';
     }
 
-    if (
-      /^https?:\/\//i.test(clean) ||
-      clean.startsWith('data:') ||
-      clean.startsWith('blob:')
-    ) {
-      candidates.push(clean);
-
-      return;
-    }
-
-    let storagePath =
-      clean.replace(/^\/+/, '');
-
-    if (
-      storagePath.startsWith(
-        `${CONFIG.bucket}/`
-      )
-    ) {
-      storagePath =
-        storagePath.slice(
-          CONFIG.bucket.length + 1
-        );
-    }
-
-    addStoragePath(
-      candidates,
-      storagePath
-    );
-  }
-
-  function addStoragePath(
-    candidates,
-    path
-  ) {
-    const cleanPath =
-      String(path || '')
-        .replace(/^\/+/, '');
-
-    if (!cleanPath) {
-      return;
-    }
+    const path =
+      `${COVER_FOLDER}/${id}.jpg`;
 
     const {
       data
-    } = client.storage
-      .from(CONFIG.bucket)
-      .getPublicUrl(cleanPath);
+    } = supabaseClient
+      .storage
+      .from(BUCKET_NAME)
+      .getPublicUrl(path);
 
-    if (data?.publicUrl) {
-      candidates.push(
-        data.publicUrl
-      );
-    }
+    return (
+      data?.publicUrl ||
+      ''
+    );
   }
 
-  /* =======================================================
-     RENDERING
-     ======================================================= */
+
+  /* ==========================================================================
+     7. RENDER THE RAIN COVERS
+     ========================================================================== */
 
   function renderRain(
     elements,
     stories
   ) {
-    elements.rainLeft.innerHTML = '';
-    elements.rainRight.innerHTML = '';
+    elements.rainLeft.innerHTML =
+      '';
+
+    elements.rainRight.innerHTML =
+      '';
 
     stories.forEach(
       (story, index) => {
@@ -637,14 +885,11 @@
             ? 'left'
             : 'right';
 
-        const sideIndex =
-          Math.floor(index / 2);
-
         const item =
           createRainItem(
             story,
             side,
-            sideIndex
+            Math.floor(index / 2)
           );
 
         const destination =
@@ -663,59 +908,70 @@
     index
   ) {
     const figure =
-      document.createElement('figure');
+      document.createElement(
+        'figure'
+      );
 
     const image =
-      document.createElement('img');
+      document.createElement(
+        'img'
+      );
 
     const fallback =
-      document.createElement('span');
+      document.createElement(
+        'span'
+      );
 
-    const xPattern =
+    const leftX = [
+      2,
+      47,
+      18,
+      67,
+      31,
+      8,
+      58,
+      24,
+      72,
+      39,
+      12,
+      62,
+      28,
+      52
+    ];
+
+    const rightX = [
+      60,
+      12,
+      72,
+      30,
+      4,
+      52,
+      20,
+      66,
+      38,
+      8,
+      57,
+      26,
+      70,
+      16
+    ];
+
+    const positions =
       side === 'left'
-        ? [
-            2,
-            47,
-            18,
-            67,
-            31,
-            8,
-            58,
-            24,
-            72,
-            39,
-            12,
-            62,
-            28,
-            52
-          ]
-        : [
-            60,
-            12,
-            72,
-            30,
-            4,
-            52,
-            20,
-            66,
-            38,
-            8,
-            57,
-            26,
-            70,
-            16
-          ];
+        ? leftX
+        : rightX;
 
     figure.className =
       's4-rain-item';
 
-    figure.dataset.rainItem = '';
-    figure.dataset.rainSide = side;
-    figure.dataset.rainIndex =
-      String(index);
+    figure.dataset.coverShell =
+      '';
+
+    figure.dataset.rainSide =
+      side;
 
     figure.style.left =
-      `${xPattern[index % xPattern.length]}%`;
+      `${positions[index % positions.length]}%`;
 
     figure.style.top =
       `${-18 + (index % 8) * 17}%`;
@@ -723,34 +979,45 @@
     figure.style.zIndex =
       String(1 + (index % 3));
 
+    image.alt =
+      '';
+
+    image.loading =
+      'eager';
+
+    image.decoding =
+      'async';
+
     fallback.className =
       's4-cover-fallback';
 
-    fallback.dataset.coverFallback = '';
+    fallback.dataset.coverFallback =
+      '';
 
     fallback.textContent =
       story.title;
-
-    image.alt = '';
-    image.decoding = 'async';
-    image.loading = 'eager';
 
     figure.append(
       image,
       fallback
     );
 
-    loadImageCandidates(
+    loadCover(
       image,
       fallback,
-      story.coverCandidates,
-      `${story.title} cover`
+      story,
+      ''
     );
 
     return figure;
   }
 
-  function renderChosenStory(
+
+  /* ==========================================================================
+     8. RENDER THE CHOSEN STORY
+     ========================================================================== */
+
+  function renderStory(
     section,
     story
   ) {
@@ -769,11 +1036,9 @@
       )
       .forEach((node) => {
         node.textContent =
-          story.creator;
+          story.creator ||
+          'Unknown creator';
       });
-
-    const format =
-      formatTypes(story.types);
 
     section
       .querySelectorAll(
@@ -781,7 +1046,7 @@
       )
       .forEach((node) => {
         node.textContent =
-          format;
+          formatType(story.type);
       });
 
     section
@@ -789,15 +1054,14 @@
         '[data-story-cover]'
       )
       .forEach((image) => {
-        const shell =
-          image.closest(
-            '[data-cover-shell]'
-          );
-
         const fallback =
-          shell?.querySelector(
-            '[data-cover-fallback]'
-          );
+          image
+            .closest(
+              '[data-cover-shell]'
+            )
+            ?.querySelector(
+              '[data-cover-fallback]'
+            );
 
         if (!fallback) {
           return;
@@ -806,59 +1070,95 @@
         fallback.textContent =
           story.title;
 
-        loadImageCandidates(
+        loadCover(
           image,
           fallback,
-          story.coverCandidates,
+          story,
           `${story.title} cover`
         );
       });
   }
 
-  function loadImageCandidates(
+  function loadCover(
     image,
     fallback,
-    candidates,
+    story,
     alt
   ) {
-    const queue = [
+    const url =
+      getCoverUrlFromId(
+        story.id
+      );
+
+    image.hidden =
+      true;
+
+    image.alt =
+      alt;
+
+    fallback.hidden =
+      false;
+
+    if (!url) {
+      image.removeAttribute(
+        'src'
+      );
+
+      return;
+    }
+
+    image.onload = () => {
+      image.hidden =
+        false;
+
+      fallback.hidden =
+        true;
+    };
+
+    image.onerror = () => {
+      image.hidden =
+        true;
+
+      fallback.hidden =
+        false;
+
+      image.removeAttribute(
+        'src'
+      );
+    };
+
+    image.src =
+      url;
+  }
+
+  function formatType(list) {
+    const clean = [
       ...new Set(
-        candidates || []
+        (list || [])
+          .map((item) => {
+            const text =
+              String(item).trim();
+
+            if (!text) {
+              return '';
+            }
+
+            return (
+              text
+                .charAt(0)
+                .toUpperCase() +
+              text
+                .slice(1)
+                .toLowerCase()
+            );
+          })
+          .filter(Boolean)
       )
     ];
 
-    let index = 0;
-
-    image.hidden = true;
-    fallback.hidden = false;
-    image.alt = alt;
-
-    const tryNext = () => {
-      if (index >= queue.length) {
-        image.removeAttribute('src');
-
-        image.hidden = true;
-        fallback.hidden = false;
-
-        return;
-      }
-
-      const source =
-        queue[index++];
-
-      image.onload = () => {
-        image.hidden = false;
-        fallback.hidden = true;
-      };
-
-      image.onerror =
-        tryNext;
-
-      image.src =
-        source;
-    };
-
-    tryNext();
+    return clean.length
+      ? clean.join(' / ')
+      : 'Manga / Anime';
   }
 
   function repeatStories(
@@ -870,7 +1170,9 @@
     }
 
     return Array.from(
-      { length: amount },
+      {
+        length: amount
+      },
       (_, index) => {
         return stories[
           index % stories.length
@@ -879,236 +1181,554 @@
     );
   }
 
-  function formatTypes(types) {
-    const unique = [
-      ...new Set(
-        types.map((type) => {
-          return normalizeText(type);
-        })
-      )
-    ];
 
-    const labels =
-      unique
-        .filter((type) => {
-          return (
-            type === 'anime' ||
-            type === 'manga'
-          );
-        })
-        .map((type) => {
-          return (
-            type.charAt(0).toUpperCase() +
-            type.slice(1)
-          );
-        });
+  /* ==========================================================================
+     9. PROFILE AND SAVED-LAYER CONTROLLER
+     ========================================================================== */
 
-    return labels.length
-      ? labels.join(' / ')
-      : 'Anime / Manga';
-  }
-
-  /* =======================================================
-     SYNCHRONIZED TABS
-     ======================================================= */
-
-  function setupSynchronizedTabs(section) {
-    const tabLists = [
-      ...section.querySelectorAll(
-        '[data-layer-tabs]'
-      )
-    ];
-
-    const tabs = [
-      ...section.querySelectorAll(
-        '[data-soul-tab]'
-      )
-    ];
-
-    const panels = [
-      ...section.querySelectorAll(
-        '[data-soul-panel]'
-      )
-    ];
-
-    const order = [
-      'quote',
-      'character',
+  function createContentController(
+    elements
+  ) {
+    const layers = [
+      'quotes',
+      'characters',
       'thoughts'
     ];
 
-    let activeLayer =
-      'quote';
+    let activeProfile =
+      'kai';
 
-    const activate = (
-      layer,
-      options = {}
-    ) => {
-      if (!order.includes(layer)) {
+    let activeLayer =
+      'quotes';
+
+    /*
+      Fill small profile cards from PROFILES.
+    */
+    elements.profileButtons.forEach(
+      (button) => {
+        const profile =
+          PROFILES[
+            button.dataset.profileSelect
+          ];
+
+        if (!profile) {
+          return;
+        }
+
+        button
+          .querySelector(
+            '[data-profile-name]'
+          )
+          .textContent =
+            profile.name;
+
+        button
+          .querySelector(
+            '[data-profile-bio]'
+          )
+          .textContent =
+            profile.bio;
+
+        button
+          .querySelector(
+            '[data-profile-avatar-fallback]'
+          )
+          .textContent =
+            profile.initial;
+
+        const image =
+          button.querySelector(
+            '[data-profile-avatar-image]'
+          );
+
+        if (profile.avatarUrl) {
+          image.src =
+            profile.avatarUrl;
+
+          image.alt =
+            `${profile.name} profile picture`;
+
+          image.hidden =
+            false;
+
+          image.onerror = () => {
+            image.hidden =
+              true;
+
+            image.removeAttribute(
+              'src'
+            );
+          };
+        }
+      }
+    );
+
+    function chooseProfile(
+      id,
+      focus = false
+    ) {
+      if (!PROFILES[id]) {
         return;
       }
 
-      activeLayer = layer;
+      activeProfile =
+        id;
 
-      tabs.forEach((tab) => {
-        const selected =
-          tab.dataset.soulTab === layer;
+      elements.profileButtons.forEach(
+        (button) => {
+          const selected =
+            button.dataset.profileSelect === id;
 
-        tab.classList.toggle(
-          'is-active',
-          selected
+          button.classList.toggle(
+            'is-active',
+            selected
+          );
+
+          button.setAttribute(
+            'aria-selected',
+            String(selected)
+          );
+
+          button.tabIndex =
+            selected ? 0 : -1;
+        }
+      );
+
+      elements.readerScore.textContent =
+        PROFILES[id].score;
+
+      elements.readerStatus.textContent =
+        PROFILES[id].status;
+
+      renderContent();
+
+      if (focus) {
+        elements.profileButtons
+          .find((button) => {
+            return (
+              button.dataset.profileSelect === id
+            );
+          })
+          ?.focus();
+      }
+    }
+
+    function chooseLayer(
+      layer,
+      focus = false
+    ) {
+      if (!layers.includes(layer)) {
+        return;
+      }
+
+      activeLayer =
+        layer;
+
+      elements.layerButtons.forEach(
+        (button) => {
+          const selected =
+            button.dataset.layerSelect === layer;
+
+          button.classList.toggle(
+            'is-active',
+            selected
+          );
+
+          button.setAttribute(
+            'aria-selected',
+            String(selected)
+          );
+
+          button.tabIndex =
+            selected ? 0 : -1;
+        }
+      );
+
+      renderContent();
+
+      if (focus) {
+        elements.layerButtons
+          .find((button) => {
+            return (
+              button.dataset.layerSelect === layer
+            );
+          })
+          ?.focus();
+      }
+    }
+
+    function renderContent() {
+      const profile =
+        PROFILES[activeProfile];
+
+      if (activeLayer === 'quotes') {
+        renderQuotes(
+          elements.layerContent,
+          profile
         );
-
-        tab.setAttribute(
-          'aria-selected',
-          String(selected)
+      } else if (
+        activeLayer === 'characters'
+      ) {
+        renderCharacters(
+          elements.layerContent,
+          profile
         );
-
-        tab.tabIndex =
-          selected ? 0 : -1;
-      });
-
-      panels.forEach((panel) => {
-        const selected =
-          panel.dataset.soulPanel === layer;
-
-        panel.hidden =
-          !selected;
-
-        panel.classList.toggle(
-          'is-active',
-          selected
+      } else {
+        renderThoughts(
+          elements.layerContent,
+          profile
         );
+      }
+
+      animateContent(
+        elements.layerContent
+      );
+    }
+
+    /*
+      Mouse and touch profile selection.
+    */
+    elements.profileButtons.forEach(
+      (button) => {
+        button.addEventListener(
+          'click',
+          () => {
+            chooseProfile(
+              button.dataset.profileSelect
+            );
+          }
+        );
+      }
+    );
+
+    /*
+      Mouse and touch layer selection.
+    */
+    elements.layerButtons.forEach(
+      (button) => {
+        button.addEventListener(
+          'click',
+          () => {
+            chooseLayer(
+              button.dataset.layerSelect
+            );
+          }
+        );
+      }
+    );
+
+    /*
+      Keyboard support for profile selectors.
+    */
+    elements.profileSwitcher.addEventListener(
+      'keydown',
+      (event) => {
+        const current =
+          event.target.closest(
+            '[data-profile-select]'
+          );
+
+        if (!current) {
+          return;
+        }
+
+        const ids =
+          elements.profileButtons.map(
+            (button) => {
+              return button.dataset.profileSelect;
+            }
+          );
+
+        const index =
+          ids.indexOf(
+            current.dataset.profileSelect
+          );
+
+        let next =
+          index;
 
         if (
-          selected &&
-          options.animate !== false &&
-          !prefersReducedMotion()
+          event.key === 'ArrowRight' ||
+          event.key === 'ArrowDown'
         ) {
-          panel.animate(
-            [
-              {
-                opacity: 0,
-                transform:
-                  'translateY(8px)'
-              },
-              {
-                opacity: 1,
-                transform:
-                  'translateY(0)'
-              }
-            ],
-            {
-              duration: 260,
-              easing:
-                'cubic-bezier(.22,1,.36,1)'
-            }
-          );
+          next =
+            (index + 1) %
+            ids.length;
+        } else if (
+          event.key === 'ArrowLeft' ||
+          event.key === 'ArrowUp'
+        ) {
+          next =
+            (
+              index -
+              1 +
+              ids.length
+            ) %
+            ids.length;
+        } else if (
+          event.key === 'Home'
+        ) {
+          next =
+            0;
+        } else if (
+          event.key === 'End'
+        ) {
+          next =
+            ids.length - 1;
+        } else {
+          return;
         }
-      });
 
-      if (options.focusTab) {
-        const target =
-          options.focusWithin?.querySelector(
-            `[data-soul-tab="${layer}"]`
-          ) ||
-          section.querySelector(
-            `[data-soul-tab="${layer}"]`
-          );
+        event.preventDefault();
 
-        target?.focus();
+        chooseProfile(
+          ids[next],
+          true
+        );
       }
-    };
+    );
 
-    tabs.forEach((tab) => {
-      tab.addEventListener(
-        'click',
-        () => {
-          activate(
-            tab.dataset.soulTab
+    /*
+      Keyboard support for active layers.
+
+      Disabled Moments and Notes are skipped.
+    */
+    elements.layerTabs.addEventListener(
+      'keydown',
+      (event) => {
+        const current =
+          event.target.closest(
+            '[data-layer-select]'
           );
+
+        if (!current) {
+          return;
         }
-      );
-    });
 
-    tabLists.forEach((list) => {
-      list.addEventListener(
-        'keydown',
-        (event) => {
-          const current =
-            event.target.closest(
-              '[data-soul-tab]'
-            );
-
-          if (!current) {
-            return;
-          }
-
-          const currentIndex =
-            order.indexOf(
-              current.dataset.soulTab
-            );
-
-          let nextIndex =
-            currentIndex;
-
-          if (
-            event.key === 'ArrowRight' ||
-            event.key === 'ArrowDown'
-          ) {
-            nextIndex =
-              (currentIndex + 1) %
-              order.length;
-          } else if (
-            event.key === 'ArrowLeft' ||
-            event.key === 'ArrowUp'
-          ) {
-            nextIndex =
-              (
-                currentIndex -
-                1 +
-                order.length
-              ) %
-              order.length;
-          } else if (
-            event.key === 'Home'
-          ) {
-            nextIndex = 0;
-          } else if (
-            event.key === 'End'
-          ) {
-            nextIndex =
-              order.length - 1;
-          } else {
-            return;
-          }
-
-          event.preventDefault();
-
-          activate(
-            order[nextIndex],
-            {
-              focusTab: true,
-              focusWithin: list
-            }
+        const index =
+          layers.indexOf(
+            current.dataset.layerSelect
           );
-        }
-      );
-    });
 
-    activate(
-      activeLayer,
+        let next =
+          index;
+
+        if (
+          event.key === 'ArrowRight' ||
+          event.key === 'ArrowDown'
+        ) {
+          next =
+            (index + 1) %
+            layers.length;
+        } else if (
+          event.key === 'ArrowLeft' ||
+          event.key === 'ArrowUp'
+        ) {
+          next =
+            (
+              index -
+              1 +
+              layers.length
+            ) %
+            layers.length;
+        } else if (
+          event.key === 'Home'
+        ) {
+          next =
+            0;
+        } else if (
+          event.key === 'End'
+        ) {
+          next =
+            layers.length - 1;
+        } else {
+          return;
+        }
+
+        event.preventDefault();
+
+        chooseLayer(
+          layers[next],
+          true
+        );
+      }
+    );
+
+    /*
+      Initial visible profile and layer.
+    */
+    chooseProfile(
+      activeProfile
+    );
+
+    chooseLayer(
+      activeLayer
+    );
+  }
+
+
+  /* ==========================================================================
+     10. BUILD DYNAMIC CONTENT
+     ========================================================================== */
+
+  function renderQuotes(
+    container,
+    profile
+  ) {
+    container.innerHTML = `
+      <header class="s4-content-heading">
+        <span>
+          ${escapeHtml(profile.name)} · quote collection
+        </span>
+
+        <h4>
+          ${profile.quotes.length} saved ideas from the same story
+        </h4>
+      </header>
+
+      <div class="s4-content-grid">
+        ${profile.quotes
+          .map((quote, index) => {
+            return `
+              <article class="s4-quote-card">
+                <span class="s4-quote-number">
+                  Saved quote ${String(index + 1).padStart(2, '0')}
+                </span>
+
+                <blockquote>
+                  “${escapeHtml(quote.text)}”
+                </blockquote>
+
+                <p>
+                  ${escapeHtml(quote.note)}
+                </p>
+              </article>
+            `;
+          })
+          .join('')}
+      </div>
+    `;
+  }
+
+  function renderCharacters(
+    container,
+    profile
+  ) {
+    container.innerHTML = `
+      <header class="s4-content-heading">
+        <span>
+          ${escapeHtml(profile.name)} · character ranking
+        </span>
+
+        <h4>
+          Top ${profile.characters.length} characters
+        </h4>
+      </header>
+
+      <div class="s4-content-grid">
+        ${profile.characters
+          .map((character) => {
+            return `
+              <article class="s4-character-card">
+                <span
+                  class="s4-character-badge"
+                  aria-hidden="true"
+                >
+                  ${escapeHtml(
+                    character.name
+                      .charAt(0)
+                      .toUpperCase()
+                  )}
+                </span>
+
+                <div class="s4-character-copy">
+                  <span class="s4-character-rank">
+                    Rank ${String(character.rank).padStart(2, '0')}
+                  </span>
+
+                  <h5>
+                    ${escapeHtml(character.name)}
+                  </h5>
+
+                  <p>
+                    ${escapeHtml(character.reason)}
+                  </p>
+                </div>
+              </article>
+            `;
+          })
+          .join('')}
+      </div>
+    `;
+  }
+
+  function renderThoughts(
+    container,
+    profile
+  ) {
+    container.innerHTML = `
+      <article class="s4-thoughts-card">
+        <span class="s4-quote-number">
+          ${escapeHtml(profile.name)} · long reflection
+        </span>
+
+        <h4>
+          ${escapeHtml(profile.thoughts.title)}
+        </h4>
+
+        <div class="s4-thoughts-copy">
+          ${profile.thoughts.paragraphs
+            .map((text) => {
+              return `
+                <p>
+                  ${escapeHtml(text)}
+                </p>
+              `;
+            })
+            .join('')}
+        </div>
+      </article>
+    `;
+  }
+
+  function animateContent(container) {
+    if (
+      prefersReducedMotion() ||
+      typeof container.animate !== 'function'
+    ) {
+      return;
+    }
+
+    container.animate(
+      [
+        {
+          opacity: 0.25,
+
+          transform:
+            'translateY(8px)'
+        },
+        {
+          opacity: 1,
+
+          transform:
+            'translateY(0)'
+        }
+      ],
       {
-        animate: false
+        duration: 260,
+
+        easing:
+          'cubic-bezier(.22,1,.36,1)'
       }
     );
   }
 
-  /* =======================================================
-     MOTION
-     ======================================================= */
 
-  function setupMotion(
+  /* ==========================================================================
+     11. GSAP SCROLL ANIMATION
+     ========================================================================== */
+
+  function setupSectionAnimation(
     section,
     elements
   ) {
@@ -1117,10 +1737,10 @@
       !window.ScrollTrigger
     ) {
       console.warn(
-        'Section 4: GSAP or ScrollTrigger is missing. Showing the static layout.'
+        'Section 4: GSAP or ScrollTrigger is missing.'
       );
 
-      showStatic(
+      showStaticLayout(
         section,
         elements
       );
@@ -1137,20 +1757,19 @@
       ScrollTrigger
     );
 
-    const media =
-      gsap.matchMedia();
-
-    media.add(
+    gsap.matchMedia().add(
       {
         animated:
-          '(min-width: 1180px) and (min-height: 820px) and (prefers-reduced-motion: no-preference)',
+          '(min-width: 1050px) and (min-height: 780px) and (prefers-reduced-motion: no-preference)',
 
         static:
-          '(max-width: 1179px), (max-height: 819px), (prefers-reduced-motion: reduce)'
+          '(max-width: 1049px), (max-height: 779px), (prefers-reduced-motion: reduce)'
       },
       (context) => {
-        if (context.conditions.static) {
-          showStatic(
+        if (
+          context.conditions.static
+        ) {
+          showStaticLayout(
             section,
             elements
           );
@@ -1195,69 +1814,48 @@
       ...rightItems
     ];
 
-    gsap.set(
-      elements.rainScene,
-      {
-        autoAlpha: 1
-      }
-    );
-
-    gsap.set(
-      elements.rainCopy,
-      {
-        autoAlpha: 1,
-        y: 0
-      }
-    );
-
-    gsap.set(
-      elements.mergeStage,
-      {
-        autoAlpha: 1
-      }
-    );
-
+    /*
+      Initial final interface state.
+    */
     gsap.set(
       elements.finalScene,
       {
         autoAlpha: 0,
-        visibility: 'hidden',
-        pointerEvents: 'none'
+
+        visibility:
+          'hidden',
+
+        pointerEvents:
+          'none'
       }
     );
 
     gsap.set(
-      elements.sharedStory,
+      elements.finalIntro,
       {
         autoAlpha: 0,
-        y: -20,
-        scale: 0.96
-      }
-    );
 
-    gsap.set(
-      elements.finalHeading,
-      {
-        autoAlpha: 0,
         y: 18
       }
     );
 
     gsap.set(
-      elements.cardLeft,
+      elements.profileButtons,
       {
         autoAlpha: 0,
-        x: -92,
-        y: 28
+
+        y: 24
       }
     );
 
     gsap.set(
-      elements.cardRight,
+      elements.mainCard,
       {
         autoAlpha: 0,
-        x: 92,
-        y: 28
+
+        y: 74,
+
+        scale: 0.985
       }
     );
 
@@ -1265,10 +1863,14 @@
       elements.mergeCaption,
       {
         autoAlpha: 0,
+
         y: 12
       }
     );
 
+    /*
+      Left rain begins below the viewport.
+    */
     leftItems.forEach(
       (item, index) => {
         gsap.set(
@@ -1277,27 +1879,34 @@
             y: () => {
               return (
                 window.innerHeight *
-                  0.74 +
-                index * 94
+                0.74 +
+                index *
+                94
               );
             },
 
             rotation:
               -8 +
-              (index % 5) * 4,
+              (index % 5) *
+              4,
 
             scale:
               0.82 +
-              (index % 3) * 0.1,
+              (index % 3) *
+              0.1,
 
             opacity:
               0.5 +
-              (index % 3) * 0.18
+              (index % 3) *
+              0.18
           }
         );
       }
     );
 
+    /*
+      Right rain begins above the viewport.
+    */
     rightItems.forEach(
       (item, index) => {
         gsap.set(
@@ -1306,29 +1915,34 @@
             y: () => {
               return (
                 -window.innerHeight *
-                  0.82 -
-                index * 94
+                0.82 -
+                index *
+                94
               );
             },
 
             rotation:
               9 -
-              (index % 5) * 4,
+              (index % 5) *
+              4,
 
             scale:
               0.82 +
               ((index + 1) % 3) *
-                0.1,
+              0.1,
 
             opacity:
               0.5 +
               ((index + 1) % 3) *
-                0.18
+              0.18
           }
         );
       }
     );
 
+    /*
+      Two selected covers begin in the lower corners.
+    */
     gsap.set(
       elements.mergeLeft,
       {
@@ -1339,19 +1953,22 @@
 
         x: () => {
           return -Math.min(
-            window.innerWidth * 0.36,
+            window.innerWidth *
+            0.36,
             540
           );
         },
 
         y: () => {
           return Math.min(
-            window.innerHeight * 0.42,
+            window.innerHeight *
+            0.42,
             390
           );
         },
 
         rotation: -11,
+
         scale: 0.86
       }
     );
@@ -1366,23 +1983,29 @@
 
         x: () => {
           return Math.min(
-            window.innerWidth * 0.36,
+            window.innerWidth *
+            0.36,
             540
           );
         },
 
         y: () => {
           return Math.min(
-            window.innerHeight * 0.42,
+            window.innerHeight *
+            0.42,
             390
           );
         },
 
         rotation: 11,
+
         scale: 0.86
       }
     );
 
+    /*
+      The merged center copy starts hidden.
+    */
     gsap.set(
       elements.mergeOne,
       {
@@ -1395,6 +2018,7 @@
         y: 0,
 
         rotation: 0,
+
         scale: 1
       }
     );
@@ -1402,7 +2026,8 @@
     const timeline =
       gsap.timeline({
         defaults: {
-          ease: 'none'
+          ease:
+            'none'
         },
 
         scrollTrigger: {
@@ -1413,7 +2038,7 @@
             'top top',
 
           end:
-            `+=${CONFIG.pinDistance}`,
+            `+=${PIN_DISTANCE}`,
 
           pin:
             true,
@@ -1430,8 +2055,8 @@
       });
 
     /*
-      Phase 1:
-      Covers move in opposite directions.
+      PHASE 1:
+      covers move in opposite directions.
     */
     timeline.to(
       leftItems,
@@ -1439,15 +2064,17 @@
         y: (index) => {
           return (
             -window.innerHeight *
-              1.55 -
-            index * 72
+            1.55 -
+            index *
+            72
           );
         },
 
         rotation: (index) => {
           return (
             8 -
-            (index % 5) * 3
+            (index % 5) *
+            3
           );
         },
 
@@ -1455,8 +2082,11 @@
           2.15,
 
         stagger: {
-          each: 0.025,
-          from: 'start'
+          each:
+            0.025,
+
+          from:
+            'start'
         }
       },
       0
@@ -1468,15 +2098,17 @@
         y: (index) => {
           return (
             window.innerHeight *
-              1.55 +
-            index * 72
+            1.55 +
+            index *
+            72
           );
         },
 
         rotation: (index) => {
           return (
             -8 +
-            (index % 5) * 3
+            (index % 5) *
+            3
           );
         },
 
@@ -1484,8 +2116,11 @@
           2.15,
 
         stagger: {
-          each: 0.025,
-          from: 'start'
+          each:
+            0.025,
+
+          from:
+            'start'
         }
       },
       0
@@ -1495,7 +2130,9 @@
       elements.rainCopy,
       {
         autoAlpha: 0,
+
         y: -45,
+
         duration: 0.45
       },
       0.78
@@ -1505,16 +2142,17 @@
       allRainItems,
       {
         autoAlpha: 0,
+
         scale: 0.8,
+
         duration: 0.55
       },
       1.28
     );
 
     /*
-      Phase 2:
-      Two identical covers enter from
-      the lower-left and lower-right.
+      PHASE 2:
+      two copies enter and meet.
     */
     timeline.to(
       [
@@ -1523,6 +2161,7 @@
       ],
       {
         autoAlpha: 1,
+
         duration: 0.18
       },
       1.18
@@ -1535,6 +2174,7 @@
         y: 0,
 
         rotation: 0,
+
         scale: 1,
 
         duration: 0.95,
@@ -1552,6 +2192,7 @@
         y: 0,
 
         rotation: 0,
+
         scale: 1,
 
         duration: 0.95,
@@ -1580,6 +2221,7 @@
       ],
       {
         autoAlpha: 0,
+
         duration: 0.24
       },
       2.2
@@ -1592,8 +2234,11 @@
       },
       {
         scale: 1.045,
+
         duration: 0.18,
-        ease: 'power2.out'
+
+        ease:
+          'power2.out'
       },
       2.2
     );
@@ -1602,8 +2247,11 @@
       elements.mergeOne,
       {
         scale: 1,
+
         duration: 0.22,
-        ease: 'power2.inOut'
+
+        ease:
+          'power2.inOut'
       },
       2.38
     );
@@ -1612,98 +2260,101 @@
       elements.mergeCaption,
       {
         autoAlpha: 1,
+
         y: 0,
+
         duration: 0.28
       },
       2.34
     );
 
     /*
-      The merged cover rises toward
-      the shared-story position.
+      The merged cover rises.
+
+      No duplicate Attack on Titan title is displayed above it.
     */
     timeline.to(
       elements.mergeOne,
       {
         y: () => {
           return -Math.min(
-            window.innerHeight * 0.31,
-            290
+            window.innerHeight *
+            0.24,
+            220
           );
         },
 
-        scale: 0.54,
+        scale: 0.56,
 
-        duration: 0.7,
+        duration: 0.65,
 
         ease:
           'power2.inOut'
       },
-      2.65
+      2.64
     );
 
     timeline.to(
       elements.mergeCaption,
       {
         autoAlpha: 0,
+
         y: -10,
-        duration: 0.25
+
+        duration: 0.24
       },
-      2.72
+      2.74
     );
 
     /*
-      Phase 3:
-      Shared cover and both cards reveal.
+      PHASE 3:
+      reveal small profiles and one lower shared card.
     */
     timeline.set(
       elements.finalScene,
       {
-        visibility: 'visible'
+        visibility:
+          'visible'
       },
-      2.82
+      2.86
     );
 
     timeline.to(
       elements.finalScene,
       {
         autoAlpha: 1,
-        duration: 0.34
+
+        duration: 0.32
       },
-      2.82
+      2.86
     );
 
     timeline.to(
-      elements.sharedStory,
+      elements.finalIntro,
       {
         autoAlpha: 1,
-        y: 0,
-        scale: 1,
 
-        duration: 0.42,
+        y: 0,
+
+        duration: 0.34,
 
         ease:
           'power2.out'
       },
-      2.95
+      3.0
     );
 
+    /*
+      Both profile selectors appear together.
+    */
     timeline.to(
-      elements.mergeOne,
-      {
-        autoAlpha: 0,
-        duration: 0.26
-      },
-      3.02
-    );
-
-    timeline.to(
-      elements.finalHeading,
+      elements.profileButtons,
       {
         autoAlpha: 1,
+
         y: 0,
 
-        duration: 0.34,
+        duration: 0.42,
 
         ease:
           'power2.out'
@@ -1712,76 +2363,62 @@
     );
 
     /*
-      The left and right cards start
-      and finish at the same time.
+      The one shared card rises into its lower position.
     */
     timeline.to(
-      [
-        elements.cardLeft,
-        elements.cardRight
-      ],
+      elements.mainCard,
       {
         autoAlpha: 1,
 
-        x: 0,
         y: 0,
 
-        duration: 0.56,
+        scale: 1,
+
+        duration: 0.58,
 
         ease:
           'power2.out'
       },
-      3.42
+      3.36
     );
 
+    timeline.to(
+      elements.mergeOne,
+      {
+        autoAlpha: 0,
+
+        duration: 0.26
+      },
+      3.38
+    );
+
+    /*
+      Enable buttons only when the final interface is visible.
+    */
     timeline.set(
       elements.finalScene,
       {
-        pointerEvents: 'auto'
+        pointerEvents:
+          'auto'
       },
       3.72
-    );
-
-    timeline.add(
-      () => {
-        elements.finalScene.classList.add(
-          'is-interactive'
-        );
-      },
-      3.72
-    );
-
-    timeline.add(
-      () => {
-        elements.finalScene.classList.remove(
-          'is-interactive'
-        );
-      },
-      3.71
     );
 
     return () => {
-      timeline.scrollTrigger?.kill();
-      timeline.kill();
+      timeline
+        .scrollTrigger
+        ?.kill();
 
-      gsap.set(
-        [
-          elements.rainScene,
-          elements.mergeStage,
-          elements.finalScene,
-          elements.sharedStory,
-          elements.finalHeading,
-          elements.cardLeft,
-          elements.cardRight
-        ],
-        {
-          clearProps: 'all'
-        }
-      );
+      timeline.kill();
     };
   }
 
-  function showStatic(
+
+  /* ==========================================================================
+     12. FALLBACKS AND UTILITIES
+     ========================================================================== */
+
+  function showStaticLayout(
     section,
     elements
   ) {
@@ -1797,10 +2434,6 @@
 
     elements.finalScene.style.pointerEvents =
       'auto';
-
-    elements.finalScene.classList.add(
-      'is-interactive'
-    );
   }
 
   function showDatabaseError(
@@ -1811,10 +2444,13 @@
       return;
     }
 
-    elements.empty.hidden = false;
+    elements.empty.hidden =
+      false;
 
     const paragraph =
-      elements.empty.querySelector('p');
+      elements.empty.querySelector(
+        'p'
+      );
 
     if (paragraph) {
       paragraph.innerHTML =
@@ -1839,16 +2475,16 @@
     }
   }
 
-  function prefersReducedMotion() {
-    return window.matchMedia(
-      '(prefers-reduced-motion: reduce)'
-    ).matches;
-  }
-
   function normalizeText(value) {
     return String(value || '')
       .trim()
       .toLowerCase();
+  }
+
+  function prefersReducedMotion() {
+    return window.matchMedia(
+      '(prefers-reduced-motion: reduce)'
+    ).matches;
   }
 
   function escapeHtml(value) {
