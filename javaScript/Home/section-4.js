@@ -24,12 +24,6 @@
     'Shingeki no Kyojin'
   ];
 
-  /*
-    The scroll distance remains fixed.
-
-    Adding more database titles increases rain density without increasing
-    the total scroll length.
-  */
   const PIN_DISTANCE =
     4200;
 
@@ -517,7 +511,10 @@
   function normalizeStoryRows(
     rows
   ) {
-    return (rows || [])
+    return (
+      rows ||
+      []
+    )
       .filter(
         (item) => {
           return (
@@ -555,7 +552,7 @@
     if (
       CHOSEN_STORY_ID
     ) {
-      const poolMatch =
+      const match =
         storyPool.find(
           (story) => {
             return (
@@ -570,22 +567,22 @@
         );
 
       if (
-        poolMatch
+        match
       ) {
-        return poolMatch;
+        return match;
       }
     }
 
-    const aliases =
+    const aliasKeys =
       CHOSEN_STORY_ALIASES
         .map(
           normalizeText
         );
 
-    const poolTitleMatch =
+    const poolMatch =
       storyPool.find(
         (story) => {
-          return aliases.includes(
+          return aliasKeys.includes(
             normalizeText(
               story.title
             )
@@ -594,9 +591,9 @@
       );
 
     if (
-      poolTitleMatch
+      poolMatch
     ) {
-      return poolTitleMatch;
+      return poolMatch;
     }
 
     for (
@@ -624,7 +621,7 @@
             normalizeStory
           );
 
-        const exact =
+        return (
           normalized.find(
             (story) => {
               return (
@@ -636,10 +633,7 @@
                 )
               );
             }
-          );
-
-        return (
-          exact ||
+          ) ||
           normalized[0]
         );
       }
@@ -732,7 +726,7 @@
           );
       }
     } catch (_) {
-      // Plain text values are valid.
+      // Plain text is valid.
     }
 
     return text
@@ -866,20 +860,14 @@
     elements.rainRight.innerHTML =
       '';
 
-    const chosenKey =
-      storyKey(
-        chosenStory
-      );
-
     const ordinaryPool =
       dedupeStories(
         storyPool.filter(
           (story) => {
             return (
-              storyKey(
-                story
-              ) !==
-              chosenKey
+              !isChosenStoryTitle(
+                story.title
+              )
             );
           }
         )
@@ -889,17 +877,11 @@
       seededShuffle(
         ordinaryPool,
         hashString(
-          `${chosenStory.title}-all-rain-v6`
+          `${chosenStory.title}-all-rain-final`
         )
       );
 
-    /*
-      Every ordinary title is used once.
-
-      If the count is odd, the left stream receives one extra title.
-      Attack on Titan is inserted once into both streams.
-    */
-    const leftOrdinaryCount =
+    const leftCount =
       Math.ceil(
         shuffled.length /
         2
@@ -908,17 +890,18 @@
     const leftOrdinary =
       shuffled.slice(
         0,
-        leftOrdinaryCount
+        leftCount
       );
 
     const rightOrdinary =
       shuffled.slice(
-        leftOrdinaryCount
+        leftCount
       );
 
-    const chosenLeftIndex =
-      Math.min(
-        leftOrdinary.length,
+    const leftStories =
+      insertChosenStory(
+        leftOrdinary,
+        chosenStory,
         Math.max(
           1,
           Math.floor(
@@ -931,9 +914,10 @@
         )
       );
 
-    const chosenRightIndex =
-      Math.min(
-        rightOrdinary.length,
+    const rightStories =
+      insertChosenStory(
+        rightOrdinary,
+        chosenStory,
         Math.max(
           1,
           Math.floor(
@@ -944,20 +928,6 @@
             0.56
           )
         )
-      );
-
-    const leftStories =
-      insertChosenStory(
-        leftOrdinary,
-        chosenStory,
-        chosenLeftIndex
-      );
-
-    const rightStories =
-      insertChosenStory(
-        rightOrdinary,
-        chosenStory,
-        chosenRightIndex
       );
 
     leftStories.forEach(
@@ -972,10 +942,9 @@
               story,
               'left',
               index,
-              storyKey(
-                story
-              ) ===
-                chosenKey
+              isChosenStoryTitle(
+                story.title
+              )
             )
           );
       }
@@ -993,10 +962,9 @@
               story,
               'right',
               index,
-              storyKey(
-                story
-              ) ===
-                chosenKey
+              isChosenStoryTitle(
+                story.title
+              )
             )
           );
       }
@@ -1008,10 +976,9 @@
     chosenStory,
     requestedIndex
   ) {
-    const result =
-      [
-        ...stories
-      ];
+    const result = [
+      ...stories
+    ];
 
     const safeIndex =
       Math.min(
@@ -1029,6 +996,26 @@
     );
 
     return result;
+  }
+
+  function isChosenStoryTitle(
+    title
+  ) {
+    const key =
+      normalizeText(
+        title
+      );
+
+    return CHOSEN_STORY_ALIASES.some(
+      (alias) => {
+        return (
+          normalizeText(
+            alias
+          ) ===
+          key
+        );
+      }
+    );
   }
 
   function dedupeStories(
@@ -1077,10 +1064,9 @@
     stories,
     seed
   ) {
-    const copy =
-      [
-        ...stories
-      ];
+    const copy = [
+      ...stories
+    ];
 
     let state =
       seed ||
@@ -1181,10 +1167,6 @@
         'span'
       );
 
-    /*
-      The positions repeat intentionally to make the streams denser
-      and allow controlled overlapping.
-    */
     const leftPositions = [
       8,
       28,
@@ -1215,7 +1197,7 @@
       7
     ];
 
-    const coverWidths = [
+    const widths = [
       92,
       100,
       96,
@@ -1270,9 +1252,9 @@
     figure.style.setProperty(
       '--s4-rain-width',
       `${
-        coverWidths[
+        widths[
           itemIndex %
-          coverWidths.length
+          widths.length
         ]
       }px`
     );
@@ -1432,14 +1414,11 @@
         .readerContents
         .forEach(
           (container) => {
-            const readerId =
-              container
-                .dataset
-                .readerContent;
-
             const reader =
               READERS[
-                readerId
+                container
+                  .dataset
+                  .readerContent
               ];
 
             if (
@@ -1616,7 +1595,8 @@
           getCombinedScore();
 
         const combinedReason =
-          `Average of Kai's ${READERS.kai.score} and Nova's ${READERS.nova.score}. Focus either profile to see the reason behind that reader's score.`;
+          `Average of Kai's ${READERS.kai.score} and Nova's ${READERS.nova.score}. ` +
+          'Focus either profile to see the reason behind that reader’s score.';
 
         updateScoreDisplay(
           elements,
@@ -1731,11 +1711,7 @@
       READERS.nova.score
     ]
       .map(
-        (value) => {
-          return Number.parseFloat(
-            value
-          );
-        }
+        Number.parseFloat
       )
       .filter(
         Number.isFinite
@@ -1847,12 +1823,10 @@
               ) {
                 image.src =
                   fallbackPortrait;
-
-                return;
+              } else {
+                image.hidden =
+                  true;
               }
-
-              image.hidden =
-                true;
             };
         }
       );
@@ -2180,20 +2154,23 @@
     container.animate(
       [
         {
-          opacity: 0.25,
+          opacity:
+            0.25,
 
           transform:
             'translateY(9px)'
         },
         {
-          opacity: 1,
+          opacity:
+            1,
 
           transform:
             'translateY(0)'
         }
       ],
       {
-        duration: 280,
+        duration:
+          280,
 
         easing:
           'cubic-bezier(.22,1,.36,1)'
@@ -2303,7 +2280,7 @@
         section
       );
 
-      return;
+      return undefined;
     }
 
     const regularLeft =
@@ -2386,6 +2363,57 @@
     const comparisonTime =
       4.52;
 
+    const DOCK_TOP =
+      70;
+
+    const DOCK_SCALE =
+      0.79;
+
+    const expandedCardHeight =
+      elements.sharedCard
+        .getBoundingClientRect()
+        .height;
+
+    function updateFinalLayoutMetrics() {
+      const introHeight =
+        Math.max(
+          elements.contentIntro
+            .getBoundingClientRect()
+            .height,
+          30
+        );
+
+      const cardVisualBottom =
+        DOCK_TOP +
+        expandedCardHeight *
+        DOCK_SCALE;
+
+      const introTop =
+        Math.ceil(
+          cardVisualBottom +
+          12
+        );
+
+      const compareTop =
+        Math.ceil(
+          introTop +
+          introHeight +
+          10
+        );
+
+      elements.stage.style.setProperty(
+        '--s4-intro-top',
+        `${introTop}px`
+      );
+
+      elements.stage.style.setProperty(
+        '--s4-compare-top',
+        `${compareTop}px`
+      );
+    }
+
+    updateFinalLayoutMetrics();
+
     gsap.set(
       [
         ...leftItems,
@@ -2427,7 +2455,7 @@
           -50,
 
         scale:
-          1.05,
+          1.04,
 
         pointerEvents:
           'none'
@@ -2461,7 +2489,7 @@
           0,
 
         y:
-          14
+          12
       }
     );
 
@@ -2472,7 +2500,7 @@
           0,
 
         y:
-          30,
+          24,
 
         pointerEvents:
           'none'
@@ -2486,7 +2514,7 @@
           0,
 
         y:
-          18
+          16
       }
     );
 
@@ -2497,7 +2525,7 @@
           0,
 
         y:
-          24
+          20
       }
     );
 
@@ -2531,7 +2559,10 @@
             1,
 
           invalidateOnRefresh:
-            true
+            true,
+
+          onRefreshInit:
+            updateFinalLayoutMetrics
         }
       });
 
@@ -2900,7 +2931,7 @@
       ],
       {
         x: (
-          index,
+          _index,
           item
         ) => {
           return getCenterTarget(
@@ -2910,7 +2941,7 @@
         },
 
         y: (
-          index,
+          _index,
           item
         ) => {
           return getCenterTarget(
@@ -2997,9 +3028,6 @@
       0.08
     );
 
-    /*
-      The only shared card appears exactly where both selected covers merge.
-    */
     timeline.to(
       elements.sharedCardWrap,
       {
@@ -3018,20 +3046,17 @@
       cardRevealTime
     );
 
-    /*
-      The same card shrinks and moves below the navigation.
-    */
     timeline.to(
       elements.sharedCardWrap,
       {
         top:
-          '68px',
+          `${DOCK_TOP}px`,
 
         yPercent:
           0,
 
         scale:
-          0.84,
+          DOCK_SCALE,
 
         duration:
           cardDockTime -
@@ -3053,10 +3078,10 @@
           'auto',
 
         marginTop:
-          '0.32rem',
+          '0.3rem',
 
         paddingTop:
-          '0.42rem',
+          '0.38rem',
 
         duration:
           0.32,
@@ -3159,9 +3184,6 @@
       0.2
     );
 
-    /*
-      Keep the complete interactive interface visible at the end.
-    */
     timeline.to(
       {},
       {
@@ -3169,6 +3191,20 @@
           1.15
       }
     );
+
+    if (
+      document.fonts?.ready
+    ) {
+      document.fonts.ready.then(
+        () => {
+          updateFinalLayoutMetrics();
+
+          timeline
+            .scrollTrigger
+            ?.refresh();
+        }
+      );
+    }
 
     return () => {
       timeline
