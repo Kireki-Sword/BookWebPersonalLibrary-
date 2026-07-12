@@ -1,42 +1,5 @@
-/* ============================================================================
-   SECTION 4 — SAME STORY, DIFFERENT SOULS
-
-   WHAT THIS VERSION FIXES
-
-   1. Left and right cover pairs use matching timing.
-   2. Attack on Titan is inserted into the real rain on both sides.
-   3. Those two exact rain covers move into the centre and merge.
-   4. Only the cinematic is pinned.
-   5. The final content uses normal page scrolling.
-   6. The shared card appears before the reader comparison.
-   7. Kai appears on the left and Nova appears on the right.
-   8. Clicking a profile focuses that side.
-   9. Clicking Compare Both restores an equal comparison.
-
-   REQUIRED LIBRARIES
-
-   - Supabase browser library
-   - GSAP
-   - GSAP ScrollTrigger
-
-   DATABASE COVER RULE
-
-   Bucket:
-   img
-
-   File:
-   covers/{database-id}.jpg
-   ============================================================================ */
-
 (() => {
   'use strict';
-
-
-  /* ==========================================================================
-     1. DATABASE AND ANIMATION CONFIGURATION
-
-     These are the main technical values you may want to edit.
-     ========================================================================== */
 
   const SUPABASE_URL =
     'https://hsruxfpslxguhwnccwuj.supabase.co';
@@ -53,245 +16,106 @@
   const COVER_FOLDER =
     'covers';
 
-
-  /*
-    BEST OPTION
-
-    Add the exact database ID of Attack on Titan.
-
-    Example:
-
-    const CHOSEN_STORY_ID = 'attack-on-titan-2013';
-
-    Leaving the value empty still works because the script searches using
-    the two titles in CHOSEN_STORY_ALIASES.
-  */
-
   const CHOSEN_STORY_ID = '';
-
-
-  /*
-    Fallback titles used when CHOSEN_STORY_ID is empty or does not match.
-  */
 
   const CHOSEN_STORY_ALIASES = [
     'Attack on Titan',
     'Shingeki no Kyojin'
   ];
 
+  const RAIN_PAIR_COUNT = 9;
 
-  /*
-    Number of paired covers.
-
-    11 means:
-    - 11 covers on the left
-    - 11 covers on the right
-  */
-
-  const RAIN_PAIR_COUNT = 11;
-
-
-  /*
-    Which pair contains Attack on Titan.
-
-    Pair indexes begin at 0.
-
-    4 means Attack on Titan is the fifth pair.
-  */
-
-  const CHOSEN_PAIR_INDEX = 4;
-
-
-  /*
-    Length of the pinned scroll animation.
-
-    Increase this value for a slower, longer scroll.
-    Decrease it for a shorter scroll.
-  */
-
-  const PIN_DISTANCE = 3600;
-
+  const PIN_DISTANCE = 2800;
 
   let supabaseClient = null;
 
-
-  /* ==========================================================================
-     2. EDIT READER CONTENT HERE
-
-     This is the main content-editing area.
-
-     avatarUrl:
-     - Leave empty to use the letter.
-     - Add a real image path to show a profile picture.
-
-     quotes:
-     - Add or remove objects.
-     - Each object creates one quote card.
-
-     characters:
-     - Add or remove ranked character objects.
-
-     thoughts:
-     - Add as many paragraphs as needed.
-
-     The example quote text is paraphrased rather than copied dialogue.
-     ========================================================================== */
-
   const READERS = {
     kai: {
-      /*
-        Which side this reader appears on.
-      */
       side: 'left',
-
-      /*
-        Profile information.
-      */
       name: 'kai.reads',
-      bio: 'saves emotions first',
+      bio: 'remembers the feeling before the theory',
       initial: 'K',
-
-      /*
-        Add a real avatar path here.
-
-        Example:
-        avatarUrl: 'images/kai-avatar.jpg'
-      */
       avatarUrl: '',
-
-      /*
-        Personal score and status.
-      */
       score: '9/10',
       status: 'Completed',
 
-      /*
-        Kai's saved quote ideas.
-      */
+      ratingReason:
+        'Kai gives it 9/10 because the emotional choices stay memorable, even when the middle pacing feels crowded.',
+
       quotes: [
         {
           text:
-            'Even inside fear, there is still a choice.',
+            'Fear can be present and a choice can still be yours.',
 
           note:
-            'Kai saves this idea because it turns a huge conflict into a personal question about courage.'
+            'This stays with Kai because the story repeatedly makes courage feel personal rather than superhuman.'
         },
         {
           text:
-            'Freedom can become another kind of pressure.',
+            'Freedom can become another kind of burden.',
 
           note:
-            'Wanting freedom and understanding freedom are not always the same thing.'
+            'Kai reads freedom as something characters must define for themselves, not simply reach.'
         },
         {
           text:
-            'People become braver when someone believes they can.',
+            'Being believed in can change what courage looks like.',
 
           note:
-            'Kai connects this to the quiet support characters give one another before difficult decisions.'
-        },
-        {
-          text:
-            'Fear does not disappear just because you move forward.',
-
-          note:
-            'For Kai, courage means acting while the fear is still present.'
-        },
-        {
-          text:
-            'A dream can save someone and still hurt them.',
-
-          note:
-            'Many characters are driven by hopes that also make their lives heavier.'
+            'The quieter relationships matter to Kai because support often arrives before a character can support themselves.'
         }
       ],
 
-      /*
-        Kai's character ranking.
-      */
       characters: [
         {
           rank: 1,
-
-          name:
-            'Armin Arlert',
+          name: 'Armin Arlert',
+          imageUrl: '',
 
           reason:
-            'His curiosity, empathy, and quiet bravery make intelligence feel deeply human.'
+            'I like how his curiosity and empathy turn intelligence into a form of bravery.'
         },
         {
           rank: 2,
-
-          name:
-            'Mikasa Ackerman',
+          name: 'Mikasa Ackerman',
+          imageUrl: '',
 
           reason:
-            'Kai connects with her loyalty and the emotional cost of protecting someone.'
+            'Her loyalty is powerful, but the emotional cost of that loyalty is what stays with me.'
         },
         {
           rank: 3,
-
-          name:
-            'Levi Ackerman',
-
-          reason:
-            'His discipline matters, but Kai is more interested in the grief hidden beneath it.'
-        },
-        {
-          rank: 4,
-
-          name:
-            'Hange Zoë',
+          name: 'Levi Ackerman',
+          imageUrl: '',
 
           reason:
-            'Their curiosity brings warmth and movement into a world shaped by fear.'
-        },
-        {
-          rank: 5,
-
-          name:
-            'Jean Kirstein',
-
-          reason:
-            'Ordinary doubt slowly becomes responsibility and courage.'
+            'His control is impressive; the grief and responsibility underneath it are more interesting.'
         }
       ],
 
-      /*
-        Kai's long reflection.
-      */
       thoughts: {
         title:
-          'Freedom means less when fear is making every decision for you.',
+          'Freedom matters most when fear is no longer making every decision.',
 
         paragraphs: [
-          'Kai remembers the story first as an emotional experience. The scale is enormous, but the moments that remain are usually small: a pause before a decision, a look between two people, or a character choosing to continue when nothing feels certain.',
+          'Kai remembers the series through small emotional decisions inside enormous events: a pause, a promise, or the moment someone acts while still afraid.',
 
-          'For Kai, the story is not only about escaping a wall or defeating an enemy. It is about the pressure created by love, loyalty, fear, and expectation. Characters often believe they are moving toward freedom while carrying invisible obligations with them.',
-
-          'The most meaningful part is the way courage changes from character to character. Sometimes courage is loud. Sometimes it is simply admitting doubt, listening to another person, or taking responsibility after making the wrong choice.',
-
-          'Kai leaves the story thinking about how easily fear can choose a life for someone. Real freedom begins when a person can recognize that fear and still decide what kind of person they want to become.'
+          'The lasting idea is that freedom is not only reaching the other side of a wall. It is recognizing the pressure of fear, love, and expectation, then deciding what kind of person to be anyway.'
         ]
       }
     },
 
-
     nova: {
       side: 'right',
-
       name: 'nova.pages',
-      bio: 'tracks themes and meaning',
+      bio: 'tracks themes, systems, and shifting truth',
       initial: 'N',
-
-      /*
-        Example:
-        avatarUrl: 'images/nova-avatar.jpg'
-      */
       avatarUrl: '',
-
       score: '10/10',
       status: 'Completed',
+
+      ratingReason:
+        'Nova gives it 10/10 for the way perspective, history, and responsibility keep changing the meaning of earlier events.',
 
       quotes: [
         {
@@ -299,83 +123,48 @@
             'The world changes when the story around it changes.',
 
           note:
-            'Information and perspective repeatedly reshape what every character believes is true.'
+            'Nova saves this because new information repeatedly rebuilds what the audience thinks it already understands.'
         },
         {
           text:
             'Understanding a side does not erase what that side has done.',
 
           note:
-            'For Nova, empathy and accountability have to exist together.'
-        },
-        {
-          text:
-            'History becomes a weapon when only one voice controls it.',
-
-          note:
-            'This connects to memory, inherited conflict, and political storytelling.'
+            'For Nova, the series is strongest when empathy and accountability are allowed to exist together.'
         },
         {
           text:
             'An enemy can be created long before two people meet.',
 
           note:
-            'Fear can be taught and passed from one generation to another.'
-        },
-        {
-          text:
-            'A person can be responsible and trapped at the same time.',
-
-          note:
-            'The story rarely allows guilt, duty, identity, or survival to remain simple.'
+            'This captures how inherited stories can turn fear into identity before personal experience has a chance.'
         }
       ],
 
       characters: [
         {
           rank: 1,
-
-          name:
-            'Reiner Braun',
+          name: 'Reiner Braun',
+          imageUrl: '',
 
           reason:
-            'Nova is drawn to the conflict between duty, identity, guilt, and survival.'
+            'I am drawn to the collision between duty, identity, guilt, and the need to survive.'
         },
         {
           rank: 2,
-
-          name:
-            'Erwin Smith',
+          name: 'Erwin Smith',
+          imageUrl: '',
 
           reason:
-            'His leadership raises difficult questions about sacrifice, truth, and obsession.'
+            'His leadership makes sacrifice, truth, and personal obsession impossible to separate.'
         },
         {
           rank: 3,
-
-          name:
-            'Zeke Yeager',
-
-          reason:
-            'His worldview turns pain into a complete political philosophy.'
-        },
-        {
-          rank: 4,
-
-          name:
-            'Historia Reiss',
+          name: 'Historia Reiss',
+          imageUrl: '',
 
           reason:
-            'Her growth explores identity, inherited roles, and self-determination.'
-        },
-        {
-          rank: 5,
-
-          name:
-            'Gabi Braun',
-
-          reason:
-            'Her perspective demonstrates the construction and collapse of prejudice.'
+            'Her growth turns an inherited role into a question of self-definition and responsibility.'
         }
       ],
 
@@ -384,24 +173,13 @@
           'The most dangerous wall is the story that makes cruelty feel necessary.',
 
         paragraphs: [
-          'Nova reads the series as a study of systems. Individual choices matter, but those choices happen inside histories, institutions, inherited fears, and repeated stories about who deserves safety and who deserves blame.',
+          'Nova reads the series as a study of systems: choices happen inside inherited histories, institutions, and repeated stories about who deserves safety.',
 
-          'The same event can produce completely different meanings depending on who remembers it, who records it, and who benefits from the accepted version. That makes truth feel unstable without making truth meaningless.',
-
-          'Nova is especially interested in characters who are both responsible for harm and shaped by forces larger than themselves. The story asks the viewer to understand those forces without turning understanding into an excuse.',
-
-          'The lasting question is not simply who is right. It is how a person should act after realizing that their identity, enemy, duty, and history were built from incomplete information.'
+          'Its strongest question is not simply who is right. It is how someone should act after learning that their identity, enemy, duty, and history were built from incomplete information.'
         ]
       }
     }
   };
-
-
-  /* ==========================================================================
-     3. FALLBACK STORY
-
-     Used when the Attack on Titan database row cannot be found.
-     ========================================================================== */
 
   const FALLBACK_STORY = {
     id: '',
@@ -418,11 +196,6 @@
     ]
   };
 
-
-  /* ==========================================================================
-     4. STARTUP
-     ========================================================================== */
-
   if (document.readyState === 'loading') {
     document.addEventListener(
       'DOMContentLoaded',
@@ -435,21 +208,11 @@
     startSection4();
   }
 
-
   async function startSection4() {
-    /*
-      Find the root Section 4 element.
-    */
-
     const section =
       document.querySelector(
         '[data-section-cover-rain]'
       );
-
-
-    /*
-      Stop if the section does not exist or has already been initialized.
-    */
 
     if (
       !section ||
@@ -458,30 +221,13 @@
       return;
     }
 
-
     section.dataset.section4Ready =
       'true';
-
-
-    /*
-      Collect all important elements once.
-    */
 
     const elements =
       collectElements(section);
 
-
-    /*
-      Set up Quotes, Characters, Thoughts, and profile focusing before
-      loading the database.
-    */
-
     setupReaderContent(elements);
-
-
-    /*
-      If Supabase is unavailable, show a usable static version.
-    */
 
     if (!window.supabase?.createClient) {
       console.error(
@@ -505,17 +251,11 @@
       return;
     }
 
-
-    /*
-      Create the Supabase client.
-    */
-
     supabaseClient =
       window.supabase.createClient(
         SUPABASE_URL,
         SUPABASE_KEY
       );
-
 
     try {
       setStatus(
@@ -523,48 +263,23 @@
         'Loading featured anime and manga.'
       );
 
-
-      /*
-        Load the featured anime/manga pool.
-      */
-
       const featuredStories =
         await loadFeaturedAnimeManga();
-
-
-      /*
-        Find Attack on Titan.
-      */
 
       const chosenStory =
         await findChosenStory(
           featuredStories
         );
 
-
-      /*
-        When there are no featured stories, use the chosen story by itself.
-      */
-
       const rainPool =
         featuredStories.length
           ? featuredStories
           : [chosenStory];
 
-
-      /*
-        Fill the main card with Attack on Titan.
-      */
-
       renderStory(
         section,
         chosenStory
       );
-
-
-      /*
-        Build paired rain and place Attack on Titan in one matching pair.
-      */
 
       renderMirroredRain(
         elements,
@@ -572,17 +287,10 @@
         chosenStory
       );
 
-
       setStatus(
         elements,
         `${chosenStory.title} loaded as the shared story.`
       );
-
-
-      /*
-        Wait for the newly created rain elements to enter the DOM,
-        then create the GSAP animation.
-      */
 
       requestAnimationFrame(() => {
         setupMotion(
@@ -611,13 +319,6 @@
       );
     }
   }
-
-
-  /* ==========================================================================
-     5. DOM REFERENCES
-
-     All selectors are kept here so they are easy to find and edit.
-     ========================================================================== */
 
   function collectElements(section) {
     return {
@@ -648,6 +349,16 @@
           '[data-selection-copy]'
         ),
 
+      cardFormation:
+        section.querySelector(
+          '[data-card-formation]'
+        ),
+
+      formationCoverSlot:
+        section.querySelector(
+          '[data-formation-cover-slot]'
+        ),
+
       continueCue:
         section.querySelector(
           '[data-continue-cue]'
@@ -656,6 +367,11 @@
       storyContent:
         section.querySelector(
           '[data-story-content]'
+        ),
+
+      controlDeck:
+        section.querySelector(
+          '[data-control-deck]'
         ),
 
       sharedCard:
@@ -718,11 +434,6 @@
     };
   }
 
-
-  /* ==========================================================================
-     6. DATABASE
-     ========================================================================== */
-
   async function loadFeaturedAnimeManga() {
     const {
       data,
@@ -735,11 +446,9 @@
         true
       );
 
-
     if (error) {
       throw error;
     }
-
 
     return (data || [])
       .filter((item) => {
@@ -763,15 +472,9 @@
       });
   }
 
-
   async function findChosenStory(
     featuredStories
   ) {
-    /*
-      First choice:
-      exact configured ID.
-    */
-
     if (CHOSEN_STORY_ID) {
       const featuredMatch =
         featuredStories.find((story) => {
@@ -781,11 +484,9 @@
           );
         });
 
-
       if (featuredMatch) {
         return featuredMatch;
       }
-
 
       const {
         data,
@@ -799,7 +500,6 @@
         )
         .limit(1);
 
-
       if (
         !error &&
         data?.[0]
@@ -810,17 +510,10 @@
       }
     }
 
-
-    /*
-      Second choice:
-      exact title inside the featured rows.
-    */
-
     const aliases =
       CHOSEN_STORY_ALIASES.map(
         normalizeText
       );
-
 
     const featuredTitleMatch =
       featuredStories.find((story) => {
@@ -829,16 +522,9 @@
         );
       });
 
-
     if (featuredTitleMatch) {
       return featuredTitleMatch;
     }
-
-
-    /*
-      Third choice:
-      search the entire table by title.
-    */
 
     for (
       const alias of
@@ -856,7 +542,6 @@
         )
         .limit(10);
 
-
       if (
         !error &&
         data?.length
@@ -866,7 +551,6 @@
             normalizeStory
           );
 
-
         const exact =
           normalized.find((story) => {
             return (
@@ -875,7 +559,6 @@
             );
           });
 
-
         return (
           exact ||
           normalized[0]
@@ -883,16 +566,10 @@
       }
     }
 
-
-    /*
-      Final fallback.
-    */
-
     return {
       ...FALLBACK_STORY
     };
   }
-
 
   function normalizeStory(item) {
     return {
@@ -923,22 +600,12 @@
     };
   }
 
-
   function getTypeList(value) {
-    /*
-      Handle a real JavaScript array.
-    */
-
     if (Array.isArray(value)) {
       return value
         .map(String)
         .filter(Boolean);
     }
-
-
-    /*
-      Default type when the database field is empty.
-    */
 
     if (!value) {
       return [
@@ -946,14 +613,8 @@
       ];
     }
 
-
     const text =
       String(value).trim();
-
-
-    /*
-      Handle a JSON array stored as text.
-    */
 
     try {
       const parsed =
@@ -965,19 +626,8 @@
           .filter(Boolean);
       }
     } catch (_) {
-      /*
-        Plain text is expected for most rows.
-      */
+      // Plain text is allowed.
     }
-
-
-    /*
-      Handle values such as:
-
-      Manga / Anime
-      Manga, Anime
-      Manga|Anime
-    */
 
     return text
       .split(/[,/|]+/)
@@ -987,11 +637,6 @@
       .filter(Boolean);
   }
 
-
-  /*
-    This uses the exact same cover rule as Section 1.
-  */
-
   function getCoverUrlFromId(id) {
     if (
       !id ||
@@ -1000,10 +645,8 @@
       return '';
     }
 
-
     const path =
       `${COVER_FOLDER}/${id}.jpg`;
-
 
     const {
       data
@@ -1012,26 +655,16 @@
       .from(BUCKET_NAME)
       .getPublicUrl(path);
 
-
     return (
       data?.publicUrl ||
       ''
     );
   }
 
-
-  /* ==========================================================================
-     7. RENDER THE STORY AND MIRRORED RAIN
-     ========================================================================== */
-
   function renderStory(
     section,
     story
   ) {
-    /*
-      Update every story title in the section.
-    */
-
     section
       .querySelectorAll(
         '[data-story-title]'
@@ -1040,11 +673,6 @@
         node.textContent =
           story.title;
       });
-
-
-    /*
-      Update every creator field.
-    */
 
     section
       .querySelectorAll(
@@ -1056,11 +684,6 @@
           'Unknown creator';
       });
 
-
-    /*
-      Update every format field.
-    */
-
     section
       .querySelectorAll(
         '[data-story-format]'
@@ -1071,11 +694,6 @@
             story.type
           );
       });
-
-
-    /*
-      Load the cover into every main story-cover element.
-    */
 
     section
       .querySelectorAll(
@@ -1092,15 +710,12 @@
             '[data-cover-fallback]'
           );
 
-
         if (!fallback) {
           return;
         }
 
-
         fallback.textContent =
           story.title;
-
 
         loadCover(
           image,
@@ -1111,110 +726,203 @@
       });
   }
 
-
   function renderMirroredRain(
     elements,
     storyPool,
     chosenStory
   ) {
-    /*
-      Clear any previous cover elements.
-    */
-
-    elements.rainLeft.innerHTML =
-      '';
-
-    elements.rainRight.innerHTML =
-      '';
-
-
-    /*
-      Prevent Attack on Titan from being repeated accidentally in ordinary
-      rain positions when possible.
-    */
+    elements.rainLeft.innerHTML = '';
+    elements.rainRight.innerHTML = '';
 
     const ordinaryPool =
-      storyPool.filter((story) => {
-        return (
-          String(story.id) !==
-          String(chosenStory.id)
-        );
-      });
+      dedupeStories(
+        storyPool.filter((story) => {
+          return (
+            storyKey(story) !==
+            storyKey(chosenStory)
+          );
+        })
+      );
 
-
-    /*
-      When the database contains only Attack on Titan, use it safely.
-    */
-
-    const safePool =
+    const pairCount =
       ordinaryPool.length
-        ? ordinaryPool
-        : storyPool;
+        ? Math.min(
+            RAIN_PAIR_COUNT,
+            ordinaryPool.length + 1
+          )
+        : 1;
 
+    const chosenPairIndex =
+      Math.floor(pairCount / 2);
 
-    /*
-      Create paired items.
+    const ordinaryPerLane =
+      Math.max(0, pairCount - 1);
 
-      Every pair receives the same pairIndex.
-      That is what allows left and right timing to stay synchronized.
-    */
+    const shuffled =
+      seededShuffle(
+        ordinaryPool,
+        hashString(chosenStory.title)
+      );
+
+    const leftOrdinary =
+      shuffled.slice(
+        0,
+        ordinaryPerLane
+      );
+
+    const rightOrdinary =
+      shuffled.length >=
+      ordinaryPerLane * 2
+        ? shuffled.slice(
+            ordinaryPerLane,
+            ordinaryPerLane * 2
+          )
+        : seededShuffle(
+            ordinaryPool,
+            hashString(
+              `${chosenStory.title}-right`
+            )
+          ).slice(
+            0,
+            ordinaryPerLane
+          );
+
+    let leftIndex = 0;
+    let rightIndex = 0;
 
     for (
       let pairIndex = 0;
-      pairIndex < RAIN_PAIR_COUNT;
+      pairIndex < pairCount;
       pairIndex += 1
     ) {
       const isChosen =
-        pairIndex === CHOSEN_PAIR_INDEX;
-
+        pairIndex === chosenPairIndex;
 
       const leftStory =
         isChosen
           ? chosenStory
-          : safePool[
-              (pairIndex * 2) %
-              safePool.length
-            ];
-
+          : leftOrdinary[leftIndex++];
 
       const rightStory =
         isChosen
           ? chosenStory
-          : safePool[
-              (pairIndex * 2 + 1) %
-              safePool.length
-            ];
+          : rightOrdinary[rightIndex++];
 
+      if (!leftStory || !rightStory) {
+        continue;
+      }
 
-      const leftItem =
+      elements.rainLeft.appendChild(
         createRainItem(
           leftStory,
           'left',
           pairIndex,
           isChosen
-        );
+        )
+      );
 
-
-      const rightItem =
+      elements.rainRight.appendChild(
         createRainItem(
           rightStory,
           'right',
           pairIndex,
           isChosen
-        );
-
-
-      elements.rainLeft.appendChild(
-        leftItem
-      );
-
-
-      elements.rainRight.appendChild(
-        rightItem
+        )
       );
     }
   }
 
+  function dedupeStories(stories) {
+    const seen = new Set();
+
+    return (stories || []).filter(
+      (story) => {
+        const key =
+          storyKey(story);
+
+        if (
+          !key ||
+          seen.has(key)
+        ) {
+          return false;
+        }
+
+        seen.add(key);
+
+        return true;
+      }
+    );
+  }
+
+  function storyKey(story) {
+    return String(
+      story?.id ||
+      normalizeText(story?.title)
+    );
+  }
+
+  function seededShuffle(
+    stories,
+    seed
+  ) {
+    const copy =
+      [...stories];
+
+    let state =
+      seed || 1;
+
+    const random = () => {
+      state =
+        (
+          state * 1664525 +
+          1013904223
+        ) >>> 0;
+
+      return state / 4294967296;
+    };
+
+    for (
+      let index = copy.length - 1;
+      index > 0;
+      index -= 1
+    ) {
+      const swapIndex =
+        Math.floor(
+          random() * (index + 1)
+        );
+
+      [
+        copy[index],
+        copy[swapIndex]
+      ] = [
+        copy[swapIndex],
+        copy[index]
+      ];
+    }
+
+    return copy;
+  }
+
+  function hashString(value) {
+    let hash =
+      2166136261;
+
+    for (
+      const character of
+      String(value || '')
+    ) {
+      hash ^=
+        character.charCodeAt(0);
+
+      hash =
+        Math.imul(
+          hash,
+          16777619
+        );
+    }
+
+    return hash >>> 0;
+  }
 
   function createRainItem(
     story,
@@ -1227,22 +935,15 @@
         'figure'
       );
 
-
     const image =
       document.createElement(
         'img'
       );
 
-
     const fallback =
       document.createElement(
         'span'
       );
-
-
-    /*
-      Horizontal positions inside each rain lane.
-    */
 
     const leftPositions = [
       2,
@@ -1258,7 +959,6 @@
       12
     ];
 
-
     const rightPositions = [
       60,
       12,
@@ -1273,52 +973,37 @@
       57
     ];
 
-
     const positions =
       side === 'left'
         ? leftPositions
         : rightPositions;
-
-
-    /*
-      Add the chosen class only to the Attack on Titan pair.
-    */
 
     figure.className =
       isChosen
         ? 's4-rain-item is-chosen-story'
         : 's4-rain-item';
 
-
     figure.dataset.coverShell =
       '';
-
 
     figure.dataset.rainSide =
       side;
 
-
     figure.dataset.rainPair =
       String(pairIndex);
-
-
-    /*
-      Mark the chosen left and right items so GSAP can select those exact
-      real rain covers later.
-    */
 
     if (isChosen) {
       figure.dataset.chosenRainCover =
         side;
     }
 
-
     figure.style.left =
-      `${positions[
-        pairIndex %
-        positions.length
-      ]}%`;
-
+      `${
+        positions[
+          pairIndex %
+          positions.length
+        ]
+      }%`;
 
     figure.style.zIndex =
       String(
@@ -1326,36 +1011,28 @@
         pairIndex % 3
       );
 
-
     image.alt =
       '';
-
 
     image.loading =
       'eager';
 
-
     image.decoding =
       'async';
-
 
     fallback.className =
       's4-cover-fallback';
 
-
     fallback.dataset.coverFallback =
       '';
 
-
     fallback.textContent =
       story.title;
-
 
     figure.append(
       image,
       fallback
     );
-
 
     loadCover(
       image,
@@ -1364,10 +1041,8 @@
       ''
     );
 
-
     return figure;
   }
-
 
   function loadCover(
     image,
@@ -1380,26 +1055,14 @@
         story.id
       );
 
-
-    /*
-      Begin with the fallback visible.
-    */
-
     image.hidden =
       true;
-
 
     image.alt =
       alt;
 
-
     fallback.hidden =
       false;
-
-
-    /*
-      Keep the fallback when no database ID is available.
-    */
 
     if (!url) {
       image.removeAttribute(
@@ -1409,11 +1072,6 @@
       return;
     }
 
-
-    /*
-      Show the image only after it loads successfully.
-    */
-
     image.onload = () => {
       image.hidden =
         false;
@@ -1421,11 +1079,6 @@
       fallback.hidden =
         true;
     };
-
-
-    /*
-      Return to the fallback when the image fails.
-    */
 
     image.onerror = () => {
       image.hidden =
@@ -1439,11 +1092,9 @@
       );
     };
 
-
     image.src =
       url;
   }
-
 
   function formatType(list) {
     const clean = [
@@ -1467,60 +1118,37 @@
       )
     ];
 
-
     return clean.length
       ? clean.join(' / ')
       : 'Manga / Anime';
   }
 
-
-  /* ==========================================================================
-     8. READER CONTENT AND INTERACTIONS
-     ========================================================================== */
-
   function setupReaderContent(
     elements
   ) {
-    /*
-      Initial interface state.
-    */
-
     let activeLayer =
       'quotes';
 
-
     let focusMode =
       'both';
-
-
-    /*
-      Fill the small profile cards using the READERS object.
-    */
 
     fillProfileCards(
       elements.section
     );
 
-
-    /*
-      Render the current layer on both sides.
-    */
-
     function renderBothSides() {
       elements.readerContents.forEach(
         (container) => {
           const readerId =
-            container.dataset.readerContent;
-
+            container.dataset
+              .readerContent;
 
           const reader =
             READERS[readerId];
 
-
           if (!reader) {
             return;
           }
-
 
           if (
             activeLayer ===
@@ -1545,18 +1173,12 @@
             );
           }
 
-
           animateContent(
             container
           );
         }
       );
     }
-
-
-    /*
-      Change between Quotes, Characters, and Thoughts.
-    */
 
     function setLayer(layer) {
       if (
@@ -1569,10 +1191,8 @@
         return;
       }
 
-
       activeLayer =
         layer;
-
 
       elements.layerButtons.forEach(
         (button) => {
@@ -1580,12 +1200,10 @@
             button.dataset.layer ===
             layer;
 
-
           button.classList.toggle(
             'is-active',
             selected
           );
-
 
           button.setAttribute(
             'aria-pressed',
@@ -1594,14 +1212,8 @@
         }
       );
 
-
       renderBothSides();
     }
-
-
-    /*
-      Focus the left reader, right reader, or both.
-    */
 
     function setFocus(mode) {
       if (
@@ -1614,18 +1226,11 @@
         return;
       }
 
-
       focusMode =
         mode;
 
-
       elements.compareStage.dataset.focus =
         focusMode;
-
-
-      /*
-        Update profile-button states.
-      */
 
       elements.profileButtons.forEach(
         (button) => {
@@ -1633,16 +1238,10 @@
             button.dataset.focusReader ===
             focusMode;
 
-
           button.setAttribute(
             'aria-pressed',
             String(selected)
           );
-
-
-          /*
-            Both profile cards appear highlighted when comparing both.
-          */
 
           button.classList.toggle(
             'is-active',
@@ -1652,7 +1251,6 @@
         }
       );
 
-
       elements.compareBoth.setAttribute(
         'aria-pressed',
         String(
@@ -1660,61 +1258,54 @@
         )
       );
 
-
-      /*
-        Change score and status on the main card.
-      */
-
       if (
         focusMode === 'left'
       ) {
-        elements.scoreText.textContent =
-          READERS.kai.score;
+        updateScoreDisplay(
+          elements,
+          READERS.kai.score,
 
+          `Kai rated this story ${READERS.kai.score}. ${READERS.kai.ratingReason}`,
 
-        elements.score.setAttribute(
-          'aria-label',
-          `Kai rated this story ${READERS.kai.score}`
+          READERS.kai.ratingReason
         );
-
 
         elements.readerStatus.textContent =
           READERS.kai.status;
       } else if (
         focusMode === 'right'
       ) {
-        elements.scoreText.textContent =
-          READERS.nova.score;
+        updateScoreDisplay(
+          elements,
+          READERS.nova.score,
 
+          `Nova rated this story ${READERS.nova.score}. ${READERS.nova.ratingReason}`,
 
-        elements.score.setAttribute(
-          'aria-label',
-          `Nova rated this story ${READERS.nova.score}`
+          READERS.nova.ratingReason
         );
-
 
         elements.readerStatus.textContent =
           READERS.nova.status;
       } else {
-        elements.scoreText.textContent =
-          '9 · 10';
+        const combinedScore =
+          getCombinedScore();
 
+        const combinedReason =
+          `Average of Kai's ${READERS.kai.score} and Nova's ${READERS.nova.score}. Hover a profile score to see each reader's reason.`;
 
-        elements.score.setAttribute(
-          'aria-label',
-          `Reader scores: Kai ${READERS.kai.score}, Nova ${READERS.nova.score}`
+        updateScoreDisplay(
+          elements,
+          combinedScore,
+
+          `Average reader rating ${combinedScore}. Kai rated it ${READERS.kai.score} and Nova rated it ${READERS.nova.score}.`,
+
+          combinedReason
         );
-
 
         elements.readerStatus.textContent =
           'Both completed';
       }
     }
-
-
-    /*
-      Layer-button click events.
-    */
 
     elements.layerButtons.forEach(
       (button) => {
@@ -1729,13 +1320,6 @@
       }
     );
 
-
-    /*
-      Clicking the currently focused reader returns to both.
-
-      Clicking the other reader focuses that side.
-    */
-
     elements.profileButtons.forEach(
       (button) => {
         button.addEventListener(
@@ -1743,7 +1327,6 @@
           () => {
             const requested =
               button.dataset.focusReader;
-
 
             setFocus(
               focusMode === requested
@@ -1755,11 +1338,6 @@
       }
     );
 
-
-    /*
-      Centre comparison button.
-    */
-
     elements.compareBoth.addEventListener(
       'click',
       () => {
@@ -1769,21 +1347,65 @@
       }
     );
 
-
-    /*
-      Initial render.
-    */
-
     setLayer(
       activeLayer
     );
-
 
     setFocus(
       focusMode
     );
   }
 
+  function updateScoreDisplay(
+    elements,
+    visibleScore,
+    ariaLabel,
+    tooltip
+  ) {
+    if (elements.scoreText) {
+      elements.scoreText.textContent =
+        visibleScore;
+    }
+
+    if (elements.score) {
+      elements.score.setAttribute(
+        'aria-label',
+        ariaLabel
+      );
+
+      elements.score.dataset.scoreTooltip =
+        tooltip;
+    }
+  }
+
+  function getCombinedScore() {
+    const values = [
+      READERS.kai.score,
+      READERS.nova.score
+    ]
+      .map((value) => {
+        return Number.parseFloat(
+          value
+        );
+      })
+      .filter(
+        Number.isFinite
+      );
+
+    if (!values.length) {
+      return '9.5/10';
+    }
+
+    const average =
+      values.reduce(
+        (sum, value) => {
+          return sum + value;
+        },
+        0
+      ) / values.length;
+
+    return `${average.toFixed(1)}/10`;
+  }
 
   function fillProfileCards(section) {
     Object.entries(
@@ -1793,10 +1415,6 @@
         readerId,
         reader
       ]) => {
-        /*
-          Profile name.
-        */
-
         section
           .querySelectorAll(
             `[data-profile-name="${readerId}"]`
@@ -1805,11 +1423,6 @@
             node.textContent =
               reader.name;
           });
-
-
-        /*
-          Profile biography.
-        */
 
         section
           .querySelectorAll(
@@ -1820,11 +1433,6 @@
               reader.bio;
           });
 
-
-        /*
-          Fallback initial.
-        */
-
         section
           .querySelectorAll(
             `[data-avatar-fallback="${readerId}"]`
@@ -1834,51 +1442,46 @@
               reader.initial;
           });
 
-
-        /*
-          Optional avatar image.
-        */
-
         const image =
           section.querySelector(
             `[data-avatar-image="${readerId}"]`
           );
 
+        if (image) {
+          const fallbackPortrait =
+            createCharacterPlaceholder(
+              reader.name,
+              reader.side
+            );
 
-        if (
-          image &&
-          reader.avatarUrl
-        ) {
           image.src =
-            reader.avatarUrl;
-
+            reader.avatarUrl ||
+            fallbackPortrait;
 
           image.alt =
             `${reader.name} profile picture`;
 
-
           image.hidden =
             false;
 
-
           image.onerror = () => {
+            if (
+              image.src !==
+              fallbackPortrait
+            ) {
+              image.src =
+                fallbackPortrait;
+
+              return;
+            }
+
             image.hidden =
               true;
-
-
-            image.removeAttribute(
-              'src'
-            );
           };
         }
       }
     );
   }
-
-
-  /* ==========================================================================
-     9. BUILD THE DYNAMIC EVIDENCE CONTENT
-     ========================================================================== */
 
   function renderQuotes(
     container,
@@ -1891,7 +1494,7 @@
         </span>
 
         <h4>
-          ${reader.quotes.length} saved ideas from the same story
+          ${reader.quotes.length} ideas — and why they stayed
         </h4>
       </header>
 
@@ -1903,12 +1506,16 @@
                 class="s4-quote-card ${index === 0 ? 'is-featured' : ''}"
               >
                 <span class="s4-card-number">
-                  Saved quote ${String(index + 1).padStart(2, '0')}
+                  Saved idea ${String(index + 1).padStart(2, '0')}
                 </span>
 
                 <blockquote>
                   “${escapeHtml(quote.text)}”
                 </blockquote>
+
+                <span class="s4-quote-note-label">
+                  Why it stayed
+                </span>
 
                 <p>
                   ${escapeHtml(quote.note)}
@@ -1921,7 +1528,6 @@
     `;
   }
 
-
   function renderCharacters(
     container,
     reader
@@ -1929,35 +1535,49 @@
     container.innerHTML = `
       <header class="s4-evidence-header">
         <span>
-          ${escapeHtml(reader.name)} · character ranking
+          ${escapeHtml(reader.name)} · character shelf
         </span>
 
         <h4>
-          Top ${reader.characters.length} characters
+          ${reader.characters.length} characters and what I see in them
         </h4>
       </header>
 
       <div class="s4-character-grid">
         ${reader.characters
           .map((character, index) => {
+            const fallbackImage =
+              createCharacterPlaceholder(
+                character.name,
+                reader.side
+              );
+
+            const imageUrl =
+              character.imageUrl ||
+              fallbackImage;
+
             return `
               <article
                 class="s4-character-card ${index === 0 ? 'is-featured' : ''}"
               >
-                <span
-                  class="s4-character-badge"
-                  aria-hidden="true"
-                >
-                  ${escapeHtml(
-                    character.name
-                      .charAt(0)
-                      .toUpperCase()
-                  )}
-                </span>
+                <figure class="s4-character-portrait">
+                  <img
+                    src="${escapeHtml(imageUrl)}"
+                    data-character-image
+                    data-fallback-src="${escapeHtml(fallbackImage)}"
+                    alt="Portrait for ${escapeHtml(character.name)}"
+                    loading="lazy"
+                    decoding="async"
+                  >
+
+                  <span class="s4-character-rank-badge">
+                    #${String(character.rank).padStart(2, '0')}
+                  </span>
+                </figure>
 
                 <div class="s4-character-copy">
                   <span class="s4-character-rank">
-                    Rank ${String(character.rank).padStart(2, '0')}
+                    Reader pick
                   </span>
 
                   <h5>
@@ -1974,8 +1594,24 @@
           .join('')}
       </div>
     `;
-  }
 
+    container
+      .querySelectorAll(
+        '[data-character-image]'
+      )
+      .forEach((image) => {
+        image.addEventListener(
+          'error',
+          () => {
+            image.src =
+              image.dataset.fallbackSrc;
+          },
+          {
+            once: true
+          }
+        );
+      });
+  }
 
   function renderThoughts(
     container,
@@ -1984,7 +1620,7 @@
     container.innerHTML = `
       <article class="s4-thought-card">
         <span class="s4-card-number">
-          ${escapeHtml(reader.name)} · long reflection
+          ${escapeHtml(reader.name)} · final reflection
         </span>
 
         <h4>
@@ -1993,11 +1629,17 @@
 
         <div class="s4-thought-copy">
           ${reader.thoughts.paragraphs
-            .map((paragraph) => {
+            .map((paragraph, index) => {
               return `
-                <p>
-                  ${escapeHtml(paragraph)}
-                </p>
+                <section class="s4-thought-point">
+                  <span>
+                    ${index === 0 ? 'What I noticed' : 'What stayed'}
+                  </span>
+
+                  <p>
+                    ${escapeHtml(paragraph)}
+                  </p>
+                </section>
               `;
             })
             .join('')}
@@ -2006,13 +1648,97 @@
     `;
   }
 
+  function createCharacterPlaceholder(
+    name,
+    side
+  ) {
+    const initials =
+      String(name || '?')
+        .split(/\s+/)
+        .filter(Boolean)
+        .slice(0, 2)
+        .map((part) => {
+          return part
+            .charAt(0)
+            .toUpperCase();
+        })
+        .join('');
 
-  /*
-    Small content-change animation.
+    const colours =
+      side === 'right'
+        ? [
+            '#67c9e8',
+            '#596fd7',
+            '#11172d'
+          ]
+        : [
+            '#9b7cff',
+            '#6578df',
+            '#11172d'
+          ];
 
-    This uses the Web Animations API rather than GSAP because it is a simple
-    interface transition and should work independently from ScrollTrigger.
-  */
+    const svg = `
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 320">
+        <defs>
+          <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="${colours[0]}"/>
+            <stop offset="0.55" stop-color="${colours[1]}"/>
+            <stop offset="1" stop-color="${colours[2]}"/>
+          </linearGradient>
+
+          <radialGradient id="r" cx="0.3" cy="0.18" r="0.8">
+            <stop offset="0" stop-color="#ffffff" stop-opacity="0.34"/>
+            <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+
+        <rect
+          width="240"
+          height="320"
+          rx="28"
+          fill="url(#g)"
+        />
+
+        <rect
+          width="240"
+          height="320"
+          rx="28"
+          fill="url(#r)"
+        />
+
+        <circle
+          cx="120"
+          cy="118"
+          r="54"
+          fill="#f7f4ff"
+          fill-opacity="0.18"
+        />
+
+        <path
+          d="M42 296c8-70 42-108 78-108s70 38 78 108"
+          fill="#070b17"
+          fill-opacity="0.46"
+        />
+
+        <text
+          x="120"
+          y="139"
+          text-anchor="middle"
+          font-family="Georgia,serif"
+          font-size="54"
+          font-weight="700"
+          fill="#ffffff"
+        >
+          ${initials}
+        </text>
+      </svg>
+    `;
+
+    return (
+      `data:image/svg+xml;charset=UTF-8,` +
+      encodeURIComponent(svg)
+    );
+  }
 
   function animateContent(container) {
     if (
@@ -2022,7 +1748,6 @@
     ) {
       return;
     }
-
 
     container.animate(
       [
@@ -2048,19 +1773,10 @@
     );
   }
 
-
-  /* ==========================================================================
-     10. GSAP MOTION
-     ========================================================================== */
-
   function setupMotion(
     section,
     elements
   ) {
-    /*
-      Display the static final content when GSAP is unavailable.
-    */
-
     if (
       !window.gsap ||
       !window.ScrollTrigger
@@ -2069,34 +1785,21 @@
         'Section 4: GSAP or ScrollTrigger is missing.'
       );
 
-
       showStaticLayout(
         section
       );
 
-
       return;
     }
-
 
     const {
       gsap,
       ScrollTrigger
     } = window;
 
-
     gsap.registerPlugin(
       ScrollTrigger
     );
-
-
-    /*
-      Full cinematic:
-      larger desktop screens without reduced motion.
-
-      Static version:
-      small screens, short screens, and reduced-motion users.
-    */
 
     gsap.matchMedia().add(
       {
@@ -2114,15 +1817,12 @@
             section
           );
 
-
           return;
         }
-
 
         section.classList.remove(
           'is-static'
         );
-
 
         return createPinnedTimeline(
           section,
@@ -2131,11 +1831,6 @@
         );
       }
     );
-
-
-    /*
-      Reveal the main card when it enters the normal page viewport.
-    */
 
     gsap.from(
       elements.sharedCard,
@@ -2161,11 +1856,6 @@
         }
       }
     );
-
-
-    /*
-      Reveal the split-reader comparison after the card.
-    */
 
     gsap.from(
       elements.compareStage,
@@ -2193,22 +1883,16 @@
     );
   }
 
-
   function createPinnedTimeline(
     section,
     elements,
     gsap
   ) {
-    /*
-      Get all actual rain-cover elements.
-    */
-
     const leftItems =
       gsap.utils.toArray(
         '[data-rain-side="left"]',
         elements.cinematic
       );
-
 
     const rightItems =
       gsap.utils.toArray(
@@ -2216,26 +1900,28 @@
         elements.cinematic
       );
 
-
-    /*
-      Find the exact Attack on Titan elements inside both rain lanes.
-    */
-
     const chosenLeft =
       elements.cinematic.querySelector(
         '[data-chosen-rain-cover="left"]'
       );
-
 
     const chosenRight =
       elements.cinematic.querySelector(
         '[data-chosen-rain-cover="right"]'
       );
 
+    if (
+      !chosenLeft ||
+      !chosenRight ||
+      !elements.cardFormation ||
+      !elements.formationCoverSlot
+    ) {
+      showStaticLayout(
+        section
+      );
 
-    /*
-      Ordinary rain excludes the two selected covers.
-    */
+      return;
+    }
 
     const regularLeft =
       leftItems.filter((item) => {
@@ -2244,7 +1930,6 @@
         );
       });
 
-
     const regularRight =
       rightItems.filter((item) => {
         return (
@@ -2252,21 +1937,9 @@
         );
       });
 
-
-    /*
-      Use the real cinematic height so resizing remains reliable.
-    */
-
     const viewportHeight = () => {
       return elements.cinematic.clientHeight;
     };
-
-
-    /*
-      REGULAR LEFT COVERS
-
-      Start below the viewport and travel upward.
-    */
 
     regularLeft.forEach((item) => {
       const pair =
@@ -2274,7 +1947,6 @@
           item.dataset.rainPair ||
           0
         );
-
 
       gsap.set(
         item,
@@ -2302,23 +1974,12 @@
       );
     });
 
-
-    /*
-      REGULAR RIGHT COVERS
-
-      Start above the viewport and travel downward.
-
-      Pair N uses the same distance calculation and timeline duration as the
-      matching left item.
-    */
-
     regularRight.forEach((item) => {
       const pair =
         Number(
           item.dataset.rainPair ||
           0
         );
-
 
       gsap.set(
         item,
@@ -2346,12 +2007,11 @@
       );
     });
 
-
-    /*
-      SELECTED LEFT COVER
-
-      It starts as part of the left rain, below the screen.
-    */
+    const chosenPair =
+      Number(
+        chosenLeft.dataset.rainPair ||
+        0
+      );
 
     gsap.set(
       chosenLeft,
@@ -2359,24 +2019,24 @@
         y: () => {
           return (
             viewportHeight() +
-            120
+            100 +
+            chosenPair * 126
           );
         },
 
-        rotation: -10,
+        rotation:
+          -8 +
+          chosenPair % 5 * 4,
 
-        scale: 0.94,
+        scale:
+          0.82 +
+          chosenPair % 3 * 0.1,
 
-        opacity: 0.9
+        opacity:
+          0.54 +
+          chosenPair % 3 * 0.16
       }
     );
-
-
-    /*
-      SELECTED RIGHT COVER
-
-      It starts as part of the right rain, above the screen.
-    */
 
     gsap.set(
       chosenRight,
@@ -2384,46 +2044,51 @@
         y: () => {
           return (
             -chosenRight.offsetHeight -
-            120
+            100 -
+            chosenPair * 126
           );
         },
 
-        rotation: 10,
+        rotation:
+          8 -
+          chosenPair % 5 * 4,
 
-        scale: 0.94,
+        scale:
+          0.82 +
+          chosenPair % 3 * 0.1,
 
-        opacity: 0.9
+        opacity:
+          0.54 +
+          chosenPair % 3 * 0.16
       }
     );
-
-
-    /*
-      Hide merge text before scrolling begins.
-    */
 
     gsap.set(
       elements.selectionCopy,
       {
         autoAlpha: 0,
-
         y: 12
       }
     );
-
 
     gsap.set(
       elements.continueCue,
       {
         autoAlpha: 0,
-
         y: 12
       }
     );
 
-
-    /*
-      Main pinned timeline.
-    */
+    gsap.set(
+      elements.cardFormation,
+      {
+        autoAlpha: 0,
+        xPercent: -50,
+        yPercent: -50,
+        y: 18,
+        scale: 0.82
+      }
+    );
 
     const timeline =
       gsap.timeline({
@@ -2445,11 +2110,6 @@
           pin:
             true,
 
-          /*
-            pinSpacing adds real document space below the pin.
-
-            This allows the page to continue naturally into the shared card.
-          */
           pinSpacing:
             true,
 
@@ -2464,15 +2124,6 @@
         }
       });
 
-
-    /*
-      PHASE 1 — SYNCHRONIZED RAIN
-
-      Both arrays start at timeline position 0 and use duration 1.6.
-
-      Therefore the left side does not finish before the right side.
-    */
-
     timeline.to(
       regularLeft,
       {
@@ -2485,7 +2136,6 @@
               item.dataset.rainPair ||
               0
             );
-
 
           return (
             -viewportHeight() -
@@ -2504,7 +2154,6 @@
               0
             );
 
-
           return (
             8 -
             pair % 5 * 3
@@ -2516,7 +2165,6 @@
       },
       0
     );
-
 
     timeline.to(
       regularRight,
@@ -2530,7 +2178,6 @@
               item.dataset.rainPair ||
               0
             );
-
 
           return (
             viewportHeight() +
@@ -2549,7 +2196,6 @@
               0
             );
 
-
           return (
             -8 +
             pair % 5 * 3
@@ -2561,12 +2207,6 @@
       },
       0
     );
-
-
-    /*
-      The selected pair moves through the rain and reaches matching positions
-      at exactly the same time.
-    */
 
     timeline.to(
       chosenLeft,
@@ -2588,7 +2228,6 @@
       0
     );
 
-
     timeline.to(
       chosenRight,
       {
@@ -2609,11 +2248,6 @@
       0
     );
 
-
-    /*
-      Fade the opening heading while the rain continues.
-    */
-
     timeline.to(
       elements.cinematicCopy,
       {
@@ -2625,11 +2259,6 @@
       },
       0.72
     );
-
-
-    /*
-      Remove ordinary rain covers so attention moves to Attack on Titan.
-    */
 
     timeline.to(
       [
@@ -2646,15 +2275,22 @@
       1.18
     );
 
+    timeline.to(
+      [
+        chosenLeft,
+        chosenRight
+      ],
+      {
+        borderColor:
+          'rgba(216, 221, 255, 0.72)',
 
-    /*
-      PHASE 2 — MOVE THE REAL SELECTED COVERS TO THE CENTRE
+        boxShadow:
+          '0 34px 78px rgba(0,0,0,.56), 0 0 58px rgba(155,124,255,.34)',
 
-      getCenterTarget calculates the transform needed for each cover based on
-      its real lane position.
-
-      No new fake cover appears from the bottom.
-    */
+        duration: 0.28
+      },
+      1.2
+    );
 
     timeline.to(
       [
@@ -2694,7 +2330,6 @@
       1.34
     );
 
-
     timeline.to(
       elements.selectionCopy,
       {
@@ -2707,14 +2342,6 @@
       1.78
     );
 
-
-    /*
-      MERGE
-
-      The right copy fades.
-      The left copy remains as the final merged cover.
-    */
-
     timeline.to(
       chosenRight,
       {
@@ -2724,7 +2351,6 @@
       },
       2.14
     );
-
 
     timeline.fromTo(
       chosenLeft,
@@ -2742,7 +2368,6 @@
       2.14
     );
 
-
     timeline.to(
       chosenLeft,
       {
@@ -2756,39 +2381,6 @@
       2.3
     );
 
-
-    /*
-      Move the merged cover toward the top centre.
-    */
-
-    timeline.to(
-      chosenLeft,
-      {
-        x: () => {
-          return getTopCenterTarget(
-            chosenLeft,
-            elements.cinematic
-          ).x;
-        },
-
-        y: () => {
-          return getTopCenterTarget(
-            chosenLeft,
-            elements.cinematic
-          ).y;
-        },
-
-        scale: 0.74,
-
-        duration: 0.66,
-
-        ease:
-          'power2.inOut'
-      },
-      2.52
-    );
-
-
     timeline.to(
       elements.selectionCopy,
       {
@@ -2798,13 +2390,56 @@
 
         duration: 0.22
       },
-      2.58
+      2.34
     );
 
+    timeline.to(
+      elements.cardFormation,
+      {
+        autoAlpha: 1,
 
-    /*
-      Tell the visitor that normal page content follows.
-    */
+        y: 0,
+
+        scale: 1,
+
+        duration: 0.52,
+
+        ease:
+          'power2.out'
+      },
+      2.36
+    );
+
+    timeline.to(
+      chosenLeft,
+      {
+        x: () => {
+          return getFormationCoverTarget(
+            chosenLeft,
+            elements.cinematic,
+            elements.cardFormation,
+            elements.formationCoverSlot
+          ).x;
+        },
+
+        y: () => {
+          return getFormationCoverTarget(
+            chosenLeft,
+            elements.cinematic,
+            elements.cardFormation,
+            elements.formationCoverSlot
+          ).y;
+        },
+
+        scale: 0.9,
+
+        duration: 0.56,
+
+        ease:
+          'power2.inOut'
+      },
+      2.36
+    );
 
     timeline.to(
       elements.continueCue,
@@ -2815,26 +2450,23 @@
 
         duration: 0.3
       },
-      2.88
+      2.84
     );
 
-
-    /*
-      Fade the merged cover just before the pin releases.
-
-      The normal shared card follows immediately after this cinematic.
-    */
-
     timeline.to(
-      chosenLeft,
+      [
+        chosenLeft,
+        elements.cardFormation
+      ],
       {
         autoAlpha: 0,
 
-        duration: 0.22
-      },
-      3.2
-    );
+        y: -12,
 
+        duration: 0.26
+      },
+      3.18
+    );
 
     timeline.to(
       elements.continueCue,
@@ -2845,37 +2477,17 @@
 
         duration: 0.18
       },
-      3.2
+      3.18
     );
-
-
-    /*
-      Cleanup when the media query changes or the animation is rebuilt.
-    */
 
     return () => {
       timeline
         .scrollTrigger
         ?.kill();
 
-
       timeline.kill();
     };
   }
-
-
-  /* ==========================================================================
-     11. COVER TARGET CALCULATIONS
-     ========================================================================== */
-
-
-  /*
-    Calculate where a rain cover must move so its centre aligns with the
-    centre of the cinematic.
-
-    The cover remains inside its original left or right rain lane, so we must
-    compensate for the lane's position.
-  */
 
   function getCenterTarget(
     item,
@@ -2884,22 +2496,17 @@
     const lane =
       item.offsetParent;
 
-
     const stageRect =
       stage.getBoundingClientRect();
-
 
     const laneRect =
       lane.getBoundingClientRect();
 
-
     const targetCenterX =
       stageRect.width / 2;
 
-
     const targetCenterY =
       stageRect.height / 2;
-
 
     return {
       x:
@@ -2918,40 +2525,36 @@
     };
   }
 
-
-  /*
-    Calculate the final top-centre destination of the merged cover.
-
-    Change navOffset when the merged cover should stop higher or lower.
-  */
-
-  function getTopCenterTarget(
+  function getFormationCoverTarget(
     item,
-    stage
+    stage,
+    formation,
+    slot
   ) {
     const lane =
       item.offsetParent;
 
-
     const stageRect =
       stage.getBoundingClientRect();
-
 
     const laneRect =
       lane.getBoundingClientRect();
 
+    const targetCenterX =
+      formation.offsetLeft -
+      formation.offsetWidth / 2 +
+      slot.offsetLeft +
+      slot.offsetWidth / 2;
 
-    /*
-      Increase to move the merged cover lower.
-      Decrease to move it higher.
-    */
-
-    const navOffset = 78;
-
+    const targetCenterY =
+      formation.offsetTop -
+      formation.offsetHeight / 2 +
+      slot.offsetTop +
+      slot.offsetHeight / 2;
 
     return {
       x:
-        stageRect.width / 2 -
+        targetCenterX -
         (
           laneRect.left -
           stageRect.left
@@ -2960,33 +2563,17 @@
         item.offsetWidth / 2,
 
       y:
-        navOffset +
-        item.offsetHeight * 0.5 -
+        targetCenterY -
         item.offsetTop -
         item.offsetHeight / 2
     };
   }
-
-
-  /* ==========================================================================
-     12. FALLBACKS AND UTILITIES
-     ========================================================================== */
-
-
-  /*
-    Hide the cinematic and expose the normal final content.
-  */
 
   function showStaticLayout(section) {
     section.classList.add(
       'is-static'
     );
   }
-
-
-  /*
-    Display the database error screen.
-  */
 
   function showDatabaseError(
     elements,
@@ -2997,17 +2584,11 @@
         false;
     }
 
-
     setStatus(
       elements,
       message
     );
   }
-
-
-  /*
-    Send a message to the invisible accessibility status element.
-  */
 
   function setStatus(
     elements,
@@ -3019,11 +2600,6 @@
     }
   }
 
-
-  /*
-    Normalize text for reliable title comparison.
-  */
-
   function normalizeText(value) {
     return String(
       value || ''
@@ -3032,21 +2608,11 @@
       .toLowerCase();
   }
 
-
-  /*
-    Detect the operating-system reduced-motion preference.
-  */
-
   function prefersReducedMotion() {
     return window.matchMedia(
       '(prefers-reduced-motion: reduce)'
     ).matches;
   }
-
-
-  /*
-    Escape dynamic strings before inserting them into innerHTML.
-  */
 
   function escapeHtml(value) {
     return String(value)

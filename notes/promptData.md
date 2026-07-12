@@ -1,7 +1,5 @@
 
 
-1. tokyo ghoul
-4. Tokyo Ghoul:re
 6. The Climber
 7. Chainsaw Man
 8. good bye eri
@@ -10,6 +8,24 @@
 12. Blue Period
 14. The Horizon
 16. Homunculus
+
+stain gate 
+monogatri series
+
+Choujin X Publishing
+	Gantz
+look back
+Solanin
+3-gatsu no Lion
+nana
+  	The Summit of the Gods
+    Three Days of Happiness
+the bokex
+bastard
+my derest slef with mecisu afoertthough
+Girls' Last Tour
+	Emanon: Memories of Emanon
+  The Girl From the Other Side: Siúil, a Rún
 
 
 

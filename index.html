@@ -554,23 +554,14 @@
 
     </section>
 
-    <!-- SECTION 4 — SAME STORY, DIFFERENT SOULS-->
+    <!-- SECTION 4 SAME STORY, DIFFERENT SOULS-->
     <section
     id="section-4"
     class="section section-cover-rain"
     aria-labelledby="section-4-title"
     data-section-cover-rain
     >
-    <!-- =====================================================================
-        PART 1 — PINNED CINEMATIC
-
-        Only this part is pinned by ScrollTrigger.
-        The final card and reader content remain in normal document flow.
-        ===================================================================== -->
-
     <div class="s4-cinematic" data-s4-cinematic>
-        <!-- JavaScript places the database covers inside these two lanes. -->
-
         <div
         class="s4-rain-lane s4-rain-lane-left"
         data-rain-left
@@ -582,8 +573,6 @@
         data-rain-right
         aria-hidden="true"
         ></div>
-
-        <!-- Opening section message. -->
 
         <div class="s4-cinematic-copy" data-cinematic-copy>
         <span class="s4-section-label">
@@ -605,18 +594,35 @@
         </span>
         </div>
 
-        <!-- Appears while the selected covers move into the centre. -->
-
         <div
         class="s4-selection-copy"
         data-selection-copy
         aria-hidden="true"
         >
-        <span>Selected from both sides</span>
+        <span>Selected from the middle of the rain</span>
         <strong>One shared story</strong>
         </div>
 
-        <!-- Appears before ScrollTrigger releases the pinned scene. -->
+        <div
+        class="s4-card-formation"
+        data-card-formation
+        aria-hidden="true"
+        >
+        <span
+            class="s4-card-formation-cover-slot"
+            data-formation-cover-slot
+        ></span>
+
+        <div class="s4-card-formation-copy">
+            <span>Shared story</span>
+            <strong data-story-title>Attack on Titan</strong>
+            <small data-story-creator>Hajime Isayama</small>
+        </div>
+
+        <span class="s4-card-formation-score">
+            9.5/10
+        </span>
+        </div>
 
         <div
         class="s4-continue-cue"
@@ -627,215 +633,143 @@
         </div>
     </div>
 
-    <!-- =====================================================================
-        PART 2 — NORMAL PAGE CONTENT
-
-        This is not an inner scrolling container.
-
-        The browser page itself controls scrolling, fixing the problem where
-        the mouse wheel could not scroll upward after reaching the bottom.
-        ===================================================================== -->
-
     <div class="s4-story-content" data-story-content>
         <div class="s4-story-content-inner">
-        <!-- =================================================================
-            ONE SHARED STORY CARD
-
-            This card appears first at the top.
-
-            Its hover interactions are based on the Section 2 card:
-            - card lift
-            - background light sweep
-            - cover tilt
-            - cover shine
-            - title and creator glow
-            - score glow
-            - interactive layer buttons
-            ================================================================= -->
-
-        <article
+        <div class="s4-control-deck" data-control-deck>
+            <article
             class="s4-shared-card"
             data-shared-card
             tabindex="0"
-        >
-            <!--
-            The cover comes from:
-
-            Supabase bucket:
-            img
-
-            Storage path:
-            covers/{database-id}.jpg
-            -->
-
-            <figure
-            class="s4-card-cover"
-            data-cover-shell
             >
-            <img
+            <figure
+                class="s4-card-cover"
+                data-cover-shell
+            >
+                <img
                 data-story-cover
                 src=""
                 alt="Attack on Titan cover"
                 decoding="async"
-            >
+                >
 
-            <span
+                <span
                 class="s4-cover-fallback"
                 data-cover-fallback
-            >
+                >
                 Attack on Titan
-            </span>
+                </span>
             </figure>
 
-            <!-- Story title and creator. -->
-
             <div class="s4-card-info">
-            <h3 data-story-title>
+                <h3 data-story-title>
                 Attack on Titan
-            </h3>
+                </h3>
 
-            <p data-story-creator>
+                <p data-story-creator>
                 Hajime Isayama
-            </p>
+                </p>
             </div>
 
-            <!--
-            When both readers are shown, this displays both scores.
-
-            When one reader is focused, JavaScript changes this to that
-            reader's score.
-            -->
-
             <div
-            class="s4-card-score"
-            data-reader-score
-            role="group"
-            tabindex="0"
-            aria-label="Reader scores: Kai 9 out of 10 and Nova 10 out of 10"
+                class="s4-card-score"
+                data-reader-score
+                data-score-tooltip="Average of Kai's 9/10 and Nova's 10/10."
+                role="group"
+                tabindex="0"
+                aria-label="Average reader rating: 9.5 out of 10. Kai rated it 9 and Nova rated it 10."
             >
-            <span>9 · 10</span>
+                <span>9.5/10</span>
             </div>
 
-            <!-- Story type and selected-reader status. -->
-
             <div
-            class="s4-card-meta"
-            aria-label="Story information"
+                class="s4-card-meta"
+                aria-label="Story information"
             >
-            <span data-story-format>
+                <span data-story-format>
                 Manga / Anime
-            </span>
+                </span>
 
-            <span data-reader-status>
+                <span data-reader-status>
                 Both completed
-            </span>
+                </span>
             </div>
-
-            <!-- Saved-layer controls. -->
 
             <div class="s4-card-layers">
-            <span class="s4-layers-label">
+                <span class="s4-layers-label">
                 Saved layers
-            </span>
+                </span>
 
-            <div
+                <div
                 class="s4-layer-buttons"
                 aria-label="Choose a saved layer"
-            >
-                <button
-                class="s4-layer-button is-active"
-                type="button"
-                aria-pressed="true"
-                data-layer="quotes"
                 >
-                Quotes
-                </button>
-
-                <!--
-                Dark and disabled because the example readers did not save
-                any Moments.
-                -->
-
                 <button
-                class="s4-layer-button is-empty"
-                type="button"
-                disabled
-                aria-disabled="true"
-                title="No saved moments"
+                    class="s4-layer-button is-active"
+                    type="button"
+                    aria-pressed="true"
+                    data-layer="quotes"
                 >
-                Moments
+                    Quotes
                 </button>
 
                 <button
-                class="s4-layer-button"
-                type="button"
-                aria-pressed="false"
-                data-layer="characters"
+                    class="s4-layer-button is-empty"
+                    type="button"
+                    disabled
+                    aria-disabled="true"
+                    title="No saved moments"
                 >
-                Characters
-                </button>
-
-                <!--
-                Dark and disabled because the example readers did not save
-                any Notes.
-                -->
-
-                <button
-                class="s4-layer-button is-empty"
-                type="button"
-                disabled
-                aria-disabled="true"
-                title="No saved notes"
-                >
-                Notes
+                    Moments
                 </button>
 
                 <button
-                class="s4-layer-button"
-                type="button"
-                aria-pressed="false"
-                data-layer="thoughts"
+                    class="s4-layer-button"
+                    type="button"
+                    aria-pressed="false"
+                    data-layer="characters"
                 >
-                Thoughts
+                    Characters
                 </button>
+
+                <button
+                    class="s4-layer-button is-empty"
+                    type="button"
+                    disabled
+                    aria-disabled="true"
+                    title="No saved notes"
+                >
+                    Notes
+                </button>
+
+                <button
+                    class="s4-layer-button"
+                    type="button"
+                    aria-pressed="false"
+                    data-layer="thoughts"
+                >
+                    Thoughts
+                </button>
+                </div>
             </div>
-            </div>
-        </article>
+            </article>
 
-        <!-- The explanation comes after the main card. -->
-
-        <header class="s4-content-intro">
+            <header class="s4-content-intro">
             <span class="s4-section-label">
-            One title. Two inner worlds.
+                One title. Two inner worlds.
             </span>
 
             <p>
-            Choose a saved layer to compare both readers. Select either
-            profile to focus that side, or return to the full comparison.
+                Switch layers without losing the shared card. Focus either reader,
+                or keep both sides visible for a direct comparison.
             </p>
-        </header>
-
-        <!-- =================================================================
-            SPLIT READER SHOWCASE
-
-            Left reader content always appears on the left.
-            Right reader content always appears on the right.
-
-            A line divides the two sides.
-
-            Clicking a profile focuses that reader.
-            Clicking Compare Both restores the equal comparison.
-            ================================================================= -->
+            </header>
+        </div>
 
         <div
             class="s4-compare-stage"
             data-compare-stage
             data-focus="both"
         >
-            <!-- ===============================================================
-                LEFT READER
-                =============================================================== -->
-
             <section
             class="s4-reader-side s4-reader-side-left"
             aria-labelledby="s4-kai-name"
@@ -880,20 +814,12 @@
                 </span>
             </button>
 
-            <!--
-                JavaScript places Kai's quotes, characters, or thoughts here.
-            -->
-
             <div
                 class="s4-reader-content"
                 data-reader-content="kai"
                 aria-live="polite"
             ></div>
             </section>
-
-            <!-- ===============================================================
-                CENTRE DIVIDER
-                =============================================================== -->
 
             <div class="s4-compare-divider">
             <span
@@ -915,10 +841,6 @@
                 aria-hidden="true"
             ></span>
             </div>
-
-            <!-- ===============================================================
-                RIGHT READER
-                =============================================================== -->
 
             <section
             class="s4-reader-side s4-reader-side-right"
@@ -964,10 +886,6 @@
                 </span>
             </button>
 
-            <!--
-                JavaScript places Nova's quotes, characters, or thoughts here.
-            -->
-
             <div
                 class="s4-reader-content"
                 data-reader-content="nova"
@@ -977,8 +895,6 @@
         </div>
         </div>
     </div>
-
-    <!-- Database loading error message. -->
 
     <div
         class="s4-empty"
@@ -998,8 +914,6 @@
         <strong>featured = true</strong>.
         </p>
     </div>
-
-    <!-- Invisible screen-reader status updates. -->
 
     <p
         class="s4-status"

@@ -1,90 +1,29 @@
-/* ============================================================================
-   SECTION 4 — SAME STORY, DIFFERENT SOULS
-
-   CSS ORGANIZATION
-
-   1. Main variables and section root
-   2. Accessibility and shared helpers
-   3. Pinned cinematic
-   4. Cover rain and selected covers
-   5. Normal final content
-   6. Shared story card
-   7. Split reader showcase
-   8. Quote, character, and thought content
-   9. Empty and static states
-   10. Responsive and reduced-motion rules
-
-   EDITING RULE
-
-   Each main component is defined in one place.
-   Responsive changes are kept together at the bottom.
-   ============================================================================ */
-
-
-/* ============================================================================
-   1. MAIN VARIABLES AND SECTION ROOT
-
-   These variables are the easiest way to change the overall section.
-   ============================================================================ */
-
 .section-cover-rain {
-  /*
-    Change this value to match the height of your fixed navigation bar.
-  */
   --s4-nav-height: 64px;
 
-  /*
-    Width of the Attack on Titan card.
-  */
   --s4-card-width:
     min(900px, calc(100vw - 48px));
 
-  /*
-    Maximum width of the two-reader comparison area.
-  */
   --s4-compare-width:
     min(1420px, calc(100vw - 56px));
 
-  /*
-    Width of the cover inside the main card.
-  */
   --s4-cover-width: 156px;
-
-  /*
-    Space between the card cover and card information.
-  */
   --s4-card-gap: 1.4rem;
-
-  /* Main background colours. */
 
   --s4-bg-top: #080b18;
   --s4-bg-mid: #121934;
   --s4-bg-bottom: #070b17;
 
-  /* Card and evidence-panel colours. */
+  --s4-panel: rgba(8, 13, 28, 0.96);
+  --s4-panel-strong: rgba(15, 21, 40, 0.98);
 
-  --s4-panel:
-    rgba(8, 13, 28, 0.96);
-
-  --s4-panel-strong:
-    rgba(15, 21, 40, 0.98);
-
-  /* Border colours. */
-
-  --s4-border:
-    rgba(170, 183, 255, 0.18);
-
-  --s4-border-strong:
-    rgba(190, 200, 255, 0.44);
-
-  /* Text colours. */
+  --s4-border: rgba(170, 183, 255, 0.18);
+  --s4-border-strong: rgba(190, 200, 255, 0.44);
 
   --s4-text: #f5f1ff;
   --s4-text-mid: #c9cde2;
   --s4-text-muted: #8f96b3;
   --s4-text-faint: #636d8b;
-
-  /* Accent colours. */
 
   --s4-purple: #9b7cff;
   --s4-blue: #718cff;
@@ -93,15 +32,7 @@
 
   position: relative;
   isolation: isolate;
-
   width: 100%;
-
-  /*
-    This must remain visible.
-
-    Do not add overflow-y:auto to the section or final content.
-    The browser page must control vertical scrolling.
-  */
   overflow: visible;
 
   color: var(--s4-text);
@@ -130,35 +61,22 @@
     );
 }
 
-
-/*
-  Give every Section 4 element predictable box sizing.
-*/
-
 .section-cover-rain *,
 .section-cover-rain *::before,
 .section-cover-rain *::after {
   box-sizing: border-box;
 }
 
-
-/*
-  Decorative grid and grain layers.
-*/
-
 .section-cover-rain::before,
 .section-cover-rain::after {
   content: "";
-
   position: absolute;
   inset: 0;
-
   pointer-events: none;
 }
 
 .section-cover-rain::before {
   z-index: 0;
-
   opacity: 0.2;
 
   background-image:
@@ -191,7 +109,6 @@
 
 .section-cover-rain::after {
   z-index: 0;
-
   opacity: 0.07;
 
   background-image:
@@ -203,27 +120,10 @@
   background-size: 4px 4px;
 }
 
-
-/*
-  Keep the real section content above the decorative backgrounds.
-*/
-
 .section-cover-rain > * {
   position: relative;
   z-index: 1;
 }
-
-
-/* ============================================================================
-   2. ACCESSIBILITY AND SHARED HELPERS
-   ============================================================================ */
-
-
-/*
-  Invisible live-status element.
-
-  Screen readers can hear its text, but sighted visitors do not see it.
-*/
 
 .s4-status {
   position: absolute !important;
@@ -242,11 +142,6 @@
 
   border: 0 !important;
 }
-
-
-/*
-  Small uppercase section labels.
-*/
 
 .s4-section-label {
   display: inline-flex;
@@ -278,24 +173,16 @@
 
   border-radius: 999px;
 
-  background:
-    var(--s4-cyan);
+  background: var(--s4-cyan);
 
   box-shadow:
     0 0 18px rgba(120, 216, 255, 0.7),
     0 0 34px rgba(113, 140, 255, 0.32);
 }
 
-
-/*
-  Shared styling for every cover shell.
-*/
-
 [data-cover-shell] {
   position: relative;
-
   overflow: hidden;
-
   margin: 0;
 
   background:
@@ -329,11 +216,6 @@
   display: none !important;
 }
 
-
-/*
-  Gradient placeholder shown when the database cover cannot load.
-*/
-
 .s4-cover-fallback {
   position: absolute;
   inset: 0;
@@ -343,8 +225,7 @@
 
   padding: 0.75rem;
 
-  color:
-    rgba(255, 255, 255, 0.96);
+  color: rgba(255, 255, 255, 0.96);
 
   font-family:
     var(--font-display, Georgia, serif);
@@ -371,16 +252,6 @@
     );
 }
 
-
-/* ============================================================================
-   3. PINNED CINEMATIC
-   ============================================================================ */
-
-
-/*
-  ScrollTrigger pins only this element.
-*/
-
 .s4-cinematic {
   position: relative;
   isolation: isolate;
@@ -392,11 +263,6 @@
   overflow: hidden;
 }
 
-
-/*
-  Opening title in the middle of the cinematic.
-*/
-
 .s4-cinematic-copy {
   position: absolute;
 
@@ -404,13 +270,11 @@
   top: 50%;
   z-index: 4;
 
-  width:
-    min(760px, 72vw);
+  width: min(760px, 72vw);
 
   text-align: center;
 
-  transform:
-    translate(-50%, -50%);
+  transform: translate(-50%, -50%);
 
   will-change:
     transform,
@@ -418,11 +282,9 @@
 }
 
 .s4-cinematic-copy h2 {
-  margin:
-    0.9rem 0 0;
+  margin: 0.9rem 0 0;
 
-  color:
-    var(--s4-text);
+  color: var(--s4-text);
 
   font-family:
     var(--font-display, Georgia, serif);
@@ -442,19 +304,15 @@
 
 .s4-cinematic-copy h2 span {
   display: block;
-
   color: #e7ebff;
 }
 
 .s4-cinematic-copy p {
-  width:
-    min(560px, 94%);
+  width: min(560px, 94%);
 
-  margin:
-    1.1rem auto 0;
+  margin: 1.1rem auto 0;
 
-  color:
-    var(--s4-text-muted);
+  color: var(--s4-text-muted);
 
   font-family:
     var(--font-body, system-ui, sans-serif);
@@ -466,11 +324,6 @@
   line-height: 1.65;
 }
 
-
-/*
-  Small scroll instruction.
-*/
-
 .s4-scroll-cue {
   display: inline-flex;
   align-items: center;
@@ -479,8 +332,7 @@
 
   margin-top: 1.6rem;
 
-  color:
-    rgba(203, 208, 231, 0.72);
+  color: rgba(203, 208, 231, 0.72);
 
   font-family:
     var(--font-body, system-ui, sans-serif);
@@ -506,11 +358,6 @@
     );
 }
 
-
-/*
-  Labels used during and after the merge.
-*/
-
 .s4-selection-copy,
 .s4-continue-cue {
   position: absolute;
@@ -522,8 +369,7 @@
 
   pointer-events: none;
 
-  transform:
-    translateX(-50%);
+  transform: translateX(-50%);
 
   will-change:
     transform,
@@ -545,8 +391,7 @@
 
 .s4-selection-copy span,
 .s4-continue-cue {
-  color:
-    var(--s4-text-muted);
+  color: var(--s4-text-muted);
 
   font-family:
     var(--font-body, system-ui, sans-serif);
@@ -572,32 +417,17 @@
   bottom:
     clamp(34px, 5vh, 60px);
 
-  padding:
-    0.62rem 0.9rem;
+  padding: 0.62rem 0.9rem;
 
   border:
     1px solid rgba(184, 192, 255, 0.18);
 
   border-radius: 999px;
 
-  background:
-    rgba(8, 13, 28, 0.72);
+  background: rgba(8, 13, 28, 0.72);
 
-  backdrop-filter:
-    blur(12px);
+  backdrop-filter: blur(12px);
 }
-
-
-/* ============================================================================
-   4. COVER RAIN AND SELECTED COVERS
-   ============================================================================ */
-
-
-/*
-  The rain occupies only the left and right edges.
-
-  The middle remains open for the heading and cover merge.
-*/
 
 .s4-rain-lane {
   position: absolute;
@@ -606,8 +436,7 @@
   bottom: 0;
   z-index: 2;
 
-  width:
-    min(27vw, 390px);
+  width: min(27vw, 390px);
 
   pointer-events: none;
 }
@@ -621,11 +450,6 @@
   right:
     clamp(0.6rem, 3vw, 3.5rem);
 }
-
-
-/*
-  Individual database cover inside the rain.
-*/
 
 .s4-rain-item {
   position: absolute;
@@ -672,14 +496,6 @@
     );
 }
 
-
-/*
-  Attack on Titan exists as a chosen item in BOTH rain lanes.
-
-  These selected elements receive a higher layer so they can move over the
-  other covers and into the centre.
-*/
-
 .s4-rain-item.is-chosen-story {
   z-index: 20 !important;
 
@@ -691,22 +507,6 @@
     0 0 52px rgba(155, 124, 255, 0.22),
     0 0 0 1px rgba(255, 255, 255, 0.08);
 }
-
-
-/* ============================================================================
-   5. NORMAL FINAL CONTENT
-   ============================================================================ */
-
-
-/*
-  This area follows normal page flow.
-
-  Do not add:
-  overflow-y: auto;
-  height: 100vh;
-
-  Those rules can create a second scrolling area and trap the mouse wheel.
-*/
 
 .s4-story-content {
   position: relative;
@@ -727,14 +527,8 @@
 
 .s4-story-content-inner {
   width: 100%;
-
   margin-inline: auto;
 }
-
-
-/*
-  Introduction below the main card.
-*/
 
 .s4-content-intro {
   width:
@@ -749,11 +543,9 @@
 }
 
 .s4-content-intro p {
-  margin:
-    0.65rem 0 0;
+  margin: 0.65rem 0 0;
 
-  color:
-    var(--s4-text-muted);
+  color: var(--s4-text-muted);
 
   font-family:
     var(--font-body, system-ui, sans-serif);
@@ -764,26 +556,16 @@
   line-height: 1.55;
 }
 
-
-/* ============================================================================
-   6. ONE SHARED STORY CARD
-
-   Edit the main card in this section.
-   ============================================================================ */
-
 .s4-shared-card {
   position: relative;
   isolation: isolate;
 
-  width:
-    var(--s4-card-width);
-
+  width: var(--s4-card-width);
   min-height: 286px;
 
   margin-inline: auto;
 
-  padding:
-    24px 26px;
+  padding: 24px 26px;
 
   display: grid;
 
@@ -802,9 +584,7 @@
     auto
     auto;
 
-  column-gap:
-    var(--s4-card-gap);
-
+  column-gap: var(--s4-card-gap);
   row-gap: 0.55rem;
 
   align-items: center;
@@ -844,11 +624,6 @@
     box-shadow 240ms ease;
 }
 
-
-/*
-  Soft glow behind the card.
-*/
-
 .s4-shared-card::after {
   content: "";
 
@@ -876,8 +651,7 @@
       transparent 74%
     );
 
-  filter:
-    blur(32px);
+  filter: blur(32px);
 
   opacity: 0.84;
 
@@ -889,11 +663,6 @@
     opacity 240ms ease,
     transform 240ms ease;
 }
-
-
-/*
-  Moving light sweep across the whole card.
-*/
 
 .s4-shared-card::before {
   content: "";
@@ -921,18 +690,12 @@
       transparent 100%
     );
 
-  transform:
-    rotate(8deg);
+  transform: rotate(8deg);
 
   transition:
     transform 700ms cubic-bezier(0.22, 1, 0.36, 1),
     opacity 220ms ease;
 }
-
-
-/*
-  Main card hover and keyboard-focus state.
-*/
 
 .s4-shared-card:hover,
 .s4-shared-card:focus-visible {
@@ -987,11 +750,6 @@
   outline-offset: 5px;
 }
 
-
-/*
-  Keep all real card content above the moving light sweep.
-*/
-
 .s4-card-cover,
 .s4-card-info,
 .s4-card-score,
@@ -1001,18 +759,12 @@
   z-index: 1;
 }
 
-
-/* ------------------------------
-   Card cover
-   ------------------------------ */
-
 .s4-card-cover {
   grid-area: cover;
 
   align-self: center;
 
-  width:
-    var(--s4-cover-width);
+  width: var(--s4-cover-width);
 
   aspect-ratio: 2 / 3;
 
@@ -1029,11 +781,6 @@
     transform 280ms cubic-bezier(0.22, 1, 0.36, 1),
     box-shadow 280ms ease;
 }
-
-
-/*
-  Shine that moves across the cover when the cover is hovered.
-*/
 
 .s4-card-cover::before {
   content: "";
@@ -1059,8 +806,7 @@
       transparent
     );
 
-  transform:
-    rotate(12deg);
+  transform: rotate(12deg);
 
   transition:
     transform 520ms cubic-bezier(0.22, 1, 0.36, 1),
@@ -1098,11 +844,6 @@
     contrast(1.04);
 }
 
-
-/* ------------------------------
-   Card title and creator
-   ------------------------------ */
-
 .s4-card-info {
   grid-area: info;
 
@@ -1130,8 +871,7 @@
 }
 
 .s4-card-info h3 {
-  color:
-    var(--s4-text);
+  color: var(--s4-text);
 
   font-family:
     var(--font-display, Georgia, serif);
@@ -1146,8 +886,7 @@
 }
 
 .s4-card-info p {
-  color:
-    var(--s4-text-mid);
+  color: var(--s4-text-mid);
 
   font-family:
     var(--font-body, system-ui, sans-serif);
@@ -1160,8 +899,7 @@
 
 .s4-card-info h3:hover,
 .s4-card-info p:hover {
-  transform:
-    translateY(-1px);
+  transform: translateY(-1px);
 }
 
 .s4-card-info h3:hover {
@@ -1179,11 +917,6 @@
     0 0 16px rgba(155, 124, 255, 0.35);
 }
 
-
-/* ------------------------------
-   Score capsule
-   ------------------------------ */
-
 .s4-card-score {
   grid-area: score;
   grid-row: 1 / 3;
@@ -1194,14 +927,12 @@
   min-width: 92px;
   height: 56px;
 
-  padding:
-    0 1.1rem;
+  padding: 0 1.1rem;
 
   display: grid;
   place-items: center;
 
-  color:
-    var(--s4-text);
+  color: var(--s4-text);
 
   border:
     1px solid rgba(184, 192, 255, 0.26);
@@ -1269,11 +1000,9 @@
   left: 50%;
   top: calc(100% + 8px);
 
-  padding:
-    0.34rem 0.68rem;
+  padding: 0.34rem 0.68rem;
 
-  color:
-    var(--s4-text-mid);
+  color: var(--s4-text-mid);
 
   font-family:
     var(--font-body, system-ui, sans-serif);
@@ -1325,9 +1054,7 @@
 .s4-card-score:hover::before,
 .s4-card-score:focus-visible::before {
   opacity: 1;
-
-  transform:
-    scale(1);
+  transform: scale(1);
 }
 
 .s4-card-score:hover::after,
@@ -1346,11 +1073,6 @@
   outline-offset: 4px;
 }
 
-
-/* ------------------------------
-   Type and status chips
-   ------------------------------ */
-
 .s4-card-meta {
   grid-area: meta;
 
@@ -1368,15 +1090,13 @@
 .s4-layer-button {
   min-height: 34px;
 
-  padding:
-    0 0.82rem;
+  padding: 0 0.82rem;
 
   display: inline-flex;
   align-items: center;
   justify-content: center;
 
-  color:
-    var(--s4-text-mid);
+  color: var(--s4-text-mid);
 
   font-family:
     var(--font-body, system-ui, sans-serif);
@@ -1409,11 +1129,9 @@
 }
 
 .s4-card-meta span:hover {
-  transform:
-    translateY(-1px);
+  transform: translateY(-1px);
 
-  color:
-    var(--s4-text);
+  color: var(--s4-text);
 
   border-color:
     rgba(184, 192, 255, 0.44);
@@ -1429,11 +1147,6 @@
     0 10px 22px rgba(0, 0, 0, 0.26),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
-
-
-/* ------------------------------
-   Saved-layer controls
-   ------------------------------ */
 
 .s4-card-layers {
   grid-area: layers;
@@ -1452,8 +1165,7 @@
 
   margin-bottom: 0.55rem;
 
-  color:
-    var(--s4-text-muted);
+  color: var(--s4-text-muted);
 
   font-family:
     var(--font-body, system-ui, sans-serif);
@@ -1479,11 +1191,9 @@
 
 .s4-layer-button:hover,
 .s4-layer-button.is-active {
-  transform:
-    translateY(-1px);
+  transform: translateY(-1px);
 
-  color:
-    var(--s4-text);
+  color: var(--s4-text);
 
   border-color:
     rgba(184, 192, 255, 0.52);
@@ -1506,11 +1216,6 @@
 
   outline-offset: 4px;
 }
-
-
-/*
-  Disabled empty layers.
-*/
 
 .s4-layer-button.is-empty,
 .s4-layer-button:disabled {
@@ -1536,14 +1241,8 @@
   transform: none;
 }
 
-
-/* ============================================================================
-   7. SPLIT READER SHOWCASE
-   ============================================================================ */
-
 .s4-compare-stage {
-  width:
-    var(--s4-compare-width);
+  width: var(--s4-compare-width);
 
   margin:
     clamp(1.5rem, 3vh, 2.6rem)
@@ -1567,22 +1266,12 @@
     cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-
-/*
-  When Kai is focused, the left column becomes larger.
-*/
-
 .s4-compare-stage[data-focus="left"] {
   grid-template-columns:
     minmax(0, 1.28fr)
     72px
     minmax(260px, 0.72fr);
 }
-
-
-/*
-  When Nova is focused, the right column becomes larger.
-*/
 
 .s4-compare-stage[data-focus="right"] {
   grid-template-columns:
@@ -1599,11 +1288,6 @@
     filter 260ms ease,
     transform 260ms ease;
 }
-
-
-/*
-  Dim the side that is not focused.
-*/
 
 .s4-compare-stage[data-focus="left"]
 .s4-reader-side-right,
@@ -1627,11 +1311,6 @@
   pointer-events: none;
 }
 
-
-/* ------------------------------
-   Small reader profile cards
-   ------------------------------ */
-
 .s4-profile-card {
   width: 100%;
   min-height: 74px;
@@ -1650,8 +1329,7 @@
 
   gap: 0.75rem;
 
-  color:
-    var(--s4-text-mid);
+  color: var(--s4-text-mid);
 
   text-align: left;
 
@@ -1688,8 +1366,7 @@
 .s4-profile-card:hover,
 .s4-profile-card.is-active,
 .s4-profile-card[aria-pressed="true"] {
-  transform:
-    translateY(-2px);
+  transform: translateY(-2px);
 
   border-color:
     rgba(190, 200, 255, 0.48);
@@ -1719,9 +1396,6 @@
 
   outline-offset: 4px;
 }
-
-
-/* Reader avatar. */
 
 .s4-profile-avatar {
   position: relative;
@@ -1755,11 +1429,6 @@
     );
 }
 
-
-/*
-  Give Nova a slightly different avatar gradient.
-*/
-
 .s4-reader-side-right .s4-profile-avatar {
   background:
     linear-gradient(
@@ -1783,9 +1452,6 @@
   display: none;
 }
 
-
-/* Profile name and short biography. */
-
 .s4-profile-text {
   min-width: 0;
 }
@@ -1801,8 +1467,7 @@
 }
 
 .s4-profile-text strong {
-  color:
-    var(--s4-text);
+  color: var(--s4-text);
 
   font-family:
     var(--font-body, system-ui, sans-serif);
@@ -1814,8 +1479,7 @@
 .s4-profile-text small {
   margin-top: 0.16rem;
 
-  color:
-    var(--s4-text-muted);
+  color: var(--s4-text-muted);
 
   font-family:
     var(--font-body, system-ui, sans-serif);
@@ -1827,8 +1491,7 @@
   padding:
     0.34rem 0.58rem;
 
-  color:
-    var(--s4-text-faint);
+  color: var(--s4-text-faint);
 
   font-family:
     var(--font-body, system-ui, sans-serif);
@@ -1855,11 +1518,6 @@
   background:
     rgba(124, 140, 255, 0.16);
 }
-
-
-/* ------------------------------
-   Centre divider
-   ------------------------------ */
 
 .s4-compare-divider {
   align-self: stretch;
@@ -1901,8 +1559,7 @@
   display: grid;
   place-items: center;
 
-  color:
-    var(--s4-text-muted);
+  color: var(--s4-text-muted);
 
   font-family:
     var(--font-body, system-ui, sans-serif);
@@ -1950,11 +1607,6 @@
     scale(1.03);
 }
 
-
-/*
-  Container where JavaScript inserts evidence.
-*/
-
 .s4-reader-content {
   min-height: 300px;
 
@@ -1964,11 +1616,6 @@
     opacity 220ms ease,
     transform 220ms ease;
 }
-
-
-/* ============================================================================
-   8. QUOTE, CHARACTER, AND THOUGHT CONTENT
-   ============================================================================ */
 
 .s4-evidence-header {
   margin-bottom: 0.85rem;
@@ -1995,8 +1642,7 @@
   margin:
     0.38rem 0 0;
 
-  color:
-    var(--s4-text);
+  color: var(--s4-text);
 
   font-family:
     var(--font-display, Georgia, serif);
@@ -2010,9 +1656,6 @@
   letter-spacing: -0.04em;
 }
 
-
-/* Quotes and character rankings use two columns per reader. */
-
 .s4-quote-grid,
 .s4-character-grid {
   display: grid;
@@ -2022,11 +1665,6 @@
 
   gap: 0.75rem;
 }
-
-
-/*
-  Shared evidence-card styling.
-*/
 
 .s4-quote-card,
 .s4-character-card,
@@ -2079,25 +1717,13 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
-
-/* ------------------------------
-   Quote cards
-   ------------------------------ */
-
 .s4-quote-card {
   min-height: 150px;
-
   padding: 1rem;
 }
 
-
-/*
-  The first quote is larger and spans the full reader width.
-*/
-
 .s4-quote-card.is-featured {
   grid-column: 1 / -1;
-
   min-height: 170px;
 }
 
@@ -2105,8 +1731,7 @@
   margin:
     0.55rem 0 0;
 
-  color:
-    var(--s4-text);
+  color: var(--s4-text);
 
   font-family:
     var(--font-display, Georgia, serif);
@@ -2121,8 +1746,7 @@
 .s4-quote-card p,
 .s4-character-copy p,
 .s4-thought-copy p {
-  color:
-    var(--s4-text-muted);
+  color: var(--s4-text-muted);
 
   font-family:
     var(--font-body, system-ui, sans-serif);
@@ -2133,14 +1757,8 @@
     0.65rem 0 0;
 
   font-size: 0.7rem;
-
   line-height: 1.5;
 }
-
-
-/* ------------------------------
-   Character cards
-   ------------------------------ */
 
 .s4-character-card {
   min-height: 126px;
@@ -2157,11 +1775,6 @@
 
   align-items: start;
 }
-
-
-/*
-  The reader's first-ranked character spans the full width.
-*/
 
 .s4-character-card.is-featured {
   grid-column: 1 / -1;
@@ -2199,8 +1812,7 @@
   margin:
     0.28rem 0 0;
 
-  color:
-    var(--s4-text);
+  color: var(--s4-text);
 
   font-family:
     var(--font-body, system-ui, sans-serif);
@@ -2216,14 +1828,8 @@
     0.32rem 0 0;
 
   font-size: 0.68rem;
-
   line-height: 1.48;
 }
-
-
-/* ------------------------------
-   Long thought cards
-   ------------------------------ */
 
 .s4-thought-card {
   padding:
@@ -2236,8 +1842,7 @@
   margin:
     0.5rem 0 0;
 
-  color:
-    var(--s4-text);
+  color: var(--s4-text);
 
   font-family:
     var(--font-display, Georgia, serif);
@@ -2265,16 +1870,6 @@
   line-height: 1.72;
 }
 
-
-/* ============================================================================
-   9. EMPTY AND STATIC STATES
-   ============================================================================ */
-
-
-/*
-  Database error screen.
-*/
-
 .s4-empty {
   position: absolute !important;
 
@@ -2299,8 +1894,7 @@
   margin:
     0.9rem 0 0;
 
-  color:
-    var(--s4-text);
+  color: var(--s4-text);
 
   font-family:
     var(--font-display, Georgia, serif);
@@ -2317,22 +1911,13 @@
   margin:
     1rem auto 0;
 
-  color:
-    var(--s4-text-muted);
+  color: var(--s4-text-muted);
 
   font-family:
     var(--font-body, system-ui, sans-serif);
 
   line-height: 1.6;
 }
-
-
-/*
-  Static fallback for mobile, short screens, reduced motion,
-  or missing GSAP.
-
-  The cinematic disappears and the final content remains available.
-*/
 
 .section-cover-rain.is-static .s4-cinematic {
   display: none;
@@ -2342,28 +1927,891 @@
   min-height: 100svh;
 }
 
+.section-cover-rain {
+  --s4-card-width:
+    min(820px, calc(100vw - 48px));
 
-/* ============================================================================
-   10. RESPONSIVE AND REDUCED-MOTION RULES
-   ============================================================================ */
+  --s4-cover-width: 126px;
+  --s4-card-gap: 1.1rem;
+}
 
+.s4-rain-item.is-chosen-story {
+  z-index: 20 !important;
 
-/* ------------------------------
-   Tablet and narrow desktop
-   ------------------------------ */
+  border-color:
+    rgba(255, 255, 255, 0.12);
+
+  box-shadow:
+    0 24px 48px rgba(0, 0, 0, 0.46),
+    0 0 34px rgba(124, 140, 255, 0.12);
+}
+
+.s4-card-formation {
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+  z-index: 5;
+
+  width:
+    min(780px, calc(100vw - 120px));
+
+  min-height: 214px;
+
+  padding:
+    20px 24px;
+
+  display: grid;
+
+  grid-template-columns:
+    116px
+    minmax(0, 1fr)
+    auto;
+
+  align-items: center;
+
+  gap: 1.25rem;
+
+  overflow: hidden;
+
+  border:
+    1px solid rgba(190, 200, 255, 0.42);
+
+  border-radius: 25px;
+
+  background:
+    radial-gradient(
+      circle at 76% 50%,
+      rgba(124, 140, 255, 0.18),
+      transparent 36%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(16, 23, 44, 0.98),
+      rgba(8, 13, 28, 0.98)
+    );
+
+  box-shadow:
+    0 42px 110px rgba(0, 0, 0, 0.58),
+    0 0 70px rgba(124, 140, 255, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.09);
+
+  opacity: 0;
+  pointer-events: none;
+
+  will-change:
+    transform,
+    opacity;
+}
+
+.s4-card-formation::before {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+
+  pointer-events: none;
+
+  background:
+    linear-gradient(
+      105deg,
+      transparent 8%,
+      rgba(255, 255, 255, 0.08) 42%,
+      transparent 68%
+    );
+
+  transform:
+    translateX(-110%);
+
+  animation:
+    s4-formation-sweep 2.4s ease-in-out infinite;
+}
+
+@keyframes s4-formation-sweep {
+  0%,
+  45% {
+    transform:
+      translateX(-110%);
+  }
+
+  75%,
+  100% {
+    transform:
+      translateX(110%);
+  }
+}
+
+.s4-card-formation-cover-slot {
+  width: 112px;
+  aspect-ratio: 2 / 3;
+
+  display: block;
+
+  border:
+    1px solid rgba(190, 200, 255, 0.24);
+
+  border-radius: 16px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(124, 140, 255, 0.12),
+      rgba(255, 255, 255, 0.025)
+    );
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.s4-card-formation-copy {
+  position: relative;
+  z-index: 1;
+
+  min-width: 0;
+
+  display: grid;
+  gap: 0.28rem;
+}
+
+.s4-card-formation-copy span {
+  color:
+    rgba(184, 192, 255, 0.72);
+
+  font-family:
+    var(--font-body, system-ui, sans-serif);
+
+  font-size: 0.62rem;
+  font-weight: 900;
+
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.s4-card-formation-copy strong {
+  overflow: hidden;
+
+  color: var(--s4-text);
+
+  font-family:
+    var(--font-display, Georgia, serif);
+
+  font-size:
+    clamp(2rem, 4vw, 3.5rem);
+
+  line-height: 0.94;
+  letter-spacing: -0.05em;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.s4-card-formation-copy small {
+  color: var(--s4-text-mid);
+
+  font-family:
+    var(--font-body, system-ui, sans-serif);
+
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.s4-card-formation-score {
+  position: relative;
+  z-index: 1;
+
+  min-width: 96px;
+  height: 52px;
+
+  padding:
+    0 1rem;
+
+  display: grid;
+  place-items: center;
+
+  color: var(--s4-text);
+
+  font-family:
+    var(--font-display, Georgia, serif);
+
+  font-size: 1.3rem;
+  font-weight: 800;
+
+  border:
+    1px solid rgba(190, 200, 255, 0.36);
+
+  border-radius: 999px;
+
+  background:
+    rgba(124, 140, 255, 0.14);
+}
+
+.s4-story-content {
+  min-height: 100svh;
+
+  padding:
+    calc(var(--s4-nav-height) + 14px)
+    0
+    26px;
+}
+
+.s4-story-content-inner {
+  width: 100%;
+}
+
+.s4-control-deck {
+  position: relative;
+  z-index: 5;
+
+  width: 100%;
+}
+
+.s4-shared-card {
+  min-height: 208px;
+
+  padding:
+    16px 18px;
+
+  grid-template-rows:
+    minmax(58px, 1fr)
+    auto
+    auto;
+
+  column-gap:
+    var(--s4-card-gap);
+
+  row-gap: 0.34rem;
+
+  border-radius: 22px;
+}
+
+.s4-card-cover {
+  border-radius: 15px;
+}
+
+.s4-card-info h3 {
+  font-size:
+    clamp(1.85rem, 2.7vw, 2.65rem);
+
+  line-height: 0.96;
+}
+
+.s4-card-info p {
+  font-size: 0.86rem;
+}
+
+.s4-card-score {
+  min-width: 100px;
+  height: 50px;
+
+  padding:
+    0 0.95rem;
+
+  z-index: 8;
+}
+
+.s4-card-score span {
+  font-size: 1.22rem;
+}
+
+.s4-card-score::after {
+  content:
+    attr(data-score-tooltip);
+
+  left: auto;
+  right: calc(100% + 10px);
+  top: 50%;
+
+  width:
+    min(290px, 34vw);
+
+  padding:
+    0.62rem 0.72rem;
+
+  font-size: 0.64rem;
+  font-weight: 750;
+  line-height: 1.42;
+
+  letter-spacing: 0;
+  text-align: left;
+  text-transform: none;
+  white-space: normal;
+
+  border-radius: 13px;
+
+  transform:
+    translateY(-50%)
+    translateX(6px);
+}
+
+.s4-card-score:hover::after,
+.s4-card-score:focus-visible::after {
+  transform:
+    translateY(-50%)
+    translateX(0);
+}
+
+.s4-card-meta {
+  gap: 0.42rem;
+}
+
+.s4-card-meta span,
+.s4-layer-button {
+  min-height: 30px;
+
+  padding:
+    0 0.72rem;
+
+  font-size: 0.7rem;
+}
+
+.s4-card-layers {
+  margin-top: 0.42rem;
+  padding-top: 0.48rem;
+}
+
+.s4-layers-label {
+  margin-bottom: 0.42rem;
+  font-size: 0.6rem;
+}
+
+.s4-layer-buttons {
+  gap: 0.42rem;
+}
+
+.s4-layer-button:hover,
+.s4-layer-button.is-active {
+  box-shadow:
+    0 10px 22px rgba(0, 0, 0, 0.28),
+    0 0 30px rgba(124, 140, 255, 0.18);
+}
+
+.s4-content-intro {
+  width:
+    min(760px, calc(100vw - 36px));
+
+  margin:
+    0.5rem
+    auto
+    0;
+}
+
+.s4-content-intro .s4-section-label {
+  font-size: 0.58rem;
+}
+
+.s4-content-intro p {
+  margin-top: 0.34rem;
+
+  font-size: 0.76rem;
+  line-height: 1.42;
+}
+
+.s4-compare-stage {
+  margin:
+    0.68rem
+    auto
+    0;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    58px
+    minmax(0, 1fr);
+
+  gap:
+    clamp(0.8rem, 1.5vw, 1.35rem);
+}
+
+.s4-compare-stage[data-focus="left"] {
+  grid-template-columns:
+    minmax(0, 1.22fr)
+    58px
+    minmax(260px, 0.78fr);
+}
+
+.s4-compare-stage[data-focus="right"] {
+  grid-template-columns:
+    minmax(260px, 0.78fr)
+    58px
+    minmax(0, 1.22fr);
+}
+
+.s4-profile-card {
+  position: relative;
+
+  min-height: 60px;
+
+  padding:
+    8px 10px;
+
+  grid-template-columns:
+    42px
+    minmax(0, 1fr)
+    auto;
+
+  gap: 0.62rem;
+
+  overflow: hidden;
+
+  border-radius: 16px;
+}
+
+.s4-profile-card::before {
+  content: "";
+
+  position: absolute;
+
+  top: -70%;
+  left: -50%;
+
+  width: 38%;
+  height: 240%;
+
+  pointer-events: none;
+
+  opacity: 0;
+
+  background:
+    linear-gradient(
+      105deg,
+      transparent,
+      rgba(255, 255, 255, 0.16),
+      transparent
+    );
+
+  transform:
+    rotate(10deg);
+
+  transition:
+    transform 560ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 180ms ease;
+}
+
+.s4-profile-card:hover::before,
+.s4-profile-card:focus-visible::before {
+  opacity: 1;
+
+  transform:
+    translateX(430%)
+    rotate(10deg);
+}
+
+.s4-profile-avatar {
+  width: 42px;
+  height: 42px;
+
+  border-radius: 12px;
+
+  transition:
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 220ms ease;
+}
+
+.s4-profile-card:hover .s4-profile-avatar,
+.s4-profile-card[aria-pressed="true"] .s4-profile-avatar {
+  transform:
+    rotate(-2deg)
+    scale(1.05);
+
+  box-shadow:
+    0 12px 26px rgba(0, 0, 0, 0.34),
+    0 0 24px rgba(124, 140, 255, 0.22);
+}
+
+.s4-profile-text strong {
+  font-size: 0.8rem;
+}
+
+.s4-profile-text small {
+  font-size: 0.62rem;
+}
+
+.s4-profile-command {
+  font-size: 0.52rem;
+}
+
+.s4-compare-divider {
+  gap: 0.5rem;
+}
+
+.s4-compare-both {
+  width: 54px;
+  min-height: 54px;
+
+  font-size: 0.47rem;
+}
+
+.s4-reader-content {
+  min-height: 0;
+
+  margin-top: 0.62rem;
+}
+
+.s4-evidence-header {
+  margin-bottom: 0.56rem;
+}
+
+.s4-evidence-header h4 {
+  margin-top: 0.28rem;
+
+  font-size:
+    clamp(1.08rem, 1.5vw, 1.45rem);
+}
+
+.s4-quote-grid,
+.s4-character-grid {
+  gap: 0.58rem;
+}
+
+.s4-quote-card,
+.s4-character-card,
+.s4-thought-card {
+  border-radius: 15px;
+}
+
+.s4-quote-card::before,
+.s4-character-card::before,
+.s4-thought-card::before {
+  content: "";
+
+  position: absolute;
+
+  top: -70%;
+  left: -55%;
+  z-index: 0;
+
+  width: 36%;
+  height: 250%;
+
+  pointer-events: none;
+
+  opacity: 0;
+
+  background:
+    linear-gradient(
+      105deg,
+      transparent,
+      rgba(255, 255, 255, 0.1),
+      transparent
+    );
+
+  transform:
+    rotate(10deg);
+
+  transition:
+    transform 650ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 180ms ease;
+}
+
+.s4-quote-card:hover::before,
+.s4-character-card:hover::before,
+.s4-thought-card:hover::before {
+  opacity: 1;
+
+  transform:
+    translateX(480%)
+    rotate(10deg);
+}
+
+.s4-quote-card > *,
+.s4-character-card > *,
+.s4-thought-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.s4-quote-card {
+  min-height: 98px;
+
+  padding:
+    0.76rem 0.82rem;
+}
+
+.s4-quote-card.is-featured {
+  min-height: 108px;
+}
+
+.s4-quote-card blockquote {
+  margin-top: 0.42rem;
+
+  font-size:
+    clamp(0.84rem, 1vw, 1.02rem);
+
+  line-height: 1.24;
+
+  transition:
+    transform 200ms ease,
+    color 200ms ease,
+    text-shadow 200ms ease;
+}
+
+.s4-quote-card:hover blockquote {
+  color: #ffffff;
+
+  text-shadow:
+    0 0 22px rgba(155, 124, 255, 0.28);
+
+  transform:
+    translateX(3px);
+}
+
+.s4-quote-note-label {
+  display: inline-block;
+
+  margin-top: 0.5rem;
+
+  color:
+    rgba(200, 164, 107, 0.84);
+
+  font-family:
+    var(--font-body, system-ui, sans-serif);
+
+  font-size: 0.52rem;
+  font-weight: 900;
+
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.s4-quote-card p {
+  margin-top: 0.24rem;
+
+  font-size: 0.64rem;
+  line-height: 1.42;
+}
+
+.s4-character-card {
+  min-height: 112px;
+
+  padding: 0.68rem;
+
+  grid-template-columns:
+    62px
+    minmax(0, 1fr);
+
+  gap: 0.66rem;
+
+  align-items: center;
+}
+
+.s4-character-portrait {
+  position: relative;
+
+  width: 62px;
+  aspect-ratio: 3 / 4;
+
+  margin: 0;
+
+  overflow: hidden;
+
+  border:
+    1px solid rgba(190, 200, 255, 0.22);
+
+  border-radius: 13px;
+
+  background:
+    rgba(124, 140, 255, 0.12);
+
+  box-shadow:
+    0 13px 28px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.s4-character-portrait img {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: cover;
+
+  transition:
+    transform 280ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 280ms ease;
+}
+
+.s4-character-card:hover .s4-character-portrait img {
+  filter:
+    saturate(1.08)
+    contrast(1.04);
+
+  transform:
+    scale(1.065);
+}
+
+.s4-character-rank-badge {
+  position: absolute;
+
+  left: 5px;
+  bottom: 5px;
+
+  min-width: 28px;
+  min-height: 20px;
+
+  padding:
+    0 0.35rem;
+
+  display: grid;
+  place-items: center;
+
+  color: #ffffff;
+
+  font-family:
+    var(--font-body, system-ui, sans-serif);
+
+  font-size: 0.48rem;
+  font-weight: 900;
+
+  border:
+    1px solid rgba(255, 255, 255, 0.22);
+
+  border-radius: 999px;
+
+  background:
+    rgba(7, 11, 23, 0.82);
+
+  backdrop-filter:
+    blur(8px);
+}
+
+.s4-character-copy h5 {
+  font-size: 0.8rem;
+}
+
+.s4-character-copy p {
+  font-size: 0.63rem;
+  line-height: 1.42;
+}
+
+.s4-thought-card {
+  padding:
+    0.95rem 1.05rem;
+}
+
+.s4-thought-card h4 {
+  max-width: 860px;
+
+  margin-top: 0.4rem;
+
+  font-size:
+    clamp(1.22rem, 1.9vw, 1.72rem);
+
+  line-height: 1.04;
+}
+
+.s4-thought-copy {
+  margin-top: 0.72rem;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 0.62rem;
+}
+
+.s4-thought-point {
+  padding: 0.72rem;
+
+  border:
+    1px solid rgba(184, 192, 255, 0.12);
+
+  border-radius: 13px;
+
+  background:
+    rgba(255, 255, 255, 0.025);
+
+  transition:
+    transform 200ms ease,
+    border-color 200ms ease,
+    background 200ms ease;
+}
+
+.s4-thought-point:hover {
+  transform:
+    translateY(-2px);
+
+  border-color:
+    rgba(190, 200, 255, 0.32);
+
+  background:
+    rgba(124, 140, 255, 0.07);
+}
+
+.s4-thought-point > span {
+  color:
+    rgba(200, 164, 107, 0.84);
+
+  font-family:
+    var(--font-body, system-ui, sans-serif);
+
+  font-size: 0.52rem;
+  font-weight: 900;
+
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.s4-thought-copy p {
+  margin:
+    0.34rem 0 0;
+
+  font-size: 0.68rem;
+  line-height: 1.55;
+}
+
+@media (min-width: 1051px) and (min-height: 760px) {
+  .s4-story-content {
+    height: 100svh;
+    min-height: 760px;
+
+    display: flex;
+    align-items: flex-start;
+  }
+
+  .s4-story-content-inner {
+    height:
+      calc(
+        100svh -
+        var(--s4-nav-height) -
+        40px
+      );
+
+    display: grid;
+
+    grid-template-rows:
+      auto
+      minmax(0, 1fr);
+
+    align-content: start;
+  }
+
+  .s4-control-deck {
+    position: sticky;
+    top: calc(var(--s4-nav-height) + 8px);
+  }
+
+  .s4-compare-stage {
+    min-height: 0;
+  }
+}
 
 @media (max-width: 1050px) {
   .section-cover-rain {
     --s4-card-width:
-      min(900px, calc(100vw - 32px));
+      min(820px, calc(100vw - 32px));
 
     --s4-compare-width:
       min(820px, calc(100vw - 32px));
   }
 
-  /*
-    Stack the two readers vertically on tablets.
-  */
+  .s4-story-content {
+    height: auto;
+    min-height: 100svh;
+  }
+
+  .s4-control-deck {
+    position: static;
+  }
 
   .s4-compare-stage,
   .s4-compare-stage[data-focus="left"],
@@ -2372,10 +2820,6 @@
 
     gap: 1.25rem;
   }
-
-  /*
-    Turn the vertical centre divider into a horizontal divider.
-  */
 
   .s4-compare-divider {
     min-height: 0;
@@ -2414,12 +2858,11 @@
 
     transform: none;
   }
+
+  .s4-thought-copy {
+    grid-template-columns: 1fr;
+  }
 }
-
-
-/* ------------------------------
-   Mobile
-   ------------------------------ */
 
 @media (max-width: 680px) {
   .section-cover-rain {
@@ -2431,7 +2874,7 @@
     --s4-compare-width:
       calc(100vw - 24px);
 
-    --s4-cover-width: 116px;
+    --s4-cover-width: 104px;
     --s4-card-gap: 0.95rem;
   }
 
@@ -2461,14 +2904,10 @@
       );
   }
 
-  /*
-    Reorganize the main card for a narrow display.
-  */
-
   .s4-shared-card {
     min-height: 0;
 
-    padding: 1rem;
+    padding: 0.9rem;
 
     grid-template-columns:
       var(--s4-cover-width)
@@ -2527,10 +2966,6 @@
     margin-top: 0.2rem;
   }
 
-  /*
-    Display the layer buttons in a grid.
-  */
-
   .s4-layer-buttons {
     display: grid;
 
@@ -2563,12 +2998,11 @@
   .s4-character-card.is-featured {
     grid-column: auto;
   }
+
+  .s4-thought-copy {
+    grid-template-columns: 1fr;
+  }
 }
-
-
-/* ------------------------------
-   Reduced motion
-   ------------------------------ */
 
 @media (prefers-reduced-motion: reduce) {
   .section-cover-rain *,
@@ -2601,5 +3035,24 @@
   .s4-shared-card:focus-visible::before,
   .s4-card-cover:hover::before {
     opacity: 0 !important;
+  }
+
+  .s4-card-formation::before {
+    animation: none !important;
+  }
+
+  .s4-profile-card::before,
+  .s4-quote-card::before,
+  .s4-character-card::before,
+  .s4-thought-card::before {
+    display: none !important;
+  }
+
+  .s4-profile-card:hover .s4-profile-avatar,
+  .s4-profile-card[aria-pressed="true"] .s4-profile-avatar,
+  .s4-quote-card:hover blockquote,
+  .s4-character-card:hover .s4-character-portrait img,
+  .s4-thought-point:hover {
+    transform: none !important;
   }
 }
