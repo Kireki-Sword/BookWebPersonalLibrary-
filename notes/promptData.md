@@ -1,14 +1,26 @@
 
 
-
+Code Geass
+Cowboy Bebop
+Neon Genesis Evangelion
+pluto
+Gurren Lagann
+Psycho Pass
+Puella Magi Madoka Magica
+Death Parade
+Steins;Gate
+Fate/stay night
+Violet Evergarden
+Sword Art Online
+Re:Zero − Starting Life in Another World
+Monogatari Series
+86—Eighty-Six
+Samurai Champloo
 10. Ashita no Joe
 11. Blood on the Tracks
 12. Blue Period
 14. The Horizon
-16. Homunculus
 
-stain gate 
-monogatri series
 
 Choujin X Publishing
 	Gantz

@@ -24,17 +24,24 @@
     'Shingeki no Kyojin'
   ];
 
-  const RAIN_ITEMS_PER_SIDE =
+  /*
+    Each side can contain up to ten covers total.
+
+    Attack on Titan uses one position on each side. All other titles are
+    unique and are not reused on the opposite side.
+
+    When the database contains fewer stories, both sides are reduced to the
+    same size.
+  */
+  const MAX_RAIN_ITEMS_PER_SIDE =
     10;
 
-  const CHOSEN_LEFT_INDEX =
-    5;
-
-  const CHOSEN_RIGHT_INDEX =
-    4;
-
+  /*
+    A longer distance gives the covers enough scrolling time to enter,
+    cross the screen, and exit.
+  */
   const PIN_DISTANCE =
-    3200;
+    4200;
 
   let supabaseClient =
     null;
@@ -63,7 +70,7 @@
         'Completed',
 
       ratingReason:
-        'Kai gives it 9/10 because the emotional decisions remain powerful and memorable. The characters feel vulnerable even during the largest moments. Some middle sections feel crowded, but the emotional consequences keep the story grounded. Kai finishes the series remembering its people more than its spectacle.',
+        'Kai gives it 9/10 because the emotional decisions remain powerful and memorable. The characters feel vulnerable even during the largest moments. Some middle sections feel crowded, but the consequences keep the story grounded.',
 
       quotes: [
         {
@@ -71,21 +78,21 @@
             'Fear can be present and a choice can still be yours.',
 
           note:
-            'This stays with Kai because the series rarely treats courage as the absence of fear. The characters often move while still uncertain, exhausted, or emotionally overwhelmed. That makes their decisions feel human instead of simply heroic. Kai remembers the hesitation before the action as much as the action itself.'
+            'This stays with Kai because the series rarely treats courage as the absence of fear. The characters often move while they are still uncertain or overwhelmed. That makes their decisions feel human rather than simply heroic.'
         },
         {
           text:
             'Freedom can become another kind of burden.',
 
           note:
-            'Kai connects this idea to characters who spend their lives imagining freedom as a destination. When they finally move closer to it, they discover that freedom also brings responsibility, uncertainty, and difficult choices. The story shows that escaping one limitation does not automatically remove every internal pressure. Kai likes that freedom remains emotionally complicated.'
+            'Kai connects this idea to characters who imagine freedom as a final destination. When they move closer to it, they also gain responsibility and uncertainty. Escaping one limit does not automatically remove every internal pressure.'
         },
         {
           text:
             'Being believed in can change what courage looks like.',
 
           note:
-            'The quieter relationships matter to Kai because support often arrives before a character can support themselves. A small amount of trust can change how someone sees their own abilities. That trust does not remove fear, but it gives the person a reason to move through it. Kai remembers these moments because they make courage feel shared rather than individual.'
+            'The quieter relationships matter because support often arrives before a character can support themselves. Trust does not remove fear, but it can give someone a reason to move through it. Kai remembers courage as something people help build together.'
         }
       ],
 
@@ -101,7 +108,7 @@
             '',
 
           reason:
-            'I like how his curiosity and empathy turn intelligence into a form of bravery. He is often afraid, but he continues thinking when everyone else is overwhelmed. His growth feels meaningful because confidence never completely replaces his sensitivity.'
+            'His curiosity and empathy turn intelligence into a form of bravery. He continues thinking when everyone else is overwhelmed. His confidence grows without completely replacing his sensitivity.'
         },
         {
           rank:
@@ -114,7 +121,7 @@
             '',
 
           reason:
-            'Her loyalty is powerful, but the emotional cost of that loyalty is what stays with me. She is incredibly capable while still being shaped by fear, attachment, and loss. I find the conflict between her strength and dependence more interesting than her physical skill.'
+            'Her loyalty is powerful, but its emotional cost is what stays with Kai. She is extremely capable while still being shaped by fear and attachment. That conflict is more interesting than her physical strength alone.'
         },
         {
           rank:
@@ -127,7 +134,7 @@
             '',
 
           reason:
-            'His control is impressive, but the grief underneath it is more interesting to me. He repeatedly carries the consequences of decisions that had no completely good outcome. His restraint makes the smaller signs of care and exhaustion feel much stronger.'
+            'His control is impressive, but the grief underneath it matters more. He carries the consequences of decisions with no completely good outcome. His restraint makes the smaller signs of care feel stronger.'
         }
       ],
 
@@ -136,13 +143,13 @@
           'Freedom matters most when fear is no longer making every decision.',
 
         paragraphs: [
-          'Kai remembers the series through small emotional decisions inside enormous events. A pause before answering, a promise made under pressure, or the moment someone moves while still afraid can matter more than the scale surrounding it. The story feels strongest when its characters are allowed to be uncertain.',
+          'Kai remembers the series through small emotional decisions inside enormous events. A pause before answering, a promise under pressure, or the moment someone moves while still afraid can matter more than the scale around it.',
 
-          'Freedom is not presented as a simple place that can finally be reached. Every character carries fear, love, guilt, expectation, or responsibility with them. Even after an external wall disappears, those internal pressures can continue controlling a life.',
+          'Freedom is not presented as a simple place that can finally be reached. Every character carries fear, love, guilt, expectation, or responsibility with them, and those pressures can remain even after an external wall disappears.',
 
-          'The relationships are important because courage is rarely created alone. Characters borrow confidence from one another, disappoint one another, and sometimes continue because another person believed they could. That makes bravery feel less like a natural gift and more like something people help build together.',
+          'The relationships matter because courage is rarely created alone. Characters borrow confidence from one another, disappoint one another, and sometimes continue because another person believed they could.',
 
-          'Kai leaves the story thinking about how easily fear can make decisions for someone without them noticing. Real freedom begins when a person recognizes that pressure and still chooses what kind of person they want to become. That idea is what makes the emotional parts of the series last.'
+          'Kai leaves the story thinking about how easily fear can make decisions for someone without them noticing. Real freedom begins when a person recognizes that pressure and still chooses what kind of person to become.'
         ]
       }
     },
@@ -170,7 +177,7 @@
         'Completed',
 
       ratingReason:
-        'Nova gives it 10/10 because perspective continually changes the meaning of earlier events. History, identity, duty, and responsibility remain connected throughout the story. New information does not simply create twists; it changes how previous decisions must be judged. Nova values the way the story refuses to make understanding feel simple.',
+        'Nova gives it 10/10 because perspective continually changes the meaning of earlier events. History, identity, duty, and responsibility remain connected throughout the story. New information changes how earlier decisions must be judged.',
 
       quotes: [
         {
@@ -178,21 +185,21 @@
             'The world changes when the story around it changes.',
 
           note:
-            'Nova saves this because new information repeatedly rebuilds what the audience thinks it understands. The physical world may remain the same, but its meaning changes when history and perspective are revealed. Earlier actions can appear heroic, cruel, necessary, or avoidable depending on who controls the explanation. Nova likes how the series makes interpretation part of the conflict.'
+            'Nova saves this because new information repeatedly rebuilds what the audience thinks it understands. The physical world may stay the same while its meaning changes. Earlier actions can appear heroic, cruel, necessary, or avoidable depending on who explains them.'
         },
         {
           text:
             'Understanding a side does not erase what that side has done.',
 
           note:
-            'For Nova, the series is strongest when empathy and accountability are allowed to exist together. Learning why someone acted does not automatically make the damage disappear. At the same time, refusing to understand the conditions behind an action makes future harm more likely. Nova values that the story asks for understanding without turning understanding into an excuse.'
+            'The series is strongest when empathy and accountability are allowed to exist together. Learning why someone acted does not remove the damage they caused. Refusing to understand the conditions behind that action can also make future harm more likely.'
         },
         {
           text:
             'An enemy can be created long before two people meet.',
 
           note:
-            'This captures how inherited stories can turn fear into identity before personal experience has a chance. People are taught what another group represents, what history means, and which suffering deserves attention. By the time two individuals meet, they may already be carrying generations of expectations. Nova sees this as one of the story’s most important warnings.'
+            'Inherited stories can turn fear into identity before personal experience has a chance. People are taught what another group represents and which suffering matters. By the time two individuals meet, they may already be carrying generations of expectations.'
         }
       ],
 
@@ -208,7 +215,7 @@
             '',
 
           reason:
-            'I am drawn to the collision between duty, identity, guilt, and survival inside him. He is responsible for serious harm while also being shaped by a system that defined his purpose early. His contradictions make him one of the clearest examples of how a person can be both accountable and trapped.'
+            'He brings duty, identity, guilt, and survival into the same conflict. He is responsible for serious harm while also being shaped by a system that defined him early. That makes him both accountable and trapped.'
         },
         {
           rank:
@@ -221,7 +228,7 @@
             '',
 
           reason:
-            'His leadership makes sacrifice, truth, and personal obsession impossible to separate. He can inspire people while also using their lives to move closer to an answer he personally needs. I find him compelling because his public purpose and private motivation are never completely identical.'
+            'His leadership makes sacrifice, truth, and obsession difficult to separate. He can inspire people while using their lives to move closer to an answer he personally needs. His public purpose and private motive are never identical.'
         },
         {
           rank:
@@ -234,7 +241,7 @@
             '',
 
           reason:
-            'Her growth turns an inherited role into a question of self-definition and responsibility. She has to decide whether kindness means obeying what others need or choosing honestly for herself. I like how her story connects personal identity with the political expectations placed on her.'
+            'Her growth turns an inherited role into a question of self-definition. She has to decide whether kindness means obeying what others need or choosing honestly for herself. Her personal identity is tied directly to political responsibility.'
         }
       ],
 
@@ -243,13 +250,13 @@
           'The most dangerous wall is the story that makes cruelty feel necessary.',
 
         paragraphs: [
-          'Nova reads the series as a study of systems rather than only individual heroes and enemies. Every personal decision happens inside inherited histories, institutions, military structures, and repeated stories about who deserves safety. The characters make choices, but they never make them in an empty world.',
+          'Nova reads the series as a study of systems rather than only individual heroes and enemies. Every personal decision happens inside inherited histories, institutions, military structures, and repeated stories about who deserves safety.',
 
-          'Perspective changes the meaning of nearly everything. The same event can become liberation, invasion, revenge, protection, or tragedy depending on who remembers it and who is allowed to explain it. The story does not suggest that every interpretation is equally true, but it shows that information always shapes judgment.',
+          'Perspective changes the meaning of nearly everything. The same event can become liberation, invasion, revenge, protection, or tragedy depending on who remembers it and who is allowed to explain it.',
 
-          'Responsibility becomes difficult because people can cause harm while also being shaped by forces larger than themselves. Understanding those forces is necessary, but it cannot become an automatic excuse. Nova thinks the series is strongest when it holds both ideas together without allowing either one to remove the other.',
+          'Responsibility becomes difficult because people can cause harm while also being shaped by forces larger than themselves. Understanding those forces is necessary, but it cannot become an automatic excuse.',
 
-          'The lasting question is not simply which side is correct. It is what a person should do after learning that their identity, duty, enemy, and history were built from incomplete information. Nova values the series because it treats that realization as the beginning of responsibility rather than the end of the argument.'
+          'The lasting question is what a person should do after learning that their identity, duty, enemy, and history were built from incomplete information. Nova sees that realization as the beginning of responsibility, not the end of the argument.'
         ]
       }
     }
@@ -507,61 +514,23 @@
   }
 
   async function loadAnimeMangaPool() {
-    const featuredResult =
+    const result =
       await supabaseClient
         .from(TABLE_NAME)
         .select('*')
-        .eq(
-          'featured',
-          true
-        );
+        .limit(200);
 
     if (
-      featuredResult.error
+      result.error
     ) {
-      throw featuredResult.error;
-    }
-
-    let pool =
-      normalizeStoryRows(
-        featuredResult.data ||
-        []
-      );
-
-    const minimumNeeded =
-      (
-        RAIN_ITEMS_PER_SIDE -
-        1
-      ) *
-      2 +
-      1;
-
-    if (
-      dedupeStories(pool).length <
-      minimumNeeded
-    ) {
-      const allResult =
-        await supabaseClient
-          .from(TABLE_NAME)
-          .select('*')
-          .limit(80);
-
-      if (
-        !allResult.error
-      ) {
-        pool =
-          dedupeStories([
-            ...pool,
-            ...normalizeStoryRows(
-              allResult.data ||
-              []
-            )
-          ]);
-      }
+      throw result.error;
     }
 
     return dedupeStories(
-      pool
+      normalizeStoryRows(
+        result.data ||
+        []
+      )
     );
   }
 
@@ -616,25 +585,6 @@
         poolMatch
       ) {
         return poolMatch;
-      }
-
-      const idResult =
-        await supabaseClient
-          .from(TABLE_NAME)
-          .select('*')
-          .eq(
-            'id',
-            CHOSEN_STORY_ID
-          )
-          .limit(1);
-
-      if (
-        !idResult.error &&
-        idResult.data?.[0]
-      ) {
-        return normalizeStory(
-          idResult.data[0]
-        );
       }
     }
 
@@ -775,7 +725,7 @@
           .filter(Boolean);
       }
     } catch (_) {
-      // Plain text is allowed.
+      // Plain text is valid.
     }
 
     return text
@@ -905,86 +855,83 @@
         )
       );
 
-    const neededPerSide =
-      RAIN_ITEMS_PER_SIDE -
-      1;
+    /*
+      Both sides receive the same number of ordinary covers.
+
+      The first half is used on the left and the second half is used on the
+      right, so an ordinary title cannot appear on both sides.
+    */
+    const ordinaryPerSide =
+      Math.min(
+        MAX_RAIN_ITEMS_PER_SIDE -
+        1,
+        Math.floor(
+          ordinaryPool.length /
+          2
+        )
+      );
 
     const shuffled =
       seededShuffle(
         ordinaryPool,
         hashString(
-          `${chosenStory.title}-rain`
+          `${chosenStory.title}-rain-v4`
         )
       );
 
     const leftOrdinary =
-      takeUniqueStories(
-        shuffled,
-        neededPerSide
-      );
-
-    const leftKeys =
-      new Set(
-        leftOrdinary.map(
-          storyKey
-        )
-      );
-
-    const unusedForRight =
-      shuffled.filter(
-        (story) => {
-          return !leftKeys.has(
-            storyKey(story)
-          );
-        }
-      );
-
-    const rightFallback =
-      seededShuffle(
-        shuffled,
-        hashString(
-          `${chosenStory.title}-right-rain`
-        )
+      shuffled.slice(
+        0,
+        ordinaryPerSide
       );
 
     const rightOrdinary =
-      takeUniqueStories(
-        [
-          ...unusedForRight,
-          ...rightFallback
-        ],
-        neededPerSide
+      shuffled.slice(
+        ordinaryPerSide,
+        ordinaryPerSide *
+        2
       );
 
-    if (
-      leftOrdinary.length <
-        neededPerSide ||
-      rightOrdinary.length <
-        neededPerSide
-    ) {
-      console.warn(
-        'Section 4 needs at least nine unique ordinary covers for each lane.'
+    /*
+      Attack on Titan is inserted between ordinary covers instead of being
+      placed separately after the rain has started.
+    */
+    const chosenLeftIndex =
+      Math.max(
+        1,
+        Math.floor(
+          (
+            leftOrdinary.length +
+            1
+          ) *
+          0.42
+        )
       );
-    }
+
+    const chosenRightIndex =
+      Math.max(
+        1,
+        Math.floor(
+          (
+            rightOrdinary.length +
+            1
+          ) *
+          0.58
+        )
+      );
 
     const leftStories =
       insertChosenStory(
         leftOrdinary,
         chosenStory,
-        CHOSEN_LEFT_INDEX
-      ).slice(
-        0,
-        RAIN_ITEMS_PER_SIDE
+        chosenLeftIndex
       );
 
     const rightStories =
       insertChosenStory(
         rightOrdinary,
         chosenStory,
-        CHOSEN_RIGHT_INDEX
-      ).slice(
-        0,
-        RAIN_ITEMS_PER_SIDE
+        chosenRightIndex
       );
 
     leftStories.forEach(
@@ -992,19 +939,16 @@
         story,
         index
       ) => {
-        const isChosen =
-          storyKey(story) ===
-          storyKey(
-            chosenStory
-          );
-
         elements.rainLeft
           .appendChild(
             createRainItem(
               story,
               'left',
               index,
-              isChosen
+              storyKey(story) ===
+                storyKey(
+                  chosenStory
+                )
             )
           );
       }
@@ -1015,64 +959,20 @@
         story,
         index
       ) => {
-        const isChosen =
-          storyKey(story) ===
-          storyKey(
-            chosenStory
-          );
-
         elements.rainRight
           .appendChild(
             createRainItem(
               story,
               'right',
               index,
-              isChosen
+              storyKey(story) ===
+                storyKey(
+                  chosenStory
+                )
             )
           );
       }
     );
-  }
-
-  function takeUniqueStories(
-    stories,
-    count
-  ) {
-    const result =
-      [];
-
-    const seen =
-      new Set();
-
-    for (
-      const story of
-      stories
-    ) {
-      const key =
-        storyKey(story);
-
-      if (
-        !key ||
-        seen.has(key)
-      ) {
-        continue;
-      }
-
-      seen.add(key);
-
-      result.push(
-        story
-      );
-
-      if (
-        result.length >=
-        count
-      ) {
-        break;
-      }
-    }
-
-    return result;
   }
 
   function insertChosenStory(
@@ -1164,7 +1064,8 @@
 
     for (
       let index =
-        copy.length - 1;
+        copy.length -
+        1;
       index > 0;
       index -= 1
     ) {
@@ -1235,47 +1136,52 @@
         'span'
       );
 
+    /*
+      These values keep the streams closer together and allow controlled
+      overlap instead of spreading covers across the entire screen edge.
+    */
     const leftPositions = [
-      2,
+      7,
       34,
-      62,
-      14,
-      50,
-      74,
-      24,
-      58,
-      6,
-      42
+      56,
+      18,
+      47,
+      27,
+      61,
+      11,
+      40,
+      22
     ];
 
     const rightPositions = [
-      68,
-      36,
-      4,
-      54,
-      18,
-      72,
-      42,
+      55,
+      28,
       8,
-      60,
-      28
+      45,
+      18,
+      59,
+      32,
+      12,
+      49,
+      24
     ];
 
     const coverWidths = [
-      96,
-      116,
+      94,
       104,
-      122,
+      98,
+      108,
       92,
+      102,
       110,
-      118,
-      100,
-      112,
-      94
+      96,
+      106,
+      100
     ];
 
     const positions =
-      side === 'left'
+      side ===
+      'left'
         ? leftPositions
         : rightPositions;
 
@@ -1639,7 +1545,7 @@
           getCombinedScore();
 
         const combinedReason =
-          `Average of Kai's ${READERS.kai.score} and Nova's ${READERS.nova.score}. Focus either profile to see the complete reason behind that reader's score.`;
+          `Average of Kai's ${READERS.kai.score} and Nova's ${READERS.nova.score}. Focus either profile to see the reason behind that reader's score.`;
 
         updateScoreDisplay(
           elements,
@@ -2279,56 +2185,6 @@
         );
       }
     );
-
-    gsap.from(
-      elements.sharedCard,
-      {
-        opacity: 0,
-
-        y: 54,
-
-        duration: 0.72,
-
-        ease:
-          'power2.out',
-
-        scrollTrigger: {
-          trigger:
-            elements.sharedCard,
-
-          start:
-            'top 88%',
-
-          once:
-            true
-        }
-      }
-    );
-
-    gsap.from(
-      elements.compareStage,
-      {
-        opacity: 0,
-
-        y: 44,
-
-        duration: 0.72,
-
-        ease:
-          'power2.out',
-
-        scrollTrigger: {
-          trigger:
-            elements.compareStage,
-
-          start:
-            'top 88%',
-
-          once:
-            true
-        }
-      }
-    );
   }
 
   function createPinnedTimeline(
@@ -2402,109 +2258,51 @@
         );
       };
 
-    leftItems.forEach(
-      (
-        item,
-        index
-      ) => {
-        gsap.set(
-          item,
-          {
-            y: () => {
-              const step =
-                viewportHeight() /
-                Math.max(
-                  leftItems.length -
-                  1,
-                  1
-                );
+    const timeline =
+      gsap.timeline({
+        defaults: {
+          ease:
+            'none'
+        },
 
-              return (
-                viewportHeight() *
-                0.9 -
-                index *
-                step
-              );
-            },
+        scrollTrigger: {
+          trigger:
+            elements.cinematic,
 
-            rotation:
-              -9 +
-              (
-                index %
-                5
-              ) *
-              4,
+          start:
+            'top top',
 
-            scale:
-              0.86 +
-              (
-                index %
-                4
-              ) *
-              0.055,
+          end:
+            `+=${PIN_DISTANCE}`,
 
-            opacity:
-              0.72 +
-              (
-                index %
-                3
-              ) *
-              0.1
-          }
-        );
-      }
-    );
+          pin:
+            true,
 
-    rightItems.forEach(
-      (
-        item,
-        index
-      ) => {
-        gsap.set(
-          item,
-          {
-            y: () => {
-              const step =
-                viewportHeight() /
-                Math.max(
-                  rightItems.length -
-                  1,
-                  1
-                );
+          pinSpacing:
+            true,
 
-              return (
-                -item.offsetHeight *
-                0.65 +
-                index *
-                step
-              );
-            },
+          scrub:
+            1,
 
-            rotation:
-              9 -
-              (
-                index %
-                5
-              ) *
-              4,
+          anticipatePin:
+            1,
 
-            scale:
-              0.86 +
-              (
-                index %
-                4
-              ) *
-              0.055,
+          invalidateOnRefresh:
+            true
+        }
+      });
 
-            opacity:
-              0.72 +
-              (
-                index %
-                3
-              ) *
-              0.1
-          }
-        );
+    /*
+      The CSS also hides the covers, preventing a flash before GSAP sets
+      their starting positions.
+    */
+    gsap.set(
+      [
+        ...leftItems,
+        ...rightItems
+      ],
+      {
+        autoAlpha: 0
       }
     );
 
@@ -2546,205 +2344,293 @@
       {
         autoAlpha: 0,
 
-        scale: 1.12,
+        scale: 1.08,
 
         rotation: -2
       }
     );
 
-    const timeline =
-      gsap.timeline({
-        defaults: {
-          ease:
-            'none'
-        },
+    /*
+      LEFT STREAM
 
-        scrollTrigger: {
-          trigger:
-            elements.cinematic,
+      Every ordinary left cover begins above the viewport. Each cover starts
+      at a different timeline position and travels downward until it leaves
+      below the viewport.
+    */
+    regularLeft.forEach(
+      (
+        item,
+        index
+      ) => {
+        const startTime =
+          0.18 +
+          index *
+          0.24;
 
-          start:
-            'top top',
+        const rotation =
+          -8 +
+          (
+            index %
+            5
+          ) *
+          3.5;
 
-          end:
-            `+=${PIN_DISTANCE}`,
+        timeline.fromTo(
+          item,
+          {
+            y: () => {
+              return (
+                -item.offsetHeight -
+                120 -
+                (
+                  index %
+                  3
+                ) *
+                80
+              );
+            },
 
-          pin:
-            true,
+            rotation,
 
-          pinSpacing:
-            true,
+            scale:
+              0.88 +
+              (
+                index %
+                3
+              ) *
+              0.05,
 
-          scrub:
-            1,
+            autoAlpha: 0
+          },
+          {
+            y: () => {
+              return (
+                viewportHeight() +
+                item.offsetHeight +
+                160 +
+                (
+                  index %
+                  3
+                ) *
+                80
+              );
+            },
 
-          anticipatePin:
-            1,
+            rotation:
+              -rotation *
+              0.55,
 
-          invalidateOnRefresh:
-            true
-        }
-      });
+            autoAlpha: 1,
 
-    timeline.to(
-      regularLeft,
-      {
-        y: (
-          index,
-          item
-        ) => {
-          const order =
-            Number(
-              item
-                .dataset
-                .rainIndex ||
-              index
-            );
+            duration: 1.42,
 
-          return (
-            -viewportHeight() *
-            1.25 -
-            (
-              regularLeft.length -
-              order
-            ) *
-            80
-          );
-        },
+            ease:
+              'none'
+          },
+          startTime
+        );
 
-        rotation: (
-          index,
-          item
-        ) => {
-          const order =
-            Number(
-              item
-                .dataset
-                .rainIndex ||
-              index
-            );
+        timeline.to(
+          item,
+          {
+            autoAlpha: 0,
 
-          return (
-            7 -
-            (
-              order %
-              5
-            ) *
-            3
-          );
-        },
-
-        duration:
-          1.78
-      },
-      0
+            duration: 0.16
+          },
+          startTime +
+          1.26
+        );
+      }
     );
 
-    timeline.to(
-      regularRight,
-      {
-        y: (
-          index,
-          item
-        ) => {
-          const order =
-            Number(
-              item
-                .dataset
-                .rainIndex ||
-              index
-            );
+    /*
+      RIGHT STREAM
 
-          return (
-            viewportHeight() *
-            1.2 +
-            order *
-            78
-          );
-        },
+      Every ordinary right cover begins below the viewport and travels
+      upward until it leaves above the viewport.
+    */
+    regularRight.forEach(
+      (
+        item,
+        index
+      ) => {
+        const startTime =
+          0.18 +
+          index *
+          0.24;
 
-        rotation: (
-          index,
-          item
-        ) => {
-          const order =
-            Number(
-              item
-                .dataset
-                .rainIndex ||
-              index
-            );
+        const rotation =
+          8 -
+          (
+            index %
+            5
+          ) *
+          3.5;
 
-          return (
-            -7 +
-            (
-              order %
-              5
-            ) *
-            3
-          );
-        },
+        timeline.fromTo(
+          item,
+          {
+            y: () => {
+              return (
+                viewportHeight() +
+                item.offsetHeight +
+                120 +
+                (
+                  index %
+                  3
+                ) *
+                80
+              );
+            },
 
-        duration:
-          1.78
-      },
-      0
+            rotation,
+
+            scale:
+              0.88 +
+              (
+                index %
+                3
+              ) *
+              0.05,
+
+            autoAlpha: 0
+          },
+          {
+            y: () => {
+              return (
+                -item.offsetHeight -
+                160 -
+                (
+                  index %
+                  3
+                ) *
+                80
+              );
+            },
+
+            rotation:
+              -rotation *
+              0.55,
+
+            autoAlpha: 1,
+
+            duration: 1.42,
+
+            ease:
+              'none'
+          },
+          startTime
+        );
+
+        timeline.to(
+          item,
+          {
+            autoAlpha: 0,
+
+            duration: 0.16
+          },
+          startTime +
+          1.26
+        );
+      }
     );
 
-    timeline.to(
+    /*
+      ATTACK ON TITAN
+
+      The left copy follows the downward stream. The right copy follows the
+      upward stream. Both enter after the rain has started and are selected
+      near the middle before they can leave the screen.
+    */
+    const chosenEntryTime =
+      1.02;
+
+    const chosenArrivalTime =
+      2.22;
+
+    timeline.fromTo(
       chosenLeft,
       {
         y: () => {
           return (
-            viewportHeight() *
-            0.58 -
-            chosenLeft
-              .offsetHeight /
-            2
+            -chosenLeft.offsetHeight -
+            170
           );
         },
 
-        rotation:
-          -4,
+        rotation: -7,
 
-        scale:
-          1,
+        scale: 0.92,
 
-        duration:
-          1.48,
-
-        ease:
-          'power1.inOut'
+        autoAlpha: 0
       },
-      0
-    );
-
-    timeline.to(
-      chosenRight,
       {
         y: () => {
           return (
             viewportHeight() *
-            0.42 -
-            chosenRight
-              .offsetHeight /
+            0.46 -
+            chosenLeft.offsetHeight /
             2
           );
         },
 
-        rotation:
-          4,
+        rotation: -3,
 
-        scale:
-          1,
+        scale: 1,
+
+        autoAlpha: 1,
 
         duration:
-          1.48,
+          chosenArrivalTime -
+          chosenEntryTime,
 
         ease:
-          'power1.inOut'
+          'none'
       },
-      0
+      chosenEntryTime
+    );
+
+    timeline.fromTo(
+      chosenRight,
+      {
+        y: () => {
+          return (
+            viewportHeight() +
+            chosenRight.offsetHeight +
+            170
+          );
+        },
+
+        rotation: 7,
+
+        scale: 0.92,
+
+        autoAlpha: 0
+      },
+      {
+        y: () => {
+          return (
+            viewportHeight() *
+            0.54 -
+            chosenRight.offsetHeight /
+            2
+          );
+        },
+
+        rotation: 3,
+
+        scale: 1,
+
+        autoAlpha: 1,
+
+        duration:
+          chosenArrivalTime -
+          chosenEntryTime,
+
+        ease:
+          'none'
+      },
+      chosenEntryTime
     );
 
     timeline.to(
@@ -2754,9 +2640,9 @@
 
         y: -42,
 
-        duration: 0.42
+        duration: 0.4
       },
-      0.78
+      1.55
     );
 
     timeline.to(
@@ -2765,15 +2651,16 @@
         ...regularRight
       ],
       {
-        autoAlpha: 0.12,
+        autoAlpha: 0.16,
 
-        scale: 0.8,
-
-        duration: 0.48
+        duration: 0.32
       },
-      1.16
+      2.05
     );
 
+    /*
+      Pickup glow.
+    */
     timeline.to(
       [
         chosenLeft,
@@ -2786,18 +2673,19 @@
         boxShadow:
           '0 38px 90px rgba(0,0,0,.62), 0 0 72px rgba(155,124,255,.42), 0 0 0 2px rgba(255,255,255,.12)',
 
-        scale:
-          1.13,
+        scale: 1.12,
 
-        duration:
-          0.3,
+        duration: 0.22,
 
         ease:
           'power2.out'
       },
-      1.22
+      chosenArrivalTime
     );
 
+    /*
+      Move both selected rain covers to the exact center.
+    */
     timeline.to(
       [
         chosenLeft,
@@ -2824,206 +2712,188 @@
           ).y;
         },
 
-        rotation:
-          0,
+        rotation: 0,
 
-        scale:
-          1.26,
+        scale: 1.26,
 
-        duration:
-          0.82,
+        duration: 0.72,
 
         ease:
           'power2.inOut'
       },
-      1.42
+      chosenArrivalTime +
+      0.18
     );
 
     timeline.to(
       elements.selectionCopy,
       {
-        autoAlpha:
-          1,
+        autoAlpha: 1,
 
-        y:
-          0,
+        y: 0,
 
-        duration:
-          0.28
+        duration: 0.24
       },
-      1.82
+      chosenArrivalTime +
+      0.56
     );
 
+    /*
+      Merge both selected covers into one.
+    */
     timeline.to(
       chosenRight,
       {
-        autoAlpha:
-          0,
+        autoAlpha: 0,
 
-        scale:
-          1.38,
+        scale: 1.38,
 
-        duration:
-          0.22
+        duration: 0.2
       },
-      2.13
+      chosenArrivalTime +
+      0.94
     );
 
     timeline.fromTo(
       chosenLeft,
       {
-        scale:
-          1.26
+        scale: 1.26
       },
       {
-        scale:
-          1.42,
+        scale: 1.42,
 
-        duration:
-          0.16,
+        duration: 0.15,
 
         ease:
           'power2.out'
       },
-      2.13
+      chosenArrivalTime +
+      0.94
     );
 
     timeline.to(
       chosenLeft,
       {
-        scale:
-          1.3,
+        scale: 1.3,
 
-        duration:
-          0.2,
+        duration: 0.18,
 
         ease:
           'power2.inOut'
       },
-      2.29
+      chosenArrivalTime +
+      1.09
     );
 
     timeline.to(
       elements.selectionCopy,
       {
-        autoAlpha:
-          0,
+        autoAlpha: 0,
 
-        y:
-          -10,
+        y: -10,
 
-        duration:
-          0.2
+        duration: 0.18
       },
-      2.33
+      chosenArrivalTime +
+      1.11
     );
 
+    /*
+      The formation card contains its own cover image. This avoids the
+      stacking-layer issue where the moving rain cover appeared behind a
+      dark placeholder.
+    */
     timeline.to(
       elements.cardFormation,
       {
-        autoAlpha:
-          1,
+        autoAlpha: 1,
 
-        y:
-          0,
+        y: 0,
 
-        scale:
-          1,
+        scale: 1,
 
-        duration:
-          0.5,
+        duration: 0.46,
 
         ease:
           'power2.out'
       },
-      2.36
+      chosenArrivalTime +
+      1.13
     );
 
     timeline.to(
       elements.formationCover,
       {
-        autoAlpha:
-          1,
+        autoAlpha: 1,
 
-        scale:
-          1,
+        scale: 1,
 
-        rotation:
-          0,
+        rotation: 0,
 
-        duration:
-          0.42,
+        duration: 0.36,
 
         ease:
           'power2.out'
       },
-      2.42
+      chosenArrivalTime +
+      1.18
     );
 
     timeline.to(
       chosenLeft,
       {
-        autoAlpha:
-          0,
+        autoAlpha: 0,
 
-        scale:
-          1.46,
+        scale: 1.46,
 
-        duration:
-          0.3,
+        duration: 0.24,
 
         ease:
           'power2.out'
       },
-      2.36
+      chosenArrivalTime +
+      1.13
     );
 
     timeline.to(
       elements.continueCue,
       {
-        autoAlpha:
-          1,
+        autoAlpha: 1,
 
-        y:
-          0,
+        y: 0,
 
-        duration:
-          0.28
+        duration: 0.24
       },
-      2.86
+      chosenArrivalTime +
+      1.58
     );
 
     timeline.to(
       elements.cardFormation,
       {
-        autoAlpha:
-          0,
+        autoAlpha: 0,
 
-        y:
-          -14,
+        y: -12,
 
-        scale:
-          0.98,
+        scale: 0.985,
 
-        duration:
-          0.28
+        duration: 0.26
       },
-      3.22
+      chosenArrivalTime +
+      2.12
     );
 
     timeline.to(
       elements.continueCue,
       {
-        autoAlpha:
-          0,
+        autoAlpha: 0,
 
-        y:
-          -8,
+        y: -8,
 
-        duration:
-          0.18
+        duration: 0.16
       },
-      3.22
+      chosenArrivalTime +
+      2.12
     );
 
     return () => {
