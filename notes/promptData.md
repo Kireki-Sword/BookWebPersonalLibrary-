@@ -1,16 +1,14 @@
 
 
-Code Geass
 Cowboy Bebop
-Neon Genesis Evangelion
 pluto
+gallactic wars
 Gurren Lagann
 Psycho Pass
 Puella Magi Madoka Magica
 Death Parade
-Steins;Gate
 Fate/stay night
-Violet Evergarden
+Violet Evergarden    v 
 Sword Art Online
 Re:Zero − Starting Life in Another World
 Monogatari Series

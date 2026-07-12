@@ -561,7 +561,7 @@
     aria-labelledby="section-4-title"
     data-section-cover-rain
     >
-    <div class="s4-cinematic" data-s4-cinematic>
+    <div class="s4-stage" data-s4-stage>
         <div
         class="s4-rain-lane s4-rain-lane-left"
         data-rain-left
@@ -603,352 +603,282 @@
         <strong>One shared story</strong>
         </div>
 
+        <!--
+        This is the only Attack on Titan card.
+
+        It forms in the center, shrinks toward the top, receives its buttons,
+        and remains visible while the profiles and reader content appear below.
+        -->
         <div
-        class="s4-card-formation"
-        data-card-formation
-        aria-hidden="true"
+        class="s4-shared-card-wrap"
+        data-shared-card-wrap
         >
-        <figure
-            class="s4-card-formation-cover"
-            data-formation-cover
-            data-cover-shell
-        >
-            <img
-            data-story-cover
-            src=""
-            alt="Attack on Titan cover"
-            decoding="async"
-            >
-
-            <span
-            class="s4-cover-fallback"
-            data-cover-fallback
-            >
-            Attack on Titan
-            </span>
-        </figure>
-
-        <div class="s4-card-formation-copy">
-            <span class="s4-card-formation-eyebrow">
-            Shared story
-            </span>
-
-            <strong data-story-title>
-            Attack on Titan
-            </strong>
-
-            <small data-story-creator>
-            Hajime Isayama
-            </small>
-
-            <div class="s4-card-formation-meta">
-            <span data-story-format>
-                Manga / Anime
-            </span>
-
-            <span>
-                Both completed
-            </span>
-            </div>
-        </div>
-
-        <span class="s4-card-formation-score">
-            9.5/10
-        </span>
-
-        <div
-            class="s4-card-formation-layers"
-            aria-hidden="true"
-        >
-            <span class="s4-card-formation-layers-label">
-            Saved layers
-            </span>
-
-            <div class="s4-card-formation-buttons">
-            <span class="is-active">Quotes</span>
-            <span class="is-muted">Moments</span>
-            <span>Characters</span>
-            <span class="is-muted">Notes</span>
-            <span>Thoughts</span>
-            </div>
-        </div>
-        </div>
-
-        <div
-        class="s4-continue-cue"
-        data-continue-cue
-        aria-hidden="true"
-        >
-        Continue to compare their saved layers
-        </div>
-    </div>
-
-    <div
-        class="s4-story-content"
-        data-story-content
-    >
-        <div class="s4-story-content-inner">
-        <div
-            class="s4-control-deck"
-            data-control-deck
-        >
-            <article
+        <article
             class="s4-shared-card"
             data-shared-card
             tabindex="0"
-            >
+        >
             <figure
-                class="s4-card-cover"
-                data-cover-shell
+            class="s4-card-cover"
+            data-cover-shell
             >
-                <img
+            <img
                 data-story-cover
                 src=""
                 alt="Attack on Titan cover"
                 decoding="async"
-                >
+            >
 
-                <span
+            <span
                 class="s4-cover-fallback"
                 data-cover-fallback
-                >
+            >
                 Attack on Titan
-                </span>
+            </span>
             </figure>
 
             <div class="s4-card-info">
-                <h3 data-story-title>
-                Attack on Titan
-                </h3>
-
-                <p data-story-creator>
-                Hajime Isayama
-                </p>
-            </div>
-
-            <div
-                class="s4-card-score"
-                data-reader-score
-                data-score-tooltip="Average of Kai's 9/10 and Nova's 10/10. Focus either reader to see the reason behind that score."
-                role="group"
-                tabindex="0"
-                aria-label="Average reader rating: 9.5 out of 10."
-            >
-                <span>9.5/10</span>
-            </div>
-
-            <div
-                class="s4-card-meta"
-                aria-label="Story information"
-            >
-                <span data-story-format>
-                Manga / Anime
-                </span>
-
-                <span data-reader-status>
-                Both completed
-                </span>
-            </div>
-
-            <div class="s4-card-layers">
-                <span class="s4-layers-label">
-                Saved layers
-                </span>
-
-                <div
-                class="s4-layer-buttons"
-                aria-label="Choose a saved layer"
-                >
-                <button
-                    class="s4-layer-button is-active"
-                    type="button"
-                    aria-pressed="true"
-                    data-layer="quotes"
-                >
-                    Quotes
-                </button>
-
-                <button
-                    class="s4-layer-button is-empty"
-                    type="button"
-                    disabled
-                    aria-disabled="true"
-                    title="No saved moments"
-                >
-                    Moments
-                </button>
-
-                <button
-                    class="s4-layer-button"
-                    type="button"
-                    aria-pressed="false"
-                    data-layer="characters"
-                >
-                    Characters
-                </button>
-
-                <button
-                    class="s4-layer-button is-empty"
-                    type="button"
-                    disabled
-                    aria-disabled="true"
-                    title="No saved notes"
-                >
-                    Notes
-                </button>
-
-                <button
-                    class="s4-layer-button"
-                    type="button"
-                    aria-pressed="false"
-                    data-layer="thoughts"
-                >
-                    Thoughts
-                </button>
-                </div>
-            </div>
-            </article>
-
-            <header class="s4-content-intro">
-            <span class="s4-section-label">
-                One title. Two inner worlds.
+            <span class="s4-card-eyebrow">
+                Shared story
             </span>
 
-            <p>
-                The shared card stays available while you switch layers and
-                compare both readers.
-            </p>
-            </header>
-        </div>
+            <h3 data-story-title>
+                Attack on Titan
+            </h3>
 
-        <div
-            class="s4-compare-stage"
-            data-compare-stage
-            data-focus="both"
-        >
-            <section
-            class="s4-reader-side s4-reader-side-left"
-            aria-labelledby="s4-kai-name"
+            <p data-story-creator>
+                Hajime Isayama
+            </p>
+            </div>
+
+            <div
+            class="s4-card-score"
+            data-reader-score
+            data-score-tooltip="Average of Kai's 9/10 and Nova's 10/10. Focus either reader to see why they gave that score."
+            role="group"
+            tabindex="0"
+            aria-label="Average reader rating: 9.5 out of 10."
             >
-            <button
-                class="s4-profile-card"
+            <span>9.5/10</span>
+            </div>
+
+            <div
+            class="s4-card-meta"
+            aria-label="Story information"
+            >
+            <span data-story-format>
+                Manga / Anime
+            </span>
+
+            <span data-reader-status>
+                Both completed
+            </span>
+            </div>
+
+            <div
+            class="s4-card-layers"
+            data-card-layers
+            >
+            <span class="s4-layers-label">
+                Saved layers
+            </span>
+
+            <div
+                class="s4-layer-buttons"
+                aria-label="Choose a saved layer"
+            >
+                <button
+                class="s4-layer-button is-active"
+                type="button"
+                aria-pressed="true"
+                data-layer="quotes"
+                >
+                Quotes
+                </button>
+
+                <button
+                class="s4-layer-button is-empty"
+                type="button"
+                disabled
+                aria-disabled="true"
+                title="No saved moments"
+                >
+                Moments
+                </button>
+
+                <button
+                class="s4-layer-button"
                 type="button"
                 aria-pressed="false"
-                data-focus-reader="left"
+                data-layer="characters"
+                >
+                Characters
+                </button>
+
+                <button
+                class="s4-layer-button is-empty"
+                type="button"
+                disabled
+                aria-disabled="true"
+                title="No saved notes"
+                >
+                Notes
+                </button>
+
+                <button
+                class="s4-layer-button"
+                type="button"
+                aria-pressed="false"
+                data-layer="thoughts"
+                >
+                Thoughts
+                </button>
+            </div>
+            </div>
+        </article>
+        </div>
+
+        <header
+        class="s4-content-intro"
+        data-content-intro
+        >
+        <span class="s4-section-label">
+            One title. Two inner worlds.
+        </span>
+
+        <p>
+            Switch layers or focus either reader while keeping the shared
+            story visible.
+        </p>
+        </header>
+
+        <div
+        class="s4-compare-stage"
+        data-compare-stage
+        data-focus="both"
+        >
+        <section
+            class="s4-reader-side s4-reader-side-left"
+            aria-labelledby="s4-kai-name"
+        >
+            <button
+            class="s4-profile-card"
+            type="button"
+            aria-pressed="false"
+            data-focus-reader="left"
             >
-                <span
+            <span
                 class="s4-profile-avatar"
                 aria-hidden="true"
-                >
+            >
                 <img
-                    data-avatar-image="kai"
-                    src=""
-                    alt=""
-                    hidden
+                data-avatar-image="kai"
+                src=""
+                alt=""
+                hidden
                 >
 
                 <span data-avatar-fallback="kai">
-                    K
+                K
                 </span>
-                </span>
+            </span>
 
-                <span class="s4-profile-text">
+            <span class="s4-profile-text">
                 <strong
-                    id="s4-kai-name"
-                    data-profile-name="kai"
+                id="s4-kai-name"
+                data-profile-name="kai"
                 >
-                    kai.reads
+                kai.reads
                 </strong>
 
                 <small data-profile-bio="kai">
-                    remembers the feeling before the theory
+                remembers the feeling before the theory
                 </small>
-                </span>
+            </span>
 
-                <span class="s4-profile-command">
+            <span class="s4-profile-command">
                 Focus
-                </span>
+            </span>
             </button>
 
             <div
-                class="s4-reader-content"
-                data-reader-content="kai"
-                aria-live="polite"
+            class="s4-reader-content"
+            data-reader-content="kai"
+            aria-live="polite"
             ></div>
-            </section>
+        </section>
 
-            <div class="s4-compare-divider">
+        <div class="s4-compare-divider">
             <span
-                class="s4-divider-line"
-                aria-hidden="true"
+            class="s4-divider-line"
+            aria-hidden="true"
             ></span>
 
             <button
-                class="s4-compare-both"
-                type="button"
-                data-compare-both
-                aria-pressed="true"
+            class="s4-compare-both"
+            type="button"
+            data-compare-both
+            aria-pressed="true"
             >
-                Compare both
+            Compare both
             </button>
 
             <span
-                class="s4-divider-line"
-                aria-hidden="true"
+            class="s4-divider-line"
+            aria-hidden="true"
             ></span>
-            </div>
+        </div>
 
-            <section
+        <section
             class="s4-reader-side s4-reader-side-right"
             aria-labelledby="s4-nova-name"
-            >
+        >
             <button
-                class="s4-profile-card"
-                type="button"
-                aria-pressed="false"
-                data-focus-reader="right"
+            class="s4-profile-card"
+            type="button"
+            aria-pressed="false"
+            data-focus-reader="right"
             >
-                <span
+            <span
                 class="s4-profile-avatar"
                 aria-hidden="true"
-                >
+            >
                 <img
-                    data-avatar-image="nova"
-                    src=""
-                    alt=""
-                    hidden
+                data-avatar-image="nova"
+                src=""
+                alt=""
+                hidden
                 >
 
                 <span data-avatar-fallback="nova">
-                    N
+                N
                 </span>
-                </span>
+            </span>
 
-                <span class="s4-profile-text">
+            <span class="s4-profile-text">
                 <strong
-                    id="s4-nova-name"
-                    data-profile-name="nova"
+                id="s4-nova-name"
+                data-profile-name="nova"
                 >
-                    nova.pages
+                nova.pages
                 </strong>
 
                 <small data-profile-bio="nova">
-                    tracks themes, systems, and shifting truth
+                tracks themes, systems, and shifting truth
                 </small>
-                </span>
+            </span>
 
-                <span class="s4-profile-command">
+            <span class="s4-profile-command">
                 Focus
-                </span>
+            </span>
             </button>
 
             <div
-                class="s4-reader-content"
-                data-reader-content="nova"
-                aria-live="polite"
+            class="s4-reader-content"
+            data-reader-content="nova"
+            aria-live="polite"
             ></div>
-            </section>
-        </div>
+        </section>
         </div>
     </div>
 
@@ -967,7 +897,7 @@
 
         <p>
         Confirm that Supabase is loaded and that the manga table contains
-        valid anime or manga rows with cover files.
+        valid rows and cover files.
         </p>
     </div>
 
