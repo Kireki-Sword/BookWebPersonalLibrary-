@@ -55,7 +55,6 @@ title | Title
 alternativeTitles | ["Alt Title 1", "Alt Title 2"]
 type | ["manga", "anime"]
 creator | Creator Name
-cover | img/covers/primarytype-title-year.jpg
 heroScore | 9.6
 genres | ["Genre 1", "Genre 2", "Genre 3"]
 tags | ["Tag 1", "Tag 2", "Tag 3", "Tag 4"]
@@ -72,7 +71,6 @@ title
 alternativeTitles
 type
 creator
-cover
 heroScore
 genres
 tags
@@ -202,14 +200,6 @@ For light novels, use the author.
 For anime-original works, use the main original creator, studio credit, or official creator credit if applicable.
 Do not put anime studios here unless the work is anime-original and the studio/creator credit is the official creator identity.
 
-cover:
-Always use:
-img/covers/[id].jpg
-
-Example:
-img/covers/manga-berserk-1989.jpg
-
-The actual uploaded image should be the chosen official cover, but the database path must stay stable.
 
 heroScore:
 Use a numeric value.
@@ -883,7 +873,6 @@ title
 alternativeTitles
 type
 creator
-cover
 heroScore
 genres
 tags
@@ -1122,7 +1111,6 @@ title | Example Title
 alternativeTitles | ["Example Native Title", "Example Romanized Title"]
 type | ["manga", "anime"]
 creator | Creator Name
-cover | img/covers/manga-example-2000.jpg
 heroScore | 9.5
 genres | ["Action", "Drama", "Fantasy"]
 tags | ["Trauma", "Survival", "Morality", "Sacrifice"]

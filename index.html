@@ -542,190 +542,615 @@
 
     </section>
 
-    <!-- Section 4 — Featured Anime/Manga Cover Rain + Same Story Different Souls -->
-    <section id="section-4" class="section section-cover-rain" aria-labelledby="section-4-title" data-section-cover-rain>
+    <!-- SECTION 4 — Same Story, Different Souls -->
+    <section
+    id="section-4"
+    class="section section-cover-rain"
+    aria-labelledby="section-4-title"
+    data-section-cover-rain
+    >
+    <!-- Phase 1: featured anime/manga cover rain -->
+    <div class="s4-rain-scene" data-rain-scene>
+        <div
+        class="s4-rain-lane s4-rain-lane-left"
+        data-rain-left
+        aria-hidden="true"
+        ></div>
 
-        <!-- PHASE 1: database covers rain on both sides -->
-        <div class="rain-wrapper" data-rain-wrapper>
+        <div
+        class="s4-rain-lane s4-rain-lane-right"
+        data-rain-right
+        aria-hidden="true"
+        ></div>
 
-            <!-- Left side: covers float upward -->
-            <div class="rain-col rain-col-left" data-rain-left aria-hidden="true"></div>
+        <div class="s4-rain-copy" data-rain-copy>
+        <span class="s4-section-label">
+            Every story finds its reader
+        </span>
 
-            <!-- Right side: covers fall downward -->
-            <div class="rain-col rain-col-right" data-rain-right aria-hidden="true"></div>
+        <h2 id="section-4-title">
+            Same story.
+            <span>Different souls.</span>
+        </h2>
 
-            <!-- Center copy over cover rain -->
-            <div class="rain-center-copy" data-rain-label>
-                <span class="section-label">Every story finds its reader</span>
+        <p>
+            Two people can finish the same story and carry away
+            completely different meanings.
+        </p>
 
-                <h2 id="section-4-title">
-                    Same story.
-                    <span>Different souls.</span>
-                </h2>
+        <span class="s4-scroll-cue" aria-hidden="true">
+            Scroll to connect them
+        </span>
+        </div>
+    </div>
 
-                <p>Scroll to see how one anime or manga can live differently in two libraries.</p>
-            </div>
+    <!-- Phase 2: two identical covers meet and become one -->
+    <div
+        class="s4-merge-stage"
+        data-merge-stage
+        aria-hidden="true"
+    >
+        <figure
+        class="s4-merge-copy s4-merge-copy-left"
+        data-merge-copy-left
+        data-cover-shell
+        >
+        <img
+            data-story-cover
+            src=""
+            alt=""
+            decoding="async"
+        >
 
+        <span
+            class="s4-cover-fallback"
+            data-cover-fallback
+        >
+            Attack on Titan
+        </span>
+        </figure>
+
+        <figure
+        class="s4-merge-copy s4-merge-copy-right"
+        data-merge-copy-right
+        data-cover-shell
+        >
+        <img
+            data-story-cover
+            src=""
+            alt=""
+            decoding="async"
+        >
+
+        <span
+            class="s4-cover-fallback"
+            data-cover-fallback
+        >
+            Attack on Titan
+        </span>
+        </figure>
+
+        <figure
+        class="s4-merge-copy s4-merge-copy-one"
+        data-merge-copy-one
+        data-cover-shell
+        >
+        <img
+            data-story-cover
+            src=""
+            alt=""
+            decoding="async"
+        >
+
+        <span
+            class="s4-cover-fallback"
+            data-cover-fallback
+        >
+            Attack on Titan
+        </span>
+        </figure>
+
+        <span
+        class="s4-merge-caption"
+        data-merge-caption
+        >
+        One shared story
+        </span>
+    </div>
+
+    <!-- Phase 3: shared cover and two synchronized cards -->
+    <div
+        class="s4-final-scene"
+        data-final-scene
+    >
+        <header
+        class="s4-shared-story"
+        data-shared-story
+        >
+        <figure
+            class="s4-shared-cover"
+            data-cover-shell
+        >
+            <img
+            data-story-cover
+            src=""
+            alt="Attack on Titan cover"
+            decoding="async"
+            >
+
+            <span
+            class="s4-cover-fallback"
+            data-cover-fallback
+            >
+            Attack on Titan
+            </span>
+        </figure>
+
+        <div class="s4-shared-story-copy">
+            <span class="s4-shared-kicker">
+            The story they shared
+            </span>
+
+            <h3 data-story-title>
+            Attack on Titan
+            </h3>
+
+            <p data-story-creator>
+            Hajime Isayama
+            </p>
+        </div>
+        </header>
+
+        <div
+        class="s4-final-heading"
+        data-final-heading
+        >
+        <span class="s4-section-label">
+            One title. Two inner worlds.
+        </span>
+
+        <p>
+            Choose a saved layer. Both cards update together so
+            their experiences stay easy to compare.
+        </p>
         </div>
 
+        <div
+        class="s4-card-grid"
+        data-card-grid
+        >
+        <!-- LEFT VIEWER -->
+        <article
+            class="s4-story-card s4-story-card-left"
+            data-soul-card="left"
+            aria-labelledby="s4-left-title"
+        >
+            <figure
+            class="s4-card-cover"
+            data-cover-shell
+            >
+            <img
+                data-story-cover
+                src=""
+                alt="Attack on Titan cover"
+                decoding="async"
+            >
 
-        <!-- TRANSITION: selected featured cover rises into place -->
-        <div class="feature-book-float" data-transition-book aria-hidden="true">
-            <div class="feature-book-cover-shell">
-                <img data-feature-cover src="" alt="">
-                <div class="cover-fallback" data-feature-cover-fallback></div>
+            <span
+                class="s4-cover-fallback"
+                data-cover-fallback
+            >
+                Attack on Titan
+            </span>
+            </figure>
+
+            <div class="s4-card-info">
+            <div class="s4-owner">
+                <span
+                class="s4-owner-avatar"
+                aria-hidden="true"
+                >
+                K
+                </span>
+
+                <span class="s4-owner-copy">
+                <strong>kai.reads</strong>
+                <small>saves emotions first</small>
+                </span>
             </div>
-        </div>
 
+            <h3
+                id="s4-left-title"
+                data-story-title
+            >
+                Attack on Titan
+            </h3>
 
-        <!-- PHASE 2: same anime/manga, two different users -->
-        <div class="souls-section" data-souls-section>
+            <p data-story-creator>
+                Hajime Isayama
+            </p>
+            </div>
 
-            <!-- Shared story cover at the top center -->
-            <div class="souls-book" data-souls-book>
-                <div class="souls-book-cover-shell">
-                    <img data-souls-book-cover src="" alt="">
-                    <div class="cover-fallback" data-souls-book-fallback></div>
+            <div
+            class="s4-card-score"
+            aria-label="Kai rated this story 9 out of 10"
+            >
+            <span>9/10</span>
+            </div>
+
+            <div
+            class="s4-card-chips"
+            aria-label="Kai's story status"
+            >
+            <span data-story-format>
+                Anime / Manga
+            </span>
+
+            <span>Completed</span>
+            </div>
+
+            <div class="s4-saved-layers">
+            <span class="s4-layers-label">
+                Saved layers
+            </span>
+
+            <div
+                class="s4-layer-tabs"
+                role="tablist"
+                aria-label="Kai's saved layers"
+                data-layer-tabs
+            >
+                <button
+                id="s4-left-tab-quote"
+                class="s4-layer-tab is-active"
+                type="button"
+                role="tab"
+                aria-selected="true"
+                aria-controls="s4-left-panel-quote"
+                tabindex="0"
+                data-soul-tab="quote"
+                >
+                Quote
+                </button>
+
+                <button
+                id="s4-left-tab-character"
+                class="s4-layer-tab"
+                type="button"
+                role="tab"
+                aria-selected="false"
+                aria-controls="s4-left-panel-character"
+                tabindex="-1"
+                data-soul-tab="character"
+                >
+                Character
+                </button>
+
+                <button
+                id="s4-left-tab-thoughts"
+                class="s4-layer-tab"
+                type="button"
+                role="tab"
+                aria-selected="false"
+                aria-controls="s4-left-panel-thoughts"
+                tabindex="-1"
+                data-soul-tab="thoughts"
+                >
+                Thoughts
+                </button>
+            </div>
+
+            <div class="s4-layer-panels">
+                <section
+                id="s4-left-panel-quote"
+                class="s4-layer-panel is-active"
+                role="tabpanel"
+                aria-labelledby="s4-left-tab-quote"
+                tabindex="0"
+                data-soul-panel="quote"
+                >
+                <span class="s4-panel-kicker">
+                    Favorite line · paraphrased
+                </span>
+
+                <p class="s4-panel-feature">
+                    “Even inside fear, there is still a choice.”
+                </p>
+
+                <p>
+                    Kai keeps this idea because it turns the story’s
+                    scale into a personal question about courage.
+                </p>
+                </section>
+
+                <section
+                id="s4-left-panel-character"
+                class="s4-layer-panel"
+                role="tabpanel"
+                aria-labelledby="s4-left-tab-character"
+                tabindex="0"
+                data-soul-panel="character"
+                hidden
+                >
+                <span class="s4-panel-kicker">
+                    Favorite character
+                </span>
+
+                <div class="s4-character-row">
+                    <span
+                    class="s4-character-mark"
+                    aria-hidden="true"
+                    >
+                    A
+                    </span>
+
+                    <div>
+                    <strong>Armin Arlert</strong>
+
+                    <p>
+                        Kai connects with his curiosity, empathy,
+                        and quiet kind of bravery.
+                    </p>
+                    </div>
                 </div>
+                </section>
 
-                <div class="souls-book-info">
-                    <span class="souls-book-kicker">Shared featured story</span>
-                    <h3 data-souls-book-title>Featured story</h3>
-                    <p data-souls-book-creator>From your database</p>
+                <section
+                id="s4-left-panel-thoughts"
+                class="s4-layer-panel"
+                role="tabpanel"
+                aria-labelledby="s4-left-tab-thoughts"
+                tabindex="0"
+                data-soul-panel="thoughts"
+                hidden
+                >
+                <span class="s4-panel-kicker">
+                    Personal reflection
+                </span>
+
+                <p class="s4-panel-feature">
+                    Freedom means less when fear chooses for you.
+                </p>
+
+                <p>
+                    Kai remembers the story as an emotional struggle
+                    between fear, loyalty, and the desire to move forward.
+                </p>
+                </section>
+            </div>
+            </div>
+        </article>
+
+        <!-- RIGHT VIEWER -->
+        <article
+            class="s4-story-card s4-story-card-right"
+            data-soul-card="right"
+            aria-labelledby="s4-right-title"
+        >
+            <figure
+            class="s4-card-cover"
+            data-cover-shell
+            >
+            <img
+                data-story-cover
+                src=""
+                alt="Attack on Titan cover"
+                decoding="async"
+            >
+
+            <span
+                class="s4-cover-fallback"
+                data-cover-fallback
+            >
+                Attack on Titan
+            </span>
+            </figure>
+
+            <div class="s4-card-info">
+            <div class="s4-owner">
+                <span
+                class="s4-owner-avatar"
+                aria-hidden="true"
+                >
+                N
+                </span>
+
+                <span class="s4-owner-copy">
+                <strong>nova.pages</strong>
+                <small>tracks themes and meaning</small>
+                </span>
+            </div>
+
+            <h3
+                id="s4-right-title"
+                data-story-title
+            >
+                Attack on Titan
+            </h3>
+
+            <p data-story-creator>
+                Hajime Isayama
+            </p>
+            </div>
+
+            <div
+            class="s4-card-score"
+            aria-label="Nova rated this story 10 out of 10"
+            >
+            <span>10/10</span>
+            </div>
+
+            <div
+            class="s4-card-chips"
+            aria-label="Nova's story status"
+            >
+            <span data-story-format>
+                Anime / Manga
+            </span>
+
+            <span>Completed</span>
+            </div>
+
+            <div class="s4-saved-layers">
+            <span class="s4-layers-label">
+                Saved layers
+            </span>
+
+            <div
+                class="s4-layer-tabs"
+                role="tablist"
+                aria-label="Nova's saved layers"
+                data-layer-tabs
+            >
+                <button
+                id="s4-right-tab-quote"
+                class="s4-layer-tab is-active"
+                type="button"
+                role="tab"
+                aria-selected="true"
+                aria-controls="s4-right-panel-quote"
+                tabindex="0"
+                data-soul-tab="quote"
+                >
+                Quote
+                </button>
+
+                <button
+                id="s4-right-tab-character"
+                class="s4-layer-tab"
+                type="button"
+                role="tab"
+                aria-selected="false"
+                aria-controls="s4-right-panel-character"
+                tabindex="-1"
+                data-soul-tab="character"
+                >
+                Character
+                </button>
+
+                <button
+                id="s4-right-tab-thoughts"
+                class="s4-layer-tab"
+                type="button"
+                role="tab"
+                aria-selected="false"
+                aria-controls="s4-right-panel-thoughts"
+                tabindex="-1"
+                data-soul-tab="thoughts"
+                >
+                Thoughts
+                </button>
+            </div>
+
+            <div class="s4-layer-panels">
+                <section
+                id="s4-right-panel-quote"
+                class="s4-layer-panel is-active"
+                role="tabpanel"
+                aria-labelledby="s4-right-tab-quote"
+                tabindex="0"
+                data-soul-panel="quote"
+                >
+                <span class="s4-panel-kicker">
+                    Favorite line · paraphrased
+                </span>
+
+                <p class="s4-panel-feature">
+                    “The world changes when the story around it changes.”
+                </p>
+
+                <p>
+                    Nova saves this idea because it captures how truth,
+                    memory, and perspective shape every decision.
+                </p>
+                </section>
+
+                <section
+                id="s4-right-panel-character"
+                class="s4-layer-panel"
+                role="tabpanel"
+                aria-labelledby="s4-right-tab-character"
+                tabindex="0"
+                data-soul-panel="character"
+                hidden
+                >
+                <span class="s4-panel-kicker">
+                    Favorite character
+                </span>
+
+                <div class="s4-character-row">
+                    <span
+                    class="s4-character-mark"
+                    aria-hidden="true"
+                    >
+                    R
+                    </span>
+
+                    <div>
+                    <strong>Reiner Braun</strong>
+
+                    <p>
+                        Nova is drawn to the contradiction between duty,
+                        identity, guilt, and survival.
+                    </p>
+                    </div>
                 </div>
+                </section>
+
+                <section
+                id="s4-right-panel-thoughts"
+                class="s4-layer-panel"
+                role="tabpanel"
+                aria-labelledby="s4-right-tab-thoughts"
+                tabindex="0"
+                data-soul-panel="thoughts"
+                hidden
+                >
+                <span class="s4-panel-kicker">
+                    Personal reflection
+                </span>
+
+                <p class="s4-panel-feature">
+                    Understanding a side does not erase what that side has done.
+                </p>
+
+                <p>
+                    Nova remembers the story as a warning about inherited
+                    conflict and the stories people use to justify it.
+                </p>
+                </section>
             </div>
-
-
-            <!-- Phase 2 intro -->
-            <div class="souls-intro" data-souls-intro>
-                <span class="section-label">One title. Two inner worlds.</span>
-                <p>The same anime or manga can become completely different memories for different people.</p>
             </div>
-
-
-            <!-- Two profile cards -->
-            <div class="souls-columns">
-
-                <!-- LEFT PROFILE -->
-                <article class="souls-profile-card souls-profile-left" data-souls-card-left>
-
-                    <header class="souls-person" data-souls-person>
-                        <div class="souls-avatar" aria-hidden="true">K</div>
-
-                        <div>
-                            <span class="souls-name">kai.reads</span>
-                            <p class="souls-subtitle">saves emotions first</p>
-                        </div>
-                    </header>
-
-                    <!-- JS fills these rows with featured anime/manga from the database -->
-                    <div class="souls-mini-library" data-souls-library-left aria-label="Kai featured library preview"></div>
-
-                    <section class="souls-round souls-round-quote" data-round="quote">
-                        <span class="souls-round-label">Saved line</span>
-                        <p class="souls-quote">
-                            “I saved this because it made the whole story feel personal.”
-                        </p>
-                    </section>
-
-                    <section class="souls-round souls-round-moment" data-round="moment">
-                        <span class="souls-round-label">Moment</span>
-                        <p>
-                            Kai remembers the quiet pause after the biggest turning point, when everything felt heavier than before.
-                        </p>
-                    </section>
-
-                    <section class="souls-round souls-round-character" data-round="character">
-                        <span class="souls-round-label">Character</span>
-
-                        <div class="souls-character">
-                            <div class="souls-character-mark" aria-hidden="true">A</div>
-
-                            <div>
-                                <strong>The one they understand most</strong>
-                                <p>messy, human, and hard to stop thinking about</p>
-                            </div>
-                        </div>
-                    </section>
-
-                    <section class="souls-round souls-round-thoughts" data-round="thoughts">
-                        <span class="souls-round-label">Thoughts</span>
-
-                        <p class="souls-thoughts" data-type-thought>
-                            Kai reads this story like a memory about pressure, loyalty, and the strange way a fictional scene can explain something real.
-                        </p>
-                    </section>
-
-                </article>
-
-
-                <div class="souls-divider" aria-hidden="true"></div>
-
-
-                <!-- RIGHT PROFILE -->
-                <article class="souls-profile-card souls-profile-right" data-souls-card-right>
-
-                    <header class="souls-person" data-souls-person>
-                        <div class="souls-avatar" aria-hidden="true">N</div>
-
-                        <div>
-                            <span class="souls-name">nova.pages</span>
-                            <p class="souls-subtitle">tracks themes and meaning</p>
-                        </div>
-                    </header>
-
-                    <!-- JS fills these rows with featured anime/manga from the database -->
-                    <div class="souls-mini-library" data-souls-library-right aria-label="Nova featured library preview"></div>
-
-                    <section class="souls-round souls-round-quote" data-round="quote">
-                        <span class="souls-round-label">Saved line</span>
-                        <p class="souls-quote">
-                            “I saved this because it changed how I saw the character.”
-                        </p>
-                    </section>
-
-                    <section class="souls-round souls-round-moment" data-round="moment">
-                        <span class="souls-round-label">Moment</span>
-                        <p>
-                            Nova remembers the scene where the story stops rushing and finally lets the meaning catch up.
-                        </p>
-                    </section>
-
-                    <section class="souls-round souls-round-character" data-round="character">
-                        <span class="souls-round-label">Character</span>
-
-                        <div class="souls-character">
-                            <div class="souls-character-mark" aria-hidden="true">B</div>
-
-                            <div>
-                                <strong>The one they question most</strong>
-                                <p>complicated, symbolic, and impossible to ignore</p>
-                            </div>
-                        </div>
-                    </section>
-
-                    <section class="souls-round souls-round-thoughts" data-round="thoughts">
-                        <span class="souls-round-label">Thoughts</span>
-
-                        <p class="souls-thoughts" data-type-thought>
-                            Nova reads this story like a question about identity, choice, and why two people can finish the same title with different feelings.
-                        </p>
-                    </section>
-
-                </article>
-
-            </div>
-
+        </article>
         </div>
+    </div>
 
+    <!-- Shown only when database loading fails -->
+    <div
+        class="s4-empty"
+        data-section-4-empty
+        hidden
+    >
+        <span class="s4-section-label">
+        Featured stories needed
+        </span>
 
-        <!-- Static message appears only if there are no featured anime/manga rows -->
-        <div class="section-4-empty" data-section-4-empty hidden>
-            <span class="section-label">Featured stories needed</span>
-            <h3>Add featured anime or manga in Supabase</h3>
-            <p>Set <strong>featured = true</strong> on a few anime or manga rows so this section can build the cover rain.</p>
-        </div>
+        <h3>
+        Add featured anime or manga in Supabase
+        </h3>
 
+        <p>
+        Set <strong>featured = true</strong> on several anime
+        or manga rows so the cover rain can be built.
+        </p>
+    </div>
+
+    <p
+        class="s4-status"
+        data-section-4-status
+        role="status"
+        aria-live="polite"
+    ></p>
     </section>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>

@@ -1,852 +1,1877 @@
-// =========================================================
-// SECTION 4 — FEATURED ANIME/MANGA COVER RAIN
-// Data source:
-// - Supabase table: manga
-// - only rows where featured = true
-// - only type including anime or manga
-// - cover rule: database can store img/covers/id.jpg,
-//   Supabase Storage bucket is already "img", so public path becomes covers/id.jpg.
-// Requires:
-// - Supabase browser library
-// - GSAP
-// - GSAP ScrollTrigger
-// =========================================================
+/* =========================================================
+   SECTION 4 — SAME STORY, DIFFERENT SOULS
+
+   Requires:
+   - Supabase
+   - GSAP
+   - ScrollTrigger
+
+   Replace the old Section 4 JavaScript with this file.
+   ========================================================= */
 
 (() => {
-  // ---------------------------------------------------------
-  // DATABASE CONFIG
-  // ---------------------------------------------------------
+  'use strict';
 
-  const SUPABASE_URL = 'https://hsruxfpslxguhwnccwuj.supabase.co';
-  const SUPABASE_KEY = 'sb_publishable_Z2upBCdemNtdB4j5jry65A_XD_u8BsD';
+  const CONFIG = {
+    supabaseUrl:
+      'https://hsruxfpslxguhwnccwuj.supabase.co',
 
-  const TABLE_NAME = 'manga';
-  const BUCKET_NAME = 'img';
-  const COVER_FOLDER = 'covers';
+    supabaseKey:
+      'sb_publishable_Z2upBCdemNtdB4j5jry65A_XD_u8BsD',
 
-  // How many visual cover cards the rain needs.
-  // The database does not need this many unique rows because the JS repeats featured stories.
-  const RAIN_COVER_COUNT = 40;
+    table:
+      'manga',
 
-  // Pinned scroll distance. Phase 1 gets the first part; transition and Phase 2 use the rest.
-  const PIN_DISTANCE = 5200;
+    bucket:
+      'img',
 
-  // ---------------------------------------------------------
-  // STATE
-  // ---------------------------------------------------------
+    coverFolder:
+      'covers',
 
-  let supabaseClient = null;
+    /*
+      Add the exact Attack on Titan database ID here
+      when you know it.
 
-  // ---------------------------------------------------------
-  // INIT
-  // ---------------------------------------------------------
+      Example:
+      chosenStoryId: 'attack-on-titan-2013'
+    */
+    chosenStoryId: '',
 
-  function startSection4() {
-    const section = document.querySelector('[data-section-cover-rain]');
+    chosenStoryTitle:
+      'Attack on Titan',
 
-    if (!section) {
-      return;
-    }
+    chosenStoryAliases: [
+      'Attack on Titan',
+      'Shingeki no Kyojin'
+    ],
 
-    const elements = getElements(section);
+    rainCoverCount:
+      28,
 
-    if (!hasRequiredElements(elements)) {
-      console.error('Missing Section 4 elements.', elements);
-      return;
-    }
+    pinDistance:
+      4800
+  };
 
-    if (!window.supabase) {
-      console.error('Supabase library is not loaded. Section 4 needs Supabase to load featured covers.');
-      showEmptyState(elements, 'Supabase is not loaded.');
-      return;
-    }
+  const FALLBACK_STORY = {
+    id:
+      'attack-on-titan-fallback',
 
-    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    title:
+      'Attack on Titan',
 
-    loadFeaturedAnimeManga()
-      .then((featuredStories) => {
-        if (featuredStories.length === 0) {
-          showEmptyState(elements, 'No featured anime/manga rows found.');
-          return;
-        }
+    creator:
+      'Hajime Isayama',
 
-        const featureStory = featuredStories[0];
-        const rainPool = buildRainPool(featuredStories, RAIN_COVER_COUNT);
+    types: [
+      'anime',
+      'manga'
+    ],
 
-        renderRainCovers(elements, rainPool);
-        renderFeatureStory(elements, featureStory);
-        renderProfileLibraries(elements, featuredStories, featureStory);
-        splitThoughtText(elements.section);
+    coverCandidates: []
+  };
 
-        requestAnimationFrame(() => {
-          setupSection4Animation(elements);
-        });
-      })
-      .catch((error) => {
-        console.error('Section 4 failed to load featured stories:', error);
-        showEmptyState(elements, 'Featured stories could not load.');
-      });
+  let client = null;
+
+  if (document.readyState === 'loading') {
+    document.addEventListener(
+      'DOMContentLoaded',
+      init,
+      { once: true }
+    );
+  } else {
+    init();
   }
 
-  function getElements(section) {
+  async function init() {
+    const section =
+      document.querySelector(
+        '[data-section-cover-rain]'
+      );
+
+    if (
+      !section ||
+      section.dataset.s4Ready === 'true'
+    ) {
+      return;
+    }
+
+    section.dataset.s4Ready = 'true';
+
+    const elements =
+      collectElements(section);
+
+    setupSynchronizedTabs(section);
+
+    if (!window.supabase?.createClient) {
+      console.error(
+        'Section 4: Supabase is not loaded.'
+      );
+
+      showDatabaseError(
+        elements,
+        'Supabase is not loaded.'
+      );
+
+      showStatic(
+        section,
+        elements
+      );
+
+      return;
+    }
+
+    client =
+      window.supabase.createClient(
+        CONFIG.supabaseUrl,
+        CONFIG.supabaseKey
+      );
+
+    setStatus(
+      elements,
+      'Loading featured stories.'
+    );
+
+    try {
+      const featuredStories =
+        await loadFeaturedAnimeManga();
+
+      if (!featuredStories.length) {
+        showDatabaseError(
+          elements,
+          'No featured anime or manga rows were found.'
+        );
+
+        showStatic(
+          section,
+          elements
+        );
+
+        return;
+      }
+
+      const chosenStory =
+        await findChosenStory(
+          featuredStories
+        );
+
+      const rainPool =
+        repeatStories(
+          featuredStories,
+          CONFIG.rainCoverCount
+        );
+
+      renderRain(
+        elements,
+        rainPool
+      );
+
+      renderChosenStory(
+        section,
+        chosenStory
+      );
+
+      setStatus(
+        elements,
+        `${chosenStory.title} loaded as the shared story.`
+      );
+
+      requestAnimationFrame(() => {
+        setupMotion(
+          section,
+          elements
+        );
+      });
+    } catch (error) {
+      console.error(
+        'Section 4 failed:',
+        error
+      );
+
+      showDatabaseError(
+        elements,
+        'Featured stories could not be loaded.'
+      );
+
+      showStatic(
+        section,
+        elements
+      );
+    }
+  }
+
+  function collectElements(section) {
     return {
       section,
 
-      rainWrapper: section.querySelector('[data-rain-wrapper]'),
-      rainLeft: section.querySelector('[data-rain-left]'),
-      rainRight: section.querySelector('[data-rain-right]'),
-      rainLabel: section.querySelector('[data-rain-label]'),
+      rainScene:
+        section.querySelector(
+          '[data-rain-scene]'
+        ),
 
-      transitionBook: section.querySelector('[data-transition-book]'),
-      transitionCover: section.querySelector('[data-feature-cover]'),
-      transitionFallback: section.querySelector('[data-feature-cover-fallback]'),
+      rainLeft:
+        section.querySelector(
+          '[data-rain-left]'
+        ),
 
-      soulsSection: section.querySelector('[data-souls-section]'),
-      soulsBook: section.querySelector('[data-souls-book]'),
-      soulsBookCover: section.querySelector('[data-souls-book-cover]'),
-      soulsBookFallback: section.querySelector('[data-souls-book-fallback]'),
-      soulsBookTitle: section.querySelector('[data-souls-book-title]'),
-      soulsBookCreator: section.querySelector('[data-souls-book-creator]'),
-      soulsIntro: section.querySelector('[data-souls-intro]'),
+      rainRight:
+        section.querySelector(
+          '[data-rain-right]'
+        ),
 
-      cardLeft: section.querySelector('[data-souls-card-left]'),
-      cardRight: section.querySelector('[data-souls-card-right]'),
-      libraryLeft: section.querySelector('[data-souls-library-left]'),
-      libraryRight: section.querySelector('[data-souls-library-right]'),
+      rainCopy:
+        section.querySelector(
+          '[data-rain-copy]'
+        ),
 
-      empty: section.querySelector('[data-section-4-empty]')
+      mergeStage:
+        section.querySelector(
+          '[data-merge-stage]'
+        ),
+
+      mergeLeft:
+        section.querySelector(
+          '[data-merge-copy-left]'
+        ),
+
+      mergeRight:
+        section.querySelector(
+          '[data-merge-copy-right]'
+        ),
+
+      mergeOne:
+        section.querySelector(
+          '[data-merge-copy-one]'
+        ),
+
+      mergeCaption:
+        section.querySelector(
+          '[data-merge-caption]'
+        ),
+
+      finalScene:
+        section.querySelector(
+          '[data-final-scene]'
+        ),
+
+      sharedStory:
+        section.querySelector(
+          '[data-shared-story]'
+        ),
+
+      finalHeading:
+        section.querySelector(
+          '[data-final-heading]'
+        ),
+
+      cardLeft:
+        section.querySelector(
+          '[data-soul-card="left"]'
+        ),
+
+      cardRight:
+        section.querySelector(
+          '[data-soul-card="right"]'
+        ),
+
+      empty:
+        section.querySelector(
+          '[data-section-4-empty]'
+        ),
+
+      status:
+        section.querySelector(
+          '[data-section-4-status]'
+        )
     };
   }
 
-  function hasRequiredElements(elements) {
-    return Boolean(
-      elements.section &&
-      elements.rainWrapper &&
-      elements.rainLeft &&
-      elements.rainRight &&
-      elements.rainLabel &&
-      elements.transitionBook &&
-      elements.transitionCover &&
-      elements.transitionFallback &&
-      elements.soulsSection &&
-      elements.soulsBook &&
-      elements.soulsBookCover &&
-      elements.soulsBookFallback &&
-      elements.soulsBookTitle &&
-      elements.soulsBookCreator &&
-      elements.soulsIntro &&
-      elements.cardLeft &&
-      elements.cardRight &&
-      elements.libraryLeft &&
-      elements.libraryRight &&
-      elements.empty
-    );
-  }
-
-  // ---------------------------------------------------------
-  // DATABASE
-  // ---------------------------------------------------------
+  /* =======================================================
+     DATABASE
+     ======================================================= */
 
   async function loadFeaturedAnimeManga() {
-    const { data, error } = await supabaseClient
-      .from(TABLE_NAME)
-      .select('id, title, creator, author, writer, type, cover, heroScore, hero_score, score, rating, genres, featured')
-      .eq('featured', true)
-      .order('heroScore', { ascending: false, nullsFirst: false });
+    const {
+      data,
+      error
+    } = await client
+      .from(CONFIG.table)
+      .select('*')
+      .eq('featured', true);
 
     if (error) {
       throw error;
     }
 
-    return normalizeStories(data || []).filter((story) => {
-      const types = getTypeList(story);
-      return types.includes('anime') || types.includes('manga');
-    });
+    return (data || [])
+      .filter((row) => {
+        return (
+          row &&
+          row.id != null &&
+          row.title
+        );
+      })
+      .map(normalizeStory)
+      .filter((story) => {
+        return (
+          story.types.includes('anime') ||
+          story.types.includes('manga')
+        );
+      });
   }
 
-  function normalizeStories(items) {
-    return items
-      .filter((item) => item && item.id && item.title)
-      .map(normalizeStory);
-  }
+  async function findChosenStory(
+    featuredStories
+  ) {
+    const matchingId =
+      CONFIG.chosenStoryId
+        ? featuredStories.find((story) => {
+            return (
+              String(story.id) ===
+              String(CONFIG.chosenStoryId)
+            );
+          })
+        : null;
 
-  function normalizeStory(item) {
+    if (matchingId) {
+      return matchingId;
+    }
+
+    const aliases =
+      CONFIG.chosenStoryAliases.map(
+        normalizeText
+      );
+
+    const exactFeatured =
+      featuredStories.find((story) => {
+        return aliases.includes(
+          normalizeText(story.title)
+        );
+      });
+
+    if (exactFeatured) {
+      return exactFeatured;
+    }
+
+    /*
+      Attack on Titan may not be marked featured,
+      so search for it separately.
+    */
+    if (CONFIG.chosenStoryId) {
+      const {
+        data
+      } = await client
+        .from(CONFIG.table)
+        .select('*')
+        .eq(
+          'id',
+          CONFIG.chosenStoryId
+        )
+        .limit(1);
+
+      if (data?.[0]) {
+        return normalizeStory(
+          data[0]
+        );
+      }
+    }
+
+    for (
+      const alias of
+      CONFIG.chosenStoryAliases
+    ) {
+      const {
+        data,
+        error
+      } = await client
+        .from(CONFIG.table)
+        .select('*')
+        .ilike(
+          'title',
+          `%${alias}%`
+        )
+        .limit(10);
+
+      if (
+        !error &&
+        data?.length
+      ) {
+        const normalized =
+          data.map(normalizeStory);
+
+        const exact =
+          normalized.find((story) => {
+            return (
+              normalizeText(story.title) ===
+              normalizeText(alias)
+            );
+          });
+
+        return (
+          exact ||
+          normalized[0]
+        );
+      }
+    }
+
+    /*
+      Keep Attack on Titan selected even when
+      the database row is missing.
+    */
     return {
-      id: String(item.id),
-      title: String(item.title || ''),
-      creator: getCreatorValue(item),
-      type: getTypeList(item),
-      coverCandidates: getCoverCandidates(item),
-      score: getScoreValue(item),
-      genres: getArrayValue(item.genres),
-      raw: item
+      ...FALLBACK_STORY
     };
   }
 
-  function buildRainPool(featuredStories, neededAmount) {
-    const pool = [];
+  function normalizeStory(row) {
+    return {
+      id:
+        String(row.id),
 
-    if (featuredStories.length === 0) {
-      return pool;
-    }
+      title:
+        String(
+          row.title ||
+          'Untitled story'
+        ),
 
-    while (pool.length < neededAmount) {
-      featuredStories.forEach((story) => {
-        if (pool.length < neededAmount) {
-          pool.push(story);
-        }
-      });
-    }
+      creator:
+        getCreator(row),
 
-    return pool;
+      types:
+        getTypeList(
+          row.type ??
+          row.types ??
+          row.format
+        ),
+
+      coverCandidates:
+        getCoverCandidates(row),
+
+      raw:
+        row
+    };
   }
 
-  // ---------------------------------------------------------
-  // RENDERING
-  // ---------------------------------------------------------
-
-  function renderRainCovers(elements, rainPool) {
-    elements.rainLeft.innerHTML = '';
-    elements.rainRight.innerHTML = '';
-
-    const leftStories = rainPool.filter((_, index) => index % 2 === 0);
-    const rightStories = rainPool.filter((_, index) => index % 2 !== 0);
-
-    leftStories.forEach((story, index) => {
-      elements.rainLeft.appendChild(createRainItem(story, index, 'left'));
-    });
-
-    rightStories.forEach((story, index) => {
-      elements.rainRight.appendChild(createRainItem(story, index, 'right'));
-    });
-  }
-
-  function createRainItem(story, index, side) {
-    const item = document.createElement('figure');
-    const img = document.createElement('img');
-    const fallback = document.createElement('div');
-
-    const leftX = [4, 48, 18, 72, 33, 8, 61, 24, 78, 43, 13, 68, 30, 54, 6, 76, 22, 63, 40, 16];
-    const rightX = [62, 16, 76, 34, 7, 56, 24, 70, 42, 12, 60, 30, 74, 20, 52, 38, 9, 66, 27, 80];
-
-    const yStep = 128;
-    const rotation = getRotation(index, side);
-    const scale = getScale(index);
-
-    item.className = 'rain-item';
-    item.style.left = `${side === 'left' ? leftX[index % leftX.length] : rightX[index % rightX.length]}%`;
-    item.style.top = side === 'left'
-      ? `${112 + index * yStep}px`
-      : `${-188 - index * yStep}px`;
-
-    item.style.setProperty('--rain-rotation', `${rotation}deg`);
-    item.style.setProperty('--rain-scale', scale);
-    item.style.setProperty('--rain-start-y', side === 'left' ? '100vh' : '-100vh');
-
-    fallback.className = 'cover-fallback';
-    fallback.textContent = story.title;
-
-    setImageWithFallback(img, fallback, story, `${story.title} cover`);
-
-    item.appendChild(img);
-    item.appendChild(fallback);
-
-    return item;
-  }
-
-  function renderFeatureStory(elements, story) {
-    setImageWithFallback(
-      elements.transitionCover,
-      elements.transitionFallback,
-      story,
-      `${story.title} cover`
+  function getCreator(row) {
+    return String(
+      row.creator ||
+      row.author ||
+      row.writer ||
+      row.artist ||
+      row.studio ||
+      'Unknown creator'
     );
-
-    setImageWithFallback(
-      elements.soulsBookCover,
-      elements.soulsBookFallback,
-      story,
-      `${story.title} cover`
-    );
-
-    elements.soulsBookTitle.textContent = story.title;
-    elements.soulsBookCreator.textContent = story.creator || formatTypeLabel(story.type);
   }
 
-  function renderProfileLibraries(elements, stories, featureStory) {
-    const leftStories = pickLibraryStories(stories, featureStory, 0);
-    const rightStories = pickLibraryStories(stories, featureStory, 3);
-
-    elements.libraryLeft.innerHTML = '';
-    elements.libraryRight.innerHTML = '';
-
-    leftStories.forEach((story, index) => {
-      elements.libraryLeft.appendChild(
-        createLibraryRow(story, index, getLeftStatus(index), story.id === featureStory.id)
-      );
-    });
-
-    rightStories.forEach((story, index) => {
-      elements.libraryRight.appendChild(
-        createLibraryRow(story, index, getRightStatus(index), story.id === featureStory.id)
-      );
-    });
-  }
-
-  function pickLibraryStories(stories, featureStory, offset) {
-    const pool = stories.filter((story) => story.id !== featureStory.id);
-    const picked = [featureStory];
-
-    if (pool.length === 0) {
-      return [featureStory, featureStory, featureStory];
+  function getTypeList(value) {
+    if (Array.isArray(value)) {
+      return value
+        .map((item) => {
+          return normalizeText(item);
+        })
+        .filter(Boolean);
     }
 
-    for (let index = 0; picked.length < 3; index += 1) {
-      picked.push(pool[(index + offset) % pool.length]);
+    if (
+      value &&
+      typeof value === 'object'
+    ) {
+      return Object
+        .values(value)
+        .map((item) => {
+          return normalizeText(item);
+        })
+        .filter(Boolean);
     }
 
-    return picked;
-  }
+    const text =
+      String(value || '').trim();
 
-  function createLibraryRow(story, index, status, isShared) {
-    const row = document.createElement('div');
-    const cover = document.createElement('div');
-    const img = document.createElement('img');
-    const fallback = document.createElement('div');
-    const title = document.createElement('span');
-    const state = document.createElement('strong');
-
-    row.className = isShared
-      ? 'souls-library-row souls-row-shared'
-      : 'souls-library-row';
-
-    row.dataset.libraryRow = '';
-    row.dataset.storyId = story.id;
-    row.dataset.rowIndex = String(index);
-
-    cover.className = 'library-row-cover';
-
-    fallback.className = 'cover-fallback';
-    fallback.textContent = getShortTitle(story.title);
-
-    setImageWithFallback(img, fallback, story, `${story.title} cover`);
-
-    title.textContent = story.title;
-    state.textContent = status;
-
-    cover.appendChild(img);
-    cover.appendChild(fallback);
-
-    row.appendChild(cover);
-    row.appendChild(title);
-    row.appendChild(state);
-
-    return row;
-  }
-
-  function showEmptyState(elements, message) {
-    elements.section.classList.add('is-static');
-    elements.empty.hidden = false;
-
-    const paragraph = elements.empty.querySelector('p');
-
-    if (paragraph && message) {
-      paragraph.innerHTML = `${message} Set <strong>featured = true</strong> on anime or manga rows in Supabase.`;
-    }
-  }
-
-  // ---------------------------------------------------------
-  // ANIMATION
-  // ---------------------------------------------------------
-
-  function setupSection4Animation(elements) {
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const isSmallScreen = window.matchMedia('(max-width: 980px)').matches;
-
-    if (prefersReducedMotion || isSmallScreen) {
-      showStaticFallback(elements);
-      return;
-    }
-
-    if (!window.gsap || !window.ScrollTrigger) {
-      console.error('GSAP or ScrollTrigger is not loaded.');
-      showStaticFallback(elements);
-      return;
-    }
-
-    const { gsap, ScrollTrigger } = window;
-
-    gsap.registerPlugin(ScrollTrigger);
-
-    const section = elements.section;
-
-    const leftItems = gsap.utils.toArray(section.querySelectorAll('.rain-col-left .rain-item'));
-    const rightItems = gsap.utils.toArray(section.querySelectorAll('.rain-col-right .rain-item'));
-    const allRainItems = [...leftItems, ...rightItems];
-
-    const people = gsap.utils.toArray(section.querySelectorAll('.souls-person'));
-    const leftRows = gsap.utils.toArray(elements.cardLeft.querySelectorAll('[data-library-row]'));
-    const rightRows = gsap.utils.toArray(elements.cardRight.querySelectorAll('[data-library-row]'));
-    const sharedRows = gsap.utils.toArray(section.querySelectorAll('.souls-row-shared'));
-
-    const leftQuote = elements.cardLeft.querySelector('.souls-round-quote');
-    const rightQuote = elements.cardRight.querySelector('.souls-round-quote');
-
-    const leftMoment = elements.cardLeft.querySelector('.souls-round-moment');
-    const rightMoment = elements.cardRight.querySelector('.souls-round-moment');
-
-    const leftCharacter = elements.cardLeft.querySelector('.souls-round-character');
-    const rightCharacter = elements.cardRight.querySelector('.souls-round-character');
-
-    const leftThoughts = elements.cardLeft.querySelector('.souls-round-thoughts');
-    const rightThoughts = elements.cardRight.querySelector('.souls-round-thoughts');
-
-    const leftThoughtChars = gsap.utils.toArray(elements.cardLeft.querySelectorAll('[data-type-thought] span'));
-    const rightThoughtChars = gsap.utils.toArray(elements.cardRight.querySelectorAll('[data-type-thought] span'));
-
-    gsap.set(elements.soulsSection, {
-      opacity: 0,
-      pointerEvents: 'none'
-    });
-
-    gsap.set(elements.transitionBook, {
-      opacity: 0,
-      scale: 0.34,
-      y: 190
-    });
-
-    gsap.set(elements.soulsBook, {
-      opacity: 0,
-      y: -24
-    });
-
-    gsap.set(elements.soulsIntro, {
-      opacity: 0,
-      y: 18
-    });
-
-    gsap.set(elements.cardLeft, {
-      opacity: 0,
-      x: -76,
-      y: 34
-    });
-
-    gsap.set(elements.cardRight, {
-      opacity: 0,
-      x: 76,
-      y: 34
-    });
-
-    gsap.set(people, {
-      opacity: 0,
-      y: 16
-    });
-
-    gsap.set([...leftRows, ...rightRows], {
-      opacity: 0,
-      y: 16
-    });
-
-    gsap.set([leftQuote, rightQuote, leftMoment, rightMoment, leftCharacter, rightCharacter, leftThoughts, rightThoughts], {
-      opacity: 0,
-      y: 22
-    });
-
-    gsap.set([...leftThoughtChars, ...rightThoughtChars], {
-      opacity: 0
-    });
-
-    const timeline = gsap.timeline({
-      defaults: {
-        ease: 'none'
-      },
-      scrollTrigger: {
-        trigger: section,
-        start: 'top top',
-        end: `+=${PIN_DISTANCE}`,
-        pin: true,
-        scrub: 1,
-        anticipatePin: 1,
-        invalidateOnRefresh: true
-      }
-    });
-
-    // PHASE 1 — cover rain.
-    timeline.to(leftItems, {
-      y: '-190vh',
-      rotation: (index) => getRotation(index, 'left') * -1,
-      duration: 2.0,
-      stagger: {
-        each: 0.035,
-        from: 'start'
-      }
-    }, 0);
-
-    timeline.to(rightItems, {
-      y: '190vh',
-      rotation: (index) => getRotation(index, 'right') * -1,
-      duration: 2.0,
-      stagger: {
-        each: 0.035,
-        from: 'start'
-      }
-    }, 0);
-
-    timeline.to(elements.rainLabel, {
-      opacity: 0,
-      y: -52,
-      duration: 0.48
-    }, 0.82);
-
-    // PHASE 1 → PHASE 2 transition.
-    timeline.to(allRainItems, {
-      opacity: 0,
-      scale: 0.82,
-      duration: 0.56
-    }, 1.48);
-
-    timeline.to(elements.transitionBook, {
-      opacity: 1,
-      scale: 1,
-      y: -210,
-      duration: 0.78
-    }, 1.48);
-
-    timeline.to(elements.soulsSection, {
-      opacity: 1,
-      pointerEvents: 'auto',
-      duration: 0.34
-    }, 1.78);
-
-    timeline.to(elements.soulsBook, {
-      opacity: 1,
-      y: 0,
-      duration: 0.46
-    }, 1.84);
-
-    timeline.to(elements.transitionBook, {
-      opacity: 0,
-      scale: 0.96,
-      y: -245,
-      duration: 0.34
-    }, 2.12);
-
-    timeline.to(elements.soulsIntro, {
-      opacity: 1,
-      y: 0,
-      duration: 0.34
-    }, 2.16);
-
-    timeline.to(elements.cardLeft, {
-      opacity: 1,
-      x: 0,
-      y: 0,
-      duration: 0.48
-    }, 2.34);
-
-    timeline.to(elements.cardRight, {
-      opacity: 1,
-      x: 0,
-      y: 0,
-      duration: 0.48
-    }, 2.34);
-
-    // Profile build.
-    timeline.to(people, {
-      opacity: 1,
-      y: 0,
-      duration: 0.34
-    }, 2.62);
-
-    const rowStart = 2.86;
-    const maxRows = Math.max(leftRows.length, rightRows.length);
-
-    for (let index = 0; index < maxRows; index += 1) {
-      const pair = [leftRows[index], rightRows[index]].filter(Boolean);
-
-      timeline.to(pair, {
-        opacity: 1,
-        y: 0,
-        duration: 0.34
-      }, rowStart + index * 0.15);
-    }
-
-    timeline.to(sharedRows, {
-      boxShadow:
-        '0 0 30px rgba(200, 164, 107, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.08)',
-      duration: 0.38
-    }, rowStart + 0.34);
-
-    // Round 1 — quotes.
-    timeline.to([leftQuote, rightQuote], {
-      opacity: 1,
-      y: 0,
-      duration: 0.48
-    }, 3.58);
-
-    // Round 2 — moments.
-    timeline.to([leftMoment, rightMoment], {
-      opacity: 1,
-      y: 0,
-      duration: 0.48
-    }, 4.12);
-
-    // Round 3 — characters.
-    timeline.to([leftCharacter, rightCharacter], {
-      opacity: 1,
-      y: 0,
-      duration: 0.48
-    }, 4.66);
-
-    // Round 4 — thoughts + typewriter.
-    timeline.to([leftThoughts, rightThoughts], {
-      opacity: 1,
-      y: 0,
-      duration: 0.36
-    }, 5.18);
-
-    timeline.to(leftThoughtChars, {
-      opacity: 1,
-      duration: 0.08,
-      stagger: 0.012
-    }, 5.28);
-
-    timeline.to(rightThoughtChars, {
-      opacity: 1,
-      duration: 0.08,
-      stagger: 0.012
-    }, 5.28);
-  }
-
-  function showStaticFallback(elements) {
-    elements.section.classList.add('is-static');
-    elements.soulsSection.style.pointerEvents = 'auto';
-  }
-
-  function splitThoughtText(section) {
-    const thoughtElements = section.querySelectorAll('[data-type-thought]');
-
-    thoughtElements.forEach((element) => {
-      const text = element.textContent.trim();
-
-      element.setAttribute('aria-label', text);
-      element.textContent = '';
-
-      [...text].forEach((character) => {
-        const span = document.createElement('span');
-
-        span.setAttribute('aria-hidden', 'true');
-        span.textContent = character === ' ' ? '\u00A0' : character;
-
-        element.appendChild(span);
-      });
-    });
-  }
-
-  // ---------------------------------------------------------
-  // IMAGE HELPERS
-  // ---------------------------------------------------------
-
-  function setImageWithFallback(img, fallback, story, altText) {
-    const candidates = story.coverCandidates || getCoverCandidates(story.raw || story);
-    let index = 0;
-
-    img.hidden = false;
-    img.alt = altText || '';
-
-    fallback.textContent = getShortTitle(story.title);
-    fallback.classList.remove('is-hidden');
-
-    if (candidates.length === 0) {
-      img.hidden = true;
-      img.removeAttribute('src');
-      return;
-    }
-
-    img.onload = () => {
-      fallback.classList.add('is-hidden');
-    };
-
-    img.onerror = () => {
-      index += 1;
-
-      if (index >= candidates.length) {
-        img.hidden = true;
-        img.removeAttribute('src');
-        fallback.classList.remove('is-hidden');
-        return;
-      }
-
-      img.src = candidates[index];
-    };
-
-    img.src = candidates[index];
-  }
-
-  function getCoverCandidates(item) {
-    const candidates = [];
-    const rawCover = String(item.cover || '').trim();
-
-    addCoverCandidate(candidates, rawCover);
-
-    if (item.id) {
-      addCoverCandidate(candidates, `${COVER_FOLDER}/${item.id}.jpg`);
-    }
-
-    return [...new Set(candidates.filter(Boolean))];
-  }
-
-  function addCoverCandidate(candidates, coverPath) {
-    if (!coverPath) {
-      return;
-    }
-
-    if (coverPath.startsWith('http://') || coverPath.startsWith('https://')) {
-      candidates.push(coverPath);
-      return;
-    }
-
-    if (!supabaseClient) {
-      candidates.push(coverPath);
-      return;
-    }
-
-    let storagePath = coverPath;
-
-    // Database may store img/covers/id.jpg.
-    // Supabase Storage bucket is already "img", so the path should be covers/id.jpg.
-    if (storagePath.startsWith(`${BUCKET_NAME}/`)) {
-      storagePath = storagePath.slice(BUCKET_NAME.length + 1);
-    }
-
-    if (storagePath.startsWith('/')) {
-      storagePath = storagePath.slice(1);
-    }
-
-    const { data } = supabaseClient
-      .storage
-      .from(BUCKET_NAME)
-      .getPublicUrl(storagePath);
-
-    if (data?.publicUrl) {
-      candidates.push(data.publicUrl);
-    }
-  }
-
-  // ---------------------------------------------------------
-  // VALUE HELPERS
-  // ---------------------------------------------------------
-
-  function getCreatorValue(item) {
-    return String(item.creator ?? item.author ?? item.writer ?? '').trim();
-  }
-
-  function getScoreValue(item) {
-    const value = item.heroScore ?? item.hero_score ?? item.score ?? item.rating ?? '';
-
-    if (value === null || value === undefined || value === '') {
-      return '';
-    }
-
-    return Number.isFinite(Number(value)) ? Number(value) : String(value);
-  }
-
-  function getTypeList(item) {
-    const rawType = item.type ?? item.format ?? [];
-
-    return getArrayValue(rawType)
-      .map((type) => String(type).toLowerCase().trim())
-      .filter(Boolean);
-  }
-
-  function getArrayValue(value) {
-    if (!value) {
+    if (!text) {
       return [];
     }
 
-    if (Array.isArray(value)) {
-      return value;
+    try {
+      const parsed =
+        JSON.parse(text);
+
+      if (Array.isArray(parsed)) {
+        return parsed
+          .map((item) => {
+            return normalizeText(item);
+          })
+          .filter(Boolean);
+      }
+    } catch (_) {
+      /*
+        A normal comma-separated string
+        is expected most of the time.
+      */
     }
 
-    if (typeof value === 'string') {
-      const trimmed = value.trim();
+    return text
+      .split(/[,/|]+/)
+      .map((item) => {
+        return normalizeText(item);
+      })
+      .filter(Boolean);
+  }
 
-      if (!trimmed) {
-        return [];
+  function getCoverCandidates(row) {
+    const candidates = [];
+
+    const rawValues = [
+      row.cover,
+      row.cover_url,
+      row.coverUrl,
+      row.image,
+      row.image_url,
+      row.poster,
+      row.poster_url
+    ].filter(Boolean);
+
+    rawValues.forEach((value) => {
+      addCoverValue(
+        candidates,
+        String(value)
+      );
+    });
+
+    [
+      'jpg',
+      'jpeg',
+      'png',
+      'webp'
+    ].forEach((extension) => {
+      addStoragePath(
+        candidates,
+        `${CONFIG.coverFolder}/${row.id}.${extension}`
+      );
+    });
+
+    return [
+      ...new Set(candidates)
+    ];
+  }
+
+  function addCoverValue(
+    candidates,
+    value
+  ) {
+    const clean =
+      value.trim();
+
+    if (!clean) {
+      return;
+    }
+
+    if (
+      /^https?:\/\//i.test(clean) ||
+      clean.startsWith('data:') ||
+      clean.startsWith('blob:')
+    ) {
+      candidates.push(clean);
+
+      return;
+    }
+
+    let storagePath =
+      clean.replace(/^\/+/, '');
+
+    if (
+      storagePath.startsWith(
+        `${CONFIG.bucket}/`
+      )
+    ) {
+      storagePath =
+        storagePath.slice(
+          CONFIG.bucket.length + 1
+        );
+    }
+
+    addStoragePath(
+      candidates,
+      storagePath
+    );
+  }
+
+  function addStoragePath(
+    candidates,
+    path
+  ) {
+    const cleanPath =
+      String(path || '')
+        .replace(/^\/+/, '');
+
+    if (!cleanPath) {
+      return;
+    }
+
+    const {
+      data
+    } = client.storage
+      .from(CONFIG.bucket)
+      .getPublicUrl(cleanPath);
+
+    if (data?.publicUrl) {
+      candidates.push(
+        data.publicUrl
+      );
+    }
+  }
+
+  /* =======================================================
+     RENDERING
+     ======================================================= */
+
+  function renderRain(
+    elements,
+    stories
+  ) {
+    elements.rainLeft.innerHTML = '';
+    elements.rainRight.innerHTML = '';
+
+    stories.forEach(
+      (story, index) => {
+        const side =
+          index % 2 === 0
+            ? 'left'
+            : 'right';
+
+        const sideIndex =
+          Math.floor(index / 2);
+
+        const item =
+          createRainItem(
+            story,
+            side,
+            sideIndex
+          );
+
+        const destination =
+          side === 'left'
+            ? elements.rainLeft
+            : elements.rainRight;
+
+        destination.appendChild(item);
       }
+    );
+  }
 
-      try {
-        const parsed = JSON.parse(trimmed);
+  function createRainItem(
+    story,
+    side,
+    index
+  ) {
+    const figure =
+      document.createElement('figure');
 
-        if (Array.isArray(parsed)) {
-          return parsed;
+    const image =
+      document.createElement('img');
+
+    const fallback =
+      document.createElement('span');
+
+    const xPattern =
+      side === 'left'
+        ? [
+            2,
+            47,
+            18,
+            67,
+            31,
+            8,
+            58,
+            24,
+            72,
+            39,
+            12,
+            62,
+            28,
+            52
+          ]
+        : [
+            60,
+            12,
+            72,
+            30,
+            4,
+            52,
+            20,
+            66,
+            38,
+            8,
+            57,
+            26,
+            70,
+            16
+          ];
+
+    figure.className =
+      's4-rain-item';
+
+    figure.dataset.rainItem = '';
+    figure.dataset.rainSide = side;
+    figure.dataset.rainIndex =
+      String(index);
+
+    figure.style.left =
+      `${xPattern[index % xPattern.length]}%`;
+
+    figure.style.top =
+      `${-18 + (index % 8) * 17}%`;
+
+    figure.style.zIndex =
+      String(1 + (index % 3));
+
+    fallback.className =
+      's4-cover-fallback';
+
+    fallback.dataset.coverFallback = '';
+
+    fallback.textContent =
+      story.title;
+
+    image.alt = '';
+    image.decoding = 'async';
+    image.loading = 'eager';
+
+    figure.append(
+      image,
+      fallback
+    );
+
+    loadImageCandidates(
+      image,
+      fallback,
+      story.coverCandidates,
+      `${story.title} cover`
+    );
+
+    return figure;
+  }
+
+  function renderChosenStory(
+    section,
+    story
+  ) {
+    section
+      .querySelectorAll(
+        '[data-story-title]'
+      )
+      .forEach((node) => {
+        node.textContent =
+          story.title;
+      });
+
+    section
+      .querySelectorAll(
+        '[data-story-creator]'
+      )
+      .forEach((node) => {
+        node.textContent =
+          story.creator;
+      });
+
+    const format =
+      formatTypes(story.types);
+
+    section
+      .querySelectorAll(
+        '[data-story-format]'
+      )
+      .forEach((node) => {
+        node.textContent =
+          format;
+      });
+
+    section
+      .querySelectorAll(
+        '[data-story-cover]'
+      )
+      .forEach((image) => {
+        const shell =
+          image.closest(
+            '[data-cover-shell]'
+          );
+
+        const fallback =
+          shell?.querySelector(
+            '[data-cover-fallback]'
+          );
+
+        if (!fallback) {
+          return;
         }
-      } catch {
-        // Not JSON. Use it as one value.
+
+        fallback.textContent =
+          story.title;
+
+        loadImageCandidates(
+          image,
+          fallback,
+          story.coverCandidates,
+          `${story.title} cover`
+        );
+      });
+  }
+
+  function loadImageCandidates(
+    image,
+    fallback,
+    candidates,
+    alt
+  ) {
+    const queue = [
+      ...new Set(
+        candidates || []
+      )
+    ];
+
+    let index = 0;
+
+    image.hidden = true;
+    fallback.hidden = false;
+    image.alt = alt;
+
+    const tryNext = () => {
+      if (index >= queue.length) {
+        image.removeAttribute('src');
+
+        image.hidden = true;
+        fallback.hidden = false;
+
+        return;
       }
 
-      return [trimmed];
+      const source =
+        queue[index++];
+
+      image.onload = () => {
+        image.hidden = false;
+        fallback.hidden = true;
+      };
+
+      image.onerror =
+        tryNext;
+
+      image.src =
+        source;
+    };
+
+    tryNext();
+  }
+
+  function repeatStories(
+    stories,
+    amount
+  ) {
+    if (!stories.length) {
+      return [];
     }
 
-    return [value];
+    return Array.from(
+      { length: amount },
+      (_, index) => {
+        return stories[
+          index % stories.length
+        ];
+      }
+    );
   }
 
-  function formatTypeLabel(typeValue) {
-    const types = Array.isArray(typeValue)
-      ? typeValue
-      : getArrayValue(typeValue);
+  function formatTypes(types) {
+    const unique = [
+      ...new Set(
+        types.map((type) => {
+          return normalizeText(type);
+        })
+      )
+    ];
 
-    if (types.length === 0) {
-      return 'Anime / Manga';
+    const labels =
+      unique
+        .filter((type) => {
+          return (
+            type === 'anime' ||
+            type === 'manga'
+          );
+        })
+        .map((type) => {
+          return (
+            type.charAt(0).toUpperCase() +
+            type.slice(1)
+          );
+        });
+
+    return labels.length
+      ? labels.join(' / ')
+      : 'Anime / Manga';
+  }
+
+  /* =======================================================
+     SYNCHRONIZED TABS
+     ======================================================= */
+
+  function setupSynchronizedTabs(section) {
+    const tabLists = [
+      ...section.querySelectorAll(
+        '[data-layer-tabs]'
+      )
+    ];
+
+    const tabs = [
+      ...section.querySelectorAll(
+        '[data-soul-tab]'
+      )
+    ];
+
+    const panels = [
+      ...section.querySelectorAll(
+        '[data-soul-panel]'
+      )
+    ];
+
+    const order = [
+      'quote',
+      'character',
+      'thoughts'
+    ];
+
+    let activeLayer =
+      'quote';
+
+    const activate = (
+      layer,
+      options = {}
+    ) => {
+      if (!order.includes(layer)) {
+        return;
+      }
+
+      activeLayer = layer;
+
+      tabs.forEach((tab) => {
+        const selected =
+          tab.dataset.soulTab === layer;
+
+        tab.classList.toggle(
+          'is-active',
+          selected
+        );
+
+        tab.setAttribute(
+          'aria-selected',
+          String(selected)
+        );
+
+        tab.tabIndex =
+          selected ? 0 : -1;
+      });
+
+      panels.forEach((panel) => {
+        const selected =
+          panel.dataset.soulPanel === layer;
+
+        panel.hidden =
+          !selected;
+
+        panel.classList.toggle(
+          'is-active',
+          selected
+        );
+
+        if (
+          selected &&
+          options.animate !== false &&
+          !prefersReducedMotion()
+        ) {
+          panel.animate(
+            [
+              {
+                opacity: 0,
+                transform:
+                  'translateY(8px)'
+              },
+              {
+                opacity: 1,
+                transform:
+                  'translateY(0)'
+              }
+            ],
+            {
+              duration: 260,
+              easing:
+                'cubic-bezier(.22,1,.36,1)'
+            }
+          );
+        }
+      });
+
+      if (options.focusTab) {
+        const target =
+          options.focusWithin?.querySelector(
+            `[data-soul-tab="${layer}"]`
+          ) ||
+          section.querySelector(
+            `[data-soul-tab="${layer}"]`
+          );
+
+        target?.focus();
+      }
+    };
+
+    tabs.forEach((tab) => {
+      tab.addEventListener(
+        'click',
+        () => {
+          activate(
+            tab.dataset.soulTab
+          );
+        }
+      );
+    });
+
+    tabLists.forEach((list) => {
+      list.addEventListener(
+        'keydown',
+        (event) => {
+          const current =
+            event.target.closest(
+              '[data-soul-tab]'
+            );
+
+          if (!current) {
+            return;
+          }
+
+          const currentIndex =
+            order.indexOf(
+              current.dataset.soulTab
+            );
+
+          let nextIndex =
+            currentIndex;
+
+          if (
+            event.key === 'ArrowRight' ||
+            event.key === 'ArrowDown'
+          ) {
+            nextIndex =
+              (currentIndex + 1) %
+              order.length;
+          } else if (
+            event.key === 'ArrowLeft' ||
+            event.key === 'ArrowUp'
+          ) {
+            nextIndex =
+              (
+                currentIndex -
+                1 +
+                order.length
+              ) %
+              order.length;
+          } else if (
+            event.key === 'Home'
+          ) {
+            nextIndex = 0;
+          } else if (
+            event.key === 'End'
+          ) {
+            nextIndex =
+              order.length - 1;
+          } else {
+            return;
+          }
+
+          event.preventDefault();
+
+          activate(
+            order[nextIndex],
+            {
+              focusTab: true,
+              focusWithin: list
+            }
+          );
+        }
+      );
+    });
+
+    activate(
+      activeLayer,
+      {
+        animate: false
+      }
+    );
+  }
+
+  /* =======================================================
+     MOTION
+     ======================================================= */
+
+  function setupMotion(
+    section,
+    elements
+  ) {
+    if (
+      !window.gsap ||
+      !window.ScrollTrigger
+    ) {
+      console.warn(
+        'Section 4: GSAP or ScrollTrigger is missing. Showing the static layout.'
+      );
+
+      showStatic(
+        section,
+        elements
+      );
+
+      return;
     }
 
-    return types
-      .map((type) => String(type).trim())
-      .filter(Boolean)
-      .map((type) => type.charAt(0).toUpperCase() + type.slice(1).toLowerCase())
-      .join(' / ');
+    const {
+      gsap,
+      ScrollTrigger
+    } = window;
+
+    gsap.registerPlugin(
+      ScrollTrigger
+    );
+
+    const media =
+      gsap.matchMedia();
+
+    media.add(
+      {
+        animated:
+          '(min-width: 1180px) and (min-height: 820px) and (prefers-reduced-motion: no-preference)',
+
+        static:
+          '(max-width: 1179px), (max-height: 819px), (prefers-reduced-motion: reduce)'
+      },
+      (context) => {
+        if (context.conditions.static) {
+          showStatic(
+            section,
+            elements
+          );
+
+          return;
+        }
+
+        section.classList.remove(
+          'is-static'
+        );
+
+        return createPinnedTimeline(
+          section,
+          elements,
+          gsap
+        );
+      }
+    );
   }
 
-  function getShortTitle(title) {
-    const words = String(title || '').trim().split(/\s+/);
+  function createPinnedTimeline(
+    section,
+    elements,
+    gsap
+  ) {
+    const leftItems =
+      gsap.utils.toArray(
+        section.querySelectorAll(
+          '[data-rain-side="left"]'
+        )
+      );
 
-    if (words.length <= 3) {
-      return String(title || '');
+    const rightItems =
+      gsap.utils.toArray(
+        section.querySelectorAll(
+          '[data-rain-side="right"]'
+        )
+      );
+
+    const allRainItems = [
+      ...leftItems,
+      ...rightItems
+    ];
+
+    gsap.set(
+      elements.rainScene,
+      {
+        autoAlpha: 1
+      }
+    );
+
+    gsap.set(
+      elements.rainCopy,
+      {
+        autoAlpha: 1,
+        y: 0
+      }
+    );
+
+    gsap.set(
+      elements.mergeStage,
+      {
+        autoAlpha: 1
+      }
+    );
+
+    gsap.set(
+      elements.finalScene,
+      {
+        autoAlpha: 0,
+        visibility: 'hidden',
+        pointerEvents: 'none'
+      }
+    );
+
+    gsap.set(
+      elements.sharedStory,
+      {
+        autoAlpha: 0,
+        y: -20,
+        scale: 0.96
+      }
+    );
+
+    gsap.set(
+      elements.finalHeading,
+      {
+        autoAlpha: 0,
+        y: 18
+      }
+    );
+
+    gsap.set(
+      elements.cardLeft,
+      {
+        autoAlpha: 0,
+        x: -92,
+        y: 28
+      }
+    );
+
+    gsap.set(
+      elements.cardRight,
+      {
+        autoAlpha: 0,
+        x: 92,
+        y: 28
+      }
+    );
+
+    gsap.set(
+      elements.mergeCaption,
+      {
+        autoAlpha: 0,
+        y: 12
+      }
+    );
+
+    leftItems.forEach(
+      (item, index) => {
+        gsap.set(
+          item,
+          {
+            y: () => {
+              return (
+                window.innerHeight *
+                  0.74 +
+                index * 94
+              );
+            },
+
+            rotation:
+              -8 +
+              (index % 5) * 4,
+
+            scale:
+              0.82 +
+              (index % 3) * 0.1,
+
+            opacity:
+              0.5 +
+              (index % 3) * 0.18
+          }
+        );
+      }
+    );
+
+    rightItems.forEach(
+      (item, index) => {
+        gsap.set(
+          item,
+          {
+            y: () => {
+              return (
+                -window.innerHeight *
+                  0.82 -
+                index * 94
+              );
+            },
+
+            rotation:
+              9 -
+              (index % 5) * 4,
+
+            scale:
+              0.82 +
+              ((index + 1) % 3) *
+                0.1,
+
+            opacity:
+              0.5 +
+              ((index + 1) % 3) *
+                0.18
+          }
+        );
+      }
+    );
+
+    gsap.set(
+      elements.mergeLeft,
+      {
+        autoAlpha: 0,
+
+        xPercent: -50,
+        yPercent: -50,
+
+        x: () => {
+          return -Math.min(
+            window.innerWidth * 0.36,
+            540
+          );
+        },
+
+        y: () => {
+          return Math.min(
+            window.innerHeight * 0.42,
+            390
+          );
+        },
+
+        rotation: -11,
+        scale: 0.86
+      }
+    );
+
+    gsap.set(
+      elements.mergeRight,
+      {
+        autoAlpha: 0,
+
+        xPercent: -50,
+        yPercent: -50,
+
+        x: () => {
+          return Math.min(
+            window.innerWidth * 0.36,
+            540
+          );
+        },
+
+        y: () => {
+          return Math.min(
+            window.innerHeight * 0.42,
+            390
+          );
+        },
+
+        rotation: 11,
+        scale: 0.86
+      }
+    );
+
+    gsap.set(
+      elements.mergeOne,
+      {
+        autoAlpha: 0,
+
+        xPercent: -50,
+        yPercent: -50,
+
+        x: 0,
+        y: 0,
+
+        rotation: 0,
+        scale: 1
+      }
+    );
+
+    const timeline =
+      gsap.timeline({
+        defaults: {
+          ease: 'none'
+        },
+
+        scrollTrigger: {
+          trigger:
+            section,
+
+          start:
+            'top top',
+
+          end:
+            `+=${CONFIG.pinDistance}`,
+
+          pin:
+            true,
+
+          scrub:
+            1,
+
+          anticipatePin:
+            1,
+
+          invalidateOnRefresh:
+            true
+        }
+      });
+
+    /*
+      Phase 1:
+      Covers move in opposite directions.
+    */
+    timeline.to(
+      leftItems,
+      {
+        y: (index) => {
+          return (
+            -window.innerHeight *
+              1.55 -
+            index * 72
+          );
+        },
+
+        rotation: (index) => {
+          return (
+            8 -
+            (index % 5) * 3
+          );
+        },
+
+        duration:
+          2.15,
+
+        stagger: {
+          each: 0.025,
+          from: 'start'
+        }
+      },
+      0
+    );
+
+    timeline.to(
+      rightItems,
+      {
+        y: (index) => {
+          return (
+            window.innerHeight *
+              1.55 +
+            index * 72
+          );
+        },
+
+        rotation: (index) => {
+          return (
+            -8 +
+            (index % 5) * 3
+          );
+        },
+
+        duration:
+          2.15,
+
+        stagger: {
+          each: 0.025,
+          from: 'start'
+        }
+      },
+      0
+    );
+
+    timeline.to(
+      elements.rainCopy,
+      {
+        autoAlpha: 0,
+        y: -45,
+        duration: 0.45
+      },
+      0.78
+    );
+
+    timeline.to(
+      allRainItems,
+      {
+        autoAlpha: 0,
+        scale: 0.8,
+        duration: 0.55
+      },
+      1.28
+    );
+
+    /*
+      Phase 2:
+      Two identical covers enter from
+      the lower-left and lower-right.
+    */
+    timeline.to(
+      [
+        elements.mergeLeft,
+        elements.mergeRight
+      ],
+      {
+        autoAlpha: 1,
+        duration: 0.18
+      },
+      1.18
+    );
+
+    timeline.to(
+      elements.mergeLeft,
+      {
+        x: 0,
+        y: 0,
+
+        rotation: 0,
+        scale: 1,
+
+        duration: 0.95,
+
+        ease:
+          'power2.inOut'
+      },
+      1.28
+    );
+
+    timeline.to(
+      elements.mergeRight,
+      {
+        x: 0,
+        y: 0,
+
+        rotation: 0,
+        scale: 1,
+
+        duration: 0.95,
+
+        ease:
+          'power2.inOut'
+      },
+      1.28
+    );
+
+    /*
+      Two visible copies become one.
+    */
+    timeline.set(
+      elements.mergeOne,
+      {
+        autoAlpha: 1
+      },
+      2.2
+    );
+
+    timeline.to(
+      [
+        elements.mergeLeft,
+        elements.mergeRight
+      ],
+      {
+        autoAlpha: 0,
+        duration: 0.24
+      },
+      2.2
+    );
+
+    timeline.fromTo(
+      elements.mergeOne,
+      {
+        scale: 0.98
+      },
+      {
+        scale: 1.045,
+        duration: 0.18,
+        ease: 'power2.out'
+      },
+      2.2
+    );
+
+    timeline.to(
+      elements.mergeOne,
+      {
+        scale: 1,
+        duration: 0.22,
+        ease: 'power2.inOut'
+      },
+      2.38
+    );
+
+    timeline.to(
+      elements.mergeCaption,
+      {
+        autoAlpha: 1,
+        y: 0,
+        duration: 0.28
+      },
+      2.34
+    );
+
+    /*
+      The merged cover rises toward
+      the shared-story position.
+    */
+    timeline.to(
+      elements.mergeOne,
+      {
+        y: () => {
+          return -Math.min(
+            window.innerHeight * 0.31,
+            290
+          );
+        },
+
+        scale: 0.54,
+
+        duration: 0.7,
+
+        ease:
+          'power2.inOut'
+      },
+      2.65
+    );
+
+    timeline.to(
+      elements.mergeCaption,
+      {
+        autoAlpha: 0,
+        y: -10,
+        duration: 0.25
+      },
+      2.72
+    );
+
+    /*
+      Phase 3:
+      Shared cover and both cards reveal.
+    */
+    timeline.set(
+      elements.finalScene,
+      {
+        visibility: 'visible'
+      },
+      2.82
+    );
+
+    timeline.to(
+      elements.finalScene,
+      {
+        autoAlpha: 1,
+        duration: 0.34
+      },
+      2.82
+    );
+
+    timeline.to(
+      elements.sharedStory,
+      {
+        autoAlpha: 1,
+        y: 0,
+        scale: 1,
+
+        duration: 0.42,
+
+        ease:
+          'power2.out'
+      },
+      2.95
+    );
+
+    timeline.to(
+      elements.mergeOne,
+      {
+        autoAlpha: 0,
+        duration: 0.26
+      },
+      3.02
+    );
+
+    timeline.to(
+      elements.finalHeading,
+      {
+        autoAlpha: 1,
+        y: 0,
+
+        duration: 0.34,
+
+        ease:
+          'power2.out'
+      },
+      3.18
+    );
+
+    /*
+      The left and right cards start
+      and finish at the same time.
+    */
+    timeline.to(
+      [
+        elements.cardLeft,
+        elements.cardRight
+      ],
+      {
+        autoAlpha: 1,
+
+        x: 0,
+        y: 0,
+
+        duration: 0.56,
+
+        ease:
+          'power2.out'
+      },
+      3.42
+    );
+
+    timeline.set(
+      elements.finalScene,
+      {
+        pointerEvents: 'auto'
+      },
+      3.72
+    );
+
+    timeline.add(
+      () => {
+        elements.finalScene.classList.add(
+          'is-interactive'
+        );
+      },
+      3.72
+    );
+
+    timeline.add(
+      () => {
+        elements.finalScene.classList.remove(
+          'is-interactive'
+        );
+      },
+      3.71
+    );
+
+    return () => {
+      timeline.scrollTrigger?.kill();
+      timeline.kill();
+
+      gsap.set(
+        [
+          elements.rainScene,
+          elements.mergeStage,
+          elements.finalScene,
+          elements.sharedStory,
+          elements.finalHeading,
+          elements.cardLeft,
+          elements.cardRight
+        ],
+        {
+          clearProps: 'all'
+        }
+      );
+    };
+  }
+
+  function showStatic(
+    section,
+    elements
+  ) {
+    section.classList.add(
+      'is-static'
+    );
+
+    elements.finalScene.style.visibility =
+      'visible';
+
+    elements.finalScene.style.opacity =
+      '1';
+
+    elements.finalScene.style.pointerEvents =
+      'auto';
+
+    elements.finalScene.classList.add(
+      'is-interactive'
+    );
+  }
+
+  function showDatabaseError(
+    elements,
+    message
+  ) {
+    if (!elements.empty) {
+      return;
     }
 
-    return words.slice(0, 3).join(' ');
+    elements.empty.hidden = false;
+
+    const paragraph =
+      elements.empty.querySelector('p');
+
+    if (paragraph) {
+      paragraph.innerHTML =
+        `${escapeHtml(message)} ` +
+        `Set <strong>featured = true</strong> ` +
+        `on several anime or manga rows in Supabase.`;
+    }
+
+    setStatus(
+      elements,
+      message
+    );
   }
 
-  function getLeftStatus(index) {
-    const statuses = ['Reading', 'Completed', 'Paused'];
-    return statuses[index % statuses.length];
+  function setStatus(
+    elements,
+    message
+  ) {
+    if (elements.status) {
+      elements.status.textContent =
+        message;
+    }
   }
 
-  function getRightStatus(index) {
-    const statuses = ['Completed', 'Planned', 'Reading'];
-    return statuses[index % statuses.length];
+  function prefersReducedMotion() {
+    return window.matchMedia(
+      '(prefers-reduced-motion: reduce)'
+    ).matches;
   }
 
-  function getRotation(index, side) {
-    const leftRotations = [-7, 4, -3, 8, -5, 2, -8, 6, -4, 7, -2, 5];
-    const rightRotations = [5, -8, 3, -6, 7, -4, 8, -3, 6, -7, 4, -5];
-    const values = side === 'left' ? leftRotations : rightRotations;
-
-    return values[index % values.length];
+  function normalizeText(value) {
+    return String(value || '')
+      .trim()
+      .toLowerCase();
   }
 
-  function getScale(index) {
-    const scales = [0.92, 1.04, 0.86, 1, 1.1, 0.95, 0.9, 1.06, 0.98, 0.88];
-    return scales[index % scales.length];
-  }
-
-  // ---------------------------------------------------------
-  // RUN
-  // ---------------------------------------------------------
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', startSection4);
-  } else {
-    startSection4();
+  function escapeHtml(value) {
+    return String(value)
+      .replaceAll(
+        '&',
+        '&amp;'
+      )
+      .replaceAll(
+        '<',
+        '&lt;'
+      )
+      .replaceAll(
+        '>',
+        '&gt;'
+      )
+      .replaceAll(
+        '"',
+        '&quot;'
+      )
+      .replaceAll(
+        "'",
+        '&#039;'
+      );
   }
 })();

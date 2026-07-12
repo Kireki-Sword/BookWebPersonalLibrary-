@@ -1,830 +1,1457 @@
 /* =========================================================
-   SECTION 4 — FEATURED ANIME/MANGA COVER RAIN
-   Paste this into your Section 4 CSS file.
+   SECTION 4 — SAME STORY, DIFFERENT SOULS
+   Replace the old Section 4 CSS with this file.
    ========================================================= */
 
-/* Main pinned section shell. */
 .section-cover-rain {
-  --section-4-bg-0: #050611;
-  --section-4-bg-1: #090d20;
-  --section-4-bg-2: #111634;
+  --s4-bg-0: #050611;
+  --s4-bg-1: #090d20;
+  --s4-bg-2: #111634;
 
-  --section-4-ink: var(--ink, #f5f7ff);
-  --section-4-ink-mid: var(--ink-mid, #cbd3ea);
-  --section-4-ink-light: var(--ink-light, #9ca8c4);
-  --section-4-ink-faint: var(--ink-faint, #66708a);
+  --s4-card: rgba(8, 13, 29, 0.94);
+  --s4-card-2: rgba(15, 21, 42, 0.96);
 
-  --section-4-purple: var(--accent-purple, #9b7cff);
-  --section-4-blue: var(--accent-blue, #6d8bff);
-  --section-4-cyan: var(--accent-cyan, #74d7ff);
-  --section-4-warm: #c8a46b;
+  --s4-line: rgba(181, 191, 255, 0.18);
+  --s4-line-strong: rgba(190, 200, 255, 0.42);
+
+  --s4-text: #f5f3ff;
+  --s4-text-mid: #cbd0e7;
+  --s4-text-muted: #8f98b8;
+
+  --s4-purple: #9b7cff;
+  --s4-blue: #718cff;
+  --s4-cyan: #78d8ff;
+  --s4-warm: #c8a46b;
 
   position: relative;
-  height: 100svh;
-  min-height: 760px;
-  overflow: hidden;
   isolation: isolate;
 
-  color: var(--section-4-ink);
+  width: 100%;
+  height: 100svh;
+  min-height: 760px;
+
+  overflow: hidden;
+
+  color: var(--s4-text);
 
   background:
-    radial-gradient(circle at 50% 0%, rgba(124, 140, 255, 0.24), transparent 34%),
-    radial-gradient(circle at 15% 44%, rgba(155, 124, 255, 0.16), transparent 36%),
-    radial-gradient(circle at 85% 56%, rgba(116, 215, 255, 0.12), transparent 34%),
+    radial-gradient(
+      circle at 50% 0%,
+      rgba(124, 140, 255, 0.23),
+      transparent 34%
+    ),
+    radial-gradient(
+      circle at 13% 45%,
+      rgba(155, 124, 255, 0.15),
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 88% 56%,
+      rgba(116, 215, 255, 0.11),
+      transparent 34%
+    ),
     linear-gradient(
       135deg,
-      var(--section-4-bg-0),
-      var(--section-4-bg-1) 42%,
-      var(--section-4-bg-2) 72%,
-      var(--section-4-bg-0)
+      var(--s4-bg-0),
+      var(--s4-bg-1) 43%,
+      var(--s4-bg-2) 73%,
+      var(--s4-bg-0)
     );
 }
 
-/* Box sizing for all Section 4 children. */
 .section-cover-rain *,
 .section-cover-rain *::before,
 .section-cover-rain *::after {
   box-sizing: border-box;
 }
 
-/* Soft noise/shine layer. */
-.section-cover-rain::before {
+.section-cover-rain::before,
+.section-cover-rain::after {
   content: "";
+
   position: absolute;
   inset: 0;
+
+  pointer-events: none;
+}
+
+.section-cover-rain::before {
   z-index: 0;
 
-  opacity: 0.52;
-  pointer-events: none;
+  opacity: 0.3;
 
-  background:
-    linear-gradient(rgba(255, 255, 255, 0.022) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.018) 1px, transparent 1px);
+  background-image:
+    linear-gradient(
+      rgba(255, 255, 255, 0.025) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.02) 1px,
+      transparent 1px
+    );
+
   background-size: 44px 44px;
 
-  mask-image: radial-gradient(circle at 50% 45%, black, transparent 75%);
+  -webkit-mask-image:
+    radial-gradient(
+      circle at 50% 44%,
+      #000,
+      transparent 78%
+    );
+
+  mask-image:
+    radial-gradient(
+      circle at 50% 44%,
+      #000,
+      transparent 78%
+    );
 }
 
-/* Phase containers occupy the section. */
-.rain-wrapper,
-.feature-book-float,
-.souls-section,
-.section-4-empty {
+.section-cover-rain::after {
+  z-index: 0;
+
+  opacity: 0.08;
+
+  background-image:
+    radial-gradient(
+      rgba(255, 255, 255, 0.2) 0.65px,
+      transparent 0.65px
+    );
+
+  background-size: 4px 4px;
+}
+
+.s4-rain-scene,
+.s4-merge-stage,
+.s4-final-scene,
+.s4-empty {
   position: absolute;
   inset: 0;
 }
 
-/* Cover rain wrapper. */
-.rain-wrapper {
-  z-index: 2;
-  pointer-events: none;
-}
-
-/* Cover columns. */
-.rain-col {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-
-  width: min(24vw, 340px);
-
-  opacity: 1;
-  pointer-events: none;
-}
-
-/* Left rain column. */
-.rain-col-left {
-  left: clamp(0.75rem, 3.6vw, 4.4rem);
-}
-
-/* Right rain column. */
-.rain-col-right {
-  right: clamp(0.75rem, 3.6vw, 4.4rem);
-}
-
-/* One falling/floating cover. */
-.rain-item {
-  position: absolute;
-
-  width: clamp(68px, 7vw, 114px);
-  aspect-ratio: 2 / 3;
-
-  margin: 0;
-
-  border-radius: 15px;
-  overflow: hidden;
-
-  transform-origin: center;
-  transform:
-    translate3d(0, var(--rain-start-y, 100vh), 0)
-    rotate(var(--rain-rotation, 0deg))
-    scale(var(--rain-scale, 1));
-
-  will-change: transform, opacity;
-
-  background:
-    linear-gradient(145deg, rgba(124, 140, 255, 0.28), rgba(210, 140, 255, 0.16));
-
-  box-shadow:
-    0 24px 44px rgba(0, 0, 0, 0.42),
-    0 0 0 1px rgba(255, 255, 255, 0.09),
-    0 0 34px rgba(124, 140, 255, 0.13);
-}
-
-/* Cover images. */
-.rain-item img,
-.feature-book-cover-shell img,
-.souls-book-cover-shell img,
-.library-row-cover img {
-  width: 100%;
-  height: 100%;
-  display: block;
-  object-fit: cover;
-}
-
-/* Hide broken image nodes after JS fallback fails. */
-.rain-item img[hidden],
-.feature-book-cover-shell img[hidden],
-.souls-book-cover-shell img[hidden],
-.library-row-cover img[hidden] {
-  display: none !important;
-}
-
-/* Placeholder when a cover image fails. */
-.cover-fallback {
-  position: absolute;
-  inset: 0;
-
-  display: grid;
-  place-items: center;
-
-  padding: 0.7rem;
-
-  color: rgba(245, 247, 255, 0.92);
-  font-family: var(--font-display, Newsreader, Georgia, serif);
-  font-size: clamp(0.7rem, 1vw, 1rem);
-  font-weight: 800;
-  line-height: 1.1;
-  text-align: center;
-
-  background:
-    radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.20), transparent 28%),
-    linear-gradient(145deg, rgba(124, 140, 255, 0.58), rgba(155, 124, 255, 0.28), rgba(5, 6, 17, 0.9));
-}
-
-/* Hide fallback when the image loads. */
-.cover-fallback.is-hidden {
-  display: none;
-}
-
-/* Center title over cover rain. */
-.rain-center-copy {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-
-  width: min(760px, 74vw);
-  transform: translate(-50%, -50%);
-
-  text-align: center;
-
-  opacity: 1;
-  will-change: transform, opacity;
-}
-
-/* Section labels. */
-.rain-center-copy .section-label,
-.souls-intro .section-label,
-.section-4-empty .section-label {
+.s4-section-label {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.48rem;
 
-  margin-bottom: 0.85rem;
+  gap: 0.5rem;
 
-  color: #b8c0ff;
-  font-size: clamp(0.68rem, 0.78vw, 0.78rem);
+  color: #bcc4ff;
+
+  font-family:
+    var(--font-body, system-ui, sans-serif);
+
+  font-size:
+    clamp(0.68rem, 0.72vw, 0.78rem);
+
   font-weight: 850;
-  letter-spacing: 0.15em;
   line-height: 1;
+
+  letter-spacing: 0.16em;
   text-transform: uppercase;
 }
 
-/* Small glowing dot for labels. */
-.rain-center-copy .section-label::before,
-.souls-intro .section-label::before,
-.section-4-empty .section-label::before {
+.s4-section-label::before {
   content: "";
+
   width: 6px;
   height: 6px;
 
   border-radius: 999px;
 
-  background: var(--section-4-cyan);
+  background: var(--s4-cyan);
+
   box-shadow:
-    0 0 16px rgba(116, 215, 255, 0.65),
-    0 0 32px rgba(124, 140, 255, 0.25);
+    0 0 18px rgba(120, 216, 255, 0.7),
+    0 0 34px rgba(113, 140, 255, 0.32);
 }
 
-/* Big Section 4 heading. */
-.rain-center-copy h2 {
-  margin: 0;
+/* =========================================================
+   PHASE 1 — COVER RAIN
+   ========================================================= */
 
-  color: var(--section-4-ink);
-  font-family: var(--font-display, Newsreader, Georgia, serif);
-  font-size: clamp(4rem, 8vw, 8.4rem);
-  font-weight: 800;
-  line-height: 0.88;
-  letter-spacing: -0.068em;
+.s4-rain-scene {
+  z-index: 2;
 
-  text-shadow:
-    0 28px 70px rgba(0, 0, 0, 0.55),
-    0 0 48px rgba(124, 140, 255, 0.16);
-}
-
-/* Second line of main heading. */
-.rain-center-copy h2 span {
-  display: block;
-  color: #e7ecff;
-}
-
-/* Intro helper text. */
-.rain-center-copy p {
-  width: min(520px, 92%);
-  margin: 1rem auto 0;
-
-  color: var(--section-4-ink-light);
-  font-size: clamp(0.84rem, 1vw, 1rem);
-  font-weight: 700;
-  line-height: 1.6;
-}
-
-/* Floating transition cover layer. */
-.feature-book-float {
-  z-index: 4;
-
-  display: grid;
-  place-items: center;
-
-  opacity: 0;
   pointer-events: none;
-  will-change: transform, opacity;
 }
 
-/* Cover shell used by transition and pinned book. */
-.feature-book-cover-shell,
-.souls-book-cover-shell {
-  position: relative;
+.s4-rain-lane {
+  position: absolute;
 
-  width: clamp(126px, 13vw, 190px);
+  top: 0;
+  bottom: 0;
+
+  width: min(26vw, 360px);
+}
+
+.s4-rain-lane-left {
+  left: clamp(0.6rem, 3vw, 3.5rem);
+}
+
+.s4-rain-lane-right {
+  right: clamp(0.6rem, 3vw, 3.5rem);
+}
+
+.s4-rain-item {
+  position: absolute;
+
+  width:
+    clamp(72px, 7.2vw, 116px);
+
   aspect-ratio: 2 / 3;
 
-  border-radius: 18px;
-  overflow: hidden;
-
-  background:
-    linear-gradient(145deg, rgba(124, 140, 255, 0.32), rgba(200, 164, 107, 0.18));
-
-  box-shadow:
-    0 34px 70px rgba(0, 0, 0, 0.48),
-    0 0 0 1px rgba(255, 255, 255, 0.12),
-    0 0 56px rgba(200, 164, 107, 0.20);
-}
-
-/* Phase 2 section. */
-.souls-section {
-  z-index: 3;
-
-  display: grid;
-  grid-template-rows: auto auto 1fr;
-  align-items: start;
-
-  padding:
-    clamp(3.7rem, 6vh, 5.8rem)
-    clamp(1.25rem, 5vw, 5.5rem)
-    clamp(1rem, 3vh, 2rem);
-
-  opacity: 0;
-  pointer-events: none;
-}
-
-/* Top shared story cover. */
-.souls-book {
-  justify-self: center;
-
-  display: grid;
-  place-items: center;
-  gap: 0.72rem;
-
-  text-align: center;
-
-  opacity: 0;
-  will-change: transform, opacity;
-}
-
-/* Feature story metadata. */
-.souls-book-info {
-  display: grid;
-  gap: 0.2rem;
-}
-
-/* Small label above story title. */
-.souls-book-kicker {
-  color: var(--section-4-warm);
-  font-size: 0.62rem;
-  font-weight: 900;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
-/* Feature story title. */
-.souls-book h3 {
-  max-width: min(520px, 82vw);
-  margin: 0 auto;
-
-  color: var(--section-4-ink);
-  font-family: var(--font-display, Newsreader, Georgia, serif);
-  font-size: clamp(1.2rem, 1.7vw, 1.7rem);
-  line-height: 1;
-  letter-spacing: -0.035em;
-
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* Feature story creator. */
-.souls-book p {
   margin: 0;
 
-  color: var(--section-4-ink-light);
-  font-size: 0.78rem;
-}
+  overflow: hidden;
 
-/* Phase 2 label text. */
-.souls-intro {
-  margin-top: clamp(0.76rem, 1.5vh, 1.2rem);
-  justify-self: center;
+  border:
+    1px solid rgba(255, 255, 255, 0.12);
 
-  text-align: center;
-
-  opacity: 0;
-  will-change: transform, opacity;
-}
-
-/* Phase 2 intro paragraph. */
-.souls-intro p {
-  margin: 0;
-
-  color: var(--section-4-ink-light);
-  font-size: clamp(0.8rem, 0.96vw, 0.96rem);
-}
-
-/* Two profile columns. */
-.souls-columns {
-  width: min(100%, 1240px);
-  margin: clamp(0.95rem, 2vh, 1.6rem) auto 0;
-
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 1px minmax(0, 1fr);
-  gap: clamp(1rem, 2.6vw, 2.1rem);
-
-  align-items: start;
-}
-
-/* Divider between profile cards. */
-.souls-divider {
-  width: 1px;
-  min-height: 100%;
+  border-radius: 15px;
 
   background:
     linear-gradient(
-      transparent,
-      rgba(184, 192, 255, 0.22),
-      rgba(200, 164, 107, 0.24),
-      rgba(184, 192, 255, 0.22),
-      transparent
+      145deg,
+      rgba(124, 140, 255, 0.42),
+      rgba(155, 124, 255, 0.18)
+    );
+
+  box-shadow:
+    0 24px 48px rgba(0, 0, 0, 0.46),
+    0 0 34px rgba(124, 140, 255, 0.12);
+
+  transform-origin: center;
+
+  will-change:
+    transform,
+    opacity;
+}
+
+.s4-rain-item::after,
+.s4-card-cover::after,
+.s4-shared-cover::after,
+.s4-merge-copy::after {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+
+  pointer-events: none;
+
+  background:
+    linear-gradient(
+      130deg,
+      rgba(255, 255, 255, 0.12),
+      transparent 26%,
+      transparent 72%,
+      rgba(255, 255, 255, 0.05)
     );
 }
 
-/* Profile glass cards. */
-.souls-profile-card {
-  min-width: 0;
-  min-height: 0;
+.s4-rain-item img,
+[data-cover-shell] > img {
+  width: 100%;
+  height: 100%;
 
-  padding: clamp(0.86rem, 1.42vw, 1.18rem);
+  display: block;
 
-  border: 1px solid rgba(184, 192, 255, 0.17);
-  border-radius: 22px;
-
-  background:
-    radial-gradient(circle at 16% 12%, rgba(255, 255, 255, 0.08), transparent 28%),
-    linear-gradient(135deg, rgba(17, 23, 43, 0.84), rgba(7, 11, 25, 0.78));
-
-  box-shadow:
-    0 28px 70px rgba(0, 0, 0, 0.34),
-    inset 0 1px 0 rgba(255, 255, 255, 0.06);
-
-  backdrop-filter: blur(18px) saturate(1.12);
-  -webkit-backdrop-filter: blur(18px) saturate(1.12);
-
-  opacity: 0;
-  will-change: transform, opacity;
+  object-fit: cover;
+  object-position: center top;
 }
 
-/* Profile header. */
-.souls-person {
-  display: flex;
-  align-items: center;
-  gap: 0.78rem;
-
-  margin-bottom: 0.85rem;
-
-  opacity: 0;
-  will-change: transform, opacity;
-}
-
-/* Initial avatar. */
-.souls-avatar {
-  width: 42px;
-  height: 42px;
+.s4-cover-fallback {
+  position: absolute;
+  inset: 0;
 
   display: grid;
   place-items: center;
 
-  border-radius: 14px;
+  padding: 0.65rem;
 
-  color: white;
-  font-weight: 900;
+  color:
+    rgba(255, 255, 255, 0.95);
+
+  font-family:
+    var(--font-display, Georgia, serif);
+
+  font-size:
+    clamp(0.62rem, 0.9vw, 0.92rem);
+
+  font-weight: 800;
+  line-height: 1.05;
+
+  text-align: center;
 
   background:
-    radial-gradient(circle at 26% 20%, rgba(255, 255, 255, 0.22), transparent 32%),
-    linear-gradient(145deg, rgba(155, 124, 255, 0.82), rgba(109, 139, 255, 0.68));
+    radial-gradient(
+      circle at 30% 18%,
+      rgba(255, 255, 255, 0.22),
+      transparent 30%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(124, 140, 255, 0.64),
+      rgba(155, 124, 255, 0.3),
+      rgba(5, 6, 17, 0.95)
+    );
 }
 
-/* Username. */
-.souls-name {
+.s4-cover-fallback[hidden],
+[data-cover-shell] > img[hidden] {
+  display: none !important;
+}
+
+.s4-rain-copy {
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  width:
+    min(760px, 72vw);
+
+  text-align: center;
+
+  transform:
+    translate(-50%, -50%);
+
+  will-change:
+    transform,
+    opacity;
+}
+
+.s4-rain-copy h2 {
+  margin:
+    0.9rem 0 0;
+
+  color: var(--s4-text);
+
+  font-family:
+    var(--font-display, Georgia, serif);
+
+  font-size:
+    clamp(4rem, 8.2vw, 8.7rem);
+
+  font-weight: 800;
+  line-height: 0.86;
+
+  letter-spacing: -0.07em;
+
+  text-shadow:
+    0 28px 75px rgba(0, 0, 0, 0.54),
+    0 0 48px rgba(124, 140, 255, 0.16);
+}
+
+.s4-rain-copy h2 span {
   display: block;
 
-  color: var(--section-4-ink);
-  font-size: 0.92rem;
-  font-weight: 900;
+  color: #e6ebff;
 }
 
-/* Profile subtitle. */
-.souls-subtitle {
-  margin: 0.1rem 0 0;
+.s4-rain-copy p {
+  width:
+    min(550px, 94%);
 
-  color: var(--section-4-ink-light);
-  font-size: 0.72rem;
+  margin:
+    1.1rem auto 0;
+
+  color:
+    var(--s4-text-muted);
+
+  font-family:
+    var(--font-body, system-ui, sans-serif);
+
+  font-size:
+    clamp(0.88rem, 1vw, 1.02rem);
+
+  font-weight: 650;
+  line-height: 1.65;
 }
 
-/* Mini library rows. */
-.souls-mini-library {
-  display: grid;
-  gap: 0.42rem;
-
-  margin-bottom: 0.85rem;
-}
-
-/* One mini library row. */
-.souls-library-row {
-  min-height: 38px;
-  padding: 0 0.68rem;
-
-  display: grid;
-  grid-template-columns: 34px minmax(0, 1fr) auto;
+.s4-scroll-cue {
+  display: inline-flex;
   align-items: center;
-  gap: 0.58rem;
 
-  border: 1px solid rgba(184, 192, 255, 0.13);
-  border-radius: 12px;
+  gap: 0.55rem;
 
-  background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.02));
+  margin-top: 1.6rem;
 
-  opacity: 0;
-  will-change: transform, opacity;
-}
+  color:
+    rgba(203, 208, 231, 0.72);
 
-/* Small cover in mini library rows. */
-.library-row-cover {
-  position: relative;
+  font-family:
+    var(--font-body, system-ui, sans-serif);
 
-  width: 28px;
-  aspect-ratio: 2 / 3;
-
-  overflow: hidden;
-  border-radius: 7px;
-
-  background:
-    linear-gradient(145deg, rgba(124, 140, 255, 0.35), rgba(200, 164, 107, 0.20));
-}
-
-/* Smaller placeholder text in row covers. */
-.library-row-cover .cover-fallback {
-  padding: 0.18rem;
-  font-size: 0.42rem;
-  line-height: 1;
-}
-
-/* Row title. */
-.souls-library-row span {
-  min-width: 0;
-
-  color: var(--section-4-ink-mid);
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 800;
 
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* Row status. */
-.souls-library-row strong {
-  flex: 0 0 auto;
-
-  color: var(--section-4-ink-light);
-  font-size: 0.56rem;
-  font-weight: 900;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-/* Shared story row glow. */
-.souls-row-shared {
-  border-color: rgba(200, 164, 107, 0.34);
-
-  box-shadow:
-    0 0 22px rgba(200, 164, 107, 0.11),
-    inset 0 1px 0 rgba(255, 255, 255, 0.05);
-}
-
-/* Shared story row text. */
-.souls-row-shared span,
-.souls-row-shared strong {
-  color: #f0d6a3;
-}
-
-/* Reveal rounds. */
-.souls-round {
-  margin-top: 0.56rem;
-  padding: 0.78rem;
-
-  border: 1px solid rgba(184, 192, 255, 0.13);
-  border-radius: 16px;
-
-  background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.024));
-
-  opacity: 0;
-  will-change: transform, opacity;
-}
-
-/* Round label. */
-.souls-round-label {
-  display: block;
-  margin-bottom: 0.34rem;
-
-  color: var(--section-4-warm);
-  font-size: 0.56rem;
-  font-weight: 950;
   letter-spacing: 0.13em;
   text-transform: uppercase;
 }
 
-/* Round body text. */
-.souls-round p,
-.souls-quote {
+.s4-scroll-cue::before {
+  content: "";
+
+  width: 1px;
+  height: 26px;
+
+  background:
+    linear-gradient(
+      transparent,
+      rgba(184, 192, 255, 0.85)
+    );
+}
+
+/* =========================================================
+   PHASE 2 — COVER MERGE
+   ========================================================= */
+
+.s4-merge-stage {
+  z-index: 4;
+
+  pointer-events: none;
+}
+
+.s4-merge-copy,
+.s4-shared-cover,
+.s4-card-cover {
+  position: relative;
+
+  overflow: hidden;
+
   margin: 0;
 
-  color: var(--section-4-ink-mid);
-  font-size: clamp(0.7rem, 0.82vw, 0.86rem);
-  line-height: 1.5;
+  border:
+    1px solid rgba(190, 200, 255, 0.2);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(124, 140, 255, 0.34),
+      rgba(200, 164, 107, 0.15)
+    );
+
+  box-shadow:
+    0 30px 72px rgba(0, 0, 0, 0.5),
+    0 0 46px rgba(124, 140, 255, 0.14);
 }
 
-/* Character row. */
-.souls-character {
-  display: flex;
-  align-items: center;
-  gap: 0.72rem;
+.s4-merge-copy {
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  width:
+    clamp(150px, 13.5vw, 205px);
+
+  aspect-ratio: 2 / 3;
+
+  border-radius: 18px;
+
+  opacity: 0;
+
+  transform:
+    translate(-50%, -50%);
+
+  will-change:
+    transform,
+    opacity;
 }
 
-/* Character marker. */
-.souls-character-mark {
-  width: 38px;
-  height: 38px;
+.s4-merge-copy-one {
+  z-index: 3;
+}
+
+.s4-merge-caption {
+  position: absolute;
+
+  left: 50%;
+
+  top:
+    calc(
+      50% + clamp(132px, 19vw, 190px)
+    );
+
+  color:
+    rgba(240, 214, 163, 0.9);
+
+  font-family:
+    var(--font-body, system-ui, sans-serif);
+
+  font-size: 0.72rem;
+  font-weight: 900;
+
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+
+  opacity: 0;
+
+  transform:
+    translateX(-50%);
+}
+
+/* =========================================================
+   PHASE 3 — FINAL COMPARISON
+   ========================================================= */
+
+.s4-final-scene {
+  z-index: 3;
 
   display: grid;
-  place-items: center;
+
+  grid-template-rows:
+    auto
+    auto
+    1fr;
+
+  align-items: start;
+
+  padding:
+    clamp(1.35rem, 2.8vh, 2.4rem)
+    clamp(1rem, 4vw, 4.2rem)
+    clamp(1rem, 2.3vh, 1.8rem);
+
+  opacity: 0;
+  visibility: hidden;
+
+  pointer-events: none;
+}
+
+.s4-final-scene.is-interactive {
+  pointer-events: auto;
+}
+
+.s4-shared-story {
+  justify-self: center;
+
+  display: flex;
+  align-items: center;
+
+  gap: 1rem;
+
+  min-width: 0;
+
+  text-align: left;
+
+  opacity: 0;
+
+  will-change:
+    transform,
+    opacity;
+}
+
+.s4-shared-cover {
+  flex: 0 0 auto;
+
+  width:
+    clamp(74px, 6.4vw, 96px);
+
+  aspect-ratio: 2 / 3;
 
   border-radius: 13px;
 
-  color: white;
-  font-weight: 900;
-
-  background:
-    linear-gradient(145deg, rgba(200, 164, 107, 0.72), rgba(155, 124, 255, 0.52));
+  box-shadow:
+    0 20px 48px rgba(0, 0, 0, 0.42),
+    0 0 36px rgba(200, 164, 107, 0.16);
 }
 
-/* Character name. */
-.souls-character strong {
+.s4-shared-story-copy {
+  min-width: 0;
+}
+
+.s4-shared-kicker {
   display: block;
 
-  color: var(--section-4-ink);
-  font-size: 0.84rem;
+  margin-bottom: 0.3rem;
+
+  color:
+    var(--s4-warm);
+
+  font-family:
+    var(--font-body, system-ui, sans-serif);
+
+  font-size: 0.62rem;
+  font-weight: 900;
+
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
 
-/* Character note. */
-.souls-character p {
-  margin-top: 0.1rem;
+.s4-shared-story h3 {
+  max-width:
+    min(460px, 60vw);
 
-  color: var(--section-4-ink-light);
-  font-size: 0.66rem;
+  margin: 0;
+
+  overflow: hidden;
+
+  color:
+    var(--s4-text);
+
+  font-family:
+    var(--font-display, Georgia, serif);
+
+  font-size:
+    clamp(1.35rem, 2vw, 1.85rem);
+
+  line-height: 1;
+
+  letter-spacing: -0.04em;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-/* Typewriter characters begin hidden. */
-.souls-thoughts span {
+.s4-shared-story p {
+  margin:
+    0.28rem 0 0;
+
+  color:
+    var(--s4-text-muted);
+
+  font-family:
+    var(--font-body, system-ui, sans-serif);
+
+  font-size: 0.78rem;
+}
+
+.s4-final-heading {
+  justify-self: center;
+
+  margin-top:
+    clamp(0.75rem, 1.5vh, 1.1rem);
+
+  text-align: center;
+
   opacity: 0;
+
+  will-change:
+    transform,
+    opacity;
 }
 
-/* Empty state if no featured rows exist. */
-.section-4-empty {
-  z-index: 8;
+.s4-final-heading p {
+  max-width: 650px;
+
+  margin:
+    0.55rem auto 0;
+
+  color:
+    var(--s4-text-muted);
+
+  font-family:
+    var(--font-body, system-ui, sans-serif);
+
+  font-size:
+    clamp(0.76rem, 0.85vw, 0.9rem);
+
+  line-height: 1.5;
+}
+
+.s4-card-grid {
+  width:
+    min(100%, 1280px);
+
+  margin:
+    clamp(0.8rem, 1.8vh, 1.25rem)
+    auto 0;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap:
+    clamp(0.9rem, 2vw, 1.5rem);
+
+  align-items: stretch;
+}
+
+.s4-story-card {
+  position: relative;
+
+  min-width: 0;
+  min-height: 338px;
+
+  padding:
+    clamp(1rem, 1.3vw, 1.25rem);
+
+  display: grid;
+
+  grid-template-columns:
+    clamp(102px, 9.2vw, 132px)
+    minmax(0, 1fr)
+    auto;
+
+  grid-template-areas:
+    "cover info score"
+    "cover chips score"
+    "cover layers layers";
+
+  grid-template-rows:
+    auto
+    auto
+    1fr;
+
+  column-gap:
+    clamp(0.9rem, 1.4vw, 1.2rem);
+
+  row-gap: 0.55rem;
+
+  overflow: hidden;
+
+  border:
+    1px solid var(--s4-line);
+
+  border-radius: 25px;
+
+  background:
+    radial-gradient(
+      circle at 82% 16%,
+      rgba(124, 140, 255, 0.12),
+      transparent 30%
+    ),
+    linear-gradient(
+      180deg,
+      var(--s4-card-2),
+      var(--s4-card)
+    );
+
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+
+  opacity: 0;
+
+  will-change:
+    transform,
+    opacity;
+
+  transition:
+    border-color 220ms ease,
+    box-shadow 240ms ease;
+}
+
+.s4-story-card::before {
+  content: "";
+
+  position: absolute;
+
+  top: -50%;
+  left: -90%;
+
+  width: 48%;
+  height: 200%;
+
+  pointer-events: none;
+
+  opacity: 0;
+
+  background:
+    linear-gradient(
+      105deg,
+      transparent,
+      rgba(255, 255, 255, 0.1),
+      transparent
+    );
+
+  transform:
+    rotate(8deg);
+
+  transition:
+    left 700ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 200ms ease;
+}
+
+.s4-story-card:hover {
+  border-color:
+    var(--s4-line-strong);
+
+  box-shadow:
+    0 36px 92px rgba(0, 0, 0, 0.5),
+    0 0 42px rgba(124, 140, 255, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.s4-story-card:hover::before {
+  left: 140%;
+
+  opacity: 1;
+}
+
+.s4-card-cover {
+  grid-area: cover;
+
+  align-self: start;
+
+  width: 100%;
+
+  aspect-ratio: 2 / 3;
+
+  border-radius: 16px;
+
+  box-shadow:
+    0 18px 40px rgba(0, 0, 0, 0.38),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.s4-card-info {
+  grid-area: info;
+
+  align-self: end;
+
+  min-width: 0;
+}
+
+.s4-owner {
+  display: flex;
+  align-items: center;
+
+  gap: 0.55rem;
+
+  margin-bottom: 0.55rem;
+}
+
+.s4-owner-avatar {
+  width: 34px;
+  height: 34px;
 
   display: grid;
   place-items: center;
+
+  flex: 0 0 auto;
+
+  border:
+    1px solid rgba(190, 200, 255, 0.25);
+
+  border-radius: 11px;
+
+  color: #ffffff;
+
+  font-family:
+    var(--font-body, system-ui, sans-serif);
+
+  font-size: 0.78rem;
+  font-weight: 900;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(155, 124, 255, 0.88),
+      rgba(109, 139, 255, 0.7)
+    );
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+.s4-story-card-right .s4-owner-avatar {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(116, 215, 255, 0.74),
+      rgba(109, 139, 255, 0.7)
+    );
+}
+
+.s4-owner-copy {
+  min-width: 0;
+}
+
+.s4-owner-copy strong,
+.s4-owner-copy small {
+  display: block;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.s4-owner-copy strong {
+  color:
+    var(--s4-text);
+
+  font-family:
+    var(--font-body, system-ui, sans-serif);
+
+  font-size: 0.76rem;
+  font-weight: 900;
+}
+
+.s4-owner-copy small {
+  margin-top: 0.08rem;
+
+  color:
+    var(--s4-text-muted);
+
+  font-family:
+    var(--font-body, system-ui, sans-serif);
+
+  font-size: 0.62rem;
+}
+
+.s4-card-info h3 {
+  margin: 0;
+
+  overflow: hidden;
+
+  color:
+    var(--s4-text);
+
+  font-family:
+    var(--font-display, Georgia, serif);
+
+  font-size:
+    clamp(1.45rem, 2vw, 2rem);
+
+  line-height: 0.98;
+
+  letter-spacing: -0.045em;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.s4-card-info > p {
+  margin:
+    0.28rem 0 0;
+
+  color:
+    var(--s4-text-mid);
+
+  font-family:
+    var(--font-body, system-ui, sans-serif);
+
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.s4-card-score {
+  grid-area: score;
+
+  align-self: center;
+  justify-self: end;
+
+  min-width: 72px;
+  height: 48px;
+
+  padding:
+    0 0.9rem;
+
+  display: grid;
+  place-items: center;
+
+  border:
+    1px solid rgba(184, 192, 255, 0.27);
+
+  border-radius: 999px;
+
+  background:
+    rgba(124, 140, 255, 0.1);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.s4-card-score span {
+  font-family:
+    var(--font-display, Georgia, serif);
+
+  font-size: 1.28rem;
+  font-weight: 800;
+}
+
+.s4-card-chips {
+  grid-area: chips;
+
+  align-self: start;
+
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: 0.5rem;
+}
+
+.s4-card-chips span {
+  min-height: 30px;
+
+  padding:
+    0 0.72rem;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border:
+    1px solid rgba(184, 192, 255, 0.25);
+
+  border-radius: 999px;
+
+  color:
+    var(--s4-text-mid);
+
+  font-family:
+    var(--font-body, system-ui, sans-serif);
+
+  font-size: 0.66rem;
+  font-weight: 820;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(124, 140, 255, 0.16),
+      rgba(124, 140, 255, 0.07)
+    );
+}
+
+.s4-saved-layers {
+  grid-area: layers;
+
+  min-width: 0;
+
+  margin-top: 0.25rem;
+  padding-top: 0.75rem;
+
+  border-top:
+    1px solid rgba(184, 192, 255, 0.14);
+}
+
+.s4-layers-label {
+  display: block;
+
+  margin-bottom: 0.55rem;
+
+  color:
+    var(--s4-text-muted);
+
+  font-family:
+    var(--font-body, system-ui, sans-serif);
+
+  font-size: 0.62rem;
+  font-weight: 850;
+
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.s4-layer-tabs {
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: 0.48rem;
+}
+
+.s4-layer-tab {
+  min-height: 34px;
+
+  padding:
+    0 0.82rem;
+
+  border:
+    1px solid rgba(184, 192, 255, 0.28);
+
+  border-radius: 999px;
+
+  color:
+    var(--s4-text-mid);
+
+  font:
+    820 0.69rem / 1
+    var(--font-body, system-ui, sans-serif);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(124, 140, 255, 0.15),
+      rgba(124, 140, 255, 0.07)
+    );
+
+  cursor: pointer;
+
+  transition:
+    transform 180ms ease,
+    color 180ms ease,
+    border-color 180ms ease,
+    background 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.s4-layer-tab:hover,
+.s4-layer-tab.is-active {
+  color: #ffffff;
+
+  border-color:
+    rgba(190, 200, 255, 0.55);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(124, 140, 255, 0.34),
+      rgba(124, 140, 255, 0.16)
+    );
+
+  box-shadow:
+    0 8px 20px rgba(0, 0, 0, 0.24),
+    0 0 24px rgba(124, 140, 255, 0.12);
+
+  transform:
+    translateY(-1px);
+}
+
+.s4-layer-tab:focus-visible,
+.s4-layer-panel:focus-visible {
+  outline:
+    2px solid rgba(190, 200, 255, 0.78);
+
+  outline-offset: 4px;
+}
+
+.s4-layer-panels {
+  position: relative;
+
+  min-height: 108px;
+
+  margin-top: 0.65rem;
+}
+
+.s4-layer-panel {
+  min-height: 108px;
+
+  padding:
+    0.78rem 0.85rem;
+
+  border:
+    1px solid rgba(184, 192, 255, 0.12);
+
+  border-radius: 15px;
+
+  color:
+    var(--s4-text-mid);
+
+  font-family:
+    var(--font-body, system-ui, sans-serif);
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.045),
+      rgba(255, 255, 255, 0.018)
+    );
+}
+
+.s4-layer-panel[hidden] {
+  display: none;
+}
+
+.s4-layer-panel p {
+  margin:
+    0.4rem 0 0;
+
+  font-size: 0.72rem;
+  line-height: 1.48;
+}
+
+.s4-panel-kicker {
+  display: block;
+
+  color: #b8c0ff;
+
+  font-size: 0.58rem;
+  font-weight: 900;
+
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.s4-panel-feature {
+  color:
+    var(--s4-text) !important;
+
+  font-family:
+    var(--font-display, Georgia, serif);
+
+  font-size:
+    clamp(0.84rem, 1vw, 1rem) !important;
+
+  font-weight: 700;
+
+  line-height:
+    1.3 !important;
+}
+
+.s4-character-row {
+  display: grid;
+
+  grid-template-columns:
+    36px minmax(0, 1fr);
+
+  gap: 0.65rem;
+
+  align-items: start;
+
+  margin-top: 0.55rem;
+}
+
+.s4-character-mark {
+  width: 36px;
+  height: 36px;
+
+  display: grid;
+  place-items: center;
+
+  border:
+    1px solid rgba(190, 200, 255, 0.25);
+
+  border-radius: 11px;
+
+  color: #ffffff;
+
+  font-weight: 900;
+
+  background:
+    rgba(124, 140, 255, 0.16);
+}
+
+.s4-character-row strong {
+  color:
+    var(--s4-text);
+
+  font-size: 0.8rem;
+}
+
+.s4-character-row p {
+  margin-top: 0.2rem;
+}
+
+/* =========================================================
+   EMPTY AND STATUS
+   ========================================================= */
+
+.s4-empty {
+  z-index: 10;
+
+  place-content: center;
 
   padding: 2rem;
 
   text-align: center;
 
   background:
-    radial-gradient(circle at 50% 20%, rgba(124, 140, 255, 0.20), transparent 36%),
-    linear-gradient(135deg, #050611, #090d20);
+    rgba(5, 6, 17, 0.92);
 }
 
-/* Hide empty state. */
-.section-4-empty[hidden] {
-  display: none !important;
+.s4-empty:not([hidden]) {
+  display: grid;
 }
 
-/* Empty state heading. */
-.section-4-empty h3 {
-  margin: 0;
+.s4-empty h3 {
+  margin:
+    0.9rem 0 0;
 
-  color: var(--section-4-ink);
-  font-family: var(--font-display, Newsreader, Georgia, serif);
-  font-size: clamp(2rem, 4vw, 4rem);
-  letter-spacing: -0.055em;
+  font-family:
+    var(--font-display, Georgia, serif);
+
+  font-size:
+    clamp(2rem, 5vw, 4rem);
 }
 
-/* Empty state paragraph. */
-.section-4-empty p {
-  width: min(560px, 92%);
-  margin: 0.9rem auto 0;
+.s4-empty p {
+  max-width: 620px;
 
-  color: var(--section-4-ink-light);
-  line-height: 1.7;
+  margin:
+    1rem auto 0;
+
+  color:
+    var(--s4-text-muted);
+
+  font-family:
+    var(--font-body, system-ui, sans-serif);
+
+  line-height: 1.6;
 }
 
-/* Static fallback state used for reduced motion or missing GSAP. */
+.s4-status {
+  position: absolute !important;
+
+  width: 1px !important;
+  height: 1px !important;
+
+  padding: 0 !important;
+  margin: -1px !important;
+
+  overflow: hidden !important;
+
+  clip:
+    rect(0 0 0 0) !important;
+
+  clip-path:
+    inset(50%) !important;
+
+  white-space: nowrap !important;
+
+  border: 0 !important;
+}
+
+/* =========================================================
+   STATIC AND MOBILE FALLBACK
+   ========================================================= */
+
 .section-cover-rain.is-static {
   height: auto;
-  min-height: 100svh;
+  min-height: 0;
+
   overflow: visible;
+
+  padding:
+    4rem 1rem;
 }
 
-/* Static fallback places layers back into the normal document. */
-.section-cover-rain.is-static .rain-wrapper,
-.section-cover-rain.is-static .souls-section {
-  position: relative;
-  inset: auto;
-}
-
-/* Static fallback rain area. */
-.section-cover-rain.is-static .rain-wrapper {
-  min-height: 78svh;
-}
-
-/* Static fallback hides transition cover. */
-.section-cover-rain.is-static .feature-book-float {
+.section-cover-rain.is-static .s4-rain-scene,
+.section-cover-rain.is-static .s4-merge-stage {
   display: none;
 }
 
-/* Static fallback shows the second phase. */
-.section-cover-rain.is-static .souls-section,
-.section-cover-rain.is-static .souls-book,
-.section-cover-rain.is-static .souls-intro,
-.section-cover-rain.is-static .souls-profile-card,
-.section-cover-rain.is-static .souls-person,
-.section-cover-rain.is-static .souls-library-row,
-.section-cover-rain.is-static .souls-round,
-.section-cover-rain.is-static .souls-thoughts span {
-  opacity: 1 !important;
-  transform: none !important;
+.section-cover-rain.is-static .s4-final-scene {
+  position: relative;
+  inset: auto;
+
+  opacity: 1;
+  visibility: visible;
+
   pointer-events: auto;
+
+  padding: 0;
 }
 
-/* Static fallback rain covers are dimmed. */
-.section-cover-rain.is-static .rain-col {
-  opacity: 0.28;
+.section-cover-rain.is-static .s4-shared-story,
+.section-cover-rain.is-static .s4-final-heading,
+.section-cover-rain.is-static .s4-story-card {
+  opacity: 1;
+
+  transform: none !important;
 }
 
-/* Reduced motion disables smooth transitions. */
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1100px) {
+  .s4-card-grid {
+    width:
+      min(100%, 760px);
+
+    grid-template-columns:
+      1fr;
+  }
+
+  .s4-story-card {
+    min-height: 330px;
+  }
+}
+
+@media (max-width: 720px) {
+  .section-cover-rain.is-static {
+    padding:
+      3rem 0.8rem;
+  }
+
+  .s4-shared-story {
+    align-items: flex-start;
+  }
+
+  .s4-shared-cover {
+    width: 72px;
+  }
+
+  .s4-final-heading {
+    margin-top: 1.25rem;
+  }
+
+  .s4-story-card {
+    grid-template-columns:
+      94px minmax(0, 1fr);
+
+    grid-template-areas:
+      "cover info"
+      "cover score"
+      "chips chips"
+      "layers layers";
+
+    grid-template-rows:
+      auto
+      auto
+      auto
+      1fr;
+
+    min-height: 0;
+
+    border-radius: 21px;
+  }
+
+  .s4-card-score {
+    align-self: start;
+    justify-self: start;
+
+    min-width: 68px;
+    height: 42px;
+  }
+
+  .s4-card-chips {
+    margin-top: 0.15rem;
+  }
+
+  .s4-card-info h3 {
+    white-space: normal;
+  }
+
+  .s4-layer-panels,
+  .s4-layer-panel {
+    min-height: 126px;
+  }
+}
+
+@media (max-width: 430px) {
+  .s4-story-card {
+    grid-template-columns:
+      82px minmax(0, 1fr);
+
+    padding: 0.85rem;
+
+    column-gap: 0.75rem;
+  }
+
+  .s4-card-info h3 {
+    font-size: 1.3rem;
+  }
+
+  .s4-owner {
+    align-items: flex-start;
+  }
+
+  .s4-layer-tab {
+    flex: 1 1 auto;
+
+    padding-inline: 0.55rem;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .section-cover-rain *,
   .section-cover-rain *::before,
   .section-cover-rain *::after {
     scroll-behavior: auto !important;
-    transition-duration: 0.01ms !important;
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-  }
-}
 
-/* Tablet and mobile use static layout instead of pinned scroll. */
-@media (max-width: 980px) {
-  .section-cover-rain {
-    height: auto;
-    min-height: 100svh;
-    overflow: visible;
-  }
+    animation-duration:
+      0.001ms !important;
 
-  .rain-wrapper,
-  .souls-section {
-    position: relative;
-    inset: auto;
-  }
+    animation-iteration-count:
+      1 !important;
 
-  .rain-wrapper {
-    min-height: 82svh;
-  }
-
-  .rain-col {
-    width: 30vw;
-    opacity: 0.28;
-  }
-
-  .feature-book-float {
-    display: none;
-  }
-
-  .souls-section {
-    opacity: 1;
-    pointer-events: auto;
-    padding-top: 3rem;
-  }
-
-  .souls-book,
-  .souls-intro,
-  .souls-profile-card,
-  .souls-person,
-  .souls-library-row,
-  .souls-round,
-  .souls-thoughts span {
-    opacity: 1 !important;
-    transform: none !important;
-  }
-
-  .souls-columns {
-    grid-template-columns: 1fr;
-  }
-
-  .souls-divider {
-    display: none;
-  }
-}
-
-/* Small mobile adjustments. */
-@media (max-width: 680px) {
-  .rain-col {
-    width: 36vw;
-  }
-
-  .rain-center-copy {
-    width: min(92vw, 520px);
-  }
-
-  .rain-center-copy h2 {
-    font-size: clamp(3.25rem, 16vw, 5.5rem);
-  }
-
-  .souls-section {
-    padding-inline: 1rem;
-  }
-
-  .souls-profile-card {
-    border-radius: 18px;
-  }
-
-  .souls-library-row {
-    grid-template-columns: 30px minmax(0, 1fr);
-  }
-
-  .souls-library-row strong {
-    grid-column: 2;
+    transition-duration:
+      0.001ms !important;
   }
 }
