@@ -1,8 +1,6 @@
 
 
-6. The Climber
-7. Chainsaw Man
-8. good bye eri
+
 10. Ashita no Joe
 11. Blood on the Tracks
 12. Blue Period

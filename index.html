@@ -599,7 +599,7 @@
         data-selection-copy
         aria-hidden="true"
         >
-        <span>Selected from the middle of the rain</span>
+        <span>Picked from both streams</span>
         <strong>One shared story</strong>
         </div>
 
@@ -608,15 +608,48 @@
         data-card-formation
         aria-hidden="true"
         >
-        <span
-            class="s4-card-formation-cover-slot"
-            data-formation-cover-slot
-        ></span>
+        <figure
+            class="s4-card-formation-cover"
+            data-formation-cover
+            data-cover-shell
+        >
+            <img
+            data-story-cover
+            src=""
+            alt="Attack on Titan cover"
+            decoding="async"
+            >
+
+            <span
+            class="s4-cover-fallback"
+            data-cover-fallback
+            >
+            Attack on Titan
+            </span>
+        </figure>
 
         <div class="s4-card-formation-copy">
-            <span>Shared story</span>
-            <strong data-story-title>Attack on Titan</strong>
-            <small data-story-creator>Hajime Isayama</small>
+            <span class="s4-card-formation-eyebrow">
+            Shared story
+            </span>
+
+            <strong data-story-title>
+            Attack on Titan
+            </strong>
+
+            <small data-story-creator>
+            Hajime Isayama
+            </small>
+
+            <div class="s4-card-formation-meta">
+            <span data-story-format>
+                Manga / Anime
+            </span>
+
+            <span>
+                Both completed
+            </span>
+            </div>
         </div>
 
         <span class="s4-card-formation-score">
@@ -673,10 +706,10 @@
             <div
                 class="s4-card-score"
                 data-reader-score
-                data-score-tooltip="Average of Kai's 9/10 and Nova's 10/10."
+                data-score-tooltip="Average of Kai's 9/10 and Nova's 10/10. Focus either reader to see the reason for that score."
                 role="group"
                 tabindex="0"
-                aria-label="Average reader rating: 9.5 out of 10. Kai rated it 9 and Nova rated it 10."
+                aria-label="Average reader rating: 9.5 out of 10."
             >
                 <span>9.5/10</span>
             </div>
@@ -775,7 +808,7 @@
             aria-labelledby="s4-kai-name"
             >
             <button
-                class="s4-profile-card is-active"
+                class="s4-profile-card"
                 type="button"
                 aria-pressed="false"
                 data-focus-reader="left"
@@ -805,7 +838,7 @@
                 </strong>
 
                 <small data-profile-bio="kai">
-                    saves emotions first
+                    remembers the feeling before the theory
                 </small>
                 </span>
 
@@ -877,7 +910,7 @@
                 </strong>
 
                 <small data-profile-bio="nova">
-                    tracks themes and meaning
+                    tracks themes, systems, and shifting truth
                 </small>
                 </span>
 
@@ -910,8 +943,8 @@
         </h3>
 
         <p>
-        Confirm that Supabase is loaded and that anime or manga rows use
-        <strong>featured = true</strong>.
+        Confirm that Supabase is loaded and that your anime or manga rows have
+        valid IDs and cover images.
         </p>
     </div>
 
