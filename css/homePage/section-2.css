@@ -6,7 +6,7 @@
    - Shared values are stored as custom properties in the section root.
    - Responsive media queries override only the values that actually change.
    - Quote cards all use one consistent text size and line height.
-   - Desktop quotes use an explicit grid-area mosaic matching the original order.
+   - Desktop quotes use an explicit tiled grid with balanced outer edges.
    - Cards stay content-driven, readable, and protected from overlap.
    - Existing HTML and JavaScript class names remain compatible.
    ============================================================================ */
@@ -42,12 +42,12 @@
 
   /* Quote system: shared by every quote card.
      Change these values here to update the entire quote collection. */
-  --s2-quote-gap: clamp(0.72rem, 0.82vw, 0.9rem);
-  --s2-quote-font-size: 0.9375rem; /* 15px everywhere */
-  --s2-quote-line-height: 1.4;
-  --s2-quote-padding-block: 0.78rem;
-  --s2-quote-padding-inline: 0.95rem;
-  --s2-quote-number-size: 0.6rem;
+  --s2-quote-gap: clamp(0.68rem, 0.78vw, 0.82rem);
+  --s2-quote-font-size: clamp(0.9rem, 0.18vw + 0.77rem, 0.96875rem);
+  --s2-quote-line-height: 1.46;
+  --s2-quote-padding-block: 0.68rem;
+  --s2-quote-padding-inline: 0.9rem;
+  --s2-quote-number-size: 0.59375rem;
 
 
   position: relative;
@@ -1090,54 +1090,50 @@
 
 
 /* ============================================================================
-   13. QUOTES — READABLE, ORDERED MOSAIC
+   13. QUOTES — BALANCED TILED FIELD
    ----------------------------------------------------------------------------
-   Design rules:
-   - Every quote uses exactly the same font size and line height.
-   - Cards grow from their content instead of using fixed heights.
-   - The desktop grid preserves the clean original composition.
-   - Quote 6 receives extra width for the longer text now in the HTML.
-   - Grid areas control placement, so card classes are defined only once.
-   - Responsive sections change only the grid template, not every card.
-   ============================================================================ */
+   The quote group is treated as one visual field rather than three unrelated
+   columns. Each desktop column begins and ends on the same horizontal edges,
+   while individual card heights follow the amount of copy they contain.
 
-/* Quote collection.
-   Twelve equal tracks create three balanced cards across the first row.
-   The lower rows keep the original mosaic while giving quote 6 more room. */
+   Desktop distribution:
+   - Column 1: 01, 04, 07
+   - Column 2: 02, 05, 08
+   - Column 3: 03, 06, 09
+
+   This spreads the longest quotations across the full width, keeps the outer
+   silhouette balanced, removes accidental holes, and preserves a clear
+   top-row reading entry through quotes 01, 02, and 03.
+   ============================================================================ */
 
 .section-empty-shelf.is-js-ready .falling-quotes {
   position: relative;
 
   width: var(--section-2-evidence-width);
   max-width: 1560px;
-  height: auto;
+  height: clamp(500px, 55vh, 560px);
 
   margin-inline: auto;
 
   display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  grid-template-areas:
-    "q1 q1 q1 q1 q2 q2 q2 q2 q3 q3 q3 q3"
-    "q4 q4 q5 q5 q5 q5 q6 q6 q6 q7 q7 q7"
-    "q8 q8  .  .  .  . q9 q9 q9  .  .  .";
-
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(15, minmax(0, 1fr));
   gap: var(--s2-quote-gap);
-  align-items: start;
 
+  align-items: stretch;
   overflow: visible;
 }
 
-/* Individual quote card.
-   All typography, spacing, surface, and interaction styles live here. */
-
+/* Every quote uses one component style. Its grid span controls only the space
+   it needs; no quote receives featured-card styling. */
 .falling-quote {
   position: relative;
   z-index: 1;
 
   width: 100%;
-  height: auto;
   min-width: 0;
   min-height: 0;
+  height: 100%;
 
   margin: 0;
   padding:
@@ -1154,17 +1150,17 @@
   background:
     linear-gradient(
       180deg,
-      var(--s2-panel-bg-strong) 0%,
-      var(--s2-panel-bg) 100%
+      rgba(16, 21, 39, 0.985) 0%,
+      rgba(8, 12, 26, 0.985) 100%
     );
 
   border: 1px solid var(--s2-border);
-  border-radius: clamp(16px, 1.1vw, 22px);
+  border-radius: clamp(16px, 1vw, 20px);
 
   box-shadow:
-    0 24px 56px rgba(0, 0, 0, 0.42),
-    0 0 36px rgba(124, 140, 255, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.075);
+    0 16px 38px rgba(0, 0, 0, 0.34),
+    0 0 24px rgba(124, 140, 255, 0.055),
+    inset 0 1px 0 rgba(255, 255, 255, 0.065);
 
   font-family: var(--font-display, Georgia, serif);
   font-size: var(--s2-quote-font-size);
@@ -1173,7 +1169,7 @@
 
   color: var(--s2-text-mid);
 
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
   word-break: normal;
   text-wrap: pretty;
 
@@ -1188,37 +1184,24 @@
     filter 220ms ease;
 }
 
-/* The three top cards share one row and stretch to the tallest quote.
-   This creates a clean top edge and a clean bottom edge without fixed heights. */
-
-.quote-1,
-.quote-2,
-.quote-3 {
-  align-self: stretch;
-}
-
-/* Quote number label. */
-
 .falling-quote::before {
   content: attr(data-quote-number);
 
   display: block;
-  margin-bottom: 0.38rem;
+  flex: 0 0 auto;
+
+  margin-bottom: 0.36rem;
 
   font-family: var(--font-body, system-ui, sans-serif);
   font-size: var(--s2-quote-number-size);
   font-weight: 850;
   line-height: 1;
 
-  color: rgba(184, 192, 255, 0.62);
+  color: rgba(184, 192, 255, 0.66);
 
   text-transform: uppercase;
   letter-spacing: 0.14em;
 }
-
-/* Quote text.
-   Length classes may remain in the HTML for JavaScript or semantics, but none
-   of them changes typography. Every card inherits the same shared values. */
 
 .quote-text,
 .quote-short,
@@ -1239,20 +1222,72 @@
   color: inherit;
 }
 
-/* One placement rule per card.
-   These are the only quote-number-specific rules in the base stylesheet. */
+/* Inline emphasis only. Quote 06 remains an ordinary card. */
+.quote-emphasis {
+  color: var(--s2-text);
+  font-weight: 760;
 
-.quote-1 { grid-area: q1; }
-.quote-2 { grid-area: q2; }
-.quote-3 { grid-area: q3; }
-.quote-4 { grid-area: q4; }
-.quote-5 { grid-area: q5; }
-.quote-6 { grid-area: q6; }
-.quote-7 { grid-area: q7; }
-.quote-8 { grid-area: q8; }
-.quote-9 { grid-area: q9; }
+  background:
+    linear-gradient(
+      180deg,
+      transparent 56%,
+      rgba(155, 124, 255, 0.3) 56%,
+      rgba(124, 140, 255, 0.2) 100%
+    );
 
-/* Shared hover, keyboard-focus, and active-layer state. */
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+
+  padding-inline: 0.08em;
+}
+
+/* Desktop tiled placement.
+   Fifteen small tracks let each card receive a height close to its text weight
+   while all three columns still occupy the same total vertical space. */
+.quote-1 {
+  grid-column: 1;
+  grid-row: 1 / span 5;
+}
+
+.quote-4 {
+  grid-column: 1;
+  grid-row: 6 / span 3;
+}
+
+.quote-7 {
+  grid-column: 1;
+  grid-row: 9 / span 7;
+}
+
+.quote-2 {
+  grid-column: 2;
+  grid-row: 1 / span 5;
+}
+
+.quote-5 {
+  grid-column: 2;
+  grid-row: 6 / span 6;
+}
+
+.quote-8 {
+  grid-column: 2;
+  grid-row: 12 / span 4;
+}
+
+.quote-3 {
+  grid-column: 3;
+  grid-row: 1 / span 8;
+}
+
+.quote-6 {
+  grid-column: 3;
+  grid-row: 9 / span 3;
+}
+
+.quote-9 {
+  grid-column: 3;
+  grid-row: 12 / span 4;
+}
 
 .falling-quote:hover,
 .falling-quote:focus-visible,
@@ -1270,18 +1305,114 @@
     );
 
   box-shadow:
-    0 38px 88px rgba(0, 0, 0, 0.62),
-    0 0 64px rgba(155, 124, 255, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    0 28px 66px rgba(0, 0, 0, 0.54),
+    0 0 48px rgba(155, 124, 255, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.11);
 
   filter:
-    saturate(1.08)
-    contrast(1.04);
+    saturate(1.06)
+    contrast(1.03);
 }
 
 .falling-quote:focus-visible {
-  outline: 2px solid rgba(184, 192, 255, 0.68);
+  outline: 2px solid rgba(184, 192, 255, 0.72);
   outline-offset: 4px;
+}
+
+/* Compact desktop / landscape tablet.
+   Two complete columns replace the three-column field before text becomes too
+   narrow. Both columns still start and finish at the same vertical positions. */
+@media (max-width: 1100px) {
+  .section-empty-shelf.is-js-ready .falling-quotes {
+    height: 620px;
+
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(20, minmax(0, 1fr));
+    gap: 0.58rem;
+  }
+
+  .quote-1 {
+    grid-column: 1;
+    grid-row: 1 / span 5;
+  }
+
+  .quote-4 {
+    grid-column: 1;
+    grid-row: 6 / span 3;
+  }
+
+  .quote-5 {
+    grid-column: 1;
+    grid-row: 9 / span 6;
+  }
+
+  .quote-7 {
+    grid-column: 1;
+    grid-row: 15 / span 6;
+  }
+
+  .quote-2 {
+    grid-column: 2;
+    grid-row: 1 / span 5;
+  }
+
+  .quote-3 {
+    grid-column: 2;
+    grid-row: 6 / span 6;
+  }
+
+  .quote-6 {
+    grid-column: 2;
+    grid-row: 12 / span 3;
+  }
+
+  .quote-8 {
+    grid-column: 2;
+    grid-row: 15 / span 3;
+  }
+
+  .quote-9 {
+    grid-column: 2;
+    grid-row: 18 / span 3;
+  }
+}
+
+/* Portrait tablet and mobile return to document order. A scrollable single
+   column is easier to read and keeps the pinned scene from overlapping the
+   persistent media card. */
+@media (max-width: 900px) {
+  .section-empty-shelf.is-js-ready .falling-quotes {
+    height: auto;
+    max-height: 620px;
+
+    padding-right: 0.3rem;
+
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+    gap: var(--s2-quote-gap);
+
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+  }
+
+  .falling-quote,
+  .quote-1,
+  .quote-2,
+  .quote-3,
+  .quote-4,
+  .quote-5,
+  .quote-6,
+  .quote-7,
+  .quote-8,
+  .quote-9 {
+    grid-column: auto;
+    grid-row: auto;
+    height: auto;
+    min-height: 0;
+  }
 }
 
 
@@ -1935,27 +2066,7 @@
 
 
 /* ============================================================================
-   19. COMPACT DESKTOP / SMALL LAPTOP QUOTE LAYOUT
-   ----------------------------------------------------------------------------
-   The card component does not change here. Only the parent grid is rearranged
-   into two columns, which keeps the same typography and avoids overlap.
-   ============================================================================ */
-
-@media (max-width: 1180px) {
-  .section-empty-shelf.is-js-ready .falling-quotes {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-template-areas:
-      "q1 q2"
-      "q3 q3"
-      "q4 q5"
-      "q6 q7"
-      "q8 q9";
-  }
-}
-
-
-/* ============================================================================
-   20. TABLET RESPONSIVE OVERRIDES
+   19. TABLET RESPONSIVE OVERRIDES
    ----------------------------------------------------------------------------
    Only properties that differ from the base component styles are repeated here.
    ============================================================================ */
@@ -2197,26 +2308,14 @@
   }
 
 
-  /* Mobile quotes keep the same 15px text and use one ordered column. */
+  /* Mobile quotes keep the same 15px type in one ordered column. */
 
   .section-empty-shelf.is-js-ready .falling-quotes {
     grid-template-columns: minmax(0, 1fr);
-    grid-template-areas:
-      "q1"
-      "q2"
-      "q3"
-      "q4"
-      "q5"
-      "q6"
-      "q7"
-      "q8"
-      "q9";
+    gap: var(--s2-quote-gap);
 
     max-height: 620px;
     padding-right: 0.25rem;
-
-    overflow-y: auto;
-    overscroll-behavior: contain;
   }
 
   .section-empty-shelf.is-js-ready .moving-moments {
