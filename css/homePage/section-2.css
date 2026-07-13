@@ -43,11 +43,13 @@
   /* Quote system: shared by every quote card.
      Change these values here to update the entire quote collection. */
   --s2-quote-gap: clamp(0.68rem, 0.78vw, 0.82rem);
-  --s2-quote-font-size: clamp(0.9rem, 0.18vw + 0.77rem, 0.96875rem);
-  --s2-quote-line-height: 1.46;
-  --s2-quote-padding-block: 0.68rem;
-  --s2-quote-padding-inline: 0.9rem;
-  --s2-quote-number-size: 0.59375rem;
+  /* Larger shared quote type reduces unused space while preserving a single
+     visual hierarchy across all nine cards. */
+  --s2-quote-font-size: clamp(1rem, 0.42vw + 0.76rem, 1.125rem);
+  --s2-quote-line-height: 1.43;
+  --s2-quote-padding-block: 0.72rem;
+  --s2-quote-padding-inline: 0.95rem;
+  --s2-quote-number-size: 0.625rem;
 
 
   position: relative;
@@ -1222,7 +1224,9 @@
   color: inherit;
 }
 
-/* Inline emphasis only. Quote 06 remains an ordinary card. */
+/* Shared inline emphasis.
+   Every card may contain one or more meaningful highlighted phrases. Because
+   the treatment is identical everywhere, no single quote becomes a feature. */
 .quote-emphasis {
   color: var(--s2-text);
   font-weight: 760;
@@ -1230,15 +1234,16 @@
   background:
     linear-gradient(
       180deg,
-      transparent 56%,
-      rgba(155, 124, 255, 0.3) 56%,
-      rgba(124, 140, 255, 0.2) 100%
+      transparent 54%,
+      rgba(166, 130, 255, 0.34) 54%,
+      rgba(124, 140, 255, 0.22) 100%
     );
 
   -webkit-box-decoration-break: clone;
   box-decoration-break: clone;
 
-  padding-inline: 0.08em;
+  padding-inline: 0.09em;
+  border-radius: 0.16em;
 }
 
 /* Desktop tiled placement.
@@ -2308,7 +2313,7 @@
   }
 
 
-  /* Mobile quotes keep the same 15px type in one ordered column. */
+  /* Mobile quotes preserve the shared readable type in one ordered column. */
 
   .section-empty-shelf.is-js-ready .falling-quotes {
     grid-template-columns: minmax(0, 1fr);
