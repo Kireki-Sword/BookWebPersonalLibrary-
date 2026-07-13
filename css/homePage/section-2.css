@@ -1,15 +1,15 @@
 /* ============================================================================
-   SECTION 2 — FINAL CLEAN CSS
+   SECTION 2 — ORGANIZED, RESPONSIVE CSS
    ----------------------------------------------------------------------------
-   Final revision:
-   - Persistent Vagabond card reduced to create more room above it.
-   - Cover keeps a correct 2:3 manga proportion.
-   - Seven Moment cards use balanced square and vertical image-only panels.
-   - Square and vertical Moment cards cover almost the same visual area.
-   - Moment images fill each card because figcaption elements were removed.
-   - HTML and JavaScript do not need changes.
+   Organization rules used in this file:
+   - Each component keeps its main styles in one clearly labeled section.
+   - Shared values are stored as custom properties in the section root.
+   - Responsive media queries override only the values that actually change.
+   - Quote cards all use one consistent text size and line height.
+   - Quote-card height is content-driven, so short quotes do not leave large
+     empty areas inside their cards.
+   - Existing HTML and JavaScript class names remain compatible.
    ============================================================================ */
-
 
 /* ============================================================================
    1. SECTION ROOT
@@ -39,6 +39,14 @@
   --s2-text: #f5f1ff;
   --s2-text-mid: #c9cde2;
   --s2-text-muted: #8f96b3;
+
+  /* Quote system: one size for every quote, regardless of quote length. */
+  --s2-quote-columns: 3;
+  --s2-quote-gap: clamp(0.65rem, 0.8vw, 0.9rem);
+  --s2-quote-font-size: 0.9375rem; /* 15px */
+  --s2-quote-line-height: 1.42;
+  --s2-quote-padding-block: 0.9rem;
+  --s2-quote-padding-inline: 1rem;
 
   position: relative;
   width: 100%;
@@ -1080,48 +1088,57 @@
 
 
 /* ============================================================================
-   13. QUOTES — CLEAN ALIGNED MOSAIC
+   13. QUOTES — CONSISTENT TEXT + CONTENT-FITTING CARDS
+   ----------------------------------------------------------------------------
+   Important:
+   - Every quote uses the exact same font size and line height.
+   - Quote length classes such as .quote-short or .quote-long no longer change
+     typography. They may remain in the HTML without affecting the design.
+   - The multi-column layout packs cards vertically, reducing unused space.
+   - Each card uses height: auto and only the padding defined below.
    ============================================================================ */
 
+/* Quote collection / masonry-style columns. */
+
 .section-empty-shelf.is-js-ready .falling-quotes {
-  display: grid;
+  width: var(--section-2-evidence-width);
+  max-width: 1560px;
+  margin-inline: auto;
 
-  grid-template-columns:
-    repeat(12, minmax(0, 1fr));
+  display: block;
+  column-count: var(--s2-quote-columns);
+  column-gap: var(--s2-quote-gap);
+  column-fill: balance;
 
-  grid-template-rows:
-    minmax(96px, auto)
-    minmax(96px, auto)
-    minmax(82px, auto)
-    minmax(82px, auto);
-
-  gap: clamp(0.55rem, 0.72vw, 0.82rem);
-
-  align-items: stretch;
   overflow: visible;
 }
 
-.falling-quote {
-  --quote-size: clamp(0.64rem, 0.66vw, 0.84rem);
-  --quote-leading: 1.23;
+/* Individual quote card.
+   All card appearance and typography are controlled here. */
 
+.falling-quote {
   position: relative;
   z-index: 1;
 
-  height: 100%;
+  width: 100%;
+  height: auto;
   min-height: 0;
 
-  margin: 0;
-
+  margin: 0 0 var(--s2-quote-gap);
   padding:
-    clamp(0.72rem, 0.76vw, 0.94rem)
-    clamp(0.82rem, 0.92vw, 1.05rem);
+    var(--s2-quote-padding-block)
+    var(--s2-quote-padding-inline)
+    calc(var(--s2-quote-padding-block) + 0.1rem);
 
-  display: flex;
+  box-sizing: border-box;
+
+  display: inline-flex;
   flex-direction: column;
   justify-content: flex-start;
+  vertical-align: top;
 
-  overflow: visible;
+  break-inside: avoid;
+  page-break-inside: avoid;
 
   background:
     linear-gradient(
@@ -1139,10 +1156,14 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.075);
 
   font-family: var(--font-display, Georgia, serif);
-  font-size: var(--quote-size);
+  font-size: var(--s2-quote-font-size);
+  font-weight: 500;
+  line-height: var(--s2-quote-line-height);
 
-  line-height: var(--quote-leading);
   color: var(--s2-text-mid);
+
+  overflow-wrap: anywhere;
+  text-wrap: pretty;
 
   cursor: default;
   transform-origin: center center;
@@ -1155,21 +1176,38 @@
     filter 220ms ease;
 }
 
+/* Quote number label. */
+
 .falling-quote::before {
   content: attr(data-quote-number);
 
   display: block;
-  margin-bottom: 0.32rem;
+  margin-bottom: 0.4rem;
 
   font-family: var(--font-body, system-ui, sans-serif);
-  font-size: 0.56rem;
+  font-size: 0.625rem;
   font-weight: 850;
-
-  letter-spacing: 0.15em;
   line-height: 1;
 
-  color: rgba(184, 192, 255, 0.58);
+  color: rgba(184, 192, 255, 0.62);
+
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
 }
+
+/* Quote text element.
+   This class does not change size between cards. */
+
+.quote-text {
+  display: block;
+  margin: 0;
+  padding: 0;
+
+  font: inherit;
+  color: inherit;
+}
+
+/* Shared hover, keyboard-focus, and active-layer state. */
 
 .falling-quote:hover,
 .falling-quote:focus-visible,
@@ -1199,75 +1237,6 @@
 .falling-quote:focus-visible {
   outline: 2px solid rgba(184, 192, 255, 0.68);
   outline-offset: 4px;
-}
-
-.quote-text {
-  display: block;
-}
-
-.quote-short {
-  --quote-size: clamp(0.82rem, 0.82vw, 1rem);
-  --quote-leading: 1.3;
-}
-
-.quote-medium {
-  --quote-size: clamp(0.72rem, 0.74vw, 0.9rem);
-  --quote-leading: 1.27;
-}
-
-.quote-long {
-  --quote-size: clamp(0.62rem, 0.64vw, 0.8rem);
-  --quote-leading: 1.23;
-}
-
-.quote-xl {
-  --quote-size: clamp(0.56rem, 0.6vw, 0.74rem);
-  --quote-leading: 1.21;
-}
-
-.quote-1 {
-  grid-column: 1 / span 4;
-  grid-row: 1 / span 2;
-}
-
-.quote-2 {
-  grid-column: 5 / span 4;
-  grid-row: 1 / span 2;
-}
-
-.quote-3 {
-  grid-column: 9 / span 4;
-  grid-row: 1 / span 2;
-}
-
-.quote-4 {
-  grid-column: 1 / span 2;
-  grid-row: 3 / span 1;
-}
-
-.quote-5 {
-  grid-column: 3 / span 4;
-  grid-row: 3 / span 2;
-}
-
-.quote-6 {
-  grid-column: 7 / span 2;
-  grid-row: 3 / span 1;
-}
-
-.quote-7 {
-  grid-column: 9 / span 4;
-  grid-row: 3 / span 2;
-}
-
-.quote-8 {
-  grid-column: 1 / span 2;
-  grid-row: 4 / span 1;
-}
-
-.quote-9 {
-  grid-column: 7 / span 2;
-  grid-row: 4 / span 1;
 }
 
 
@@ -1921,7 +1890,9 @@
 
 
 /* ============================================================================
-   19. TABLET RESPONSIVE
+   19. TABLET RESPONSIVE OVERRIDES
+   ----------------------------------------------------------------------------
+   Only properties that differ from the base component styles are repeated here.
    ============================================================================ */
 
 @media (max-width: 1100px) {
@@ -1929,6 +1900,10 @@
   .section-empty-shelf {
     --section-2-evidence-width:
       min(1120px, calc(100vw - 32px));
+
+    /* Quote layout changes only; quote text size stays identical. */
+    --s2-quote-columns: 2;
+    --s2-quote-gap: 0.78rem;
   }
 
   .section-empty-shelf.is-js-ready .stage-viewport {
@@ -1939,58 +1914,6 @@
     top: clamp(-90px, -7vh, -30px);
   }
 
-  .section-empty-shelf.is-js-ready .falling-quotes {
-    grid-template-columns:
-      repeat(6, minmax(0, 1fr));
-
-    grid-template-rows:
-      repeat(6, minmax(76px, auto));
-  }
-
-  .quote-1 {
-    grid-column: 1 / span 3;
-    grid-row: 1 / span 2;
-  }
-
-  .quote-2 {
-    grid-column: 4 / span 3;
-    grid-row: 1 / span 2;
-  }
-
-  .quote-3 {
-    grid-column: 1 / span 4;
-    grid-row: 3 / span 2;
-  }
-
-  .quote-4 {
-    grid-column: 5 / span 2;
-    grid-row: 3 / span 1;
-  }
-
-  .quote-5 {
-    grid-column: 5 / span 2;
-    grid-row: 4 / span 2;
-  }
-
-  .quote-6 {
-    grid-column: 1 / span 2;
-    grid-row: 5 / span 1;
-  }
-
-  .quote-7 {
-    grid-column: 3 / span 2;
-    grid-row: 5 / span 2;
-  }
-
-  .quote-8 {
-    grid-column: 5 / span 2;
-    grid-row: 6 / span 1;
-  }
-
-  .quote-9 {
-    grid-column: 1 / span 2;
-    grid-row: 6 / span 1;
-  }
 
   .section-empty-shelf.is-js-ready .moving-moments {
     height: clamp(450px, 52vh, 520px);
@@ -2093,7 +2016,10 @@
 
 
 /* ============================================================================
-   20. MOBILE RESPONSIVE
+   20. MOBILE RESPONSIVE OVERRIDES
+   ----------------------------------------------------------------------------
+   Base component rules stay above; this section changes only mobile-specific
+   sizing, placement, and scrolling behavior.
    ============================================================================ */
 
 @media (max-width: 640px) {
@@ -2106,6 +2032,10 @@
 
     --section-2-cover-width: 135px;
     --section-2-card-gap: 0.95rem;
+
+    /* One quote column on small screens; typography remains 15px. */
+    --s2-quote-columns: 1;
+    --s2-quote-gap: 0.75rem;
   }
 
   .section-2-header {
@@ -2206,23 +2136,15 @@
     padding-inline: 0.75rem;
   }
 
+
+  /* Quote cards keep the same text size; only the viewport becomes scrollable. */
+
   .section-empty-shelf.is-js-ready .falling-quotes {
-    display: flex;
-    flex-direction: column;
-
-    gap: 0.75rem;
-
     max-height: 620px;
     padding-right: 0.25rem;
 
     overflow-y: auto;
-  }
-
-  .falling-quote {
-    height: auto;
-    min-height: auto;
-
-    font-size: 0.82rem;
+    overscroll-behavior: contain;
   }
 
   .section-empty-shelf.is-js-ready .moving-moments {
