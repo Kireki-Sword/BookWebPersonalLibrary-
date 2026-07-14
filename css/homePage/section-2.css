@@ -1601,73 +1601,63 @@
    --w controls card width.
    ============================================================================ */
 
-/* Square 1 */
+/* Four square cards */
 
 .moment-frame-1 {
   --x: 0%;
   --y: 5%;
-  --w: 19%;
-
+  --w: 18%;
   z-index: 5;
 }
 
-/* Square 2 */
-
 .moment-frame-2 {
-  --x: 17%;
+  --x: 14.7%;
   --y: 27%;
-  --w: 19%;
-
+  --w: 18%;
   z-index: 3;
 }
 
-/* Square 3 */
-
 .moment-frame-3 {
-  --x: 34%;
+  --x: 29.4%;
   --y: 6%;
-  --w: 19%;
-
+  --w: 18%;
   z-index: 6;
 }
 
-/* Vertical 1 */
-
-.moment-frame-5 {
-  --x: 51.5%;
-  --y: 1%;
-  --w: 15.5%;
-
-  z-index: 7;
-}
-
-/* Vertical 2 */
-
-.moment-frame-6 {
-  --x: 62.5%;
-  --y: 20%;
-  --w: 15.5%;
-
+.moment-frame-4 {
+  --x: 44.1%;
+  --y: 25%;
+  --w: 18%;
   z-index: 4;
 }
 
-/* Vertical 3 */
+/* Four vertical cards */
+
+.moment-frame-5 {
+  --x: 55.5%;
+  --y: 1%;
+  --w: 14.5%;
+  z-index: 7;
+}
+
+.moment-frame-6 {
+  --x: 65.5%;
+  --y: 20%;
+  --w: 14.5%;
+  z-index: 4;
+}
 
 .moment-frame-7 {
-  --x: 73.5%;
+  --x: 75.5%;
   --y: 3%;
-  --w: 15.5%;
-
+  --w: 14.5%;
   z-index: 6;
 }
 
-/* Vertical 4 */
-
 .moment-frame-8 {
-  --x: 84.5%;
+  --x: 85.5%;
   --y: 19%;
-  --w: 15.5%;
-
+  --w: 14.5%;
   z-index: 3;
 }
 
