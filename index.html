@@ -306,7 +306,7 @@
         </div>
     </section>
 
-    <!-- SECTION 3 — SEARCH → SAVE → ORGANIZE -->
+    <!-- SECTION 3  SEARCH, SAVE, AND ORGANIZE-->
     <section
     id="section-3-library-flow"
     class="section section-library-flow"
@@ -314,9 +314,18 @@
     >
     <div class="flow-grid">
 
-        <!-- INTRO -->
-        <article class="flow-copy-card" data-flow-motion="copy">
-        <span class="section-label" data-flow-motion-item>
+        <!-- ==================================================
+            INTRODUCTION
+            ================================================== -->
+
+        <article
+        class="flow-copy-card"
+        data-flow-motion="copy"
+        >
+        <span
+            class="section-label"
+            data-flow-motion-item
+        >
             Your first step
         </span>
 
@@ -351,10 +360,13 @@
         </article>
 
 
-        <!-- SEARCH CARD -->
+        <!-- ==================================================
+            SEARCH CARD
+            ================================================== -->
+
         <article
         class="flow-card flow-search-card"
-        aria-label="Search and add demo"
+        aria-label="Search and add a story"
         data-flow-motion="search"
         >
         <div
@@ -370,6 +382,7 @@
         </div>
 
         <div class="flow-search-body">
+
             <form
             class="flow-search-form"
             data-flow-search-form
@@ -403,7 +416,9 @@
             </div>
             </form>
 
+
             <!-- Search suggestions -->
+
             <div
             class="flow-suggestions"
             data-flow-suggestions
@@ -411,7 +426,9 @@
             hidden
             ></div>
 
-            <!-- Search message -->
+
+            <!-- Search helper/status message -->
+
             <div
             class="flow-search-empty"
             data-flow-search-empty
@@ -422,7 +439,9 @@
             </p>
             </div>
 
-            <!-- Selected search result -->
+
+            <!-- Selected result -->
+
             <div
             class="flow-result-area"
             data-flow-result-area
@@ -434,7 +453,10 @@
                 data-flow-result-card
                 >
                 <div class="flow-result-cover">
-                    <img src="" alt="Story cover">
+                    <img
+                    src=""
+                    alt="Story cover"
+                    >
                 </div>
 
                 <div class="flow-result-info">
@@ -460,7 +482,9 @@
             </template>
             </div>
 
-            <!-- Status picker -->
+
+            <!-- Status selection before adding -->
+
             <fieldset
             class="flow-status-picker"
             data-flow-status-picker
@@ -471,6 +495,7 @@
             </legend>
 
             <div class="flow-status-options">
+
                 <label>
                 <input
                     type="radio"
@@ -516,13 +541,18 @@
                 >
                 <span>Dropped</span>
                 </label>
+
             </div>
             </fieldset>
+
         </div>
         </article>
 
 
-        <!-- LIBRARY CARD -->
+        <!-- ==================================================
+            LIBRARY CARD
+            ================================================== -->
+
         <article
         class="flow-card flow-library-card"
         aria-label="Saved stories preview"
@@ -547,9 +577,13 @@
             </span>
         </header>
 
+
         <div class="flow-library-body">
 
-            <!-- FORMAT FILTERS + SORTING -->
+            <!-- ==============================================
+                FORMAT FILTERS AND SORTING
+                ============================================== -->
+
             <div
             class="flow-library-toolbar"
             data-flow-motion-item
@@ -604,83 +638,47 @@
                 </button>
             </div>
 
-            <div
-                class="flow-sort-controls"
-                aria-label="Sort saved stories"
-            >
-                <span class="flow-sort-label">
+
+            <!-- One simple sorting dropdown -->
+
+            <div class="flow-sort-controls">
+                <label for="library-sort-select">
                 Sort by
-                </span>
-
-                <!-- Main sorting options remain visible -->
-                <div
-                class="flow-sort-quick"
-                aria-label="Primary sorting options"
-                >
-                <button
-                    type="button"
-                    class="flow-sort-button active"
-                    data-sort-quick="newest"
-                    aria-pressed="true"
-                >
-                    Recent
-                </button>
-
-                <button
-                    type="button"
-                    class="flow-sort-button"
-                    data-sort-quick="oldest"
-                    aria-pressed="false"
-                >
-                    Oldest
-                </button>
-
-                <button
-                    type="button"
-                    class="flow-sort-button"
-                    data-sort-quick="status"
-                    aria-pressed="false"
-                >
-                    Status
-                </button>
-                </div>
-
-                <!-- More specific sorting options -->
-                <label class="flow-sort-specific">
-                <span class="sr-only">
-                    More sorting options
-                </span>
+                </label>
 
                 <select
-                    data-sort-specific
-                    aria-label="More sorting options"
+                id="library-sort-select"
+                data-library-sort
+                aria-label="Sort saved stories"
                 >
-                    <option value="">
-                    More sorting
-                    </option>
+                <option value="">
+                    Default order
+                </option>
 
-                    <option value="title-asc">
+                <option value="title-asc">
                     Title A–Z
-                    </option>
+                </option>
 
-                    <option value="title-desc">
+                <option value="title-desc">
                     Title Z–A
-                    </option>
+                </option>
 
-                    <option value="rating-desc">
+                <option value="rating-desc">
                     Personal rating high–low
-                    </option>
+                </option>
 
-                    <option value="rating-asc">
+                <option value="rating-asc">
                     Personal rating low–high
-                    </option>
+                </option>
                 </select>
-                </label>
             </div>
             </div>
 
 
-            <!-- STATUS FILTERS -->
+            <!-- ==============================================
+                STATUS FILTERS
+                ============================================== -->
+
             <div
             class="flow-library-status-row"
             data-flow-motion-item
@@ -744,6 +742,7 @@
                 </button>
             </div>
 
+
             <div
                 class="flow-library-save-notice"
                 role="status"
@@ -760,7 +759,10 @@
             </div>
 
 
-            <!-- COLUMN LABELS -->
+            <!-- ==============================================
+                COLUMN LABELS
+                ============================================== -->
+
             <div
             class="flow-library-list-header"
             aria-hidden="true"
@@ -773,7 +775,10 @@
             </div>
 
 
-            <!-- EMPTY STATE -->
+            <!-- ==============================================
+                EMPTY STATE
+                ============================================== -->
+
             <div
             class="flow-library-empty"
             data-library-empty
@@ -786,7 +791,10 @@
             </div>
 
 
-            <!-- GENERATED LIBRARY ROWS -->
+            <!-- ==============================================
+                GENERATED STORY LIST
+                ============================================== -->
+
             <div
             class="flow-library-list"
             data-library-list
@@ -795,12 +803,18 @@
             ></div>
 
 
-            <!-- LIBRARY ROW TEMPLATE -->
+            <!-- ==============================================
+                STORY ROW TEMPLATE
+                ============================================== -->
+
             <template id="flow-library-row-template">
             <article
                 class="flow-library-row"
                 data-library-row
             >
+
+                <!-- Story information -->
+
                 <div class="flow-library-story-cell">
                 <div class="flow-library-row-cover">
                     <img
@@ -821,13 +835,17 @@
                 </div>
                 </div>
 
-                <!-- Generated format badges -->
+
+                <!-- Format badges -->
+
                 <div
                 class="flow-library-row-format"
                 data-library-format
                 ></div>
 
-                <!-- Status dropdown -->
+
+                <!-- Status -->
+
                 <div class="flow-library-row-status">
                 <select
                     name="library_status"
@@ -856,11 +874,13 @@
                 </select>
                 </div>
 
+
                 <!-- Manual personal rating -->
+
                 <div class="flow-library-row-rating">
                 <label>
                     <span class="sr-only">
-                    Your rating from 0 to 10
+                    Your personal rating from 0 to 10
                     </span>
 
                     <input
@@ -871,7 +891,7 @@
                     inputmode="decimal"
                     placeholder="—"
                     data-library-rating
-                    aria-label="Your rating from 0 to 10"
+                    aria-label="Your personal rating from 0 to 10"
                     >
 
                     <span class="flow-rating-scale">
@@ -879,11 +899,13 @@
                     </span>
                 </label>
                 </div>
+
             </article>
             </template>
 
         </div>
         </article>
+
     </div>
     </section>
 

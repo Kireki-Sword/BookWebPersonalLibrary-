@@ -1,8 +1,8 @@
 // section3LibraryFlow-final.js
 // =========================================================
-// SECTION 3 — SEARCH → PREVIEW → STATUS → MINI LIBRARY
+// SECTION 3 — SEARCH → PREVIEW → STATUS → LIBRARY
 //
-// Load after:
+// Load this after:
 // 1. The Supabase JavaScript library
 // 2. The Section 3 HTML
 // =========================================================
@@ -10,8 +10,9 @@
 (() => {
   'use strict';
 
+
   // ---------------------------------------------------------
-  // DATABASE CONFIG
+  // DATABASE CONFIGURATION
   // ---------------------------------------------------------
 
   const SUPABASE_URL =
@@ -20,9 +21,14 @@
   const SUPABASE_KEY =
     'sb_publishable_Z2upBCdemNtdB4j5jry65A_XD_u8BsD';
 
-  const TABLE_NAME = 'manga';
-  const BUCKET_NAME = 'img';
-  const COVER_FOLDER = 'covers';
+  const TABLE_NAME =
+    'manga';
+
+  const BUCKET_NAME =
+    'img';
+
+  const COVER_FOLDER =
+    'covers';
 
   const SEARCH_COLUMNS = [
     'id',
@@ -34,9 +40,14 @@
     'genres'
   ].join(', ');
 
-  const CATALOG_PAGE_SIZE = 1000;
-  const SEARCH_RESULT_LIMIT = 3;
-  const SEARCH_DEBOUNCE_MS = 260;
+  const CATALOG_PAGE_SIZE =
+    1000;
+
+  const SEARCH_RESULT_LIMIT =
+    3;
+
+  const SEARCH_DEBOUNCE_MS =
+    260;
 
   const DEFAULT_STATUS =
     'in-progress';
@@ -49,51 +60,47 @@
     dropped: 'Dropped'
   };
 
-  const STATUS_SORT_ORDER = {
-    'in-progress': 0,
-    planned: 1,
-    paused: 2,
-    completed: 3,
-    dropped: 4
-  };
-
 
   // ---------------------------------------------------------
-  // STATE
+  // APPLICATION STATE
   // ---------------------------------------------------------
 
-  let supabaseClient = null;
-  let cataloguePromise = null;
+  let supabaseClient =
+    null;
 
-  let searchTimer = null;
-  let lastSearchRequestId = 0;
+  let cataloguePromise =
+    null;
 
-  let currentSuggestions = [];
+  let searchTimer =
+    null;
 
-  let selectedResult = null;
+  let lastSearchRequestId =
+    0;
+
+  let currentSuggestions =
+    [];
+
+  let selectedResult =
+    null;
+
   let selectedStatus =
     DEFAULT_STATUS;
 
-  let libraryItems = [];
+  let libraryItems =
+    [];
 
-  let activeFormatFilter = 'all';
-  let activeStatusFilter = 'all';
+  let activeFormatFilter =
+    'all';
+
+  let activeStatusFilter =
+    'all';
 
   /*
-    The main visible sorting defaults to Recent.
-
-    Visible sorting:
-    - newest
-    - oldest
-    - status
-
-    Dropdown sorting:
-    - title-asc
-    - title-desc
-    - rating-desc
-    - rating-asc
+    An empty value means stories remain in their
+    default recently-added order.
   */
-  let activeSortOption = 'newest';
+  let activeSortOption =
+    '';
 
 
   // ---------------------------------------------------------
@@ -122,16 +129,25 @@
       return;
     }
 
-    /*
-      These controls can be prepared before
-      the Supabase catalogue finishes loading.
-    */
-    bindStatusPickerEvents(elements);
-    bindLibraryControlEvents(elements);
+    bindStatusPickerEvents(
+      elements
+    );
 
-    hideStatusPicker(elements);
-    renderSuggestions(elements);
-    renderLibrary(elements);
+    bindLibraryControlEvents(
+      elements
+    );
+
+    hideStatusPicker(
+      elements
+    );
+
+    renderSuggestions(
+      elements
+    );
+
+    renderLibrary(
+      elements
+    );
 
     if (!window.supabase) {
       console.error(
@@ -139,7 +155,9 @@
         'Load the Supabase script before this file.'
       );
 
-      disableSearch(elements);
+      disableSearch(
+        elements
+      );
 
       setSearchMessage(
         elements,
@@ -155,9 +173,13 @@
         SUPABASE_KEY
       );
 
-    bindSearchEvents(elements);
+    bindSearchEvents(
+      elements
+    );
 
-    disableSearch(elements);
+    disableSearch(
+      elements
+    );
 
     setSearchMessage(
       elements,
@@ -169,9 +191,13 @@
 
     cataloguePromise
       .then((catalogue) => {
-        enableSearch(elements);
+        enableSearch(
+          elements
+        );
 
-        if (catalogue.length === 0) {
+        if (
+          catalogue.length === 0
+        ) {
           setSearchMessage(
             elements,
             'No stories were found in the manga table.'
@@ -191,7 +217,9 @@
           error
         );
 
-        disableSearch(elements);
+        disableSearch(
+          elements
+        );
 
         setSearchMessage(
           elements,
@@ -202,7 +230,7 @@
 
 
   // ---------------------------------------------------------
-  // GET HTML ELEMENTS
+  // FIND HTML ELEMENTS
   // ---------------------------------------------------------
 
   function getElements(section) {
@@ -292,15 +320,9 @@
         )
       ],
 
-      quickSortButtons: [
-        ...section.querySelectorAll(
-          '[data-sort-quick]'
-        )
-      ],
-
-      specificSortSelect:
+      sortSelect:
         section.querySelector(
-          '[data-sort-specific]'
+          '[data-library-sort]'
         )
     };
   }
@@ -322,7 +344,7 @@
       elements.libraryList &&
       elements.libraryRowTemplate &&
       elements.libraryCount &&
-      elements.specificSortSelect
+      elements.sortSelect
     );
   }
 
@@ -346,13 +368,15 @@
 
 
   // ---------------------------------------------------------
-  // LOAD CATALOGUE
+  // LOAD SEARCHABLE CATALOGUE
   // ---------------------------------------------------------
 
   async function loadSearchCatalogue() {
-    const rows = [];
+    const rows =
+      [];
 
-    let from = 0;
+    let from =
+      0;
 
     while (true) {
       const to =
@@ -387,7 +411,9 @@
           ? data
           : [];
 
-      rows.push(...page);
+      rows.push(
+        ...page
+      );
 
       if (
         page.length <
@@ -401,10 +427,12 @@
     }
 
     const catalogue =
-      normalizeSearchResults(rows);
+      normalizeSearchResults(
+        rows
+      );
 
     console.log(
-      `SECTION 3: loaded ${catalogue.length} searchable manga rows.`
+      `SECTION 3: loaded ${catalogue.length} searchable rows.`
     );
 
     return catalogue;
@@ -474,10 +502,14 @@
           elements
         );
 
-        selectedResult = null;
+        selectedResult =
+          null;
 
-        if (query.length < 2) {
-          currentSuggestions = [];
+        if (
+          query.length < 2
+        ) {
+          currentSuggestions =
+            [];
 
           renderSuggestions(
             elements
@@ -520,7 +552,9 @@
         .value
         .trim();
 
-    if (query.length < 2) {
+    if (
+      query.length < 2
+    ) {
       setSearchMessage(
         elements,
         'Type at least 2 letters to search.'
@@ -569,7 +603,9 @@
         elements
       );
 
-      if (results.length === 0) {
+      if (
+        results.length === 0
+      ) {
         setSearchMessage(
           elements,
           'No matching story found. Try another title.'
@@ -608,7 +644,8 @@
         error
       );
 
-      currentSuggestions = [];
+      currentSuggestions =
+        [];
 
       renderSuggestions(
         elements
@@ -623,12 +660,10 @@
 
 
   // ---------------------------------------------------------
-  // SEARCH LOCAL CATALOGUE
+  // LOCAL SEARCH
   // ---------------------------------------------------------
 
-  async function fetchSearchResults(
-    query
-  ) {
+  async function fetchSearchResults(query) {
     const catalogue =
       await getSearchCatalogue();
 
@@ -740,23 +775,27 @@
     const fullQuery =
       searchWords.join(' ');
 
-    let rank = 1;
+    let rank =
+      1;
 
     if (
       normalizedTitle ===
       fullQuery
     ) {
-      rank += 100;
+      rank +=
+        100;
     } else if (
       normalizedTitle
         .startsWith(fullQuery)
     ) {
-      rank += 80;
+      rank +=
+        80;
     } else if (
       normalizedTitle
         .includes(fullQuery)
     ) {
-      rank += 60;
+      rank +=
+        60;
     }
 
     if (
@@ -768,7 +807,8 @@
           );
         })
     ) {
-      rank += 90;
+      rank +=
+        90;
     } else if (
       normalizedAlternatives
         .some((title) => {
@@ -778,7 +818,8 @@
             );
         })
     ) {
-      rank += 70;
+      rank +=
+        70;
     } else if (
       normalizedAlternatives
         .some((title) => {
@@ -788,28 +829,29 @@
             );
         })
     ) {
-      rank += 50;
+      rank +=
+        50;
     }
 
     if (
       normalizedCreator ===
       fullQuery
     ) {
-      rank += 40;
+      rank +=
+        40;
     } else if (
       normalizedCreator
         .includes(fullQuery)
     ) {
-      rank += 25;
+      rank +=
+        25;
     }
 
     return rank;
   }
 
 
-  function normalizeSearchText(
-    value
-  ) {
+  function normalizeSearchText(value) {
     return String(
       value ?? ''
     )
@@ -831,9 +873,7 @@
   }
 
 
-  function normalizeSearchResults(
-    items
-  ) {
+  function normalizeSearchResults(items) {
     return items
       .filter((item) => {
         return (
@@ -903,24 +943,23 @@
   // SEARCH SUGGESTIONS
   // ---------------------------------------------------------
 
-  function renderSuggestions(
-    elements
-  ) {
+  function renderSuggestions(elements) {
     elements.suggestions
-      .innerHTML = '';
+      .innerHTML =
+        '';
 
     if (
-      currentSuggestions
-        .length === 0
+      currentSuggestions.length ===
+      0
     ) {
-      elements.suggestions
-        .hidden = true;
+      elements.suggestions.hidden =
+        true;
 
       return;
     }
 
-    elements.suggestions
-      .hidden = false;
+    elements.suggestions.hidden =
+      false;
 
     currentSuggestions.forEach(
       (item) => {
@@ -934,7 +973,7 @@
             'span'
           );
 
-        const img =
+        const image =
           document.createElement(
             'img'
           );
@@ -983,13 +1022,13 @@
           );
 
         setImage(
-          img,
+          image,
           item.coverUrl,
           ''
         );
 
         cover.appendChild(
-          img
+          image
         );
 
         info.append(
@@ -1013,7 +1052,9 @@
         );
 
         elements.suggestions
-          .appendChild(button);
+          .appendChild(
+            button
+          );
       }
     );
   }
@@ -1023,7 +1064,8 @@
     item,
     elements
   ) {
-    selectedResult = item;
+    selectedResult =
+      item;
 
     selectedStatus =
       DEFAULT_STATUS;
@@ -1031,7 +1073,8 @@
     elements.searchInput.value =
       item.title;
 
-    currentSuggestions = [];
+    currentSuggestions =
+      [];
 
     renderSuggestions(
       elements
@@ -1092,7 +1135,7 @@
         '[data-flow-result-card]'
       );
 
-    const coverImg =
+    const coverImage =
       fragment.querySelector(
         '.flow-result-cover img'
       );
@@ -1122,7 +1165,7 @@
       !addButton
     ) {
       console.error(
-        'The Section 3 result template is missing required elements.'
+        'The result template is missing required elements.'
       );
 
       return;
@@ -1131,9 +1174,9 @@
     card.dataset.storyId =
       item.id;
 
-    if (coverImg) {
+    if (coverImage) {
       setImage(
-        coverImg,
+        coverImage,
         item.coverUrl,
         `${item.title} cover`
       );
@@ -1189,13 +1232,19 @@
     }
 
     elements.resultArea
-      .appendChild(fragment);
+      .appendChild(
+        fragment
+      );
+
+    elements.resultArea
+      .classList
+      .add(
+        'has-result-card'
+      );
   }
 
 
-  function clearSelectedResult(
-    elements
-  ) {
+  function clearSelectedResult(elements) {
     elements.resultArea
       .querySelectorAll(
         '[data-flow-result-card]'
@@ -1203,12 +1252,16 @@
       .forEach((card) => {
         card.remove();
       });
+
+    elements.resultArea
+      .classList
+      .remove(
+        'has-result-card'
+      );
   }
 
 
-  function updateAddButtonText(
-    elements
-  ) {
+  function updateAddButtonText(elements) {
     const addButton =
       elements.resultArea
         .querySelector(
@@ -1233,9 +1286,7 @@
   // STATUS PICKER
   // ---------------------------------------------------------
 
-  function bindStatusPickerEvents(
-    elements
-  ) {
+  function bindStatusPickerEvents(elements) {
     elements.statusRadios.forEach(
       (radio) => {
         radio.addEventListener(
@@ -1259,14 +1310,12 @@
   }
 
 
-  function showStatusPicker(
-    elements
-  ) {
-    elements.statusPicker
-      .hidden = false;
+  function showStatusPicker(elements) {
+    elements.statusPicker.hidden =
+      false;
 
-    elements.statusPicker
-      .disabled = false;
+    elements.statusPicker.disabled =
+      false;
 
     selectedStatus =
       DEFAULT_STATUS;
@@ -1279,9 +1328,11 @@
       }
     );
 
-    elements.section.classList.add(
-      'has-result'
-    );
+    elements.section
+      .classList
+      .add(
+        'has-result'
+      );
 
     updateAddButtonText(
       elements
@@ -1289,14 +1340,12 @@
   }
 
 
-  function hideStatusPicker(
-    elements
-  ) {
-    elements.statusPicker
-      .hidden = true;
+  function hideStatusPicker(elements) {
+    elements.statusPicker.hidden =
+      true;
 
-    elements.statusPicker
-      .disabled = true;
+    elements.statusPicker.disabled =
+      true;
 
     elements.statusRadios.forEach(
       (radio) => {
@@ -1306,19 +1355,19 @@
       }
     );
 
-    elements.section.classList.remove(
-      'has-result'
-    );
+    elements.section
+      .classList
+      .remove(
+        'has-result'
+      );
   }
 
 
   // ---------------------------------------------------------
-  // ADD TO LIBRARY
+  // ADD STORY TO LIBRARY
   // ---------------------------------------------------------
 
-  function addSelectedResultToLibrary(
-    elements
-  ) {
+  function addSelectedResultToLibrary(elements) {
     if (!selectedResult) {
       return;
     }
@@ -1370,9 +1419,7 @@
         selectedStatus,
 
       /*
-        Personal rating starts empty.
-
-        It is not copied from heroScore.
+        The visitor's personal rating always begins empty.
       */
       userRating:
         null,
@@ -1405,7 +1452,9 @@
   function findLibraryItem(id) {
     return libraryItems.find(
       (item) => {
-        return item.id === id;
+        return (
+          item.id === id
+        );
       }
     );
   }
@@ -1426,15 +1475,9 @@
     item.status =
       status;
 
-    /*
-      Re-render when the status changes the
-      active filter or sorting position.
-    */
     if (
-      activeSortOption ===
-        'status' ||
       activeStatusFilter !==
-        'all'
+      'all'
     ) {
       renderLibrary(
         elements
@@ -1447,11 +1490,11 @@
   // MANUAL PERSONAL RATING
   // ---------------------------------------------------------
 
-  function updateLibraryItemRatingInput(
+  function updateLibraryItemRating(
     id,
     input,
     elements,
-    shouldRender
+    shouldCommit
   ) {
     const item =
       findLibraryItem(id);
@@ -1463,10 +1506,9 @@
     const rawValue =
       input.value.trim();
 
-    /*
-      Clearing the input removes the rating.
-    */
-    if (rawValue === '') {
+    if (
+      rawValue === ''
+    ) {
       item.userRating =
         null;
 
@@ -1475,7 +1517,7 @@
       );
 
       if (
-        shouldRender &&
+        shouldCommit &&
         isRatingSort(
           activeSortOption
         )
@@ -1488,55 +1530,50 @@
       return;
     }
 
-    const parsedValue =
+    const numericValue =
       Number(rawValue);
 
     const isValid =
       Number.isFinite(
-        parsedValue
+        numericValue
       ) &&
-      parsedValue >= 0 &&
-      parsedValue <= 10;
+      numericValue >= 0 &&
+      numericValue <= 10;
 
-    /*
-      While typing, show an invalid state but do not
-      immediately replace what the visitor typed.
-    */
     if (!isValid) {
       input.setAttribute(
         'aria-invalid',
         'true'
       );
 
-      /*
-        When the visitor finishes editing, clamp
-        the number into the valid range.
-      */
-      if (shouldRender) {
-        const clamped =
+      if (shouldCommit) {
+        const safeValue =
+          Number.isFinite(
+            numericValue
+          )
+            ? numericValue
+            : 0;
+
+        const clampedValue =
           Math.min(
             10,
             Math.max(
               0,
-              Number.isFinite(
-                parsedValue
-              )
-                ? parsedValue
-                : 0
+              safeValue
             )
           );
 
-        const rounded =
-          roundToOneDecimal(
-            clamped
+        const roundedValue =
+          roundRating(
+            clampedValue
           );
 
         item.userRating =
-          rounded;
+          roundedValue;
 
         input.value =
           formatRatingValue(
-            rounded
+            roundedValue
           );
 
         input.removeAttribute(
@@ -1557,22 +1594,22 @@
       return;
     }
 
-    const rounded =
-      roundToOneDecimal(
-        parsedValue
+    const roundedValue =
+      roundRating(
+        numericValue
       );
 
     item.userRating =
-      rounded;
+      roundedValue;
 
     input.removeAttribute(
       'aria-invalid'
     );
 
-    if (shouldRender) {
+    if (shouldCommit) {
       input.value =
         formatRatingValue(
-          rounded
+          roundedValue
         );
 
       if (
@@ -1588,9 +1625,7 @@
   }
 
 
-  function roundToOneDecimal(
-    value
-  ) {
+  function roundRating(value) {
     return (
       Math.round(
         value * 10
@@ -1599,9 +1634,7 @@
   }
 
 
-  function formatRatingValue(
-    value
-  ) {
+  function formatRatingValue(value) {
     return Number.isInteger(
       value
     )
@@ -1610,9 +1643,7 @@
   }
 
 
-  function isRatingSort(
-    sortOption
-  ) {
+  function isRatingSort(sortOption) {
     return (
       sortOption ===
         'rating-desc' ||
@@ -1626,14 +1657,9 @@
   // FILTERS AND SORTING
   // ---------------------------------------------------------
 
-  function bindLibraryControlEvents(
-    elements
-  ) {
-    /*
-      Format filters.
-    */
-    elements.formatFilterButtons
-      .forEach((button) => {
+  function bindLibraryControlEvents(elements) {
+    elements.formatFilterButtons.forEach(
+      (button) => {
         button.addEventListener(
           'click',
           () => {
@@ -1647,8 +1673,7 @@
                 .trim();
 
             updatePressedButtons(
-              elements
-                .formatFilterButtons,
+              elements.formatFilterButtons,
               button
             );
 
@@ -1657,13 +1682,11 @@
             );
           }
         );
-      });
+      }
+    );
 
-    /*
-      Status filters.
-    */
-    elements.statusFilterButtons
-      .forEach((button) => {
+    elements.statusFilterButtons.forEach(
+      (button) => {
         button.addEventListener(
           'click',
           () => {
@@ -1673,8 +1696,7 @@
               'all';
 
             updatePressedButtons(
-              elements
-                .statusFilterButtons,
+              elements.statusFilterButtons,
               button
             );
 
@@ -1683,132 +1705,39 @@
             );
           }
         );
-      });
+      }
+    );
 
     /*
-      Main visible sorting controls:
-      Recent, Oldest, Status.
-    */
-    elements.quickSortButtons
-      .forEach((button) => {
-        button.addEventListener(
-          'click',
-          () => {
-            activeSortOption =
-              button.dataset
-                .sortQuick ||
-              'newest';
+      There is now only one sorting dropdown.
 
-            /*
-              Reset the specific sorting dropdown.
-            */
-            elements
-              .specificSortSelect
-              .value = '';
+      Empty selection:
+      Default recently-added order.
 
-            elements
-              .specificSortSelect
-              .classList
-              .remove(
-                'is-active'
-              );
-
-            updatePressedButtons(
-              elements
-                .quickSortButtons,
-              button
-            );
-
-            renderLibrary(
-              elements
-            );
-          }
-        );
-      });
-
-    /*
-      More specific dropdown sorting:
+      Available choices:
       - Title A–Z
       - Title Z–A
       - Personal rating high–low
       - Personal rating low–high
     */
-    elements
-      .specificSortSelect
-      .addEventListener(
-        'change',
-        () => {
-          const selectedSort =
-            elements
-              .specificSortSelect
-              .value;
+    elements.sortSelect.addEventListener(
+      'change',
+      () => {
+        activeSortOption =
+          elements.sortSelect.value;
 
-          /*
-            Selecting the placeholder restores
-            the default Recent sorting.
-          */
-          if (!selectedSort) {
-            const recentButton =
-              elements
-                .quickSortButtons
-                .find((button) => {
-                  return (
-                    button.dataset
-                      .sortQuick ===
-                    'newest'
-                  );
-                });
+        elements.sortSelect
+          .classList
+          .toggle(
+            'is-active',
+            activeSortOption !== ''
+          );
 
-            activeSortOption =
-              'newest';
-
-            elements
-              .specificSortSelect
-              .classList
-              .remove(
-                'is-active'
-              );
-
-            if (recentButton) {
-              updatePressedButtons(
-                elements
-                  .quickSortButtons,
-                recentButton
-              );
-            }
-
-            renderLibrary(
-              elements
-            );
-
-            return;
-          }
-
-          activeSortOption =
-            selectedSort;
-
+        renderLibrary(
           elements
-            .specificSortSelect
-            .classList
-            .add(
-              'is-active'
-            );
-
-          /*
-            A dropdown sort is now active,
-            so remove the active state from
-            the visible sorting buttons.
-          */
-          clearPressedButtons(
-            elements
-              .quickSortButtons
-          );
-
-          renderLibrary(
-            elements
-          );
-        }
-      );
+        );
+      }
+    );
   }
 
 
@@ -1830,24 +1759,6 @@
         button.setAttribute(
           'aria-pressed',
           String(isActive)
-        );
-      }
-    );
-  }
-
-
-  function clearPressedButtons(
-    buttons
-  ) {
-    buttons.forEach(
-      (button) => {
-        button.classList.remove(
-          'active'
-        );
-
-        button.setAttribute(
-          'aria-pressed',
-          'false'
         );
       }
     );
@@ -1892,7 +1803,9 @@
   ) {
     return getCanonicalFormats(
       item.type
-    ).includes(filter);
+    ).includes(
+      filter
+    );
   }
 
 
@@ -1903,30 +1816,6 @@
     return [...items].sort(
       (a, b) => {
         switch (sortOption) {
-          case 'oldest':
-            return (
-              Number(
-                a.addedAt || 0
-              ) -
-              Number(
-                b.addedAt || 0
-              )
-            );
-
-          case 'status':
-            return (
-              getStatusSortIndex(
-                a.status
-              ) -
-                getStatusSortIndex(
-                  b.status
-                ) ||
-              compareTitles(
-                a.title,
-                b.title
-              )
-            );
-
           case 'title-asc':
             return compareTitles(
               a.title,
@@ -1953,7 +1842,11 @@
               'asc'
             );
 
-          case 'newest':
+          /*
+            Default order keeps the newest additions first.
+            It is not shown as a separate sorting button.
+          */
+          case '':
           default:
             return (
               Number(
@@ -1969,10 +1862,7 @@
   }
 
 
-  function compareTitles(
-    a,
-    b
-  ) {
+  function compareTitles(a, b) {
     return String(a)
       .localeCompare(
         String(b),
@@ -1999,28 +1889,27 @@
         b.userRating
       );
 
-    const aRated =
+    const aIsRated =
       aRating !== null;
 
-    const bRated =
+    const bIsRated =
       bRating !== null;
 
     /*
-      Unrated stories always stay after
-      stories with a personal rating.
+      Unrated stories remain after rated stories.
     */
     if (
-      aRated !==
-      bRated
+      aIsRated !==
+      bIsRated
     ) {
-      return aRated
+      return aIsRated
         ? -1
         : 1;
     }
 
     if (
-      !aRated &&
-      !bRated
+      !aIsRated &&
+      !bIsRated
     ) {
       return compareTitles(
         a.title,
@@ -2053,9 +1942,7 @@
   }
 
 
-  function getUserRatingNumber(
-    value
-  ) {
+  function getUserRatingNumber(value) {
     if (
       value === null ||
       value === undefined ||
@@ -2075,24 +1962,11 @@
   }
 
 
-  function getStatusSortIndex(
-    status
-  ) {
-    return (
-      STATUS_SORT_ORDER[
-        status
-      ] ?? 999
-    );
-  }
-
-
   // ---------------------------------------------------------
   // RENDER LIBRARY
   // ---------------------------------------------------------
 
-  function renderLibrary(
-    elements
-  ) {
+  function renderLibrary(elements) {
     const filteredItems =
       getFilteredLibraryItems();
 
@@ -2106,7 +1980,8 @@
         );
 
     elements.libraryList
-      .innerHTML = '';
+      .innerHTML =
+        '';
 
     elements.section
       .classList
@@ -2125,8 +2000,8 @@
     if (
       filteredItems.length === 0
     ) {
-      elements.libraryEmpty
-        .hidden = false;
+      elements.libraryEmpty.hidden =
+        false;
 
       setLibraryEmptyText(
         elements,
@@ -2136,8 +2011,8 @@
       return;
     }
 
-    elements.libraryEmpty
-      .hidden = true;
+    elements.libraryEmpty.hidden =
+      true;
 
     filteredItems.forEach(
       (item) => {
@@ -2149,7 +2024,9 @@
 
         if (row) {
           elements.libraryList
-            .appendChild(row);
+            .appendChild(
+              row
+            );
         }
       }
     );
@@ -2161,8 +2038,7 @@
     elements
   ) {
     const fragment =
-      elements
-        .libraryRowTemplate
+      elements.libraryRowTemplate
         .content
         .cloneNode(true);
 
@@ -2171,7 +2047,7 @@
         '[data-library-row]'
       );
 
-    const coverImg =
+    const coverImage =
       fragment.querySelector(
         '[data-library-cover]'
       );
@@ -2220,9 +2096,9 @@
         item.type
       ).join(' ');
 
-    if (coverImg) {
+    if (coverImage) {
       setImage(
-        coverImg,
+        coverImage,
         item.coverUrl,
         `${item.title} cover`
       );
@@ -2269,10 +2145,6 @@
     }
 
     if (ratingInput) {
-      /*
-        Keep the field empty until the visitor
-        manually enters a personal rating.
-      */
       ratingInput.value =
         item.userRating === null
           ? ''
@@ -2282,17 +2154,13 @@
 
       ratingInput.setAttribute(
         'aria-label',
-        `Your rating for ${item.title}, from 0 to 10`
+        `Your personal rating for ${item.title}, from 0 to 10`
       );
 
-      /*
-        Update the stored value while typing,
-        but do not rebuild the list on every key.
-      */
       ratingInput.addEventListener(
         'input',
         () => {
-          updateLibraryItemRatingInput(
+          updateLibraryItemRating(
             item.id,
             ratingInput,
             elements,
@@ -2301,13 +2169,10 @@
         }
       );
 
-      /*
-        Format and sort once editing is complete.
-      */
       ratingInput.addEventListener(
         'change',
         () => {
-          updateLibraryItemRatingInput(
+          updateLibraryItemRating(
             item.id,
             ratingInput,
             elements,
@@ -2319,7 +2184,7 @@
       ratingInput.addEventListener(
         'blur',
         () => {
-          updateLibraryItemRatingInput(
+          updateLibraryItemRating(
             item.id,
             ratingInput,
             elements,
@@ -2334,14 +2199,15 @@
 
 
   // ---------------------------------------------------------
-  // FORMAT BADGES
+  // FORMAT BADGES AND FILTER MATCHING
   // ---------------------------------------------------------
 
   function renderFormatBadges(
     container,
     typeValue
   ) {
-    container.innerHTML = '';
+    container.innerHTML =
+      '';
 
     const formats =
       getCanonicalFormats(
@@ -2349,7 +2215,10 @@
       );
 
     const visibleFormats =
-      formats.slice(0, 2);
+      formats.slice(
+        0,
+        2
+      );
 
     const hiddenCount =
       Math.max(
@@ -2386,35 +2255,37 @@
       }
     );
 
-    if (hiddenCount > 0) {
-      const more =
+    if (
+      hiddenCount > 0
+    ) {
+      const moreBadge =
         document.createElement(
           'span'
         );
 
-      more.className =
+      moreBadge.className =
         'flow-format-more';
 
-      more.textContent =
+      moreBadge.textContent =
         `+${hiddenCount}`;
 
-      more.title =
+      moreBadge.title =
         formats
           .slice(2)
-          .map(getFormatLabel)
+          .map(
+            getFormatLabel
+          )
           .join(', ');
 
       container.appendChild(
-        more
+        moreBadge
       );
     }
   }
 
 
-  function getCanonicalFormats(
-    typeValue
-  ) {
-    const canonicalFormats =
+  function getCanonicalFormats(typeValue) {
+    const formats =
       getTypeList({
         type: typeValue
       })
@@ -2425,15 +2296,13 @@
 
     return [
       ...new Set(
-        canonicalFormats
+        formats
       )
     ];
   }
 
 
-  function canonicalizeFormat(
-    value
-  ) {
+  function canonicalizeFormat(value) {
     const token =
       normalizeSearchText(
         value
@@ -2446,10 +2315,6 @@
       return '';
     }
 
-    /*
-      Game and visual novel entries use the
-      Visual novel filter.
-    */
     if (
       token.includes(
         'visualnovel'
@@ -2500,9 +2365,7 @@
   }
 
 
-  function getFormatLabel(
-    format
-  ) {
+  function getFormatLabel(format) {
     const labels = {
       manga:
         'Manga',
@@ -2542,7 +2405,9 @@
   ) {
     const paragraph =
       elements.libraryEmpty
-        .querySelector('p');
+        .querySelector(
+          'p'
+        );
 
     if (paragraph) {
       paragraph.textContent =
@@ -2563,7 +2428,7 @@
 
     return (
       'No saved stories match ' +
-      'these filters yet.'
+      'the selected filters.'
     );
   }
 
@@ -2572,9 +2437,7 @@
   // COVER IMAGES
   // ---------------------------------------------------------
 
-  function getCoverUrlFromId(
-    id
-  ) {
+  function getCoverUrlFromId(id) {
     if (
       !id ||
       !supabaseClient
@@ -2585,15 +2448,16 @@
     const coverPath =
       `${COVER_FOLDER}/${id}.jpg`;
 
-    const { data } =
-      supabaseClient
-        .storage
-        .from(
-          BUCKET_NAME
-        )
-        .getPublicUrl(
-          coverPath
-        );
+    const {
+      data
+    } = supabaseClient
+      .storage
+      .from(
+        BUCKET_NAME
+      )
+      .getPublicUrl(
+        coverPath
+      );
 
     return (
       data?.publicUrl ||
@@ -2603,55 +2467,59 @@
 
 
   function setImage(
-    img,
+    image,
     url,
     altText
   ) {
-    img.alt =
+    image.alt =
       altText || '';
 
     if (!url) {
       hideBrokenImage(
-        img
+        image
       );
 
       return;
     }
 
-    img.hidden = false;
+    image.hidden =
+      false;
 
-    img.onerror = () => {
-      console.warn(
-        'Cover failed to load:',
-        url
-      );
+    image.onerror =
+      () => {
+        console.warn(
+          'Cover failed to load:',
+          url
+        );
 
-      hideBrokenImage(
-        img
-      );
-    };
+        hideBrokenImage(
+          image
+        );
+      };
 
-    img.onload = () => {
-      img.hidden = false;
-    };
+    image.onload =
+      () => {
+        image.hidden =
+          false;
+      };
 
-    img.src = url;
+    image.src =
+      url;
   }
 
 
-  function hideBrokenImage(
-    img
-  ) {
-    img.hidden = true;
+  function hideBrokenImage(image) {
+    image.hidden =
+      true;
 
-    img.removeAttribute(
+    image.removeAttribute(
       'src'
     );
   }
 
 
   // ---------------------------------------------------------
-  // SEARCH MESSAGE
+  // SEARCH STATUS MESSAGE
   // ---------------------------------------------------------
 
   function setSearchMessage(
@@ -2660,7 +2528,9 @@
   ) {
     const paragraph =
       elements.searchMessage
-        .querySelector('p');
+        .querySelector(
+          'p'
+        );
 
     if (paragraph) {
       paragraph.textContent =
@@ -2671,8 +2541,8 @@
           text;
     }
 
-    elements.searchMessage
-      .hidden = false;
+    elements.searchMessage.hidden =
+      false;
   }
 
 
@@ -2680,9 +2550,7 @@
   // DISPLAY HELPERS
   // ---------------------------------------------------------
 
-  function getSuggestionMeta(
-    item
-  ) {
+  function getSuggestionMeta(item) {
     const type =
       formatTypeLabel(
         item.type
@@ -2695,22 +2563,20 @@
         ? ` · ${item.score}`
         : '';
 
-    return `${type}${score}`;
+    return (
+      `${type}${score}`
+    );
   }
 
 
-  function getResultTypeLabel(
-    item
-  ) {
+  function getResultTypeLabel(item) {
     return getSuggestionMeta(
       item
     );
   }
 
 
-  function getStatusLabel(
-    status
-  ) {
+  function getStatusLabel(status) {
     return (
       STATUS_LABELS[
         status
@@ -2724,9 +2590,7 @@
   // DATABASE VALUE HELPERS
   // ---------------------------------------------------------
 
-  function getCreatorValue(
-    item
-  ) {
+  function getCreatorValue(item) {
     return String(
       item.creator ??
       item.author ??
@@ -2736,9 +2600,7 @@
   }
 
 
-  function getScoreValue(
-    item
-  ) {
+  function getScoreValue(item) {
     const value =
       item.heroScore ??
       item.hero_score ??
@@ -2762,9 +2624,7 @@
   }
 
 
-  function getNumericScore(
-    value
-  ) {
+  function getNumericScore(value) {
     return Number.isFinite(
       Number(value)
     )
@@ -2773,9 +2633,7 @@
   }
 
 
-  function hasDisplayValue(
-    value
-  ) {
+  function hasDisplayValue(value) {
     return (
       value !== null &&
       value !== undefined &&
@@ -2784,9 +2642,7 @@
   }
 
 
-  function getTypeList(
-    item
-  ) {
+  function getTypeList(item) {
     const rawType =
       item.type ??
       item.format ??
@@ -2804,9 +2660,7 @@
   }
 
 
-  function getArrayValue(
-    value
-  ) {
+  function getArrayValue(value) {
     if (
       value === null ||
       value === undefined ||
@@ -2825,42 +2679,45 @@
       typeof value ===
       'string'
     ) {
-      const trimmed =
+      const trimmedValue =
         value.trim();
 
-      if (!trimmed) {
+      if (!trimmedValue) {
         return [];
       }
 
       try {
-        const parsed =
+        const parsedValue =
           JSON.parse(
-            trimmed
+            trimmedValue
           );
 
         if (
           Array.isArray(
-            parsed
+            parsedValue
           )
         ) {
-          return parsed;
+          return parsedValue;
         }
       } catch {
         /*
-          Normal text rather than JSON.
+          The database value is normal text,
+          not a JSON array string.
         */
       }
 
-      return [trimmed];
+      return [
+        trimmedValue
+      ];
     }
 
-    return [value];
+    return [
+      value
+    ];
   }
 
 
-  function formatTypeLabel(
-    typeValue
-  ) {
+  function formatTypeLabel(typeValue) {
     const types =
       Array.isArray(
         typeValue
@@ -2891,9 +2748,7 @@
   }
 
 
-  function titleCase(
-    value
-  ) {
+  function titleCase(value) {
     return String(value)
       .trim()
       .replace(
@@ -2959,10 +2814,7 @@
 
 
 // =========================================================
-// SECTION 3 — GUIDED STORY MOTION
-//
-// This block only controls the entrance animation.
-// It does not change the search or library functionality.
+// SECTION 3 — GUIDED ENTRANCE ANIMATION
 // =========================================================
 
 (() => {
@@ -3017,9 +2869,7 @@
         '(prefers-reduced-motion: reduce)'
       ).matches;
 
-    if (
-      prefersReducedMotion
-    ) {
+    if (prefersReducedMotion) {
       showMotionGroups(
         groups
       );
@@ -3031,10 +2881,6 @@
       return;
     }
 
-    /*
-      Hidden animation states only activate
-      after JavaScript adds this class.
-    */
     section.classList.add(
       'flow-motion-ready'
     );
@@ -3048,15 +2894,13 @@
         return;
       }
 
-      hasPlayed = true;
+      hasPlayed =
+        true;
 
       showMotionGroups(
         groups
       );
 
-      /*
-        Remove will-change after the sequence.
-      */
       window.setTimeout(
         () => {
           markMotionComplete(
@@ -3075,19 +2919,18 @@
       const observer =
         new IntersectionObserver(
           (entries) => {
-            const entry =
+            const sectionEntry =
               entries.find(
-                (candidate) => {
+                (entry) => {
                   return (
-                    candidate.target ===
+                    entry.target ===
                       section &&
-                    candidate
-                      .isIntersecting
+                    entry.isIntersecting
                   );
                 }
               );
 
-            if (!entry) {
+            if (!sectionEntry) {
               return;
             }
 
@@ -3098,7 +2941,8 @@
             );
           },
           {
-            threshold: 0.17,
+            threshold:
+              0.17,
 
             rootMargin:
               '0px 0px -9% 0px'
@@ -3120,9 +2964,7 @@
   }
 
 
-  function prepareInternalDelays(
-    groups
-  ) {
+  function prepareInternalDelays(groups) {
     groups.forEach(
       (group) => {
         const groupName =
@@ -3162,9 +3004,7 @@
   }
 
 
-  function showMotionGroups(
-    groups
-  ) {
+  function showMotionGroups(groups) {
     window.requestAnimationFrame(
       () => {
         groups.forEach(
@@ -3179,9 +3019,7 @@
   }
 
 
-  function markMotionComplete(
-    groups
-  ) {
+  function markMotionComplete(groups) {
     groups.forEach(
       (group) => {
         group.classList.add(

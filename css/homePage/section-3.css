@@ -1,6 +1,11 @@
 /* =========================================================
-   SECTION 3 — LIBRARY FLOW
-   Load after your general site CSS.
+   SECTION 3 — SEARCH, SAVE, AND ORGANIZE
+   Load this after your general site CSS.
+   ========================================================= */
+
+
+/* =========================================================
+   SECTION VARIABLES AND BACKGROUND
    ========================================================= */
 
 .section-library-flow {
@@ -40,12 +45,6 @@
   --flow-pink:
     var(--accent-pink, #d28cff);
 
-  --flow-border:
-    rgba(184, 192, 255, 0.16);
-
-  --flow-border-strong:
-    rgba(184, 192, 255, 0.32);
-
   --flow-transition:
     0.24s cubic-bezier(0.4, 0, 0.2, 1);
 
@@ -68,6 +67,7 @@
     );
 
   box-sizing: border-box;
+
   position: relative;
   isolation: isolate;
 
@@ -81,8 +81,11 @@
 
   overflow: hidden;
 
-  color: var(--flow-ink);
-  font-family: var(--flow-font-body);
+  color:
+    var(--flow-ink);
+
+  font-family:
+    var(--flow-font-body);
 
   background:
     radial-gradient(
@@ -172,6 +175,8 @@
 }
 
 
+/* Screen-reader-only text */
+
 .sr-only {
   position: absolute !important;
 
@@ -192,7 +197,7 @@
 
 
 /* =========================================================
-   MAIN LAYOUT
+   MAIN SECTION GRID
    ========================================================= */
 
 .flow-grid {
@@ -228,6 +233,10 @@
     translateY(-8px);
 }
 
+
+/* =========================================================
+   SHARED GLASS CARD
+   ========================================================= */
 
 .flow-card {
   position: relative;
@@ -278,14 +287,14 @@
 
 
 /* =========================================================
-   INTRO
+   INTRODUCTION
    ========================================================= */
 
 .flow-copy-card {
   grid-area: copy;
 
-  max-width: 640px;
   min-width: 0;
+  max-width: 640px;
 
   display: flex;
   flex-direction: column;
@@ -529,6 +538,8 @@
   line-height: 1.2;
 }
 
+
+/* Search field */
 
 .flow-search-bar {
   position: relative;
@@ -837,19 +848,15 @@
 
 
 /* =========================================================
-   SEARCH RESULT
+   SELECTED SEARCH RESULT
    ========================================================= */
 
-.flow-result-area:not(
-  :has(> .flow-result-card)
-) {
+.flow-result-area {
   display: none;
 }
 
 
-.flow-result-area:has(
-  > .flow-result-card
-) {
+.flow-result-area.has-result-card {
   display: block;
 
   margin-top: 0.78rem;
@@ -1046,7 +1053,7 @@
 
 
 /* =========================================================
-   FILTER AND STATUS BUTTONS
+   SHARED FILTER BUTTONS
    ========================================================= */
 
 .flow-status-picker {
@@ -1066,8 +1073,7 @@
 
 .flow-status-options,
 .flow-library-filters,
-.flow-library-status-filters,
-.flow-sort-quick {
+.flow-library-status-filters {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -1094,8 +1100,7 @@
 
 .flow-status-options span,
 .flow-filter,
-.flow-status-filter,
-.flow-sort-button {
+.flow-status-filter {
   min-height: 30px;
 
   padding:
@@ -1138,10 +1143,8 @@
 .flow-status-options input:checked + span,
 .flow-filter:hover,
 .flow-status-filter:hover,
-.flow-sort-button:hover,
 .flow-filter.active,
-.flow-status-filter.active,
-.flow-sort-button.active {
+.flow-status-filter.active {
   color: #ffffff;
 
   border-color:
@@ -1269,16 +1272,26 @@
 }
 
 
+/* =========================================================
+   FULL-WIDTH LIBRARY BODY
+   This fixes the unused space on the right.
+   ========================================================= */
+
 .flow-library-body {
+  width: 100%;
   height:
     calc(100% - 72px);
 
+  min-width: 0;
   min-height: 0;
 
   padding:
     0.78rem 1rem 1rem;
 
   display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr);
 
   grid-template-rows:
     auto
@@ -1289,6 +1302,28 @@
   gap: 0.62rem;
 
   overflow: hidden;
+}
+
+
+/*
+  Every library section explicitly spans the complete grid.
+  This prevents older grid-area rules from limiting the width.
+*/
+
+.flow-library-toolbar,
+.flow-library-status-row,
+.flow-library-list-header,
+.flow-library-empty,
+.flow-library-list {
+  grid-column:
+    1 / -1;
+
+  width: 100%;
+  max-width: none;
+
+  min-width: 0;
+
+  justify-self: stretch;
 }
 
 
@@ -1315,8 +1350,6 @@
 
 .flow-library-toolbar,
 .flow-library-status-row {
-  min-width: 0;
-
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1332,20 +1365,21 @@
 
 
 /* =========================================================
-   SORTING
+   SORTING DROPDOWN
    ========================================================= */
 
 .flow-sort-controls {
+  flex:
+    0 0 auto;
+
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  flex-wrap: wrap;
 
   gap: 0.5rem;
 }
 
 
-.flow-sort-label {
+.flow-sort-controls label {
   color:
     var(--flow-ink-faint);
 
@@ -1356,17 +1390,12 @@
   letter-spacing: 0.08em;
 
   text-transform: uppercase;
+
+  white-space: nowrap;
 }
 
 
-.flow-sort-button {
-  min-height: 32px;
-
-  padding-inline: 0.75rem;
-}
-
-
-.flow-sort-specific select,
+.flow-sort-controls select,
 .flow-library-row-status select {
   color-scheme: dark;
 
@@ -1393,21 +1422,22 @@
 }
 
 
-.flow-sort-specific select {
-  min-height: 34px;
+.flow-sort-controls select {
+  width:
+    clamp(180px, 15vw, 245px);
 
-  max-width: 230px;
+  min-height: 36px;
 
   padding:
-    0 2rem 0 0.72rem;
+    0 2rem 0 0.75rem;
 
   border-radius: 999px;
 
-  font-size: 0.66rem;
+  font-size: 0.68rem;
 }
 
 
-.flow-sort-specific select.is-active {
+.flow-sort-controls select.is-active {
   border-color:
     rgba(116, 215, 255, 0.62);
 
@@ -1416,16 +1446,29 @@
 }
 
 
-.flow-sort-specific select option,
+.flow-sort-controls select option,
 .flow-library-row-status select option {
   color: #f5f7ff;
 
-  background: #111a33;
+  background:
+    #111a33;
+}
+
+
+.flow-sort-controls select:hover,
+.flow-sort-controls select:focus,
+.flow-library-row-status select:hover,
+.flow-library-row-status select:focus {
+  border-color:
+    rgba(116, 215, 255, 0.62);
+
+  box-shadow:
+    0 0 0 3px rgba(116, 215, 255, 0.12);
 }
 
 
 /* =========================================================
-   LIBRARY NOTICE
+   ACCOUNT NOTICE
    ========================================================= */
 
 .flow-library-save-notice {
@@ -1471,18 +1514,20 @@
 
 
 /* =========================================================
-   LIBRARY COLUMNS
+   LIBRARY COLUMN LAYOUT
    ========================================================= */
 
 .flow-library-list-header,
 .flow-library-row {
+  width: 100%;
+
   display: grid;
 
   grid-template-columns:
     minmax(340px, 1fr)
     minmax(170px, 230px)
     minmax(150px, 175px)
-    minmax(100px, 115px);
+    minmax(105px, 120px);
 
   align-items: center;
 
@@ -1510,60 +1555,13 @@
 
 
 /* =========================================================
-   LIBRARY SCROLL AREA
-   ========================================================= */
-
-.flow-library-list {
-  min-height: 0;
-
-  overflow-y: auto;
-  overflow-x: hidden;
-
-  display: grid;
-  align-content: start;
-
-  gap: 0.52rem;
-
-  padding:
-    0 0.38rem 0.55rem 0;
-
-  scroll-padding-bottom: 0.55rem;
-
-  scrollbar-width: thin;
-
-  scrollbar-color:
-    rgba(116, 215, 255, 0.38)
-    rgba(255, 255, 255, 0.05);
-}
-
-
-.flow-library-list::-webkit-scrollbar {
-  width: 8px;
-}
-
-
-.flow-library-list::-webkit-scrollbar-track {
-  background:
-    rgba(255, 255, 255, 0.05);
-
-  border-radius: 999px;
-}
-
-
-.flow-library-list::-webkit-scrollbar-thumb {
-  background:
-    rgba(116, 215, 255, 0.38);
-
-  border-radius: 999px;
-}
-
-
-/* =========================================================
-   EMPTY LIBRARY
+   FULL-WIDTH EMPTY STATE
    ========================================================= */
 
 .flow-library-empty {
-  min-height: 70px;
+  place-self: stretch;
+
+  min-height: 235px;
 
   padding: 0.9rem;
 
@@ -1602,7 +1600,58 @@
 
 
 /* =========================================================
-   LIBRARY ROW
+   FULL-WIDTH SCROLLABLE STORY LIST
+   ========================================================= */
+
+.flow-library-list {
+  place-self: stretch;
+
+  min-height: 0;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  display: grid;
+  align-content: start;
+
+  gap: 0.52rem;
+
+  padding:
+    0 0.38rem 0.65rem 0;
+
+  scroll-padding-bottom: 0.65rem;
+
+  scrollbar-width: thin;
+
+  scrollbar-color:
+    rgba(116, 215, 255, 0.38)
+    rgba(255, 255, 255, 0.05);
+}
+
+
+.flow-library-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+
+.flow-library-list::-webkit-scrollbar-track {
+  background:
+    rgba(255, 255, 255, 0.05);
+
+  border-radius: 999px;
+}
+
+
+.flow-library-list::-webkit-scrollbar-thumb {
+  background:
+    rgba(116, 215, 255, 0.38);
+
+  border-radius: 999px;
+}
+
+
+/* =========================================================
+   STORY ROW
    ========================================================= */
 
 .flow-library-row {
@@ -1629,7 +1678,10 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.05);
 
   animation:
-    flowRowIn 0.4s ease both;
+    flowRowIn
+    0.4s
+    ease
+    both;
 }
 
 
@@ -1761,9 +1813,6 @@
 
 
 .flow-format-more {
-  flex:
-    0 0 auto;
-
   color:
     var(--flow-cyan);
 }
@@ -1784,18 +1833,6 @@
   border-radius: 999px;
 
   font-size: 0.68rem;
-}
-
-
-.flow-library-row-status select:hover,
-.flow-library-row-status select:focus,
-.flow-sort-specific select:hover,
-.flow-sort-specific select:focus {
-  border-color:
-    rgba(116, 215, 255, 0.62);
-
-  box-shadow:
-    0 0 0 3px rgba(116, 215, 255, 0.12);
 }
 
 
@@ -1901,9 +1938,6 @@ input[aria-invalid="true"] {
 
 
 .flow-rating-scale {
-  flex:
-    0 0 auto;
-
   color:
     var(--flow-ink-faint);
 
@@ -1914,7 +1948,7 @@ input[aria-invalid="true"] {
 
 
 /* =========================================================
-   ITEM ANIMATIONS
+   GENERATED ITEM ANIMATIONS
    ========================================================= */
 
 @keyframes flowResultIn {
@@ -2111,13 +2145,9 @@ input[aria-invalid="true"] {
       minmax(300px, 1fr)
       minmax(150px, 195px)
       minmax(140px, 160px)
-      100px;
+      105px;
 
     gap: 0.75rem;
-  }
-
-  .flow-sort-controls {
-    max-width: 550px;
   }
 }
 
@@ -2171,6 +2201,10 @@ input[aria-invalid="true"] {
       minmax(205px, 1fr);
   }
 
+  .flow-library-empty {
+    min-height: 205px;
+  }
+
   .flow-library-row {
     min-height: 66px;
   }
@@ -2192,8 +2226,6 @@ input[aria-invalid="true"] {
   }
 
   .flow-grid {
-    display: grid;
-
     grid-template-columns: 1fr;
 
     grid-template-areas:
@@ -2238,6 +2270,8 @@ input[aria-invalid="true"] {
   }
 
   .flow-sort-controls {
+    width: 100%;
+
     justify-content: flex-start;
   }
 
@@ -2245,6 +2279,10 @@ input[aria-invalid="true"] {
     max-width: 100%;
 
     white-space: normal;
+  }
+
+  .flow-library-empty {
+    min-height: 180px;
   }
 
   .flow-library-list {
@@ -2266,7 +2304,7 @@ input[aria-invalid="true"] {
 
 
 /* =========================================================
-   MOBILE LIBRARY ROW
+   MOBILE STORY ROW
    ========================================================= */
 
 @media (max-width: 760px) {
@@ -2304,10 +2342,6 @@ input[aria-invalid="true"] {
 
   .flow-library-row-rating {
     grid-area: rating;
-  }
-
-  .flow-library-row-rating label {
-    min-height: 36px;
   }
 }
 
@@ -2352,18 +2386,12 @@ input[aria-invalid="true"] {
   }
 
   .flow-sort-controls {
-    width: 100%;
+    align-items: flex-start;
+    flex-direction: column;
   }
 
-  .flow-sort-specific {
-    flex:
-      1 1 100%;
-  }
-
-  .flow-sort-specific select {
+  .flow-sort-controls select {
     width: 100%;
-
-    max-width: none;
   }
 }
 
