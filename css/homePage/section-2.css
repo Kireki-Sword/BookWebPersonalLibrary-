@@ -2498,101 +2498,100 @@
 
 
 /* ==========================================================================
-   LARGE DESKTOP MOMENTS — ENLARGED GALLERY
-   Only changes the Moments scene.
-   Quotes, characters, notes and thoughts remain unchanged.
+   LARGE DESKTOP MOMENTS — MODERATE SIZE + EVEN OVERLAP
+
+   Visual order:
+   square 1 → vertical 5 → square 2 → vertical 6
+   → square 3 → vertical 7 → square 4 → vertical 8
    ========================================================================== */
 
 @media (min-width: 1101px) {
 
-  /* Give the Moments stage more horizontal and vertical space. */
+  /* Give only the Moments scene more width. */
   .section-empty-shelf.is-js-ready
   .scroll-stage[data-stage="moments-move"] {
-    width: min(1740px, calc(100vw - 48px));
-    height: clamp(580px, 67vh, 660px);
+    width: min(1720px, calc(100vw - 56px));
+    height: clamp(560px, 62vh, 610px);
 
-    top: clamp(-88px, -6vh, -48px);
+    top: clamp(-76px, -5vh, -42px);
   }
 
-  /* Remove the old 1560px Moments limit. */
   .section-empty-shelf.is-js-ready .moving-moments {
-    width: min(1740px, calc(100vw - 48px));
-    max-width: 1740px;
+    width: min(1720px, calc(100vw - 56px));
+    max-width: 1720px;
 
-    height: clamp(580px, 67vh, 660px);
+    height: clamp(560px, 62vh, 610px);
   }
 
-  /* Make sure padding remains inside the stated widths. */
-  .moment-frame {
-    box-sizing: border-box;
-  }
-
-  /* ----------------------------------------------------------
-     Bigger alternating arrangement:
-     square → vertical → square → vertical
-     ---------------------------------------------------------- */
+  /*
+   * Squares: 17.4%
+   * Verticals: 13.9%
+   *
+   * Every neighboring pair overlaps by approximately 3.6%.
+   * This keeps the collage effect without hiding too much artwork.
+   */
 
   .moment-frame-1 {
-    --x: 1%;
-    --y: 7%;
-    --w: 19.3%;
+    --x: 0%;
+    --y: 8%;
+    --w: 17.4%;
 
-    z-index: 5;
+    z-index: 4;
   }
 
   .moment-frame-5 {
     --x: 13.8%;
     --y: 0%;
-    --w: 15.7%;
+    --w: 13.9%;
 
-    z-index: 7;
+    z-index: 6;
   }
 
   .moment-frame-2 {
-    --x: 25%;
-    --y: 20%;
-    --w: 19.3%;
+    --x: 24.1%;
+    --y: 22%;
+    --w: 17.4%;
 
     z-index: 3;
   }
 
   .moment-frame-6 {
-    --x: 38%;
-    --y: 12%;
-    --w: 15.7%;
-
-    z-index: 6;
-  }
-
-  .moment-frame-3 {
-    --x: 49.5%;
-    --y: 5%;
-    --w: 19.3%;
+    --x: 37.9%;
+    --y: 11%;
+    --w: 13.9%;
 
     z-index: 5;
   }
 
-  .moment-frame-7 {
-    --x: 62.4%;
-    --y: 0%;
-    --w: 15.7%;
+  .moment-frame-3 {
+    --x: 48.2%;
+    --y: 7%;
+    --w: 17.4%;
 
-    z-index: 7;
+    z-index: 4;
+  }
+
+  .moment-frame-7 {
+    --x: 62%;
+    --y: 0%;
+    --w: 13.9%;
+
+    z-index: 6;
   }
 
   .moment-frame-4 {
-    --x: 73.5%;
-    --y: 19%;
-    --w: 19.3%;
+    --x: 72.3%;
+    --y: 21%;
+    --w: 17.4%;
 
     z-index: 3;
   }
 
   .moment-frame-8 {
-    --x: 83.3%;
-    --y: 11%;
-    --w: 15.7%;
+    --x: 86.1%;
+    --y: 10%;
+    --w: 13.9%;
 
-    z-index: 6;
+    z-index: 5;
   }
 }

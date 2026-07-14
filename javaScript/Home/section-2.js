@@ -1,11 +1,14 @@
 /* ============================================================================
    SECTION 2 — FINAL SCROLL STORY JS
-   Updated for:
+
+   Supports:
    - 9 quote cards
    - 8 moment cards
    - 6 character cards
-   - full-width evidence stages
-   - top-layer hover/focus behavior
+   - 4 note cards
+   - 2 thought cards
+   - GSAP ScrollTrigger animation
+   - Correct hover/focus top-layer behavior
    ============================================================================ */
 
 (() => {
@@ -15,9 +18,7 @@
     return;
   }
 
-  const hasGSAP = Boolean(window.gsap && window.ScrollTrigger);
-
-  if (!hasGSAP) {
+  if (!window.gsap || !window.ScrollTrigger) {
     console.warn(
       "Section 2 animation needs GSAP and ScrollTrigger."
     );
@@ -38,6 +39,21 @@
   const card = section.querySelector(".media-library-row");
   const score = section.querySelector(".media-row-score");
   const detailsTray = section.querySelector(".media-row-details");
+
+  if (
+    !header ||
+    !viewport ||
+    !cardWrap ||
+    !card ||
+    !score ||
+    !detailsTray
+  ) {
+    console.warn(
+      "Section 2 is missing one or more required HTML elements."
+    );
+
+    return;
+  }
 
   const layers = [
     {
@@ -83,14 +99,23 @@
   ];
 
   let masterTimeline = null;
+
   let lastAnnouncedIndex = -2;
   let lastStatusText = "";
+
   let trayRevealTime = Number.POSITIVE_INFINITY;
+
   let resizeTimer = null;
   let refreshTimer = null;
+
   let topLayerZ = 1000;
+  let activeTopLayerItem = null;
 
   initSection2();
+
+  /* ==========================================================================
+     INITIALIZATION
+     ========================================================================== */
 
   function initSection2() {
     section.classList.add("is-js-ready");
@@ -113,17 +138,28 @@
   function collectLayerElements() {
     layers.forEach((layer, index) => {
       layer.index = index;
-      layer.stage = section.querySelector(layer.stageSelector);
+
+      layer.stage = section.querySelector(
+        layer.stageSelector
+      );
 
       layer.items = layer.stage
         ? gsap.utils.toArray(
-            layer.stage.querySelectorAll(layer.itemSelector)
+            layer.stage.querySelectorAll(
+              layer.itemSelector
+            )
           )
         : [];
 
-      layer.button = section.querySelector(layer.buttonSelector);
+      layer.button = section.querySelector(
+        layer.buttonSelector
+      );
     });
   }
+
+  /* ==========================================================================
+     FLYING BUTTON PROXIES
+     ========================================================================== */
 
   function createButtonProxies() {
     document
@@ -138,14 +174,29 @@
       proxy.className = "depth-button-proxy";
       proxy.textContent = layer.label;
 
-      proxy.setAttribute("aria-hidden", "true");
-      proxy.setAttribute("data-section-2-proxy", "true");
+      proxy.setAttribute(
+        "aria-hidden",
+        "true"
+      );
+
+      proxy.setAttribute(
+        "data-section-2-proxy",
+        "true"
+      );
 
       document.body.appendChild(proxy);
 
       layer.proxy = proxy;
     });
   }
+
+  /* ==========================================================================
+     HOVER AND FOCUS LAYERING
+
+     Only one item is placed on the temporary top layer.
+     When the pointer moves to another overlapping item, the new item rises.
+     When hover/focus ends, the item returns to its original CSS z-index.
+     ========================================================================== */
 
   function enableTopLayerHover() {
     const liftableItems = section.querySelectorAll(
@@ -156,26 +207,83 @@
       ".thought-card"
     );
 
+    const clearTopLayer = (item) => {
+      if (!item) {
+        return;
+      }
+
+      item.classList.remove("is-top-layer");
+      item.style.removeProperty("z-index");
+
+      if (activeTopLayerItem === item) {
+        activeTopLayerItem = null;
+      }
+    };
+
+    const raiseTopLayer = (item) => {
+      if (
+        activeTopLayerItem &&
+        activeTopLayerItem !== item
+      ) {
+        clearTopLayer(activeTopLayerItem);
+      }
+
+      topLayerZ += 1;
+
+      item.style.zIndex = String(topLayerZ);
+      item.classList.add("is-top-layer");
+
+      activeTopLayerItem = item;
+    };
+
+    const lowerWhenInactive = (item) => {
+      window.requestAnimationFrame(() => {
+        const isHovered = item.matches(":hover");
+
+        const isFocused = item.matches(
+          ":focus, :focus-within"
+        );
+
+        if (!isHovered && !isFocused) {
+          clearTopLayer(item);
+        }
+      });
+    };
+
     liftableItems.forEach((item) => {
-      const raise = () => {
-        topLayerZ += 1;
+      item.addEventListener(
+        "pointerenter",
+        () => {
+          raiseTopLayer(item);
+        }
+      );
 
-        item.style.zIndex = String(topLayerZ);
-        item.classList.add("is-top-layer");
-      };
+      item.addEventListener(
+        "focusin",
+        () => {
+          raiseTopLayer(item);
+        }
+      );
 
-      const lower = () => {
-        item.classList.remove("is-top-layer");
-        item.style.removeProperty("z-index");
-      };
+      item.addEventListener(
+        "pointerleave",
+        () => {
+          lowerWhenInactive(item);
+        }
+      );
 
-      item.addEventListener("pointerenter", raise);
-      item.addEventListener("focusin", raise);
-
-      item.addEventListener("pointerleave", lower);
-      item.addEventListener("focusout", lower);
+      item.addEventListener(
+        "focusout",
+        () => {
+          lowerWhenInactive(item);
+        }
+      );
     });
   }
+
+  /* ==========================================================================
+     REFRESH HANDLING
+     ========================================================================== */
 
   function setupSafeRefreshes() {
     window.addEventListener("resize", () => {
@@ -196,7 +304,7 @@
       }
     );
 
-    if (document.fonts && document.fonts.ready) {
+    if (document.fonts?.ready) {
       document.fonts.ready
         .then(() => {
           queueSafeRefresh(120);
@@ -243,7 +351,13 @@
     }, delay);
   }
 
+  /* ==========================================================================
+     INITIAL AND RESET STATES
+     ========================================================================== */
+
   function setInitialState() {
+    clearActiveTopLayer();
+
     gsap.set(header, {
       autoAlpha: 1,
       y: 0
@@ -277,7 +391,11 @@
         return;
       }
 
-      layer.stage.setAttribute("aria-hidden", "true");
+      layer.stage.setAttribute(
+        "aria-hidden",
+        "true"
+      );
+
       layer.stage.classList.remove("is-active");
 
       gsap.set(layer.stage, {
@@ -299,7 +417,11 @@
         "depth-button-new"
       );
 
-      layer.button.setAttribute("aria-hidden", "true");
+      layer.button.setAttribute(
+        "aria-hidden",
+        "true"
+      );
+
       layer.button.tabIndex = -1;
 
       gsap.set(layer.button, {
@@ -308,14 +430,16 @@
         scale: 0.96
       });
 
-      gsap.set(layer.proxy, {
-        autoAlpha: 0,
-        x: 0,
-        y: 0,
-        scale: 0.8,
-        rotationX: 0,
-        rotationY: 0
-      });
+      if (layer.proxy) {
+        gsap.set(layer.proxy, {
+          autoAlpha: 0,
+          x: 0,
+          y: 0,
+          scale: 0.8,
+          rotationX: 0,
+          rotationY: 0
+        });
+      }
     });
 
     updateStatus("");
@@ -324,6 +448,8 @@
   }
 
   function resetToNaturalStart() {
+    clearActiveTopLayer();
+
     gsap.set(header, {
       autoAlpha: 1,
       y: 0
@@ -353,7 +479,11 @@
     layers.forEach((layer) => {
       if (layer.stage) {
         layer.stage.classList.remove("is-active");
-        layer.stage.setAttribute("aria-hidden", "true");
+
+        layer.stage.setAttribute(
+          "aria-hidden",
+          "true"
+        );
 
         gsap.set(layer.stage, {
           autoAlpha: 0
@@ -377,7 +507,11 @@
           "depth-button-new"
         );
 
-        layer.button.setAttribute("aria-hidden", "true");
+        layer.button.setAttribute(
+          "aria-hidden",
+          "true"
+        );
+
         layer.button.tabIndex = -1;
 
         gsap.set(layer.button, {
@@ -398,6 +532,26 @@
 
     lastAnnouncedIndex = -2;
   }
+
+  function clearActiveTopLayer() {
+    if (!activeTopLayerItem) {
+      return;
+    }
+
+    activeTopLayerItem.classList.remove(
+      "is-top-layer"
+    );
+
+    activeTopLayerItem.style.removeProperty(
+      "z-index"
+    );
+
+    activeTopLayerItem = null;
+  }
+
+  /* ==========================================================================
+     MASTER TIMELINE
+     ========================================================================== */
 
   function buildMasterTimeline() {
     const timeline = gsap.timeline({
@@ -530,8 +684,12 @@
       duration: 0.35
     });
 
+    const validButtons = layers
+      .map((layer) => layer.button)
+      .filter(Boolean);
+
     timeline.to(
-      layers.map((layer) => layer.button),
+      validButtons,
       {
         scale: 1.045,
         duration: 0.12,
@@ -552,11 +710,16 @@
     return timeline;
   }
 
+  /* ==========================================================================
+     LAYER SEQUENCES
+     ========================================================================== */
+
   function addLayerSequence(timeline, layer) {
     if (
       !layer.stage ||
       !layer.button ||
-      !layer.items.length
+      !layer.items.length ||
+      !layer.proxy
     ) {
       return;
     }
@@ -586,11 +749,17 @@
 
     timeline.to(layer.items, {
       x: (_index, element) => {
-        return getGatherDelta(element, layer).x;
+        return getGatherDelta(
+          element,
+          layer
+        ).x;
       },
 
       y: (_index, element) => {
-        return getGatherDelta(element, layer).y;
+        return getGatherDelta(
+          element,
+          layer
+        ).y;
       },
 
       scale: getGatherScale(layer),
@@ -673,6 +842,7 @@
 
       rotationX: 0,
       rotationY: 0,
+
       duration: 0.52,
       ease: "power3.inOut"
     });
@@ -725,6 +895,10 @@
     layer.endTime = timeline.duration();
   }
 
+  /* ==========================================================================
+     ENTRANCE POSITIONS
+     ========================================================================== */
+
   function getEvidenceEnterFrom(layer) {
     const base = {
       autoAlpha: 0,
@@ -733,7 +907,7 @@
     };
 
     if (layer.key === "quotes") {
-      const quoteX = [
+      const xPositions = [
         -130,
         -70,
         95,
@@ -745,7 +919,7 @@
         20
       ];
 
-      const quoteY = [
+      const yPositions = [
         -42,
         -28,
         -44,
@@ -761,21 +935,27 @@
         ...base,
 
         x: (index) => {
-          return quoteX[index % quoteX.length];
+          return xPositions[
+            index % xPositions.length
+          ];
         },
 
         y: (index) => {
-          return quoteY[index % quoteY.length];
+          return yPositions[
+            index % yPositions.length
+          ];
         },
 
         rotation: (_index, element) => {
-          return getElementRotate(element) * 1.35;
+          return (
+            getElementRotate(element) * 1.35
+          );
         }
       };
     }
 
     if (layer.key === "moments") {
-      const momentX = [
+      const xPositions = [
         -140,
         -92,
         -36,
@@ -786,7 +966,7 @@
         236
       ];
 
-      const momentY = [
+      const yPositions = [
         40,
         64,
         34,
@@ -801,23 +981,29 @@
         ...base,
 
         x: (index) => {
-          return momentX[index % momentX.length];
+          return xPositions[
+            index % xPositions.length
+          ];
         },
 
         y: (index) => {
-          return momentY[index % momentY.length];
+          return yPositions[
+            index % yPositions.length
+          ];
         },
 
         scale: 0.9,
 
         rotation: (_index, element) => {
-          return getElementRotate(element) * 1.25;
+          return (
+            getElementRotate(element) * 1.25
+          );
         }
       };
     }
 
     if (layer.key === "characters") {
-      const characterX = [
+      const xPositions = [
         -150,
         -92,
         -34,
@@ -826,7 +1012,7 @@
         150
       ];
 
-      const characterY = [
+      const yPositions = [
         34,
         52,
         38,
@@ -839,30 +1025,36 @@
         ...base,
 
         x: (index) => {
-          return characterX[index % characterX.length];
+          return xPositions[
+            index % xPositions.length
+          ];
         },
 
         y: (index) => {
-          return characterY[index % characterY.length];
+          return yPositions[
+            index % yPositions.length
+          ];
         },
 
         scale: 0.9,
 
         rotation: (_index, element) => {
-          return getElementRotate(element) * 1.2;
+          return (
+            getElementRotate(element) * 1.2
+          );
         }
       };
     }
 
     if (layer.key === "notes") {
-      const noteX = [
+      const xPositions = [
         -58,
         58,
         0,
         -36
       ];
 
-      const noteY = [
+      const yPositions = [
         28,
         34,
         40,
@@ -873,17 +1065,23 @@
         ...base,
 
         x: (index) => {
-          return noteX[index % noteX.length];
+          return xPositions[
+            index % xPositions.length
+          ];
         },
 
         y: (index) => {
-          return noteY[index % noteY.length];
+          return yPositions[
+            index % yPositions.length
+          ];
         },
 
         scale: 0.94,
 
         rotation: (_index, element) => {
-          return getElementRotate(element) * 1.5;
+          return (
+            getElementRotate(element) * 1.5
+          );
         }
       };
     }
@@ -908,7 +1106,9 @@
       y: 0,
 
       scale: (_index, element) => {
-        return Number(element.dataset.scale || 1);
+        return Number(
+          element.dataset.scale || 1
+        );
       },
 
       rotation: (_index, element) => {
@@ -916,6 +1116,7 @@
       },
 
       filter: "blur(0px)",
+
       duration: getEnterDuration(layer),
 
       stagger: {
@@ -926,6 +1127,10 @@
       ease: "power3.out"
     };
   }
+
+  /* ==========================================================================
+     TIMING AND SCALE HELPERS
+     ========================================================================== */
 
   function getGatherScale(layer) {
     if (layer.key === "quotes") {
@@ -1004,21 +1209,31 @@
   }
 
   function getElementRotate(element) {
-    return Number(element.dataset.rotate || 0);
+    return Number(
+      element.dataset.rotate || 0
+    );
   }
+
+  /* ==========================================================================
+     POSITION CALCULATIONS
+     ========================================================================== */
 
   function getViewportLiftY() {
     const headerHeight = header
       ? header.getBoundingClientRect().height
       : 0;
 
-    const maxLift = window.innerWidth <= 640
-      ? 160
-      : 235;
+    const maxLift =
+      window.innerWidth <= 640
+        ? 160
+        : 235;
 
     const desiredLift = headerHeight + 34;
 
-    return -Math.min(desiredLift, maxLift);
+    return -Math.min(
+      desiredLift,
+      maxLift
+    );
   }
 
   function getCardAnchorY() {
@@ -1040,21 +1255,27 @@
       y: 0
     });
 
-    const sectionRect = section.getBoundingClientRect();
-    const cardRect = cardWrap.getBoundingClientRect();
+    const sectionRect =
+      section.getBoundingClientRect();
+
+    const cardRect =
+      cardWrap.getBoundingClientRect();
 
     const cardTopInsidePinnedSection =
       cardRect.top - sectionRect.top;
 
-    const viewportLiftY = getViewportLiftY();
+    const viewportLiftY =
+      getViewportLiftY();
 
-    const topGap = window.innerWidth <= 640
-      ? 12
-      : 18;
+    const topGap =
+      window.innerWidth <= 640
+        ? 12
+        : 18;
 
-    const bottomGap = window.innerWidth <= 640
-      ? 18
-      : 24;
+    const bottomGap =
+      window.innerWidth <= 640
+        ? 18
+        : 24;
 
     const targetBottom =
       window.innerHeight - bottomGap;
@@ -1065,10 +1286,12 @@
     );
 
     const cardTopAfterViewportLift =
-      cardTopInsidePinnedSection + viewportLiftY;
+      cardTopInsidePinnedSection +
+      viewportLiftY;
 
     const neededCardMove =
-      targetTop - cardTopAfterViewportLift;
+      targetTop -
+      cardTopAfterViewportLift;
 
     gsap.set(viewport, {
       y: savedViewportY
@@ -1082,53 +1305,93 @@
   }
 
   function getButtonRect(layer) {
-    const rect = layer.button.getBoundingClientRect();
+    const rect =
+      layer.button.getBoundingClientRect();
 
     return {
       left: rect.left,
       top: rect.top,
-      width: Math.max(rect.width, 88),
-      height: Math.max(rect.height, 38)
+
+      width: Math.max(
+        rect.width,
+        88
+      ),
+
+      height: Math.max(
+        rect.height,
+        38
+      )
     };
   }
 
   function getLayerGatherPoint(layer) {
-    const buttonRect = getButtonRect(layer);
+    const buttonRect =
+      getButtonRect(layer);
 
     return {
-      x: buttonRect.left + buttonRect.width / 2,
-      y: buttonRect.top - 44
+      x:
+        buttonRect.left +
+        buttonRect.width / 2,
+
+      y:
+        buttonRect.top - 44
     };
   }
 
   function getElementCenter(element) {
-    const rect = element.getBoundingClientRect();
+    const rect =
+      element.getBoundingClientRect();
 
     return {
-      x: rect.left + rect.width / 2,
-      y: rect.top + rect.height / 2
+      x:
+        rect.left +
+        rect.width / 2,
+
+      y:
+        rect.top +
+        rect.height / 2
     };
   }
 
   function getGatherDelta(element, layer) {
-    const elementCenter = getElementCenter(element);
-    const gatherPoint = getLayerGatherPoint(layer);
+    const elementCenter =
+      getElementCenter(element);
+
+    const gatherPoint =
+      getLayerGatherPoint(layer);
 
     return {
-      x: gatherPoint.x - elementCenter.x,
-      y: gatherPoint.y - elementCenter.y
+      x:
+        gatherPoint.x -
+        elementCenter.x,
+
+      y:
+        gatherPoint.y -
+        elementCenter.y
     };
   }
 
   function getProxyStartRect(layer) {
-    const gatherPoint = getLayerGatherPoint(layer);
-    const buttonRect = getButtonRect(layer);
+    const gatherPoint =
+      getLayerGatherPoint(layer);
+
+    const buttonRect =
+      getButtonRect(layer);
 
     return {
-      x: gatherPoint.x - buttonRect.width / 2,
-      y: gatherPoint.y - buttonRect.height / 2
+      x:
+        gatherPoint.x -
+        buttonRect.width / 2,
+
+      y:
+        gatherPoint.y -
+        buttonRect.height / 2
     };
   }
+
+  /* ==========================================================================
+     TIMELINE STATE
+     ========================================================================== */
 
   function syncTimelineState(timeline) {
     if (!timeline) {
@@ -1136,7 +1399,9 @@
     }
 
     const time = timeline.time();
-    const trayIsVisible = time >= trayRevealTime;
+
+    const trayIsVisible =
+      time >= trayRevealTime;
 
     detailsTray.classList.toggle(
       "is-visible",
@@ -1146,9 +1411,7 @@
     let highestLandedIndex = -1;
 
     /*
-     * First determine the newest completed layer.
-     * This prevents several buttons receiving the
-     * depth-button-new class simultaneously.
+     * First find the newest completed layer.
      */
     layers.forEach((layer, index) => {
       const isLanded =
@@ -1161,8 +1424,7 @@
     });
 
     /*
-     * Then update every stage and button using the
-     * final highestLandedIndex value.
+     * Then update all stages and buttons.
      */
     layers.forEach((layer, index) => {
       const isStageActive =
@@ -1187,44 +1449,59 @@
         typeof layer.landTime === "number" &&
         time >= layer.landTime - 0.02;
 
-      if (layer.button) {
-        layer.button.classList.toggle(
-          "is-landed",
-          isLanded
+      if (!layer.button) {
+        return;
+      }
+
+      layer.button.classList.toggle(
+        "is-landed",
+        isLanded
+      );
+
+      layer.button.classList.toggle(
+        "depth-button-new",
+        isLanded &&
+          index === highestLandedIndex
+      );
+
+      if (isLanded) {
+        layer.button.removeAttribute(
+          "aria-hidden"
         );
 
-        layer.button.classList.toggle(
-          "depth-button-new",
-          isLanded && index === highestLandedIndex
+        layer.button.tabIndex = 0;
+      } else {
+        layer.button.setAttribute(
+          "aria-hidden",
+          "true"
         );
 
-        if (isLanded) {
-          layer.button.removeAttribute("aria-hidden");
-          layer.button.tabIndex = 0;
-        } else {
-          layer.button.setAttribute(
-            "aria-hidden",
-            "true"
-          );
-
-          layer.button.tabIndex = -1;
-        }
+        layer.button.tabIndex = -1;
       }
     });
 
-    if (highestLandedIndex !== lastAnnouncedIndex) {
-      lastAnnouncedIndex = highestLandedIndex;
+    if (
+      highestLandedIndex !==
+      lastAnnouncedIndex
+    ) {
+      lastAnnouncedIndex =
+        highestLandedIndex;
 
       if (highestLandedIndex >= 0) {
         updateStatus(
-          layers[highestLandedIndex].statusText
+          layers[
+            highestLandedIndex
+          ].statusText
         );
       } else {
         updateStatus("");
       }
     }
 
-    if (highestLandedIndex === layers.length - 1) {
+    if (
+      highestLandedIndex ===
+      layers.length - 1
+    ) {
       updateStatus(
         "Vagabond now includes saved quotes, moments, characters, notes, and thoughts."
       );
@@ -1232,7 +1509,10 @@
   }
 
   function updateStatus(text) {
-    if (!statusEl || text === lastStatusText) {
+    if (
+      !statusEl ||
+      text === lastStatusText
+    ) {
       return;
     }
 
@@ -1240,7 +1520,13 @@
     lastStatusText = text;
   }
 
+  /* ==========================================================================
+     REDUCED MOTION
+     ========================================================================== */
+
   function buildReducedMotionVersion() {
+    clearActiveTopLayer();
+
     gsap.set(header, {
       autoAlpha: 1,
       y: 0
@@ -1270,7 +1556,9 @@
           "true"
         );
 
-        layer.stage.classList.remove("is-active");
+        layer.stage.classList.remove(
+          "is-active"
+        );
 
         gsap.set(layer.stage, {
           autoAlpha: 0
@@ -1278,8 +1566,14 @@
       }
 
       if (layer.button) {
-        layer.button.classList.add("is-landed");
-        layer.button.removeAttribute("aria-hidden");
+        layer.button.classList.add(
+          "is-landed"
+        );
+
+        layer.button.removeAttribute(
+          "aria-hidden"
+        );
+
         layer.button.tabIndex = 0;
 
         gsap.set(layer.button, {
