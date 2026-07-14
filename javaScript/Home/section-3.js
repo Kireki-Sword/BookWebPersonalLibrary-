@@ -96,8 +96,7 @@
     'all';
 
   /*
-    An empty value means stories remain in their
-    default recently-added order.
+    Empty sorting means the normal recently-added order.
   */
   let activeSortOption =
     '';
@@ -252,6 +251,11 @@
           '[data-flow-search-button]'
         ),
 
+      searchContent:
+        section.querySelector(
+          '[data-flow-search-content]'
+        ),
+
       suggestions:
         section.querySelector(
           '[data-flow-suggestions]'
@@ -334,6 +338,7 @@
       elements.searchForm &&
       elements.searchInput &&
       elements.searchButton &&
+      elements.searchContent &&
       elements.suggestions &&
       elements.searchMessage &&
       elements.resultArea &&
@@ -364,6 +369,16 @@
 
     elements.searchButton.disabled =
       false;
+  }
+
+
+  function resetSearchContentScroll(elements) {
+    if (!elements.searchContent) {
+      return;
+    }
+
+    elements.searchContent.scrollTop =
+      0;
   }
 
 
@@ -502,6 +517,10 @@
           elements
         );
 
+        resetSearchContentScroll(
+          elements
+        );
+
         selectedResult =
           null;
 
@@ -600,6 +619,10 @@
         results;
 
       renderSuggestions(
+        elements
+      );
+
+      resetSearchContentScroll(
         elements
       );
 
@@ -1085,6 +1108,10 @@
       elements
     );
 
+    resetSearchContentScroll(
+      elements
+    );
+
     if (
       findLibraryItem(
         item.id
@@ -1419,7 +1446,7 @@
         selectedStatus,
 
       /*
-        The visitor's personal rating always begins empty.
+        Personal rating always begins empty.
       */
       userRating:
         null,
@@ -1708,18 +1735,6 @@
       }
     );
 
-    /*
-      There is now only one sorting dropdown.
-
-      Empty selection:
-      Default recently-added order.
-
-      Available choices:
-      - Title A–Z
-      - Title Z–A
-      - Personal rating high–low
-      - Personal rating low–high
-    */
     elements.sortSelect.addEventListener(
       'change',
       () => {
@@ -1727,7 +1742,10 @@
           elements.sortSelect.value;
 
         elements.sortSelect
-          .classList
+          .closest(
+            '.flow-select-shell'
+          )
+          ?.classList
           .toggle(
             'is-active',
             activeSortOption !== ''
@@ -1842,10 +1860,6 @@
               'asc'
             );
 
-          /*
-            Default order keeps the newest additions first.
-            It is not shown as a separate sorting button.
-          */
           case '':
           default:
             return (
@@ -2171,18 +2185,6 @@
 
       ratingInput.addEventListener(
         'change',
-        () => {
-          updateLibraryItemRating(
-            item.id,
-            ratingInput,
-            elements,
-            true
-          );
-        }
-      );
-
-      ratingInput.addEventListener(
-        'blur',
         () => {
           updateLibraryItemRating(
             item.id,
@@ -2701,8 +2703,7 @@
         }
       } catch {
         /*
-          The database value is normal text,
-          not a JSON array string.
+          Normal text rather than a JSON array.
         */
       }
 

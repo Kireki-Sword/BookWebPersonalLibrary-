@@ -417,133 +417,135 @@
             </form>
 
 
-            <!-- Search suggestions -->
+            <!--
+            Dynamic search content scrolls inside the fixed-height
+            search card. It will not push the section up or down.
+            -->
 
             <div
-            class="flow-suggestions"
-            data-flow-suggestions
-            aria-label="Search suggestions"
-            hidden
+            class="flow-search-content"
+            data-flow-search-content
+            >
+            <div
+                class="flow-suggestions"
+                data-flow-suggestions
+                aria-label="Search suggestions"
+                hidden
             ></div>
 
 
-            <!-- Search helper/status message -->
-
             <div
-            class="flow-search-empty"
-            data-flow-search-empty
-            data-flow-motion-item
+                class="flow-search-empty"
+                data-flow-search-empty
+                data-flow-motion-item
             >
-            <p>
+                <p>
                 Type a title to find it and add it to your library.
-            </p>
+                </p>
             </div>
 
 
-            <!-- Selected result -->
-
             <div
-            class="flow-result-area"
-            data-flow-result-area
-            aria-live="polite"
+                class="flow-result-area"
+                data-flow-result-area
+                aria-live="polite"
             >
-            <template id="flow-result-template">
+                <template id="flow-result-template">
                 <article
-                class="flow-result-card"
-                data-flow-result-card
+                    class="flow-result-card"
+                    data-flow-result-card
                 >
-                <div class="flow-result-cover">
+                    <div class="flow-result-cover">
                     <img
-                    src=""
-                    alt="Story cover"
+                        src=""
+                        alt="Story cover"
                     >
-                </div>
+                    </div>
 
-                <div class="flow-result-info">
+                    <div class="flow-result-info">
                     <h4>Story title</h4>
 
                     <p class="flow-result-creator">
-                    Creator
+                        Creator
                     </p>
 
                     <p class="flow-result-type">
-                    Manga
+                        Manga
                     </p>
-                </div>
+                    </div>
 
-                <button
+                    <button
                     class="flow-add-button"
                     type="button"
                     data-flow-add-button
-                >
+                    >
                     Add
-                </button>
+                    </button>
                 </article>
-            </template>
+                </template>
             </div>
 
 
-            <!-- Status selection before adding -->
-
             <fieldset
-            class="flow-status-picker"
-            data-flow-status-picker
-            hidden
+                class="flow-status-picker"
+                data-flow-status-picker
+                hidden
             >
-            <legend>
+                <legend>
                 Where should it go?
-            </legend>
+                </legend>
 
-            <div class="flow-status-options">
+                <div class="flow-status-options">
 
                 <label>
-                <input
+                    <input
                     type="radio"
                     name="flow_status"
                     value="in-progress"
                     checked
-                >
-                <span>Reading</span>
+                    >
+                    <span>Reading</span>
                 </label>
 
                 <label>
-                <input
+                    <input
                     type="radio"
                     name="flow_status"
                     value="completed"
-                >
-                <span>Completed</span>
+                    >
+                    <span>Completed</span>
                 </label>
 
                 <label>
-                <input
+                    <input
                     type="radio"
                     name="flow_status"
                     value="planned"
-                >
-                <span>Planned</span>
+                    >
+                    <span>Planned</span>
                 </label>
 
                 <label>
-                <input
+                    <input
                     type="radio"
                     name="flow_status"
                     value="paused"
-                >
-                <span>Paused</span>
+                    >
+                    <span>Paused</span>
                 </label>
 
                 <label>
-                <input
+                    <input
                     type="radio"
                     name="flow_status"
                     value="dropped"
-                >
-                <span>Dropped</span>
+                    >
+                    <span>Dropped</span>
                 </label>
 
-            </div>
+                </div>
             </fieldset>
+            </div>
 
         </div>
         </article>
@@ -639,38 +641,43 @@
             </div>
 
 
-            <!-- One simple sorting dropdown -->
-
             <div class="flow-sort-controls">
                 <label for="library-sort-select">
                 Sort by
                 </label>
 
+                <div class="flow-select-shell flow-sort-select-shell">
+                <i
+                    class="ti ti-arrows-sort"
+                    aria-hidden="true"
+                ></i>
+
                 <select
-                id="library-sort-select"
-                data-library-sort
-                aria-label="Sort saved stories"
+                    id="library-sort-select"
+                    data-library-sort
+                    aria-label="Sort saved stories"
                 >
-                <option value="">
+                    <option value="">
                     Default order
-                </option>
+                    </option>
 
-                <option value="title-asc">
+                    <option value="title-asc">
                     Title A–Z
-                </option>
+                    </option>
 
-                <option value="title-desc">
+                    <option value="title-desc">
                     Title Z–A
-                </option>
+                    </option>
 
-                <option value="rating-desc">
+                    <option value="rating-desc">
                     Personal rating high–low
-                </option>
+                    </option>
 
-                <option value="rating-asc">
+                    <option value="rating-asc">
                     Personal rating low–high
-                </option>
+                    </option>
                 </select>
+                </div>
             </div>
             </div>
 
@@ -776,31 +783,38 @@
 
 
             <!-- ==============================================
-                EMPTY STATE
+                FIXED LIST VIEWPORT
                 ============================================== -->
 
+            <div class="flow-library-viewport">
+
             <div
-            class="flow-library-empty"
-            data-library-empty
-            data-flow-motion-item
+                class="flow-library-empty"
+                data-library-empty
+                data-flow-motion-item
             >
-            <p>
-                Search and add something above. Your saved stories will
-                appear here.
-            </p>
+                <div class="flow-empty-content">
+                <i
+                    class="ti ti-books"
+                    aria-hidden="true"
+                ></i>
+
+                <p>
+                    Search and add something above. Your saved stories
+                    will appear here.
+                </p>
+                </div>
             </div>
 
 
-            <!-- ==============================================
-                GENERATED STORY LIST
-                ============================================== -->
-
             <div
-            class="flow-library-list"
-            data-library-list
-            aria-label="Saved stories"
-            aria-live="polite"
+                class="flow-library-list"
+                data-library-list
+                aria-label="Saved stories"
+                aria-live="polite"
             ></div>
+
+            </div>
 
 
             <!-- ==============================================
@@ -812,8 +826,6 @@
                 class="flow-library-row"
                 data-library-row
             >
-
-                <!-- Story information -->
 
                 <div class="flow-library-story-cell">
                 <div class="flow-library-row-cover">
@@ -836,52 +848,58 @@
                 </div>
 
 
-                <!-- Format badges -->
-
                 <div
                 class="flow-library-row-format"
                 data-library-format
                 ></div>
 
 
-                <!-- Status -->
-
                 <div class="flow-library-row-status">
-                <select
+                <div class="flow-select-shell flow-status-select-shell">
+                    <i
+                    class="ti ti-progress-check"
+                    aria-hidden="true"
+                    ></i>
+
+                    <select
                     name="library_status"
                     data-library-status
                     aria-label="Change status"
-                >
+                    >
                     <option value="in-progress">
-                    Reading
+                        Reading
                     </option>
 
                     <option value="completed">
-                    Completed
+                        Completed
                     </option>
 
                     <option value="planned">
-                    Planned
+                        Planned
                     </option>
 
                     <option value="paused">
-                    Paused
+                        Paused
                     </option>
 
                     <option value="dropped">
-                    Dropped
+                        Dropped
                     </option>
-                </select>
+                    </select>
+                </div>
                 </div>
 
-
-                <!-- Manual personal rating -->
 
                 <div class="flow-library-row-rating">
                 <label>
                     <span class="sr-only">
                     Your personal rating from 0 to 10
                     </span>
+
+                    <i
+                    class="ti ti-star"
+                    aria-hidden="true"
+                    ></i>
 
                     <input
                     type="number"

@@ -71,13 +71,16 @@
   position: relative;
   isolation: isolate;
 
+  /*
+    Increased section background above and below the content.
+  */
   min-height:
-    calc(112svh - var(--nav-height));
+    calc(124svh - var(--nav-height));
 
   padding:
-    clamp(2.75rem, 5vh, 4.5rem)
+    clamp(5rem, 8vh, 7rem)
     clamp(1.25rem, 4.25vw, 4.75rem)
-    clamp(3rem, 6vh, 5rem);
+    clamp(4.5rem, 7vh, 6rem);
 
   overflow: hidden;
 
@@ -89,14 +92,14 @@
 
   background:
     radial-gradient(
-      circle at 82% 18%,
-      rgba(124, 140, 255, 0.24),
+      circle at 82% 15%,
+      rgba(124, 140, 255, 0.25),
       transparent 34%
     ),
     radial-gradient(
-      circle at 15% 30%,
-      rgba(155, 124, 255, 0.15),
-      transparent 36%
+      circle at 15% 28%,
+      rgba(155, 124, 255, 0.16),
+      transparent 37%
     ),
     radial-gradient(
       circle at 78% 78%,
@@ -141,16 +144,16 @@
 
 
 .section-library-flow::before {
-  width: min(56vw, 760px);
+  width: min(58vw, 800px);
   aspect-ratio: 1;
 
   right: -16%;
-  top: -25%;
+  top: -22%;
 
   background:
     radial-gradient(
       circle,
-      rgba(124, 140, 255, 0.28),
+      rgba(124, 140, 255, 0.30),
       rgba(155, 124, 255, 0.14) 34%,
       rgba(124, 140, 255, 0.05) 58%,
       transparent 74%
@@ -159,23 +162,21 @@
 
 
 .section-library-flow::after {
-  width: min(48vw, 620px);
+  width: min(50vw, 660px);
   aspect-ratio: 1;
 
   left: -18%;
-  bottom: -32%;
+  bottom: -30%;
 
   background:
     radial-gradient(
       circle,
-      rgba(210, 140, 255, 0.15),
+      rgba(210, 140, 255, 0.16),
       rgba(116, 215, 255, 0.075) 42%,
       transparent 74%
     );
 }
 
-
-/* Screen-reader-only text */
 
 .sr-only {
   position: absolute !important;
@@ -197,7 +198,10 @@
 
 
 /* =========================================================
-   MAIN SECTION GRID
+   FIXED DESKTOP GRID
+
+   Fixed row heights prevent search results and library items
+   from moving the entire section up and down.
    ========================================================= */
 
 .flow-grid {
@@ -217,20 +221,23 @@
     "copy search"
     "library library";
 
+  /*
+    Top area and library area remain the same height.
+  */
   grid-template-rows:
-    minmax(320px, auto)
-    minmax(470px, auto);
+    380px
+    430px;
 
   column-gap:
     clamp(3rem, 6vw, 7rem);
 
+  /*
+    More breathing room between the upper content and library.
+  */
   row-gap:
-    clamp(0.8rem, 1.5vh, 1.1rem);
+    clamp(1.8rem, 3vh, 2.6rem);
 
-  align-items: center;
-
-  transform:
-    translateY(-8px);
+  align-items: stretch;
 }
 
 
@@ -301,6 +308,8 @@
 
   align-items: flex-start;
   justify-content: center;
+
+  align-self: stretch;
 }
 
 
@@ -442,7 +451,10 @@
 
 
 /* =========================================================
-   SEARCH CARD
+   FIXED SEARCH CARD
+
+   The outer card never changes height. Dynamic search content
+   scrolls inside it.
    ========================================================= */
 
 .flow-search-card {
@@ -451,13 +463,17 @@
   width:
     min(100%, 620px);
 
-  min-height: 315px;
+  height: 350px;
+  min-height: 350px;
+  max-height: 350px;
 
+  align-self: center;
   justify-self: end;
 }
 
 
 .flow-card-header {
+  height: 42px;
   min-height: 42px;
 
   padding:
@@ -515,8 +531,24 @@
 
 
 .flow-search-body {
+  height:
+    calc(100% - 42px);
+
+  min-height: 0;
+
   padding:
-    0.95rem 1rem 1.08rem;
+    0.95rem 1rem 1rem;
+
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
+}
+
+
+.flow-search-form {
+  flex:
+    0 0 auto;
 }
 
 
@@ -539,8 +571,6 @@
 }
 
 
-/* Search field */
-
 .flow-search-bar {
   position: relative;
 
@@ -554,17 +584,17 @@
   border:
     1px solid rgba(184, 192, 255, 0.2);
 
-  border-radius: 10px;
+  border-radius: 11px;
 
   background:
     linear-gradient(
       180deg,
-      rgba(255, 255, 255, 0.066),
+      rgba(255, 255, 255, 0.075),
       rgba(255, 255, 255, 0.035)
     );
 
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
     0 10px 22px rgba(0, 0, 0, 0.22);
 
   transition:
@@ -575,12 +605,12 @@
 
 .flow-search-bar:focus-within {
   border-color:
-    rgba(116, 215, 255, 0.48);
+    rgba(116, 215, 255, 0.55);
 
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
     0 0 0 3px rgba(116, 215, 255, 0.12),
-    0 0 28px rgba(124, 140, 255, 0.14);
+    0 0 28px rgba(124, 140, 255, 0.16);
 }
 
 
@@ -658,7 +688,7 @@
 
 .flow-search-bar button:hover {
   box-shadow:
-    0 0 22px rgba(124, 140, 255, 0.18);
+    0 0 22px rgba(124, 140, 255, 0.20);
 }
 
 
@@ -668,9 +698,48 @@
 }
 
 
-.flow-search-empty {
-  margin-top: 0.68rem;
+/* Dynamic area inside fixed search card */
 
+.flow-search-content {
+  flex:
+    1 1 auto;
+
+  min-height: 0;
+
+  margin-top: 0.65rem;
+  padding-right: 0.25rem;
+  padding-bottom: 0.15rem;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  scrollbar-width: thin;
+
+  scrollbar-color:
+    rgba(116, 215, 255, 0.36)
+    transparent;
+}
+
+
+.flow-search-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+
+.flow-search-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+
+.flow-search-content::-webkit-scrollbar-thumb {
+  background:
+    rgba(116, 215, 255, 0.36);
+
+  border-radius: 999px;
+}
+
+
+.flow-search-empty {
   color:
     var(--flow-ink-faint);
 
@@ -697,8 +766,6 @@
    ========================================================= */
 
 .flow-suggestions {
-  margin-top: 0.7rem;
-
   display: grid;
 
   gap: 0.45rem;
@@ -759,15 +826,15 @@
     translateY(-1px);
 
   border-color:
-    rgba(116, 215, 255, 0.32);
+    rgba(116, 215, 255, 0.36);
 
   outline: none;
 
   background:
     linear-gradient(
       135deg,
-      rgba(116, 215, 255, 0.1),
-      rgba(124, 140, 255, 0.08)
+      rgba(116, 215, 255, 0.11),
+      rgba(124, 140, 255, 0.09)
     );
 }
 
@@ -858,8 +925,6 @@
 
 .flow-result-area.has-result-card {
   display: block;
-
-  margin-top: 0.78rem;
 }
 
 
@@ -999,7 +1064,7 @@
   border:
     1px solid rgba(184, 192, 255, 0.3);
 
-  border-radius: 8px;
+  border-radius: 9px;
 
   color: #ffffff;
 
@@ -1019,6 +1084,10 @@
       #5b5fe8
     );
 
+  box-shadow:
+    0 8px 18px rgba(0, 0, 0, 0.25),
+    0 0 18px rgba(124, 140, 255, 0.15);
+
   transition:
     transform var(--flow-transition),
     box-shadow var(--flow-transition);
@@ -1030,7 +1099,8 @@
     translateY(-1px);
 
   box-shadow:
-    0 0 18px rgba(124, 140, 255, 0.2);
+    0 10px 22px rgba(0, 0, 0, 0.28),
+    0 0 22px rgba(124, 140, 255, 0.25);
 }
 
 
@@ -1053,12 +1123,12 @@
 
 
 /* =========================================================
-   SHARED FILTER BUTTONS
+   FILTER BUTTONS
    ========================================================= */
 
 .flow-status-picker {
   margin:
-    0.84rem 0 0;
+    0.8rem 0 0;
 
   padding: 0;
 
@@ -1101,17 +1171,17 @@
 .flow-status-options span,
 .flow-filter,
 .flow-status-filter {
-  min-height: 30px;
+  min-height: 31px;
 
   padding:
-    0 0.7rem;
+    0 0.74rem;
 
   display: inline-flex;
   align-items: center;
   justify-content: center;
 
   border:
-    1px solid rgba(184, 192, 255, 0.15);
+    1px solid rgba(184, 192, 255, 0.16);
 
   border-radius: 999px;
 
@@ -1127,15 +1197,19 @@
   background:
     linear-gradient(
       180deg,
-      rgba(255, 255, 255, 0.05),
-      rgba(255, 255, 255, 0.032)
+      rgba(255, 255, 255, 0.055),
+      rgba(255, 255, 255, 0.028)
     );
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
 
   transition:
     transform var(--flow-transition),
     color var(--flow-transition),
     border-color var(--flow-transition),
-    background var(--flow-transition);
+    background var(--flow-transition),
+    box-shadow var(--flow-transition);
 }
 
 
@@ -1148,15 +1222,24 @@
   color: #ffffff;
 
   border-color:
-    rgba(116, 215, 255, 0.38);
+    rgba(116, 215, 255, 0.42);
 
   background:
+    radial-gradient(
+      circle at 25% 15%,
+      rgba(255, 255, 255, 0.14),
+      transparent 30%
+    ),
     linear-gradient(
       145deg,
       rgba(116, 215, 255, 0.18),
-      rgba(124, 140, 255, 0.22),
+      rgba(124, 140, 255, 0.23),
       rgba(155, 124, 255, 0.16)
     );
+
+  box-shadow:
+    0 7px 16px rgba(0, 0, 0, 0.20),
+    0 0 16px rgba(116, 215, 255, 0.08);
 
   transform:
     translateY(-1px);
@@ -1164,7 +1247,9 @@
 
 
 /* =========================================================
-   LIBRARY CARD
+   FIXED LIBRARY CARD
+
+   It never grows when stories are added.
    ========================================================= */
 
 .flow-library-card {
@@ -1172,17 +1257,20 @@
 
   width: 100%;
 
-  min-height: 470px;
+  height: 430px;
+  min-height: 430px;
+  max-height: 430px;
 
   align-self: stretch;
 }
 
 
 .flow-library-header {
-  min-height: 72px;
+  height: 74px;
+  min-height: 74px;
 
   padding:
-    0.9rem 1rem;
+    0.95rem 1.1rem;
 
   display: flex;
   align-items: center;
@@ -1196,7 +1284,7 @@
   background:
     linear-gradient(
       180deg,
-      rgba(255, 255, 255, 0.055),
+      rgba(255, 255, 255, 0.06),
       rgba(255, 255, 255, 0.018)
     );
 }
@@ -1231,17 +1319,17 @@
 
 
 .flow-library-count {
-  min-height: 32px;
+  min-height: 34px;
 
   padding:
-    0 0.82rem;
+    0 0.86rem;
 
   display: inline-flex;
   align-items: center;
   justify-content: center;
 
   border:
-    1px solid rgba(116, 215, 255, 0.24);
+    1px solid rgba(116, 215, 255, 0.28);
 
   border-radius: 999px;
 
@@ -1255,11 +1343,19 @@
   white-space: nowrap;
 
   background:
+    radial-gradient(
+      circle at 25% 18%,
+      rgba(255, 255, 255, 0.13),
+      transparent 30%
+    ),
     linear-gradient(
       135deg,
-      rgba(116, 215, 255, 0.14),
-      rgba(124, 140, 255, 0.1)
+      rgba(116, 215, 255, 0.15),
+      rgba(124, 140, 255, 0.11)
     );
+
+  box-shadow:
+    0 8px 18px rgba(0, 0, 0, 0.18);
 }
 
 
@@ -1273,20 +1369,19 @@
 
 
 /* =========================================================
-   FULL-WIDTH LIBRARY BODY
-   This fixes the unused space on the right.
+   LIBRARY BODY AND FIXED LIST VIEWPORT
    ========================================================= */
 
 .flow-library-body {
   width: 100%;
   height:
-    calc(100% - 72px);
+    calc(100% - 74px);
 
   min-width: 0;
   min-height: 0;
 
   padding:
-    0.78rem 1rem 1rem;
+    0.78rem 1rem 0.9rem;
 
   display: grid;
 
@@ -1296,34 +1391,24 @@
   grid-template-rows:
     auto
     auto
-    auto
-    minmax(235px, 1fr);
+    26px
+    minmax(0, 1fr);
 
-  gap: 0.62rem;
+  gap: 0.58rem;
 
   overflow: hidden;
 }
 
 
-/*
-  Every library section explicitly spans the complete grid.
-  This prevents older grid-area rules from limiting the width.
-*/
-
 .flow-library-toolbar,
 .flow-library-status-row,
 .flow-library-list-header,
-.flow-library-empty,
-.flow-library-list {
+.flow-library-viewport {
   grid-column:
     1 / -1;
 
   width: 100%;
-  max-width: none;
-
   min-width: 0;
-
-  justify-self: stretch;
 }
 
 
@@ -1342,8 +1427,7 @@
 }
 
 
-.flow-library-empty,
-.flow-library-list {
+.flow-library-viewport {
   grid-row: 4;
 }
 
@@ -1364,8 +1448,27 @@
 }
 
 
+/*
+  Fixed viewport for roughly three rows.
+
+  The card and section stay in the same position while this
+  internal viewport scrolls.
+*/
+
+.flow-library-viewport {
+  position: relative;
+
+  height: 100%;
+  min-height: 0;
+
+  overflow: hidden;
+
+  border-radius: 14px;
+}
+
+
 /* =========================================================
-   SORTING DROPDOWN
+   POLISHED SELECT CONTROLS
    ========================================================= */
 
 .flow-sort-controls {
@@ -1375,19 +1478,19 @@
   display: flex;
   align-items: center;
 
-  gap: 0.5rem;
+  gap: 0.55rem;
 }
 
 
-.flow-sort-controls label {
+.flow-sort-controls > label {
   color:
     var(--flow-ink-faint);
 
-  font-size: 0.62rem;
+  font-size: 0.61rem;
 
-  font-weight: 800;
+  font-weight: 850;
 
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
 
   text-transform: uppercase;
 
@@ -1395,75 +1498,166 @@
 }
 
 
-.flow-sort-controls select,
-.flow-library-row-status select {
+.flow-select-shell {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  min-width: 0;
+
+  overflow: hidden;
+
+  border:
+    1px solid rgba(116, 215, 255, 0.30);
+
+  border-radius: 12px;
+
+  background:
+    radial-gradient(
+      circle at 18% 12%,
+      rgba(255, 255, 255, 0.10),
+      transparent 28%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(19, 31, 58, 0.96),
+      rgba(14, 22, 45, 0.98)
+    );
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    0 8px 20px rgba(0, 0, 0, 0.20),
+    0 0 18px rgba(116, 215, 255, 0.05);
+
+  transition:
+    border-color var(--flow-transition),
+    box-shadow var(--flow-transition),
+    transform var(--flow-transition);
+}
+
+
+.flow-select-shell:hover {
+  border-color:
+    rgba(116, 215, 255, 0.50);
+
+  transform:
+    translateY(-1px);
+}
+
+
+.flow-select-shell:focus-within {
+  border-color:
+    rgba(116, 215, 255, 0.72);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 0 0 3px rgba(116, 215, 255, 0.13),
+    0 0 24px rgba(116, 215, 255, 0.13);
+}
+
+
+.flow-select-shell > i {
+  position: absolute;
+  left: 0.78rem;
+  z-index: 2;
+
+  color:
+    var(--flow-cyan);
+
+  font-size: 0.88rem;
+
+  pointer-events: none;
+}
+
+
+.flow-select-shell::after {
+  content: "";
+
+  position: absolute;
+  right: 0.86rem;
+
+  width: 7px;
+  height: 7px;
+
+  border-right:
+    2px solid rgba(203, 211, 234, 0.85);
+
+  border-bottom:
+    2px solid rgba(203, 211, 234, 0.85);
+
+  transform:
+    rotate(45deg)
+    translateY(-2px);
+
+  pointer-events: none;
+}
+
+
+.flow-select-shell select {
+  width: 100%;
+  height: 100%;
+
+  padding:
+    0 2.35rem 0 2.35rem;
+
+  appearance: none;
+  -webkit-appearance: none;
+
   color-scheme: dark;
 
   color:
     var(--flow-ink);
 
-  background-color: #111a33;
-
-  border:
-    1px solid rgba(116, 215, 255, 0.28);
-
-  outline: none;
-
-  cursor: pointer;
-
   font-family:
     var(--flow-font-body);
 
-  font-weight: 750;
+  font-weight: 780;
 
-  transition:
-    border-color var(--flow-transition),
-    box-shadow var(--flow-transition);
+  background: transparent;
+
+  border: 0;
+
+  outline: 0;
+
+  cursor: pointer;
 }
 
 
-.flow-sort-controls select {
+.flow-select-shell select option {
+  color:
+    #f5f7ff;
+
+  background:
+    #111a33;
+
+  font-weight: 700;
+}
+
+
+.flow-sort-select-shell {
   width:
-    clamp(180px, 15vw, 245px);
+    clamp(205px, 17vw, 270px);
 
-  min-height: 36px;
+  height: 38px;
+}
 
-  padding:
-    0 2rem 0 0.75rem;
 
-  border-radius: 999px;
-
+.flow-sort-select-shell select {
   font-size: 0.68rem;
 }
 
 
-.flow-sort-controls select.is-active {
-  border-color:
-    rgba(116, 215, 255, 0.62);
+.flow-status-select-shell {
+  width: 100%;
+  height: 38px;
 
-  box-shadow:
-    0 0 0 3px rgba(116, 215, 255, 0.12);
+  border-radius: 11px;
 }
 
 
-.flow-sort-controls select option,
-.flow-library-row-status select option {
-  color: #f5f7ff;
-
-  background:
-    #111a33;
-}
-
-
-.flow-sort-controls select:hover,
-.flow-sort-controls select:focus,
-.flow-library-row-status select:hover,
-.flow-library-row-status select:focus {
-  border-color:
-    rgba(116, 215, 255, 0.62);
-
-  box-shadow:
-    0 0 0 3px rgba(116, 215, 255, 0.12);
+.flow-status-select-shell select {
+  font-size: 0.68rem;
 }
 
 
@@ -1475,7 +1669,7 @@
   max-width: 330px;
 
   padding:
-    0.5rem 0.7rem;
+    0.5rem 0.72rem;
 
   display: inline-flex;
   align-items: center;
@@ -1483,7 +1677,7 @@
   gap: 0.38rem;
 
   border:
-    1px solid rgba(184, 192, 255, 0.14);
+    1px solid rgba(184, 192, 255, 0.15);
 
   border-radius: 999px;
 
@@ -1501,9 +1695,12 @@
   background:
     linear-gradient(
       135deg,
-      rgba(255, 255, 255, 0.052),
-      rgba(255, 255, 255, 0.03)
+      rgba(255, 255, 255, 0.055),
+      rgba(255, 255, 255, 0.028)
     );
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.035);
 }
 
 
@@ -1514,7 +1711,7 @@
 
 
 /* =========================================================
-   LIBRARY COLUMN LAYOUT
+   LIBRARY COLUMNS
    ========================================================= */
 
 .flow-library-list-header,
@@ -1526,8 +1723,8 @@
   grid-template-columns:
     minmax(340px, 1fr)
     minmax(170px, 230px)
-    minmax(150px, 175px)
-    minmax(105px, 120px);
+    minmax(160px, 185px)
+    minmax(112px, 130px);
 
   align-items: center;
 
@@ -1555,40 +1752,62 @@
 
 
 /* =========================================================
-   FULL-WIDTH EMPTY STATE
+   FIXED EMPTY STATE
    ========================================================= */
 
 .flow-library-empty {
-  place-self: stretch;
-
-  min-height: 235px;
-
-  padding: 0.9rem;
+  position: absolute;
+  inset: 0;
 
   display: flex;
   align-items: center;
+  justify-content: center;
+
+  padding: 1rem;
 
   border:
     1px dashed rgba(184, 192, 255, 0.18);
 
-  border-radius: 13px;
+  border-radius: 14px;
 
   color:
     var(--flow-ink-faint);
-
-  font-size: 0.76rem;
 
   background:
     linear-gradient(
       180deg,
       rgba(255, 255, 255, 0.035),
-      rgba(255, 255, 255, 0.02)
+      rgba(255, 255, 255, 0.018)
     );
 }
 
 
-.flow-library-empty p {
+.flow-empty-content {
+  max-width: 430px;
+
+  display: grid;
+  justify-items: center;
+
+  gap: 0.55rem;
+
+  text-align: center;
+}
+
+
+.flow-empty-content i {
+  color:
+    rgba(116, 215, 255, 0.65);
+
+  font-size: 1.4rem;
+}
+
+
+.flow-empty-content p {
   margin: 0;
+
+  font-size: 0.76rem;
+
+  line-height: 1.5;
 }
 
 
@@ -1600,31 +1819,36 @@
 
 
 /* =========================================================
-   FULL-WIDTH SCROLLABLE STORY LIST
+   FIXED SCROLLABLE STORY LIST
    ========================================================= */
 
 .flow-library-list {
-  place-self: stretch;
-
+  width: 100%;
+  height: 100%;
   min-height: 0;
 
   overflow-y: auto;
   overflow-x: hidden;
 
   display: grid;
+
+  /*
+    Every generated row remains the same height.
+  */
+  grid-auto-rows: 76px;
   align-content: start;
 
   gap: 0.52rem;
 
   padding:
-    0 0.38rem 0.65rem 0;
+    0 0.42rem 0.6rem 0;
 
-  scroll-padding-bottom: 0.65rem;
+  scroll-padding-bottom: 0.6rem;
 
   scrollbar-width: thin;
 
   scrollbar-color:
-    rgba(116, 215, 255, 0.38)
+    rgba(116, 215, 255, 0.42)
     rgba(255, 255, 255, 0.05);
 }
 
@@ -1644,7 +1868,11 @@
 
 .flow-library-list::-webkit-scrollbar-thumb {
   background:
-    rgba(116, 215, 255, 0.38);
+    linear-gradient(
+      180deg,
+      rgba(116, 215, 255, 0.55),
+      rgba(124, 140, 255, 0.48)
+    );
 
   border-radius: 999px;
 }
@@ -1655,20 +1883,27 @@
    ========================================================= */
 
 .flow-library-row {
-  min-height: 74px;
+  height: 76px;
+  min-height: 76px;
+  max-height: 76px;
 
   padding:
     0.55rem 0.82rem;
 
   border:
-    1px solid rgba(184, 192, 255, 0.2);
+    1px solid rgba(184, 192, 255, 0.20);
 
   border-radius: 14px;
 
   background:
+    radial-gradient(
+      circle at 8% 10%,
+      rgba(255, 255, 255, 0.065),
+      transparent 28%
+    ),
     linear-gradient(
       135deg,
-      rgba(124, 140, 255, 0.1),
+      rgba(124, 140, 255, 0.11),
       rgba(255, 255, 255, 0.034) 48%,
       rgba(116, 215, 255, 0.05)
     );
@@ -1701,8 +1936,7 @@
 
 .flow-library-row-cover {
   width: 42px;
-
-  aspect-ratio: 2 / 3;
+  height: 62px;
 
   overflow: hidden;
 
@@ -1714,6 +1948,10 @@
       rgba(124, 140, 255, 0.38),
       rgba(210, 140, 255, 0.24)
     );
+
+  box-shadow:
+    0 7px 14px rgba(0, 0, 0, 0.25),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08);
 }
 
 
@@ -1736,7 +1974,7 @@
 
 .flow-library-row-info h4 {
   margin:
-    0 0 0.16rem;
+    0 0 0.18rem;
 
   color:
     var(--flow-ink);
@@ -1777,21 +2015,21 @@
 
 .flow-format-badge,
 .flow-format-more {
-  min-height: 24px;
+  min-height: 25px;
 
   padding:
-    0 0.48rem;
+    0 0.52rem;
 
   display: inline-flex;
   align-items: center;
   justify-content: center;
 
   border:
-    1px solid rgba(184, 192, 255, 0.18);
+    1px solid rgba(184, 192, 255, 0.20);
 
   border-radius: 999px;
 
-  color: #c4cbff;
+  color: #cbd2ff;
 
   font-size: 0.53rem;
 
@@ -1804,11 +2042,19 @@
   white-space: nowrap;
 
   background:
+    radial-gradient(
+      circle at 25% 15%,
+      rgba(255, 255, 255, 0.10),
+      transparent 30%
+    ),
     linear-gradient(
       180deg,
-      rgba(124, 140, 255, 0.16),
-      rgba(155, 124, 255, 0.1)
+      rgba(124, 140, 255, 0.18),
+      rgba(155, 124, 255, 0.10)
     );
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
 
@@ -1819,25 +2065,7 @@
 
 
 /* =========================================================
-   STATUS DROPDOWN
-   ========================================================= */
-
-.flow-library-row-status select {
-  width: 100%;
-
-  min-height: 36px;
-
-  padding:
-    0 2rem 0 0.72rem;
-
-  border-radius: 999px;
-
-  font-size: 0.68rem;
-}
-
-
-/* =========================================================
-   MANUAL PERSONAL RATING
+   PERSONAL RATING
    ========================================================= */
 
 .flow-library-row-rating {
@@ -1847,11 +2075,10 @@
 
 .flow-library-row-rating label {
   width: 100%;
-
-  min-height: 38px;
+  height: 38px;
 
   padding:
-    0 0.58rem;
+    0 0.62rem;
 
   display: flex;
   align-items: center;
@@ -1860,16 +2087,25 @@
   gap: 0.28rem;
 
   border:
-    1px solid rgba(116, 215, 255, 0.28);
+    1px solid rgba(116, 215, 255, 0.30);
 
-  border-radius: 12px;
+  border-radius: 11px;
 
   background:
+    radial-gradient(
+      circle at 20% 15%,
+      rgba(255, 255, 255, 0.08),
+      transparent 28%
+    ),
     linear-gradient(
-      180deg,
-      rgba(116, 215, 255, 0.09),
-      rgba(124, 140, 255, 0.065)
+      145deg,
+      rgba(19, 31, 58, 0.92),
+      rgba(14, 22, 45, 0.96)
     );
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 7px 16px rgba(0, 0, 0, 0.16);
 
   transition:
     border-color var(--flow-transition),
@@ -1879,15 +2115,24 @@
 
 .flow-library-row-rating label:focus-within {
   border-color:
-    rgba(116, 215, 255, 0.68);
+    rgba(116, 215, 255, 0.72);
 
   box-shadow:
-    0 0 0 3px rgba(116, 215, 255, 0.14);
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    0 0 0 3px rgba(116, 215, 255, 0.13);
+}
+
+
+.flow-library-row-rating label > i {
+  color:
+    #f0cf70;
+
+  font-size: 0.85rem;
 }
 
 
 .flow-library-row-rating input {
-  width: 54px;
+  width: 48px;
   min-width: 0;
 
   padding: 0;
@@ -1899,7 +2144,7 @@
   color: #ffffff;
 
   font:
-    850 0.95rem/1
+    850 0.92rem/1
     var(--flow-font-body);
 
   text-align: right;
@@ -1941,7 +2186,7 @@ input[aria-invalid="true"] {
   color:
     var(--flow-ink-faint);
 
-  font-size: 0.62rem;
+  font-size: 0.61rem;
 
   font-weight: 750;
 }
@@ -2127,11 +2372,11 @@ input[aria-invalid="true"] {
 ) {
   .flow-grid {
     grid-template-columns:
-      minmax(430px, 0.94fr)
-      minmax(460px, 1.06fr);
+      minmax(420px, 0.94fr)
+      minmax(450px, 1.06fr);
 
     column-gap:
-      clamp(2.4rem, 4.5vw, 4.5rem);
+      clamp(2.5rem, 4.5vw, 4.5rem);
   }
 
   .flow-search-card {
@@ -2142,10 +2387,10 @@ input[aria-invalid="true"] {
   .flow-library-list-header,
   .flow-library-row {
     grid-template-columns:
-      minmax(300px, 1fr)
-      minmax(150px, 195px)
-      minmax(140px, 160px)
-      105px;
+      minmax(280px, 1fr)
+      minmax(140px, 185px)
+      minmax(145px, 165px)
+      115px;
 
     gap: 0.75rem;
   }
@@ -2163,21 +2408,21 @@ input[aria-invalid="true"] {
 ) {
   .section-library-flow {
     min-height:
-      calc(110svh - var(--nav-height));
+      calc(122svh - var(--nav-height));
 
     padding:
-      1.6rem
+      3.5rem
       clamp(1.5rem, 4vw, 4.25rem)
-      2.4rem;
+      4rem;
   }
 
   .flow-grid {
     grid-template-rows:
-      minmax(255px, auto)
-      minmax(390px, auto);
+      330px
+      410px;
 
-    transform:
-      translateY(-4px);
+    row-gap:
+      1.6rem;
   }
 
   .flow-copy-card h2 {
@@ -2186,27 +2431,15 @@ input[aria-invalid="true"] {
   }
 
   .flow-search-card {
-    min-height: 245px;
+    height: 310px;
+    min-height: 310px;
+    max-height: 310px;
   }
 
   .flow-library-card {
-    min-height: 390px;
-  }
-
-  .flow-library-body {
-    grid-template-rows:
-      auto
-      auto
-      auto
-      minmax(205px, 1fr);
-  }
-
-  .flow-library-empty {
-    min-height: 205px;
-  }
-
-  .flow-library-row {
-    min-height: 66px;
+    height: 410px;
+    min-height: 410px;
+    max-height: 410px;
   }
 }
 
@@ -2217,10 +2450,10 @@ input[aria-invalid="true"] {
 
 @media (max-width: 980px) {
   .section-library-flow {
-    min-height: 110svh;
+    min-height: 112svh;
 
     padding:
-      5.2rem 6% 4.5rem;
+      5.5rem 6% 4.5rem;
 
     overflow: visible;
   }
@@ -2235,9 +2468,7 @@ input[aria-invalid="true"] {
 
     grid-template-rows: auto;
 
-    gap: 1rem;
-
-    transform: none;
+    gap: 1.6rem;
   }
 
   .flow-copy-card {
@@ -2248,19 +2479,17 @@ input[aria-invalid="true"] {
     width: 100%;
     max-width: 620px;
 
+    height: 350px;
+    min-height: 350px;
+    max-height: 350px;
+
     justify-self: stretch;
   }
 
   .flow-library-card {
-    min-height: auto;
-  }
-
-  .flow-library-body {
-    height: auto;
-
-    grid-template-rows: auto;
-
-    overflow: visible;
+    height: 450px;
+    min-height: 450px;
+    max-height: 450px;
   }
 
   .flow-library-toolbar,
@@ -2281,14 +2510,6 @@ input[aria-invalid="true"] {
     white-space: normal;
   }
 
-  .flow-library-empty {
-    min-height: 180px;
-  }
-
-  .flow-library-list {
-    max-height: 390px;
-  }
-
   .section-library-flow.flow-motion-ready
   [data-flow-motion="copy"],
 
@@ -2304,15 +2525,25 @@ input[aria-invalid="true"] {
 
 
 /* =========================================================
-   MOBILE STORY ROW
+   MOBILE LIBRARY ROW
    ========================================================= */
 
 @media (max-width: 760px) {
+  .flow-library-card {
+    height: 520px;
+    min-height: 520px;
+    max-height: 520px;
+  }
+
   .flow-library-list-header {
     display: none;
   }
 
   .flow-library-row {
+    height: 150px;
+    min-height: 150px;
+    max-height: 150px;
+
     grid-template-columns:
       minmax(0, 1fr)
       minmax(120px, 155px);
@@ -2326,6 +2557,10 @@ input[aria-invalid="true"] {
       0.65rem 0.75rem;
 
     padding: 0.78rem;
+  }
+
+  .flow-library-list {
+    grid-auto-rows: 150px;
   }
 
   .flow-library-story-cell {
@@ -2349,7 +2584,7 @@ input[aria-invalid="true"] {
 @media (max-width: 680px) {
   .section-library-flow {
     padding:
-      4.8rem 1rem 4rem;
+      5.2rem 1rem 4.5rem;
   }
 
   .flow-copy-card h2 {
@@ -2382,7 +2617,7 @@ input[aria-invalid="true"] {
   }
 
   .flow-library-heading p {
-    max-width: 220px;
+    max-width: 230px;
   }
 
   .flow-sort-controls {
@@ -2390,7 +2625,7 @@ input[aria-invalid="true"] {
     flex-direction: column;
   }
 
-  .flow-sort-controls select {
+  .flow-sort-select-shell {
     width: 100%;
   }
 }
@@ -2399,9 +2634,21 @@ input[aria-invalid="true"] {
 @media (max-width: 460px) {
   .flow-library-header {
     flex-direction: column;
+
+    height: 104px;
+    min-height: 104px;
+  }
+
+  .flow-library-body {
+    height:
+      calc(100% - 104px);
   }
 
   .flow-library-row {
+    height: 205px;
+    min-height: 205px;
+    max-height: 205px;
+
     grid-template-columns: 1fr;
 
     grid-template-areas:
@@ -2411,8 +2658,12 @@ input[aria-invalid="true"] {
       "rating";
   }
 
+  .flow-library-list {
+    grid-auto-rows: 205px;
+  }
+
   .flow-library-row-rating label {
-    max-width: 120px;
+    max-width: 130px;
   }
 }
 
