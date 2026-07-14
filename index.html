@@ -94,215 +94,573 @@
     </section>
 
     <!-- Section 2 Product -->
-    <section id="section-2-empty-shelf" class="section section-empty-shelf" aria-labelledby="section-2-title">
+    <section
+    id="section-2-empty-shelf"
+    class="section section-empty-shelf"
+    aria-labelledby="section-2-title"
+    >
+    <header class="section-2-header">
+        <span class="section-label">Beyond the score</span>
 
-        <header class="section-2-header">
-            <span class="section-label">Beyond the score</span>
-            <h2 id="section-2-title">A rating tells you nothing.</h2>
-            <p>A number can show how much you liked something. Inkwell helps you remember why.</p>
-        </header>
+        <h2 id="section-2-title">
+        A rating tells you nothing.
+        </h2>
 
-        <p id="section-2-status" class="sr-only" role="status" aria-live="polite"></p>
+        <p>
+        A number can show how much you liked something.
+        Inkwell helps you remember why.
+        </p>
+    </header>
 
-        <div class="empty-shelf-scroll">
-            <div class="stage-viewport">
+    <p
+        id="section-2-status"
+        class="sr-only"
+        role="status"
+        aria-live="polite"
+    ></p>
 
-            <!-- Persistent card -->
-            <div class="card-wrap">
-                <article class="media-library-row" aria-label="Vagabond — saved to your library">
-                    <div class="media-row-cover">
-                        <img src="img/section2/vagabond-cover.jpg" alt="Vagabond manga cover">
-                    </div>
+    <div class="empty-shelf-scroll">
+        <div class="stage-viewport">
 
-                    <div class="media-row-info">
-                        <h3>Vagabond</h3>
-                        <p>Takehiko Inoue</p>
-                    </div>
-
-                    <div class="media-row-format"><span>Manga</span></div>
-                    <div class="media-row-status"><span>Completed</span></div>
-                    <div class="media-row-score"><span>9/10</span></div>
-
-                    <div class="media-row-details" aria-label="Saved details for Vagabond">
-                        <button type="button" class="depth-button depth-button-quotes">Quotes</button>
-                        <button type="button" class="depth-button depth-button-moment">Moments</button>
-                        <button type="button" class="depth-button depth-button-character">Characters</button>
-                        <button type="button" class="depth-button depth-button-notes">Notes</button>
-                        <button type="button" class="depth-button depth-button-thoughts">Thoughts</button>
-                    </div>
-                </article>
+        <!-- Persistent card -->
+        <div class="card-wrap">
+            <article
+            class="media-library-row"
+            aria-label="Vagabond — saved to your library"
+            >
+            <div class="media-row-cover">
+                <img
+                src="img/section2/vagabond-cover.jpg"
+                alt="Vagabond manga cover"
+                >
             </div>
 
-            <!-- EVIDENCE SCENE 1 — Quotes: balanced, content-driven columns -->
-            <div class="scroll-stage" data-stage="quotes-fall" aria-hidden="true">
-                <div class="falling-quotes" aria-label="Saved quotes from Vagabond">
-
-                    <blockquote class="falling-quote quote-1 quote-long" data-quote-number="01" data-rotate="-0.55" tabindex="0">
-                        <p class="quote-text">A precipitous slope, a narrow river width, a fast and violent flow.
-                            Due to the terrain and the external influence, the state of the water is perfectly decided.
-                            <span class="quote-emphasis">And yet, water obeys only itself.</span> Water is only water. Thoroughly water. Absolutely free.</p>
-                    </blockquote>
-
-                    <blockquote class="falling-quote quote-2 quote-long" data-quote-number="02" data-rotate="0.35" tabindex="0">
-                        <p class="quote-text">Preoccupied with a single leaf, you won’t see the tree.
-                            Preoccupied with a single tree, you’ll miss the entire forest. Don’t be preoccupied with a single spot.
-                            <span class="quote-emphasis">See everything in its entirety</span>... effortlessly. That is what it means to truly <span class="quote-emphasis">'see'.</span></p>
-                    </blockquote>
-
-                    <blockquote class="falling-quote quote-3 quote-xl" data-quote-number="03" data-rotate="-0.35" tabindex="0">
-                        <p class="quote-text">Life has no value! Truly right. It has no value.
-                            If you think only of yourself, it has no value.
-                            'Why was I born?' The reason you are here... is because someone supported your life.
-                            'Why was I born? For what purpose?' <span class="quote-emphasis">The reason you are here is to support lives.</span>
-                            If you don't go against how life should be... You're already completely... Free.</p>
-                    </blockquote>
-
-                    <blockquote class="falling-quote quote-4 quote-short" data-quote-number="04" data-rotate="0.45" tabindex="0">
-                        <p class="quote-text"><span class="quote-emphasis">My sword is one with heaven and earth.</span> That’s why in a fight, I need no sword.</p>
-                    </blockquote>
-
-                    <blockquote class="falling-quote quote-5 quote-long" data-quote-number="05" data-rotate="-0.40" tabindex="0">
-                        <p class="quote-text"><span class="quote-emphasis">Invincible is merely a word.</span> To be 'invincible.' The more you think about it,
-                            the more you squint your eyes in desperation to see, the more obscured the answer becomes.
-                            If something’s too obscure to see… then try closing your eyes. Well…? <span class="quote-emphasis">Do you see how infinite you are?</span></p>
-                    </blockquote>
-
-                    <!-- Every quote uses the same restrained inline highlight treatment. -->
-                    <blockquote class="falling-quote quote-6 quote-short" data-quote-number="06" data-rotate="0.30" tabindex="0">
-                        <p class="quote-text">Musashi… you’ve become kind. That means you’re stronger. <span class="quote-emphasis">Truly strong people are kind.</span></p>
-                    </blockquote>
-
-                    <blockquote class="falling-quote quote-7 quote-long" data-quote-number="07" data-rotate="-0.45" tabindex="0">
-                        <p class="quote-text"><span class="quote-emphasis">Words are like the sea.</span> You must descend deep into the waters to see what lies at the bottom.
-                            For those content to gaze, there is only beauty and tedium. <span class="quote-emphasis">The truth lies here.</span>
-                            How it is accepted is only that: <span class="quote-emphasis">the truth for each man.</span></p>
-                    </blockquote>
-
-                    <blockquote class="falling-quote quote-8 quote-medium" data-quote-number="08" data-rotate="0.35" tabindex="0">
-                        <p class="quote-text">What is the meaning of 'strength'? It’s to have <span class="quote-emphasis">a mind that does not sway, while continuing to move forward and charge.</span></p>
-                    </blockquote>
-
-                    <blockquote class="falling-quote quote-9 quote-medium" data-quote-number="09" data-rotate="-0.20" tabindex="0">
-                        <p class="quote-text">What if you choose the wrong path? You must understand that <span class="quote-emphasis">there is more than one path</span> to the top of the mountain.</p>
-                    </blockquote>
-
-                </div>
+            <div class="media-row-info">
+                <h3>Vagabond</h3>
+                <p>Takehiko Inoue</p>
             </div>
 
-            <!-- EVIDENCE SCENE 2 — Moments -->
-            <div class="scroll-stage" data-stage="moments-move" aria-hidden="true">
-                <div class="moving-moments">
-
-                    <!-- 4 square cards -->
-                    <figure class="moment-frame moment-square moment-frame-1" data-rotate="-2" tabindex="0">
-                        <img src="img/section2/vagabond-moment-1.jpg" alt="Saved Vagabond moment">
-                    </figure>
-
-                    <figure class="moment-frame moment-square moment-frame-2" data-rotate="3" tabindex="0">
-                        <img src="img/section2/vagabond-moment-2.jpg" alt="Saved Vagabond moment">
-                    </figure>
-
-                    <figure class="moment-frame moment-square moment-frame-3" data-rotate="-3" tabindex="0">
-                        <img src="img/section2/vagabond-moment-3.jpg" alt="Saved Vagabond moment">
-                    </figure>
-
-                    <figure class="moment-frame moment-square moment-frame-4" data-rotate="2" tabindex="0">
-                          <img src="img/section2/vagabond-moment-4.jpg" alt="Saved Vagabond moment">
-                    </figure>
-
-                    <!-- 4 vertical manga cards -->
-                    <figure class="moment-frame moment-vertical moment-frame-5" data-rotate="-2" tabindex="0">
-                        <img src="img/section2/vagabond-moment-5.jpg" alt="Saved Vagabond vertical moment">
-                    </figure>
-
-                    <figure class="moment-frame moment-vertical moment-frame-6" data-rotate="2" tabindex="0">
-                        <img src="img/section2/vagabond-moment-6.jpg" alt="Saved Vagabond vertical moment">
-                    </figure>
-
-                    <figure class="moment-frame moment-vertical moment-frame-7" data-rotate="-1" tabindex="0">
-                        <img src="img/section2/vagabond-moment-7.jpg" alt="Saved Vagabond vertical moment">
-                    </figure>
-
-                    <figure class="moment-frame moment-vertical moment-frame-8" data-rotate="3" tabindex="0">
-                        <img src="img/section2/vagabond-moment-8.jpg" alt="Saved Vagabond vertical moment">
-                    </figure>
-
-                </div>
+            <div class="media-row-format">
+                <span>Manga</span>
             </div>
 
-            <!-- EVIDENCE SCENE 3 — Characters -->
-            <div class="scroll-stage" data-stage="characters-appear" aria-hidden="true">
-                <div class="character-cloud">
-
-                    <figure class="character-name character-1" data-rotate="-2" tabindex="0">
-                        <img src="img/section2/Musashi Miyamoto.jpg" alt="Musashi Miyamoto">
-                        <figcaption>Musashi Miyamoto</figcaption>
-                    </figure>
-
-                    <figure class="character-name character-2" data-rotate="3" tabindex="0">
-                        <img src="img/section2/Kojiro Sasaki.jpg" alt="Kojiro Sasaki">
-                        <figcaption>Kojiro Sasaki</figcaption>
-                    </figure>
-
-                    <figure class="character-name character-3" data-rotate="-3" tabindex="0">
-                        <img src="img/section2/Otsu.jpg" alt="Otsu">
-                        <figcaption>Otsu</figcaption>
-                    </figure>
-
-                    <figure class="character-name character-4" data-rotate="2" tabindex="0">
-                        <img src="img/section2/Matahachi Honiden.jpg" alt="Matahachi Honiden">
-                        <figcaption>Matahachi Honiden</figcaption>
-                    </figure>
-
-                    <figure class="character-name character-5" data-rotate="-2" tabindex="0">
-                        <img src="img/section2/Takuan Soho.jpg" alt="Takuan Soho">
-                        <figcaption>Takuan Soho</figcaption>
-                    </figure>
-
-                    <figure class="character-name character-6" data-rotate="2" tabindex="0">
-                        <img src="img/section2/Kanemaki Jisai.jpg" alt="Kanemaki Jisai">
-                        <figcaption>Kanemaki Jisai</figcaption>
-                    </figure>
-
-                </div>
+            <div class="media-row-status">
+                <span>Completed</span>
             </div>
 
-            <!-- EVIDENCE SCENE 4 — Notes -->
-            <div class="scroll-stage" data-stage="notes-appear" aria-hidden="true">
-            <div class="notes-cloud">
-                <p class="note-card note-1" data-rotate="-4" tabindex="0">
-                Chapter 3 — the pacing slows down intentionally. Inoue is making you sit with Musashi instead of rushing you forward.
+            <div class="media-row-score">
+                <span>9/10</span>
+            </div>
+
+            <div
+                class="media-row-details"
+                aria-label="Saved details for Vagabond"
+            >
+                <button
+                type="button"
+                class="depth-button depth-button-quotes"
+                >
+                Quotes
+                </button>
+
+                <button
+                type="button"
+                class="depth-button depth-button-moment"
+                >
+                Moments
+                </button>
+
+                <button
+                type="button"
+                class="depth-button depth-button-character"
+                >
+                Characters
+                </button>
+
+                <button
+                type="button"
+                class="depth-button depth-button-notes"
+                >
+                Notes
+                </button>
+
+                <button
+                type="button"
+                class="depth-button depth-button-thoughts"
+                >
+                Thoughts
+                </button>
+            </div>
+            </article>
+        </div>
+
+        <!-- Evidence scene 1: Quotes -->
+        <div
+            class="scroll-stage"
+            data-stage="quotes-fall"
+            aria-hidden="true"
+        >
+            <div
+            class="falling-quotes"
+            aria-label="Saved quotes from Vagabond"
+            >
+            <blockquote
+                class="falling-quote quote-1 quote-long"
+                data-quote-number="01"
+                data-rotate="-0.55"
+                tabindex="0"
+            >
+                <p class="quote-text">
+                A precipitous slope, a narrow river width, a fast and violent
+                flow. Due to the terrain and the external influence, the state
+                of the water is perfectly decided.
+
+                <span class="quote-emphasis">
+                    And yet, water obeys only itself.
+                </span>
+
+                Water is only water. Thoroughly water. Absolutely free.
                 </p>
+            </blockquote>
 
-                <p class="note-card note-2" data-rotate="3" tabindex="0">
-                Kojiro feels peaceful in a way Musashi does not. His silence makes strength feel less like domination and more like presence.
+            <blockquote
+                class="falling-quote quote-2 quote-long"
+                data-quote-number="02"
+                data-rotate="0.35"
+                tabindex="0"
+            >
+                <p class="quote-text">
+                Preoccupied with a single leaf, you won’t see the tree.
+                Preoccupied with a single tree, you’ll miss the entire forest.
+                Don’t be preoccupied with a single spot.
+
+                <span class="quote-emphasis">
+                    See everything in its entirety
+                </span>
+
+                ... effortlessly. That is what it means to truly
+
+                <span class="quote-emphasis">
+                    'see'.
+                </span>
                 </p>
+            </blockquote>
 
-                <p class="note-card note-3" data-rotate="-2" tabindex="0">
-                Volume 10 — the fight choreography barely needs words. The page rhythm carries the emotion by itself.
+            <blockquote
+                class="falling-quote quote-3 quote-xl"
+                data-quote-number="03"
+                data-rotate="-0.35"
+                tabindex="0"
+            >
+                <p class="quote-text">
+                Life has no value! Truly right. It has no value. If you think
+                only of yourself, it has no value. 'Why was I born?' The reason
+                you are here... is because someone supported your life. 'Why
+                was I born? For what purpose?'
+
+                <span class="quote-emphasis">
+                    The reason you are here is to support lives.
+                </span>
+
+                If you don't go against how life should be... You're already
+                completely... Free.
                 </p>
+            </blockquote>
 
-                <p class="note-card note-4" data-rotate="2" tabindex="0">
-                The story keeps asking whether becoming stronger is worth it if you lose the ability to be gentle.
+            <blockquote
+                class="falling-quote quote-4 quote-short"
+                data-quote-number="04"
+                data-rotate="0.45"
+                tabindex="0"
+            >
+                <p class="quote-text">
+                <span class="quote-emphasis">
+                    My sword is one with heaven and earth.
+                </span>
+
+                That’s why in a fight, I need no sword.
                 </p>
-            </div>
-            </div>
+            </blockquote>
 
-            <!-- EVIDENCE SCENE 5 — Thoughts -->
-            <div class="scroll-stage" data-stage="thoughts-appear" aria-hidden="true">
-                <div class="thoughts-cloud">
-                <p class="thought-card thought-1" data-rotate="0">
-                    Vagabond made me realise I had been confusing movement with progress.
+            <blockquote
+                class="falling-quote quote-5 quote-long"
+                data-quote-number="05"
+                data-rotate="-0.40"
+                tabindex="0"
+            >
+                <p class="quote-text">
+                <span class="quote-emphasis">
+                    Invincible is merely a word.
+                </span>
+
+                To be 'invincible.' The more you think about it, the more you
+                squint your eyes in desperation to see, the more obscured the
+                answer becomes. If something’s too obscure to see… then try
+                closing your eyes. Well…?
+
+                <span class="quote-emphasis">
+                    Do you see how infinite you are?
+                </span>
                 </p>
+            </blockquote>
 
-                <p class="thought-card thought-2" data-rotate="2" data-scale="0.9">
-                    The contrast between Musashi and Kojiro makes the idea of strength feel much less simple.
+            <blockquote
+                class="falling-quote quote-6 quote-short"
+                data-quote-number="06"
+                data-rotate="0.30"
+                tabindex="0"
+            >
+                <p class="quote-text">
+                Musashi… you’ve become kind. That means you’re stronger.
+
+                <span class="quote-emphasis">
+                    Truly strong people are kind.
+                </span>
                 </p>
-                </div>
-            </div>
+            </blockquote>
 
+            <blockquote
+                class="falling-quote quote-7 quote-long"
+                data-quote-number="07"
+                data-rotate="-0.45"
+                tabindex="0"
+            >
+                <p class="quote-text">
+                <span class="quote-emphasis">
+                    Words are like the sea.
+                </span>
+
+                You must descend deep into the waters to see what lies at the
+                bottom. For those content to gaze, there is only beauty and
+                tedium.
+
+                <span class="quote-emphasis">
+                    The truth lies here.
+                </span>
+
+                How it is accepted is only that:
+
+                <span class="quote-emphasis">
+                    the truth for each man.
+                </span>
+                </p>
+            </blockquote>
+
+            <blockquote
+                class="falling-quote quote-8 quote-medium"
+                data-quote-number="08"
+                data-rotate="0.35"
+                tabindex="0"
+            >
+                <p class="quote-text">
+                What is the meaning of 'strength'? It’s to have
+
+                <span class="quote-emphasis">
+                    a mind that does not sway, while continuing to move forward
+                    and charge.
+                </span>
+                </p>
+            </blockquote>
+
+            <blockquote
+                class="falling-quote quote-9 quote-medium"
+                data-quote-number="09"
+                data-rotate="-0.20"
+                tabindex="0"
+            >
+                <p class="quote-text">
+                What if you choose the wrong path? You must understand that
+
+                <span class="quote-emphasis">
+                    there is more than one path
+                </span>
+
+                to the top of the mountain.
+                </p>
+            </blockquote>
             </div>
         </div>
+
+        <!-- Evidence scene 2: Moments -->
+        <div
+            class="scroll-stage"
+            data-stage="moments-move"
+            aria-hidden="true"
+        >
+            <div class="moving-moments">
+
+            <!-- Square 1 -->
+            <figure
+                class="moment-frame moment-square moment-frame-1"
+                data-rotate="-2"
+                tabindex="0"
+            >
+                <img
+                src="img/section2/vagabond-moment-1.jpg"
+                alt="Saved Vagabond moment"
+                >
+            </figure>
+
+            <!-- Vertical 1 -->
+            <figure
+                class="moment-frame moment-vertical moment-frame-5"
+                data-rotate="-2"
+                tabindex="0"
+            >
+                <img
+                src="img/section2/vagabond-moment-5.jpg"
+                alt="Saved Vagabond vertical moment"
+                >
+            </figure>
+
+            <!-- Square 2 -->
+            <figure
+                class="moment-frame moment-square moment-frame-2"
+                data-rotate="3"
+                tabindex="0"
+            >
+                <img
+                src="img/section2/vagabond-moment-2.jpg"
+                alt="Saved Vagabond moment"
+                >
+            </figure>
+
+            <!-- Vertical 2 -->
+            <figure
+                class="moment-frame moment-vertical moment-frame-6"
+                data-rotate="2"
+                tabindex="0"
+            >
+                <img
+                src="img/section2/vagabond-moment-6.jpg"
+                alt="Saved Vagabond vertical moment"
+                >
+            </figure>
+
+            <!-- Square 3 -->
+            <figure
+                class="moment-frame moment-square moment-frame-3"
+                data-rotate="-3"
+                tabindex="0"
+            >
+                <img
+                src="img/section2/vagabond-moment-3.jpg"
+                alt="Saved Vagabond moment"
+                >
+            </figure>
+
+            <!-- Vertical 3 -->
+            <figure
+                class="moment-frame moment-vertical moment-frame-7"
+                data-rotate="-1"
+                tabindex="0"
+            >
+                <img
+                src="img/section2/vagabond-moment-7.jpg"
+                alt="Saved Vagabond vertical moment"
+                >
+            </figure>
+
+            <!-- Square 4 -->
+            <figure
+                class="moment-frame moment-square moment-frame-4"
+                data-rotate="2"
+                tabindex="0"
+            >
+                <img
+                src="img/section2/vagabond-moment-4.jpg"
+                alt="Saved Vagabond moment"
+                >
+            </figure>
+
+            <!-- Vertical 4 -->
+            <figure
+                class="moment-frame moment-vertical moment-frame-8"
+                data-rotate="3"
+                tabindex="0"
+            >
+                <img
+                src="img/section2/vagabond-moment-8.jpg"
+                alt="Saved Vagabond vertical moment"
+                >
+            </figure>
+            </div>
+        </div>
+
+        <!-- Evidence scene 3: Characters -->
+        <div
+            class="scroll-stage"
+            data-stage="characters-appear"
+            aria-hidden="true"
+        >
+            <div class="character-cloud">
+            <figure
+                class="character-name character-1"
+                data-rotate="-2"
+                tabindex="0"
+            >
+                <img
+                src="img/section2/Musashi Miyamoto.jpg"
+                alt="Musashi Miyamoto"
+                >
+
+                <figcaption>
+                Musashi Miyamoto
+                </figcaption>
+            </figure>
+
+            <figure
+                class="character-name character-2"
+                data-rotate="3"
+                tabindex="0"
+            >
+                <img
+                src="img/section2/Kojiro Sasaki.jpg"
+                alt="Kojiro Sasaki"
+                >
+
+                <figcaption>
+                Kojiro Sasaki
+                </figcaption>
+            </figure>
+
+            <figure
+                class="character-name character-3"
+                data-rotate="-3"
+                tabindex="0"
+            >
+                <img
+                src="img/section2/Otsu.jpg"
+                alt="Otsu"
+                >
+
+                <figcaption>
+                Otsu
+                </figcaption>
+            </figure>
+
+            <figure
+                class="character-name character-4"
+                data-rotate="2"
+                tabindex="0"
+            >
+                <img
+                src="img/section2/Matahachi Honiden.jpg"
+                alt="Matahachi Honiden"
+                >
+
+                <figcaption>
+                Matahachi Honiden
+                </figcaption>
+            </figure>
+
+            <figure
+                class="character-name character-5"
+                data-rotate="-2"
+                tabindex="0"
+            >
+                <img
+                src="img/section2/Takuan Soho.jpg"
+                alt="Takuan Soho"
+                >
+
+                <figcaption>
+                Takuan Soho
+                </figcaption>
+            </figure>
+
+            <figure
+                class="character-name character-6"
+                data-rotate="2"
+                tabindex="0"
+            >
+                <img
+                src="img/section2/Kanemaki Jisai.jpg"
+                alt="Kanemaki Jisai"
+                >
+
+                <figcaption>
+                Kanemaki Jisai
+                </figcaption>
+            </figure>
+            </div>
+        </div>
+
+        <!-- Evidence scene 4: Notes -->
+        <div
+            class="scroll-stage"
+            data-stage="notes-appear"
+            aria-hidden="true"
+        >
+            <div class="notes-cloud">
+            <p
+                class="note-card note-1"
+                data-rotate="-4"
+                tabindex="0"
+            >
+                Chapter 3 — the pacing slows down intentionally. Inoue is making
+                you sit with Musashi instead of rushing you forward.
+            </p>
+
+            <p
+                class="note-card note-2"
+                data-rotate="3"
+                tabindex="0"
+            >
+                Kojiro feels peaceful in a way Musashi does not. His silence makes
+                strength feel less like domination and more like presence.
+            </p>
+
+            <p
+                class="note-card note-3"
+                data-rotate="-2"
+                tabindex="0"
+            >
+                Volume 10 — the fight choreography barely needs words. The page
+                rhythm carries the emotion by itself.
+            </p>
+
+            <p
+                class="note-card note-4"
+                data-rotate="2"
+                tabindex="0"
+            >
+                The story keeps asking whether becoming stronger is worth it if
+                you lose the ability to be gentle.
+            </p>
+            </div>
+        </div>
+
+        <!-- Evidence scene 5: Thoughts -->
+        <div
+            class="scroll-stage"
+            data-stage="thoughts-appear"
+            aria-hidden="true"
+        >
+            <div class="thoughts-cloud">
+            <p
+                class="thought-card thought-1"
+                data-rotate="0"
+                tabindex="0"
+            >
+                Vagabond made me realise I had been confusing movement with
+                progress.
+            </p>
+
+            <p
+                class="thought-card thought-2"
+                data-rotate="2"
+                data-scale="0.9"
+                tabindex="0"
+            >
+                The contrast between Musashi and Kojiro makes the idea of strength
+                feel much less simple.
+            </p>
+            </div>
+        </div>
+
+        </div>
+    </div>
     </section>
 
     <!-- SECTION 3  SEARCH, SAVE, AND ORGANIZE-->

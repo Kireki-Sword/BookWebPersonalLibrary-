@@ -10,12 +10,18 @@
 
 (() => {
   const section = document.querySelector("#section-2-empty-shelf");
-  if (!section) return;
 
-  const hasGSAP = window.gsap && window.ScrollTrigger;
+  if (!section) {
+    return;
+  }
+
+  const hasGSAP = Boolean(window.gsap && window.ScrollTrigger);
 
   if (!hasGSAP) {
-    console.warn("Section 2 animation needs GSAP and ScrollTrigger.");
+    console.warn(
+      "Section 2 animation needs GSAP and ScrollTrigger."
+    );
+
     return;
   }
 
@@ -100,6 +106,7 @@
     }
 
     masterTimeline = buildMasterTimeline();
+
     setupSafeRefreshes();
   }
 
@@ -121,39 +128,50 @@
   function createButtonProxies() {
     document
       .querySelectorAll('[data-section-2-proxy="true"]')
-      .forEach((proxy) => proxy.remove());
+      .forEach((proxy) => {
+        proxy.remove();
+      });
 
     layers.forEach((layer) => {
       const proxy = document.createElement("div");
 
       proxy.className = "depth-button-proxy";
       proxy.textContent = layer.label;
+
       proxy.setAttribute("aria-hidden", "true");
       proxy.setAttribute("data-section-2-proxy", "true");
 
       document.body.appendChild(proxy);
+
       layer.proxy = proxy;
     });
   }
 
   function enableTopLayerHover() {
     const liftableItems = section.querySelectorAll(
-      ".falling-quote, .moment-frame, .character-name, .note-card, .thought-card"
+      ".falling-quote, " +
+      ".moment-frame, " +
+      ".character-name, " +
+      ".note-card, " +
+      ".thought-card"
     );
 
     liftableItems.forEach((item) => {
       const raise = () => {
         topLayerZ += 1;
+
         item.style.zIndex = String(topLayerZ);
         item.classList.add("is-top-layer");
       };
 
       const lower = () => {
         item.classList.remove("is-top-layer");
+        item.style.removeProperty("z-index");
       };
 
       item.addEventListener("pointerenter", raise);
       item.addEventListener("focusin", raise);
+
       item.addEventListener("pointerleave", lower);
       item.addEventListener("focusout", lower);
     });
@@ -173,12 +191,16 @@
       () => {
         queueSafeRefresh(120);
       },
-      { once: true }
+      {
+        once: true
+      }
     );
 
     if (document.fonts && document.fonts.ready) {
       document.fonts.ready
-        .then(() => queueSafeRefresh(120))
+        .then(() => {
+          queueSafeRefresh(120);
+        })
         .catch(() => {});
     }
 
@@ -186,19 +208,29 @@
       section.querySelectorAll("img")
     );
 
-    images.forEach((img) => {
-      if (img.complete) return;
+    images.forEach((image) => {
+      if (image.complete) {
+        return;
+      }
 
-      img.addEventListener(
+      image.addEventListener(
         "load",
-        () => queueSafeRefresh(120),
-        { once: true }
+        () => {
+          queueSafeRefresh(120);
+        },
+        {
+          once: true
+        }
       );
 
-      img.addEventListener(
+      image.addEventListener(
         "error",
-        () => queueSafeRefresh(120),
-        { once: true }
+        () => {
+          queueSafeRefresh(120);
+        },
+        {
+          once: true
+        }
       );
     });
   }
@@ -241,7 +273,9 @@
     detailsTray.classList.remove("is-visible");
 
     layers.forEach((layer) => {
-      if (!layer.stage || !layer.button) return;
+      if (!layer.stage || !layer.button) {
+        return;
+      }
 
       layer.stage.setAttribute("aria-hidden", "true");
       layer.stage.classList.remove("is-active");
@@ -285,6 +319,7 @@
     });
 
     updateStatus("");
+
     lastAnnouncedIndex = -2;
   }
 
@@ -360,11 +395,12 @@
     });
 
     updateStatus("");
+
     lastAnnouncedIndex = -2;
   }
 
   function buildMasterTimeline() {
-    const tl = gsap.timeline({
+    const timeline = gsap.timeline({
       defaults: {
         ease: "power2.out"
       },
@@ -373,12 +409,14 @@
         trigger: section,
         start: "top top",
 
-        end: () =>
-          "+=" +
-          Math.max(
+        end: () => {
+          const scrollDistance = Math.max(
             window.innerHeight * 8.5,
             7600
-          ),
+          );
+
+          return `+=${scrollDistance}`;
+        },
 
         pin: true,
         scrub: 0.8,
@@ -408,13 +446,16 @@
       }
     });
 
-    tl.addLabel("natural-card");
+    timeline.addLabel("natural-card");
 
-    tl.to({}, {
-      duration: 0.5
-    });
+    timeline.to(
+      {},
+      {
+        duration: 0.5
+      }
+    );
 
-    tl.fromTo(
+    timeline.fromTo(
       score,
       {
         boxShadow:
@@ -431,13 +472,16 @@
       }
     );
 
-    tl.to({}, {
-      duration: 0.18
-    });
+    timeline.to(
+      {},
+      {
+        duration: 0.18
+      }
+    );
 
-    tl.addLabel("anchor-card");
+    timeline.addLabel("anchor-card");
 
-    tl.to(
+    timeline.to(
       header,
       {
         autoAlpha: 0,
@@ -448,7 +492,7 @@
       "anchor-card"
     );
 
-    tl.to(
+    timeline.to(
       viewport,
       {
         y: () => getViewportLiftY(),
@@ -458,7 +502,7 @@
       "anchor-card"
     );
 
-    tl.to(
+    timeline.to(
       cardWrap,
       {
         y: () => getCardAnchorY(),
@@ -468,22 +512,25 @@
       "anchor-card"
     );
 
-    tl.to({}, {
-      duration: 0.42
-    });
+    timeline.to(
+      {},
+      {
+        duration: 0.42
+      }
+    );
 
     layers.forEach((layer) => {
-      addLayerSequence(tl, layer);
+      addLayerSequence(timeline, layer);
     });
 
-    tl.addLabel("final");
+    timeline.addLabel("final");
 
-    tl.to(card, {
+    timeline.to(card, {
       y: -3,
       duration: 0.35
     });
 
-    tl.to(
+    timeline.to(
       layers.map((layer) => layer.button),
       {
         scale: 1.045,
@@ -495,14 +542,17 @@
       "<"
     );
 
-    tl.to({}, {
-      duration: 0.65
-    });
+    timeline.to(
+      {},
+      {
+        duration: 0.65
+      }
+    );
 
-    return tl;
+    return timeline;
   }
 
-  function addLayerSequence(tl, layer) {
+  function addLayerSequence(timeline, layer) {
     if (
       !layer.stage ||
       !layer.button ||
@@ -511,32 +561,37 @@
       return;
     }
 
-    layer.startTime = tl.duration();
+    layer.startTime = timeline.duration();
 
-    tl.addLabel(`${layer.key}-start`);
+    timeline.addLabel(`${layer.key}-start`);
 
-    tl.to(layer.stage, {
+    timeline.to(layer.stage, {
       autoAlpha: 1,
       duration: 0.18
     });
 
-    tl.fromTo(
+    timeline.fromTo(
       layer.items,
       getEvidenceEnterFrom(layer),
       getEvidenceEnterTo(layer),
       "<"
     );
 
-    tl.to({}, {
-      duration: getReadDuration(layer)
-    });
+    timeline.to(
+      {},
+      {
+        duration: getReadDuration(layer)
+      }
+    );
 
-    tl.to(layer.items, {
-      x: (_index, element) =>
-        getGatherDelta(element, layer).x,
+    timeline.to(layer.items, {
+      x: (_index, element) => {
+        return getGatherDelta(element, layer).x;
+      },
 
-      y: (_index, element) =>
-        getGatherDelta(element, layer).y,
+      y: (_index, element) => {
+        return getGatherDelta(element, layer).y;
+      },
 
       scale: getGatherScale(layer),
       rotation: 0,
@@ -553,9 +608,9 @@
     });
 
     if (layer.index === 0) {
-      trayRevealTime = tl.duration();
+      trayRevealTime = timeline.duration();
 
-      tl.to(
+      timeline.to(
         detailsTray,
         {
           autoAlpha: 1,
@@ -566,22 +621,26 @@
       );
     }
 
-    tl.set(
+    timeline.set(
       layer.proxy,
       {
         autoAlpha: 1,
 
-        x: () =>
-          getProxyStartRect(layer).x,
+        x: () => {
+          return getProxyStartRect(layer).x;
+        },
 
-        y: () =>
-          getProxyStartRect(layer).y,
+        y: () => {
+          return getProxyStartRect(layer).y;
+        },
 
-        width: () =>
-          getButtonRect(layer).width,
+        width: () => {
+          return getButtonRect(layer).width;
+        },
 
-        height: () =>
-          getButtonRect(layer).height,
+        height: () => {
+          return getButtonRect(layer).height;
+        },
 
         scale: 0.78,
         rotationX: 12,
@@ -590,23 +649,27 @@
       "-=0.08"
     );
 
-    tl.to(layer.proxy, {
+    timeline.to(layer.proxy, {
       scale: 1,
       duration: 0.16
     });
 
-    tl.to(layer.proxy, {
-      x: () =>
-        getButtonRect(layer).left,
+    timeline.to(layer.proxy, {
+      x: () => {
+        return getButtonRect(layer).left;
+      },
 
-      y: () =>
-        getButtonRect(layer).top,
+      y: () => {
+        return getButtonRect(layer).top;
+      },
 
-      width: () =>
-        getButtonRect(layer).width,
+      width: () => {
+        return getButtonRect(layer).width;
+      },
 
-      height: () =>
-        getButtonRect(layer).height,
+      height: () => {
+        return getButtonRect(layer).height;
+      },
 
       rotationX: 0,
       rotationY: 0,
@@ -614,9 +677,9 @@
       ease: "power3.inOut"
     });
 
-    layer.landTime = tl.duration();
+    layer.landTime = timeline.duration();
 
-    tl.set(
+    timeline.set(
       layer.button,
       {
         autoAlpha: 1,
@@ -626,7 +689,7 @@
       "-=0.04"
     );
 
-    tl.to(
+    timeline.to(
       layer.proxy,
       {
         autoAlpha: 0,
@@ -636,7 +699,7 @@
       "<"
     );
 
-    tl.to(
+    timeline.to(
       layer.button,
       {
         scale: 1.055,
@@ -647,16 +710,19 @@
       "<"
     );
 
-    tl.to(layer.stage, {
+    timeline.to(layer.stage, {
       autoAlpha: 0,
       duration: 0.22
     });
 
-    tl.to({}, {
-      duration: 0.18
-    });
+    timeline.to(
+      {},
+      {
+        duration: 0.18
+      }
+    );
 
-    layer.endTime = tl.duration();
+    layer.endTime = timeline.duration();
   }
 
   function getEvidenceEnterFrom(layer) {
@@ -694,14 +760,17 @@
       return {
         ...base,
 
-        x: (index) =>
-          quoteX[index % quoteX.length],
+        x: (index) => {
+          return quoteX[index % quoteX.length];
+        },
 
-        y: (index) =>
-          quoteY[index % quoteY.length],
+        y: (index) => {
+          return quoteY[index % quoteY.length];
+        },
 
-        rotation: (_index, element) =>
-          getElementRotate(element) * 1.35
+        rotation: (_index, element) => {
+          return getElementRotate(element) * 1.35;
+        }
       };
     }
 
@@ -731,16 +800,19 @@
       return {
         ...base,
 
-        x: (index) =>
-          momentX[index % momentX.length],
+        x: (index) => {
+          return momentX[index % momentX.length];
+        },
 
-        y: (index) =>
-          momentY[index % momentY.length],
+        y: (index) => {
+          return momentY[index % momentY.length];
+        },
 
         scale: 0.9,
 
-        rotation: (_index, element) =>
-          getElementRotate(element) * 1.25
+        rotation: (_index, element) => {
+          return getElementRotate(element) * 1.25;
+        }
       };
     }
 
@@ -766,16 +838,19 @@
       return {
         ...base,
 
-        x: (index) =>
-          characterX[index % characterX.length],
+        x: (index) => {
+          return characterX[index % characterX.length];
+        },
 
-        y: (index) =>
-          characterY[index % characterY.length],
+        y: (index) => {
+          return characterY[index % characterY.length];
+        },
 
         scale: 0.9,
 
-        rotation: (_index, element) =>
-          getElementRotate(element) * 1.2
+        rotation: (_index, element) => {
+          return getElementRotate(element) * 1.2;
+        }
       };
     }
 
@@ -797,24 +872,28 @@
       return {
         ...base,
 
-        x: (index) =>
-          noteX[index % noteX.length],
+        x: (index) => {
+          return noteX[index % noteX.length];
+        },
 
-        y: (index) =>
-          noteY[index % noteY.length],
+        y: (index) => {
+          return noteY[index % noteY.length];
+        },
 
         scale: 0.94,
 
-        rotation: (_index, element) =>
-          getElementRotate(element) * 1.5
+        rotation: (_index, element) => {
+          return getElementRotate(element) * 1.5;
+        }
       };
     }
 
     return {
       ...base,
 
-      x: (index) =>
-        [-35, 35][index % 2],
+      x: (index) => {
+        return [-35, 35][index % 2];
+      },
 
       y: 22,
       scale: 0.96,
@@ -828,11 +907,13 @@
       x: 0,
       y: 0,
 
-      scale: (_index, element) =>
-        Number(element.dataset.scale || 1),
+      scale: (_index, element) => {
+        return Number(element.dataset.scale || 1);
+      },
 
-      rotation: (_index, element) =>
-        getElementRotate(element),
+      rotation: (_index, element) => {
+        return getElementRotate(element);
+      },
 
       filter: "blur(0px)",
       duration: getEnterDuration(layer),
@@ -923,9 +1004,7 @@
   }
 
   function getElementRotate(element) {
-    return Number(
-      element.dataset.rotate || 0
-    );
+    return Number(element.dataset.rotate || 0);
   }
 
   function getViewportLiftY() {
@@ -933,26 +1012,25 @@
       ? header.getBoundingClientRect().height
       : 0;
 
-    const maxLift =
-      window.innerWidth <= 640
-        ? 160
-        : 235;
+    const maxLift = window.innerWidth <= 640
+      ? 160
+      : 235;
 
-    const desiredLift =
-      headerHeight + 34;
+    const desiredLift = headerHeight + 34;
 
-    return -Math.min(
-      desiredLift,
-      maxLift
-    );
+    return -Math.min(desiredLift, maxLift);
   }
 
   function getCardAnchorY() {
-    const savedViewportY =
-      gsap.getProperty(viewport, "y");
+    const savedViewportY = gsap.getProperty(
+      viewport,
+      "y"
+    );
 
-    const savedCardY =
-      gsap.getProperty(cardWrap, "y");
+    const savedCardY = gsap.getProperty(
+      cardWrap,
+      "y"
+    );
 
     gsap.set(viewport, {
       y: 0
@@ -962,27 +1040,21 @@
       y: 0
     });
 
-    const sectionRect =
-      section.getBoundingClientRect();
-
-    const cardRect =
-      cardWrap.getBoundingClientRect();
+    const sectionRect = section.getBoundingClientRect();
+    const cardRect = cardWrap.getBoundingClientRect();
 
     const cardTopInsidePinnedSection =
       cardRect.top - sectionRect.top;
 
-    const viewportLiftY =
-      getViewportLiftY();
+    const viewportLiftY = getViewportLiftY();
 
-    const topGap =
-      window.innerWidth <= 640
-        ? 12
-        : 18;
+    const topGap = window.innerWidth <= 640
+      ? 12
+      : 18;
 
-    const bottomGap =
-      window.innerWidth <= 640
-        ? 18
-        : 24;
+    const bottomGap = window.innerWidth <= 640
+      ? 18
+      : 24;
 
     const targetBottom =
       window.innerHeight - bottomGap;
@@ -993,12 +1065,10 @@
     );
 
     const cardTopAfterViewportLift =
-      cardTopInsidePinnedSection +
-      viewportLiftY;
+      cardTopInsidePinnedSection + viewportLiftY;
 
     const neededCardMove =
-      targetTop -
-      cardTopAfterViewportLift;
+      targetTop - cardTopAfterViewportLift;
 
     gsap.set(viewport, {
       y: savedViewportY
@@ -1012,8 +1082,7 @@
   }
 
   function getButtonRect(layer) {
-    const rect =
-      layer.button.getBoundingClientRect();
+    const rect = layer.button.getBoundingClientRect();
 
     return {
       left: rect.left,
@@ -1024,77 +1093,50 @@
   }
 
   function getLayerGatherPoint(layer) {
-    const buttonRect =
-      getButtonRect(layer);
+    const buttonRect = getButtonRect(layer);
 
     return {
-      x:
-        buttonRect.left +
-        buttonRect.width / 2,
-
-      y:
-        buttonRect.top - 44
+      x: buttonRect.left + buttonRect.width / 2,
+      y: buttonRect.top - 44
     };
   }
 
   function getElementCenter(element) {
-    const rect =
-      element.getBoundingClientRect();
+    const rect = element.getBoundingClientRect();
 
     return {
-      x:
-        rect.left +
-        rect.width / 2,
-
-      y:
-        rect.top +
-        rect.height / 2
+      x: rect.left + rect.width / 2,
+      y: rect.top + rect.height / 2
     };
   }
 
   function getGatherDelta(element, layer) {
-    const elementCenter =
-      getElementCenter(element);
-
-    const gatherPoint =
-      getLayerGatherPoint(layer);
+    const elementCenter = getElementCenter(element);
+    const gatherPoint = getLayerGatherPoint(layer);
 
     return {
-      x:
-        gatherPoint.x -
-        elementCenter.x,
-
-      y:
-        gatherPoint.y -
-        elementCenter.y
+      x: gatherPoint.x - elementCenter.x,
+      y: gatherPoint.y - elementCenter.y
     };
   }
 
   function getProxyStartRect(layer) {
-    const gatherPoint =
-      getLayerGatherPoint(layer);
-
-    const buttonRect =
-      getButtonRect(layer);
+    const gatherPoint = getLayerGatherPoint(layer);
+    const buttonRect = getButtonRect(layer);
 
     return {
-      x:
-        gatherPoint.x -
-        buttonRect.width / 2,
-
-      y:
-        gatherPoint.y -
-        buttonRect.height / 2
+      x: gatherPoint.x - buttonRect.width / 2,
+      y: gatherPoint.y - buttonRect.height / 2
     };
   }
 
-  function syncTimelineState(tl) {
-    if (!tl) return;
+  function syncTimelineState(timeline) {
+    if (!timeline) {
+      return;
+    }
 
-    const time = tl.time();
-
-    const trayIsVisible =
-      time >= trayRevealTime;
+    const time = timeline.time();
+    const trayIsVisible = time >= trayRevealTime;
 
     detailsTray.classList.toggle(
       "is-visible",
@@ -1103,6 +1145,25 @@
 
     let highestLandedIndex = -1;
 
+    /*
+     * First determine the newest completed layer.
+     * This prevents several buttons receiving the
+     * depth-button-new class simultaneously.
+     */
+    layers.forEach((layer, index) => {
+      const isLanded =
+        typeof layer.landTime === "number" &&
+        time >= layer.landTime - 0.02;
+
+      if (isLanded) {
+        highestLandedIndex = index;
+      }
+    });
+
+    /*
+     * Then update every stage and button using the
+     * final highestLandedIndex value.
+     */
     layers.forEach((layer, index) => {
       const isStageActive =
         typeof layer.startTime === "number" &&
@@ -1126,10 +1187,6 @@
         typeof layer.landTime === "number" &&
         time >= layer.landTime - 0.02;
 
-      if (isLanded) {
-        highestLandedIndex = index;
-      }
-
       if (layer.button) {
         layer.button.classList.toggle(
           "is-landed",
@@ -1138,15 +1195,11 @@
 
         layer.button.classList.toggle(
           "depth-button-new",
-          isLanded &&
-          index === highestLandedIndex
+          isLanded && index === highestLandedIndex
         );
 
         if (isLanded) {
-          layer.button.removeAttribute(
-            "aria-hidden"
-          );
-
+          layer.button.removeAttribute("aria-hidden");
           layer.button.tabIndex = 0;
         } else {
           layer.button.setAttribute(
@@ -1159,28 +1212,19 @@
       }
     });
 
-    if (
-      highestLandedIndex !==
-      lastAnnouncedIndex
-    ) {
-      lastAnnouncedIndex =
-        highestLandedIndex;
+    if (highestLandedIndex !== lastAnnouncedIndex) {
+      lastAnnouncedIndex = highestLandedIndex;
 
       if (highestLandedIndex >= 0) {
         updateStatus(
-          layers[
-            highestLandedIndex
-          ].statusText
+          layers[highestLandedIndex].statusText
         );
       } else {
         updateStatus("");
       }
     }
 
-    if (
-      highestLandedIndex ===
-      layers.length - 1
-    ) {
+    if (highestLandedIndex === layers.length - 1) {
       updateStatus(
         "Vagabond now includes saved quotes, moments, characters, notes, and thoughts."
       );
@@ -1188,10 +1232,7 @@
   }
 
   function updateStatus(text) {
-    if (
-      !statusEl ||
-      text === lastStatusText
-    ) {
+    if (!statusEl || text === lastStatusText) {
       return;
     }
 
@@ -1220,9 +1261,7 @@
       y: 0
     });
 
-    detailsTray.classList.add(
-      "is-visible"
-    );
+    detailsTray.classList.add("is-visible");
 
     layers.forEach((layer) => {
       if (layer.stage) {
@@ -1231,9 +1270,7 @@
           "true"
         );
 
-        layer.stage.classList.remove(
-          "is-active"
-        );
+        layer.stage.classList.remove("is-active");
 
         gsap.set(layer.stage, {
           autoAlpha: 0
@@ -1241,14 +1278,8 @@
       }
 
       if (layer.button) {
-        layer.button.classList.add(
-          "is-landed"
-        );
-
-        layer.button.removeAttribute(
-          "aria-hidden"
-        );
-
+        layer.button.classList.add("is-landed");
+        layer.button.removeAttribute("aria-hidden");
         layer.button.tabIndex = 0;
 
         gsap.set(layer.button, {

@@ -1460,6 +1460,8 @@
   position: absolute;
   z-index: 1;
 
+  box-sizing: border-box;
+
   left: var(--x);
   top: var(--y);
 
@@ -1605,60 +1607,58 @@
 
 .moment-frame-1 {
   --x: 0%;
+  --y: 6%;
+  --w: 18%;
+  z-index: 5;
+}
+
+.moment-frame-5 {
+  --x: 12.8%;
+  --y: 0%;
+  --w: 14.5%;
+  z-index: 7;
+}
+
+.moment-frame-2 {
+  --x: 23.8%;
+  --y: 24%;
+  --w: 18%;
+  z-index: 3;
+}
+
+.moment-frame-6 {
+  --x: 37%;
+  --y: 17%;
+  --w: 14.5%;
+  z-index: 6;
+}
+
+.moment-frame-3 {
+  --x: 48%;
   --y: 5%;
   --w: 18%;
   z-index: 5;
 }
 
-.moment-frame-2 {
-  --x: 14.7%;
-  --y: 27%;
-  --w: 18%;
-  z-index: 3;
-}
-
-.moment-frame-3 {
-  --x: 29.4%;
-  --y: 6%;
-  --w: 18%;
-  z-index: 6;
-}
-
-.moment-frame-4 {
-  --x: 44.1%;
-  --y: 25%;
-  --w: 18%;
-  z-index: 4;
-}
-
-/* Four vertical cards */
-
-.moment-frame-5 {
-  --x: 55.5%;
+.moment-frame-7 {
+  --x: 61.2%;
   --y: 1%;
   --w: 14.5%;
   z-index: 7;
 }
 
-.moment-frame-6 {
-  --x: 65.5%;
-  --y: 20%;
-  --w: 14.5%;
-  z-index: 4;
-}
-
-.moment-frame-7 {
-  --x: 75.5%;
-  --y: 3%;
-  --w: 14.5%;
-  z-index: 6;
+.moment-frame-4 {
+  --x: 72.2%;
+  --y: 23%;
+  --w: 18%;
+  z-index: 3;
 }
 
 .moment-frame-8 {
   --x: 85.5%;
-  --y: 19%;
+  --y: 16%;
   --w: 14.5%;
-  z-index: 3;
+  z-index: 6;
 }
 
 
@@ -1676,6 +1676,8 @@
 .character-name {
   position: absolute;
   z-index: 1;
+
+  box-sizing: border-box;
 
   left: var(--x);
   top: var(--y);
@@ -2086,45 +2088,52 @@
     top: clamp(-52px, -3.5vh, -20px);
   }
 
+  /* Tablet: alternating square / vertical. */
   .moment-frame-1 {
     --x: 0%;
     --y: 5%;
     --w: 20%;
   }
 
-  .moment-frame-2 {
-    --x: 18%;
-    --y: 26%;
-    --w: 20%;
-  }
-
-  .moment-frame-3 {
-    --x: 36%;
-    --y: 6%;
-    --w: 20%;
-  }
-
   .moment-frame-5 {
-    --x: 53.5%;
-    --y: 1%;
+    --x: 13.5%;
+    --y: 0%;
     --w: 16%;
+  }
+
+  .moment-frame-2 {
+    --x: 24%;
+    --y: 25%;
+    --w: 20%;
   }
 
   .moment-frame-6 {
-    --x: 64%;
-    --y: 21%;
+    --x: 37.5%;
+    --y: 16%;
     --w: 16%;
   }
 
+  .moment-frame-3 {
+    --x: 48%;
+    --y: 5%;
+    --w: 20%;
+  }
+
   .moment-frame-7 {
-    --x: 74.5%;
-    --y: 3%;
+    --x: 61.5%;
+    --y: 0%;
     --w: 16%;
+  }
+
+  .moment-frame-4 {
+    --x: 72%;
+    --y: 24%;
+    --w: 20%;
   }
 
   .moment-frame-8 {
     --x: 84%;
-    --y: 20%;
+    --y: 15%;
     --w: 16%;
   }
 
@@ -2329,46 +2338,53 @@
     border-radius: 9px;
   }
 
+  /* Mobile: two alternating rows. */
   .moment-frame-1 {
-    --x: 0%;
+    --x: 5%;
     --y: 2%;
-    --w: 30%;
-  }
-
-  .moment-frame-2 {
-    --x: 35%;
-    --y: 8%;
-    --w: 30%;
-  }
-
-  .moment-frame-3 {
-    --x: 70%;
-    --y: 2%;
-    --w: 30%;
+    --w: 29%;
   }
 
   .moment-frame-5 {
-    --x: 0%;
-    --y: 39%;
-    --w: 24.5%;
+    --x: 28%;
+    --y: 0%;
+    --w: 23%;
+  }
+
+  .moment-frame-2 {
+    --x: 47%;
+    --y: 7%;
+    --w: 29%;
   }
 
   .moment-frame-6 {
-    --x: 25%;
-    --y: 45%;
-    --w: 24.5%;
+    --x: 72%;
+    --y: 1%;
+    --w: 23%;
+  }
+
+  .moment-frame-3 {
+    --x: 5%;
+    --y: 47%;
+    --w: 29%;
   }
 
   .moment-frame-7 {
-    --x: 50.5%;
-    --y: 39%;
-    --w: 24.5%;
+    --x: 28%;
+    --y: 44%;
+    --w: 23%;
+  }
+
+  .moment-frame-4 {
+    --x: 47%;
+    --y: 52%;
+    --w: 29%;
   }
 
   .moment-frame-8 {
-    --x: 75.5%;
+    --x: 72%;
     --y: 45%;
-    --w: 24.5%;
+    --w: 23%;
   }
 
   /* Six characters: three cards per row. */
