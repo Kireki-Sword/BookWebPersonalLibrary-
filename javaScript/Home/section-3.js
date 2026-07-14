@@ -1918,3 +1918,168 @@
     startSection3LibraryFlow();
   }
 })();
+
+// =========================================================
+// SECTION 3 — SCROLL REVEAL ANIMATION
+// Append this after the existing Section 3 JavaScript.
+// It does not change the search or library functionality.
+// =========================================================
+
+(() => {
+  'use strict';
+
+  function startSection3ScrollReveal() {
+    const section = document.querySelector(
+      '#section-3-library-flow'
+    );
+
+    if (!section) {
+      return;
+    }
+
+    /*
+      Use the existing elements directly, so you do not
+      need to change your current HTML.
+    */
+    const revealItems = [
+      {
+        element: section.querySelector(
+          '.flow-copy-card'
+        ),
+        direction: 'left',
+        delay: 0
+      },
+      {
+        element: section.querySelector(
+          '.flow-search-card'
+        ),
+        direction: 'right',
+        delay: 100
+      },
+      {
+        element: section.querySelector(
+          '.flow-library-card'
+        ),
+        direction: 'up',
+        delay: 190
+      }
+    ].filter((item) => {
+      return Boolean(item.element);
+    });
+
+    if (revealItems.length === 0) {
+      return;
+    }
+
+    /*
+      Add the required attributes automatically.
+      No data-flow-reveal attributes need to be added
+      manually to your HTML.
+    */
+    revealItems.forEach((item) => {
+      item.element.dataset.flowReveal =
+        item.direction;
+
+      item.element.style.setProperty(
+        '--flow-reveal-delay',
+        `${item.delay}ms`
+      );
+    });
+
+    const prefersReducedMotion =
+      window.matchMedia(
+        '(prefers-reduced-motion: reduce)'
+      ).matches;
+
+    /*
+      Show the content immediately when reduced motion
+      is enabled or IntersectionObserver is unsupported.
+    */
+    if (
+      prefersReducedMotion ||
+      !('IntersectionObserver' in window)
+    ) {
+      revealItems.forEach((item) => {
+        item.element.classList.add(
+          'is-visible',
+          'reveal-complete'
+        );
+      });
+
+      return;
+    }
+
+    /*
+      Activates the hidden starting positions from CSS.
+    */
+    section.classList.add(
+      'flow-reveal-ready'
+    );
+
+    const observer =
+      new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) {
+              return;
+            }
+
+            const element =
+              entry.target;
+
+            element.classList.add(
+              'is-visible'
+            );
+
+            /*
+              Each element animates only once.
+            */
+            observer.unobserve(element);
+
+            element.addEventListener(
+              'transitionend',
+              () => {
+                element.classList.add(
+                  'reveal-complete'
+                );
+              },
+              {
+                once: true
+              }
+            );
+          });
+        },
+        {
+          threshold: 0.12,
+          rootMargin: '0px 0px -7% 0px'
+        }
+      );
+
+    /*
+      Wait for the browser to apply the initial CSS
+      position before starting observation.
+    */
+    window.requestAnimationFrame(() => {
+      revealItems.forEach((item) => {
+        observer.observe(
+          item.element
+        );
+      });
+    });
+  }
+
+  if (
+    document.readyState ===
+    'loading'
+  ) {
+    document.addEventListener(
+      'DOMContentLoaded',
+      startSection3ScrollReveal,
+      {
+        once: true
+      }
+    );
+  } else {
+    startSection3ScrollReveal();
+  }
+})();
