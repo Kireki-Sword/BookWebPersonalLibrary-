@@ -1421,16 +1421,21 @@
 }
 
 
+/* ==14. MOMENTS — IMAGE-ONLY BALANCED GALLERY */
+
 /* ============================================================================
-   14. MOMENTS — IMAGE-ONLY BALANCED GALLERY
+   14. MOMENTS — BALANCED GALLERY WITH SMOOTH HOVER LIFT
    ----------------------------------------------------------------------------
-   The Moment HTML no longer contains figcaption elements.
+   JavaScript controls the permanent z-index order.
 
-   The square cards use 19% width.
-   The vertical cards use 15.5% width with a 0.64 / 1 ratio.
+   CSS controls only the temporary visual hover:
+   - smoothly becomes slightly larger
+   - smoothly moves upward
+   - returns to normal size after hover
+   - remains on its newly assigned layer
 
-   This makes the vertical-card image area slightly larger than the square-card
-   image area, while retaining the different shape.
+   Filters are intentionally avoided on moment cards because filters combined
+   with GSAP transforms can produce thin horizontal and vertical paint seams.
    ============================================================================ */
 
 .section-empty-shelf.is-js-ready .moving-moments {
@@ -1438,7 +1443,7 @@
 
   width: var(--section-2-evidence-width);
   max-width: 1560px;
-  height: clamp(460px, 52vh, 540px);
+  height: clamp(480px, 55vh, 560px);
 
   margin-inline: auto;
 
@@ -1446,21 +1451,20 @@
   overflow: visible;
 }
 
-/* Move only the Moments scene into the available space above the main card. */
+/* Position the gallery above the persistent Vagabond card. */
 
 .section-empty-shelf.is-js-ready
 .scroll-stage[data-stage="moments-move"] {
-  top: clamp(-58px, -4vh, -24px);
+  top: clamp(-68px, -4.5vh, -34px);
 }
 
-
-/* Moment image panel. */
+/* ============================================================================
+   MOMENT CARD
+   ============================================================================ */
 
 .moment-frame {
   position: absolute;
   z-index: 1;
-
-  box-sizing: border-box;
 
   left: var(--x);
   top: var(--y);
@@ -1470,6 +1474,8 @@
 
   margin: 0;
   padding: clamp(4px, 0.32vw, 7px);
+
+  box-sizing: border-box;
 
   display: block;
   overflow: hidden;
@@ -1481,25 +1487,38 @@
       rgba(8, 12, 26, 0.99)
     );
 
+  background-clip: padding-box;
+
   border: 1px solid rgba(184, 192, 255, 0.24);
   border-radius: clamp(14px, 0.9vw, 20px);
 
   box-shadow:
-    0 26px 62px rgba(0, 0, 0, 0.46),
-    0 0 42px rgba(124, 140, 255, 0.09),
+    0 24px 54px rgba(0, 0, 0, 0.44),
+    0 0 34px rgba(124, 140, 255, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
 
-  cursor: default;
+  /*
+   * These individual transform properties work alongside GSAP's
+   * transform property without replacing GSAP's x, y or rotation.
+   */
+  scale: 1;
+  translate: 0 0;
+
+  cursor: pointer;
   transform-origin: center center;
 
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+
   transition:
+    scale 240ms cubic-bezier(0.22, 1, 0.36, 1),
+    translate 240ms cubic-bezier(0.22, 1, 0.36, 1),
     box-shadow 240ms ease,
-    border-color 240ms ease,
-    filter 240ms ease,
-    background 240ms ease;
+    border-color 220ms ease,
+    background 220ms ease;
 }
 
-/* Thin decorative cornice around the full image. */
+/* Inner frame decoration. */
 
 .moment-frame::after {
   content: "";
@@ -1516,9 +1535,12 @@
     inset 0 0 20px rgba(6, 10, 23, 0.12);
 
   pointer-events: none;
+
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
-/* Image fills the complete card. */
+/* Moment image. */
 
 .moment-frame img {
   width: 100%;
@@ -1536,20 +1558,26 @@
   color: transparent;
   font-size: 0;
 
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+
   transition:
-    transform 320ms cubic-bezier(0.22, 1, 0.36, 1),
-    filter 240ms ease;
+    transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+/* ============================================================================
+   TEMPORARY HOVER ANIMATION
 
-/* Moment hover and keyboard-focus state. */
+   The size and vertical lift return to normal when hover ends.
+   The permanent z-index remains because JavaScript stores it inline.
+   ============================================================================ */
 
 .moment-frame:hover,
-.moment-frame:focus-visible,
-.moment-frame.is-top-layer {
-  z-index: 999;
+.moment-frame:focus-visible {
+  scale: 1.055;
+  translate: 0 -9px;
 
-  border-color: rgba(200, 207, 255, 0.48);
+  border-color: rgba(205, 211, 255, 0.52);
 
   background:
     linear-gradient(
@@ -1559,32 +1587,24 @@
     );
 
   box-shadow:
-    0 42px 96px rgba(0, 0, 0, 0.66),
-    0 0 70px rgba(155, 124, 255, 0.23),
+    0 40px 86px rgba(0, 0, 0, 0.62),
+    0 0 54px rgba(155, 124, 255, 0.18),
     inset 0 1px 0 rgba(255, 255, 255, 0.14);
-
-  filter:
-    saturate(1.06)
-    contrast(1.04);
 }
 
 .moment-frame:hover img,
-.moment-frame:focus-visible img,
-.moment-frame.is-top-layer img {
-  transform: scale(1.035);
-
-  filter:
-    saturate(1.08)
-    contrast(1.06);
+.moment-frame:focus-visible img {
+  transform: scale(1.025);
 }
 
 .moment-frame:focus-visible {
-  outline: 2px solid rgba(184, 192, 255, 0.68);
-  outline-offset: 4px;
+  outline: 2px solid rgba(184, 192, 255, 0.72);
+  outline-offset: 5px;
 }
 
-
-/* Moment shapes. */
+/* ============================================================================
+   MOMENT SHAPES
+   ============================================================================ */
 
 .moment-square {
   --ratio: 1 / 1;
@@ -1594,71 +1614,113 @@
   --ratio: 0.64 / 1;
 }
 
-
 /* ============================================================================
-   DESKTOP MOMENT POSITIONS
-   ----------------------------------------------------------------------------
-   --x controls horizontal position.
-   --y controls vertical position.
-   --w controls card width.
+   DESKTOP MOMENT SIZE AND SPACING
+
+   The overlap is now approximately 2.9% between neighboring cards.
+   This keeps the collage effect while leaving most artwork visible.
    ============================================================================ */
 
-/* Four square cards */
+@media (min-width: 1101px) {
+  .section-empty-shelf.is-js-ready
+  .scroll-stage[data-stage="moments-move"] {
+    width: min(1680px, calc(100vw - 56px));
+    height: clamp(550px, 63vh, 620px);
 
-.moment-frame-1 {
-  --x: 0%;
-  --y: 6%;
-  --w: 18%;
-  z-index: 5;
-}
+    top: clamp(-72px, -5vh, -40px);
+  }
 
-.moment-frame-5 {
-  --x: 12.8%;
-  --y: 0%;
-  --w: 14.5%;
-  z-index: 7;
-}
+  .section-empty-shelf.is-js-ready .moving-moments {
+    width: min(1680px, calc(100vw - 56px));
+    max-width: 1680px;
 
-.moment-frame-2 {
-  --x: 23.8%;
-  --y: 24%;
-  --w: 18%;
-  z-index: 3;
-}
+    height: clamp(550px, 63vh, 620px);
+  }
 
-.moment-frame-6 {
-  --x: 37%;
-  --y: 17%;
-  --w: 14.5%;
-  z-index: 6;
-}
+  .section-empty-shelf.is-js-ready
+  .moving-moments::before {
+    width: min(1680px, 108%);
+  }
 
-.moment-frame-3 {
-  --x: 48%;
-  --y: 5%;
-  --w: 18%;
-  z-index: 5;
-}
+  /* Square 1 */
 
-.moment-frame-7 {
-  --x: 61.2%;
-  --y: 1%;
-  --w: 14.5%;
-  z-index: 7;
-}
+  .moment-frame-1 {
+    --x: 0%;
+    --y: 7%;
+    --w: 16.8%;
 
-.moment-frame-4 {
-  --x: 72.2%;
-  --y: 23%;
-  --w: 18%;
-  z-index: 3;
-}
+    z-index: 5;
+  }
 
-.moment-frame-8 {
-  --x: 85.5%;
-  --y: 16%;
-  --w: 14.5%;
-  z-index: 6;
+  /* Vertical 1 */
+
+  .moment-frame-5 {
+    --x: 13.9%;
+    --y: 0%;
+    --w: 13.3%;
+
+    z-index: 7;
+  }
+
+  /* Square 2 */
+
+  .moment-frame-2 {
+    --x: 24.3%;
+    --y: 21%;
+    --w: 16.8%;
+
+    z-index: 3;
+  }
+
+  /* Vertical 2 */
+
+  .moment-frame-6 {
+    --x: 38.2%;
+    --y: 12%;
+    --w: 13.3%;
+
+    z-index: 6;
+  }
+
+  /* Square 3 */
+
+  .moment-frame-3 {
+    --x: 48.6%;
+    --y: 6%;
+    --w: 16.8%;
+
+    z-index: 5;
+  }
+
+  /* Vertical 3 */
+
+  .moment-frame-7 {
+    --x: 62.5%;
+    --y: 0%;
+    --w: 13.3%;
+
+    z-index: 7;
+  }
+
+  /* Square 4 */
+
+  .moment-frame-4 {
+    --x: 72.9%;
+    --y: 20%;
+    --w: 16.8%;
+
+    z-index: 3;
+  }
+
+  /* Vertical 4 */
+
+  .moment-frame-8 {
+    --x: 86.7%;
+    --y: 11%;
+    --w: 13.3%;
+
+    z-index: 6;
+  }
 }
 
 
