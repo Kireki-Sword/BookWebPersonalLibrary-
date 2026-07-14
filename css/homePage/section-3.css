@@ -2430,3 +2430,342 @@
     transition: none;
   }
 }
+
+/* =========================================================
+   SECTION 3 — GUIDED STORY MOTION
+
+   Sequence:
+   1. Copy explains the action
+   2. Search card introduces the interaction
+   3. Library card completes the story
+
+   This activates only when JavaScript adds:
+   .flow-motion-ready
+   ========================================================= */
+
+
+/* First headline line should keep the primary text color. */
+.flow-copy-card h2 .flow-title-line-primary {
+  color: var(--flow-ink);
+}
+
+
+/* =========================================================
+   MAIN CARD ENTRANCES
+   ========================================================= */
+
+.section-library-flow.flow-motion-ready [data-flow-motion] {
+  --flow-motion-x: 0px;
+  --flow-motion-y: 18px;
+  --flow-motion-scale: 0.99;
+  --flow-motion-delay: 0ms;
+  --flow-motion-duration: 760ms;
+
+  opacity: 0;
+
+  transform:
+    translate3d(
+      var(--flow-motion-x),
+      var(--flow-motion-y),
+      0
+    )
+    scale(var(--flow-motion-scale));
+
+  transition-property:
+    opacity,
+    transform;
+
+  transition-duration:
+    var(--flow-motion-duration);
+
+  transition-delay:
+    var(--flow-motion-delay);
+
+  transition-timing-function:
+    cubic-bezier(0.16, 1, 0.3, 1);
+
+  will-change:
+    opacity,
+    transform;
+}
+
+
+/* Left copy begins the sequence. */
+.section-library-flow.flow-motion-ready
+[data-flow-motion="copy"] {
+  --flow-motion-x: -18px;
+  --flow-motion-y: 8px;
+  --flow-motion-scale: 0.995;
+  --flow-motion-delay: 0ms;
+  --flow-motion-duration: 720ms;
+}
+
+
+/* Search follows after the copy begins. */
+.section-library-flow.flow-motion-ready
+[data-flow-motion="search"] {
+  --flow-motion-x: 18px;
+  --flow-motion-y: 8px;
+  --flow-motion-scale: 0.985;
+  --flow-motion-delay: 180ms;
+  --flow-motion-duration: 800ms;
+}
+
+
+/* Library arrives last as the conclusion. */
+.section-library-flow.flow-motion-ready
+[data-flow-motion="library"] {
+  --flow-motion-x: 0px;
+  --flow-motion-y: 26px;
+  --flow-motion-scale: 0.99;
+  --flow-motion-delay: 430ms;
+  --flow-motion-duration: 900ms;
+}
+
+
+/* Final position for all three main groups. */
+.section-library-flow.flow-motion-ready
+[data-flow-motion].is-motion-visible {
+  opacity: 1;
+
+  transform:
+    translate3d(0, 0, 0)
+    scale(1);
+}
+
+
+/* =========================================================
+   INTERNAL ELEMENT STAGGER
+   ========================================================= */
+
+.section-library-flow.flow-motion-ready
+[data-flow-motion-item] {
+  --flow-item-delay: 0ms;
+
+  opacity: 0;
+
+  transform:
+    translate3d(0, 13px, 0);
+
+  transition-property:
+    opacity,
+    transform;
+
+  transition-duration:
+    540ms,
+    660ms;
+
+  transition-delay:
+    calc(
+      var(--flow-motion-delay, 0ms) +
+      var(--flow-item-delay, 0ms)
+    );
+
+  transition-timing-function:
+    ease-out,
+    cubic-bezier(0.16, 1, 0.3, 1);
+
+  will-change:
+    opacity,
+    transform;
+}
+
+
+.section-library-flow.flow-motion-ready
+[data-flow-motion].is-motion-visible
+[data-flow-motion-item] {
+  opacity: 1;
+
+  transform:
+    translate3d(0, 0, 0);
+}
+
+
+/* Slightly smaller movement for the search-card contents. */
+.section-library-flow.flow-motion-ready
+[data-flow-motion="search"]
+[data-flow-motion-item] {
+  transform:
+    translate3d(0, 10px, 0);
+}
+
+
+.section-library-flow.flow-motion-ready
+[data-flow-motion="search"].is-motion-visible
+[data-flow-motion-item] {
+  transform:
+    translate3d(0, 0, 0);
+}
+
+
+/* Smaller stagger movement inside the library. */
+.section-library-flow.flow-motion-ready
+[data-flow-motion="library"]
+[data-flow-motion-item] {
+  transform:
+    translate3d(0, 9px, 0);
+}
+
+
+.section-library-flow.flow-motion-ready
+[data-flow-motion="library"].is-motion-visible
+[data-flow-motion-item] {
+  transform:
+    translate3d(0, 0, 0);
+}
+
+
+/* =========================================================
+   ONE-TIME SEARCH HIGHLIGHT
+   ========================================================= */
+
+.flow-search-bar {
+  position: relative;
+}
+
+
+/*
+  A restrained one-time light sweep helps direct attention
+  toward the search field without creating a repeating pulse.
+*/
+.flow-search-bar::after {
+  content: "";
+
+  position: absolute;
+  inset: 1px;
+  z-index: 3;
+
+  border-radius: 9px;
+
+  pointer-events: none;
+
+  opacity: 0;
+
+  background:
+    linear-gradient(
+      105deg,
+      transparent 0%,
+      transparent 28%,
+      rgba(116, 215, 255, 0.05) 39%,
+      rgba(184, 192, 255, 0.20) 49%,
+      rgba(116, 215, 255, 0.07) 59%,
+      transparent 72%,
+      transparent 100%
+    );
+
+  transform:
+    translate3d(-125%, 0, 0);
+}
+
+
+.section-library-flow.flow-motion-ready
+[data-flow-motion="search"].is-motion-visible
+.flow-search-bar::after {
+  animation:
+    flowSearchGuide 560ms
+    cubic-bezier(0.16, 1, 0.3, 1)
+    810ms
+    both;
+}
+
+
+@keyframes flowSearchGuide {
+  0% {
+    opacity: 0;
+    transform: translate3d(-125%, 0, 0);
+  }
+
+  18% {
+    opacity: 0.72;
+  }
+
+  82% {
+    opacity: 0.48;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate3d(125%, 0, 0);
+  }
+}
+
+
+/* =========================================================
+   ANIMATION CLEANUP
+   ========================================================= */
+
+.section-library-flow
+[data-flow-motion].motion-complete,
+.section-library-flow
+[data-flow-motion].motion-complete
+[data-flow-motion-item] {
+  will-change: auto;
+}
+
+
+/* =========================================================
+   TABLET AND MOBILE
+   Use vertical motion because horizontal movement feels much
+   larger on narrow screens.
+   ========================================================= */
+
+@media (max-width: 980px) {
+  .section-library-flow.flow-motion-ready
+  [data-flow-motion="copy"],
+
+  .section-library-flow.flow-motion-ready
+  [data-flow-motion="search"],
+
+  .section-library-flow.flow-motion-ready
+  [data-flow-motion="library"] {
+    --flow-motion-x: 0px;
+    --flow-motion-y: 15px;
+    --flow-motion-scale: 0.993;
+  }
+
+  .section-library-flow.flow-motion-ready
+  [data-flow-motion="search"] {
+    --flow-motion-delay: 150ms;
+  }
+
+  .section-library-flow.flow-motion-ready
+  [data-flow-motion="library"] {
+    --flow-motion-delay: 350ms;
+  }
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .section-library-flow.flow-motion-ready
+  [data-flow-motion],
+
+  .section-library-flow.flow-motion-ready
+  [data-flow-motion].is-motion-visible,
+
+  .section-library-flow.flow-motion-ready
+  [data-flow-motion-item],
+
+  .section-library-flow.flow-motion-ready
+  [data-flow-motion].is-motion-visible
+  [data-flow-motion-item] {
+    opacity: 1;
+
+    transform: none;
+
+    transition: none;
+
+    animation: none;
+
+    will-change: auto;
+  }
+
+  .section-library-flow.flow-motion-ready
+  .flow-search-bar::after {
+    display: none;
+    animation: none;
+  }
+}

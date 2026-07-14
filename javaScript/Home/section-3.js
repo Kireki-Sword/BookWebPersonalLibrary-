@@ -1920,71 +1920,80 @@
 })();
 
 // =========================================================
-// SECTION 3 — SCROLL REVEAL ANIMATION
+// SECTION 3 — GUIDED STORY MOTION
+//
 // Append this after the existing Section 3 JavaScript.
-// It does not change the search or library functionality.
+//
+// This code only controls entrance animation.
+// It does not change:
+// - Supabase
+// - search
+// - suggestions
+// - status selection
+// - filters
+// - adding library items
+// - cover loading
 // =========================================================
 
 (() => {
   'use strict';
 
-  function startSection3ScrollReveal() {
-    const section = document.querySelector(
-      '#section-3-library-flow'
-    );
+  const SECTION_SELECTOR =
+    '#section-3-library-flow';
+
+  const GROUP_SELECTOR =
+    '[data-flow-motion]';
+
+  const ITEM_SELECTOR =
+    '[data-flow-motion-item]';
+
+  /*
+    The delays below control the elements inside each group.
+
+    The main group delays are controlled in CSS:
+    - copy:    0ms
+    - search:  180ms
+    - library: 430ms
+  */
+  const ITEM_TIMING = {
+    copy: {
+      start: 40,
+      step: 80
+    },
+
+    search: {
+      start: 170,
+      step: 90
+    },
+
+    library: {
+      start: 190,
+      step: 70
+    }
+  };
+
+
+  function startSection3Motion() {
+    const section =
+      document.querySelector(
+        SECTION_SELECTOR
+      );
 
     if (!section) {
       return;
     }
 
-    /*
-      Use the existing elements directly, so you do not
-      need to change your current HTML.
-    */
-    const revealItems = [
-      {
-        element: section.querySelector(
-          '.flow-copy-card'
-        ),
-        direction: 'left',
-        delay: 0
-      },
-      {
-        element: section.querySelector(
-          '.flow-search-card'
-        ),
-        direction: 'right',
-        delay: 100
-      },
-      {
-        element: section.querySelector(
-          '.flow-library-card'
-        ),
-        direction: 'up',
-        delay: 190
-      }
-    ].filter((item) => {
-      return Boolean(item.element);
-    });
+    const groups = [
+      ...section.querySelectorAll(
+        GROUP_SELECTOR
+      )
+    ];
 
-    if (revealItems.length === 0) {
+    if (groups.length === 0) {
       return;
     }
 
-    /*
-      Add the required attributes automatically.
-      No data-flow-reveal attributes need to be added
-      manually to your HTML.
-    */
-    revealItems.forEach((item) => {
-      item.element.dataset.flowReveal =
-        item.direction;
-
-      item.element.style.setProperty(
-        '--flow-reveal-delay',
-        `${item.delay}ms`
-      );
-    });
+    prepareInternalDelays(groups);
 
     const prefersReducedMotion =
       window.matchMedia(
@@ -1992,81 +2001,173 @@
       ).matches;
 
     /*
-      Show the content immediately when reduced motion
-      is enabled or IntersectionObserver is unsupported.
+      Make everything visible immediately for visitors
+      who request reduced motion.
     */
-    if (
-      prefersReducedMotion ||
-      !('IntersectionObserver' in window)
-    ) {
-      revealItems.forEach((item) => {
-        item.element.classList.add(
-          'is-visible',
-          'reveal-complete'
-        );
-      });
+    if (prefersReducedMotion) {
+      showMotionGroups(groups);
+      markMotionComplete(groups);
 
       return;
     }
 
     /*
-      Activates the hidden starting positions from CSS.
+      Initial hidden states activate only after this class
+      is added. If JavaScript fails, the content stays visible.
     */
     section.classList.add(
-      'flow-reveal-ready'
+      'flow-motion-ready'
     );
 
-    const observer =
-      new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (!entry.isIntersecting) {
+    let hasPlayed = false;
+
+
+    function playMotionOnce() {
+      if (hasPlayed) {
+        return;
+      }
+
+      hasPlayed = true;
+
+      showMotionGroups(groups);
+
+      /*
+        Remove will-change after the entire sequence ends.
+        This keeps browser rendering resources from staying
+        active after the animation is finished.
+      */
+      window.setTimeout(
+        () => {
+          markMotionComplete(groups);
+        },
+        1750
+      );
+    }
+
+
+    /*
+      IntersectionObserver is preferred because it does not
+      require a continuous scroll listener.
+    */
+    if (
+      'IntersectionObserver' in window
+    ) {
+      const observer =
+        new IntersectionObserver(
+          (entries) => {
+            const sectionEntry =
+              entries.find((entry) => {
+                return (
+                  entry.target === section &&
+                  entry.isIntersecting
+                );
+              });
+
+            if (!sectionEntry) {
               return;
             }
 
-            const element =
-              entry.target;
+            playMotionOnce();
 
-            element.classList.add(
-              'is-visible'
-            );
+            observer.unobserve(section);
+          },
+          {
+            /*
+              Begin once a meaningful part of the section
+              has entered the viewport.
+            */
+            threshold: 0.17,
 
             /*
-              Each element animates only once.
+              Trigger slightly before the section reaches
+              the bottom edge of the viewport.
             */
-            observer.unobserve(element);
+            rootMargin:
+              '0px 0px -9% 0px'
+          }
+        );
 
-            element.addEventListener(
-              'transitionend',
-              () => {
-                element.classList.add(
-                  'reveal-complete'
-                );
-              },
-              {
-                once: true
-              }
-            );
-          });
-        },
-        {
-          threshold: 0.12,
-          rootMargin: '0px 0px -7% 0px'
+      /*
+        Wait one frame so the browser applies the initial
+        CSS state before checking intersection.
+      */
+      window.requestAnimationFrame(
+        () => {
+          observer.observe(section);
         }
       );
 
+      return;
+    }
+
     /*
-      Wait for the browser to apply the initial CSS
-      position before starting observation.
+      Safe fallback for older browsers.
     */
-    window.requestAnimationFrame(() => {
-      revealItems.forEach((item) => {
-        observer.observe(
-          item.element
-        );
-      });
+    playMotionOnce();
+  }
+
+
+  function prepareInternalDelays(groups) {
+    groups.forEach((group) => {
+      const groupName =
+        group.dataset.flowMotion ||
+        '';
+
+      const timing =
+        ITEM_TIMING[groupName] || {
+          start: 80,
+          step: 70
+        };
+
+      const items = [
+        ...group.querySelectorAll(
+          ITEM_SELECTOR
+        )
+      ];
+
+      items.forEach(
+        (item, index) => {
+          const delay =
+            timing.start +
+            index * timing.step;
+
+          item.style.setProperty(
+            '--flow-item-delay',
+            `${delay}ms`
+          );
+        }
+      );
     });
   }
+
+
+  function showMotionGroups(groups) {
+    /*
+      All groups receive the visible class together.
+
+      CSS delays create the ordered story:
+      copy → search → library.
+    */
+    window.requestAnimationFrame(
+      () => {
+        groups.forEach((group) => {
+          group.classList.add(
+            'is-motion-visible'
+          );
+        });
+      }
+    );
+  }
+
+
+  function markMotionComplete(groups) {
+    groups.forEach((group) => {
+      group.classList.add(
+        'motion-complete'
+      );
+    });
+  }
+
 
   if (
     document.readyState ===
@@ -2074,12 +2175,12 @@
   ) {
     document.addEventListener(
       'DOMContentLoaded',
-      startSection3ScrollReveal,
+      startSection3Motion,
       {
         once: true
       }
     );
   } else {
-    startSection3ScrollReveal();
+    startSection3Motion();
   }
 })();
