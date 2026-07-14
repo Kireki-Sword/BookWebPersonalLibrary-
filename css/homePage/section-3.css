@@ -1,228 +1,265 @@
 /* =========================================================
-   SECTION 3 — LIBRARY FLOW DEMO
-   Final consolidated CSS.
-   Load this file after your general CSS.
+   SECTION 3 — LIBRARY FLOW
+   Load after your general site CSS.
    ========================================================= */
 
-/* =========================================================
-   SECTION TOKENS + LAYOUT VARIABLES
-   ========================================================= */
-
-/* Main section wrapper: sets tokens, viewport height, padding, text color, and background. */
 .section-library-flow {
   --nav-height: 64px;
 
-  --flow-font-body: var(--font-body, Inter, system-ui, sans-serif);
-  --flow-font-display: var(--font-display, Newsreader, Georgia, serif);
+  --flow-font-body:
+    var(--font-body, Inter, system-ui, sans-serif);
+
+  --flow-font-display:
+    var(--font-display, Newsreader, Georgia, serif);
 
   --flow-bg-0: #050611;
   --flow-bg-1: #080d1f;
   --flow-bg-2: #0b1024;
 
-  --flow-ink: var(--ink, #f5f7ff);
-  --flow-ink-mid: var(--ink-mid, #cbd3ea);
-  --flow-ink-light: var(--ink-light, #9ca8c4);
-  --flow-ink-faint: var(--ink-faint, #66708a);
+  --flow-ink:
+    var(--ink, #f5f7ff);
 
-  --flow-purple: var(--accent-purple, #9b7cff);
-  --flow-blue: var(--accent-blue, #6d8bff);
-  --flow-cyan: var(--accent-cyan, #74d7ff);
-  --flow-pink: var(--accent-pink, #d28cff);
+  --flow-ink-mid:
+    var(--ink-mid, #cbd3ea);
 
-  --flow-border: var(--border, rgba(184, 192, 255, 0.16));
-  --flow-border-strong: var(--border-strong, rgba(184, 192, 255, 0.34));
-  --flow-transition: var(--transition, 0.25s cubic-bezier(0.4, 0, 0.2, 1));
+  --flow-ink-light:
+    var(--ink-light, #9ca8c4);
+
+  --flow-ink-faint:
+    var(--ink-faint, #66708a);
+
+  --flow-purple:
+    var(--accent-purple, #9b7cff);
+
+  --flow-blue:
+    var(--accent-blue, #6d8bff);
+
+  --flow-cyan:
+    var(--accent-cyan, #74d7ff);
+
+  --flow-pink:
+    var(--accent-pink, #d28cff);
+
+  --flow-border:
+    rgba(184, 192, 255, 0.16);
+
+  --flow-border-strong:
+    rgba(184, 192, 255, 0.32);
+
+  --flow-transition:
+    0.24s cubic-bezier(0.4, 0, 0.2, 1);
 
   --flow-card-bg:
-    radial-gradient(circle at 14% 8%, rgba(255, 255, 255, 0.08), transparent 26%),
-    radial-gradient(circle at 92% 10%, rgba(124, 140, 255, 0.14), transparent 34%),
-    linear-gradient(135deg, rgba(16, 22, 36, 0.84), rgba(10, 14, 29, 0.82) 54%, rgba(21, 18, 39, 0.80));
-
-  /* Desktop layout controls */
-  --flow-section-padding:
-    clamp(2rem, 4.4vh, 4.25rem)
-    clamp(1.75rem, 4.25vw, 4.75rem)
-    clamp(0.85rem, 2vh, 1.35rem);
-
-  --flow-grid-width: 1460px;
-  --flow-grid-left-col: minmax(540px, 0.94fr);
-  --flow-grid-right-col: minmax(540px, 1.06fr);
-  --flow-grid-top-row: minmax(330px, 1fr);
-  --flow-grid-library-row: clamp(220px, 29vh, 285px);
-  --flow-grid-column-gap: clamp(4rem, 6.2vw, 7.25rem);
-  --flow-grid-row-gap: clamp(1rem, 2.2vh, 1.55rem);
-
-  /* Copy controls */
-  --flow-copy-max-width: 640px;
-  --flow-title-max-width: 640px;
-  --flow-title-size: clamp(3.25rem, 4.9vw, 5.15rem);
-  --flow-title-line-height: 0.9;
-  --flow-title-margin-bottom: 1.05rem;
-  --flow-copy-text-max-width: 535px;
-  --flow-copy-text-size: clamp(0.9rem, 1vw, 1rem);
-  --flow-copy-text-line-height: 1.7;
-  --flow-copy-text-margin-bottom: 1.25rem;
-  --flow-label-size: clamp(0.66rem, 0.78vw, 0.76rem);
-  --flow-label-margin-bottom: 0.72rem;
-  --flow-cta-height: 40px;
-  --flow-cta-font-size: clamp(0.76rem, 0.84vw, 0.86rem);
-
-  /* Search card controls */
-  --flow-search-card-width: 620px;
-  --flow-search-card-min-height: 315px;
-  --flow-search-header-height: 42px;
-  --flow-search-header-padding: 0.86rem 1rem 0;
-  --flow-search-body-padding: 0.95rem 1rem 1.08rem;
-  --flow-search-dot-size: 8px;
-  --flow-search-dot-gap: 7px;
-  --flow-search-label-size: clamp(0.7rem, 0.82vw, 0.8rem);
-  --flow-search-bar-height: 48px;
-  --flow-search-input-font-size: clamp(0.76rem, 0.88vw, 0.9rem);
-  --flow-status-chip-height: 30px;
-  --flow-status-chip-font-size: clamp(0.62rem, 0.72vw, 0.7rem);
-
-  /* Library controls */
-  --flow-library-header-height: 52px;
-  --flow-library-body-padding: 0.78rem 1rem 0.9rem;
-  --flow-library-grid-columns: minmax(0, 1fr) minmax(260px, 360px);
-  --flow-library-list-min-height: 58px;
+    radial-gradient(
+      circle at 14% 8%,
+      rgba(255, 255, 255, 0.08),
+      transparent 26%
+    ),
+    radial-gradient(
+      circle at 92% 10%,
+      rgba(124, 140, 255, 0.14),
+      transparent 34%
+    ),
+    linear-gradient(
+      135deg,
+      rgba(16, 22, 36, 0.88),
+      rgba(10, 14, 29, 0.86) 54%,
+      rgba(21, 18, 39, 0.84)
+    );
 
   box-sizing: border-box;
   position: relative;
   isolation: isolate;
+
+  min-height:
+    calc(112svh - var(--nav-height));
+
+  padding:
+    clamp(2.75rem, 5vh, 4.5rem)
+    clamp(1.25rem, 4.25vw, 4.75rem)
+    clamp(3rem, 6vh, 5rem);
+
   overflow: hidden;
-
-  height: calc(110svh - var(--nav-height));
-  min-height: calc(110svh - var(--nav-height));
-
-  padding: var(--flow-section-padding);
 
   color: var(--flow-ink);
   font-family: var(--flow-font-body);
 
   background:
-    radial-gradient(circle at 82% 18%, rgba(124, 140, 255, 0.24), transparent 34%),
-    radial-gradient(circle at 15% 30%, rgba(155, 124, 255, 0.15), transparent 36%),
-    radial-gradient(circle at 78% 78%, rgba(116, 215, 255, 0.09), transparent 34%),
-    radial-gradient(circle at 24% 92%, rgba(210, 140, 255, 0.10), transparent 38%),
-    linear-gradient(135deg, var(--flow-bg-0) 0%, var(--flow-bg-1) 38%, var(--flow-bg-2) 68%, var(--flow-bg-0) 100%) !important;
+    radial-gradient(
+      circle at 82% 18%,
+      rgba(124, 140, 255, 0.24),
+      transparent 34%
+    ),
+    radial-gradient(
+      circle at 15% 30%,
+      rgba(155, 124, 255, 0.15),
+      transparent 36%
+    ),
+    radial-gradient(
+      circle at 78% 78%,
+      rgba(116, 215, 255, 0.09),
+      transparent 34%
+    ),
+    radial-gradient(
+      circle at 24% 92%,
+      rgba(210, 140, 255, 0.10),
+      transparent 38%
+    ),
+    linear-gradient(
+      135deg,
+      var(--flow-bg-0),
+      var(--flow-bg-1) 38%,
+      var(--flow-bg-2) 68%,
+      var(--flow-bg-0)
+    );
 }
+
 
 .section-library-flow *,
 .section-library-flow *::before,
-/* .section-library-flow: section styling for this component/state. */
 .section-library-flow *::after {
   box-sizing: border-box;
 }
 
-/* Background glow: adds the large right-side aurora blur. */
-.section-library-flow::before {
-  content: "";
-  position: absolute;
-  right: -16%;
-  top: -25%;
-  z-index: -2;
 
-  width: min(56vw, 760px);
-  aspect-ratio: 1;
-  border-radius: 50%;
-
-  pointer-events: none;
-
-  background:
-    radial-gradient(
-      circle,
-      rgba(124, 140, 255, 0.28) 0%,
-      rgba(155, 124, 255, 0.14) 34%,
-      rgba(124, 140, 255, 0.05) 58%,
-      transparent 74%
-    );
-
-  filter: blur(14px);
-}
-
-/* Background glow: adds the lower-left aurora blur. */
+.section-library-flow::before,
 .section-library-flow::after {
   content: "";
+
   position: absolute;
-  left: -18%;
-  bottom: -40%;
   z-index: -2;
 
-  width: min(48vw, 620px);
-  aspect-ratio: 1;
   border-radius: 50%;
 
   pointer-events: none;
-
-  background:
-    radial-gradient(
-      circle,
-      rgba(210, 140, 255, 0.15) 0%,
-      rgba(116, 215, 255, 0.075) 42%,
-      transparent 74%
-    );
 
   filter: blur(18px);
 }
 
+
+.section-library-flow::before {
+  width: min(56vw, 760px);
+  aspect-ratio: 1;
+
+  right: -16%;
+  top: -25%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(124, 140, 255, 0.28),
+      rgba(155, 124, 255, 0.14) 34%,
+      rgba(124, 140, 255, 0.05) 58%,
+      transparent 74%
+    );
+}
+
+
+.section-library-flow::after {
+  width: min(48vw, 620px);
+  aspect-ratio: 1;
+
+  left: -18%;
+  bottom: -32%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(210, 140, 255, 0.15),
+      rgba(116, 215, 255, 0.075) 42%,
+      transparent 74%
+    );
+}
+
+
+.sr-only {
+  position: absolute !important;
+
+  width: 1px !important;
+  height: 1px !important;
+
+  padding: 0 !important;
+  margin: -1px !important;
+
+  overflow: hidden !important;
+
+  clip: rect(0, 0, 0, 0) !important;
+
+  white-space: nowrap !important;
+
+  border: 0 !important;
+}
+
+
 /* =========================================================
-   MAIN GRID
+   MAIN LAYOUT
    ========================================================= */
 
-/* Main layout grid: places copy left, search card right, and library at the bottom. */
 .flow-grid {
   position: relative;
   z-index: 2;
 
-  width: min(100%, var(--flow-grid-width));
-  height: 100%;
+  width: min(100%, 1460px);
   margin-inline: auto;
 
   display: grid;
+
   grid-template-columns:
-    var(--flow-grid-left-col)
-    var(--flow-grid-right-col);
-  grid-template-rows:
-    var(--flow-grid-top-row)
-    var(--flow-grid-library-row);
+    minmax(500px, 0.94fr)
+    minmax(500px, 1.06fr);
+
   grid-template-areas:
     "copy search"
     "library library";
 
+  grid-template-rows:
+    minmax(320px, auto)
+    minmax(470px, auto);
+
+  column-gap:
+    clamp(3rem, 6vw, 7rem);
+
+  row-gap:
+    clamp(0.8rem, 1.5vh, 1.1rem);
+
   align-items: center;
-  column-gap: var(--flow-grid-column-gap);
-  row-gap: var(--flow-grid-row-gap);
+
+  transform:
+    translateY(-8px);
 }
 
-/* =========================================================
-   SHARED CARD STYLE
-   ========================================================= */
 
-/* Shared card shell: applies glass background, border, radius, shadow, and blur. */
 .flow-card {
   position: relative;
-  overflow: hidden;
   isolation: isolate;
 
-  border: 1px solid rgba(184, 192, 255, 0.18);
-  border-radius: 18px;
+  overflow: hidden;
 
-  background: var(--flow-card-bg);
+  border:
+    1px solid rgba(184, 192, 255, 0.18);
+
+  border-radius: 20px;
+
+  background:
+    var(--flow-card-bg);
 
   box-shadow:
     0 26px 70px rgba(0, 0, 0, 0.34),
     0 12px 30px rgba(0, 0, 0, 0.22),
-    0 0 0 1px rgba(184, 192, 255, 0.055),
+    0 0 0 1px rgba(184, 192, 255, 0.05),
     0 0 56px rgba(124, 140, 255, 0.09);
 
-  backdrop-filter: blur(18px) saturate(1.15);
-  -webkit-backdrop-filter: blur(18px) saturate(1.15);
+  backdrop-filter:
+    blur(18px) saturate(1.15);
+
+  -webkit-backdrop-filter:
+    blur(18px) saturate(1.15);
 }
 
-/* Shared card shine: adds the subtle inner highlight overlay. */
+
 .flow-card::before {
   content: "";
+
   position: absolute;
   inset: 0;
   z-index: -1;
@@ -239,2222 +276,1691 @@
     );
 }
 
+
 /* =========================================================
-   TOP LEFT — COPY
+   INTRO
    ========================================================= */
 
-/* Left copy block: positions the headline, paragraph, and CTA. */
 .flow-copy-card {
   grid-area: copy;
 
+  max-width: 640px;
   min-width: 0;
-  max-width: var(--flow-copy-max-width);
 
   display: flex;
   flex-direction: column;
+
   align-items: flex-start;
   justify-content: center;
-  align-self: center;
-  justify-self: start;
 }
 
-/* Small eyebrow label: styles 'Your first step'. */
+
 .flow-copy-card .section-label {
   display: inline-flex;
   align-items: center;
+
   gap: 0.5rem;
 
-  margin: 0 0 var(--flow-label-margin-bottom);
+  margin:
+    0 0 0.72rem;
 
-  color: var(--warm-brown-light, #b8c0ff);
-  font-size: var(--flow-label-size);
+  color: #b8c0ff;
+
+  font-size:
+    clamp(0.66rem, 0.78vw, 0.76rem);
+
   font-weight: 850;
+
   letter-spacing: 0.15em;
+
   line-height: 1;
+
   text-transform: uppercase;
 }
 
-/* Eyebrow dot: adds the small glowing cyan dot. */
+
 .flow-copy-card .section-label::before {
   content: "";
+
   width: 6px;
   height: 6px;
-  flex: 0 0 6px;
 
   border-radius: 999px;
-  background: var(--flow-cyan);
+
+  background:
+    var(--flow-cyan);
 
   box-shadow:
     0 0 16px rgba(116, 215, 255, 0.65),
     0 0 32px rgba(124, 140, 255, 0.25);
 }
 
-/* Main headline: controls size, line-height, width, and shadow. */
-.flow-copy-card h2 {
-  max-width: var(--flow-title-max-width);
-  margin: 0 0 var(--flow-title-margin-bottom);
 
-  color: var(--flow-ink);
-  font-family: var(--flow-font-display);
-  font-size: var(--flow-title-size);
+.flow-copy-card h2 {
+  max-width: 640px;
+
+  margin:
+    0 0 1.05rem;
+
+  color:
+    var(--flow-ink);
+
+  font-family:
+    var(--flow-font-display);
+
+  font-size:
+    clamp(3.25rem, 4.9vw, 5.15rem);
+
   font-weight: 700;
-  line-height: var(--flow-title-line-height);
+
+  line-height: 0.9;
+
   letter-spacing: -0.064em;
 
   text-shadow:
-    0 18px 55px rgba(0, 0, 0, 0.50),
+    0 18px 55px rgba(0, 0, 0, 0.5),
     0 0 42px rgba(124, 140, 255, 0.13);
 }
 
-/* Headline second line: keeps the second line together. */
-.flow-copy-card h2 span {
+
+.flow-title-line {
   display: block;
+
   color: #e7ecff;
+
   white-space: nowrap;
 }
 
-/* Intro paragraph: controls readable width, color, and spacing. */
-.flow-copy-card p {
-  max-width: var(--flow-copy-text-max-width);
-  margin: 0 0 var(--flow-copy-text-margin-bottom);
 
-  color: var(--flow-ink-light);
-  font-size: var(--flow-copy-text-size);
-  line-height: var(--flow-copy-text-line-height);
+.flow-title-line-primary {
+  color:
+    var(--flow-ink);
 }
 
-/* CTA button: sizes and aligns the start button. */
+
+.flow-copy-card p {
+  max-width: 535px;
+
+  margin:
+    0 0 1.25rem;
+
+  color:
+    var(--flow-ink-light);
+
+  font-size:
+    clamp(0.9rem, 1vw, 1rem);
+
+  line-height: 1.7;
+}
+
+
 .flow-cta {
-  min-height: var(--flow-cta-height);
-  padding: 0 1.12rem;
-  border-radius: var(--radius-sm, 8px);
+  min-height: 40px;
+
+  padding:
+    0 1.12rem;
+
+  border-radius:
+    var(--radius-sm, 8px);
 
   display: inline-flex;
   align-items: center;
   justify-content: center;
 
   text-decoration: none;
-  font-size: var(--flow-cta-font-size);
+
+  font-size:
+    clamp(0.76rem, 0.84vw, 0.86rem);
+
   font-weight: 800;
 }
 
-/* CTA arrow: adds the arrow after the button text. */
+
 .flow-cta::after {
   content: "→";
+
   margin-left: 0.56rem;
-  transition: transform var(--flow-transition);
+
+  transition:
+    transform var(--flow-transition);
 }
 
-/* CTA hover arrow: moves the arrow slightly on hover. */
+
 .flow-cta:hover::after {
-  transform: translateX(4px);
+  transform:
+    translateX(4px);
 }
+
 
 /* =========================================================
-   TOP RIGHT — SEARCH CARD
+   SEARCH CARD
    ========================================================= */
 
-/* Right search card: controls card width, height, and position. */
 .flow-search-card {
   grid-area: search;
 
-  width: min(100%, var(--flow-search-card-width));
-  min-height: var(--flow-search-card-min-height);
+  width:
+    min(100%, 620px);
 
-  align-self: center;
+  min-height: 315px;
+
   justify-self: end;
 }
 
-/* Search card top bar: holds the three dots and separator line. */
+
 .flow-card-header {
-  min-height: var(--flow-search-header-height);
-  padding: var(--flow-search-header-padding);
+  min-height: 42px;
+
+  padding:
+    0.86rem 1rem 0;
 
   display: flex;
   align-items: center;
-  justify-content: flex-start;
 
-  border-bottom: 1px solid rgba(184, 192, 255, 0.15);
+  border-bottom:
+    1px solid rgba(184, 192, 255, 0.15);
 }
 
-/* Three-dot group: aligns the small window dots. */
+
 .flow-window-controls {
   display: flex;
   align-items: center;
-  gap: var(--flow-search-dot-gap);
-  flex-shrink: 0;
+
+  gap: 7px;
 }
 
-/* Three-dot circles: controls dot size and base shape. */
+
 .flow-window-controls span {
-  width: var(--flow-search-dot-size);
-  height: var(--flow-search-dot-size);
+  width: 8px;
+  height: 8px;
 
   border-radius: 999px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
 }
 
-/* First dot: sets the pink dot color and glow. */
+
 .flow-window-controls span:nth-child(1) {
-  background: var(--flow-pink);
-  box-shadow: 0 0 12px rgba(210, 140, 255, 0.48);
+  background:
+    var(--flow-pink);
+
+  box-shadow:
+    0 0 12px rgba(210, 140, 255, 0.48);
 }
 
-/* Second dot: sets the blue dot color and glow. */
+
 .flow-window-controls span:nth-child(2) {
-  background: var(--flow-blue);
-  box-shadow: 0 0 12px rgba(124, 140, 255, 0.46);
+  background:
+    var(--flow-blue);
+
+  box-shadow:
+    0 0 12px rgba(124, 140, 255, 0.46);
 }
 
-/* Third dot: sets the cyan dot color and glow. */
+
 .flow-window-controls span:nth-child(3) {
-  background: var(--flow-cyan);
-  box-shadow: 0 0 12px rgba(116, 215, 255, 0.44);
+  background:
+    var(--flow-cyan);
+
+  box-shadow:
+    0 0 12px rgba(116, 215, 255, 0.44);
 }
 
-/* Search card body: controls inner spacing below the top bar. */
+
 .flow-search-body {
-  padding: var(--flow-search-body-padding);
+  padding:
+    0.95rem 1rem 1.08rem;
 }
+
 
 .flow-search-form label,
-/* .flow-status-picker: section styling for this component/state. */
 .flow-status-picker legend {
   display: block;
 
-  margin: 0 0 0.56rem;
+  margin:
+    0 0 0.56rem;
 
-  color: var(--flow-ink-mid);
-  font-size: var(--flow-search-label-size);
+  color:
+    var(--flow-ink-mid);
+
+  font-size:
+    clamp(0.7rem, 0.82vw, 0.8rem);
+
   font-weight: 750;
+
   line-height: 1.2;
 }
 
-/* =========================================================
-   SEARCH BAR
-   ========================================================= */
 
-/* Search input shell: controls the full search bar container. */
 .flow-search-bar {
-  min-height: var(--flow-search-bar-height);
+  position: relative;
+
+  min-height: 48px;
 
   display: flex;
   align-items: center;
+
   overflow: hidden;
 
+  border:
+    1px solid rgba(184, 192, 255, 0.2);
+
   border-radius: 10px;
-  border: 1px solid rgba(184, 192, 255, 0.20);
 
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.066), rgba(255, 255, 255, 0.035));
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.066),
+      rgba(255, 255, 255, 0.035)
+    );
 
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.05),
-    0 10px 22px rgba(0, 0, 0, 0.22),
-    0 0 20px rgba(124, 140, 255, 0.06);
+    0 10px 22px rgba(0, 0, 0, 0.22);
 
   transition:
     border-color var(--flow-transition),
     box-shadow var(--flow-transition);
 }
 
-/* Search focus state: adds the glow when input is active. */
+
 .flow-search-bar:focus-within {
-  border-color: rgba(116, 215, 255, 0.48);
+  border-color:
+    rgba(116, 215, 255, 0.48);
 
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.07),
-    0 12px 26px rgba(0, 0, 0, 0.26),
     0 0 0 3px rgba(116, 215, 255, 0.12),
     0 0 28px rgba(124, 140, 255, 0.14);
 }
 
-/* Search input: controls text size, spacing, and transparent background. */
+
 .flow-search-bar input {
   flex: 1;
+
   min-width: 0;
-  width: 100%;
-  height: var(--flow-search-bar-height);
+  height: 48px;
 
-  padding: 0 0.95rem;
+  padding:
+    0 0.95rem;
 
-  color: var(--flow-ink);
-  font-family: var(--flow-font-body);
-  font-size: var(--flow-search-input-font-size);
-  font-weight: 500;
+  color:
+    var(--flow-ink);
+
+  font:
+    500
+    clamp(0.76rem, 0.88vw, 0.9rem)
+    var(--flow-font-body);
 
   background: transparent;
+
   border: 0;
+
   outline: 0;
 }
 
-/* Search placeholder: controls muted placeholder color. */
+
 .flow-search-bar input::placeholder {
-  color: var(--flow-ink-faint);
+  color:
+    var(--flow-ink-faint);
 }
 
-/* Search button: styles the icon button on the right side. */
+
 .flow-search-bar button {
-  width: var(--flow-search-bar-height);
-  height: var(--flow-search-bar-height);
-  flex: 0 0 var(--flow-search-bar-height);
+  width: 48px;
+  height: 48px;
+
+  flex:
+    0 0 48px;
 
   display: inline-flex;
   align-items: center;
   justify-content: center;
 
   border: 0;
-  border-left: 1px solid rgba(184, 192, 255, 0.13);
 
-  color: var(--flow-ink);
+  border-left:
+    1px solid rgba(184, 192, 255, 0.13);
+
+  color:
+    var(--flow-ink);
+
   font-size: 1.05rem;
+
   cursor: pointer;
 
   background:
-    radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.22), transparent 30%),
-    linear-gradient(145deg, rgba(155, 124, 255, 0.42), rgba(109, 139, 255, 0.32));
+    radial-gradient(
+      circle at 30% 20%,
+      rgba(255, 255, 255, 0.22),
+      transparent 30%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(155, 124, 255, 0.42),
+      rgba(109, 139, 255, 0.32)
+    );
 
   transition:
-    background var(--flow-transition),
     transform var(--flow-transition),
     box-shadow var(--flow-transition);
 }
 
-/* Search button hover: brightens the gradient glow. */
+
 .flow-search-bar button:hover {
-  background:
-    radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.28), transparent 30%),
-    linear-gradient(145deg, rgba(210, 140, 255, 0.48), rgba(109, 139, 255, 0.38));
-
-  box-shadow: 0 0 22px rgba(124, 140, 255, 0.18);
+  box-shadow:
+    0 0 22px rgba(124, 140, 255, 0.18);
 }
 
-/* Search button active: adds pressed feedback. */
+
 .flow-search-bar button:active {
-  transform: scale(0.96);
+  transform:
+    scale(0.96);
 }
 
-/* =========================================================
-   SEARCH EMPTY / RESULT
-   ========================================================= */
 
-/* Search empty text: styles helper text before a result appears. */
 .flow-search-empty {
   margin-top: 0.68rem;
 
-  color: var(--flow-ink-faint);
-  font-size: clamp(0.68rem, 0.78vw, 0.78rem);
+  color:
+    var(--flow-ink-faint);
+
+  font-size:
+    clamp(0.68rem, 0.78vw, 0.78rem);
+
   line-height: 1.5;
 }
 
-/* Search empty paragraph: removes default paragraph margin. */
+
 .flow-search-empty p {
   margin: 0;
 }
 
-.section-library-flow.has-result .flow-search-empty,
-.section-library-flow.is-saved .flow-search-empty,
-.flow-search-card.has-result .flow-search-empty,
-/* .flow-search-card.is-saved: section styling for this component/state. */
-.flow-search-card.is-saved .flow-search-empty {
+
+.section-library-flow.has-result
+.flow-search-empty {
   display: none;
 }
 
-/* Result area: reserves space only when a result is inserted. */
-.flow-result-area {
-  min-height: 0;
-  margin-top: 0;
-}
 
-/* Result empty state: hides the result wrapper when no card exists. */
-.flow-result-area:not(:has(> .flow-result-card)) {
-  display: none;
-}
+/* =========================================================
+   SEARCH SUGGESTIONS
+   ========================================================= */
 
-/* Result visible state: adds spacing when a result card exists. */
-.flow-result-area:has(> .flow-result-card) {
-  display: block;
-  margin-top: 0.78rem;
-}
+.flow-suggestions {
+  margin-top: 0.7rem;
 
-/* Search result card: lays out cover, info, and add button. */
-.flow-result-card {
   display: grid;
-  grid-template-columns: 54px minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 0.7rem;
 
-  padding: 0.64rem;
-  border-radius: 14px;
-  border: 1px solid rgba(184, 192, 255, 0.20);
-
-  background:
-    radial-gradient(circle at 8% 10%, rgba(255, 255, 255, 0.075), transparent 28%),
-    linear-gradient(135deg, rgba(124, 140, 255, 0.12), rgba(255, 255, 255, 0.035) 48%, rgba(116, 215, 255, 0.052));
-
-  box-shadow:
-    0 14px 28px rgba(0, 0, 0, 0.28),
-    0 0 22px rgba(124, 140, 255, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.05);
-
-  animation: flowResultIn 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  gap: 0.45rem;
 }
 
-/* Result cover: sizes and frames the story cover image. */
-.flow-result-cover {
-  width: 54px;
-  aspect-ratio: 2 / 3;
-  overflow: hidden;
 
-  border-radius: 9px;
-  background: linear-gradient(145deg, rgba(124, 140, 255, 0.38), rgba(210, 140, 255, 0.24));
-
-  box-shadow:
-    0 10px 18px rgba(0, 0, 0, 0.32),
-    0 0 0 1px rgba(255, 255, 255, 0.10) inset;
+.flow-suggestions[hidden] {
+  display: none !important;
 }
 
-.flow-result-cover img,
-/* .flow-library-row-cover: section styling for this component/state. */
-.flow-library-row-cover img {
+
+.flow-suggestion {
   width: 100%;
-  height: 100%;
-  display: block;
-  object-fit: cover;
-}
+  min-height: 52px;
 
-/* Result text column: prevents text overflow issues. */
-.flow-result-info {
-  min-width: 0;
-}
+  padding: 0.48rem;
 
-/* Result title: styles the story title. */
-.flow-result-info h4 {
-  margin: 0 0 0.2rem;
+  display: grid;
 
-  color: var(--flow-ink);
-  font-family: var(--flow-font-display);
-  font-size: 1.08rem;
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: -0.035em;
-}
+  grid-template-columns:
+    34px minmax(0, 1fr);
 
-/* Result creator: styles and truncates the author/creator line. */
-.flow-result-creator {
-  margin: 0 0 0.25rem;
-
-  color: var(--flow-ink-light);
-  font-size: 0.68rem;
-  line-height: 1.25;
-
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* Result type pill: styles the Manga/Anime type tag. */
-.flow-result-type {
-  display: inline-flex;
   align-items: center;
-  justify-content: center;
 
-  width: fit-content;
-  min-height: 20px;
-  padding: 0 0.5rem;
-  border-radius: 999px;
-  border: 1px solid rgba(184, 192, 255, 0.20);
+  gap: 0.62rem;
 
-  color: var(--warm-brown-light, #b8c0ff);
-  font-size: 0.55rem;
-  font-weight: 850;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
+  border:
+    1px solid rgba(184, 192, 255, 0.16);
 
-  background: linear-gradient(180deg, rgba(124, 140, 255, 0.16), rgba(155, 124, 255, 0.10));
-}
+  border-radius: 12px;
 
-/* Add button: styles the button inside the result card. */
-.flow-add-button {
-  min-width: 58px;
-  min-height: 34px;
-  padding: 0 0.75rem;
+  color:
+    var(--flow-ink);
 
-  border-radius: 8px;
-  border: 1px solid rgba(184, 192, 255, 0.30);
+  font: inherit;
 
-  color: #ffffff;
-  font-family: var(--flow-font-body);
-  font-size: 0.68rem;
-  font-weight: 850;
+  text-align: left;
+
   cursor: pointer;
 
   background:
-    radial-gradient(circle at 30% 18%, rgba(255, 255, 255, 0.24), transparent 30%),
-    linear-gradient(145deg, #9b7cff 0%, #6d8bff 58%, #5b5fe8 100%);
-
-  box-shadow:
-    0 10px 20px rgba(0, 0, 0, 0.28),
-    0 0 18px rgba(124, 140, 255, 0.20),
-    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.052),
+      rgba(255, 255, 255, 0.025)
+    );
 
   transition:
     transform var(--flow-transition),
-    box-shadow var(--flow-transition),
     border-color var(--flow-transition),
     background var(--flow-transition);
 }
 
-/* Add button hover: gives lift and brighter gradient. */
-.flow-add-button:hover {
-  transform: translateY(-1px);
-  border-color: rgba(184, 192, 255, 0.48);
+
+.flow-suggestion:hover,
+.flow-suggestion:focus-visible {
+  transform:
+    translateY(-1px);
+
+  border-color:
+    rgba(116, 215, 255, 0.32);
+
+  outline: none;
 
   background:
-    radial-gradient(circle at 30% 18%, rgba(255, 255, 255, 0.28), transparent 30%),
-    linear-gradient(145deg, #d28cff 0%, #9b7cff 48%, #6d8bff 100%);
+    linear-gradient(
+      135deg,
+      rgba(116, 215, 255, 0.1),
+      rgba(124, 140, 255, 0.08)
+    );
 }
 
-/* Add button active: gives pressed feedback. */
+
+.flow-suggestion-cover {
+  width: 34px;
+
+  aspect-ratio: 2 / 3;
+
+  overflow: hidden;
+
+  border-radius: 7px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(124, 140, 255, 0.35),
+      rgba(210, 140, 255, 0.22)
+    );
+}
+
+
+.flow-suggestion-cover img,
+.flow-result-cover img,
+.flow-library-row-cover img {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: cover;
+}
+
+
+.flow-suggestion-cover img[hidden],
+.flow-result-cover img[hidden],
+.flow-library-row-cover img[hidden] {
+  display: none !important;
+}
+
+
+.flow-suggestion-info {
+  min-width: 0;
+
+  display: grid;
+
+  gap: 0.12rem;
+}
+
+
+.flow-suggestion-info strong,
+.flow-suggestion-info small {
+  white-space: nowrap;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+}
+
+
+.flow-suggestion-info strong {
+  color:
+    var(--flow-ink);
+
+  font-family:
+    var(--flow-font-display);
+
+  font-size: 0.92rem;
+}
+
+
+.flow-suggestion-info small {
+  color:
+    var(--flow-ink-light);
+
+  font-size: 0.62rem;
+}
+
+
+/* =========================================================
+   SEARCH RESULT
+   ========================================================= */
+
+.flow-result-area:not(
+  :has(> .flow-result-card)
+) {
+  display: none;
+}
+
+
+.flow-result-area:has(
+  > .flow-result-card
+) {
+  display: block;
+
+  margin-top: 0.78rem;
+}
+
+
+.flow-result-card {
+  display: grid;
+
+  grid-template-columns:
+    58px minmax(0, 1fr) auto;
+
+  align-items: center;
+
+  gap: 0.82rem;
+
+  padding: 0.64rem;
+
+  border:
+    1px solid rgba(184, 192, 255, 0.2);
+
+  border-radius: 14px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(124, 140, 255, 0.12),
+      rgba(255, 255, 255, 0.035) 48%,
+      rgba(116, 215, 255, 0.052)
+    );
+
+  animation:
+    flowResultIn
+    0.45s
+    cubic-bezier(0.2, 0.8, 0.2, 1)
+    both;
+}
+
+
+.flow-result-cover {
+  width: 58px;
+
+  aspect-ratio: 2 / 3;
+
+  overflow: hidden;
+
+  border-radius: 9px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(124, 140, 255, 0.38),
+      rgba(210, 140, 255, 0.24)
+    );
+}
+
+
+.flow-result-info {
+  min-width: 0;
+
+  overflow: hidden;
+}
+
+
+.flow-result-info h4,
+.flow-result-creator {
+  white-space: nowrap;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+}
+
+
+.flow-result-info h4 {
+  margin:
+    0 0 0.2rem;
+
+  color:
+    var(--flow-ink);
+
+  font:
+    700 1.08rem/1
+    var(--flow-font-display);
+
+  letter-spacing: -0.035em;
+}
+
+
+.flow-result-creator {
+  margin:
+    0 0 0.25rem;
+
+  color:
+    var(--flow-ink-light);
+
+  font-size: 0.68rem;
+}
+
+
+.flow-result-type {
+  width: fit-content;
+
+  margin: 0;
+
+  padding:
+    0.26rem 0.5rem;
+
+  border:
+    1px solid rgba(184, 192, 255, 0.2);
+
+  border-radius: 999px;
+
+  color: #b8c0ff;
+
+  font-size: 0.55rem;
+
+  font-weight: 850;
+
+  letter-spacing: 0.07em;
+
+  text-transform: uppercase;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(124, 140, 255, 0.16),
+      rgba(155, 124, 255, 0.1)
+    );
+}
+
+
+.flow-add-button {
+  min-width: 108px;
+  min-height: 36px;
+
+  padding:
+    0 0.75rem;
+
+  border:
+    1px solid rgba(184, 192, 255, 0.3);
+
+  border-radius: 8px;
+
+  color: #ffffff;
+
+  font:
+    850 0.68rem
+    var(--flow-font-body);
+
+  white-space: nowrap;
+
+  cursor: pointer;
+
+  background:
+    linear-gradient(
+      145deg,
+      #9b7cff,
+      #6d8bff 58%,
+      #5b5fe8
+    );
+
+  transition:
+    transform var(--flow-transition),
+    box-shadow var(--flow-transition);
+}
+
+
+.flow-add-button:hover {
+  transform:
+    translateY(-1px);
+
+  box-shadow:
+    0 0 18px rgba(124, 140, 255, 0.2);
+}
+
+
 .flow-add-button:active {
-  transform: translateY(0) scale(0.97);
+  transform:
+    scale(0.97);
 }
 
-/* Added state: disables the add button after saving. */
+
 .flow-add-button.is-added {
   pointer-events: none;
-  color: rgba(255, 255, 255, 0.78);
-  background: linear-gradient(145deg, rgba(116, 215, 255, 0.28), rgba(124, 140, 255, 0.22));
+
+  opacity: 0.72;
 }
 
-/* Added state icon: inserts the checkmark before text. */
+
 .flow-add-button.is-added::before {
   content: "✓ ";
 }
 
+
 /* =========================================================
-   STATUS PICKER
+   FILTER AND STATUS BUTTONS
    ========================================================= */
 
-/* Status picker: styles the status fieldset and disabled state. */
 .flow-status-picker {
-  margin: 0.84rem 0 0;
+  margin:
+    0.84rem 0 0;
+
   padding: 0;
+
   border: 0;
-
-  opacity: 0.46;
-  filter: saturate(0.82);
-  pointer-events: none;
-
-  transition:
-    opacity var(--flow-transition),
-    filter var(--flow-transition);
 }
 
-.flow-status-picker.is-active,
-.section-library-flow.has-result .flow-status-picker,
-/* .flow-search-card.has-result: section styling for this component/state. */
-.flow-search-card.has-result .flow-status-picker {
-  opacity: 1;
-  filter: saturate(1);
-  pointer-events: auto;
+
+.flow-status-picker[hidden] {
+  display: none !important;
 }
 
-/* Status disabled state: keeps disabled picker visually muted. */
-.flow-status-picker:disabled {
-  opacity: 0.46;
-}
 
-/* Status chip row: wraps and spaces the status chips. */
-.flow-status-options {
+.flow-status-options,
+.flow-library-filters,
+.flow-library-status-filters,
+.flow-sort-quick {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.48rem;
+  align-items: center;
+
+  gap: 0.46rem;
 }
 
-/* Status labels: makes each chip clickable. */
+
 .flow-status-options label {
   position: relative;
+
   cursor: pointer;
 }
 
-/* Hidden status radios: hides native radio inputs. */
+
 .flow-status-options input {
   position: absolute;
+
   opacity: 0;
+
   pointer-events: none;
 }
 
+
 .flow-status-options span,
 .flow-filter,
-/* .flow-status-filter: section styling for this component/state. */
-.flow-status-filter {
-  min-height: var(--flow-status-chip-height);
+.flow-status-filter,
+.flow-sort-button {
+  min-height: 30px;
+
+  padding:
+    0 0.7rem;
+
   display: inline-flex;
   align-items: center;
   justify-content: center;
 
-  padding: 0 0.7rem;
+  border:
+    1px solid rgba(184, 192, 255, 0.15);
+
   border-radius: 999px;
-  border: 1px solid rgba(184, 192, 255, 0.15);
 
-  color: var(--flow-ink-light);
-  font-family: var(--flow-font-body);
-  font-size: var(--flow-status-chip-font-size);
-  font-weight: 750;
+  color:
+    var(--flow-ink-light);
 
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.032));
+  font:
+    750 0.66rem
+    var(--flow-font-body);
 
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  cursor: pointer;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.05),
+      rgba(255, 255, 255, 0.032)
+    );
 
   transition:
-    background var(--flow-transition),
+    transform var(--flow-transition),
     color var(--flow-transition),
     border-color var(--flow-transition),
-    transform var(--flow-transition),
-    box-shadow var(--flow-transition);
+    background var(--flow-transition);
 }
+
 
 .flow-status-options span:hover,
 .flow-status-options input:checked + span,
 .flow-filter:hover,
 .flow-status-filter:hover,
+.flow-sort-button:hover,
 .flow-filter.active,
-/* .flow-status-filter.active: section styling for this component/state. */
-.flow-status-filter.active {
+.flow-status-filter.active,
+.flow-sort-button.active {
   color: #ffffff;
-  border-color: rgba(116, 215, 255, 0.38);
+
+  border-color:
+    rgba(116, 215, 255, 0.38);
 
   background:
-    radial-gradient(circle at 28% 16%, rgba(255, 255, 255, 0.14), transparent 30%),
-    linear-gradient(145deg, rgba(116, 215, 255, 0.18), rgba(124, 140, 255, 0.22), rgba(155, 124, 255, 0.16));
+    linear-gradient(
+      145deg,
+      rgba(116, 215, 255, 0.18),
+      rgba(124, 140, 255, 0.22),
+      rgba(155, 124, 255, 0.16)
+    );
 
-  box-shadow:
-    0 7px 14px rgba(0, 0, 0, 0.22),
-    0 0 16px rgba(124, 140, 255, 0.10),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
-
-  transform: translateY(-1px);
+  transform:
+    translateY(-1px);
 }
 
-.flow-status-options input:focus-visible + span,
-.flow-filter:focus-visible,
-.flow-status-filter:focus-visible,
-.flow-search-bar button:focus-visible,
-.flow-add-button:focus-visible,
-.flow-library-row-status select:focus-visible,
-/* .flow-cta: section styling for this component/state. */
-.flow-cta:focus-visible {
-  outline: 3px solid rgba(116, 215, 255, 0.28);
-  outline-offset: 3px;
-}
-
-/* Checked chip icon: adds the checkmark to selected status. */
-.flow-status-options input:checked + span::before {
-  content: "✓";
-  margin-right: 0.32rem;
-  color: var(--flow-cyan);
-  text-shadow: 0 0 10px rgba(116, 215, 255, 0.45);
-}
-
-/* Saved message: styles the confirmation message. */
-.flow-saved-message {
-  width: fit-content;
-  max-width: 100%;
-  margin-top: 0.7rem;
-  padding: 0.52rem 0.68rem;
-
-  display: inline-flex;
-  align-items: center;
-  gap: 0.42rem;
-
-  border-radius: 999px;
-  border: 1px solid rgba(116, 215, 255, 0.30);
-
-  color: #f5f7ff;
-  font-size: 0.68rem;
-  font-weight: 800;
-  line-height: 1.3;
-
-  background:
-    radial-gradient(circle at 12% 20%, rgba(255, 255, 255, 0.10), transparent 30%),
-    linear-gradient(135deg, rgba(116, 215, 255, 0.16), rgba(124, 140, 255, 0.10));
-
-  box-shadow:
-    0 10px 20px rgba(0, 0, 0, 0.20),
-    0 0 20px rgba(116, 215, 255, 0.10),
-    inset 0 1px 0 rgba(255, 255, 255, 0.07);
-
-  animation: flowSavedIn 0.4s ease both;
-}
-
-/* Saved hidden state: fully hides the saved message when hidden. */
-.flow-saved-message[hidden] {
-  display: none;
-}
-
-/* Saved icon: colors the confirmation icon. */
-.flow-saved-message i {
-  color: var(--flow-cyan);
-}
 
 /* =========================================================
-   BOTTOM — LIBRARY CARD
+   LIBRARY CARD
    ========================================================= */
 
-/* Library card: positions the bottom full-width preview card. */
 .flow-library-card {
   grid-area: library;
 
   width: 100%;
-  height: 100%;
-  min-height: 0;
 
-  align-self: end;
-  justify-self: stretch;
+  min-height: 470px;
 
-  border-radius: 20px;
+  align-self: stretch;
 }
 
-/* Library header: lays out title and saved count. */
+
 .flow-library-header {
-  min-height: var(--flow-library-header-height);
-  padding: 0.76rem 1rem;
+  min-height: 72px;
+
+  padding:
+    0.9rem 1rem;
 
   display: flex;
   align-items: center;
   justify-content: space-between;
+
   gap: 1rem;
 
-  border-bottom: 1px solid rgba(184, 192, 255, 0.13);
+  border-bottom:
+    1px solid rgba(184, 192, 255, 0.13);
 
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.018));
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.055),
+      rgba(255, 255, 255, 0.018)
+    );
 }
 
-/* Library eyebrow: styles small uppercase labels inside cards. */
-.flow-eyebrow {
-  display: block;
-  margin: 0 0 0.15rem;
 
-  color: var(--warm-brown-light, #b8c0ff);
-  font-size: 0.58rem;
-  font-weight: 850;
-  letter-spacing: 0.14em;
-  line-height: 1;
-  text-transform: uppercase;
+.flow-library-heading h3 {
+  margin:
+    0 0 0.18rem;
+
+  color:
+    var(--flow-ink);
+
+  font:
+    700
+    clamp(1.45rem, 1.8vw, 1.85rem)/1
+    var(--flow-font-display);
+
+  letter-spacing: -0.04em;
 }
 
-/* Library title: styles 'My Library'. */
-.flow-library-header h3 {
+
+.flow-library-heading p {
   margin: 0;
 
-  color: var(--flow-ink);
-  font-family: var(--flow-font-display);
-  font-size: clamp(1.22rem, 1.45vw, 1.5rem);
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: -0.035em;
+  color:
+    var(--flow-ink-light);
+
+  font-size: 0.7rem;
+
+  line-height: 1.35;
 }
 
-/* Saved count pill: styles the count badge. */
+
 .flow-library-count {
-  min-height: 30px;
-  padding: 0 0.78rem;
+  min-height: 32px;
+
+  padding:
+    0 0.82rem;
 
   display: inline-flex;
   align-items: center;
   justify-content: center;
 
-  border-radius: 999px;
-  border: 1px solid rgba(116, 215, 255, 0.24);
+  border:
+    1px solid rgba(116, 215, 255, 0.24);
 
-  color: var(--flow-ink);
-  font-size: 0.7rem;
+  border-radius: 999px;
+
+  color:
+    var(--flow-ink);
+
+  font-size: 0.72rem;
+
   font-weight: 850;
 
+  white-space: nowrap;
+
   background:
-    radial-gradient(circle at 22% 18%, rgba(255, 255, 255, 0.12), transparent 30%),
-    linear-gradient(135deg, rgba(116, 215, 255, 0.14), rgba(124, 140, 255, 0.10));
+    linear-gradient(
+      135deg,
+      rgba(116, 215, 255, 0.14),
+      rgba(124, 140, 255, 0.1)
+    );
 }
 
-/* Saved count number: highlights the numeric count. */
-.flow-library-count [data-library-count] {
-  color: var(--flow-cyan);
+
+.flow-library-count
+[data-library-count] {
   margin-right: 0.22rem;
+
+  color:
+    var(--flow-cyan);
 }
 
-/* Library body grid: lays out filters, notice, and list area. */
+
 .flow-library-body {
-  height: calc(100% - var(--flow-library-header-height));
+  height:
+    calc(100% - 72px);
+
   min-height: 0;
-  padding: var(--flow-library-body-padding);
+
+  padding:
+    0.78rem 1rem 1rem;
 
   display: grid;
-  grid-template-columns: var(--flow-library-grid-columns);
+
   grid-template-rows:
     auto
     auto
-    minmax(var(--flow-library-list-min-height), 1fr);
-  grid-template-areas:
-    "format notice"
-    "status notice"
-    "list   list";
+    auto
+    minmax(235px, 1fr);
 
-  align-items: center;
-  gap: 0.58rem 1rem;
+  gap: 0.62rem;
+
+  overflow: hidden;
 }
 
-.flow-library-filters,
-/* Status filters: places the status filter row. */
-.flow-library-status-filters {
+
+.flow-library-toolbar {
+  grid-row: 1;
+}
+
+
+.flow-library-status-row {
+  grid-row: 2;
+}
+
+
+.flow-library-list-header {
+  grid-row: 3;
+}
+
+
+.flow-library-empty,
+.flow-library-list {
+  grid-row: 4;
+}
+
+
+.flow-library-toolbar,
+.flow-library-status-row {
   min-width: 0;
 
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: 0.46rem;
+  justify-content: space-between;
+
+  gap: 1rem;
 }
 
-/* Format filters: places the format filter row. */
-.flow-library-filters {
-  grid-area: format;
-}
 
-/* Status filters: places the status filter row. */
+.flow-library-filters,
 .flow-library-status-filters {
-  grid-area: status;
+  min-width: 0;
 }
 
-.flow-filter,
-/* .flow-status-filter: section styling for this component/state. */
-.flow-status-filter {
+
+/* =========================================================
+   SORTING
+   ========================================================= */
+
+.flow-sort-controls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+
+  gap: 0.5rem;
+}
+
+
+.flow-sort-label {
+  color:
+    var(--flow-ink-faint);
+
+  font-size: 0.62rem;
+
+  font-weight: 800;
+
+  letter-spacing: 0.08em;
+
+  text-transform: uppercase;
+}
+
+
+.flow-sort-button {
+  min-height: 32px;
+
+  padding-inline: 0.75rem;
+}
+
+
+.flow-sort-specific select,
+.flow-library-row-status select {
+  color-scheme: dark;
+
+  color:
+    var(--flow-ink);
+
+  background-color: #111a33;
+
+  border:
+    1px solid rgba(116, 215, 255, 0.28);
+
+  outline: none;
+
   cursor: pointer;
+
+  font-family:
+    var(--flow-font-body);
+
+  font-weight: 750;
+
+  transition:
+    border-color var(--flow-transition),
+    box-shadow var(--flow-transition);
 }
 
-/* List header: hidden because this compact preview does not need columns. */
+
+.flow-sort-specific select {
+  min-height: 34px;
+
+  max-width: 230px;
+
+  padding:
+    0 2rem 0 0.72rem;
+
+  border-radius: 999px;
+
+  font-size: 0.66rem;
+}
+
+
+.flow-sort-specific select.is-active {
+  border-color:
+    rgba(116, 215, 255, 0.62);
+
+  box-shadow:
+    0 0 0 3px rgba(116, 215, 255, 0.12);
+}
+
+
+.flow-sort-specific select option,
+.flow-library-row-status select option {
+  color: #f5f7ff;
+
+  background: #111a33;
+}
+
+
+/* =========================================================
+   LIBRARY NOTICE
+   ========================================================= */
+
+.flow-library-save-notice {
+  max-width: 330px;
+
+  padding:
+    0.5rem 0.7rem;
+
+  display: inline-flex;
+  align-items: center;
+
+  gap: 0.38rem;
+
+  border:
+    1px solid rgba(184, 192, 255, 0.14);
+
+  border-radius: 999px;
+
+  color:
+    var(--flow-ink-light);
+
+  font-size: 0.64rem;
+
+  font-weight: 700;
+
+  line-height: 1.3;
+
+  white-space: nowrap;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.052),
+      rgba(255, 255, 255, 0.03)
+    );
+}
+
+
+.flow-library-save-notice i {
+  color:
+    var(--flow-cyan);
+}
+
+
+/* =========================================================
+   LIBRARY COLUMNS
+   ========================================================= */
+
+.flow-library-list-header,
+.flow-library-row {
+  display: grid;
+
+  grid-template-columns:
+    minmax(340px, 1fr)
+    minmax(170px, 230px)
+    minmax(150px, 175px)
+    minmax(100px, 115px);
+
+  align-items: center;
+
+  gap: 1rem;
+}
+
+
 .flow-library-list-header {
-  display: none;
+  min-height: 26px;
+
+  padding:
+    0 0.82rem;
+
+  color:
+    var(--flow-ink-faint);
+
+  font-size: 0.57rem;
+
+  font-weight: 850;
+
+  letter-spacing: 0.09em;
+
+  text-transform: uppercase;
 }
 
-/* Library empty state: styles the dashed empty list box. */
-.flow-library-empty {
-  grid-area: list;
 
-  min-height: 56px;
-  padding: 0.78rem 0.9rem;
+/* =========================================================
+   LIBRARY SCROLL AREA
+   ========================================================= */
+
+.flow-library-list {
+  min-height: 0;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  display: grid;
+  align-content: start;
+
+  gap: 0.52rem;
+
+  padding:
+    0 0.38rem 0.55rem 0;
+
+  scroll-padding-bottom: 0.55rem;
+
+  scrollbar-width: thin;
+
+  scrollbar-color:
+    rgba(116, 215, 255, 0.38)
+    rgba(255, 255, 255, 0.05);
+}
+
+
+.flow-library-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+
+.flow-library-list::-webkit-scrollbar-track {
+  background:
+    rgba(255, 255, 255, 0.05);
+
+  border-radius: 999px;
+}
+
+
+.flow-library-list::-webkit-scrollbar-thumb {
+  background:
+    rgba(116, 215, 255, 0.38);
+
+  border-radius: 999px;
+}
+
+
+/* =========================================================
+   EMPTY LIBRARY
+   ========================================================= */
+
+.flow-library-empty {
+  min-height: 70px;
+
+  padding: 0.9rem;
 
   display: flex;
   align-items: center;
 
-  border: 1px dashed rgba(184, 192, 255, 0.18);
+  border:
+    1px dashed rgba(184, 192, 255, 0.18);
+
   border-radius: 13px;
 
-  color: var(--flow-ink-faint);
+  color:
+    var(--flow-ink-faint);
+
   font-size: 0.76rem;
-  line-height: 1.35;
 
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.02));
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.035),
+      rgba(255, 255, 255, 0.02)
+    );
 }
 
-/* Library empty paragraph: removes default paragraph spacing. */
+
 .flow-library-empty p {
   margin: 0;
 }
 
-.section-library-flow.has-library-item .flow-library-empty,
-/* .flow-library-card.has-library-item: section styling for this component/state. */
-.flow-library-card.has-library-item .flow-library-empty {
-  display: none;
+
+.flow-library-empty[hidden],
+.section-library-flow.has-library-item
+.flow-library-empty {
+  display: none !important;
 }
 
-/* Library list: contains generated library rows and scrolls if needed. */
-.flow-library-list {
-  grid-area: list;
-  min-height: 0;
 
-  display: grid;
-  gap: 0.48rem;
+/* =========================================================
+   LIBRARY ROW
+   ========================================================= */
 
-  overflow: auto;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(184, 192, 255, 0.28) transparent;
-}
-
-/* Library row: lays out one saved story row. */
 .flow-library-row {
-  min-height: 58px;
-  padding: 0.56rem 0.72rem;
+  min-height: 74px;
 
-  display: grid;
-  grid-template-columns: minmax(210px, 1.35fr) minmax(78px, 0.42fr) minmax(110px, 0.58fr) minmax(44px, 0.2fr);
-  grid-template-areas: "story format status rating";
-  align-items: center;
-  gap: 0.72rem;
+  padding:
+    0.55rem 0.82rem;
+
+  border:
+    1px solid rgba(184, 192, 255, 0.2);
 
   border-radius: 14px;
-  border: 1px solid rgba(184, 192, 255, 0.20);
 
   background:
-    radial-gradient(circle at 8% 10%, rgba(255, 255, 255, 0.066), transparent 28%),
-    linear-gradient(135deg, rgba(124, 140, 255, 0.10), rgba(255, 255, 255, 0.034) 48%, rgba(116, 215, 255, 0.05));
+    linear-gradient(
+      135deg,
+      rgba(124, 140, 255, 0.1),
+      rgba(255, 255, 255, 0.034) 48%,
+      rgba(116, 215, 255, 0.05)
+    );
 
   box-shadow:
     0 10px 20px rgba(0, 0, 0, 0.18),
     inset 0 1px 0 rgba(255, 255, 255, 0.05);
 
-  animation: flowRowIn 0.45s ease both;
+  animation:
+    flowRowIn 0.4s ease both;
 }
 
-/* Library cover: sizes the small cover thumbnail. */
+
+.flow-library-story-cell {
+  min-width: 0;
+
+  display: grid;
+
+  grid-template-columns:
+    42px minmax(0, 1fr);
+
+  align-items: center;
+
+  gap: 0.75rem;
+}
+
+
 .flow-library-row-cover {
-  grid-area: story;
-  width: 38px;
+  width: 42px;
+
   aspect-ratio: 2 / 3;
+
   overflow: hidden;
 
-  border-radius: 7px;
+  border-radius: 8px;
 
   background:
-    linear-gradient(145deg, rgba(124, 140, 255, 0.38), rgba(210, 140, 255, 0.24));
-
-  box-shadow:
-    0 7px 14px rgba(0, 0, 0, 0.26),
-    0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+    linear-gradient(
+      145deg,
+      rgba(124, 140, 255, 0.38),
+      rgba(210, 140, 255, 0.24)
+    );
 }
 
-/* Library row text: positions title and creator beside the cover. */
+
 .flow-library-row-info {
-  grid-area: story;
   min-width: 0;
-  padding-left: 50px;
 }
 
-/* Library row title: styles and truncates the story title. */
-.flow-library-row-info h4 {
-  margin: 0 0 0.1rem;
 
-  color: var(--flow-ink);
-  font-family: var(--flow-font-display);
-  font-size: 0.98rem;
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: -0.035em;
+.flow-library-row-info h4,
+.flow-library-row-info p {
+  max-width: 100%;
 
   white-space: nowrap;
+
   overflow: hidden;
+
   text-overflow: ellipsis;
 }
 
-/* Library row creator: styles and truncates the creator line. */
+
+.flow-library-row-info h4 {
+  margin:
+    0 0 0.16rem;
+
+  color:
+    var(--flow-ink);
+
+  font:
+    700 1rem/1.08
+    var(--flow-font-display);
+
+  letter-spacing: -0.03em;
+}
+
+
 .flow-library-row-info p {
   margin: 0;
 
-  color: var(--flow-ink-light);
-  font-size: 0.66rem;
-  line-height: 1.2;
+  color:
+    var(--flow-ink-light);
 
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-size: 0.67rem;
 }
 
-/* Library format cell: positions the format pill. */
+
+/* =========================================================
+   FORMAT BADGES
+   ========================================================= */
+
 .flow-library-row-format {
-  grid-area: format;
+  min-width: 0;
+
+  display: flex;
+  align-items: center;
+
+  gap: 0.32rem;
+
+  overflow: hidden;
 }
 
-/* Library status cell: positions the status dropdown. */
-.flow-library-row-status {
-  grid-area: status;
-}
 
-/* Library rating cell: positions the score placeholder. */
-.flow-library-row-rating {
-  grid-area: rating;
-  justify-self: end;
-}
-
-.flow-library-row-format span,
-/* .flow-library-row-rating: section styling for this component/state. */
-.flow-library-row-rating span {
+.flow-format-badge,
+.flow-format-more {
   min-height: 24px;
-  padding: 0 0.5rem;
+
+  padding:
+    0 0.48rem;
 
   display: inline-flex;
   align-items: center;
   justify-content: center;
 
-  border-radius: 999px;
-  border: 1px solid rgba(184, 192, 255, 0.18);
+  border:
+    1px solid rgba(184, 192, 255, 0.18);
 
-  color: var(--warm-brown-light, #b8c0ff);
-  font-size: 0.55rem;
+  border-radius: 999px;
+
+  color: #c4cbff;
+
+  font-size: 0.53rem;
+
   font-weight: 850;
-  letter-spacing: 0.08em;
+
+  letter-spacing: 0.055em;
+
   text-transform: uppercase;
 
+  white-space: nowrap;
+
   background:
-    linear-gradient(180deg, rgba(124, 140, 255, 0.16), rgba(155, 124, 255, 0.10));
+    linear-gradient(
+      180deg,
+      rgba(124, 140, 255, 0.16),
+      rgba(155, 124, 255, 0.1)
+    );
 }
 
-/* Status dropdown: styles the row status select. */
+
+.flow-format-more {
+  flex:
+    0 0 auto;
+
+  color:
+    var(--flow-cyan);
+}
+
+
+/* =========================================================
+   STATUS DROPDOWN
+   ========================================================= */
+
 .flow-library-row-status select {
   width: 100%;
-  max-width: 118px;
-  min-height: 26px;
-  padding: 0 1.6rem 0 0.56rem;
+
+  min-height: 36px;
+
+  padding:
+    0 2rem 0 0.72rem;
 
   border-radius: 999px;
-  border: 1px solid rgba(116, 215, 255, 0.25);
 
-  color: var(--flow-ink);
-  font-family: var(--flow-font-body);
-  font-size: 0.6rem;
-  font-weight: 750;
-
-  background:
-    linear-gradient(180deg, rgba(116, 215, 255, 0.12), rgba(124, 140, 255, 0.08));
-
-  outline: none;
-  cursor: pointer;
-}
-
-/* Save notice: styles the account reminder pill. */
-.flow-library-save-notice {
-  grid-area: notice;
-  justify-self: end;
-  align-self: center;
-
-  width: fit-content;
-  max-width: 330px;
-  margin: 0;
-  padding: 0.52rem 0.72rem;
-
-  display: inline-flex;
-  align-items: center;
-  gap: 0.38rem;
-
-  border-radius: 999px;
-  border: 1px solid rgba(184, 192, 255, 0.14);
-
-  color: var(--flow-ink-light);
-  font-size: 0.66rem;
-  font-weight: 700;
-  line-height: 1.35;
-
-  background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.052), rgba(255, 255, 255, 0.03));
-}
-
-/* Save notice icon: colors the lock icon. */
-.flow-library-save-notice i {
-  color: var(--flow-cyan);
-  text-shadow: 0 0 10px rgba(116, 215, 255, 0.44);
-}
-
-/* =========================================================
-   ANIMATIONS
-   ========================================================= */
-
-/* Animation: fades and slides in a search result. */
-@keyframes flowResultIn {
-/* Animation step: defines the from state. */
-  /* Animation start state. */
-  from {
-    opacity: 0;
-    transform: translateY(10px) scale(0.99);
-  }
-
-/* Animation step: defines the to state. */
-  /* Animation end state. */
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-/* Animation: fades and slides in the saved confirmation. */
-@keyframes flowSavedIn {
-/* Animation step: defines the from state. */
-  /* Animation start state. */
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-
-/* Animation step: defines the to state. */
-  /* Animation end state. */
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Animation: fades and slides in a library row. */
-@keyframes flowRowIn {
-/* Animation step: defines the from state. */
-  /* Animation start state. */
-  from {
-    opacity: 0;
-    transform: translateY(8px) scale(0.99);
-  }
-
-/* Animation step: defines the to state. */
-  /* Animation end state. */
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-/* =========================================================
-   RESPONSIVE VARIABLES
-   Component selectors above stay clean; breakpoints mostly
-   change variables instead of redefining the same element.
-   ========================================================= */
-
-/* Large desktop breakpoint: gives the top and library rows more breathing room. */
-@media (min-width: 981px) and (min-height: 860px) {
-/* Main section wrapper: sets tokens, viewport height, padding, text color, and background. */
-  .section-library-flow {
-    --flow-grid-top-row: minmax(380px, 1fr);
-    --flow-grid-library-row: clamp(240px, 29vh, 300px);
-    --flow-search-card-min-height: 315px;
-  }
-}
-
-/* Medium desktop breakpoint: slightly narrows layout variables. */
-@media (min-width: 981px) and (max-width: 1320px) {
-/* Main section wrapper: sets tokens, viewport height, padding, text color, and background. */
-  .section-library-flow {
-    --flow-grid-width: 1240px;
-    --flow-grid-left-col: minmax(455px, 0.94fr);
-    --flow-grid-right-col: minmax(500px, 1.06fr);
-    --flow-grid-column-gap: clamp(2.75rem, 5vw, 4.8rem);
-
-    --flow-copy-max-width: 570px;
-    --flow-title-max-width: 570px;
-    --flow-title-size: clamp(3rem, 4.7vw, 4.65rem);
-
-    --flow-search-card-width: 560px;
-  }
-}
-
-/* Short laptop breakpoint: compresses vertical sizes so the section fits. */
-@media (min-width: 981px) and (max-height: 760px) {
-/* Main section wrapper: sets tokens, viewport height, padding, text color, and background. */
-  .section-library-flow {
-    --flow-section-padding:
-      clamp(1.05rem, 3vh, 1.8rem)
-      clamp(1.75rem, 4vw, 4.5rem)
-      clamp(0.65rem, 1.6vh, 1rem);
-
-    --flow-grid-width: 1440px;
-    --flow-grid-top-row: minmax(250px, 1fr);
-    --flow-grid-library-row: clamp(180px, 27vh, 225px);
-    --flow-grid-row-gap: clamp(0.72rem, 1.6vh, 1rem);
-
-    --flow-copy-max-width: 600px;
-    --flow-title-max-width: 600px;
-    --flow-title-size: clamp(2.75rem, 4.55vw, 4.15rem);
-    --flow-title-margin-bottom: 0.82rem;
-    --flow-copy-text-max-width: 490px;
-    --flow-copy-text-size: 0.82rem;
-    --flow-copy-text-line-height: 1.58;
-    --flow-copy-text-margin-bottom: 0.92rem;
-    --flow-cta-height: 36px;
-
-    --flow-search-card-width: 540px;
-    --flow-search-card-min-height: 238px;
-    --flow-search-header-height: 36px;
-    --flow-search-header-padding: 0.72rem 0.9rem 0;
-    --flow-search-body-padding: 0.68rem 0.9rem 0.88rem;
-    --flow-search-bar-height: 44px;
-    --flow-status-chip-height: 26px;
-    --flow-status-chip-font-size: 0.58rem;
-
-    --flow-library-header-height: 46px;
-    --flow-library-body-padding: 0.6rem 0.88rem 0.72rem;
-    --flow-library-list-min-height: 42px;
-  }
-}
-
-/* Very short viewport breakpoint: hides notice and compresses the card further. */
-@media (min-width: 981px) and (max-height: 610px) {
-/* Main section wrapper: sets tokens, viewport height, padding, text color, and background. */
-  .section-library-flow {
-    --flow-grid-top-row: minmax(210px, 1fr);
-    --flow-grid-library-row: 164px;
-
-    --flow-title-size: clamp(2.45rem, 4.1vw, 3.45rem);
-    --flow-copy-text-size: 0.74rem;
-    --flow-copy-text-line-height: 1.48;
-
-    --flow-search-card-width: 510px;
-    --flow-search-card-min-height: 198px;
-    --flow-search-bar-height: 38px;
-    --flow-search-label-size: 0.56rem;
-  }
-
-/* Save notice: styles the account reminder pill. */
-  .flow-library-save-notice {
-    display: none;
-  }
-
-/* Library body grid: lays out filters, notice, and list area. */
-  .flow-library-body {
-    grid-template-columns: 1fr;
-    grid-template-areas:
-      "format"
-      "status"
-      "list";
-  }
-}
-
-/* Narrow desktop breakpoint: adjusts grid columns and search card width. */
-@media (max-width: 1080px) and (min-width: 981px) {
-/* Main section wrapper: sets tokens, viewport height, padding, text color, and background. */
-  .section-library-flow {
-    --flow-grid-width: 1060px;
-    --flow-grid-left-col: minmax(290px, 0.9fr);
-    --flow-grid-right-col: minmax(360px, 1.1fr);
-    --flow-grid-column-gap: clamp(2rem, 6vw, 5rem);
-    --flow-search-card-width: 520px;
-  }
-}
-
-/* Tablet breakpoint: stacks copy, search, and library vertically. */
-@media (max-width: 980px) {
-/* Main section wrapper: sets tokens, viewport height, padding, text color, and background. */
-  .section-library-flow {
-    --flow-section-padding: 5.2rem 6% 4rem;
-    --flow-title-size: clamp(3rem, 10vw, 4.5rem);
-    --flow-search-card-width: 560px;
-    --flow-search-card-min-height: auto;
-    --flow-library-header-height: auto;
-
-    height: auto;
-    min-height: 100svh;
-    overflow: visible;
-  }
-
-/* Main layout grid: places copy left, search card right, and library at the bottom. */
-  .flow-grid {
-    height: auto;
-
-    grid-template-columns: 1fr;
-    grid-template-rows: auto;
-    grid-template-areas:
-      "copy"
-      "search"
-      "library";
-
-    gap: 1rem;
-  }
-
-/* Left copy block: positions the headline, paragraph, and CTA. */
-  .flow-copy-card {
-    max-width: 680px;
-  }
-
-/* Intro paragraph: controls readable width, color, and spacing. */
-  .flow-copy-card p {
-    max-width: 600px;
-  }
-
-  .flow-search-card,
-/* Library card: positions the bottom full-width preview card. */
-  .flow-library-card {
-    width: 100%;
-    height: auto;
-    min-height: auto;
-    justify-self: stretch;
-  }
-
-/* Right search card: controls card width, height, and position. */
-  .flow-search-card {
-    max-width: var(--flow-search-card-width);
-  }
-
-/* Library body grid: lays out filters, notice, and list area. */
-  .flow-library-body {
-    height: auto;
-
-    grid-template-columns: 1fr;
-    grid-template-rows: auto;
-    grid-template-areas:
-      "format"
-      "status"
-      "notice"
-      "list";
-  }
-
-/* Save notice: styles the account reminder pill. */
-  .flow-library-save-notice {
-    justify-self: start;
-  }
-}
-
-/* Mobile breakpoint: improves tap sizes and changes library rows to card layout. */
-@media (max-width: 680px) {
-/* Main section wrapper: sets tokens, viewport height, padding, text color, and background. */
-  .section-library-flow {
-    --flow-section-padding: 4.8rem 1rem 3.6rem;
-    --flow-title-size: clamp(2.68rem, 12.8vw, 4rem);
-    --flow-title-line-height: 0.92;
-    --flow-copy-text-size: 0.92rem;
-    --flow-search-bar-height: 48px;
-    --flow-status-chip-height: 36px;
-    --flow-status-chip-font-size: 0.72rem;
-    --flow-library-body-padding: 0.92rem;
-  }
-
-  .flow-search-card,
-/* Library card: positions the bottom full-width preview card. */
-  .flow-library-card {
-    border-radius: 18px;
-  }
-
-/* Search card top bar: holds the three dots and separator line. */
-  .flow-card-header {
-    min-height: 34px;
-  }
-
-/* Search result card: lays out cover, info, and add button. */
-  .flow-result-card {
-    grid-template-columns: 58px minmax(0, 1fr);
-    gap: 0.72rem;
-  }
-
-/* Result cover: sizes and frames the story cover image. */
-  .flow-result-cover {
-    width: 58px;
-  }
-
-/* Add button: styles the button inside the result card. */
-  .flow-add-button {
-    grid-column: 1 / -1;
-    width: 100%;
-    min-height: 42px;
-  }
-
-  .flow-status-options,
-  .flow-library-filters,
-/* Status filters: places the status filter row. */
-  .flow-library-status-filters {
-    gap: 0.42rem;
-  }
-
-/* Library header: lays out title and saved count. */
-  .flow-library-header {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
-  .flow-saved-message,
-/* Save notice: styles the account reminder pill. */
-  .flow-library-save-notice {
-    width: 100%;
-    justify-content: center;
-    border-radius: 14px;
-  }
-
-/* Library row: lays out one saved story row. */
-  .flow-library-row {
-    grid-template-columns: 50px minmax(0, 1fr);
-    grid-template-areas:
-      "cover info"
-      "format status"
-      "rating rating";
-    gap: 0.65rem;
-    min-height: auto;
-    padding: 0.78rem;
-  }
-
-/* Library cover: sizes the small cover thumbnail. */
-  .flow-library-row-cover {
-    grid-area: cover;
-    width: 50px;
-    border-radius: 10px;
-  }
-
-/* Library row text: positions title and creator beside the cover. */
-  .flow-library-row-info {
-    grid-area: info;
-    padding-left: 0;
-  }
-
-/* Library row title: styles and truncates the story title. */
-  .flow-library-row-info h4 {
-    font-size: 1.16rem;
-  }
-
-/* Library row creator: styles and truncates the creator line. */
-  .flow-library-row-info p {
-    font-size: 0.74rem;
-  }
-
-/* Library format cell: positions the format pill. */
-  .flow-library-row-format {
-    grid-area: format;
-  }
-
-/* Library status cell: positions the status dropdown. */
-  .flow-library-row-status {
-    grid-area: status;
-  }
-
-/* Status dropdown: styles the row status select. */
-  .flow-library-row-status select {
-    max-width: none;
-    min-height: 34px;
-    font-size: 0.72rem;
-  }
-
-/* Library rating cell: positions the score placeholder. */
-  .flow-library-row-rating {
-    grid-area: rating;
-    justify-self: start;
-  }
-}
-
-/* Small mobile breakpoint: tightens spacing and thumbnail sizes. */
-@media (max-width: 420px) {
-/* Main section wrapper: sets tokens, viewport height, padding, text color, and background. */
-  .section-library-flow {
-    --flow-section-padding: 4.8rem 0.85rem 3.6rem;
-    --flow-title-size: clamp(2.42rem, 14vw, 3.35rem);
-    --flow-search-dot-size: 6px;
-  }
-
-/* Search result card: lays out cover, info, and add button. */
-  .flow-result-card {
-    grid-template-columns: 54px minmax(0, 1fr);
-  }
-
-/* Result cover: sizes and frames the story cover image. */
-  .flow-result-cover {
-    width: 54px;
-  }
-
-/* Library row: lays out one saved story row. */
-  .flow-library-row {
-    grid-template-columns: 46px minmax(0, 1fr);
-  }
-
-/* Library cover: sizes the small cover thumbnail. */
-  .flow-library-row-cover {
-    width: 46px;
-  }
-}
-
-/* =========================================================
-   REDUCED MOTION
-   ========================================================= */
-
-/* Reduced motion: removes animations and movement for users who request it. */
-@media (prefers-reduced-motion: reduce) {
-  .flow-result-card,
-  .flow-saved-message,
-/* Library row: lays out one saved story row. */
-  .flow-library-row {
-    animation: none;
-  }
-
-  .flow-cta::after,
-  .flow-add-button,
-  .flow-search-bar,
-  .flow-search-bar button,
-  .flow-status-options span,
-  .flow-filter,
-/* .flow-status-filter: section styling for this component/state. */
-  .flow-status-filter {
-    transition: none;
-  }
-
-  .flow-filter:hover,
-  .flow-status-filter:hover,
-  .flow-status-options span:hover,
-  .flow-status-options input:checked + span,
-/* Add button hover: gives lift and brighter gradient. */
-  .flow-add-button:hover {
-    transform: none;
-  }
+  font-size: 0.68rem;
 }
 
 
-
-
-/* =========================================================
-   SECTION 3 UX FIX PATCH
-   Paste this at the very bottom of your Section 3 CSS.
-   Fixes:
-   - search suggestions styling
-   - broken cover fallback display
-   - cleaner status picker behavior
-   - taller bottom library
-   - scrollable library rows
-   - row overlap
-   - readable dropdown colors
-   ========================================================= */
-
-/* Search suggestions under the search bar. */
-.flow-suggestions {
-  margin-top: 0.7rem;
-  display: grid;
-  gap: 0.45rem;
-}
-
-/* Hide suggestions when there are no results. */
-.flow-suggestions[hidden] {
-  display: none !important;
-}
-
-/* One small clickable search suggestion. */
-.flow-suggestion {
-  width: 100%;
-  min-height: 52px;
-  padding: 0.48rem;
-
-  display: grid;
-  grid-template-columns: 34px minmax(0, 1fr);
-  align-items: center;
-  gap: 0.62rem;
-
-  border: 1px solid rgba(184, 192, 255, 0.16);
-  border-radius: 12px;
-
-  color: var(--flow-ink, #f5f7ff);
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-
-  background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.052), rgba(255, 255, 255, 0.025)),
-    rgba(255, 255, 255, 0.02);
-
-  transition:
-    transform var(--flow-transition, 0.25s ease),
-    border-color var(--flow-transition, 0.25s ease),
-    background var(--flow-transition, 0.25s ease);
-}
-
-/* Suggestion hover/focus state. */
-.flow-suggestion:hover,
-.flow-suggestion:focus-visible {
-  transform: translateY(-1px);
-  border-color: rgba(116, 215, 255, 0.32);
-
-  background:
-    linear-gradient(135deg, rgba(116, 215, 255, 0.10), rgba(124, 140, 255, 0.08)),
-    rgba(255, 255, 255, 0.03);
-
-  outline: none;
-}
-
-/* Keyboard focus ring for suggestions. */
-.flow-suggestion:focus-visible {
-  box-shadow: 0 0 0 3px rgba(116, 215, 255, 0.16);
-}
-
-/* Small cover holder in suggestion rows. */
-.flow-suggestion-cover {
-  width: 34px;
-  aspect-ratio: 2 / 3;
-  overflow: hidden;
-
-  border-radius: 7px;
-
-  background:
-    linear-gradient(145deg, rgba(124, 140, 255, 0.35), rgba(210, 140, 255, 0.22));
+.flow-library-row-status select:hover,
+.flow-library-row-status select:focus,
+.flow-sort-specific select:hover,
+.flow-sort-specific select:focus {
+  border-color:
+    rgba(116, 215, 255, 0.62);
 
   box-shadow:
-    0 7px 14px rgba(0, 0, 0, 0.24),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+    0 0 0 3px rgba(116, 215, 255, 0.12);
 }
 
-/* Suggestion image sizing. */
-.flow-suggestion-cover img {
+
+/* =========================================================
+   MANUAL PERSONAL RATING
+   ========================================================= */
+
+.flow-library-row-rating {
+  justify-self: stretch;
+}
+
+
+.flow-library-row-rating label {
   width: 100%;
-  height: 100%;
-  display: block;
-  object-fit: cover;
-}
 
-/* Suggestion text column. */
-.flow-suggestion-info {
-  min-width: 0;
-  display: grid;
-  gap: 0.12rem;
-}
+  min-height: 38px;
 
-/* Suggestion title. */
-.flow-suggestion-info strong {
-  color: var(--flow-ink, #f5f7ff);
-  font-family: var(--flow-font-display, Georgia, serif);
-  font-size: 0.92rem;
-  line-height: 1;
-  letter-spacing: -0.025em;
+  padding:
+    0 0.58rem;
 
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-/* Suggestion meta text. */
-.flow-suggestion-info small {
-  color: var(--flow-ink-light, #9ca8c4);
-  font-size: 0.62rem;
-  line-height: 1.25;
+  gap: 0.28rem;
 
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
+  border:
+    1px solid rgba(116, 215, 255, 0.28);
 
-/* Hide broken image elements cleanly after JS fallback fails. */
-.flow-result-cover img[hidden],
-.flow-library-row-cover img[hidden],
-.flow-suggestion-cover img[hidden] {
-  display: none !important;
-}
+  border-radius: 12px;
 
-/* Status picker is hidden until a result is selected. */
-.flow-status-picker[hidden] {
-  display: none !important;
-}
-
-/* Status picker is fully clickable once shown. */
-.flow-status-picker.is-active {
-  opacity: 1;
-  filter: saturate(1);
-  pointer-events: auto;
-}
-
-/* The selected result should have enough room. */
-.flow-result-card {
-  grid-template-columns: 58px minmax(0, 1fr) auto;
-  gap: 0.82rem;
-}
-
-/* Keep result text from colliding with Add button. */
-.flow-result-info {
-  min-width: 0;
-  overflow: hidden;
-}
-
-/* Prevent title and creator overflow. */
-.flow-result-info h4,
-.flow-result-creator {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* Make Add button more readable. */
-.flow-add-button {
-  white-space: nowrap;
-  min-width: 108px;
-}
-
-/* Desktop library layout fixes. */
-@media (min-width: 981px) {
-  /* Make bottom library area taller. */
-  .section-library-flow {
-    --flow-grid-library-row: clamp(300px, 36vh, 390px);
-  }
-
-  /* Keep the library card contained. */
-  .flow-library-card {
-    min-height: 300px;
-    overflow: hidden;
-  }
-
-  /* Make filters and list use separate rows, not overlap. */
-  .flow-library-body {
-    height: calc(100% - var(--flow-library-header-height, 52px));
-    min-height: 0;
-
-    align-items: start;
-
-    grid-template-columns: minmax(0, 1fr) minmax(280px, 380px);
-    grid-template-rows:
-      auto
-      auto
-      minmax(145px, 1fr);
-
-    grid-template-areas:
-      "format notice"
-      "status notice"
-      "list   list";
-
-    gap: 0.72rem 1rem;
-
-    overflow: hidden;
-  }
-
-  /* Keep filter chips above the row list. */
-  .flow-library-filters,
-  .flow-library-status-filters,
-  .flow-library-save-notice {
-    position: relative;
-    z-index: 2;
-  }
-
-  /* Real scroll area for library rows. */
-  .flow-library-list {
-    grid-area: list;
-
-    min-height: 0;
-    max-height: 100%;
-    overflow-y: auto;
-    overflow-x: hidden;
-
-    padding-right: 0.35rem;
-
-    align-content: start;
-    position: relative;
-    z-index: 1;
-
-    scrollbar-width: thin;
-    scrollbar-color: rgba(116, 215, 255, 0.38) rgba(255, 255, 255, 0.05);
-  }
-
-  /* Scrollbar for Chrome/Edge/Safari. */
-  .flow-library-list::-webkit-scrollbar {
-    width: 8px;
-  }
-
-  .flow-library-list::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 999px;
-  }
-
-  .flow-library-list::-webkit-scrollbar-thumb {
-    background: rgba(116, 215, 255, 0.38);
-    border-radius: 999px;
-  }
-
-  /* Fix row columns so title does not go behind buttons. */
-  .flow-library-row {
-    min-height: 66px;
-
-    grid-template-columns:
-      minmax(360px, 1.35fr)
-      minmax(120px, 0.36fr)
-      minmax(160px, 0.48fr)
-      minmax(58px, 0.18fr);
-
-    gap: 0.85rem;
-
-    overflow: visible;
-  }
-
-  /* Give title text room beside cover. */
-  .flow-library-row-info {
-    min-width: 0;
-    padding-left: 54px;
-    overflow: hidden;
-  }
-
-  /* Prevent title text from overlapping controls. */
-  .flow-library-row-info h4,
-  .flow-library-row-info p {
-    max-width: 100%;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  /* Keep format pill centered in its own column. */
-  .flow-library-row-format {
-    justify-self: start;
-    min-width: 0;
-  }
-
-  /* Keep dropdown in its own column. */
-  .flow-library-row-status {
-    justify-self: stretch;
-    min-width: 150px;
-  }
-
-  /* Keep rating/score at the end. */
-  .flow-library-row-rating {
-    justify-self: end;
-  }
-}
-
-/* Dark readable dropdown. */
-.flow-library-row-status select {
-  width: 100%;
-  max-width: 160px;
-  min-height: 34px;
-
-  color-scheme: dark;
-
-  color: #f5f7ff;
-  background-color: #111a33;
-
-  border: 1px solid rgba(116, 215, 255, 0.34);
-  border-radius: 999px;
-
-  font-family: var(--flow-font-body, Inter, system-ui, sans-serif);
-  font-size: 0.68rem;
-  font-weight: 800;
-
-  cursor: pointer;
-}
-
-/* Dropdown options need their own colors or they can become white-on-white. */
-.flow-library-row-status select option {
-  color: #f5f7ff;
-  background-color: #111a33;
-}
-
-/* Hover/focus for dropdown. */
-.flow-library-row-status select:hover,
-.flow-library-row-status select:focus {
-  border-color: rgba(116, 215, 255, 0.62);
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(116, 215, 255, 0.14);
-}
-
-/* Tablet/mobile library rows should stack cleanly. */
-@media (max-width: 980px) {
-  .flow-library-card {
-    min-height: auto;
-  }
-
-  .flow-library-body {
-    overflow: visible;
-  }
-
-  .flow-library-list {
-    max-height: 360px;
-    overflow-y: auto;
-    padding-right: 0.25rem;
-  }
-}
-
-/* Mobile row layout. */
-@media (max-width: 680px) {
-  .flow-library-row {
-    grid-template-columns: 52px minmax(0, 1fr);
-    grid-template-areas:
-      "cover info"
-      "format status"
-      "rating rating";
-
-    gap: 0.68rem;
-  }
-
-  .flow-library-row-cover {
-    grid-area: cover;
-  }
-
-  .flow-library-row-info {
-    grid-area: info;
-    padding-left: 0;
-  }
-
-  .flow-library-row-format {
-    grid-area: format;
-  }
-
-  .flow-library-row-status {
-    grid-area: status;
-    min-width: 0;
-  }
-
-  .flow-library-row-status select {
-    max-width: none;
-  }
-
-  .flow-library-row-rating {
-    grid-area: rating;
-    justify-self: start;
-  }
-}
-
-/* =========================================================
-   FINAL LAYOUT + SCROLL REVEAL OVERRIDES
-
-   Final adjustments:
-   - extends the complete section background
-   - adds more background above and below the content
-   - prevents the next section from appearing too early
-   - keeps the library close to the upper content
-   - keeps the content slightly above center
-   - preserves the scroll-reveal animation
-   ========================================================= */
-
-
-/* =========================================================
-   DESKTOP LAYOUT
-   ========================================================= */
-
-@media (min-width: 981px) {
-  .section-library-flow {
-    /*
-      More background above the heading and below the library.
-    */
-    --flow-section-padding:
-      clamp(2.75rem, 5vh, 4.5rem)
-      clamp(1.75rem, 4.25vw, 4.75rem)
-      clamp(3.25rem, 6vh, 5rem);
-
-    /*
-      Keep the upper content and library close together.
-      The extra section height becomes background space rather
-      than a large gap between the cards.
-    */
-    --flow-grid-top-row:
-      clamp(310px, 43vh, 420px);
-
-    --flow-grid-library-row:
-      clamp(250px, 30vh, 300px);
-
-    --flow-grid-row-gap:
-      clamp(0.55rem, 1.15vh, 0.85rem);
-
-    /*
-      Increase the overall section height.
-
-      It was previously 100svh. It is now 112svh, so the next
-      section background does not appear too quickly.
-    */
-    height: auto;
-    min-height:
-      calc(112svh - var(--nav-height));
-
-    /*
-      This makes it possible to vertically center the main grid
-      while allowing the section to grow when content requires it.
-    */
-    display: grid;
-    align-items: center;
-
-    overflow: hidden;
-
-    /*
-      Provides a solid fallback behind the gradients and removes
-      tiny one-pixel seams between neighboring sections.
-    */
-    background-color: var(--flow-bg-0);
-    margin-block: -1px;
-  }
-
-  .section-library-flow .flow-grid {
-    /*
-      Do not stretch the grid to the full section height.
-      This keeps the text, search card, and library together.
-    */
-    height: auto;
-
-    /*
-      Move the entire content group slightly upward while keeping
-      extra background space above and below.
-    */
-    transform: translateY(-12px);
-  }
-
-  .flow-copy-card,
-  .flow-search-card {
-    position: relative;
-    top: -4px;
-  }
-
-  .flow-library-card {
-    position: relative;
-    top: -2px;
-
-    min-height: 0;
-  }
-}
-
-
-/* =========================================================
-   SHORT LAPTOPS
-   ========================================================= */
-
-@media (min-width: 981px) and (max-height: 760px) {
-  .section-library-flow {
-    /*
-      Keep additional background space while making the content
-      compact enough for shorter laptop screens.
-    */
-    --flow-section-padding:
-      clamp(1.4rem, 3.2vh, 2rem)
-      clamp(1.5rem, 4vw, 4.25rem)
-      clamp(2rem, 4vh, 2.8rem);
-
-    --flow-grid-top-row:
-      clamp(250px, 42vh, 320px);
-
-    --flow-grid-library-row:
-      clamp(190px, 28vh, 225px);
-
-    --flow-grid-row-gap: 0.55rem;
-
-    min-height:
-      calc(110svh - var(--nav-height));
-  }
-
-  .section-library-flow .flow-grid {
-    transform: translateY(-7px);
-  }
-
-  .flow-copy-card,
-  .flow-search-card {
-    top: -2px;
-  }
-
-  .flow-library-card {
-    top: 0;
-  }
-}
-
-
-/* =========================================================
-   EXTREMELY SHORT DESKTOP WINDOWS
-   ========================================================= */
-
-@media (min-width: 981px) and (max-height: 620px) {
-  .section-library-flow {
-    /*
-      Allow the section to grow naturally instead of clipping
-      its content on extremely short browser windows.
-    */
-    display: block;
-
-    height: auto;
-    min-height:
-      calc(112svh - var(--nav-height));
-
-    overflow: visible;
-
-    --flow-section-padding:
-      1.5rem
-      clamp(1.5rem, 4vw, 4rem)
-      2.5rem;
-  }
-
-  .section-library-flow .flow-grid {
-    height: auto;
-
-    grid-template-rows:
-      auto
-      auto;
-
-    transform: none;
-  }
-
-  .flow-copy-card,
-  .flow-search-card,
-  .flow-library-card {
-    top: 0;
-  }
-
-  .flow-library-card {
-    min-height: 210px;
-  }
-}
-
-
-/* =========================================================
-   TABLETS
-   ========================================================= */
-
-@media (max-width: 980px) {
-  .section-library-flow {
-    /*
-      More section background above and below the stacked cards.
-    */
-    --flow-section-padding:
-      5.2rem
-      6%
-      4.5rem;
-
-    height: auto;
-    min-height: 110svh;
-
-    background-color: var(--flow-bg-0);
-    margin-block: -1px;
-  }
-
-  .flow-grid {
-    height: auto;
-    gap: 0.9rem;
-  }
-}
-
-
-/* =========================================================
-   MOBILE
-   ========================================================= */
-
-@media (max-width: 680px) {
-  .section-library-flow {
-    --flow-section-padding:
-      4.8rem
-      1rem
-      4rem;
-
-    min-height: 108svh;
-  }
-}
-
-
-/* =========================================================
-   SMALL MOBILE
-   ========================================================= */
-
-@media (max-width: 420px) {
-  .section-library-flow {
-    --flow-section-padding:
-      4.6rem
-      0.85rem
-      3.8rem;
-  }
-}
-
-
-/* =========================================================
-   SCROLL REVEAL
-   ========================================================= */
-
-/*
-  The hidden state activates only after JavaScript adds
-  .flow-reveal-ready.
-
-  This means all content stays visible if JavaScript fails.
-*/
-.section-library-flow.flow-reveal-ready [data-flow-reveal] {
-  --flow-reveal-x: 0px;
-  --flow-reveal-y: 30px;
-  --flow-reveal-delay: 0ms;
-
-  opacity: 0;
-  filter: blur(8px);
-
-  transform:
-    translate3d(
-      var(--flow-reveal-x),
-      var(--flow-reveal-y),
-      0
-    )
-    scale(0.985);
+  background:
+    linear-gradient(
+      180deg,
+      rgba(116, 215, 255, 0.09),
+      rgba(124, 140, 255, 0.065)
+    );
 
   transition:
-    opacity 720ms
-      cubic-bezier(0.2, 0.75, 0.25, 1),
-
-    transform 820ms
-      cubic-bezier(0.2, 0.75, 0.25, 1),
-
-    filter 720ms ease;
-
-  transition-delay:
-    var(--flow-reveal-delay);
-
-  will-change:
-    opacity,
-    transform,
-    filter;
+    border-color var(--flow-transition),
+    box-shadow var(--flow-transition);
 }
 
 
-/* Text enters from the left. */
-.section-library-flow.flow-reveal-ready
-[data-flow-reveal="left"] {
-  --flow-reveal-x: -28px;
-  --flow-reveal-y: 16px;
-  --flow-reveal-delay: 0ms;
+.flow-library-row-rating label:focus-within {
+  border-color:
+    rgba(116, 215, 255, 0.68);
+
+  box-shadow:
+    0 0 0 3px rgba(116, 215, 255, 0.14);
 }
 
 
-/* Search card enters from the right. */
-.section-library-flow.flow-reveal-ready
-[data-flow-reveal="right"] {
-  --flow-reveal-x: 28px;
-  --flow-reveal-y: 16px;
-  --flow-reveal-delay: 110ms;
+.flow-library-row-rating input {
+  width: 54px;
+  min-width: 0;
+
+  padding: 0;
+
+  border: 0;
+
+  outline: 0;
+
+  color: #ffffff;
+
+  font:
+    850 0.95rem/1
+    var(--flow-font-body);
+
+  text-align: right;
+
+  background: transparent;
+
+  appearance: textfield;
+
+  -moz-appearance: textfield;
 }
 
 
-/* Library card enters upward. */
-.section-library-flow.flow-reveal-ready
-[data-flow-reveal="up"] {
-  --flow-reveal-x: 0px;
-  --flow-reveal-y: 34px;
-  --flow-reveal-delay: 190ms;
+.flow-library-row-rating
+input::-webkit-outer-spin-button,
+.flow-library-row-rating
+input::-webkit-inner-spin-button {
+  margin: 0;
+
+  -webkit-appearance: none;
 }
 
 
-/* Final visible position. */
-.section-library-flow.flow-reveal-ready
-[data-flow-reveal].is-visible {
+.flow-library-row-rating
+input::placeholder {
+  color:
+    var(--flow-ink-faint);
+
   opacity: 1;
-  filter: blur(0);
-
-  transform:
-    translate3d(0, 0, 0)
-    scale(1);
 }
 
 
-/*
-  Remove the performance hint after the animation finishes.
-*/
-.section-library-flow.flow-reveal-ready
-[data-flow-reveal].reveal-complete {
-  will-change: auto;
+.flow-library-row-rating
+input[aria-invalid="true"] {
+  color: #ffb4c2;
+}
+
+
+.flow-rating-scale {
+  flex:
+    0 0 auto;
+
+  color:
+    var(--flow-ink-faint);
+
+  font-size: 0.62rem;
+
+  font-weight: 750;
 }
 
 
 /* =========================================================
-   REDUCED MOTION
+   ITEM ANIMATIONS
    ========================================================= */
 
-@media (prefers-reduced-motion: reduce) {
-  .section-library-flow.flow-reveal-ready
-  [data-flow-reveal],
+@keyframes flowResultIn {
+  from {
+    opacity: 0;
 
-  .section-library-flow.flow-reveal-ready
-  [data-flow-reveal].is-visible {
+    transform:
+      translateY(10px)
+      scale(0.99);
+  }
+
+  to {
     opacity: 1;
-    filter: none;
-    transform: none;
-    transition: none;
+
+    transform:
+      translateY(0)
+      scale(1);
   }
 }
 
-/* =========================================================
-   SECTION 3 — GUIDED STORY MOTION
 
-   Sequence:
-   1. Copy explains the action
-   2. Search card introduces the interaction
-   3. Library card completes the story
+@keyframes flowRowIn {
+  from {
+    opacity: 0;
 
-   This activates only when JavaScript adds:
-   .flow-motion-ready
-   ========================================================= */
+    transform:
+      translateY(8px)
+      scale(0.99);
+  }
 
+  to {
+    opacity: 1;
 
-/* First headline line should keep the primary text color. */
-.flow-copy-card h2 .flow-title-line-primary {
-  color: var(--flow-ink);
+    transform:
+      translateY(0)
+      scale(1);
+  }
 }
 
 
 /* =========================================================
-   MAIN CARD ENTRANCES
+   SECTION ENTRANCE ANIMATION
    ========================================================= */
 
-.section-library-flow.flow-motion-ready [data-flow-motion] {
+.section-library-flow.flow-motion-ready
+[data-flow-motion] {
   --flow-motion-x: 0px;
   --flow-motion-y: 18px;
   --flow-motion-scale: 0.99;
@@ -2471,18 +1977,16 @@
     )
     scale(var(--flow-motion-scale));
 
-  transition-property:
-    opacity,
-    transform;
+  transition:
+    opacity
+    var(--flow-motion-duration)
+    cubic-bezier(0.16, 1, 0.3, 1)
+    var(--flow-motion-delay),
 
-  transition-duration:
-    var(--flow-motion-duration);
-
-  transition-delay:
+    transform
+    var(--flow-motion-duration)
+    cubic-bezier(0.16, 1, 0.3, 1)
     var(--flow-motion-delay);
-
-  transition-timing-function:
-    cubic-bezier(0.16, 1, 0.3, 1);
 
   will-change:
     opacity,
@@ -2490,18 +1994,15 @@
 }
 
 
-/* Left copy begins the sequence. */
 .section-library-flow.flow-motion-ready
 [data-flow-motion="copy"] {
   --flow-motion-x: -18px;
   --flow-motion-y: 8px;
-  --flow-motion-scale: 0.995;
   --flow-motion-delay: 0ms;
   --flow-motion-duration: 720ms;
 }
 
 
-/* Search follows after the copy begins. */
 .section-library-flow.flow-motion-ready
 [data-flow-motion="search"] {
   --flow-motion-x: 18px;
@@ -2512,18 +2013,14 @@
 }
 
 
-/* Library arrives last as the conclusion. */
 .section-library-flow.flow-motion-ready
 [data-flow-motion="library"] {
-  --flow-motion-x: 0px;
   --flow-motion-y: 26px;
-  --flow-motion-scale: 0.99;
   --flow-motion-delay: 430ms;
   --flow-motion-duration: 900ms;
 }
 
 
-/* Final position for all three main groups. */
 .section-library-flow.flow-motion-ready
 [data-flow-motion].is-motion-visible {
   opacity: 1;
@@ -2534,10 +2031,6 @@
 }
 
 
-/* =========================================================
-   INTERNAL ELEMENT STAGGER
-   ========================================================= */
-
 .section-library-flow.flow-motion-ready
 [data-flow-motion-item] {
   --flow-item-delay: 0ms;
@@ -2547,23 +2040,22 @@
   transform:
     translate3d(0, 13px, 0);
 
-  transition-property:
-    opacity,
-    transform;
-
-  transition-duration:
-    540ms,
-    660ms;
-
-  transition-delay:
+  transition:
+    opacity
+    540ms
+    ease-out
     calc(
       var(--flow-motion-delay, 0ms) +
-      var(--flow-item-delay, 0ms)
-    );
+      var(--flow-item-delay)
+    ),
 
-  transition-timing-function:
-    ease-out,
-    cubic-bezier(0.16, 1, 0.3, 1);
+    transform
+    660ms
+    cubic-bezier(0.16, 1, 0.3, 1)
+    calc(
+      var(--flow-motion-delay, 0ms) +
+      var(--flow-item-delay)
+    );
 
   will-change:
     opacity,
@@ -2581,119 +2073,6 @@
 }
 
 
-/* Slightly smaller movement for the search-card contents. */
-.section-library-flow.flow-motion-ready
-[data-flow-motion="search"]
-[data-flow-motion-item] {
-  transform:
-    translate3d(0, 10px, 0);
-}
-
-
-.section-library-flow.flow-motion-ready
-[data-flow-motion="search"].is-motion-visible
-[data-flow-motion-item] {
-  transform:
-    translate3d(0, 0, 0);
-}
-
-
-/* Smaller stagger movement inside the library. */
-.section-library-flow.flow-motion-ready
-[data-flow-motion="library"]
-[data-flow-motion-item] {
-  transform:
-    translate3d(0, 9px, 0);
-}
-
-
-.section-library-flow.flow-motion-ready
-[data-flow-motion="library"].is-motion-visible
-[data-flow-motion-item] {
-  transform:
-    translate3d(0, 0, 0);
-}
-
-
-/* =========================================================
-   ONE-TIME SEARCH HIGHLIGHT
-   ========================================================= */
-
-.flow-search-bar {
-  position: relative;
-}
-
-
-/*
-  A restrained one-time light sweep helps direct attention
-  toward the search field without creating a repeating pulse.
-*/
-.flow-search-bar::after {
-  content: "";
-
-  position: absolute;
-  inset: 1px;
-  z-index: 3;
-
-  border-radius: 9px;
-
-  pointer-events: none;
-
-  opacity: 0;
-
-  background:
-    linear-gradient(
-      105deg,
-      transparent 0%,
-      transparent 28%,
-      rgba(116, 215, 255, 0.05) 39%,
-      rgba(184, 192, 255, 0.20) 49%,
-      rgba(116, 215, 255, 0.07) 59%,
-      transparent 72%,
-      transparent 100%
-    );
-
-  transform:
-    translate3d(-125%, 0, 0);
-}
-
-
-.section-library-flow.flow-motion-ready
-[data-flow-motion="search"].is-motion-visible
-.flow-search-bar::after {
-  animation:
-    flowSearchGuide 560ms
-    cubic-bezier(0.16, 1, 0.3, 1)
-    810ms
-    both;
-}
-
-
-@keyframes flowSearchGuide {
-  0% {
-    opacity: 0;
-    transform: translate3d(-125%, 0, 0);
-  }
-
-  18% {
-    opacity: 0.72;
-  }
-
-  82% {
-    opacity: 0.48;
-  }
-
-  100% {
-    opacity: 0;
-    transform: translate3d(125%, 0, 0);
-  }
-}
-
-
-/* =========================================================
-   ANIMATION CLEANUP
-   ========================================================= */
-
 .section-library-flow
 [data-flow-motion].motion-complete,
 .section-library-flow
@@ -2704,12 +2083,174 @@
 
 
 /* =========================================================
-   TABLET AND MOBILE
-   Use vertical motion because horizontal movement feels much
-   larger on narrow screens.
+   MEDIUM DESKTOP
+   ========================================================= */
+
+@media (
+  max-width: 1280px
+) and (
+  min-width: 981px
+) {
+  .flow-grid {
+    grid-template-columns:
+      minmax(430px, 0.94fr)
+      minmax(460px, 1.06fr);
+
+    column-gap:
+      clamp(2.4rem, 4.5vw, 4.5rem);
+  }
+
+  .flow-search-card {
+    width:
+      min(100%, 560px);
+  }
+
+  .flow-library-list-header,
+  .flow-library-row {
+    grid-template-columns:
+      minmax(300px, 1fr)
+      minmax(150px, 195px)
+      minmax(140px, 160px)
+      100px;
+
+    gap: 0.75rem;
+  }
+
+  .flow-sort-controls {
+    max-width: 550px;
+  }
+}
+
+
+/* =========================================================
+   SHORT DESKTOP
+   ========================================================= */
+
+@media (
+  min-width: 981px
+) and (
+  max-height: 760px
+) {
+  .section-library-flow {
+    min-height:
+      calc(110svh - var(--nav-height));
+
+    padding:
+      1.6rem
+      clamp(1.5rem, 4vw, 4.25rem)
+      2.4rem;
+  }
+
+  .flow-grid {
+    grid-template-rows:
+      minmax(255px, auto)
+      minmax(390px, auto);
+
+    transform:
+      translateY(-4px);
+  }
+
+  .flow-copy-card h2 {
+    font-size:
+      clamp(2.75rem, 4.55vw, 4.15rem);
+  }
+
+  .flow-search-card {
+    min-height: 245px;
+  }
+
+  .flow-library-card {
+    min-height: 390px;
+  }
+
+  .flow-library-body {
+    grid-template-rows:
+      auto
+      auto
+      auto
+      minmax(205px, 1fr);
+  }
+
+  .flow-library-row {
+    min-height: 66px;
+  }
+}
+
+
+/* =========================================================
+   TABLET
    ========================================================= */
 
 @media (max-width: 980px) {
+  .section-library-flow {
+    min-height: 110svh;
+
+    padding:
+      5.2rem 6% 4.5rem;
+
+    overflow: visible;
+  }
+
+  .flow-grid {
+    display: grid;
+
+    grid-template-columns: 1fr;
+
+    grid-template-areas:
+      "copy"
+      "search"
+      "library";
+
+    grid-template-rows: auto;
+
+    gap: 1rem;
+
+    transform: none;
+  }
+
+  .flow-copy-card {
+    max-width: 680px;
+  }
+
+  .flow-search-card {
+    width: 100%;
+    max-width: 620px;
+
+    justify-self: stretch;
+  }
+
+  .flow-library-card {
+    min-height: auto;
+  }
+
+  .flow-library-body {
+    height: auto;
+
+    grid-template-rows: auto;
+
+    overflow: visible;
+  }
+
+  .flow-library-toolbar,
+  .flow-library-status-row {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .flow-sort-controls {
+    justify-content: flex-start;
+  }
+
+  .flow-library-save-notice {
+    max-width: 100%;
+
+    white-space: normal;
+  }
+
+  .flow-library-list {
+    max-height: 390px;
+  }
+
   .section-library-flow.flow-motion-ready
   [data-flow-motion="copy"],
 
@@ -2720,17 +2261,130 @@
   [data-flow-motion="library"] {
     --flow-motion-x: 0px;
     --flow-motion-y: 15px;
-    --flow-motion-scale: 0.993;
+  }
+}
+
+
+/* =========================================================
+   MOBILE LIBRARY ROW
+   ========================================================= */
+
+@media (max-width: 760px) {
+  .flow-library-list-header {
+    display: none;
   }
 
-  .section-library-flow.flow-motion-ready
-  [data-flow-motion="search"] {
-    --flow-motion-delay: 150ms;
+  .flow-library-row {
+    grid-template-columns:
+      minmax(0, 1fr)
+      minmax(120px, 155px);
+
+    grid-template-areas:
+      "story story"
+      "format format"
+      "status rating";
+
+    gap:
+      0.65rem 0.75rem;
+
+    padding: 0.78rem;
   }
 
-  .section-library-flow.flow-motion-ready
-  [data-flow-motion="library"] {
-    --flow-motion-delay: 350ms;
+  .flow-library-story-cell {
+    grid-area: story;
+  }
+
+  .flow-library-row-format {
+    grid-area: format;
+  }
+
+  .flow-library-row-status {
+    grid-area: status;
+  }
+
+  .flow-library-row-rating {
+    grid-area: rating;
+  }
+
+  .flow-library-row-rating label {
+    min-height: 36px;
+  }
+}
+
+
+@media (max-width: 680px) {
+  .section-library-flow {
+    padding:
+      4.8rem 1rem 4rem;
+  }
+
+  .flow-copy-card h2 {
+    font-size:
+      clamp(2.68rem, 12.8vw, 4rem);
+
+    line-height: 0.92;
+  }
+
+  .flow-title-line {
+    white-space: normal;
+  }
+
+  .flow-result-card {
+    grid-template-columns:
+      58px minmax(0, 1fr);
+  }
+
+  .flow-add-button {
+    grid-column:
+      1 / -1;
+
+    width: 100%;
+
+    min-height: 42px;
+  }
+
+  .flow-library-header {
+    align-items: flex-start;
+  }
+
+  .flow-library-heading p {
+    max-width: 220px;
+  }
+
+  .flow-sort-controls {
+    width: 100%;
+  }
+
+  .flow-sort-specific {
+    flex:
+      1 1 100%;
+  }
+
+  .flow-sort-specific select {
+    width: 100%;
+
+    max-width: none;
+  }
+}
+
+
+@media (max-width: 460px) {
+  .flow-library-header {
+    flex-direction: column;
+  }
+
+  .flow-library-row {
+    grid-template-columns: 1fr;
+
+    grid-template-areas:
+      "story"
+      "format"
+      "status"
+      "rating";
+  }
+
+  .flow-library-row-rating label {
+    max-width: 120px;
   }
 }
 
@@ -2739,7 +2393,14 @@
    REDUCED MOTION
    ========================================================= */
 
-@media (prefers-reduced-motion: reduce) {
+@media (
+  prefers-reduced-motion: reduce
+) {
+  .flow-result-card,
+  .flow-library-row {
+    animation: none;
+  }
+
   .section-library-flow.flow-motion-ready
   [data-flow-motion],
 
@@ -2758,14 +2419,6 @@
 
     transition: none;
 
-    animation: none;
-
     will-change: auto;
-  }
-
-  .section-library-flow.flow-motion-ready
-  .flow-search-bar::after {
-    display: none;
-    animation: none;
   }
 }

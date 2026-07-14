@@ -2,13 +2,9 @@
 // =========================================================
 // SECTION 3 — SEARCH → PREVIEW → STATUS → MINI LIBRARY
 //
-// Uses the same Supabase setup and cover rule as Section 1:
-//   bucket: img
-//   path:   covers/{manga-id}.jpg
-//
-// Load this file after:
-//   1. the Supabase JavaScript library
-//   2. the Section 3 HTML
+// Load after:
+// 1. The Supabase JavaScript library
+// 2. The Section 3 HTML
 // =========================================================
 
 (() => {
@@ -28,17 +24,6 @@
   const BUCKET_NAME = 'img';
   const COVER_FOLDER = 'covers';
 
-  /*
-    Only request fields that actually exist in your manga table.
-
-    There is intentionally no "cover" column here.
-
-    Cover images are created from the manga ID:
-
-    img bucket
-      └── covers
-            └── attack-on-titan-2009.jpg
-  */
   const SEARCH_COLUMNS = [
     'id',
     'title',
@@ -49,18 +34,12 @@
     'genres'
   ].join(', ');
 
-  /*
-    Supabase commonly returns up to 1000 rows per request.
-
-    This code requests additional pages when the table contains
-    more than 1000 manga records.
-  */
   const CATALOG_PAGE_SIZE = 1000;
-
   const SEARCH_RESULT_LIMIT = 3;
   const SEARCH_DEBOUNCE_MS = 260;
 
-  const DEFAULT_STATUS = 'in-progress';
+  const DEFAULT_STATUS =
+    'in-progress';
 
   const STATUS_LABELS = {
     'in-progress': 'Reading',
@@ -69,6 +48,15 @@
     paused: 'Paused',
     dropped: 'Dropped'
   };
+
+  const STATUS_SORT_ORDER = {
+    'in-progress': 0,
+    planned: 1,
+    paused: 2,
+    completed: 3,
+    dropped: 4
+  };
+
 
   // ---------------------------------------------------------
   // STATE
@@ -81,31 +69,49 @@
   let lastSearchRequestId = 0;
 
   let currentSuggestions = [];
+
   let selectedResult = null;
-  let selectedStatus = DEFAULT_STATUS;
+  let selectedStatus =
+    DEFAULT_STATUS;
 
   let libraryItems = [];
 
   let activeFormatFilter = 'all';
   let activeStatusFilter = 'all';
 
+  /*
+    The main visible sorting defaults to Recent.
+
+    Visible sorting:
+    - newest
+    - oldest
+    - status
+
+    Dropdown sorting:
+    - title-asc
+    - title-desc
+    - rating-desc
+    - rating-asc
+  */
+  let activeSortOption = 'newest';
+
+
   // ---------------------------------------------------------
   // INITIALIZATION
   // ---------------------------------------------------------
 
   function startSection3LibraryFlow() {
-    const section = document.querySelector(
-      '#section-3-library-flow'
-    );
+    const section =
+      document.querySelector(
+        '#section-3-library-flow'
+      );
 
-    /*
-      Stop safely when this page does not contain Section 3.
-    */
     if (!section) {
       return;
     }
 
-    const elements = getElements(section);
+    const elements =
+      getElements(section);
 
     if (!hasRequiredElements(elements)) {
       console.error(
@@ -117,54 +123,49 @@
     }
 
     /*
-      The Supabase CDN script must load before this file.
+      These controls can be prepared before
+      the Supabase catalogue finishes loading.
     */
+    bindStatusPickerEvents(elements);
+    bindLibraryControlEvents(elements);
+
+    hideStatusPicker(elements);
+    renderSuggestions(elements);
+    renderLibrary(elements);
+
     if (!window.supabase) {
       console.error(
-        'Supabase library is not loaded. ' +
-        'Load the Supabase script before section3LibraryFlow-final.js.'
+        'Supabase is not loaded. ' +
+        'Load the Supabase script before this file.'
       );
+
+      disableSearch(elements);
 
       setSearchMessage(
         elements,
         'Search is unavailable because the database library did not load.'
       );
 
-      disableSearch(elements);
-
       return;
     }
 
-    /*
-      Create the Supabase client using the same setup as Section 1.
-    */
-    supabaseClient = window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_KEY
-    );
+    supabaseClient =
+      window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+      );
 
     bindSearchEvents(elements);
-    bindStatusPickerEvents(elements);
-    bindLibraryFilterEvents(elements);
 
-    hideStatusPicker(elements);
-    renderSuggestions(elements);
-    renderLibrary(elements);
+    disableSearch(elements);
 
     setSearchMessage(
       elements,
       'Loading the story catalogue…'
     );
 
-    disableSearch(elements);
-
-    /*
-      Load the searchable manga catalogue immediately.
-
-      After it loads, searching happens locally in the browser.
-      This avoids making a new database request for every letter.
-    */
-    cataloguePromise = loadSearchCatalogue();
+    cataloguePromise =
+      loadSearchCatalogue();
 
     cataloguePromise
       .then((catalogue) => {
@@ -199,45 +200,54 @@
       });
   }
 
+
   // ---------------------------------------------------------
-  // FIND SECTION 3 HTML ELEMENTS
+  // GET HTML ELEMENTS
   // ---------------------------------------------------------
 
   function getElements(section) {
     return {
       section,
 
-      searchForm: section.querySelector(
-        '[data-flow-search-form]'
-      ),
+      searchForm:
+        section.querySelector(
+          '[data-flow-search-form]'
+        ),
 
-      searchInput: section.querySelector(
-        '[data-flow-search-input]'
-      ),
+      searchInput:
+        section.querySelector(
+          '[data-flow-search-input]'
+        ),
 
-      searchButton: section.querySelector(
-        '[data-flow-search-button]'
-      ),
+      searchButton:
+        section.querySelector(
+          '[data-flow-search-button]'
+        ),
 
-      suggestions: section.querySelector(
-        '[data-flow-suggestions]'
-      ),
+      suggestions:
+        section.querySelector(
+          '[data-flow-suggestions]'
+        ),
 
-      searchMessage: section.querySelector(
-        '[data-flow-search-empty]'
-      ),
+      searchMessage:
+        section.querySelector(
+          '[data-flow-search-empty]'
+        ),
 
-      resultArea: section.querySelector(
-        '[data-flow-result-area]'
-      ),
+      resultArea:
+        section.querySelector(
+          '[data-flow-result-area]'
+        ),
 
-      resultTemplate: section.querySelector(
-        '#flow-result-template'
-      ),
+      resultTemplate:
+        section.querySelector(
+          '#flow-result-template'
+        ),
 
-      statusPicker: section.querySelector(
-        '[data-flow-status-picker]'
-      ),
+      statusPicker:
+        section.querySelector(
+          '[data-flow-status-picker]'
+        ),
 
       statusRadios: [
         ...section.querySelectorAll(
@@ -245,25 +255,30 @@
         )
       ],
 
-      libraryCard: section.querySelector(
-        '.flow-library-card'
-      ),
+      libraryCard:
+        section.querySelector(
+          '.flow-library-card'
+        ),
 
-      libraryEmpty: section.querySelector(
-        '[data-library-empty]'
-      ),
+      libraryEmpty:
+        section.querySelector(
+          '[data-library-empty]'
+        ),
 
-      libraryList: section.querySelector(
-        '[data-library-list]'
-      ),
+      libraryList:
+        section.querySelector(
+          '[data-library-list]'
+        ),
 
-      libraryRowTemplate: section.querySelector(
-        '#flow-library-row-template'
-      ),
+      libraryRowTemplate:
+        section.querySelector(
+          '#flow-library-row-template'
+        ),
 
-      libraryCount: section.querySelector(
-        '[data-library-count]'
-      ),
+      libraryCount:
+        section.querySelector(
+          '[data-library-count]'
+        ),
 
       formatFilterButtons: [
         ...section.querySelectorAll(
@@ -275,9 +290,21 @@
         ...section.querySelectorAll(
           '[data-status-filter]'
         )
-      ]
+      ],
+
+      quickSortButtons: [
+        ...section.querySelectorAll(
+          '[data-sort-quick]'
+        )
+      ],
+
+      specificSortSelect:
+        section.querySelector(
+          '[data-sort-specific]'
+        )
     };
   }
+
 
   function hasRequiredElements(elements) {
     return Boolean(
@@ -290,25 +317,36 @@
       elements.resultArea &&
       elements.resultTemplate &&
       elements.statusPicker &&
+      elements.libraryCard &&
       elements.libraryEmpty &&
       elements.libraryList &&
       elements.libraryRowTemplate &&
-      elements.libraryCount
+      elements.libraryCount &&
+      elements.specificSortSelect
     );
   }
 
+
   function disableSearch(elements) {
-    elements.searchInput.disabled = true;
-    elements.searchButton.disabled = true;
+    elements.searchInput.disabled =
+      true;
+
+    elements.searchButton.disabled =
+      true;
   }
+
 
   function enableSearch(elements) {
-    elements.searchInput.disabled = false;
-    elements.searchButton.disabled = false;
+    elements.searchInput.disabled =
+      false;
+
+    elements.searchButton.disabled =
+      false;
   }
 
+
   // ---------------------------------------------------------
-  // LOAD SEARCHABLE MANGA CATALOGUE
+  // LOAD CATALOGUE
   // ---------------------------------------------------------
 
   async function loadSearchCatalogue() {
@@ -318,36 +356,48 @@
 
     while (true) {
       const to =
-        from + CATALOG_PAGE_SIZE - 1;
+        from +
+        CATALOG_PAGE_SIZE -
+        1;
 
-      const { data, error } = await supabaseClient
+      const {
+        data,
+        error
+      } = await supabaseClient
         .from(TABLE_NAME)
         .select(SEARCH_COLUMNS)
-        .order('heroScore', {
-          ascending: false,
-          nullsFirst: false
-        })
-        .range(from, to);
+        .order(
+          'heroScore',
+          {
+            ascending: false,
+            nullsFirst: false
+          }
+        )
+        .range(
+          from,
+          to
+        );
 
       if (error) {
         throw error;
       }
 
-      const page = Array.isArray(data)
-        ? data
-        : [];
+      const page =
+        Array.isArray(data)
+          ? data
+          : [];
 
       rows.push(...page);
 
-      /*
-        A page smaller than the requested page size means
-        there are no more rows to request.
-      */
-      if (page.length < CATALOG_PAGE_SIZE) {
+      if (
+        page.length <
+        CATALOG_PAGE_SIZE
+      ) {
         break;
       }
 
-      from += CATALOG_PAGE_SIZE;
+      from +=
+        CATALOG_PAGE_SIZE;
     }
 
     const catalogue =
@@ -360,6 +410,7 @@
     return catalogue;
   }
 
+
   async function getSearchCatalogue() {
     if (!cataloguePromise) {
       cataloguePromise =
@@ -369,18 +420,12 @@
     return cataloguePromise;
   }
 
+
   // ---------------------------------------------------------
   // SEARCH EVENTS
   // ---------------------------------------------------------
 
   function bindSearchEvents(elements) {
-    /*
-      Handle the search form submission.
-
-      This covers:
-      - clicking a submit button
-      - pressing Enter inside the search input
-    */
     elements.searchForm.addEventListener(
       'submit',
       (event) => {
@@ -395,55 +440,48 @@
       }
     );
 
-    /*
-      A submit button inside the form is already handled
-      by the form submit listener.
+    elements.searchButton.addEventListener(
+      'click',
+      (event) => {
+        event.preventDefault();
 
-      Only add a separate click listener when the button is
-      not submitting this form.
-    */
-    const buttonSubmitsForm =
-      elements.searchForm.contains(
-        elements.searchButton
-      ) &&
-      elements.searchButton.type === 'submit';
+        runSearchFromInput(
+          elements,
+          {
+            autoSelectFirst: true
+          }
+        );
+      }
+    );
 
-    if (!buttonSubmitsForm) {
-      elements.searchButton.addEventListener(
-        'click',
-        (event) => {
-          event.preventDefault();
-
-          runSearchFromInput(
-            elements,
-            {
-              autoSelectFirst: true
-            }
-          );
-        }
-      );
-    }
-
-    /*
-      Live suggestions while the visitor types.
-    */
     elements.searchInput.addEventListener(
       'input',
       () => {
         const query =
-          elements.searchInput.value.trim();
+          elements.searchInput
+            .value
+            .trim();
 
-        window.clearTimeout(searchTimer);
+        window.clearTimeout(
+          searchTimer
+        );
 
-        clearSelectedResult(elements);
-        hideStatusPicker(elements);
+        clearSelectedResult(
+          elements
+        );
+
+        hideStatusPicker(
+          elements
+        );
 
         selectedResult = null;
 
         if (query.length < 2) {
           currentSuggestions = [];
 
-          renderSuggestions(elements);
+          renderSuggestions(
+            elements
+          );
 
           setSearchMessage(
             elements,
@@ -458,25 +496,29 @@
           'Searching…'
         );
 
-        searchTimer = window.setTimeout(
-          () => {
-            searchStories(
-              query,
-              elements
-            );
-          },
-          SEARCH_DEBOUNCE_MS
-        );
+        searchTimer =
+          window.setTimeout(
+            () => {
+              searchStories(
+                query,
+                elements
+              );
+            },
+            SEARCH_DEBOUNCE_MS
+          );
       }
     );
   }
+
 
   function runSearchFromInput(
     elements,
     options = {}
   ) {
     const query =
-      elements.searchInput.value.trim();
+      elements.searchInput
+        .value
+        .trim();
 
     if (query.length < 2) {
       setSearchMessage(
@@ -487,7 +529,9 @@
       return;
     }
 
-    window.clearTimeout(searchTimer);
+    window.clearTimeout(
+      searchTimer
+    );
 
     searchStories(
       query,
@@ -495,6 +539,7 @@
       options
     );
   }
+
 
   async function searchStories(
     query,
@@ -506,21 +551,23 @@
 
     try {
       const results =
-        await fetchSearchResults(query);
+        await fetchSearchResults(
+          query
+        );
 
-      /*
-        Ignore an older request when a newer search
-        has already started.
-      */
       if (
-        requestId !== lastSearchRequestId
+        requestId !==
+        lastSearchRequestId
       ) {
         return;
       }
 
-      currentSuggestions = results;
+      currentSuggestions =
+        results;
 
-      renderSuggestions(elements);
+      renderSuggestions(
+        elements
+      );
 
       if (results.length === 0) {
         setSearchMessage(
@@ -540,7 +587,9 @@
         }. Choose one to preview.`
       );
 
-      if (options.autoSelectFirst) {
+      if (
+        options.autoSelectFirst
+      ) {
         selectSuggestion(
           results[0],
           elements
@@ -548,7 +597,8 @@
       }
     } catch (error) {
       if (
-        requestId !== lastSearchRequestId
+        requestId !==
+        lastSearchRequestId
       ) {
         return;
       }
@@ -560,7 +610,9 @@
 
       currentSuggestions = [];
 
-      renderSuggestions(elements);
+      renderSuggestions(
+        elements
+      );
 
       setSearchMessage(
         elements,
@@ -569,11 +621,14 @@
     }
   }
 
+
   // ---------------------------------------------------------
-  // SEARCH THE LOCAL CATALOGUE
+  // SEARCH LOCAL CATALOGUE
   // ---------------------------------------------------------
 
-  async function fetchSearchResults(query) {
+  async function fetchSearchResults(
+    query
+  ) {
     const catalogue =
       await getSearchCatalogue();
 
@@ -582,7 +637,9 @@
         .split(' ')
         .filter(Boolean);
 
-    if (searchWords.length === 0) {
+    if (
+      searchWords.length === 0
+    ) {
       return [];
     }
 
@@ -590,30 +647,35 @@
       .map((item) => {
         return {
           item,
-          rank: getSearchRank(
-            item,
-            searchWords
-          )
+
+          rank:
+            getSearchRank(
+              item,
+              searchWords
+            )
         };
       })
       .filter((entry) => {
         return entry.rank > 0;
       })
       .sort((a, b) => {
-        /*
-          First sort by search relevance.
-        */
-        if (b.rank !== a.rank) {
-          return b.rank - a.rank;
+        if (
+          b.rank !==
+          a.rank
+        ) {
+          return (
+            b.rank -
+            a.rank
+          );
         }
 
-        /*
-          When two results have the same relevance,
-          put the higher heroScore first.
-        */
         return (
-          getNumericScore(b.item.score) -
-          getNumericScore(a.item.score)
+          getNumericScore(
+            b.item.score
+          ) -
+          getNumericScore(
+            a.item.score
+          )
         );
       })
       .slice(
@@ -625,15 +687,20 @@
       });
   }
 
+
   function getSearchRank(
     item,
     searchWords
   ) {
     const normalizedTitle =
-      normalizeSearchText(item.title);
+      normalizeSearchText(
+        item.title
+      );
 
     const normalizedCreator =
-      normalizeSearchText(item.creator);
+      normalizeSearchText(
+        item.creator
+      );
 
     const normalizedAlternatives =
       item.alternativeTitles.map(
@@ -658,14 +725,13 @@
       ...normalizedGenres
     ].join(' ');
 
-    /*
-      Every word entered by the visitor must appear
-      somewhere in the searchable manga information.
-    */
     const allWordsMatch =
-      searchWords.every((word) => {
-        return searchableText.includes(word);
-      });
+      searchWords.every(
+        (word) => {
+          return searchableText
+            .includes(word);
+        }
+      );
 
     if (!allWordsMatch) {
       return 0;
@@ -676,71 +742,63 @@
 
     let rank = 1;
 
-    /*
-      Main title matches.
-    */
     if (
-      normalizedTitle === fullQuery
+      normalizedTitle ===
+      fullQuery
     ) {
       rank += 100;
     } else if (
-      normalizedTitle.startsWith(
-        fullQuery
-      )
+      normalizedTitle
+        .startsWith(fullQuery)
     ) {
       rank += 80;
     } else if (
-      normalizedTitle.includes(
-        fullQuery
-      )
+      normalizedTitle
+        .includes(fullQuery)
     ) {
       rank += 60;
     }
 
-    /*
-      Alternative title matches.
-    */
     if (
-      normalizedAlternatives.some(
-        (title) => {
-          return title === fullQuery;
-        }
-      )
+      normalizedAlternatives
+        .some((title) => {
+          return (
+            title ===
+            fullQuery
+          );
+        })
     ) {
       rank += 90;
     } else if (
-      normalizedAlternatives.some(
-        (title) => {
-          return title.startsWith(
-            fullQuery
-          );
-        }
-      )
+      normalizedAlternatives
+        .some((title) => {
+          return title
+            .startsWith(
+              fullQuery
+            );
+        })
     ) {
       rank += 70;
     } else if (
-      normalizedAlternatives.some(
-        (title) => {
-          return title.includes(
-            fullQuery
-          );
-        }
-      )
+      normalizedAlternatives
+        .some((title) => {
+          return title
+            .includes(
+              fullQuery
+            );
+        })
     ) {
       rank += 50;
     }
 
-    /*
-      Creator matches.
-    */
     if (
-      normalizedCreator === fullQuery
+      normalizedCreator ===
+      fullQuery
     ) {
       rank += 40;
     } else if (
-      normalizedCreator.includes(
-        fullQuery
-      )
+      normalizedCreator
+        .includes(fullQuery)
     ) {
       rank += 25;
     }
@@ -748,8 +806,13 @@
     return rank;
   }
 
-  function normalizeSearchText(value) {
-    return String(value ?? '')
+
+  function normalizeSearchText(
+    value
+  ) {
+    return String(
+      value ?? ''
+    )
       .normalize('NFKD')
       .replace(
         /[\u0300-\u036f]/g,
@@ -767,11 +830,10 @@
       .trim();
   }
 
-  // ---------------------------------------------------------
-  // NORMALIZE DATABASE ROWS
-  // ---------------------------------------------------------
 
-  function normalizeSearchResults(items) {
+  function normalizeSearchResults(
+    items
+  ) {
     return items
       .filter((item) => {
         return (
@@ -782,9 +844,11 @@
       })
       .map((item) => {
         return {
-          id: String(item.id),
+          id:
+            String(item.id),
 
-          title: String(item.title),
+          title:
+            String(item.title),
 
           alternativeTitles:
             getArrayValue(
@@ -798,22 +862,24 @@
               .filter(Boolean),
 
           creator:
-            getCreatorValue(item),
+            getCreatorValue(
+              item
+            ),
 
           type:
-            getTypeList(item),
+            getTypeList(
+              item
+            ),
 
-          /*
-            This uses the same cover URL method
-            as Section 1.
-          */
           coverUrl:
             getCoverUrlFromId(
               item.id
             ),
 
           score:
-            getScoreValue(item),
+            getScoreValue(
+              item
+            ),
 
           genres:
             getArrayValue(
@@ -826,27 +892,35 @@
               })
               .filter(Boolean),
 
-          raw: item
+          raw:
+            item
         };
       });
   }
+
 
   // ---------------------------------------------------------
   // SEARCH SUGGESTIONS
   // ---------------------------------------------------------
 
-  function renderSuggestions(elements) {
-    elements.suggestions.innerHTML = '';
+  function renderSuggestions(
+    elements
+  ) {
+    elements.suggestions
+      .innerHTML = '';
 
     if (
-      currentSuggestions.length === 0
+      currentSuggestions
+        .length === 0
     ) {
-      elements.suggestions.hidden = true;
+      elements.suggestions
+        .hidden = true;
 
       return;
     }
 
-    elements.suggestions.hidden = false;
+    elements.suggestions
+      .hidden = false;
 
     currentSuggestions.forEach(
       (item) => {
@@ -880,7 +954,8 @@
             'small'
           );
 
-        button.type = 'button';
+        button.type =
+          'button';
 
         button.className =
           'flow-suggestion';
@@ -903,25 +978,29 @@
           item.title;
 
         meta.textContent =
-          getSuggestionMeta(item);
+          getSuggestionMeta(
+            item
+          );
 
-        /*
-          Suggestion images are decorative,
-          so they use an empty alt value.
-        */
         setImage(
           img,
           item.coverUrl,
           ''
         );
 
-        cover.appendChild(img);
+        cover.appendChild(
+          img
+        );
 
-        info.appendChild(title);
-        info.appendChild(meta);
+        info.append(
+          title,
+          meta
+        );
 
-        button.appendChild(cover);
-        button.appendChild(info);
+        button.append(
+          cover,
+          info
+        );
 
         button.addEventListener(
           'click',
@@ -933,36 +1012,44 @@
           }
         );
 
-        elements.suggestions.appendChild(
-          button
-        );
+        elements.suggestions
+          .appendChild(button);
       }
     );
   }
+
 
   function selectSuggestion(
     item,
     elements
   ) {
     selectedResult = item;
-    selectedStatus = DEFAULT_STATUS;
+
+    selectedStatus =
+      DEFAULT_STATUS;
 
     elements.searchInput.value =
       item.title;
 
     currentSuggestions = [];
 
-    renderSuggestions(elements);
+    renderSuggestions(
+      elements
+    );
+
     renderSelectedResult(
       item,
       elements
     );
 
-    const existingItem =
-      findLibraryItem(item.id);
-
-    if (existingItem) {
-      hideStatusPicker(elements);
+    if (
+      findLibraryItem(
+        item.id
+      )
+    ) {
+      hideStatusPicker(
+        elements
+      );
 
       setSearchMessage(
         elements,
@@ -972,7 +1059,9 @@
       return;
     }
 
-    showStatusPicker(elements);
+    showStatusPicker(
+      elements
+    );
 
     setSearchMessage(
       elements,
@@ -980,20 +1069,23 @@
     );
   }
 
+
   // ---------------------------------------------------------
-  // SELECTED RESULT CARD
+  // SELECTED RESULT
   // ---------------------------------------------------------
 
   function renderSelectedResult(
     item,
     elements
   ) {
-    clearSelectedResult(elements);
+    clearSelectedResult(
+      elements
+    );
 
     const fragment =
-      elements.resultTemplate.content.cloneNode(
-        true
-      );
+      elements.resultTemplate
+        .content
+        .cloneNode(true);
 
     const card =
       fragment.querySelector(
@@ -1061,13 +1153,16 @@
 
     if (type) {
       type.textContent =
-        getResultTypeLabel(item);
+        getResultTypeLabel(
+          item
+        );
     }
 
-    const existingItem =
-      findLibraryItem(item.id);
-
-    if (existingItem) {
+    if (
+      findLibraryItem(
+        item.id
+      )
+    ) {
       addButton.textContent =
         'Added';
 
@@ -1075,14 +1170,9 @@
         'is-added'
       );
 
-      addButton.disabled = true;
+      addButton.disabled =
+        true;
     } else {
-      addButton.classList.remove(
-        'is-added'
-      );
-
-      addButton.disabled = false;
-
       addButton.textContent =
         `Add to ${getStatusLabel(
           selectedStatus
@@ -1098,12 +1188,14 @@
       );
     }
 
-    elements.resultArea.appendChild(
-      fragment
-    );
+    elements.resultArea
+      .appendChild(fragment);
   }
 
-  function clearSelectedResult(elements) {
+
+  function clearSelectedResult(
+    elements
+  ) {
     elements.resultArea
       .querySelectorAll(
         '[data-flow-result-card]'
@@ -1113,15 +1205,15 @@
       });
   }
 
-  function getCurrentAddButton(elements) {
-    return elements.resultArea.querySelector(
-      '[data-flow-add-button]'
-    );
-  }
 
-  function updateAddButtonText(elements) {
+  function updateAddButtonText(
+    elements
+  ) {
     const addButton =
-      getCurrentAddButton(elements);
+      elements.resultArea
+        .querySelector(
+          '[data-flow-add-button]'
+        );
 
     if (
       !addButton ||
@@ -1135,6 +1227,7 @@
         selectedStatus
       )}`;
   }
+
 
   // ---------------------------------------------------------
   // STATUS PICKER
@@ -1165,13 +1258,15 @@
     );
   }
 
-  function showStatusPicker(elements) {
-    elements.statusPicker.hidden = false;
-    elements.statusPicker.disabled = false;
 
-    elements.statusPicker.classList.add(
-      'is-active'
-    );
+  function showStatusPicker(
+    elements
+  ) {
+    elements.statusPicker
+      .hidden = false;
+
+    elements.statusPicker
+      .disabled = false;
 
     selectedStatus =
       DEFAULT_STATUS;
@@ -1188,16 +1283,20 @@
       'has-result'
     );
 
-    updateAddButtonText(elements);
+    updateAddButtonText(
+      elements
+    );
   }
 
-  function hideStatusPicker(elements) {
-    elements.statusPicker.hidden = true;
-    elements.statusPicker.disabled = true;
 
-    elements.statusPicker.classList.remove(
-      'is-active'
-    );
+  function hideStatusPicker(
+    elements
+  ) {
+    elements.statusPicker
+      .hidden = true;
+
+    elements.statusPicker
+      .disabled = true;
 
     elements.statusRadios.forEach(
       (radio) => {
@@ -1212,8 +1311,9 @@
     );
   }
 
+
   // ---------------------------------------------------------
-  // ADD TO MINI LIBRARY
+  // ADD TO LIBRARY
   // ---------------------------------------------------------
 
   function addSelectedResultToLibrary(
@@ -1223,18 +1323,19 @@
       return;
     }
 
-    const existingItem =
+    if (
       findLibraryItem(
         selectedResult.id
-      );
-
-    if (existingItem) {
+      )
+    ) {
       renderSelectedResult(
         selectedResult,
         elements
       );
 
-      hideStatusPicker(elements);
+      hideStatusPicker(
+        elements
+      );
 
       setSearchMessage(
         elements,
@@ -1261,15 +1362,24 @@
       coverUrl:
         selectedResult.coverUrl,
 
-      score:
-        selectedResult.score,
-
       genres: [
         ...selectedResult.genres
       ],
 
       status:
-        selectedStatus
+        selectedStatus,
+
+      /*
+        Personal rating starts empty.
+
+        It is not copied from heroScore.
+      */
+      userRating:
+        null,
+
+      addedAt:
+        Date.now() +
+        libraryItems.length
     });
 
     renderSelectedResult(
@@ -1277,14 +1387,20 @@
       elements
     );
 
-    hideStatusPicker(elements);
-    renderLibrary(elements);
+    hideStatusPicker(
+      elements
+    );
+
+    renderLibrary(
+      elements
+    );
 
     setSearchMessage(
       elements,
       `${selectedResult.title} was added to your library.`
     );
   }
+
 
   function findLibraryItem(id) {
     return libraryItems.find(
@@ -1293,6 +1409,7 @@
       }
     );
   }
+
 
   function updateLibraryItemStatus(
     id,
@@ -1306,20 +1423,217 @@
       return;
     }
 
-    item.status = status;
+    item.status =
+      status;
 
-    renderLibrary(elements);
+    /*
+      Re-render when the status changes the
+      active filter or sorting position.
+    */
+    if (
+      activeSortOption ===
+        'status' ||
+      activeStatusFilter !==
+        'all'
+    ) {
+      renderLibrary(
+        elements
+      );
+    }
   }
 
+
   // ---------------------------------------------------------
-  // LIBRARY FILTERS
+  // MANUAL PERSONAL RATING
   // ---------------------------------------------------------
 
-  function bindLibraryFilterEvents(
+  function updateLibraryItemRatingInput(
+    id,
+    input,
+    elements,
+    shouldRender
+  ) {
+    const item =
+      findLibraryItem(id);
+
+    if (!item) {
+      return;
+    }
+
+    const rawValue =
+      input.value.trim();
+
+    /*
+      Clearing the input removes the rating.
+    */
+    if (rawValue === '') {
+      item.userRating =
+        null;
+
+      input.removeAttribute(
+        'aria-invalid'
+      );
+
+      if (
+        shouldRender &&
+        isRatingSort(
+          activeSortOption
+        )
+      ) {
+        renderLibrary(
+          elements
+        );
+      }
+
+      return;
+    }
+
+    const parsedValue =
+      Number(rawValue);
+
+    const isValid =
+      Number.isFinite(
+        parsedValue
+      ) &&
+      parsedValue >= 0 &&
+      parsedValue <= 10;
+
+    /*
+      While typing, show an invalid state but do not
+      immediately replace what the visitor typed.
+    */
+    if (!isValid) {
+      input.setAttribute(
+        'aria-invalid',
+        'true'
+      );
+
+      /*
+        When the visitor finishes editing, clamp
+        the number into the valid range.
+      */
+      if (shouldRender) {
+        const clamped =
+          Math.min(
+            10,
+            Math.max(
+              0,
+              Number.isFinite(
+                parsedValue
+              )
+                ? parsedValue
+                : 0
+            )
+          );
+
+        const rounded =
+          roundToOneDecimal(
+            clamped
+          );
+
+        item.userRating =
+          rounded;
+
+        input.value =
+          formatRatingValue(
+            rounded
+          );
+
+        input.removeAttribute(
+          'aria-invalid'
+        );
+
+        if (
+          isRatingSort(
+            activeSortOption
+          )
+        ) {
+          renderLibrary(
+            elements
+          );
+        }
+      }
+
+      return;
+    }
+
+    const rounded =
+      roundToOneDecimal(
+        parsedValue
+      );
+
+    item.userRating =
+      rounded;
+
+    input.removeAttribute(
+      'aria-invalid'
+    );
+
+    if (shouldRender) {
+      input.value =
+        formatRatingValue(
+          rounded
+        );
+
+      if (
+        isRatingSort(
+          activeSortOption
+        )
+      ) {
+        renderLibrary(
+          elements
+        );
+      }
+    }
+  }
+
+
+  function roundToOneDecimal(
+    value
+  ) {
+    return (
+      Math.round(
+        value * 10
+      ) / 10
+    );
+  }
+
+
+  function formatRatingValue(
+    value
+  ) {
+    return Number.isInteger(
+      value
+    )
+      ? String(value)
+      : value.toFixed(1);
+  }
+
+
+  function isRatingSort(
+    sortOption
+  ) {
+    return (
+      sortOption ===
+        'rating-desc' ||
+      sortOption ===
+        'rating-asc'
+    );
+  }
+
+
+  // ---------------------------------------------------------
+  // FILTERS AND SORTING
+  // ---------------------------------------------------------
+
+  function bindLibraryControlEvents(
     elements
   ) {
-    elements.formatFilterButtons.forEach(
-      (button) => {
+    /*
+      Format filters.
+    */
+    elements.formatFilterButtons
+      .forEach((button) => {
         button.addEventListener(
           'click',
           () => {
@@ -1333,18 +1647,23 @@
                 .trim();
 
             updatePressedButtons(
-              elements.formatFilterButtons,
+              elements
+                .formatFilterButtons,
               button
             );
 
-            renderLibrary(elements);
+            renderLibrary(
+              elements
+            );
           }
         );
-      }
-    );
+      });
 
-    elements.statusFilterButtons.forEach(
-      (button) => {
+    /*
+      Status filters.
+    */
+    elements.statusFilterButtons
+      .forEach((button) => {
         button.addEventListener(
           'click',
           () => {
@@ -1354,94 +1673,460 @@
               'all';
 
             updatePressedButtons(
-              elements.statusFilterButtons,
+              elements
+                .statusFilterButtons,
               button
             );
 
-            renderLibrary(elements);
+            renderLibrary(
+              elements
+            );
           }
         );
-      }
-    );
+      });
+
+    /*
+      Main visible sorting controls:
+      Recent, Oldest, Status.
+    */
+    elements.quickSortButtons
+      .forEach((button) => {
+        button.addEventListener(
+          'click',
+          () => {
+            activeSortOption =
+              button.dataset
+                .sortQuick ||
+              'newest';
+
+            /*
+              Reset the specific sorting dropdown.
+            */
+            elements
+              .specificSortSelect
+              .value = '';
+
+            elements
+              .specificSortSelect
+              .classList
+              .remove(
+                'is-active'
+              );
+
+            updatePressedButtons(
+              elements
+                .quickSortButtons,
+              button
+            );
+
+            renderLibrary(
+              elements
+            );
+          }
+        );
+      });
+
+    /*
+      More specific dropdown sorting:
+      - Title A–Z
+      - Title Z–A
+      - Personal rating high–low
+      - Personal rating low–high
+    */
+    elements
+      .specificSortSelect
+      .addEventListener(
+        'change',
+        () => {
+          const selectedSort =
+            elements
+              .specificSortSelect
+              .value;
+
+          /*
+            Selecting the placeholder restores
+            the default Recent sorting.
+          */
+          if (!selectedSort) {
+            const recentButton =
+              elements
+                .quickSortButtons
+                .find((button) => {
+                  return (
+                    button.dataset
+                      .sortQuick ===
+                    'newest'
+                  );
+                });
+
+            activeSortOption =
+              'newest';
+
+            elements
+              .specificSortSelect
+              .classList
+              .remove(
+                'is-active'
+              );
+
+            if (recentButton) {
+              updatePressedButtons(
+                elements
+                  .quickSortButtons,
+                recentButton
+              );
+            }
+
+            renderLibrary(
+              elements
+            );
+
+            return;
+          }
+
+          activeSortOption =
+            selectedSort;
+
+          elements
+            .specificSortSelect
+            .classList
+            .add(
+              'is-active'
+            );
+
+          /*
+            A dropdown sort is now active,
+            so remove the active state from
+            the visible sorting buttons.
+          */
+          clearPressedButtons(
+            elements
+              .quickSortButtons
+          );
+
+          renderLibrary(
+            elements
+          );
+        }
+      );
   }
+
 
   function updatePressedButtons(
     buttons,
     activeButton
   ) {
-    buttons.forEach((button) => {
-      const isActive =
-        button === activeButton;
+    buttons.forEach(
+      (button) => {
+        const isActive =
+          button ===
+          activeButton;
 
-      button.classList.toggle(
-        'active',
-        isActive
-      );
+        button.classList.toggle(
+          'active',
+          isActive
+        );
 
-      button.setAttribute(
-        'aria-pressed',
-        String(isActive)
-      );
-    });
-  }
-
-  function getFilteredLibraryItems() {
-    return libraryItems.filter(
-      (item) => {
-        const matchesFormat =
-          activeFormatFilter ===
-            'all' ||
-          getTypeList(item).includes(
-            activeFormatFilter
-          );
-
-        const matchesStatus =
-          activeStatusFilter ===
-            'all' ||
-          item.status ===
-            activeStatusFilter;
-
-        return (
-          matchesFormat &&
-          matchesStatus
+        button.setAttribute(
+          'aria-pressed',
+          String(isActive)
         );
       }
     );
   }
 
-  // ---------------------------------------------------------
-  // LIBRARY RENDERING
-  // ---------------------------------------------------------
 
-  function renderLibrary(elements) {
-    const filteredItems =
-      getFilteredLibraryItems();
+  function clearPressedButtons(
+    buttons
+  ) {
+    buttons.forEach(
+      (button) => {
+        button.classList.remove(
+          'active'
+        );
 
-    elements.libraryCount.textContent =
-      String(libraryItems.length);
-
-    elements.libraryList.innerHTML = '';
-
-    const hasItems =
-      libraryItems.length > 0;
-
-    elements.section.classList.toggle(
-      'has-library-item',
-      hasItems
+        button.setAttribute(
+          'aria-pressed',
+          'false'
+        );
+      }
     );
+  }
 
-    if (elements.libraryCard) {
-      elements.libraryCard.classList.toggle(
-        'has-library-item',
-        hasItems
+
+  function getFilteredLibraryItems() {
+    const filteredItems =
+      libraryItems.filter(
+        (item) => {
+          const matchesFormat =
+            activeFormatFilter ===
+              'all' ||
+            itemMatchesFormatFilter(
+              item,
+              activeFormatFilter
+            );
+
+          const matchesStatus =
+            activeStatusFilter ===
+              'all' ||
+            item.status ===
+              activeStatusFilter;
+
+          return (
+            matchesFormat &&
+            matchesStatus
+          );
+        }
+      );
+
+    return sortLibraryItems(
+      filteredItems,
+      activeSortOption
+    );
+  }
+
+
+  function itemMatchesFormatFilter(
+    item,
+    filter
+  ) {
+    return getCanonicalFormats(
+      item.type
+    ).includes(filter);
+  }
+
+
+  function sortLibraryItems(
+    items,
+    sortOption
+  ) {
+    return [...items].sort(
+      (a, b) => {
+        switch (sortOption) {
+          case 'oldest':
+            return (
+              Number(
+                a.addedAt || 0
+              ) -
+              Number(
+                b.addedAt || 0
+              )
+            );
+
+          case 'status':
+            return (
+              getStatusSortIndex(
+                a.status
+              ) -
+                getStatusSortIndex(
+                  b.status
+                ) ||
+              compareTitles(
+                a.title,
+                b.title
+              )
+            );
+
+          case 'title-asc':
+            return compareTitles(
+              a.title,
+              b.title
+            );
+
+          case 'title-desc':
+            return compareTitles(
+              b.title,
+              a.title
+            );
+
+          case 'rating-desc':
+            return compareUserRatings(
+              a,
+              b,
+              'desc'
+            );
+
+          case 'rating-asc':
+            return compareUserRatings(
+              a,
+              b,
+              'asc'
+            );
+
+          case 'newest':
+          default:
+            return (
+              Number(
+                b.addedAt || 0
+              ) -
+              Number(
+                a.addedAt || 0
+              )
+            );
+        }
+      }
+    );
+  }
+
+
+  function compareTitles(
+    a,
+    b
+  ) {
+    return String(a)
+      .localeCompare(
+        String(b),
+        undefined,
+        {
+          sensitivity: 'base'
+        }
+      );
+  }
+
+
+  function compareUserRatings(
+    a,
+    b,
+    direction
+  ) {
+    const aRating =
+      getUserRatingNumber(
+        a.userRating
+      );
+
+    const bRating =
+      getUserRatingNumber(
+        b.userRating
+      );
+
+    const aRated =
+      aRating !== null;
+
+    const bRated =
+      bRating !== null;
+
+    /*
+      Unrated stories always stay after
+      stories with a personal rating.
+    */
+    if (
+      aRated !==
+      bRated
+    ) {
+      return aRated
+        ? -1
+        : 1;
+    }
+
+    if (
+      !aRated &&
+      !bRated
+    ) {
+      return compareTitles(
+        a.title,
+        b.title
       );
     }
 
     if (
+      direction ===
+      'asc'
+    ) {
+      return (
+        aRating -
+          bRating ||
+        compareTitles(
+          a.title,
+          b.title
+        )
+      );
+    }
+
+    return (
+      bRating -
+        aRating ||
+      compareTitles(
+        a.title,
+        b.title
+      )
+    );
+  }
+
+
+  function getUserRatingNumber(
+    value
+  ) {
+    if (
+      value === null ||
+      value === undefined ||
+      value === ''
+    ) {
+      return null;
+    }
+
+    const rating =
+      Number(value);
+
+    return Number.isFinite(
+      rating
+    )
+      ? rating
+      : null;
+  }
+
+
+  function getStatusSortIndex(
+    status
+  ) {
+    return (
+      STATUS_SORT_ORDER[
+        status
+      ] ?? 999
+    );
+  }
+
+
+  // ---------------------------------------------------------
+  // RENDER LIBRARY
+  // ---------------------------------------------------------
+
+  function renderLibrary(
+    elements
+  ) {
+    const filteredItems =
+      getFilteredLibraryItems();
+
+    const hasItems =
+      libraryItems.length > 0;
+
+    elements.libraryCount
+      .textContent =
+        String(
+          libraryItems.length
+        );
+
+    elements.libraryList
+      .innerHTML = '';
+
+    elements.section
+      .classList
+      .toggle(
+        'has-library-item',
+        hasItems
+      );
+
+    elements.libraryCard
+      .classList
+      .toggle(
+        'has-library-item',
+        hasItems
+      );
+
+    if (
       filteredItems.length === 0
     ) {
-      elements.libraryEmpty.hidden =
-        false;
+      elements.libraryEmpty
+        .hidden = false;
 
       setLibraryEmptyText(
         elements,
@@ -1451,8 +2136,8 @@
       return;
     }
 
-    elements.libraryEmpty.hidden =
-      true;
+    elements.libraryEmpty
+      .hidden = true;
 
     filteredItems.forEach(
       (item) => {
@@ -1463,20 +2148,21 @@
           );
 
         if (row) {
-          elements.libraryList.appendChild(
-            row
-          );
+          elements.libraryList
+            .appendChild(row);
         }
       }
     );
   }
+
 
   function createLibraryRow(
     item,
     elements
   ) {
     const fragment =
-      elements.libraryRowTemplate
+      elements
+        .libraryRowTemplate
         .content
         .cloneNode(true);
 
@@ -1484,14 +2170,6 @@
       fragment.querySelector(
         '[data-library-row]'
       );
-
-    if (!row) {
-      console.error(
-        'The Section 3 library row template is missing [data-library-row].'
-      );
-
-      return null;
-    }
 
     const coverImg =
       fragment.querySelector(
@@ -1508,7 +2186,7 @@
         '[data-library-creator]'
       );
 
-    const format =
+    const formatContainer =
       fragment.querySelector(
         '[data-library-format]'
       );
@@ -1518,19 +2196,29 @@
         '[data-library-status]'
       );
 
-    const rating =
+    const ratingInput =
       fragment.querySelector(
         '[data-library-rating]'
       );
 
+    if (!row) {
+      console.error(
+        'The library row template is missing [data-library-row].'
+      );
+
+      return null;
+    }
+
     row.dataset.storyId =
       item.id;
 
-    row.dataset.format =
-      getTypeList(item).join(' ');
-
     row.dataset.status =
       item.status;
+
+    row.dataset.format =
+      getCanonicalFormats(
+        item.type
+      ).join(' ');
 
     if (coverImg) {
       setImage(
@@ -1552,23 +2240,21 @@
           : 'Unknown creator';
     }
 
-    if (format) {
-      format.textContent =
-        formatTypeLabel(
-          item.type
-        );
-    }
-
-    if (rating) {
-      rating.textContent =
-        hasDisplayValue(item.score)
-          ? String(item.score)
-          : '—';
+    if (formatContainer) {
+      renderFormatBadges(
+        formatContainer,
+        item.type
+      );
     }
 
     if (statusSelect) {
       statusSelect.value =
         item.status;
+
+      statusSelect.setAttribute(
+        'aria-label',
+        `Change status for ${item.title}`
+      );
 
       statusSelect.addEventListener(
         'change',
@@ -1582,25 +2268,293 @@
       );
     }
 
+    if (ratingInput) {
+      /*
+        Keep the field empty until the visitor
+        manually enters a personal rating.
+      */
+      ratingInput.value =
+        item.userRating === null
+          ? ''
+          : formatRatingValue(
+              item.userRating
+            );
+
+      ratingInput.setAttribute(
+        'aria-label',
+        `Your rating for ${item.title}, from 0 to 10`
+      );
+
+      /*
+        Update the stored value while typing,
+        but do not rebuild the list on every key.
+      */
+      ratingInput.addEventListener(
+        'input',
+        () => {
+          updateLibraryItemRatingInput(
+            item.id,
+            ratingInput,
+            elements,
+            false
+          );
+        }
+      );
+
+      /*
+        Format and sort once editing is complete.
+      */
+      ratingInput.addEventListener(
+        'change',
+        () => {
+          updateLibraryItemRatingInput(
+            item.id,
+            ratingInput,
+            elements,
+            true
+          );
+        }
+      );
+
+      ratingInput.addEventListener(
+        'blur',
+        () => {
+          updateLibraryItemRatingInput(
+            item.id,
+            ratingInput,
+            elements,
+            true
+          );
+        }
+      );
+    }
+
     return row;
   }
+
+
+  // ---------------------------------------------------------
+  // FORMAT BADGES
+  // ---------------------------------------------------------
+
+  function renderFormatBadges(
+    container,
+    typeValue
+  ) {
+    container.innerHTML = '';
+
+    const formats =
+      getCanonicalFormats(
+        typeValue
+      );
+
+    const visibleFormats =
+      formats.slice(0, 2);
+
+    const hiddenCount =
+      Math.max(
+        0,
+        formats.length - 2
+      );
+
+    if (
+      visibleFormats.length === 0
+    ) {
+      visibleFormats.push(
+        'story'
+      );
+    }
+
+    visibleFormats.forEach(
+      (format) => {
+        const badge =
+          document.createElement(
+            'span'
+          );
+
+        badge.className =
+          'flow-format-badge';
+
+        badge.textContent =
+          getFormatLabel(
+            format
+          );
+
+        container.appendChild(
+          badge
+        );
+      }
+    );
+
+    if (hiddenCount > 0) {
+      const more =
+        document.createElement(
+          'span'
+        );
+
+      more.className =
+        'flow-format-more';
+
+      more.textContent =
+        `+${hiddenCount}`;
+
+      more.title =
+        formats
+          .slice(2)
+          .map(getFormatLabel)
+          .join(', ');
+
+      container.appendChild(
+        more
+      );
+    }
+  }
+
+
+  function getCanonicalFormats(
+    typeValue
+  ) {
+    const canonicalFormats =
+      getTypeList({
+        type: typeValue
+      })
+        .map(
+          canonicalizeFormat
+        )
+        .filter(Boolean);
+
+    return [
+      ...new Set(
+        canonicalFormats
+      )
+    ];
+  }
+
+
+  function canonicalizeFormat(
+    value
+  ) {
+    const token =
+      normalizeSearchText(
+        value
+      ).replace(
+        /\s+/g,
+        ''
+      );
+
+    if (!token) {
+      return '';
+    }
+
+    /*
+      Game and visual novel entries use the
+      Visual novel filter.
+    */
+    if (
+      token.includes(
+        'visualnovel'
+      ) ||
+      token === 'game' ||
+      token.includes(
+        'videogame'
+      )
+    ) {
+      return 'visual-novel';
+    }
+
+    if (
+      token.includes(
+        'lightnovel'
+      ) ||
+      token === 'novel'
+    ) {
+      return 'light-novel';
+    }
+
+    if (
+      token.includes(
+        'anime'
+      )
+    ) {
+      return 'anime';
+    }
+
+    if (
+      token.includes(
+        'manga'
+      ) ||
+      token.includes(
+        'manhwa'
+      ) ||
+      token.includes(
+        'manhua'
+      ) ||
+      token.includes(
+        'comic'
+      )
+    ) {
+      return 'manga';
+    }
+
+    return token;
+  }
+
+
+  function getFormatLabel(
+    format
+  ) {
+    const labels = {
+      manga:
+        'Manga',
+
+      anime:
+        'Anime',
+
+      'light-novel':
+        'Light novel',
+
+      'visual-novel':
+        'Visual novel',
+
+      story:
+        'Story'
+    };
+
+    return (
+      labels[format] ||
+      titleCase(
+        format.replace(
+          /-/g,
+          ' '
+        )
+      )
+    );
+  }
+
+
+  // ---------------------------------------------------------
+  // EMPTY LIBRARY TEXT
+  // ---------------------------------------------------------
 
   function setLibraryEmptyText(
     elements,
     text
   ) {
     const paragraph =
-      elements.libraryEmpty.querySelector(
-        'p'
-      );
+      elements.libraryEmpty
+        .querySelector('p');
 
     if (paragraph) {
-      paragraph.textContent = text;
+      paragraph.textContent =
+        text;
     }
   }
 
+
   function getLibraryEmptyText() {
-    if (libraryItems.length === 0) {
+    if (
+      libraryItems.length === 0
+    ) {
       return (
         'Search and add something above. ' +
         'Your saved stories will appear here.'
@@ -1613,11 +2567,14 @@
     );
   }
 
+
   // ---------------------------------------------------------
-  // COVER LOADING — SAME RULE AS SECTION 1
+  // COVER IMAGES
   // ---------------------------------------------------------
 
-  function getCoverUrlFromId(id) {
+  function getCoverUrlFromId(
+    id
+  ) {
     if (
       !id ||
       !supabaseClient
@@ -1625,36 +2582,38 @@
       return '';
     }
 
-    /*
-      Example:
-
-      ID:
-      attack-on-titan-2009
-
-      Storage path:
-      covers/attack-on-titan-2009.jpg
-    */
     const coverPath =
       `${COVER_FOLDER}/${id}.jpg`;
 
     const { data } =
       supabaseClient
         .storage
-        .from(BUCKET_NAME)
-        .getPublicUrl(coverPath);
+        .from(
+          BUCKET_NAME
+        )
+        .getPublicUrl(
+          coverPath
+        );
 
-    return data?.publicUrl || '';
+    return (
+      data?.publicUrl ||
+      ''
+    );
   }
+
 
   function setImage(
     img,
     url,
     altText
   ) {
-    img.alt = altText || '';
+    img.alt =
+      altText || '';
 
     if (!url) {
-      hideBrokenImage(img);
+      hideBrokenImage(
+        img
+      );
 
       return;
     }
@@ -1667,7 +2626,9 @@
         url
       );
 
-      hideBrokenImage(img);
+      hideBrokenImage(
+        img
+      );
     };
 
     img.onload = () => {
@@ -1677,11 +2638,17 @@
     img.src = url;
   }
 
-  function hideBrokenImage(img) {
+
+  function hideBrokenImage(
+    img
+  ) {
     img.hidden = true;
 
-    img.removeAttribute('src');
+    img.removeAttribute(
+      'src'
+    );
   }
+
 
   // ---------------------------------------------------------
   // SEARCH MESSAGE
@@ -1692,53 +2659,74 @@
     text
   ) {
     const paragraph =
-      elements.searchMessage.querySelector(
-        'p'
-      );
+      elements.searchMessage
+        .querySelector('p');
 
     if (paragraph) {
-      paragraph.textContent = text;
-    } else {
-      elements.searchMessage.textContent =
+      paragraph.textContent =
         text;
+    } else {
+      elements.searchMessage
+        .textContent =
+          text;
     }
 
-    elements.searchMessage.hidden =
-      false;
+    elements.searchMessage
+      .hidden = false;
   }
+
 
   // ---------------------------------------------------------
   // DISPLAY HELPERS
   // ---------------------------------------------------------
 
-  function getSuggestionMeta(item) {
+  function getSuggestionMeta(
+    item
+  ) {
     const type =
-      formatTypeLabel(item.type);
+      formatTypeLabel(
+        item.type
+      );
 
     const score =
-      hasDisplayValue(item.score)
+      hasDisplayValue(
+        item.score
+      )
         ? ` · ${item.score}`
         : '';
 
     return `${type}${score}`;
   }
 
-  function getResultTypeLabel(item) {
-    return getSuggestionMeta(item);
+
+  function getResultTypeLabel(
+    item
+  ) {
+    return getSuggestionMeta(
+      item
+    );
   }
 
-  function getStatusLabel(status) {
+
+  function getStatusLabel(
+    status
+  ) {
     return (
-      STATUS_LABELS[status] ||
+      STATUS_LABELS[
+        status
+      ] ||
       status
     );
   }
+
 
   // ---------------------------------------------------------
   // DATABASE VALUE HELPERS
   // ---------------------------------------------------------
 
-  function getCreatorValue(item) {
+  function getCreatorValue(
+    item
+  ) {
     return String(
       item.creator ??
       item.author ??
@@ -1747,7 +2735,10 @@
     ).trim();
   }
 
-  function getScoreValue(item) {
+
+  function getScoreValue(
+    item
+  ) {
     const value =
       item.heroScore ??
       item.hero_score ??
@@ -1755,34 +2746,36 @@
       item.rating ??
       '';
 
-    if (!hasDisplayValue(value)) {
+    if (
+      !hasDisplayValue(
+        value
+      )
+    ) {
       return '';
     }
 
-    if (
-      Number.isFinite(
-        Number(value)
-      )
-    ) {
-      return Number(value);
-    }
-
-    return String(value);
+    return Number.isFinite(
+      Number(value)
+    )
+      ? Number(value)
+      : String(value);
   }
 
-  function getNumericScore(value) {
-    if (
-      Number.isFinite(
-        Number(value)
-      )
-    ) {
-      return Number(value);
-    }
 
-    return 0;
+  function getNumericScore(
+    value
+  ) {
+    return Number.isFinite(
+      Number(value)
+    )
+      ? Number(value)
+      : 0;
   }
 
-  function hasDisplayValue(value) {
+
+  function hasDisplayValue(
+    value
+  ) {
     return (
       value !== null &&
       value !== undefined &&
@@ -1790,13 +2783,18 @@
     );
   }
 
-  function getTypeList(item) {
+
+  function getTypeList(
+    item
+  ) {
     const rawType =
       item.type ??
       item.format ??
       [];
 
-    return getArrayValue(rawType)
+    return getArrayValue(
+      rawType
+    )
       .map((type) => {
         return String(type)
           .toLowerCase()
@@ -1805,7 +2803,10 @@
       .filter(Boolean);
   }
 
-  function getArrayValue(value) {
+
+  function getArrayValue(
+    value
+  ) {
     if (
       value === null ||
       value === undefined ||
@@ -1814,15 +2815,16 @@
       return [];
     }
 
-    if (Array.isArray(value)) {
+    if (
+      Array.isArray(value)
+    ) {
       return value;
     }
 
-    /*
-      This also supports database values accidentally
-      returned as serialized JSON strings.
-    */
-    if (typeof value === 'string') {
+    if (
+      typeof value ===
+      'string'
+    ) {
       const trimmed =
         value.trim();
 
@@ -1832,14 +2834,20 @@
 
       try {
         const parsed =
-          JSON.parse(trimmed);
+          JSON.parse(
+            trimmed
+          );
 
-        if (Array.isArray(parsed)) {
+        if (
+          Array.isArray(
+            parsed
+          )
+        ) {
           return parsed;
         }
       } catch {
         /*
-          The value is normal text rather than JSON.
+          Normal text rather than JSON.
         */
       }
 
@@ -1849,29 +2857,54 @@
     return [value];
   }
 
-  function formatTypeLabel(typeValue) {
-    const types =
-      Array.isArray(typeValue)
-        ? typeValue
-        : getArrayValue(typeValue);
 
-    if (types.length === 0) {
+  function formatTypeLabel(
+    typeValue
+  ) {
+    const types =
+      Array.isArray(
+        typeValue
+      )
+        ? typeValue
+        : getArrayValue(
+            typeValue
+          );
+
+    if (
+      types.length === 0
+    ) {
       return 'Story';
     }
 
     return types
       .map((type) => {
-        return String(type).trim();
-      })
-      .filter(Boolean)
-      .map((type) => {
-        return (
-          type.charAt(0).toUpperCase() +
-          type.slice(1).toLowerCase()
+        return titleCase(
+          String(type)
+            .replace(
+              /[-_]/g,
+              ' '
+            )
         );
       })
+      .filter(Boolean)
       .join(' / ');
   }
+
+
+  function titleCase(
+    value
+  ) {
+    return String(value)
+      .trim()
+      .replace(
+        /\b\w/g,
+        (character) => {
+          return character
+            .toUpperCase();
+        }
+      );
+  }
+
 
   // ---------------------------------------------------------
   // ERROR LOGGING
@@ -1903,58 +2936,38 @@
     );
   }
 
+
   // ---------------------------------------------------------
-  // RUN
+  // RUN MAIN FUNCTIONALITY
   // ---------------------------------------------------------
 
   if (
-    document.readyState === 'loading'
+    document.readyState ===
+    'loading'
   ) {
     document.addEventListener(
       'DOMContentLoaded',
-      startSection3LibraryFlow
+      startSection3LibraryFlow,
+      {
+        once: true
+      }
     );
   } else {
     startSection3LibraryFlow();
   }
 })();
 
+
 // =========================================================
 // SECTION 3 — GUIDED STORY MOTION
 //
-// Append this after the existing Section 3 JavaScript.
-//
-// This code only controls entrance animation.
-// It does not change:
-// - Supabase
-// - search
-// - suggestions
-// - status selection
-// - filters
-// - adding library items
-// - cover loading
+// This block only controls the entrance animation.
+// It does not change the search or library functionality.
 // =========================================================
 
 (() => {
   'use strict';
 
-  const SECTION_SELECTOR =
-    '#section-3-library-flow';
-
-  const GROUP_SELECTOR =
-    '[data-flow-motion]';
-
-  const ITEM_SELECTOR =
-    '[data-flow-motion-item]';
-
-  /*
-    The delays below control the elements inside each group.
-
-    The main group delays are controlled in CSS:
-    - copy:    0ms
-    - search:  180ms
-    - library: 430ms
-  */
   const ITEM_TIMING = {
     copy: {
       start: 40,
@@ -1976,7 +2989,7 @@
   function startSection3Motion() {
     const section =
       document.querySelector(
-        SECTION_SELECTOR
+        '#section-3-library-flow'
       );
 
     if (!section) {
@@ -1985,41 +2998,49 @@
 
     const groups = [
       ...section.querySelectorAll(
-        GROUP_SELECTOR
+        '[data-flow-motion]'
       )
     ];
 
-    if (groups.length === 0) {
+    if (
+      groups.length === 0
+    ) {
       return;
     }
 
-    prepareInternalDelays(groups);
+    prepareInternalDelays(
+      groups
+    );
 
     const prefersReducedMotion =
       window.matchMedia(
         '(prefers-reduced-motion: reduce)'
       ).matches;
 
-    /*
-      Make everything visible immediately for visitors
-      who request reduced motion.
-    */
-    if (prefersReducedMotion) {
-      showMotionGroups(groups);
-      markMotionComplete(groups);
+    if (
+      prefersReducedMotion
+    ) {
+      showMotionGroups(
+        groups
+      );
+
+      markMotionComplete(
+        groups
+      );
 
       return;
     }
 
     /*
-      Initial hidden states activate only after this class
-      is added. If JavaScript fails, the content stays visible.
+      Hidden animation states only activate
+      after JavaScript adds this class.
     */
     section.classList.add(
       'flow-motion-ready'
     );
 
-    let hasPlayed = false;
+    let hasPlayed =
+      false;
 
 
     function playMotionOnce() {
@@ -2029,143 +3050,145 @@
 
       hasPlayed = true;
 
-      showMotionGroups(groups);
+      showMotionGroups(
+        groups
+      );
 
       /*
-        Remove will-change after the entire sequence ends.
-        This keeps browser rendering resources from staying
-        active after the animation is finished.
+        Remove will-change after the sequence.
       */
       window.setTimeout(
         () => {
-          markMotionComplete(groups);
+          markMotionComplete(
+            groups
+          );
         },
-        1750
+        1800
       );
     }
 
 
-    /*
-      IntersectionObserver is preferred because it does not
-      require a continuous scroll listener.
-    */
     if (
-      'IntersectionObserver' in window
+      'IntersectionObserver'
+      in window
     ) {
       const observer =
         new IntersectionObserver(
           (entries) => {
-            const sectionEntry =
-              entries.find((entry) => {
-                return (
-                  entry.target === section &&
-                  entry.isIntersecting
-                );
-              });
+            const entry =
+              entries.find(
+                (candidate) => {
+                  return (
+                    candidate.target ===
+                      section &&
+                    candidate
+                      .isIntersecting
+                  );
+                }
+              );
 
-            if (!sectionEntry) {
+            if (!entry) {
               return;
             }
 
             playMotionOnce();
 
-            observer.unobserve(section);
+            observer.unobserve(
+              section
+            );
           },
           {
-            /*
-              Begin once a meaningful part of the section
-              has entered the viewport.
-            */
             threshold: 0.17,
 
-            /*
-              Trigger slightly before the section reaches
-              the bottom edge of the viewport.
-            */
             rootMargin:
               '0px 0px -9% 0px'
           }
         );
 
-      /*
-        Wait one frame so the browser applies the initial
-        CSS state before checking intersection.
-      */
       window.requestAnimationFrame(
         () => {
-          observer.observe(section);
+          observer.observe(
+            section
+          );
         }
       );
 
       return;
     }
 
-    /*
-      Safe fallback for older browsers.
-    */
     playMotionOnce();
   }
 
 
-  function prepareInternalDelays(groups) {
-    groups.forEach((group) => {
-      const groupName =
-        group.dataset.flowMotion ||
-        '';
+  function prepareInternalDelays(
+    groups
+  ) {
+    groups.forEach(
+      (group) => {
+        const groupName =
+          group.dataset
+            .flowMotion ||
+          '';
 
-      const timing =
-        ITEM_TIMING[groupName] || {
-          start: 80,
-          step: 70
-        };
+        const timing =
+          ITEM_TIMING[
+            groupName
+          ] || {
+            start: 80,
+            step: 70
+          };
 
-      const items = [
-        ...group.querySelectorAll(
-          ITEM_SELECTOR
-        )
-      ];
+        const items = [
+          ...group.querySelectorAll(
+            '[data-flow-motion-item]'
+          )
+        ];
 
-      items.forEach(
-        (item, index) => {
-          const delay =
-            timing.start +
-            index * timing.step;
+        items.forEach(
+          (item, index) => {
+            const delay =
+              timing.start +
+              index *
+                timing.step;
 
-          item.style.setProperty(
-            '--flow-item-delay',
-            `${delay}ms`
-          );
-        }
-      );
-    });
-  }
-
-
-  function showMotionGroups(groups) {
-    /*
-      All groups receive the visible class together.
-
-      CSS delays create the ordered story:
-      copy → search → library.
-    */
-    window.requestAnimationFrame(
-      () => {
-        groups.forEach((group) => {
-          group.classList.add(
-            'is-motion-visible'
-          );
-        });
+            item.style.setProperty(
+              '--flow-item-delay',
+              `${delay}ms`
+            );
+          }
+        );
       }
     );
   }
 
 
-  function markMotionComplete(groups) {
-    groups.forEach((group) => {
-      group.classList.add(
-        'motion-complete'
-      );
-    });
+  function showMotionGroups(
+    groups
+  ) {
+    window.requestAnimationFrame(
+      () => {
+        groups.forEach(
+          (group) => {
+            group.classList.add(
+              'is-motion-visible'
+            );
+          }
+        );
+      }
+    );
+  }
+
+
+  function markMotionComplete(
+    groups
+  ) {
+    groups.forEach(
+      (group) => {
+        group.classList.add(
+          'motion-complete'
+        );
+      }
+    );
   }
 
 

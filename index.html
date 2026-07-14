@@ -306,450 +306,585 @@
         </div>
     </section>
 
-    <!-- Section 3 Combined Library Flow Demo -->
+    <!-- SECTION 3 — SEARCH → SAVE → ORGANIZE -->
     <section
-        id="section-3-library-flow"
-        class="section section-library-flow"
-        aria-labelledby="section-3-title"
+    id="section-3-library-flow"
+    class="section section-library-flow"
+    aria-labelledby="section-3-title"
     >
-        <div class="flow-grid">
+    <div class="flow-grid">
 
-            <!-- TOP LEFT: TEXT -->
-            <article
-                class="flow-copy-card"
-                data-flow-motion="copy"
+        <!-- INTRO -->
+        <article class="flow-copy-card" data-flow-motion="copy">
+        <span class="section-label" data-flow-motion-item>
+            Your first step
+        </span>
+
+        <h2 id="section-3-title">
+            <span
+            class="flow-title-line flow-title-line-primary"
+            data-flow-motion-item
             >
-                <span
-                    class="section-label"
-                    data-flow-motion-item
+            Find it. Save
+            </span>
+
+            <span
+            class="flow-title-line"
+            data-flow-motion-item
+            >
+            it. Keep going.
+            </span>
+        </h2>
+
+        <p data-flow-motion-item>
+            Search any story you are reading or watching. Add it to your
+            library, then choose where it belongs.
+        </p>
+
+        <a
+            href="signup.html"
+            class="btn-primary flow-cta"
+            data-flow-motion-item
+        >
+            Start your library
+        </a>
+        </article>
+
+
+        <!-- SEARCH CARD -->
+        <article
+        class="flow-card flow-search-card"
+        aria-label="Search and add demo"
+        data-flow-motion="search"
+        >
+        <div
+            class="flow-card-header"
+            aria-hidden="true"
+            data-flow-motion-item
+        >
+            <div class="flow-window-controls">
+            <span></span>
+            <span></span>
+            <span></span>
+            </div>
+        </div>
+
+        <div class="flow-search-body">
+            <form
+            class="flow-search-form"
+            data-flow-search-form
+            data-flow-motion-item
+            novalidate
+            >
+            <label for="home-flow-search">
+                Search your next story
+            </label>
+
+            <div class="flow-search-bar">
+                <input
+                id="home-flow-search"
+                name="q"
+                type="search"
+                placeholder="Search a book, manga, anime, film, or show"
+                autocomplete="off"
+                data-flow-search-input
                 >
-                    Your first step
+
+                <button
+                type="button"
+                aria-label="Search"
+                data-flow-search-button
+                >
+                <i
+                    class="ti ti-search"
+                    aria-hidden="true"
+                ></i>
+                </button>
+            </div>
+            </form>
+
+            <!-- Search suggestions -->
+            <div
+            class="flow-suggestions"
+            data-flow-suggestions
+            aria-label="Search suggestions"
+            hidden
+            ></div>
+
+            <!-- Search message -->
+            <div
+            class="flow-search-empty"
+            data-flow-search-empty
+            data-flow-motion-item
+            >
+            <p>
+                Type a title to find it and add it to your library.
+            </p>
+            </div>
+
+            <!-- Selected search result -->
+            <div
+            class="flow-result-area"
+            data-flow-result-area
+            aria-live="polite"
+            >
+            <template id="flow-result-template">
+                <article
+                class="flow-result-card"
+                data-flow-result-card
+                >
+                <div class="flow-result-cover">
+                    <img src="" alt="Story cover">
+                </div>
+
+                <div class="flow-result-info">
+                    <h4>Story title</h4>
+
+                    <p class="flow-result-creator">
+                    Creator
+                    </p>
+
+                    <p class="flow-result-type">
+                    Manga
+                    </p>
+                </div>
+
+                <button
+                    class="flow-add-button"
+                    type="button"
+                    data-flow-add-button
+                >
+                    Add
+                </button>
+                </article>
+            </template>
+            </div>
+
+            <!-- Status picker -->
+            <fieldset
+            class="flow-status-picker"
+            data-flow-status-picker
+            hidden
+            >
+            <legend>
+                Where should it go?
+            </legend>
+
+            <div class="flow-status-options">
+                <label>
+                <input
+                    type="radio"
+                    name="flow_status"
+                    value="in-progress"
+                    checked
+                >
+                <span>Reading</span>
+                </label>
+
+                <label>
+                <input
+                    type="radio"
+                    name="flow_status"
+                    value="completed"
+                >
+                <span>Completed</span>
+                </label>
+
+                <label>
+                <input
+                    type="radio"
+                    name="flow_status"
+                    value="planned"
+                >
+                <span>Planned</span>
+                </label>
+
+                <label>
+                <input
+                    type="radio"
+                    name="flow_status"
+                    value="paused"
+                >
+                <span>Paused</span>
+                </label>
+
+                <label>
+                <input
+                    type="radio"
+                    name="flow_status"
+                    value="dropped"
+                >
+                <span>Dropped</span>
+                </label>
+            </div>
+            </fieldset>
+        </div>
+        </article>
+
+
+        <!-- LIBRARY CARD -->
+        <article
+        class="flow-card flow-library-card"
+        aria-label="Saved stories preview"
+        data-flow-motion="library"
+        >
+        <header
+            class="flow-library-header"
+            data-flow-motion-item
+        >
+            <div class="flow-library-heading">
+            <h3>Saved stories</h3>
+
+            <p>
+                Filter your collection, update progress, and add your own
+                rating.
+            </p>
+            </div>
+
+            <span class="flow-library-count">
+            <span data-library-count>0</span>
+            saved
+            </span>
+        </header>
+
+        <div class="flow-library-body">
+
+            <!-- FORMAT FILTERS + SORTING -->
+            <div
+            class="flow-library-toolbar"
+            data-flow-motion-item
+            >
+            <div
+                class="flow-library-filters"
+                aria-label="Filter by format"
+            >
+                <button
+                type="button"
+                class="flow-filter active"
+                data-format-filter="all"
+                aria-pressed="true"
+                >
+                All
+                </button>
+
+                <button
+                type="button"
+                class="flow-filter"
+                data-format-filter="manga"
+                aria-pressed="false"
+                >
+                Manga
+                </button>
+
+                <button
+                type="button"
+                class="flow-filter"
+                data-format-filter="anime"
+                aria-pressed="false"
+                >
+                Anime
+                </button>
+
+                <button
+                type="button"
+                class="flow-filter"
+                data-format-filter="light-novel"
+                aria-pressed="false"
+                >
+                Light novel
+                </button>
+
+                <button
+                type="button"
+                class="flow-filter"
+                data-format-filter="visual-novel"
+                aria-pressed="false"
+                >
+                Visual novel
+                </button>
+            </div>
+
+            <div
+                class="flow-sort-controls"
+                aria-label="Sort saved stories"
+            >
+                <span class="flow-sort-label">
+                Sort by
                 </span>
 
-                <h2 id="section-3-title">
-                    <span
-                        class="flow-title-line flow-title-line-primary"
-                        data-flow-motion-item
-                    >
-                        Find it. Save
-                    </span>
-
-                    <span
-                        class="flow-title-line"
-                        data-flow-motion-item
-                    >
-                        it. Keep going.
-                    </span>
-                </h2>
-
-                <p data-flow-motion-item>
-                    Search any story you are reading or watching. Add it to your
-                    library, then choose where it belongs.
-                </p>
-
-                <a
-                    href="signup.html"
-                    class="btn-primary flow-cta"
-                    data-flow-motion-item
-                >
-                    Start your library
-                </a>
-            </article>
-
-
-            <!-- TOP RIGHT: SEARCH / ADD CARD -->
-            <article
-                class="flow-card flow-search-card"
-                aria-label="Search and add demo"
-                data-flow-motion="search"
-            >
+                <!-- Main sorting options remain visible -->
                 <div
-                    class="flow-card-header"
-                    aria-hidden="true"
-                    data-flow-motion-item
+                class="flow-sort-quick"
+                aria-label="Primary sorting options"
                 >
-                    <div class="flow-window-controls">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </div>
+                <button
+                    type="button"
+                    class="flow-sort-button active"
+                    data-sort-quick="newest"
+                    aria-pressed="true"
+                >
+                    Recent
+                </button>
+
+                <button
+                    type="button"
+                    class="flow-sort-button"
+                    data-sort-quick="oldest"
+                    aria-pressed="false"
+                >
+                    Oldest
+                </button>
+
+                <button
+                    type="button"
+                    class="flow-sort-button"
+                    data-sort-quick="status"
+                    aria-pressed="false"
+                >
+                    Status
+                </button>
                 </div>
 
-                <div class="flow-search-body">
+                <!-- More specific sorting options -->
+                <label class="flow-sort-specific">
+                <span class="sr-only">
+                    More sorting options
+                </span>
 
-                    <form
-                        class="flow-search-form"
-                        data-flow-search-form
-                        data-flow-motion-item
-                        novalidate
-                    >
-                        <label for="home-flow-search">
-                            Search your next story
-                        </label>
+                <select
+                    data-sort-specific
+                    aria-label="More sorting options"
+                >
+                    <option value="">
+                    More sorting
+                    </option>
 
-                        <div class="flow-search-bar">
-                            <input
-                                id="home-flow-search"
-                                name="q"
-                                type="search"
-                                placeholder="Search a book, manga, anime, film, or show"
-                                autocomplete="off"
-                                data-flow-search-input
-                            >
+                    <option value="title-asc">
+                    Title A–Z
+                    </option>
 
-                            <button
-                                type="button"
-                                aria-label="Search"
-                                data-flow-search-button
-                            >
-                                <i class="ti ti-search"></i>
-                            </button>
-                        </div>
-                    </form>
+                    <option value="title-desc">
+                    Title Z–A
+                    </option>
 
-                    <!-- Search suggestions render here -->
-                    <div
-                        class="flow-suggestions"
-                        data-flow-suggestions
-                        aria-label="Search suggestions"
-                        hidden
-                    ></div>
+                    <option value="rating-desc">
+                    Personal rating high–low
+                    </option>
 
-                    <!-- Helper text -->
-                    <div
-                        class="flow-search-empty"
-                        data-flow-search-empty
-                        data-flow-motion-item
-                    >
-                        <p>
-                            Type a title to find it and add it to your library.
-                        </p>
-                    </div>
-
-                    <!-- Selected result renders here -->
-                    <div
-                        class="flow-result-area"
-                        data-flow-result-area
-                        aria-live="polite"
-                    >
-                        <template id="flow-result-template">
-                            <article
-                                class="flow-result-card"
-                                data-flow-result-card
-                            >
-                                <div class="flow-result-cover">
-                                    <img src="" alt="Story cover">
-                                </div>
-
-                                <div class="flow-result-info">
-                                    <h4>Story title</h4>
-
-                                    <p class="flow-result-creator">
-                                        Creator
-                                    </p>
-
-                                    <p class="flow-result-type">
-                                        Manga
-                                    </p>
-                                </div>
-
-                                <button
-                                    class="flow-add-button"
-                                    type="button"
-                                    data-flow-add-button
-                                >
-                                    Add
-                                </button>
-                            </article>
-                        </template>
-                    </div>
-
-                    <!-- Status picker -->
-                    <fieldset
-                        class="flow-status-picker"
-                        data-flow-status-picker
-                        hidden
-                    >
-                        <legend>
-                            Where should it go?
-                        </legend>
-
-                        <div class="flow-status-options">
-                            <label>
-                                <input
-                                    type="radio"
-                                    name="flow_status"
-                                    value="in-progress"
-                                    checked
-                                >
-                                <span>Reading</span>
-                            </label>
-
-                            <label>
-                                <input
-                                    type="radio"
-                                    name="flow_status"
-                                    value="completed"
-                                >
-                                <span>Completed</span>
-                            </label>
-
-                            <label>
-                                <input
-                                    type="radio"
-                                    name="flow_status"
-                                    value="planned"
-                                >
-                                <span>Planned</span>
-                            </label>
-
-                            <label>
-                                <input
-                                    type="radio"
-                                    name="flow_status"
-                                    value="paused"
-                                >
-                                <span>Paused</span>
-                            </label>
-
-                            <label>
-                                <input
-                                    type="radio"
-                                    name="flow_status"
-                                    value="dropped"
-                                >
-                                <span>Dropped</span>
-                            </label>
-                        </div>
-                    </fieldset>
-
-                </div>
-            </article>
+                    <option value="rating-asc">
+                    Personal rating low–high
+                    </option>
+                </select>
+                </label>
+            </div>
+            </div>
 
 
-            <!-- BOTTOM FULL WIDTH: LIBRARY CARD -->
-            <article
-                class="flow-card flow-library-card"
-                aria-label="Library preview"
-                data-flow-motion="library"
+            <!-- STATUS FILTERS -->
+            <div
+            class="flow-library-status-row"
+            data-flow-motion-item
             >
-                <div
-                    class="flow-library-header"
-                    data-flow-motion-item
+            <div
+                class="flow-library-status-filters"
+                aria-label="Filter by status"
+            >
+                <button
+                type="button"
+                class="flow-status-filter active"
+                data-status-filter="all"
+                aria-pressed="true"
                 >
-                    <div>
-                        <span class="flow-eyebrow">
-                            Your library
-                        </span>
+                All
+                </button>
 
-                        <h3>My Library</h3>
-                    </div>
+                <button
+                type="button"
+                class="flow-status-filter"
+                data-status-filter="in-progress"
+                aria-pressed="false"
+                >
+                Reading
+                </button>
 
-                    <span class="flow-library-count">
-                        <span data-library-count>0</span>
-                        saved
-                    </span>
+                <button
+                type="button"
+                class="flow-status-filter"
+                data-status-filter="completed"
+                aria-pressed="false"
+                >
+                Completed
+                </button>
+
+                <button
+                type="button"
+                class="flow-status-filter"
+                data-status-filter="planned"
+                aria-pressed="false"
+                >
+                Planned
+                </button>
+
+                <button
+                type="button"
+                class="flow-status-filter"
+                data-status-filter="paused"
+                aria-pressed="false"
+                >
+                Paused
+                </button>
+
+                <button
+                type="button"
+                class="flow-status-filter"
+                data-status-filter="dropped"
+                aria-pressed="false"
+                >
+                Dropped
+                </button>
+            </div>
+
+            <div
+                class="flow-library-save-notice"
+                role="status"
+            >
+                <i
+                class="ti ti-lock"
+                aria-hidden="true"
+                ></i>
+
+                <span>
+                Create an account to save changes to your real library.
+                </span>
+            </div>
+            </div>
+
+
+            <!-- COLUMN LABELS -->
+            <div
+            class="flow-library-list-header"
+            aria-hidden="true"
+            data-flow-motion-item
+            >
+            <span>Story</span>
+            <span>Formats</span>
+            <span>Status</span>
+            <span>Your rating</span>
+            </div>
+
+
+            <!-- EMPTY STATE -->
+            <div
+            class="flow-library-empty"
+            data-library-empty
+            data-flow-motion-item
+            >
+            <p>
+                Search and add something above. Your saved stories will
+                appear here.
+            </p>
+            </div>
+
+
+            <!-- GENERATED LIBRARY ROWS -->
+            <div
+            class="flow-library-list"
+            data-library-list
+            aria-label="Saved stories"
+            aria-live="polite"
+            ></div>
+
+
+            <!-- LIBRARY ROW TEMPLATE -->
+            <template id="flow-library-row-template">
+            <article
+                class="flow-library-row"
+                data-library-row
+            >
+                <div class="flow-library-story-cell">
+                <div class="flow-library-row-cover">
+                    <img
+                    data-library-cover
+                    src=""
+                    alt="Story cover"
+                    >
                 </div>
 
-                <div class="flow-library-body">
+                <div class="flow-library-row-info">
+                    <h4 data-library-title>
+                    Story title
+                    </h4>
 
-                    <!-- Format filters -->
-                    <div
-                        class="flow-library-filters"
-                        aria-label="Filter by format"
-                        data-flow-motion-item
+                    <p data-library-creator>
+                    Creator
+                    </p>
+                </div>
+                </div>
+
+                <!-- Generated format badges -->
+                <div
+                class="flow-library-row-format"
+                data-library-format
+                ></div>
+
+                <!-- Status dropdown -->
+                <div class="flow-library-row-status">
+                <select
+                    name="library_status"
+                    data-library-status
+                    aria-label="Change status"
+                >
+                    <option value="in-progress">
+                    Reading
+                    </option>
+
+                    <option value="completed">
+                    Completed
+                    </option>
+
+                    <option value="planned">
+                    Planned
+                    </option>
+
+                    <option value="paused">
+                    Paused
+                    </option>
+
+                    <option value="dropped">
+                    Dropped
+                    </option>
+                </select>
+                </div>
+
+                <!-- Manual personal rating -->
+                <div class="flow-library-row-rating">
+                <label>
+                    <span class="sr-only">
+                    Your rating from 0 to 10
+                    </span>
+
+                    <input
+                    type="number"
+                    min="0"
+                    max="10"
+                    step="0.1"
+                    inputmode="decimal"
+                    placeholder="—"
+                    data-library-rating
+                    aria-label="Your rating from 0 to 10"
                     >
-                        <button
-                            type="button"
-                            class="flow-filter active"
-                            data-format-filter="all"
-                            aria-pressed="true"
-                        >
-                            All
-                        </button>
 
-                        <button
-                            type="button"
-                            class="flow-filter"
-                            data-format-filter="manga"
-                            aria-pressed="false"
-                        >
-                            Manga
-                        </button>
-
-                        <button
-                            type="button"
-                            class="flow-filter"
-                            data-format-filter="anime"
-                            aria-pressed="false"
-                        >
-                            Anime
-                        </button>
-                    </div>
-
-                    <!-- Status filters -->
-                    <div
-                        class="flow-library-status-filters"
-                        aria-label="Filter by status"
-                        data-flow-motion-item
-                    >
-                        <button
-                            type="button"
-                            class="flow-status-filter active"
-                            data-status-filter="all"
-                            aria-pressed="true"
-                        >
-                            All
-                        </button>
-
-                        <button
-                            type="button"
-                            class="flow-status-filter"
-                            data-status-filter="in-progress"
-                            aria-pressed="false"
-                        >
-                            Reading
-                        </button>
-
-                        <button
-                            type="button"
-                            class="flow-status-filter"
-                            data-status-filter="completed"
-                            aria-pressed="false"
-                        >
-                            Completed
-                        </button>
-
-                        <button
-                            type="button"
-                            class="flow-status-filter"
-                            data-status-filter="planned"
-                            aria-pressed="false"
-                        >
-                            Planned
-                        </button>
-
-                        <button
-                            type="button"
-                            class="flow-status-filter"
-                            data-status-filter="paused"
-                            aria-pressed="false"
-                        >
-                            Paused
-                        </button>
-
-                        <button
-                            type="button"
-                            class="flow-status-filter"
-                            data-status-filter="dropped"
-                            aria-pressed="false"
-                        >
-                            Dropped
-                        </button>
-                    </div>
-
-                    <!-- Empty state -->
-                    <div
-                        class="flow-library-empty"
-                        data-library-empty
-                        data-flow-motion-item
-                    >
-                        <p>
-                            Search and add something above. Your saved stories
-                            will appear here.
-                        </p>
-                    </div>
-
-                    <!-- Library rows render here -->
-                    <div
-                        class="flow-library-list"
-                        data-library-list
-                        aria-live="polite"
-                    ></div>
-
-                    <!-- Library row template -->
-                    <template id="flow-library-row-template">
-                        <article
-                            class="flow-library-row"
-                            data-library-row
-                        >
-                            <div class="flow-library-row-cover">
-                                <img
-                                    data-library-cover
-                                    src=""
-                                    alt="Story cover"
-                                >
-                            </div>
-
-                            <div class="flow-library-row-info">
-                                <h4 data-library-title>
-                                    Story title
-                                </h4>
-
-                                <p data-library-creator>
-                                    Creator
-                                </p>
-                            </div>
-
-                            <div class="flow-library-row-format">
-                                <span data-library-format>
-                                    Manga
-                                </span>
-                            </div>
-
-                            <div class="flow-library-row-status">
-                                <select
-                                    name="library_status"
-                                    data-library-status
-                                    aria-label="Change status"
-                                >
-                                    <option value="in-progress">
-                                        Reading
-                                    </option>
-
-                                    <option value="completed">
-                                        Completed
-                                    </option>
-
-                                    <option value="planned">
-                                        Planned
-                                    </option>
-
-                                    <option value="paused">
-                                        Paused
-                                    </option>
-
-                                    <option value="dropped">
-                                        Dropped
-                                    </option>
-                                </select>
-                            </div>
-
-                            <div class="flow-library-row-rating">
-                                <span data-library-rating>—</span>
-                            </div>
-                        </article>
-                    </template>
-
-                    <div
-                        class="flow-library-save-notice"
-                        role="status"
-                        data-flow-motion-item
-                    >
-                        <i
-                            class="ti ti-lock"
-                            aria-hidden="true"
-                        ></i>
-
-                        <span>
-                            Create an account to save changes to your real library.
-                        </span>
-                    </div>
-
+                    <span class="flow-rating-scale">
+                    /10
+                    </span>
+                </label>
                 </div>
             </article>
+            </template>
 
         </div>
+        </article>
+    </div>
     </section>
 
     <!-- SECTION 4 SAME STORY, DIFFERENT SOULS-->
