@@ -1,56 +1,24 @@
-/* ============================================================================
-   SECTION 2 — ORGANIZED, RESPONSIVE CSS
-   ----------------------------------------------------------------------------
-   Organization rules used in this file:
-   - Each component keeps its main styles in one clearly labeled section.
-   - Shared values are stored as custom properties in the section root.
-   - Responsive media queries override only the values that actually change.
-   - Quote cards all use one consistent text size and line height.
-   - Desktop quotes use an explicit tiled grid with balanced outer edges.
-   - Cards stay content-driven, readable, and protected from overlap.
-   - Existing HTML and JavaScript class names remain compatible.
-   ============================================================================ */
-
-/* ============================================================================
-   1. SECTION ROOT
-   ============================================================================ */
-
-#section-2-empty-shelf,
-.section-empty-shelf {
+#section-2-empty-shelf, .section-empty-shelf {
   --section-2-row-width: 860px;
   --section-2-cover-width: 156px;
   --section-2-card-gap: 1.4rem;
-
-  --section-2-evidence-width: min(
-    1560px,
-    calc(100vw - clamp(24px, 3.5vw, 64px))
-  );
-
+  --section-2-evidence-width: min(1560px, calc(100vw - clamp(24px, 3.5vw, 64px)));
   --s2-bg-top: #0a0d1a;
   --s2-bg-mid: #141a36;
   --s2-bg-bottom: #080c18;
-
   --s2-panel-bg: rgba(8, 12, 26, 0.96);
   --s2-panel-bg-strong: rgba(15, 20, 36, 0.98);
-
   --s2-border: rgba(170, 183, 255, 0.18);
   --s2-border-strong: rgba(190, 200, 255, 0.42);
-
   --s2-text: #f5f1ff;
   --s2-text-mid: #c9cde2;
   --s2-text-muted: #8f96b3;
-
-  /* Quote system: shared by every quote card.
-     Change these values here to update the entire quote collection. */
   --s2-quote-gap: clamp(0.68rem, 0.78vw, 0.82rem);
-  /* Larger shared quote type reduces unused space while preserving a single
-     visual hierarchy across all nine cards. */
-  --s2-quote-font-size: clamp(1rem, 0.42vw + 0.76rem, 1.125rem);
-  --s2-quote-line-height: 1.43;
+  --s2-quote-font-size: clamp(0.95rem, 0.34vw + 0.72rem, 1rem);
+  --s2-quote-line-height: 1.4;
   --s2-quote-padding-block: 0.72rem;
   --s2-quote-padding-inline: 0.95rem;
   --s2-quote-number-size: 0.625rem;
-
 
   position: relative;
   width: 100%;
@@ -85,7 +53,6 @@
 #section-2-empty-shelf::before,
 .section-empty-shelf::before {
   content: "";
-
   position: absolute;
   left: 50%;
   top: 7rem;
@@ -107,14 +74,12 @@
 
   filter: blur(64px);
   opacity: 0.9;
-
   transform: translateX(-50%);
 }
 
 #section-2-empty-shelf::after,
 .section-empty-shelf::after {
   content: "";
-
   position: absolute;
   inset: 0;
   z-index: 0;
@@ -137,39 +102,23 @@
   z-index: 1;
 }
 
-
-/* ============================================================================
-   2. ACCESSIBILITY
-   ============================================================================ */
-
 .sr-only,
 #section-2-status {
   position: absolute !important;
-
   width: 1px !important;
   height: 1px !important;
-
   padding: 0 !important;
   margin: -1px !important;
-
   overflow: hidden !important;
   white-space: nowrap !important;
-
   clip: rect(0 0 0 0) !important;
   clip-path: inset(50%) !important;
-
   border: 0 !important;
 }
-
-
-/* ============================================================================
-   3. SECTION HEADER
-   ============================================================================ */
 
 .section-2-header {
   max-width: 880px;
   margin: 0 auto 4rem;
-
   text-align: center;
 }
 
@@ -215,11 +164,6 @@
   line-height: 1.7;
 }
 
-
-/* ============================================================================
-   4. SCROLL STRUCTURE
-   ============================================================================ */
-
 .empty-shelf-scroll {
   position: relative;
   z-index: 1;
@@ -227,7 +171,6 @@
 
 .stage-viewport {
   position: relative;
-
   width: 100%;
   overflow: visible;
 }
@@ -267,11 +210,6 @@
   visibility: visible;
   pointer-events: auto;
 }
-
-
-/* ============================================================================
-   5. CARD WRAPPER
-   ============================================================================ */
 
 .card-wrap {
   position: relative;
@@ -325,16 +263,8 @@
 
 .card-wrap:hover::before {
   opacity: 1;
-
-  transform:
-    translate(-50%, -50%)
-    scale(1.025);
+  transform: translate(-50%, -50%) scale(1.025);
 }
-
-
-/* ============================================================================
-   6. MAIN MEDIA CARD
-   ============================================================================ */
 
 .media-library-row {
   position: relative;
@@ -353,8 +283,8 @@
     auto;
 
   grid-template-areas:
-    "cover info    score"
-    "cover chips   score"
+    "cover info score"
+    "cover chips score"
     "cover details details";
 
   grid-template-rows:
@@ -472,14 +402,8 @@
   outline-offset: 5px;
 }
 
-
-/* ============================================================================
-   7. COVER
-   ============================================================================ */
-
 .media-row-cover {
   grid-area: cover;
-
   align-self: center;
   justify-self: start;
 
@@ -493,7 +417,6 @@
   max-height: none;
 
   aspect-ratio: 2 / 3;
-
   overflow: hidden;
 
   border: 1px solid rgba(184, 192, 255, 0.18);
@@ -533,8 +456,7 @@
   color: transparent;
   font-size: 0;
 
-  transition:
-    filter 280ms ease;
+  transition: filter 280ms ease;
 }
 
 .media-row-cover::after {
@@ -598,11 +520,6 @@
     rotate(12deg)
     translateX(260%);
 }
-
-
-/* ============================================================================
-   8. TITLE AND AUTHOR
-   ============================================================================ */
 
 .media-row-info {
   grid-area: info;
@@ -680,11 +597,6 @@
   text-shadow:
     0 0 16px rgba(155, 124, 255, 0.35);
 }
-
-
-/* ============================================================================
-   9. META CHIPS
-   ============================================================================ */
 
 .media-row-format,
 .media-row-status {
@@ -764,11 +676,6 @@
   outline: 2px solid rgba(184, 192, 255, 0.68);
   outline-offset: 4px;
 }
-
-
-/* ============================================================================
-   10. SCORE CAPSULE
-   ============================================================================ */
 
 .media-row-score {
   grid-area: score;
@@ -911,11 +818,6 @@
   outline-offset: 4px;
 }
 
-
-/* ============================================================================
-   11. SAVED LAYERS TRAY
-   ============================================================================ */
-
 .media-row-details {
   grid-area: details;
 
@@ -1038,11 +940,6 @@
     );
 }
 
-
-/* ============================================================================
-   12. SHARED EVIDENCE STYLES
-   ============================================================================ */
-
 .falling-quotes,
 .moving-moments,
 .character-cloud,
@@ -1090,23 +987,7 @@
     translate(-50%, -50%);
 }
 
-
-/* ============================================================================
-   13. QUOTES — BALANCED TILED FIELD
-   ----------------------------------------------------------------------------
-   The quote group is treated as one visual field rather than three unrelated
-   columns. Each desktop column begins and ends on the same horizontal edges,
-   while individual card heights follow the amount of copy they contain.
-
-   Desktop distribution:
-   - Column 1: 01, 04, 07
-   - Column 2: 02, 05, 08
-   - Column 3: 03, 06, 09
-
-   This spreads the longest quotations across the full width, keeps the outer
-   silhouette balanced, removes accidental holes, and preserves a clear
-   top-row reading entry through quotes 01, 02, and 03.
-   ============================================================================ */
+/* Eleven-quote desktop grid */
 
 .section-empty-shelf.is-js-ready .falling-quotes {
   position: relative;
@@ -1119,15 +1000,13 @@
 
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  grid-template-rows: repeat(15, minmax(0, 1fr));
+  grid-template-rows: repeat(20, minmax(0, 1fr));
   gap: var(--s2-quote-gap);
 
   align-items: stretch;
   overflow: visible;
 }
 
-/* Every quote uses one component style. Its grid span controls only the space
-   it needs; no quote receives featured-card styling. */
 .falling-quote {
   position: relative;
   z-index: 1;
@@ -1138,6 +1017,7 @@
   height: 100%;
 
   margin: 0;
+
   padding:
     var(--s2-quote-padding-block)
     var(--s2-quote-padding-inline)
@@ -1224,9 +1104,6 @@
   color: inherit;
 }
 
-/* Shared inline emphasis.
-   Every card may contain one or more meaningful highlighted phrases. Because
-   the treatment is identical everywhere, no single quote becomes a feature. */
 .quote-emphasis {
   color: var(--s2-text);
   font-weight: 760;
@@ -1246,9 +1123,8 @@
   border-radius: 0.16em;
 }
 
-/* Desktop tiled placement.
-   Fifteen small tracks let each card receive a height close to its text weight
-   while all three columns still occupy the same total vertical space. */
+/* Column 1 */
+
 .quote-1 {
   grid-column: 1;
   grid-row: 1 / span 5;
@@ -1256,13 +1132,20 @@
 
 .quote-4 {
   grid-column: 1;
-  grid-row: 6 / span 3;
+  grid-row: 6 / span 4;
 }
 
 .quote-7 {
   grid-column: 1;
-  grid-row: 9 / span 7;
+  grid-row: 10 / span 7;
 }
+
+.quote-11 {
+  grid-column: 1;
+  grid-row: 17 / span 4;
+}
+
+/* Column 2 */
 
 .quote-2 {
   grid-column: 2;
@@ -1271,27 +1154,34 @@
 
 .quote-5 {
   grid-column: 2;
-  grid-row: 6 / span 6;
+  grid-row: 6 / span 7;
 }
 
 .quote-8 {
   grid-column: 2;
-  grid-row: 12 / span 4;
+  grid-row: 13 / span 4;
 }
+
+.quote-10 {
+  grid-column: 2;
+  grid-row: 17 / span 4;
+}
+
+/* Column 3 */
 
 .quote-3 {
   grid-column: 3;
-  grid-row: 1 / span 8;
+  grid-row: 1 / span 9;
 }
 
 .quote-6 {
   grid-column: 3;
-  grid-row: 9 / span 3;
+  grid-row: 10 / span 4;
 }
 
 .quote-9 {
   grid-column: 3;
-  grid-row: 12 / span 4;
+  grid-row: 14 / span 7;
 }
 
 .falling-quote:hover,
@@ -1324,68 +1214,9 @@
   outline-offset: 4px;
 }
 
-/* Compact desktop / landscape tablet.
-   Two complete columns replace the three-column field before text becomes too
-   narrow. Both columns still start and finish at the same vertical positions. */
+/* Tablet and mobile quotes */
+
 @media (max-width: 1100px) {
-  .section-empty-shelf.is-js-ready .falling-quotes {
-    height: 620px;
-
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-template-rows: repeat(20, minmax(0, 1fr));
-    gap: 0.58rem;
-  }
-
-  .quote-1 {
-    grid-column: 1;
-    grid-row: 1 / span 5;
-  }
-
-  .quote-4 {
-    grid-column: 1;
-    grid-row: 6 / span 3;
-  }
-
-  .quote-5 {
-    grid-column: 1;
-    grid-row: 9 / span 6;
-  }
-
-  .quote-7 {
-    grid-column: 1;
-    grid-row: 15 / span 6;
-  }
-
-  .quote-2 {
-    grid-column: 2;
-    grid-row: 1 / span 5;
-  }
-
-  .quote-3 {
-    grid-column: 2;
-    grid-row: 6 / span 6;
-  }
-
-  .quote-6 {
-    grid-column: 2;
-    grid-row: 12 / span 3;
-  }
-
-  .quote-8 {
-    grid-column: 2;
-    grid-row: 15 / span 3;
-  }
-
-  .quote-9 {
-    grid-column: 2;
-    grid-row: 18 / span 3;
-  }
-}
-
-/* Portrait tablet and mobile return to document order. A scrollable single
-   column is easier to read and keeps the pinned scene from overlapping the
-   persistent media card. */
-@media (max-width: 900px) {
   .section-empty-shelf.is-js-ready .falling-quotes {
     height: auto;
     max-height: 620px;
@@ -1395,10 +1226,12 @@
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: none;
+
     gap: var(--s2-quote-gap);
 
-    overflow-y: auto;
     overflow-x: hidden;
+    overflow-y: auto;
+
     overscroll-behavior: contain;
     scrollbar-gutter: stable;
   }
@@ -1412,31 +1245,19 @@
   .quote-6,
   .quote-7,
   .quote-8,
-  .quote-9 {
+  .quote-9,
+  .quote-10,
+  .quote-11 {
     grid-column: auto;
     grid-row: auto;
+
+    width: 100%;
     height: auto;
     min-height: 0;
   }
 }
 
-
-/* ==14. MOMENTS — IMAGE-ONLY BALANCED GALLERY */
-
-/* ============================================================================
-   14. MOMENTS — BALANCED GALLERY WITH SMOOTH HOVER LIFT
-   ----------------------------------------------------------------------------
-   JavaScript controls the permanent z-index order.
-
-   CSS controls only the temporary visual hover:
-   - smoothly becomes slightly larger
-   - smoothly moves upward
-   - returns to normal size after hover
-   - remains on its newly assigned layer
-
-   Filters are intentionally avoided on moment cards because filters combined
-   with GSAP transforms can produce thin horizontal and vertical paint seams.
-   ============================================================================ */
+/* Moments */
 
 .section-empty-shelf.is-js-ready .moving-moments {
   position: relative;
@@ -1451,16 +1272,10 @@
   overflow: visible;
 }
 
-/* Position the gallery above the persistent Vagabond card. */
-
 .section-empty-shelf.is-js-ready
 .scroll-stage[data-stage="moments-move"] {
   top: clamp(-68px, -4.5vh, -34px);
 }
-
-/* ============================================================================
-   MOMENT CARD
-   ============================================================================ */
 
 .moment-frame {
   position: absolute;
@@ -1497,10 +1312,6 @@
     0 0 34px rgba(124, 140, 255, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
 
-  /*
-   * These individual transform properties work alongside GSAP's
-   * transform property without replacing GSAP's x, y or rotation.
-   */
   scale: 1;
   translate: 0 0;
 
@@ -1517,8 +1328,6 @@
     border-color 220ms ease,
     background 220ms ease;
 }
-
-/* Inner frame decoration. */
 
 .moment-frame::after {
   content: "";
@@ -1539,8 +1348,6 @@
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
 }
-
-/* Moment image. */
 
 .moment-frame img {
   width: 100%;
@@ -1564,13 +1371,6 @@
   transition:
     transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
 }
-
-/* ============================================================================
-   TEMPORARY HOVER ANIMATION
-
-   The size and vertical lift return to normal when hover ends.
-   The permanent z-index remains because JavaScript stores it inline.
-   ============================================================================ */
 
 .moment-frame:hover,
 .moment-frame:focus-visible {
@@ -1602,10 +1402,6 @@
   outline-offset: 5px;
 }
 
-/* ============================================================================
-   MOMENT SHAPES
-   ============================================================================ */
-
 .moment-square {
   --ratio: 1 / 1;
 }
@@ -1614,119 +1410,88 @@
   --ratio: 0.64 / 1;
 }
 
-/* ============================================================================
-   DESKTOP MOMENT SIZE AND SPACING
-
-   The overlap is now approximately 2.9% between neighboring cards.
-   This keeps the collage effect while leaving most artwork visible.
-   ============================================================================ */
-
 @media (min-width: 1101px) {
   .section-empty-shelf.is-js-ready
   .scroll-stage[data-stage="moments-move"] {
-    width: min(1680px, calc(100vw - 56px));
-    height: clamp(550px, 63vh, 620px);
+    width: min(1720px, calc(100vw - 56px));
+    height: clamp(560px, 62vh, 610px);
 
-    top: clamp(-72px, -5vh, -40px);
+    top: clamp(-76px, -5vh, -42px);
   }
 
   .section-empty-shelf.is-js-ready .moving-moments {
-    width: min(1680px, calc(100vw - 56px));
-    max-width: 1680px;
+    width: min(1720px, calc(100vw - 56px));
+    max-width: 1720px;
 
-    height: clamp(550px, 63vh, 620px);
+    height: clamp(560px, 62vh, 610px);
   }
-
-  .section-empty-shelf.is-js-ready
-  .moving-moments::before {
-    width: min(1680px, 108%);
-  }
-
-  /* Square 1 */
 
   .moment-frame-1 {
     --x: 0%;
-    --y: 7%;
-    --w: 16.8%;
+    --y: 8%;
+    --w: 17.4%;
 
-    z-index: 5;
+    z-index: 4;
   }
-
-  /* Vertical 1 */
 
   .moment-frame-5 {
-    --x: 13.9%;
+    --x: 13.8%;
     --y: 0%;
-    --w: 13.3%;
-
-    z-index: 7;
-  }
-
-  /* Square 2 */
-
-  .moment-frame-2 {
-    --x: 24.3%;
-    --y: 21%;
-    --w: 16.8%;
-
-    z-index: 3;
-  }
-
-  /* Vertical 2 */
-
-  .moment-frame-6 {
-    --x: 38.2%;
-    --y: 12%;
-    --w: 13.3%;
+    --w: 13.9%;
 
     z-index: 6;
   }
 
-  /* Square 3 */
+  .moment-frame-2 {
+    --x: 24.1%;
+    --y: 22%;
+    --w: 17.4%;
 
-  .moment-frame-3 {
-    --x: 48.6%;
-    --y: 6%;
-    --w: 16.8%;
+    z-index: 3;
+  }
+
+  .moment-frame-6 {
+    --x: 37.9%;
+    --y: 11%;
+    --w: 13.9%;
 
     z-index: 5;
   }
 
-  /* Vertical 3 */
+  .moment-frame-3 {
+    --x: 48.2%;
+    --y: 7%;
+    --w: 17.4%;
 
-  .moment-frame-7 {
-    --x: 62.5%;
-    --y: 0%;
-    --w: 13.3%;
-
-    z-index: 7;
+    z-index: 4;
   }
 
-  /* Square 4 */
+  .moment-frame-7 {
+    --x: 62%;
+    --y: 0%;
+    --w: 13.9%;
+
+    z-index: 6;
+  }
 
   .moment-frame-4 {
-    --x: 72.9%;
-    --y: 20%;
-    --w: 16.8%;
+    --x: 72.3%;
+    --y: 21%;
+    --w: 17.4%;
 
     z-index: 3;
   }
 
-  /* Vertical 4 */
-
   .moment-frame-8 {
-    --x: 86.7%;
-    --y: 11%;
-    --w: 13.3%;
+    --x: 86.1%;
+    --y: 10%;
+    --w: 13.9%;
 
-    z-index: 6;
+    z-index: 5;
   }
 }
 
-
-/* ============================================================================
-   15. CHARACTERS
-   ============================================================================ */
+/* Characters */
 
 .section-empty-shelf.is-js-ready .character-cloud {
   height: clamp(500px, 56vh, 620px);
@@ -1877,10 +1642,7 @@
   --w: 17.4%;
 }
 
-
-/* ============================================================================
-   16. NOTES
-   ============================================================================ */
+/* Notes */
 
 .notes-cloud {
   display: grid;
@@ -1987,10 +1749,7 @@
   outline-offset: 4px;
 }
 
-
-/* ============================================================================
-   17. THOUGHTS
-   ============================================================================ */
+/* Thoughts */
 
 .thoughts-cloud {
   display: grid;
@@ -2067,10 +1826,7 @@
   outline-offset: 4px;
 }
 
-
-/* ============================================================================
-   18. FLYING BUTTON PROXY
-   ============================================================================ */
+/* Flying button */
 
 .depth-button-proxy {
   position: fixed;
@@ -2117,12 +1873,7 @@
   transform-style: preserve-3d;
 }
 
-
-/* ============================================================================
-   19. TABLET RESPONSIVE OVERRIDES
-   ----------------------------------------------------------------------------
-   Only properties that differ from the base component styles are repeated here.
-   ============================================================================ */
+/* Tablet */
 
 @media (max-width: 1100px) {
   #section-2-empty-shelf,
@@ -2150,7 +1901,6 @@
     top: clamp(-52px, -3.5vh, -20px);
   }
 
-  /* Tablet: alternating square / vertical. */
   .moment-frame-1 {
     --x: 0%;
     --y: 5%;
@@ -2199,7 +1949,6 @@
     --w: 16%;
   }
 
-  /* Six characters: a balanced 3 × 2 layout on tablets. */
   .character-1 {
     --x: 3.5%;
     --y: 0%;
@@ -2242,13 +1991,7 @@
   }
 }
 
-
-/* ============================================================================
-   21. MOBILE RESPONSIVE OVERRIDES
-   ----------------------------------------------------------------------------
-   Base component rules stay above; this section changes only mobile-specific
-   sizing, placement, and scrolling behavior.
-   ============================================================================ */
+/* Mobile */
 
 @media (max-width: 640px) {
   #section-2-empty-shelf,
@@ -2260,7 +2003,6 @@
 
     --section-2-cover-width: 135px;
     --section-2-card-gap: 0.95rem;
-
     --s2-quote-gap: 0.75rem;
   }
 
@@ -2362,9 +2104,6 @@
     padding-inline: 0.75rem;
   }
 
-
-  /* Mobile quotes preserve the shared readable type in one ordered column. */
-
   .section-empty-shelf.is-js-ready .falling-quotes {
     grid-template-columns: minmax(0, 1fr);
     gap: var(--s2-quote-gap);
@@ -2400,7 +2139,6 @@
     border-radius: 9px;
   }
 
-  /* Mobile: two alternating rows. */
   .moment-frame-1 {
     --x: 5%;
     --y: 2%;
@@ -2449,7 +2187,6 @@
     --w: 23%;
   }
 
-  /* Six characters: three cards per row. */
   .character-1 {
     --x: 0%;
     --y: 0%;
@@ -2492,10 +2229,7 @@
   }
 }
 
-
-/* ============================================================================
-   22. REDUCED MOTION
-   ============================================================================ */
+/* Reduced motion */
 
 @media (prefers-reduced-motion: reduce) {
   .card-wrap::before,
@@ -2534,126 +2268,14 @@
     transform: none !important;
   }
 
+  .moment-frame:hover,
+  .moment-frame:focus-visible {
+    scale: 1;
+    translate: 0 0;
+  }
+
   .media-library-row:hover::before,
   .media-row-cover:hover::after {
     opacity: 0 !important;
-  }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* ==========================================================================
-   LARGE DESKTOP MOMENTS — MODERATE SIZE + EVEN OVERLAP
-
-   Visual order:
-   square 1 → vertical 5 → square 2 → vertical 6
-   → square 3 → vertical 7 → square 4 → vertical 8
-   ========================================================================== */
-
-@media (min-width: 1101px) {
-
-  /* Give only the Moments scene more width. */
-  .section-empty-shelf.is-js-ready
-  .scroll-stage[data-stage="moments-move"] {
-    width: min(1720px, calc(100vw - 56px));
-    height: clamp(560px, 62vh, 610px);
-
-    top: clamp(-76px, -5vh, -42px);
-  }
-
-  .section-empty-shelf.is-js-ready .moving-moments {
-    width: min(1720px, calc(100vw - 56px));
-    max-width: 1720px;
-
-    height: clamp(560px, 62vh, 610px);
-  }
-
-  /*
-   * Squares: 17.4%
-   * Verticals: 13.9%
-   *
-   * Every neighboring pair overlaps by approximately 3.6%.
-   * This keeps the collage effect without hiding too much artwork.
-   */
-
-  .moment-frame-1 {
-    --x: 0%;
-    --y: 8%;
-    --w: 17.4%;
-
-    z-index: 4;
-  }
-
-  .moment-frame-5 {
-    --x: 13.8%;
-    --y: 0%;
-    --w: 13.9%;
-
-    z-index: 6;
-  }
-
-  .moment-frame-2 {
-    --x: 24.1%;
-    --y: 22%;
-    --w: 17.4%;
-
-    z-index: 3;
-  }
-
-  .moment-frame-6 {
-    --x: 37.9%;
-    --y: 11%;
-    --w: 13.9%;
-
-    z-index: 5;
-  }
-
-  .moment-frame-3 {
-    --x: 48.2%;
-    --y: 7%;
-    --w: 17.4%;
-
-    z-index: 4;
-  }
-
-  .moment-frame-7 {
-    --x: 62%;
-    --y: 0%;
-    --w: 13.9%;
-
-    z-index: 6;
-  }
-
-  .moment-frame-4 {
-    --x: 72.3%;
-    --y: 21%;
-    --w: 17.4%;
-
-    z-index: 3;
-  }
-
-  .moment-frame-8 {
-    --x: 86.1%;
-    --y: 10%;
-    --w: 13.9%;
-
-    z-index: 5;
   }
 }
