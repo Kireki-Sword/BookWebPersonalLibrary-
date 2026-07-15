@@ -1047,40 +1047,123 @@
 
 
             <div class="flow-sort-controls">
-                <label for="library-sort-select">
+                <span
+                class="flow-sort-label"
+                id="library-sort-label"
+                >
                 Sort by
-                </label>
+                </span>
 
-                <div class="flow-select-shell flow-sort-select-shell">
-                <i
+                <div
+                class="flow-sort-menu"
+                data-sort-menu
+                >
+                <button
+                    class="flow-sort-trigger"
+                    type="button"
+                    data-sort-trigger
+                    aria-haspopup="listbox"
+                    aria-expanded="false"
+                    aria-labelledby="library-sort-label library-sort-value"
+                >
+                    <i
                     class="ti ti-arrows-sort"
                     aria-hidden="true"
-                ></i>
+                    ></i>
+
+                    <span
+                    id="library-sort-value"
+                    data-sort-label
+                    >
+                    Default order
+                    </span>
+
+                    <i
+                    class="ti ti-chevron-down flow-sort-chevron"
+                    aria-hidden="true"
+                    ></i>
+                </button>
+
+                <div
+                    class="flow-sort-options"
+                    data-sort-options
+                    role="listbox"
+                    aria-labelledby="library-sort-label"
+                    hidden
+                >
+                    <button
+                    type="button"
+                    class="flow-sort-option is-selected"
+                    data-sort-option
+                    data-sort-value=""
+                    data-sort-option-label="Default order"
+                    role="option"
+                    aria-selected="true"
+                    >
+                    Default order
+                    </button>
+
+                    <button
+                    type="button"
+                    class="flow-sort-option"
+                    data-sort-option
+                    data-sort-value="title-asc"
+                    data-sort-option-label="Title A–Z"
+                    role="option"
+                    aria-selected="false"
+                    >
+                    Title A–Z
+                    </button>
+
+                    <button
+                    type="button"
+                    class="flow-sort-option"
+                    data-sort-option
+                    data-sort-value="title-desc"
+                    data-sort-option-label="Title Z–A"
+                    role="option"
+                    aria-selected="false"
+                    >
+                    Title Z–A
+                    </button>
+
+                    <button
+                    type="button"
+                    class="flow-sort-option"
+                    data-sort-option
+                    data-sort-value="rating-desc"
+                    data-sort-option-label="Personal rating high–low"
+                    role="option"
+                    aria-selected="false"
+                    >
+                    Personal rating high–low
+                    </button>
+
+                    <button
+                    type="button"
+                    class="flow-sort-option"
+                    data-sort-option
+                    data-sort-value="rating-asc"
+                    data-sort-option-label="Personal rating low–high"
+                    role="option"
+                    aria-selected="false"
+                    >
+                    Personal rating low–high
+                    </button>
+                </div>
 
                 <select
                     id="library-sort-select"
                     data-library-sort
-                    aria-label="Sort saved stories"
+                    aria-hidden="true"
+                    tabindex="-1"
+                    hidden
                 >
-                    <option value="">
-                    Default order
-                    </option>
-
-                    <option value="title-asc">
-                    Title A–Z
-                    </option>
-
-                    <option value="title-desc">
-                    Title Z–A
-                    </option>
-
-                    <option value="rating-desc">
-                    Personal rating high–low
-                    </option>
-
-                    <option value="rating-asc">
-                    Personal rating low–high
-                    </option>
+                    <option value="">Default order</option>
+                    <option value="title-asc">Title A–Z</option>
+                    <option value="title-desc">Title Z–A</option>
+                    <option value="rating-desc">Personal rating high–low</option>
+                    <option value="rating-asc">Personal rating low–high</option>
                 </select>
                 </div>
             </div>
@@ -1302,7 +1385,8 @@
                     </span>
 
                     <i
-                    class="ti ti-star"
+                    class="ti ti-star flow-rating-star"
+                    data-library-rating-icon
                     aria-hidden="true"
                     ></i>
 

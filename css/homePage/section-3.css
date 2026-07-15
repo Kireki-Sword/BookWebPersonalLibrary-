@@ -686,15 +686,76 @@
 }
 
 
-.flow-search-bar button:hover {
-  box-shadow:
-    0 0 22px rgba(124, 140, 255, 0.20);
+.flow-search-bar button > i {
+  transition:
+    transform var(--flow-transition),
+    filter var(--flow-transition);
 }
 
 
-.flow-search-bar button:active {
+.flow-search-bar button:hover:not(:disabled),
+.flow-search-bar button:focus-visible:not(:disabled) {
+  color: #ffffff;
+
+  outline: none;
+
+  background:
+    radial-gradient(
+      circle at 28% 18%,
+      rgba(255, 255, 255, 0.36),
+      transparent 32%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(116, 215, 255, 0.92),
+      rgba(109, 139, 255, 0.95) 48%,
+      rgba(155, 124, 255, 0.95)
+    );
+
+  box-shadow:
+    0 0 0 3px rgba(116, 215, 255, 0.12),
+    0 9px 24px rgba(0, 0, 0, 0.24),
+    0 0 28px rgba(116, 215, 255, 0.28);
+
   transform:
-    scale(0.96);
+    translateY(-1px);
+}
+
+
+.flow-search-bar button:hover:not(:disabled) > i,
+.flow-search-bar button:focus-visible:not(:disabled) > i {
+  transform:
+    rotate(-8deg)
+    scale(1.08);
+
+  filter:
+    drop-shadow(0 0 8px rgba(255, 255, 255, 0.44));
+}
+
+
+.flow-search-bar button:active:not(:disabled) {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(210, 140, 255, 0.96),
+      rgba(109, 139, 255, 0.98) 58%,
+      rgba(91, 95, 232, 0.98)
+    );
+
+  box-shadow:
+    0 0 0 2px rgba(210, 140, 255, 0.15),
+    0 4px 12px rgba(0, 0, 0, 0.26),
+    0 0 22px rgba(210, 140, 255, 0.24);
+
+  transform:
+    translateY(0)
+    scale(0.94);
+}
+
+
+.flow-search-bar button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
 }
 
 
@@ -1482,7 +1543,8 @@
 }
 
 
-.flow-sort-controls > label {
+.flow-sort-controls > label,
+.flow-sort-label {
   color:
     var(--flow-ink-faint);
 
@@ -1645,6 +1707,325 @@
 
 .flow-sort-select-shell select {
   font-size: 0.68rem;
+}
+
+
+/* Custom sort dropdown: unlike a native select, the open panel can be
+   fully rounded and styled consistently in every browser. */
+
+.flow-library-toolbar {
+  position: relative;
+  z-index: 20;
+}
+
+
+.flow-sort-menu {
+  position: relative;
+  z-index: 30;
+
+  width:
+    clamp(220px, 18vw, 282px);
+}
+
+
+.flow-sort-trigger {
+  width: 100%;
+  height: 40px;
+
+  padding:
+    0 0.72rem 0 0.82rem;
+
+  display: grid;
+  grid-template-columns:
+    auto minmax(0, 1fr) auto;
+  align-items: center;
+
+  gap: 0.62rem;
+
+  border:
+    1px solid rgba(116, 215, 255, 0.34);
+
+  border-radius: 13px;
+
+  color:
+    var(--flow-ink);
+
+  font:
+    780 0.69rem
+    var(--flow-font-body);
+
+  text-align: left;
+
+  cursor: pointer;
+
+  background:
+    radial-gradient(
+      circle at 16% 10%,
+      rgba(255, 255, 255, 0.13),
+      transparent 30%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(20, 34, 64, 0.98),
+      rgba(13, 22, 44, 0.98) 58%,
+      rgba(17, 20, 45, 0.98)
+    );
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 10px 22px rgba(0, 0, 0, 0.22),
+    0 0 20px rgba(116, 215, 255, 0.06);
+
+  transition:
+    border-color var(--flow-transition),
+    box-shadow var(--flow-transition),
+    transform var(--flow-transition),
+    background var(--flow-transition);
+}
+
+
+.flow-sort-trigger:hover,
+.flow-sort-trigger:focus-visible,
+.flow-sort-menu.is-open .flow-sort-trigger {
+  border-color:
+    rgba(116, 215, 255, 0.70);
+
+  outline: none;
+
+  background:
+    radial-gradient(
+      circle at 16% 10%,
+      rgba(255, 255, 255, 0.16),
+      transparent 31%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(26, 45, 82, 0.99),
+      rgba(17, 28, 55, 0.99) 55%,
+      rgba(28, 24, 60, 0.99)
+    );
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.09),
+    0 0 0 3px rgba(116, 215, 255, 0.11),
+    0 12px 28px rgba(0, 0, 0, 0.26),
+    0 0 24px rgba(116, 215, 255, 0.13);
+
+  transform:
+    translateY(-1px);
+}
+
+
+.flow-sort-trigger > .ti-arrows-sort {
+  color:
+    var(--flow-cyan);
+
+  font-size: 0.9rem;
+}
+
+
+.flow-sort-trigger [data-sort-label] {
+  min-width: 0;
+
+  overflow: hidden;
+
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+
+.flow-sort-chevron {
+  color:
+    var(--flow-ink-light);
+
+  font-size: 0.86rem;
+
+  transition:
+    transform var(--flow-transition),
+    color var(--flow-transition);
+}
+
+
+.flow-sort-menu.is-open .flow-sort-chevron {
+  color:
+    var(--flow-cyan);
+
+  transform:
+    rotate(180deg);
+}
+
+
+.flow-sort-options {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 50;
+
+  width: 100%;
+
+  padding: 0.42rem;
+
+  overflow: hidden;
+
+  border:
+    1px solid rgba(116, 215, 255, 0.34);
+
+  border-radius: 15px;
+
+  background:
+    radial-gradient(
+      circle at 12% 4%,
+      rgba(124, 140, 255, 0.20),
+      transparent 34%
+    ),
+    linear-gradient(
+      155deg,
+      rgba(17, 28, 53, 0.99),
+      rgba(9, 15, 32, 0.995) 62%,
+      rgba(20, 16, 42, 0.99)
+    );
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 22px 46px rgba(0, 0, 0, 0.48),
+    0 0 34px rgba(116, 215, 255, 0.11);
+
+  backdrop-filter:
+    blur(18px) saturate(1.16);
+
+  -webkit-backdrop-filter:
+    blur(18px) saturate(1.16);
+
+  transform-origin:
+    top right;
+
+  animation:
+    flowSortMenuIn
+    0.18s
+    ease-out
+    both;
+}
+
+
+.flow-sort-options[hidden] {
+  display: none !important;
+}
+
+
+.flow-sort-option {
+  position: relative;
+
+  width: 100%;
+  min-height: 38px;
+
+  padding:
+    0.58rem 2rem 0.58rem 0.75rem;
+
+  display: flex;
+  align-items: center;
+
+  border: 0;
+  border-radius: 10px;
+
+  color:
+    var(--flow-ink-mid);
+
+  font:
+    720 0.68rem
+    var(--flow-font-body);
+
+  text-align: left;
+
+  cursor: pointer;
+
+  background: transparent;
+
+  transition:
+    color var(--flow-transition),
+    background var(--flow-transition),
+    transform var(--flow-transition);
+}
+
+
+.flow-sort-option::after {
+  content: "✓";
+
+  position: absolute;
+  right: 0.75rem;
+
+  color:
+    var(--flow-cyan);
+
+  font-size: 0.74rem;
+  font-weight: 900;
+
+  opacity: 0;
+
+  transform:
+    scale(0.7);
+
+  transition:
+    opacity var(--flow-transition),
+    transform var(--flow-transition);
+}
+
+
+.flow-sort-option:hover,
+.flow-sort-option:focus-visible {
+  color: #ffffff;
+
+  outline: none;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(116, 215, 255, 0.14),
+      rgba(124, 140, 255, 0.17),
+      rgba(155, 124, 255, 0.10)
+    );
+
+  transform:
+    translateX(2px);
+}
+
+
+.flow-sort-option.is-selected {
+  color: #ffffff;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(116, 215, 255, 0.18),
+      rgba(124, 140, 255, 0.23),
+      rgba(155, 124, 255, 0.14)
+    );
+}
+
+
+.flow-sort-option.is-selected::after {
+  opacity: 1;
+
+  transform:
+    scale(1);
+}
+
+
+@keyframes flowSortMenuIn {
+  from {
+    opacity: 0;
+
+    transform:
+      translateY(-6px)
+      scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      translateY(0)
+      scale(1);
+  }
 }
 
 
@@ -2127,7 +2508,52 @@
   color:
     #f0cf70;
 
-  font-size: 0.85rem;
+  font-size: 0.88rem;
+
+  filter:
+    drop-shadow(0 0 0 rgba(240, 207, 112, 0));
+
+  transform:
+    scale(1);
+
+  transition:
+    color var(--flow-transition),
+    filter var(--flow-transition),
+    transform var(--flow-transition);
+}
+
+
+.flow-library-row-rating label.has-rating > i {
+  color:
+    #ffd96a;
+
+  filter:
+    drop-shadow(0 0 8px rgba(255, 217, 106, 0.42));
+
+  transform:
+    scale(1.08);
+}
+
+
+.flow-library-row-rating label.has-rating > i.is-filled::before {
+  content: "★";
+
+  font-family:
+    Arial, sans-serif;
+
+  font-style: normal;
+  line-height: 1;
+}
+
+
+.flow-library-row-rating label.has-rating {
+  border-color:
+    rgba(255, 217, 106, 0.42);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    0 0 0 2px rgba(255, 217, 106, 0.06),
+    0 7px 18px rgba(0, 0, 0, 0.18);
 }
 
 
@@ -2625,7 +3051,8 @@ input[aria-invalid="true"] {
     flex-direction: column;
   }
 
-  .flow-sort-select-shell {
+  .flow-sort-select-shell,
+  .flow-sort-menu {
     width: 100%;
   }
 }

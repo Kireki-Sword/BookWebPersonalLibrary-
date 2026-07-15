@@ -2279,3 +2279,289 @@
     opacity: 0 !important;
   }
 }
+
+
+
+
+
+
+
+
+/* ==========================================================================
+   SECTION 2 — QUOTE OVERFLOW + SINGLE THOUGHT CARD FIXES
+   Paste this at the very bottom of the existing Section 2 CSS file.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   QUOTES
+
+   Gives the longer quotes more vertical room, slightly tightens the
+   typography, and prevents words from escaping their cards.
+   -------------------------------------------------------------------------- */
+
+#section-2-empty-shelf,
+.section-empty-shelf {
+  --s2-quote-column-gap:
+    clamp(0.68rem, 0.78vw, 0.82rem);
+
+  --s2-quote-row-gap:
+    clamp(0.38rem, 0.46vw, 0.5rem);
+
+  --s2-quote-font-size:
+    clamp(0.84rem, 0.2vw + 0.72rem, 0.9rem);
+
+  --s2-quote-line-height: 1.32;
+  --s2-quote-padding-block: 0.62rem;
+}
+
+.section-empty-shelf.is-js-ready
+.falling-quotes {
+  column-gap: var(--s2-quote-column-gap);
+  row-gap: var(--s2-quote-row-gap);
+}
+
+.falling-quote {
+  overflow: hidden;
+
+  overflow-wrap: anywhere;
+  word-break: normal;
+  hyphens: auto;
+
+  font-size: var(--s2-quote-font-size);
+  line-height: var(--s2-quote-line-height);
+}
+
+/*
+ * Desktop quote distribution.
+ *
+ * The longer first and second cards now receive six rows.
+ * The shorter cards below them use fewer rows so the total
+ * layout still fits inside the same twenty-row grid.
+ */
+
+@media (min-width: 1101px) {
+  /* Column 1 */
+
+  .quote-1 {
+    grid-column: 1;
+    grid-row: 1 / span 6;
+  }
+
+  .quote-4 {
+    grid-column: 1;
+    grid-row: 7 / span 3;
+  }
+
+  .quote-7 {
+    grid-column: 1;
+    grid-row: 10 / span 7;
+  }
+
+  .quote-11 {
+    grid-column: 1;
+    grid-row: 17 / span 4;
+  }
+
+  /* Column 2 */
+
+  .quote-2 {
+    grid-column: 2;
+    grid-row: 1 / span 6;
+  }
+
+  .quote-5 {
+    grid-column: 2;
+    grid-row: 7 / span 7;
+  }
+
+  .quote-8 {
+    grid-column: 2;
+    grid-row: 14 / span 3;
+  }
+
+  .quote-10 {
+    grid-column: 2;
+    grid-row: 17 / span 4;
+  }
+
+  /* Column 3 */
+
+  .quote-3 {
+    grid-column: 3;
+    grid-row: 1 / span 9;
+  }
+
+  .quote-6 {
+    grid-column: 3;
+    grid-row: 10 / span 4;
+  }
+
+  .quote-9 {
+    grid-column: 3;
+    grid-row: 14 / span 7;
+  }
+}
+
+/*
+ * The quote cards already become a vertical scrolling list
+ * below 1100px. These rules preserve comfortable spacing.
+ */
+
+@media (max-width: 1100px) {
+  #section-2-empty-shelf,
+  .section-empty-shelf {
+    --s2-quote-column-gap: 0.78rem;
+    --s2-quote-row-gap: 0.78rem;
+  }
+
+  .section-empty-shelf.is-js-ready
+  .falling-quotes {
+    gap: var(--s2-quote-row-gap);
+  }
+}
+
+@media (max-width: 640px) {
+  #section-2-empty-shelf,
+  .section-empty-shelf {
+    --s2-quote-column-gap: 0.75rem;
+    --s2-quote-row-gap: 0.75rem;
+  }
+
+  .section-empty-shelf.is-js-ready
+  .falling-quotes {
+    gap: var(--s2-quote-row-gap);
+  }
+}
+
+
+/* --------------------------------------------------------------------------
+   THOUGHTS
+
+   The .thoughts-cloud element is now the one large outer card.
+
+   The two existing .thought-card elements remain in the HTML, but are
+   displayed as normal paragraphs inside the single large card rather
+   than appearing as two separate cards.
+   -------------------------------------------------------------------------- */
+
+.thoughts-cloud {
+  width: min(980px, 100%);
+  min-height: clamp(320px, 40vh, 420px);
+
+  margin-inline: auto;
+  padding: clamp(1.5rem, 2.4vw, 2.35rem);
+
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+
+  gap: 1.15rem;
+
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      circle at 78% 24%,
+      rgba(124, 140, 255, 0.1),
+      transparent 38%
+    ),
+    linear-gradient(
+      180deg,
+      var(--s2-panel-bg-strong) 0%,
+      var(--s2-panel-bg) 100%
+    );
+
+  border: 1px solid var(--s2-border);
+  border-radius: 24px;
+
+  box-shadow:
+    0 28px 68px rgba(0, 0, 0, 0.48),
+    0 0 42px rgba(124, 140, 255, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+
+  transition:
+    border-color 240ms ease,
+    background 240ms ease,
+    box-shadow 240ms ease;
+}
+
+.thoughts-cloud:hover,
+.thoughts-cloud:focus-within {
+  border-color: var(--s2-border-strong);
+
+  background:
+    radial-gradient(
+      circle at 78% 24%,
+      rgba(124, 140, 255, 0.15),
+      transparent 40%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(18, 24, 43, 0.99) 0%,
+      rgba(8, 13, 28, 0.99) 100%
+    );
+
+  box-shadow:
+    0 40px 92px rgba(0, 0, 0, 0.62),
+    0 0 64px rgba(155, 124, 255, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+/*
+ * Remove the individual card appearance from each thought.
+ * They now act as text paragraphs inside .thoughts-cloud.
+ */
+
+.thought-card,
+.thought-card:hover,
+.thought-card:focus-visible,
+.thought-card.is-top-layer {
+  width: 100%;
+  min-height: 0;
+
+  margin: 0;
+  padding: 0;
+
+  background: transparent;
+
+  border: 0;
+  border-radius: 0;
+
+  box-shadow: none;
+
+  color: var(--s2-text-mid);
+  filter: none;
+
+  /*
+   * Removes the separate rotations and scaling that were
+   * previously applied to the two small thought cards.
+   * Their opacity animation still works.
+   */
+  transform: none !important;
+}
+
+.thought-card:hover,
+.thought-card.is-top-layer {
+  color: var(--s2-text);
+}
+
+.thought-card:focus-visible {
+  outline:
+    1px solid
+    rgba(184, 192, 255, 0.48);
+
+  outline-offset: 6px;
+  border-radius: 8px;
+}
+
+/* Mobile sizing for the single large thought card. */
+
+@media (max-width: 640px) {
+  .thoughts-cloud {
+    min-height: 300px;
+    padding: 1.35rem;
+    gap: 1rem;
+  }
+}
