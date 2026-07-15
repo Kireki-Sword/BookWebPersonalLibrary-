@@ -3022,3 +3022,277 @@ body.s4-dialog-open {
       none !important;
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ==========================================================================
+   SECTION 4 — VISIBILITY, FITTING AND CENTERED DETAIL WINDOW FIX
+   Add this at the very bottom of the Section 4 stylesheet.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Remove the reader-panel scrollbars.
+   The complete panels are fitted into the available desktop viewport by JS.
+   -------------------------------------------------------------------------- */
+
+.s4-reader-side {
+  max-height: none;
+  overflow: visible;
+  overscroll-behavior: auto;
+  scrollbar-width: none;
+}
+
+.s4-reader-side::-webkit-scrollbar {
+  display: none;
+}
+
+/*
+ * Independent scale is used so it does not interfere with the GSAP
+ * translate animation applied to the comparison stage.
+ */
+
+.s4-compare-stage {
+  scale: var(--s4-fit-scale, 1);
+  transform-origin: top center;
+}
+
+
+/* --------------------------------------------------------------------------
+   Full quote visibility
+   -------------------------------------------------------------------------- */
+
+.s4-quote-grid {
+  grid-template-rows: auto auto;
+  align-items: stretch;
+}
+
+.s4-quote-card,
+.s4-quote-card.is-featured {
+  height: auto;
+}
+
+.s4-quote-card {
+  min-height: 190px;
+}
+
+.s4-quote-card.is-featured {
+  min-height: 235px;
+}
+
+/*
+ * Cancel every line-clamp and hidden-overflow rule from the original CSS.
+ */
+
+.s4-quote-card blockquote,
+.s4-quote-card.is-featured blockquote,
+.s4-quote-card:not(.is-featured) blockquote {
+  display: block;
+
+  overflow: visible;
+
+  -webkit-line-clamp: unset;
+  -webkit-box-orient: initial;
+
+  line-clamp: unset;
+}
+
+.s4-quote-card blockquote p {
+  margin: 0;
+}
+
+.s4-quote-card blockquote p + p {
+  margin-top: 0.68rem;
+}
+
+/*
+ * Long quotes use slightly more compact typography but are not shortened.
+ */
+
+.s4-quote-card.quote-long blockquote {
+  font-size: clamp(0.94rem, 0.93vw, 1.02rem);
+  line-height: 1.39;
+}
+
+.s4-quote-card.quote-medium blockquote {
+  font-size: clamp(0.98rem, 1vw, 1.08rem);
+  line-height: 1.4;
+}
+
+.s4-quote-card.quote-short blockquote {
+  font-size: clamp(1.22rem, 1.42vw, 1.44rem);
+  line-height: 1.28;
+}
+
+.s4-quote-card cite {
+  margin-top: 0.9rem;
+}
+
+/*
+ * The button now opens the reader's interpretation rather than the quote.
+ */
+
+.s4-quote-card .s4-card-actions {
+  padding-top: 0.8rem;
+}
+
+
+/* --------------------------------------------------------------------------
+   Properly center the detail window
+   -------------------------------------------------------------------------- */
+
+.s4-detail-dialog {
+  position: fixed !important;
+
+  left: 50% !important;
+  top: 50% !important;
+  right: auto !important;
+  bottom: auto !important;
+
+  inset: auto !important;
+
+  margin: 0 !important;
+
+  transform:
+    translate(-50%, -50%);
+
+  transform-origin: center;
+}
+
+/*
+ * Do not lock body scrolling when opening the dialog.
+ * Native modal dialogs already prevent background interaction.
+ * Removing overflow:hidden prevents the page from jumping.
+ */
+
+body.s4-dialog-open {
+  overflow: visible;
+}
+
+.s4-detail-dialog[open] {
+  animation:
+    s4-dialog-centered-in
+    260ms
+    cubic-bezier(0.22, 1, 0.36, 1)
+    both;
+}
+
+@keyframes s4-dialog-centered-in {
+  from {
+    opacity: 0;
+
+    transform:
+      translate(-50%, calc(-50% + 18px))
+      scale(0.965);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      translate(-50%, -50%)
+      scale(1);
+  }
+}
+
+/*
+ * Reader-takeaway content inside the window.
+ */
+
+.s4-detail-takeaway {
+  padding:
+    clamp(1.15rem, 2.5vw, 1.65rem);
+
+  color: var(--s4-text-mid);
+
+  border:
+    1px solid rgba(184, 192, 255, 0.2);
+
+  border-radius: 17px;
+
+  background:
+    radial-gradient(
+      circle at 90% 8%,
+      rgba(124, 140, 255, 0.12),
+      transparent 34%
+    ),
+    rgba(124, 140, 255, 0.06);
+}
+
+.s4-detail-takeaway-label {
+  display: block;
+
+  margin-bottom: 0.7rem;
+
+  color: rgba(184, 192, 255, 0.76);
+
+  font-family:
+    var(--font-body, system-ui, sans-serif);
+
+  font-size: 0.62rem;
+  font-weight: 900;
+
+  line-height: 1;
+
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.s4-detail-takeaway p {
+  margin: 0;
+
+  color: var(--s4-text-mid);
+
+  font-family:
+    var(--font-body, system-ui, sans-serif);
+
+  font-size: clamp(0.92rem, 1.3vw, 1rem);
+  line-height: 1.75;
+}
+
+
+/* --------------------------------------------------------------------------
+   Static/mobile layouts should not be scaled.
+   Their content can use normal page scrolling.
+   -------------------------------------------------------------------------- */
+
+.section-cover-rain.is-static
+.s4-compare-stage {
+  --s4-fit-scale: 1;
+
+  scale: 1;
+}
+
+@media (max-width: 899px), (max-height: 719px) {
+  .s4-compare-stage {
+    --s4-fit-scale: 1;
+
+    scale: 1;
+  }
+
+  .s4-reader-side {
+    overflow: visible;
+  }
+}
+
+@media (max-width: 680px) {
+  .s4-quote-card,
+  .s4-quote-card.is-featured {
+    min-height: 0;
+  }
+
+  .s4-quote-card.quote-long blockquote,
+  .s4-quote-card.quote-medium blockquote {
+    font-size: 0.98rem;
+  }
+}

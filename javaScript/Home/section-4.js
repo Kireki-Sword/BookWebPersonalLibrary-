@@ -257,7 +257,7 @@
             'medium',
 
           paragraphs: [
-            'At the very least, we need to keep the children out of this forest. Otherwise, the exact same things will just keep happening. It\'s up to us adults to shoulder the sins of the past.'
+            "At the very least, we need to keep the children out of this forest. Otherwise, the exact same things will just keep happening. It's up to us adults to shoulder the sins of the past."
           ],
 
           detail:
@@ -1029,6 +1029,13 @@
     storyPool,
     chosenStory
   ) {
+    if (
+      !elements.rainLeft ||
+      !elements.rainRight
+    ) {
+      return;
+    }
+
     elements.rainLeft.innerHTML =
       '';
 
@@ -1110,18 +1117,16 @@
         story,
         index
       ) => {
-        elements
-          .rainLeft
-          .appendChild(
-            createRainItem(
-              story,
-              'left',
-              index,
-              isChosenStoryTitle(
-                story.title
-              )
+        elements.rainLeft.appendChild(
+          createRainItem(
+            story,
+            'left',
+            index,
+            isChosenStoryTitle(
+              story.title
             )
-          );
+          )
+        );
       }
     );
 
@@ -1130,18 +1135,16 @@
         story,
         index
       ) => {
-        elements
-          .rainRight
-          .appendChild(
-            createRainItem(
-              story,
-              'right',
-              index,
-              isChosenStoryTitle(
-                story.title
-              )
+        elements.rainRight.appendChild(
+          createRainItem(
+            story,
+            'right',
+            index,
+            isChosenStoryTitle(
+              story.title
             )
-          );
+          )
+        );
       }
     );
   }
@@ -1572,62 +1575,69 @@
     let focusMode =
       'both';
 
+    let comparisonResizeTimer =
+      null;
+
     fillProfileCards(
       elements.section
     );
 
     function renderBothSides() {
-      elements
-        .readerContents
-        .forEach(
-          (container) => {
-            const readerId =
-              container
-                .dataset
-                .readerContent;
+      elements.readerContents.forEach(
+        (container) => {
+          const readerId =
+            container.dataset.readerContent;
 
-            const reader =
-              READERS[
-                readerId
-              ];
+          const reader =
+            READERS[
+              readerId
+            ];
 
-            if (
-              !reader
-            ) {
-              return;
-            }
+          if (
+            !reader
+          ) {
+            return;
+          }
 
-            if (
-              activeLayer ===
-              'quotes'
-            ) {
-              renderQuotes(
-                container,
-                readerId,
-                reader
-              );
-            } else if (
-              activeLayer ===
-              'characters'
-            ) {
-              renderCharacters(
-                container,
-                readerId,
-                reader
-              );
-            } else {
-              renderThoughts(
-                container,
-                readerId,
-                reader
-              );
-            }
-
-            animateContent(
-              container
+          if (
+            activeLayer ===
+            'quotes'
+          ) {
+            renderQuotes(
+              container,
+              readerId,
+              reader
+            );
+          } else if (
+            activeLayer ===
+            'characters'
+          ) {
+            renderCharacters(
+              container,
+              readerId,
+              reader
+            );
+          } else {
+            renderThoughts(
+              container,
+              readerId,
+              reader
             );
           }
-        );
+
+          animateContent(
+            container
+          );
+        }
+      );
+
+      requestAnimationFrame(
+        () => {
+          fitComparisonToViewport(
+            elements
+          );
+        }
+      );
     }
 
     function setLayer(
@@ -1648,31 +1658,25 @@
       activeLayer =
         layer;
 
-      elements
-        .layerButtons
-        .forEach(
-          (button) => {
-            const selected =
-              button
-                .dataset
-                .layer ===
-              layer;
+      elements.layerButtons.forEach(
+        (button) => {
+          const selected =
+            button.dataset.layer ===
+            layer;
 
-            button
-              .classList
-              .toggle(
-                'is-active',
-                selected
-              );
+          button.classList.toggle(
+            'is-active',
+            selected
+          );
 
-            button.setAttribute(
-              'aria-pressed',
-              String(
-                selected
-              )
-            );
-          }
-        );
+          button.setAttribute(
+            'aria-pressed',
+            String(
+              selected
+            )
+          );
+        }
+      );
 
       renderBothSides();
     }
@@ -1695,40 +1699,31 @@
       focusMode =
         mode;
 
-      elements
-        .compareStage
-        .dataset
-        .focus =
-          focusMode;
+      elements.compareStage.dataset.focus =
+        focusMode;
 
-      elements
-        .profileButtons
-        .forEach(
-          (button) => {
-            const selected =
-              button
-                .dataset
-                .focusReader ===
-              focusMode;
+      elements.profileButtons.forEach(
+        (button) => {
+          const selected =
+            button.dataset.focusReader ===
+            focusMode;
 
-            button.setAttribute(
-              'aria-pressed',
-              String(
-                selected
-              )
-            );
-          }
-        );
+          button.setAttribute(
+            'aria-pressed',
+            String(
+              selected
+            )
+          );
+        }
+      );
 
-      elements
-        .compareBoth
-        .setAttribute(
-          'aria-pressed',
-          String(
-            focusMode ===
-            'both'
-          )
-        );
+      elements.compareBoth.setAttribute(
+        'aria-pressed',
+        String(
+          focusMode ===
+          'both'
+        )
+      );
 
       if (
         focusMode ===
@@ -1741,10 +1736,8 @@
           READERS.kai.ratingReason
         );
 
-        elements
-          .readerStatus
-          .textContent =
-            READERS.kai.status;
+        elements.readerStatus.textContent =
+          READERS.kai.status;
       } else if (
         focusMode ===
         'right'
@@ -1756,10 +1749,8 @@
           READERS.nova.ratingReason
         );
 
-        elements
-          .readerStatus
-          .textContent =
-            READERS.nova.status;
+        elements.readerStatus.textContent =
+          READERS.nova.status;
       } else {
         const combinedScore =
           getCombinedScore();
@@ -1775,63 +1766,81 @@
           combinedReason
         );
 
-        elements
-          .readerStatus
-          .textContent =
-            'Both completed';
+        elements.readerStatus.textContent =
+          'Both completed';
       }
+
+      requestAnimationFrame(
+        () => {
+          fitComparisonToViewport(
+            elements
+          );
+        }
+      );
     }
 
-    elements
-      .layerButtons
-      .forEach(
-        (button) => {
-          button.addEventListener(
-            'click',
+    elements.layerButtons.forEach(
+      (button) => {
+        button.addEventListener(
+          'click',
+          () => {
+            setLayer(
+              button.dataset.layer
+            );
+          }
+        );
+      }
+    );
+
+    elements.profileButtons.forEach(
+      (button) => {
+        button.addEventListener(
+          'click',
+          () => {
+            const requested =
+              button.dataset.focusReader;
+
+            setFocus(
+              focusMode ===
+              requested
+                ? 'both'
+                : requested
+            );
+          }
+        );
+      }
+    );
+
+    elements.compareBoth?.addEventListener(
+      'click',
+      () => {
+        setFocus(
+          'both'
+        );
+      }
+    );
+
+    window.addEventListener(
+      'resize',
+      () => {
+        window.clearTimeout(
+          comparisonResizeTimer
+        );
+
+        comparisonResizeTimer =
+          window.setTimeout(
             () => {
-              setLayer(
-                button
-                  .dataset
-                  .layer
+              fitComparisonToViewport(
+                elements
               );
-            }
+            },
+            120
           );
-        }
-      );
-
-    elements
-      .profileButtons
-      .forEach(
-        (button) => {
-          button.addEventListener(
-            'click',
-            () => {
-              const requested =
-                button
-                  .dataset
-                  .focusReader;
-
-              setFocus(
-                focusMode ===
-                requested
-                  ? 'both'
-                  : requested
-              );
-            }
-          );
-        }
-      );
-
-    elements
-      .compareBoth
-      .addEventListener(
-        'click',
-        () => {
-          setFocus(
-            'both'
-          );
-        }
-      );
+      },
+      {
+        passive: true
+      }
+    );
 
     setLayer(
       activeLayer
@@ -1851,27 +1860,20 @@
     if (
       elements.scoreText
     ) {
-      elements
-        .scoreText
-        .textContent =
-          visibleScore;
+      elements.scoreText.textContent =
+        visibleScore;
     }
 
     if (
       elements.score
     ) {
-      elements
-        .score
-        .setAttribute(
-          'aria-label',
-          ariaLabel
-        );
+      elements.score.setAttribute(
+        'aria-label',
+        ariaLabel
+      );
 
-      elements
-        .score
-        .dataset
-        .scoreTooltip =
-          tooltip;
+      elements.score.dataset.scoreTooltip =
+        tooltip;
     }
   }
 
@@ -1916,90 +1918,88 @@
   function fillProfileCards(
     section
   ) {
-    Object
-      .entries(
-        READERS
-      )
-      .forEach(
-        ([
-          readerId,
-          reader
-        ]) => {
-          section
-            .querySelectorAll(
-              `[data-profile-name="${readerId}"]`
-            )
-            .forEach(
-              (node) => {
-                node.textContent =
-                  reader.name;
-              }
-            );
+    Object.entries(
+      READERS
+    ).forEach(
+      ([
+        readerId,
+        reader
+      ]) => {
+        section
+          .querySelectorAll(
+            `[data-profile-name="${readerId}"]`
+          )
+          .forEach(
+            (node) => {
+              node.textContent =
+                reader.name;
+            }
+          );
 
-          section
-            .querySelectorAll(
-              `[data-profile-bio="${readerId}"]`
-            )
-            .forEach(
-              (node) => {
-                node.textContent =
-                  reader.bio;
-              }
-            );
+        section
+          .querySelectorAll(
+            `[data-profile-bio="${readerId}"]`
+          )
+          .forEach(
+            (node) => {
+              node.textContent =
+                reader.bio;
+            }
+          );
 
-          section
-            .querySelectorAll(
-              `[data-avatar-fallback="${readerId}"]`
-            )
-            .forEach(
-              (node) => {
-                node.textContent =
-                  reader.initial;
-              }
-            );
+        section
+          .querySelectorAll(
+            `[data-avatar-fallback="${readerId}"]`
+          )
+          .forEach(
+            (node) => {
+              node.textContent =
+                reader.initial;
+            }
+          );
 
-          const image =
-            section.querySelector(
-              `[data-avatar-image="${readerId}"]`
-            );
+        const image =
+          section.querySelector(
+            `[data-avatar-image="${readerId}"]`
+          );
 
-          if (
-            !image
-          ) {
-            return;
-          }
-
-          const fallbackPortrait =
-            createPortraitPlaceholder(
-              reader.name,
-              reader.side
-            );
-
-          image.src =
-            reader.avatarUrl ||
-            fallbackPortrait;
-
-          image.alt =
-            `${reader.name} profile picture`;
-
-          image.hidden =
-            false;
-
-          image.onerror =
-            () => {
-              if (
-                image.src !==
-                fallbackPortrait
-              ) {
-                image.src =
-                  fallbackPortrait;
-              } else {
-                image.hidden =
-                  true;
-              }
-            };
+        if (
+          !image
+        ) {
+          return;
         }
-      );
+
+        const fallbackPortrait =
+          createPortraitPlaceholder(
+            reader.name,
+            reader.side
+          );
+
+        image.src =
+          reader.avatarUrl ||
+          fallbackPortrait;
+
+        image.alt =
+          `${reader.name} profile picture`;
+
+        image.hidden =
+          false;
+
+        image.onerror =
+          () => {
+            if (
+              image.src !==
+              fallbackPortrait
+            ) {
+              image.src =
+                fallbackPortrait;
+            } else {
+              image.hidden =
+                true;
+            }
+          };
+      }
+    );
   }
 
   function renderQuotes(
@@ -2025,10 +2025,32 @@
               quote,
               index
             ) => {
-              const preview =
-                quote
-                  .paragraphs
-                  .join(' ');
+              const quoteParagraphs =
+                quote.paragraphs
+                  .map(
+                    (
+                      paragraph,
+                      paragraphIndex
+                    ) => {
+                      const openingMark =
+                        paragraphIndex === 0
+                          ? '“'
+                          : '';
+
+                      const closingMark =
+                        paragraphIndex ===
+                        quote.paragraphs.length - 1
+                          ? '”'
+                          : '';
+
+                      return `
+                        <p>
+                          ${openingMark}${escapeHtml(paragraph)}${closingMark}
+                        </p>
+                      `;
+                    }
+                  )
+                  .join('');
 
               return `
                 <article
@@ -2044,9 +2066,7 @@
                   </span>
 
                   <blockquote>
-                    <p>
-                      “${escapeHtml(preview)}”
-                    </p>
+                    ${quoteParagraphs}
                   </blockquote>
 
                   <cite>
@@ -2062,7 +2082,7 @@
                       data-reader-id="${escapeHtml(readerId)}"
                       data-item-index="${index}"
                     >
-                      Read full quote
+                      Reader's takeaway
                     </button>
                   </div>
                 </article>
@@ -2072,6 +2092,48 @@
           .join('')}
       </div>
     `;
+
+    prepareQuoteVisibility(
+      container
+    );
+  }
+
+  function prepareQuoteVisibility(
+    container
+  ) {
+    container
+      .querySelectorAll(
+        '.s4-quote-card'
+      )
+      .forEach(
+        (card) => {
+          card.style.height =
+            'auto';
+
+          card.style.overflow =
+            'visible';
+        }
+      );
+
+    container
+      .querySelectorAll(
+        '.s4-quote-card blockquote'
+      )
+      .forEach(
+        (blockquote) => {
+          blockquote.style.display =
+            'block';
+
+          blockquote.style.overflow =
+            'visible';
+
+          blockquote.style.webkitLineClamp =
+            'unset';
+
+          blockquote.style.webkitBoxOrient =
+            'initial';
+        }
+      );
   }
 
   function renderCharacters(
@@ -2175,9 +2237,7 @@
             'error',
             () => {
               image.src =
-                image
-                  .dataset
-                  .fallbackSrc;
+                image.dataset.fallbackSrc;
             },
             {
               once: true
@@ -2203,12 +2263,7 @@
         </h4>
       </header>
 
-      <article
-        class="
-          s4-evidence-card
-          s4-thought-card
-        "
-      >
+      <article class="s4-evidence-card s4-thought-card">
         <span class="s4-card-theme">
           Full reflection
         </span>
@@ -2259,15 +2314,27 @@
     let returnFocus =
       null;
 
+    let preservedScrollX =
+      0;
+
+    let preservedScrollY =
+      0;
+
+    const restoreSectionPosition =
+      () => {
+        window.scrollTo(
+          preservedScrollX,
+          preservedScrollY
+        );
+      };
+
     section.addEventListener(
       'click',
       (event) => {
         const opener =
-          event
-            .target
-            .closest(
-              '[data-open-detail]'
-            );
+          event.target.closest(
+            '[data-open-detail]'
+          );
 
         if (
           !opener ||
@@ -2278,19 +2345,53 @@
           return;
         }
 
+        event.preventDefault();
+        event.stopPropagation();
+
         returnFocus =
           opener;
+
+        preservedScrollX =
+          window.scrollX;
+
+        preservedScrollY =
+          window.scrollY;
 
         openDetailWindow(
           elements,
           opener
+        );
+
+        restoreSectionPosition();
+
+        requestAnimationFrame(
+          () => {
+            restoreSectionPosition();
+
+            dialogClose.focus({
+              preventScroll:
+                true
+            });
+          }
+        );
+
+        window.setTimeout(
+          restoreSectionPosition,
+          40
+        );
+
+        window.setTimeout(
+          restoreSectionPosition,
+          120
         );
       }
     );
 
     dialogClose.addEventListener(
       'click',
-      () => {
+      (event) => {
+        event.preventDefault();
+
         closeDetailWindow(
           dialog
         );
@@ -2312,24 +2413,39 @@
     );
 
     dialog.addEventListener(
+      'cancel',
+      (event) => {
+        event.preventDefault();
+
+        closeDetailWindow(
+          dialog
+        );
+      }
+    );
+
+    dialog.addEventListener(
       'close',
       () => {
-        document
-          .body
-          .classList
-          .remove(
-            's4-dialog-open'
-          );
+        document.body.classList.remove(
+          's4-dialog-open'
+        );
 
-        if (
-          returnFocus
-            ?.isConnected
-        ) {
-          returnFocus.focus({
-            preventScroll:
-              true
-          });
-        }
+        restoreSectionPosition();
+
+        requestAnimationFrame(
+          () => {
+            restoreSectionPosition();
+
+            if (
+              returnFocus?.isConnected
+            ) {
+              returnFocus.focus({
+                preventScroll:
+                  true
+              });
+            }
+          }
+        );
       }
     );
   }
@@ -2339,20 +2455,14 @@
     opener
   ) {
     const type =
-      opener
-        .dataset
-        .detailType;
+      opener.dataset.detailType;
 
     const readerId =
-      opener
-        .dataset
-        .readerId;
+      opener.dataset.readerId;
 
     const index =
       Number(
-        opener
-          .dataset
-          .itemIndex ||
+        opener.dataset.itemIndex ||
         0
       );
 
@@ -2381,10 +2491,9 @@
       'quote'
     ) {
       const quote =
-        reader
-          .quotes[
-            index
-          ];
+        reader.quotes[
+          index
+        ];
 
       if (
         !quote
@@ -2396,28 +2505,14 @@
         `${reader.name} · ${quote.theme}`;
 
       title =
-        quote.author;
+        `What ${reader.name} took from this quote`;
 
       body = `
-        <blockquote class="s4-detail-quote">
-          ${quote.paragraphs
-            .map(
-              (paragraph) => {
-                return `
-                  <p>
-                    “${escapeHtml(paragraph)}”
-                  </p>
-                `;
-              }
-            )
-            .join('')}
+        <div class="s4-detail-takeaway">
+          <span class="s4-detail-takeaway-label">
+            Reader reflection · ${escapeHtml(quote.author)}
+          </span>
 
-          <cite>
-            — ${escapeHtml(quote.author)}
-          </cite>
-        </blockquote>
-
-        <div class="s4-detail-analysis">
           <p>
             ${escapeHtml(quote.detail)}
           </p>
@@ -2428,10 +2523,9 @@
       'character'
     ) {
       const character =
-        reader
-          .characters[
-            index
-          ];
+        reader.characters[
+          index
+        ];
 
       if (
         !character
@@ -2450,7 +2544,13 @@
         fallbackImage;
 
       eyebrow =
-        `${reader.name} · reader pick #${String(character.rank).padStart(2, '0')}`;
+        `${reader.name} · reader pick #` +
+        String(
+          character.rank
+        ).padStart(
+          2,
+          '0'
+        );
 
       title =
         character.name;
@@ -2487,14 +2587,10 @@
         `${reader.name} · full reflection`;
 
       title =
-        reader
-          .thoughts
-          .title;
+        reader.thoughts.title;
 
       body =
-        reader
-          .thoughts
-          .paragraphs
+        reader.thoughts.paragraphs
           .map(
             (paragraph) => {
               return `
@@ -2509,50 +2605,45 @@
       return;
     }
 
-    elements
-      .dialogEyebrow
-      .textContent =
-        eyebrow;
+    elements.dialogEyebrow.textContent =
+      eyebrow;
 
-    elements
-      .dialogTitle
-      .textContent =
-        title;
+    elements.dialogTitle.textContent =
+      title;
 
-    elements
-      .dialogBody
-      .innerHTML =
-        body;
+    elements.dialogBody.innerHTML =
+      body;
 
-    document
-      .body
-      .classList
-      .add(
-        's4-dialog-open'
+    const detailScroll =
+      elements.dialog.querySelector(
+        '.s4-detail-scroll'
       );
 
     if (
-      typeof elements
-        .dialog
-        .showModal ===
+      detailScroll
+    ) {
+      detailScroll.scrollTop =
+        0;
+    }
+
+    document.body.classList.add(
+      's4-dialog-open'
+    );
+
+    if (
+      typeof elements.dialog.showModal ===
       'function'
     ) {
       if (
-        !elements
-          .dialog
-          .open
+        !elements.dialog.open
       ) {
-        elements
-          .dialog
-          .showModal();
+        elements.dialog.showModal();
       }
     } else {
-      elements
-        .dialog
-        .setAttribute(
-          'open',
-          ''
-        );
+      elements.dialog.setAttribute(
+        'open',
+        ''
+      );
     }
   }
 
@@ -2561,22 +2652,168 @@
   ) {
     if (
       typeof dialog.close ===
-        'function' &&
+      'function' &&
       dialog.open
     ) {
       dialog.close();
-    } else {
-      dialog.removeAttribute(
-        'open'
+
+      return;
+    }
+
+    dialog.removeAttribute(
+      'open'
+    );
+
+    document.body.classList.remove(
+      's4-dialog-open'
+    );
+  }
+
+  function fitComparisonToViewport(
+    elements
+  ) {
+    const {
+      section,
+      stage,
+      compareStage
+    } =
+      elements;
+
+    if (
+      !stage ||
+      !compareStage
+    ) {
+      return;
+    }
+
+    const readerSides = [
+      ...compareStage.querySelectorAll(
+        '.s4-reader-side'
+      )
+    ];
+
+    readerSides.forEach(
+      (side) => {
+        side.style.maxHeight =
+          'none';
+
+        side.style.overflow =
+          'visible';
+
+        side.style.overflowX =
+          'visible';
+
+        side.style.overflowY =
+          'visible';
+
+        side.style.scrollbarWidth =
+          'none';
+      }
+    );
+
+    const usesPinnedDesktop =
+      window.matchMedia(
+        '(min-width: 900px) and ' +
+        '(min-height: 720px) and ' +
+        '(prefers-reduced-motion: no-preference)'
+      ).matches;
+
+    if (
+      !usesPinnedDesktop ||
+      section.classList.contains(
+        'is-static'
+      )
+    ) {
+      compareStage.style.setProperty(
+        '--s4-fit-scale',
+        '1'
       );
 
-      document
-        .body
-        .classList
-        .remove(
-          's4-dialog-open'
-        );
+      compareStage.style.scale =
+        '1';
+
+      return;
     }
+
+    compareStage.style.setProperty(
+      '--s4-fit-scale',
+      '1'
+    );
+
+    compareStage.style.scale =
+      '1';
+
+    const stageStyles =
+      window.getComputedStyle(
+        stage
+      );
+
+    const compareTopValue =
+      Number.parseFloat(
+        stageStyles.getPropertyValue(
+          '--s4-compare-top'
+        )
+      );
+
+    const compareTop =
+      Number.isFinite(
+        compareTopValue
+      )
+        ? compareTopValue
+        : compareStage.offsetTop;
+
+    const readerHeight =
+      Math.max(
+        0,
+        ...readerSides.map(
+          (side) => {
+            return Math.max(
+              side.scrollHeight,
+              side.offsetHeight
+            );
+          }
+        )
+      );
+
+    const comparisonHeight =
+      Math.max(
+        compareStage.scrollHeight,
+        compareStage.offsetHeight,
+        readerHeight
+      );
+
+    const availableHeight =
+      Math.max(
+        1,
+        stage.clientHeight -
+        compareTop -
+        10
+      );
+
+    const fittedScale =
+      comparisonHeight >
+      availableHeight
+        ? availableHeight /
+          comparisonHeight
+        : 1;
+
+    const safeScale =
+      Math.min(
+        1,
+        fittedScale
+      );
+
+    compareStage.style.setProperty(
+      '--s4-fit-scale',
+      safeScale.toFixed(
+        4
+      )
+    );
+
+    compareStage.style.scale =
+      safeScale.toFixed(
+        4
+      );
   }
 
   function createPortraitPlaceholder(
@@ -2713,7 +2950,7 @@
     `;
 
     return (
-      `data:image/svg+xml;charset=UTF-8,` +
+      'data:image/svg+xml;charset=UTF-8,' +
       encodeURIComponent(
         svg
       )
@@ -2726,7 +2963,7 @@
     if (
       prefersReducedMotion() ||
       typeof container.animate !==
-        'function'
+      'function'
     ) {
       return;
     }
@@ -2799,9 +3036,7 @@
       },
       (context) => {
         if (
-          context
-            .conditions
-            .static
+          context.conditions.static
         ) {
           showStaticLayout(
             section,
@@ -2811,11 +3046,9 @@
           return;
         }
 
-        section
-          .classList
-          .remove(
-            'is-static'
-          );
+        section.classList.remove(
+          'is-static'
+        );
 
         return createPinnedTimeline(
           section,
@@ -2844,18 +3077,14 @@
       );
 
     const chosenLeft =
-      elements
-        .stage
-        .querySelector(
-          '[data-chosen-rain-cover="left"]'
-        );
+      elements.stage.querySelector(
+        '[data-chosen-rain-cover="left"]'
+      );
 
     const chosenRight =
-      elements
-        .stage
-        .querySelector(
-          '[data-chosen-rain-cover="right"]'
-        );
+      elements.stage.querySelector(
+        '[data-chosen-rain-cover="right"]'
+      );
 
     if (
       !chosenLeft ||
@@ -2900,11 +3129,7 @@
 
     const viewportHeight =
       () => {
-        return (
-          elements
-            .stage
-            .clientHeight
-        );
+        return elements.stage.clientHeight;
       };
 
     const maximumCount =
@@ -2968,16 +3193,14 @@
       0.79;
 
     const expandedCardHeight =
-      elements
-        .sharedCard
+      elements.sharedCard
         .getBoundingClientRect()
         .height;
 
     function updateFinalLayoutMetrics() {
       const introHeight =
         Math.max(
-          elements
-            .contentIntro
+          elements.contentIntro
             .getBoundingClientRect()
             .height,
           30
@@ -3001,21 +3224,23 @@
           10
         );
 
-      elements
-        .stage
-        .style
-        .setProperty(
-          '--s4-intro-top',
-          `${introTop}px`
-        );
+      elements.stage.style.setProperty(
+        '--s4-intro-top',
+        `${introTop}px`
+      );
 
-      elements
-        .stage
-        .style
-        .setProperty(
-          '--s4-compare-top',
-          `${compareTop}px`
-        );
+      elements.stage.style.setProperty(
+        '--s4-compare-top',
+        `${compareTop}px`
+      );
+
+      requestAnimationFrame(
+        () => {
+          fitComparisonToViewport(
+            elements
+          );
+        }
+      );
     }
 
     updateFinalLayoutMetrics();
@@ -3199,7 +3424,14 @@
             true,
 
           onRefreshInit:
-            updateFinalLayoutMetrics
+            updateFinalLayoutMetrics,
+
+          onRefresh:
+            () => {
+              fitComparisonToViewport(
+                elements
+              );
+            }
         }
       });
 
@@ -3208,9 +3440,7 @@
     ) {
       const index =
         Number(
-          item
-            .dataset
-            .rainIndex ||
+          item.dataset.rainIndex ||
           0
         );
 
@@ -3242,17 +3472,18 @@
         timeline.fromTo(
           item,
           {
-            y: () => {
-              return (
-                -item.offsetHeight -
-                85 -
-                (
-                  index %
-                  4
-                ) *
-                30
-              );
-            },
+            y:
+              () => {
+                return (
+                  -item.offsetHeight -
+                  85 -
+                  (
+                    index %
+                    4
+                  ) *
+                  30
+                );
+              },
 
             rotation,
 
@@ -3268,18 +3499,19 @@
               0
           },
           {
-            y: () => {
-              return (
-                viewportHeight() +
-                item.offsetHeight +
-                95 +
-                (
-                  index %
-                  4
-                ) *
-                30
-              );
-            },
+            y:
+              () => {
+                return (
+                  viewportHeight() +
+                  item.offsetHeight +
+                  95 +
+                  (
+                    index %
+                    4
+                  ) *
+                  30
+                );
+              },
 
             rotation:
               rotation *
@@ -3331,18 +3563,19 @@
         timeline.fromTo(
           item,
           {
-            y: () => {
-              return (
-                viewportHeight() +
-                item.offsetHeight +
-                85 +
-                (
-                  index %
-                  4
-                ) *
-                30
-              );
-            },
+            y:
+              () => {
+                return (
+                  viewportHeight() +
+                  item.offsetHeight +
+                  85 +
+                  (
+                    index %
+                    4
+                  ) *
+                  30
+                );
+              },
 
             rotation,
 
@@ -3358,17 +3591,18 @@
               0
           },
           {
-            y: () => {
-              return (
-                -item.offsetHeight -
-                95 -
-                (
-                  index %
-                  4
-                ) *
-                30
-              );
-            },
+            y:
+              () => {
+                return (
+                  -item.offsetHeight -
+                  95 -
+                  (
+                    index %
+                    4
+                  ) *
+                  30
+                );
+              },
 
             rotation:
               rotation *
@@ -3412,12 +3646,13 @@
     timeline.fromTo(
       chosenLeft,
       {
-        y: () => {
-          return (
-            -chosenLeft.offsetHeight -
-            110
-          );
-        },
+        y:
+          () => {
+            return (
+              -chosenLeft.offsetHeight -
+              110
+            );
+          },
 
         rotation:
           -7,
@@ -3429,14 +3664,15 @@
           0
       },
       {
-        y: () => {
-          return (
-            viewportHeight() *
-            0.46 -
-            chosenLeft.offsetHeight /
-            2
-          );
-        },
+        y:
+          () => {
+            return (
+              viewportHeight() *
+              0.46 -
+              chosenLeft.offsetHeight /
+              2
+            );
+          },
 
         rotation:
           -3,
@@ -3460,13 +3696,14 @@
     timeline.fromTo(
       chosenRight,
       {
-        y: () => {
-          return (
-            viewportHeight() +
-            chosenRight.offsetHeight +
-            110
-          );
-        },
+        y:
+          () => {
+            return (
+              viewportHeight() +
+              chosenRight.offsetHeight +
+              110
+            );
+          },
 
         rotation:
           7,
@@ -3478,14 +3715,15 @@
           0
       },
       {
-        y: () => {
-          return (
-            viewportHeight() *
-            0.54 -
-            chosenRight.offsetHeight /
-            2
-          );
-        },
+        y:
+          () => {
+            return (
+              viewportHeight() *
+              0.54 -
+              chosenRight.offsetHeight /
+              2
+            );
+          },
 
         rotation:
           3,
@@ -3569,25 +3807,27 @@
         chosenRight
       ],
       {
-        x: (
-          _index,
-          item
-        ) => {
-          return getCenterTarget(
-            item,
-            elements.stage
-          ).x;
-        },
+        x:
+          (
+            _index,
+            item
+          ) => {
+            return getCenterTarget(
+              item,
+              elements.stage
+            ).x;
+          },
 
-        y: (
-          _index,
-          item
-        ) => {
-          return getCenterTarget(
-            item,
-            elements.stage
-          ).y;
-        },
+        y:
+          (
+            _index,
+            item
+          ) => {
+            return getCenterTarget(
+              item,
+              elements.stage
+            ).y;
+          },
 
         rotation:
           0,
@@ -3620,12 +3860,6 @@
       0.3
     );
 
-    /*
-     * Show the card around the merged cover.
-     *
-     * The real cover inside the card stays invisible until the
-     * moving cover has reached the correct left-side position.
-     */
     timeline.set(
       elements.sharedCardWrap,
       {
@@ -3644,33 +3878,37 @@
         autoAlpha:
           1,
 
-        x: () => {
-          return getRelativeRect(
-            chosenLeft,
-            elements.stage
-          ).left;
-        },
+        x:
+          () => {
+            return getRelativeRect(
+              chosenLeft,
+              elements.stage
+            ).left;
+          },
 
-        y: () => {
-          return getRelativeRect(
-            chosenLeft,
-            elements.stage
-          ).top;
-        },
+        y:
+          () => {
+            return getRelativeRect(
+              chosenLeft,
+              elements.stage
+            ).top;
+          },
 
-        width: () => {
-          return getRelativeRect(
-            chosenLeft,
-            elements.stage
-          ).width;
-        },
+        width:
+          () => {
+            return getRelativeRect(
+              chosenLeft,
+              elements.stage
+            ).width;
+          },
 
-        height: () => {
-          return getRelativeRect(
-            chosenLeft,
-            elements.stage
-          ).height;
-        },
+        height:
+          () => {
+            return getRelativeRect(
+              chosenLeft,
+              elements.stage
+            ).height;
+          },
 
         borderRadius:
           '14px',
@@ -3681,9 +3919,6 @@
       cardRevealTime
     );
 
-    /*
-     * The second cover is absorbed into the first.
-     */
     timeline.to(
       chosenRight,
       {
@@ -3703,10 +3938,6 @@
       0.12
     );
 
-    /*
-     * Hide the original left cover only after the handoff copy
-     * is in the exact same place.
-     */
     timeline.to(
       chosenLeft,
       {
@@ -3736,41 +3967,40 @@
       0.05
     );
 
-    /*
-     * Move the cover into the left cover slot.
-     *
-     * back.out creates the small bounce as it settles.
-     */
     timeline.to(
       elements.handoff,
       {
-        x: () => {
-          return getRelativeRect(
-            elements.cardCover,
-            elements.stage
-          ).left;
-        },
+        x:
+          () => {
+            return getRelativeRect(
+              elements.cardCover,
+              elements.stage
+            ).left;
+          },
 
-        y: () => {
-          return getRelativeRect(
-            elements.cardCover,
-            elements.stage
-          ).top;
-        },
+        y:
+          () => {
+            return getRelativeRect(
+              elements.cardCover,
+              elements.stage
+            ).top;
+          },
 
-        width: () => {
-          return getRelativeRect(
-            elements.cardCover,
-            elements.stage
-          ).width;
-        },
+        width:
+          () => {
+            return getRelativeRect(
+              elements.cardCover,
+              elements.stage
+            ).width;
+          },
 
-        height: () => {
-          return getRelativeRect(
-            elements.cardCover,
-            elements.stage
-          ).height;
-        },
+        height:
+          () => {
+            return getRelativeRect(
+              elements.cardCover,
+              elements.stage
+            ).height;
+          },
 
         borderRadius:
           '14px',
@@ -3804,12 +4034,6 @@
       0.14
     );
 
-    /*
-     * Crossfade from the moving cover to the real card cover.
-     *
-     * They occupy the exact same coordinates, so the replacement
-     * is not visible to the user.
-     */
     timeline.to(
       elements.cardCover,
       {
@@ -3836,10 +4060,6 @@
       0.04
     );
 
-    /*
-     * Once the cover is inside the card, move the complete card
-     * toward its final top position.
-     */
     timeline.to(
       elements.sharedCardWrap,
       {
@@ -3977,6 +4197,17 @@
       0.2
     );
 
+    timeline.call(
+      () => {
+        fitComparisonToViewport(
+          elements
+        );
+      },
+      null,
+      comparisonTime +
+      0.45
+    );
+
     timeline.to(
       {},
       {
@@ -3992,17 +4223,13 @@
         () => {
           updateFinalLayoutMetrics();
 
-          timeline
-            .scrollTrigger
-            ?.refresh();
+          timeline.scrollTrigger?.refresh();
         }
       );
     }
 
     return () => {
-      timeline
-        .scrollTrigger
-        ?.kill();
+      timeline.scrollTrigger?.kill();
 
       timeline.kill();
 
@@ -4042,76 +4269,51 @@
         '[data-cover-fallback]'
       );
 
-    elements
-      .handoffFallback
-      .textContent =
-        sourceFallback
-          ?.textContent ||
-        'Attack on Titan';
+    elements.handoffFallback.textContent =
+      sourceFallback?.textContent ||
+      'Attack on Titan';
 
-    elements
-      .handoffFallback
-      .hidden =
-        false;
+    elements.handoffFallback.hidden =
+      false;
 
-    elements
-      .handoffImage
-      .hidden =
-        true;
+    elements.handoffImage.hidden =
+      true;
 
     const sourceUrl =
-      sourceImage
-        ?.currentSrc ||
-      sourceImage
-        ?.src ||
+      sourceImage?.currentSrc ||
+      sourceImage?.src ||
       '';
 
     if (
       !sourceUrl
     ) {
-      elements
-        .handoffImage
-        .removeAttribute(
-          'src'
-        );
+      elements.handoffImage.removeAttribute(
+        'src'
+      );
 
       return;
     }
 
-    elements
-      .handoffImage
-      .onload =
-        () => {
-          elements
-            .handoffImage
-            .hidden =
-              false;
+    elements.handoffImage.onload =
+      () => {
+        elements.handoffImage.hidden =
+          false;
 
-          elements
-            .handoffFallback
-            .hidden =
-              true;
-        };
+        elements.handoffFallback.hidden =
+          true;
+      };
 
-    elements
-      .handoffImage
-      .onerror =
-        () => {
-          elements
-            .handoffImage
-            .hidden =
-              true;
+    elements.handoffImage.onerror =
+      () => {
+        elements.handoffImage.hidden =
+          true;
 
-          elements
-            .handoffFallback
-            .hidden =
-              false;
-        };
+        elements.handoffFallback.hidden =
+          false;
+      };
 
-    elements
-      .handoffImage
-      .src =
-        sourceUrl;
+    elements.handoffImage.src =
+      sourceUrl;
   }
 
   function getCenterTarget(
@@ -4122,12 +4324,10 @@
       item.offsetParent;
 
     const stageRect =
-      stage
-        .getBoundingClientRect();
+      stage.getBoundingClientRect();
 
     const laneRect =
-      lane
-        .getBoundingClientRect();
+      lane.getBoundingClientRect();
 
     return {
       x:
@@ -4155,12 +4355,10 @@
     relativeTo
   ) {
     const rect =
-      element
-        .getBoundingClientRect();
+      element.getBoundingClientRect();
 
     const parentRect =
-      relativeTo
-        .getBoundingClientRect();
+      relativeTo.getBoundingClientRect();
 
     return {
       left:
@@ -4183,47 +4381,49 @@
     section,
     elements
   ) {
-    section
-      .classList
-      .add(
-        'is-static'
-      );
+    section.classList.add(
+      'is-static'
+    );
 
     if (
       elements?.cardCover
     ) {
-      elements
-        .cardCover
-        .style
-        .opacity =
-          '1';
+      elements.cardCover.style.opacity =
+        '1';
 
-      elements
-        .cardCover
-        .style
-        .visibility =
-          'visible';
+      elements.cardCover.style.visibility =
+        'visible';
     }
 
     if (
       elements?.sharedCardWrap
     ) {
-      elements
-        .sharedCardWrap
-        .style
-        .pointerEvents =
-          'auto';
+      elements.sharedCardWrap.style.pointerEvents =
+        'auto';
     }
 
     if (
       elements?.compareStage
     ) {
-      elements
-        .compareStage
-        .style
-        .pointerEvents =
-          'auto';
+      elements.compareStage.style.pointerEvents =
+        'auto';
+
+      elements.compareStage.style.scale =
+        '1';
+
+      elements.compareStage.style.setProperty(
+        '--s4-fit-scale',
+        '1'
+      );
     }
+
+    requestAnimationFrame(
+      () => {
+        fitComparisonToViewport(
+          elements
+        );
+      }
+    );
   }
 
   function showDatabaseError(
@@ -4233,17 +4433,13 @@
     if (
       elements.empty
     ) {
-      elements
-        .empty
-        .hidden =
-          false;
+      elements.empty.hidden =
+        false;
 
       const paragraph =
-        elements
-          .empty
-          .querySelector(
-            'p'
-          );
+        elements.empty.querySelector(
+          'p'
+        );
 
       if (
         paragraph
@@ -4266,19 +4462,15 @@
     if (
       elements.status
     ) {
-      elements
-        .status
-        .textContent =
-          message;
+      elements.status.textContent =
+        message;
     }
   }
 
   function prefersReducedMotion() {
-    return window
-      .matchMedia(
-        '(prefers-reduced-motion: reduce)'
-      )
-      .matches;
+    return window.matchMedia(
+      '(prefers-reduced-motion: reduce)'
+    ).matches;
   }
 
   function normalizeText(
