@@ -121,7 +121,7 @@
             1,
 
           name:
-            'Armin Arlert',
+            'Eren',
 
           imageUrl:
             '',
@@ -138,7 +138,7 @@
             2,
 
           name:
-            'Mikasa Ackerman',
+            'Reiner',
 
           imageUrl:
             '',
@@ -155,7 +155,7 @@
             3,
 
           name:
-            'Levi Ackerman',
+            'Gabi',
 
           imageUrl:
             '',
@@ -281,7 +281,7 @@
             1,
 
           name:
-            'Reiner Braun',
+            'Armin',
 
           imageUrl:
             '',
@@ -298,7 +298,7 @@
             2,
 
           name:
-            'Erwin Smith',
+            'Zeke',
 
           imageUrl:
             '',
@@ -315,7 +315,7 @@
             3,
 
           name:
-            'Historia Reiss',
+            'Erwin',
 
           imageUrl:
             '',
