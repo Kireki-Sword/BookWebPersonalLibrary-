@@ -65,21 +65,13 @@
             'Freedom',
 
           author:
-            'Eren Yeager',
+            'Armin',
 
           size:
             'long',
 
           paragraphs: [
-            'Ever since the day we were born... every single one of us is free.',
-
-            "It doesn't matter how strong those who would deny us that freedom are.",
-
-            "Flaming water, frozen earth... I don't care what it is! The one who sees them will be the freest person in the entire world!",
-
-            "Fight! Who cares if you lose your life? The world is a terrible place, but I don't care!",
-
-            'Because I was born into this world!'
+            "A good person? Well… I don’t really like that term. Because to me, it just seems to mean someone who’s good for you. And I don’t think there’s any one person who’s good for everyone. If someone’s good for you, then they’re a good person, but if you’re not helping them, then to them, you’re a bad person. If you won't help me, then to me, you're a bad person. You just have to be able to accept that."
           ],
 
           detail:
@@ -91,13 +83,13 @@
             'Beauty and cruelty',
 
           author:
-            'Mikasa Ackerman',
+            'Levi',
 
           size:
             'short',
 
           paragraphs: [
-            "This world is cruel... but it's also very beautiful."
+            "Believe in yourself... or believe in me and them... the Survey Corps. I don't know the answer. I never have. Whether you trust in your own strength... or trust in the choices made by reliable comrades. No one knows what the outcome will be. So as much as you can, choose whatever you'll regret the least."
           ],
 
           detail:
@@ -109,7 +101,7 @@
             'Doubt',
 
           author:
-            'Eren Yeager',
+            'Eren',
 
           size:
             'short',
@@ -229,7 +221,7 @@
             'Desire',
 
           author:
-            'Kenny Ackerman',
+            'Kenny',
 
           size:
             'medium',
@@ -269,7 +261,7 @@
             'Truth and belief',
 
           author:
-            'Eren Kruger',
+            'Kruger',
 
           size:
             'medium',
