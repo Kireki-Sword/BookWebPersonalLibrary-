@@ -1,24 +1,21 @@
 /* ==========================================================================
    SECTION 4 — SAME STORY, DIFFERENT SOULS
-   Complete replacement stylesheet for Section 4.
+   Complete replacement stylesheet.
    ========================================================================== */
 
 .section-cover-rain {
   --s4-nav-height: 58px;
-  --s4-card-width: min(760px, calc(100vw - 64px));
-  --s4-layout-width: min(1380px, calc(100vw - 80px));
-
-  --s4-intro-top: 242px;
-  --s4-compare-top: 286px;
+  --s4-card-width: min(700px, calc(100vw - 56px));
+  --s4-layout-width: min(1280px, calc(100vw - 64px));
+  --s4-intro-top: 205px;
+  --s4-compare-top: 252px;
 
   --s4-text: #f5f1ff;
   --s4-text-mid: #c9cde2;
   --s4-muted: #8f96b3;
   --s4-faint: #626c8b;
-
   --s4-border: rgba(170, 183, 255, 0.18);
   --s4-border-strong: rgba(198, 207, 255, 0.5);
-
   --s4-purple: #9b7cff;
   --s4-blue: #718cff;
   --s4-cyan: #78d8ff;
@@ -146,7 +143,7 @@
 
 
 /* ==========================================================================
-   MAIN STAGE
+   STAGE
    ========================================================================== */
 
 .s4-stage {
@@ -155,7 +152,7 @@
 
   width: 100%;
   height: 100svh;
-  min-height: 720px;
+  min-height: 760px;
 
   overflow: hidden;
 }
@@ -199,7 +196,7 @@
 
 
 /* ==========================================================================
-   COVER SHELLS
+   COVER IMAGE SHELLS
    ========================================================================== */
 
 [data-cover-shell],
@@ -521,7 +518,7 @@
 
 
 /* ==========================================================================
-   SEAMLESS COVER HANDOFF
+   COVER HANDOFF
    ========================================================================== */
 
 .s4-cover-handoff {
@@ -597,17 +594,17 @@
   isolation: isolate;
 
   width: 100%;
-  min-height: 184px;
+  min-height: 164px;
 
   margin: 0;
 
   padding:
-    13px 15px;
+    11px 13px;
 
   display: grid;
 
   grid-template-columns:
-    102px
+    92px
     minmax(0, 1fr)
     auto;
 
@@ -617,12 +614,12 @@
     "cover layers layers";
 
   grid-template-rows:
-    minmax(48px, 1fr)
+    minmax(42px, 1fr)
     auto
     auto;
 
-  column-gap: 0.95rem;
-  row-gap: 0.25rem;
+  column-gap: 0.85rem;
+  row-gap: 0.22rem;
 
   align-items: center;
 
@@ -631,7 +628,7 @@
   border:
     1px solid rgba(184, 192, 255, 0.25);
 
-  border-radius: 20px;
+  border-radius: 19px;
 
   background:
     radial-gradient(
@@ -646,8 +643,8 @@
     );
 
   box-shadow:
-    0 38px 92px rgba(0, 0, 0, 0.52),
-    0 0 56px rgba(124, 140, 255, 0.14),
+    0 34px 82px rgba(0, 0, 0, 0.5),
+    0 0 52px rgba(124, 140, 255, 0.13),
     inset 0 1px 0 rgba(255, 255, 255, 0.09);
 
   transition:
@@ -725,8 +722,8 @@
     );
 
   box-shadow:
-    0 46px 108px rgba(0, 0, 0, 0.6),
-    0 0 72px rgba(124, 140, 255, 0.21),
+    0 42px 100px rgba(0, 0, 0, 0.58),
+    0 0 66px rgba(124, 140, 255, 0.19),
     inset 0 1px 0 rgba(255, 255, 255, 0.11);
 }
 
@@ -755,17 +752,17 @@
 .s4-card-cover {
   grid-area: cover;
 
-  width: 102px;
+  width: 92px;
 
   aspect-ratio: 2 / 3;
 
   border:
     1px solid rgba(184, 192, 255, 0.24);
 
-  border-radius: 14px;
+  border-radius: 13px;
 
   box-shadow:
-    0 18px 38px rgba(0, 0, 0, 0.42),
+    0 16px 34px rgba(0, 0, 0, 0.42),
     inset 0 1px 0 rgba(255, 255, 255, 0.12);
 
   transition:
@@ -776,12 +773,12 @@
 .s4-shared-card:hover
 .s4-card-cover {
   transform:
-    translateY(-3px)
+    translateY(-2px)
     rotate(-1deg);
 
   box-shadow:
-    0 24px 48px rgba(0, 0, 0, 0.48),
-    0 0 28px rgba(124, 140, 255, 0.13);
+    0 22px 44px rgba(0, 0, 0, 0.48),
+    0 0 26px rgba(124, 140, 255, 0.13);
 }
 
 .s4-card-info {
@@ -793,7 +790,7 @@
 
   display: grid;
 
-  gap: 0.18rem;
+  gap: 0.14rem;
 }
 
 .s4-card-eyebrow {
@@ -803,7 +800,7 @@
   font-family:
     var(--font-body, system-ui, sans-serif);
 
-  font-size: 0.54rem;
+  font-size: 0.5rem;
   font-weight: 900;
 
   letter-spacing: 0.11em;
@@ -821,11 +818,11 @@
     var(--font-display, Georgia, serif);
 
   font-size:
-    clamp(1.68rem, 2.18vw, 2.3rem);
+    clamp(1.55rem, 2vw, 2rem);
 
-  line-height: 0.96;
+  line-height: 0.98;
 
-  letter-spacing: -0.055em;
+  letter-spacing: -0.05em;
 
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -840,7 +837,7 @@
   font-family:
     var(--font-body, system-ui, sans-serif);
 
-  font-size: 0.76rem;
+  font-size: 0.7rem;
   font-weight: 700;
 }
 
@@ -851,11 +848,11 @@
   align-self: center;
   justify-self: end;
 
-  min-width: 88px;
-  height: 43px;
+  min-width: 82px;
+  height: 39px;
 
   padding:
-    0 0.82rem;
+    0 0.76rem;
 
   display: grid;
   place-items: center;
@@ -893,7 +890,7 @@
   font-family:
     var(--font-display, Georgia, serif);
 
-  font-size: 1.05rem;
+  font-size: 1rem;
   font-weight: 800;
 }
 
@@ -909,19 +906,19 @@
   top: 50%;
 
   width:
-    min(310px, 34vw);
+    min(300px, 32vw);
 
   padding:
-    0.7rem 0.75rem;
+    0.68rem 0.72rem;
 
   color: var(--s4-text-mid);
 
   font-family:
     var(--font-body, system-ui, sans-serif);
 
-  font-size: 0.65rem;
+  font-size: 0.64rem;
   font-weight: 700;
-  line-height: 1.48;
+  line-height: 1.46;
 
   border:
     1px solid rgba(184, 192, 255, 0.34);
@@ -962,17 +959,17 @@
   display: flex;
   flex-wrap: wrap;
 
-  gap: 0.35rem;
+  gap: 0.3rem;
 
-  margin-top: 0.4rem;
+  margin-top: 0.3rem;
 }
 
 .s4-card-meta span,
 .s4-layer-button {
-  min-height: 27px;
+  min-height: 25px;
 
   padding:
-    0 0.62rem;
+    0 0.58rem;
 
   display: inline-flex;
   align-items: center;
@@ -983,7 +980,7 @@
   font-family:
     var(--font-body, system-ui, sans-serif);
 
-  font-size: 0.63rem;
+  font-size: 0.59rem;
   font-weight: 820;
 
   border:
@@ -1004,8 +1001,8 @@
 
   width: 100%;
 
-  margin-top: 0.3rem;
-  padding-top: 0.38rem;
+  margin-top: 0.22rem;
+  padding-top: 0.32rem;
 
   border-top:
     1px solid rgba(184, 192, 255, 0.14);
@@ -1014,14 +1011,14 @@
 .s4-layers-label {
   display: block;
 
-  margin-bottom: 0.32rem;
+  margin-bottom: 0.26rem;
 
   color: var(--s4-muted);
 
   font-family:
     var(--font-body, system-ui, sans-serif);
 
-  font-size: 0.54rem;
+  font-size: 0.5rem;
   font-weight: 850;
 
   letter-spacing: 0.11em;
@@ -1032,7 +1029,7 @@
   display: flex;
   flex-wrap: wrap;
 
-  gap: 0.35rem;
+  gap: 0.3rem;
 }
 
 .s4-layer-button {
@@ -1061,8 +1058,8 @@
     );
 
   box-shadow:
-    0 10px 22px rgba(0, 0, 0, 0.28),
-    0 0 28px rgba(124, 140, 255, 0.15);
+    0 8px 18px rgba(0, 0, 0, 0.26),
+    0 0 24px rgba(124, 140, 255, 0.13);
 
   transform:
     translateY(-1px);
@@ -1088,7 +1085,7 @@
 
 
 /* ==========================================================================
-   CONTENT INTRODUCTION
+   FINAL CONTENT INTRO
    ========================================================================== */
 
 .s4-content-intro {
@@ -1119,25 +1116,26 @@
 
 .s4-content-intro
 .s4-section-label {
-  font-size: 0.55rem;
+  font-size: 0.53rem;
 }
 
 .s4-content-intro p {
   margin:
-    0.3rem 0 0;
+    0.26rem 0 0;
 
   color: var(--s4-muted);
 
   font-family:
     var(--font-body, system-ui, sans-serif);
 
-  font-size: 0.7rem;
-  line-height: 1.42;
+  font-size: 0.66rem;
+  line-height: 1.35;
 }
 
 
 /* ==========================================================================
    COMPARISON LAYOUT
+   This layout is never scaled down by JavaScript.
    ========================================================================== */
 
 .s4-compare-stage {
@@ -1159,10 +1157,10 @@
 
   grid-template-columns:
     minmax(0, 1fr)
-    58px
+    52px
     minmax(0, 1fr);
 
-  gap: 16px;
+  gap: 13px;
 
   align-items: start;
 
@@ -1173,6 +1171,9 @@
 
   transform:
     translateX(-50%);
+
+  transform-origin:
+    top center;
 
   will-change:
     transform,
@@ -1186,16 +1187,16 @@
 
 .s4-compare-stage[data-focus="left"] {
   grid-template-columns:
-    minmax(0, 1.2fr)
-    58px
-    minmax(270px, 0.8fr);
+    minmax(0, 1.18fr)
+    52px
+    minmax(260px, 0.82fr);
 }
 
 .s4-compare-stage[data-focus="right"] {
   grid-template-columns:
-    minmax(270px, 0.8fr)
-    58px
-    minmax(0, 1.2fr);
+    minmax(260px, 0.82fr)
+    52px
+    minmax(0, 1.18fr);
 }
 
 .s4-reader-side {
@@ -1210,30 +1211,14 @@
 
   height: auto;
 
-  max-height:
-    calc(
-      100svh -
-      var(--s4-compare-top) -
-      18px
-    );
+  padding: 9px;
 
-  padding: 11px;
-
-  overflow-x: hidden;
-  overflow-y: auto;
-
-  overscroll-behavior: contain;
-
-  scrollbar-width: thin;
-
-  scrollbar-color:
-    rgba(137, 151, 224, 0.42)
-    transparent;
+  overflow: visible;
 
   border:
     1px solid rgba(176, 188, 255, 0.13);
 
-  border-radius: 18px;
+  border-radius: 17px;
 
   background:
     radial-gradient(
@@ -1248,7 +1233,7 @@
     );
 
   box-shadow:
-    0 22px 58px rgba(0, 0, 0, 0.24),
+    0 20px 52px rgba(0, 0, 0, 0.24),
     inset 0 1px 0 rgba(255, 255, 255, 0.035);
 
   transition:
@@ -1270,21 +1255,6 @@
       rgba(10, 15, 32, 0.82),
       rgba(5, 9, 21, 0.68)
     );
-}
-
-.s4-reader-side::-webkit-scrollbar {
-  width: 7px;
-}
-
-.s4-reader-side::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.s4-reader-side::-webkit-scrollbar-thumb {
-  border-radius: 999px;
-
-  background:
-    rgba(137, 151, 224, 0.34);
 }
 
 .s4-compare-stage[data-focus="left"]
@@ -1318,21 +1288,21 @@
   position: relative;
 
   width: 100%;
-  min-height: 66px;
+  min-height: 54px;
 
   padding:
-    8px 10px;
+    6px 8px;
 
   display: grid;
 
   grid-template-columns:
-    48px
+    40px
     minmax(0, 1fr)
     auto;
 
   align-items: center;
 
-  gap: 0.7rem;
+  gap: 0.58rem;
 
   overflow: hidden;
 
@@ -1343,7 +1313,7 @@
   border:
     1px solid rgba(184, 192, 255, 0.18);
 
-  border-radius: 16px;
+  border-radius: 14px;
 
   background:
     radial-gradient(
@@ -1358,7 +1328,7 @@
     );
 
   box-shadow:
-    0 16px 38px rgba(0, 0, 0, 0.27),
+    0 14px 32px rgba(0, 0, 0, 0.25),
     inset 0 1px 0 rgba(255, 255, 255, 0.05);
 
   cursor: pointer;
@@ -1391,8 +1361,8 @@
     );
 
   box-shadow:
-    0 20px 48px rgba(0, 0, 0, 0.36),
-    0 0 28px rgba(124, 140, 255, 0.12),
+    0 18px 42px rgba(0, 0, 0, 0.34),
+    0 0 26px rgba(124, 140, 255, 0.11),
     inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
@@ -1400,8 +1370,8 @@
   position: relative;
   z-index: 1;
 
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
 
   display: grid;
   place-items: center;
@@ -1413,13 +1383,13 @@
   font-family:
     var(--font-body, system-ui, sans-serif);
 
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   font-weight: 900;
 
   border:
     1px solid rgba(190, 200, 255, 0.25);
 
-  border-radius: 14px;
+  border-radius: 12px;
 
   background:
     linear-gradient(
@@ -1452,8 +1422,8 @@
     scale(1.05);
 
   box-shadow:
-    0 12px 26px rgba(0, 0, 0, 0.34),
-    0 0 24px rgba(124, 140, 255, 0.22);
+    0 10px 22px rgba(0, 0, 0, 0.32),
+    0 0 22px rgba(124, 140, 255, 0.2);
 }
 
 .s4-profile-avatar img {
@@ -1495,34 +1465,34 @@
   font-family:
     var(--font-body, system-ui, sans-serif);
 
-  font-size: 0.84rem;
+  font-size: 0.76rem;
   font-weight: 900;
 
   white-space: nowrap;
 }
 
 .s4-profile-text small {
-  margin-top: 0.16rem;
+  margin-top: 0.12rem;
 
   color: var(--s4-muted);
 
   font-family:
     var(--font-body, system-ui, sans-serif);
 
-  font-size: 0.64rem;
-  line-height: 1.35;
+  font-size: 0.57rem;
+  line-height: 1.25;
 }
 
 .s4-profile-command {
   padding:
-    0.32rem 0.56rem;
+    0.28rem 0.5rem;
 
   color: var(--s4-faint);
 
   font-family:
     var(--font-body, system-ui, sans-serif);
 
-  font-size: 0.48rem;
+  font-size: 0.44rem;
   font-weight: 900;
 
   letter-spacing: 0.08em;
@@ -1558,18 +1528,18 @@
   display: grid;
 
   grid-template-rows:
-    minmax(40px, 1fr)
+    minmax(34px, 1fr)
     auto
-    minmax(40px, 1fr);
+    minmax(34px, 1fr);
 
   justify-items: center;
 
-  gap: 0.5rem;
+  gap: 0.4rem;
 }
 
 .s4-divider-line {
   width: 1px;
-  min-height: 80px;
+  min-height: 70px;
 
   background:
     linear-gradient(
@@ -1582,11 +1552,10 @@
 }
 
 .s4-compare-both {
-  width: 54px;
-  min-height: 54px;
+  width: 48px;
+  min-height: 48px;
 
-  padding:
-    0.45rem;
+  padding: 0.4rem;
 
   display: grid;
   place-items: center;
@@ -1596,7 +1565,7 @@
   font-family:
     var(--font-body, system-ui, sans-serif);
 
-  font-size: 0.52rem;
+  font-size: 0.47rem;
   font-weight: 900;
   line-height: 1.05;
 
@@ -1634,7 +1603,7 @@
     rgba(124, 140, 255, 0.16);
 
   box-shadow:
-    0 0 24px rgba(124, 140, 255, 0.14);
+    0 0 22px rgba(124, 140, 255, 0.14);
 
   transform:
     scale(1.04);
@@ -1648,14 +1617,14 @@
 .s4-reader-content {
   min-height: 0;
 
-  margin-top: 0.72rem;
+  margin-top: 0.58rem;
 }
 
 .s4-evidence-header {
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.58rem;
 
   padding:
-    0 0.1rem 0.62rem;
+    0 0.08rem 0.48rem;
 
   border-bottom:
     1px solid rgba(184, 192, 255, 0.1);
@@ -1671,7 +1640,7 @@
   font-family:
     var(--font-body, system-ui, sans-serif);
 
-  font-size: 0.56rem;
+  font-size: 0.5rem;
   font-weight: 900;
   line-height: 1;
 
@@ -1681,7 +1650,7 @@
 
 .s4-evidence-header h4 {
   margin:
-    0.34rem 0 0;
+    0.28rem 0 0;
 
   color: var(--s4-text);
 
@@ -1689,12 +1658,12 @@
     var(--font-display, Georgia, serif);
 
   font-size:
-    clamp(1.14rem, 1.48vw, 1.44rem);
+    clamp(1rem, 1.25vw, 1.25rem);
 
   font-weight: 700;
-  line-height: 1.08;
+  line-height: 1.05;
 
-  letter-spacing: -0.04em;
+  letter-spacing: -0.035em;
 }
 
 .s4-quote-grid,
@@ -1704,11 +1673,9 @@
   grid-template-columns:
     repeat(2, minmax(0, 1fr));
 
-  grid-template-rows:
-    minmax(240px, auto)
-    minmax(195px, auto);
+  gap: 10px;
 
-  gap: 12px;
+  align-items: stretch;
 }
 
 .s4-evidence-card {
@@ -1722,7 +1689,7 @@
   border:
     1px solid var(--s4-border);
 
-  border-radius: 16px;
+  border-radius: 15px;
 
   background:
     radial-gradient(
@@ -1737,8 +1704,8 @@
     );
 
   box-shadow:
-    0 18px 44px rgba(0, 0, 0, 0.34),
-    0 0 28px rgba(124, 140, 255, 0.06),
+    0 16px 38px rgba(0, 0, 0, 0.32),
+    0 0 24px rgba(124, 140, 255, 0.05),
     inset 0 1px 0 rgba(255, 255, 255, 0.07);
 
   transition:
@@ -1752,27 +1719,28 @@
   z-index: 2;
 
   transform:
-    translateY(-3px);
+    translateY(-2px);
 
   border-color:
     rgba(190, 200, 255, 0.46);
 
   box-shadow:
-    0 24px 54px rgba(0, 0, 0, 0.43),
-    0 0 38px rgba(124, 140, 255, 0.1),
+    0 22px 48px rgba(0, 0, 0, 0.41),
+    0 0 34px rgba(124, 140, 255, 0.09),
     inset 0 1px 0 rgba(255, 255, 255, 0.09);
 }
 
 
 /* ==========================================================================
-   QUOTE CARDS
+   QUOTES
+   Full quote text is visible. Nothing is line-clamped.
    ========================================================================== */
 
 .s4-quote-card {
-  min-height: 195px;
+  min-height: 174px;
 
   padding:
-    22px 24px;
+    15px 17px;
 
   display: flex;
   flex-direction: column;
@@ -1782,7 +1750,7 @@
   grid-column:
     1 / -1;
 
-  min-height: 240px;
+  min-height: 238px;
 }
 
 .s4-quote-card blockquote {
@@ -1790,9 +1758,9 @@
   z-index: 1;
 
   margin:
-    0.8rem 0 0;
+    0.56rem 0 0;
 
-  overflow: hidden;
+  overflow: visible;
 
   color: var(--s4-text);
 
@@ -1802,61 +1770,52 @@
   font-weight: 700;
 
   text-wrap: pretty;
-
-  display: -webkit-box;
-
-  -webkit-box-orient: vertical;
-}
-
-.s4-quote-card.is-featured blockquote {
-  -webkit-line-clamp: 8;
-}
-
-.s4-quote-card:not(.is-featured)
-blockquote {
-  -webkit-line-clamp: 5;
 }
 
 .s4-quote-card blockquote p {
   margin: 0;
 }
 
+.s4-quote-card blockquote p + p {
+  margin-top: 0.28rem;
+}
+
 .s4-quote-card.quote-long
 blockquote {
   font-size:
-    clamp(1rem, 1.02vw, 1.06rem);
+    clamp(0.82rem, 0.78vw, 0.91rem);
 
-  line-height: 1.43;
+  line-height: 1.34;
 }
 
 .s4-quote-card.quote-medium
 blockquote {
   font-size:
-    clamp(1rem, 1.08vw, 1.12rem);
+    clamp(0.88rem, 0.86vw, 0.98rem);
 
-  line-height: 1.4;
+  line-height: 1.36;
 }
 
 .s4-quote-card.quote-short
 blockquote {
   font-size:
-    clamp(1.32rem, 1.55vw, 1.5rem);
+    clamp(1.12rem, 1.22vw, 1.3rem);
 
-  line-height: 1.3;
+  line-height: 1.24;
 }
 
 .s4-quote-card cite {
   position: relative;
   z-index: 1;
 
-  margin-top: 0.85rem;
+  margin-top: 0.54rem;
 
   color: var(--s4-text-mid);
 
   font-family:
     var(--font-body, system-ui, sans-serif);
 
-  font-size: 0.76rem;
+  font-size: 0.65rem;
   font-style: normal;
   font-weight: 800;
   line-height: 1.2;
@@ -1867,7 +1826,7 @@ blockquote {
   z-index: 2;
 
   margin-top: auto;
-  padding-top: 0.9rem;
+  padding-top: 0.5rem;
 
   display: flex;
   align-items: center;
@@ -1875,23 +1834,23 @@ blockquote {
 }
 
 .s4-detail-button {
-  min-height: 34px;
+  min-height: 28px;
 
   padding:
-    0 0.82rem;
+    0 0.68rem;
 
   display: inline-flex;
   align-items: center;
   justify-content: center;
 
-  gap: 0.36rem;
+  gap: 0.3rem;
 
   color: var(--s4-text);
 
   font-family:
     var(--font-body, system-ui, sans-serif);
 
-  font-size: 0.66rem;
+  font-size: 0.56rem;
   font-weight: 850;
 
   border:
@@ -1921,7 +1880,7 @@ blockquote {
 .s4-detail-button::after {
   content: "↗";
 
-  font-size: 0.72rem;
+  font-size: 0.62rem;
 }
 
 .s4-detail-button:hover {
@@ -1939,27 +1898,27 @@ blockquote {
     );
 
   box-shadow:
-    0 10px 24px rgba(0, 0, 0, 0.24),
-    0 0 24px rgba(124, 140, 255, 0.12);
+    0 8px 20px rgba(0, 0, 0, 0.23),
+    0 0 22px rgba(124, 140, 255, 0.11);
 }
 
 
 /* ==========================================================================
-   CHARACTER CARDS
+   CHARACTERS
    ========================================================================== */
 
 .s4-character-card {
-  min-height: 195px;
+  min-height: 174px;
 
-  padding: 14px;
+  padding: 11px;
 
   display: grid;
 
   grid-template-columns:
-    92px
+    76px
     minmax(0, 1fr);
 
-  gap: 0.85rem;
+  gap: 0.68rem;
 
   align-items: stretch;
 }
@@ -1968,10 +1927,10 @@ blockquote {
   grid-column:
     1 / -1;
 
-  min-height: 240px;
+  min-height: 226px;
 
   grid-template-columns:
-    128px
+    110px
     minmax(0, 1fr);
 }
 
@@ -1988,7 +1947,7 @@ blockquote {
   border:
     1px solid rgba(184, 192, 255, 0.19);
 
-  border-radius: 13px;
+  border-radius: 12px;
 
   background:
     rgba(124, 140, 255, 0.08);
@@ -2015,18 +1974,18 @@ blockquote {
 .s4-character-rank-badge {
   position: absolute;
 
-  left: 0.55rem;
-  bottom: 0.55rem;
+  left: 0.45rem;
+  bottom: 0.45rem;
 
   padding:
-    0.28rem 0.46rem;
+    0.24rem 0.4rem;
 
   color: #ffffff;
 
   font-family:
     var(--font-body, system-ui, sans-serif);
 
-  font-size: 0.58rem;
+  font-size: 0.52rem;
   font-weight: 900;
 
   border:
@@ -2053,7 +2012,7 @@ blockquote {
 
 .s4-character-copy h5 {
   margin:
-    0.48rem 0 0;
+    0.36rem 0 0;
 
   color: var(--s4-text);
 
@@ -2061,37 +2020,25 @@ blockquote {
     var(--font-display, Georgia, serif);
 
   font-size:
-    clamp(1.12rem, 1.5vw, 1.42rem);
+    clamp(1rem, 1.28vw, 1.26rem);
 
   font-weight: 760;
-  line-height: 1.05;
+  line-height: 1.04;
 
-  letter-spacing: -0.04em;
+  letter-spacing: -0.035em;
 }
 
 .s4-character-copy p {
   margin:
-    0.6rem 0 0;
-
-  overflow: hidden;
+    0.46rem 0 0;
 
   color: var(--s4-text-mid);
 
   font-family:
     var(--font-body, system-ui, sans-serif);
 
-  font-size: 0.72rem;
-  line-height: 1.58;
-
-  display: -webkit-box;
-
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 5;
-}
-
-.s4-character-card:not(.is-featured)
-.s4-character-copy p {
-  -webkit-line-clamp: 4;
+  font-size: 0.64rem;
+  line-height: 1.48;
 }
 
 
@@ -2101,10 +2048,10 @@ blockquote {
 
 .s4-thought-card {
   width: 100%;
-  min-height: 320px;
+  min-height: 300px;
 
   padding:
-    1.25rem 1.35rem;
+    1.05rem 1.15rem;
 
   display: flex;
   flex-direction: column;
@@ -2117,7 +2064,7 @@ blockquote {
   max-width: 28ch;
 
   margin:
-    0.62rem 0 0;
+    0.5rem 0 0;
 
   color: var(--s4-text);
 
@@ -2125,26 +2072,19 @@ blockquote {
     var(--font-display, Georgia, serif);
 
   font-size:
-    clamp(1.34rem, 1.82vw, 1.72rem);
+    clamp(1.2rem, 1.55vw, 1.52rem);
 
   font-weight: 700;
-  line-height: 1.12;
+  line-height: 1.1;
 
-  letter-spacing: -0.045em;
+  letter-spacing: -0.04em;
 }
 
 .s4-thought-copy {
   position: relative;
   z-index: 1;
 
-  margin-top: 1rem;
-
-  overflow: hidden;
-
-  display: -webkit-box;
-
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 8;
+  margin-top: 0.78rem;
 }
 
 .s4-thought-copy p {
@@ -2157,38 +2097,41 @@ blockquote {
   font-family:
     var(--font-body, system-ui, sans-serif);
 
-  font-size: 0.78rem;
-  line-height: 1.76;
+  font-size: 0.72rem;
+  line-height: 1.66;
 }
 
 
 /* ==========================================================================
-   APPLE-STYLE DETAIL WINDOW
+   CENTERED DETAIL DIALOG
+   Uses inset: 0 and margin: auto.
+   There is no left/top/inset conflict.
    ========================================================================== */
 
-body.s4-dialog-open {
-  overflow: hidden;
-}
-
 .s4-detail-dialog {
-  width:
-    min(780px, calc(100vw - 32px));
+  position: fixed;
 
-  max-width: 780px;
+  inset: 0;
+
+  width:
+    min(760px, calc(100vw - 32px));
+
+  max-width: 760px;
 
   max-height:
-    min(82svh, 760px);
+    min(80svh, 720px);
 
+  margin: auto;
   padding: 0;
 
-  overflow: visible;
+  overflow: hidden;
 
   color: var(--s4-text);
 
   border:
     1px solid rgba(204, 212, 255, 0.3);
 
-  border-radius: 24px;
+  border-radius: 23px;
 
   background: transparent;
 
@@ -2197,9 +2140,13 @@ body.s4-dialog-open {
     0 0 80px rgba(124, 140, 255, 0.18);
 }
 
+.s4-detail-dialog:not([open]) {
+  display: none;
+}
+
 .s4-detail-dialog::backdrop {
   background:
-    rgba(2, 5, 14, 0.7);
+    rgba(2, 5, 14, 0.72);
 
   backdrop-filter:
     blur(14px)
@@ -2209,7 +2156,7 @@ body.s4-dialog-open {
 .s4-detail-dialog[open] {
   animation:
     s4-dialog-in
-    260ms
+    250ms
     cubic-bezier(0.22, 1, 0.36, 1)
     both;
 }
@@ -2254,10 +2201,10 @@ body.s4-dialog-open {
 }
 
 .s4-detail-toolbar {
-  min-height: 54px;
+  min-height: 52px;
 
   padding:
-    0 15px;
+    0 14px;
 
   display: grid;
 
@@ -2312,7 +2259,7 @@ body.s4-dialog-open {
   font-family:
     var(--font-body, system-ui, sans-serif);
 
-  font-size: 0.66rem;
+  font-size: 0.64rem;
   font-weight: 800;
 
   letter-spacing: 0.06em;
@@ -2322,8 +2269,8 @@ body.s4-dialog-open {
 .s4-detail-close {
   justify-self: end;
 
-  width: 32px;
-  height: 32px;
+  width: 31px;
+  height: 31px;
 
   display: grid;
   place-items: center;
@@ -2333,7 +2280,7 @@ body.s4-dialog-open {
   font-family:
     var(--font-body, system-ui, sans-serif);
 
-  font-size: 1.3rem;
+  font-size: 1.25rem;
   line-height: 1;
 
   border:
@@ -2370,12 +2317,12 @@ body.s4-dialog-open {
 .s4-detail-scroll {
   max-height:
     calc(
-      min(82svh, 760px) -
-      54px
+      min(80svh, 720px) -
+      52px
     );
 
   padding:
-    clamp(1.35rem, 3vw, 2.25rem);
+    clamp(1.25rem, 3vw, 2rem);
 
   overflow-y: auto;
 
@@ -2401,7 +2348,7 @@ body.s4-dialog-open {
 
 .s4-detail-dialog h3 {
   margin:
-    0.55rem 0 0;
+    0.5rem 0 0;
 
   color: var(--s4-text);
 
@@ -2409,24 +2356,24 @@ body.s4-dialog-open {
     var(--font-display, Georgia, serif);
 
   font-size:
-    clamp(1.8rem, 4vw, 3rem);
+    clamp(1.65rem, 4vw, 2.7rem);
 
   font-weight: 760;
-  line-height: 1;
+  line-height: 1.02;
 
-  letter-spacing: -0.05em;
+  letter-spacing: -0.045em;
 }
 
 .s4-detail-body {
-  margin-top: 1.35rem;
+  margin-top: 1.2rem;
 
   color: var(--s4-text-mid);
 
   font-family:
     var(--font-body, system-ui, sans-serif);
 
-  font-size: 0.94rem;
-  line-height: 1.75;
+  font-size: 0.92rem;
+  line-height: 1.72;
 }
 
 .s4-detail-body p {
@@ -2434,27 +2381,14 @@ body.s4-dialog-open {
 }
 
 .s4-detail-body p + p {
-  margin-top: 1rem;
+  margin-top: 0.95rem;
 }
 
-.s4-detail-quote {
-  margin: 0;
-
+.s4-detail-takeaway {
   padding:
-    clamp(1.1rem, 2.5vw, 1.6rem);
+    clamp(1.1rem, 2.5vw, 1.55rem);
 
-  color: var(--s4-text);
-
-  font-family:
-    var(--font-display, Georgia, serif);
-
-  font-size:
-    clamp(1.12rem, 2vw, 1.38rem);
-
-  font-weight: 700;
-  line-height: 1.48;
-
-  text-wrap: pretty;
+  color: var(--s4-text-mid);
 
   border:
     1px solid rgba(184, 192, 255, 0.2);
@@ -2462,44 +2396,55 @@ body.s4-dialog-open {
   border-radius: 17px;
 
   background:
-    rgba(124, 140, 255, 0.07);
+    radial-gradient(
+      circle at 90% 8%,
+      rgba(124, 140, 255, 0.12),
+      transparent 34%
+    ),
+    rgba(124, 140, 255, 0.06);
 }
 
-.s4-detail-quote p + p {
-  margin-top: 0.85rem;
-}
-
-.s4-detail-quote cite {
+.s4-detail-takeaway-label {
   display: block;
 
-  margin-top: 1.1rem;
+  margin-bottom: 0.68rem;
+
+  color:
+    rgba(184, 192, 255, 0.76);
+
+  font-family:
+    var(--font-body, system-ui, sans-serif);
+
+  font-size: 0.6rem;
+  font-weight: 900;
+  line-height: 1;
+
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.s4-detail-takeaway p {
+  margin: 0;
 
   color: var(--s4-text-mid);
 
   font-family:
     var(--font-body, system-ui, sans-serif);
 
-  font-size: 0.82rem;
-  font-style: normal;
-  font-weight: 850;
-}
+  font-size:
+    clamp(0.9rem, 1.3vw, 0.98rem);
 
-.s4-detail-analysis {
-  margin-top: 1.15rem;
-  padding-top: 1.15rem;
-
-  border-top:
-    1px solid rgba(184, 192, 255, 0.14);
+  line-height: 1.72;
 }
 
 .s4-detail-character {
   display: grid;
 
   grid-template-columns:
-    minmax(150px, 210px)
+    minmax(145px, 200px)
     minmax(0, 1fr);
 
-  gap: 1.35rem;
+  gap: 1.25rem;
 
   align-items: start;
 }
@@ -2538,18 +2483,18 @@ body.s4-dialog-open {
     var(--font-display, Georgia, serif);
 
   font-size:
-    clamp(1.4rem, 2.4vw, 2rem);
+    clamp(1.35rem, 2.4vw, 1.9rem);
 
   line-height: 1.08;
 }
 
 .s4-detail-character-copy p {
-  margin-top: 0.8rem;
+  margin-top: 0.75rem;
 }
 
 
 /* ==========================================================================
-   ERROR STATE
+   ERROR
    ========================================================================== */
 
 .s4-empty {
@@ -2603,7 +2548,7 @@ body.s4-dialog-open {
 
 
 /* ==========================================================================
-   STATIC FALLBACK
+   STATIC AND RESPONSIVE FALLBACK
    ========================================================================== */
 
 .section-cover-rain.is-static {
@@ -2646,7 +2591,7 @@ body.s4-dialog-open {
   top: auto;
 
   width:
-    min(1380px, calc(100vw - 28px));
+    min(1280px, calc(100vw - 28px));
 
   margin-inline: auto;
 
@@ -2662,7 +2607,7 @@ body.s4-dialog-open {
 .section-cover-rain.is-static
 .s4-shared-card-wrap {
   width:
-    min(760px, calc(100vw - 28px));
+    min(700px, calc(100vw - 28px));
 }
 
 .section-cover-rain.is-static
@@ -2673,12 +2618,12 @@ body.s4-dialog-open {
 
 .section-cover-rain.is-static
 .s4-content-intro {
-  margin-top: 0.7rem;
+  margin-top: 0.72rem;
 }
 
 .section-cover-rain.is-static
 .s4-compare-stage {
-  margin-top: 0.9rem;
+  margin-top: 0.82rem;
 }
 
 .section-cover-rain.is-static
@@ -2686,78 +2631,16 @@ body.s4-dialog-open {
   height: auto !important;
 
   margin-top:
-    0.3rem !important;
+    0.22rem !important;
 
   padding-top:
-    0.38rem !important;
+    0.32rem !important;
 
   opacity: 1 !important;
   visibility: visible !important;
 }
 
-.section-cover-rain.is-static
-.s4-reader-side {
-  max-height: none;
-
-  overflow: visible;
-}
-
-
-/* ==========================================================================
-   SHORT DESKTOP VIEWPORTS
-   ========================================================================== */
-
-@media (min-width: 1051px) and (max-height: 820px) {
-  .section-cover-rain {
-    --s4-layout-width:
-      min(1340px, calc(100vw - 72px));
-  }
-
-  .s4-shared-card {
-    min-height: 170px;
-  }
-
-  .s4-card-cover {
-    width: 94px;
-  }
-
-  .s4-content-intro p {
-    display: none;
-  }
-
-  .s4-quote-grid,
-  .s4-character-grid {
-    grid-template-rows:
-      minmax(215px, auto)
-      minmax(178px, auto);
-  }
-
-  .s4-quote-card {
-    min-height: 178px;
-
-    padding:
-      17px 18px;
-  }
-
-  .s4-quote-card.is-featured,
-  .s4-character-card.is-featured {
-    min-height: 215px;
-  }
-
-  .s4-thought-card {
-    min-height: 285px;
-
-    padding:
-      0.96rem 1.04rem;
-  }
-}
-
-
-/* ==========================================================================
-   TABLET
-   ========================================================================== */
-
-@media (max-width: 1050px) {
+@media (max-width: 1099px), (max-height: 759px) {
   .section-cover-rain {
     overflow: visible;
   }
@@ -2773,12 +2656,6 @@ body.s4-dialog-open {
     grid-template-columns: 1fr;
 
     align-items: stretch;
-  }
-
-  .s4-reader-side {
-    max-height: none;
-
-    overflow: visible;
   }
 
   .s4-compare-divider {
@@ -2810,17 +2687,7 @@ body.s4-dialog-open {
         transparent
       );
   }
-
-  .section-cover-rain.is-static
-  .s4-compare-stage {
-    grid-template-columns: 1fr;
-  }
 }
-
-
-/* ==========================================================================
-   MOBILE
-   ========================================================================== */
 
 @media (max-width: 680px) {
   .section-cover-rain {
@@ -2861,7 +2728,7 @@ body.s4-dialog-open {
     padding: 0.8rem;
 
     grid-template-columns:
-      86px
+      82px
       minmax(0, 1fr);
 
     grid-template-areas:
@@ -2878,7 +2745,7 @@ body.s4-dialog-open {
   }
 
   .s4-card-cover {
-    width: 86px;
+    width: 82px;
   }
 
   .s4-card-score {
@@ -2893,7 +2760,7 @@ body.s4-dialog-open {
 
   .s4-card-info h3 {
     font-size:
-      clamp(1.4rem, 8vw, 2rem);
+      clamp(1.35rem, 8vw, 1.9rem);
   }
 
   .s4-layer-buttons {
@@ -2911,13 +2778,8 @@ body.s4-dialog-open {
 
   .s4-profile-card {
     grid-template-columns:
-      44px
+      40px
       minmax(0, 1fr);
-  }
-
-  .s4-profile-avatar {
-    width: 44px;
-    height: 44px;
   }
 
   .s4-profile-command {
@@ -2927,7 +2789,6 @@ body.s4-dialog-open {
   .s4-quote-grid,
   .s4-character-grid {
     grid-template-columns: 1fr;
-    grid-template-rows: auto;
   }
 
   .s4-quote-card.is-featured,
@@ -2937,17 +2798,24 @@ body.s4-dialog-open {
 
   .s4-quote-card,
   .s4-quote-card.is-featured {
-    min-height: 210px;
+    min-height: 0;
 
-    padding: 1.1rem;
+    padding: 1rem;
+  }
+
+  .s4-quote-card.quote-long
+  blockquote,
+  .s4-quote-card.quote-medium
+  blockquote {
+    font-size: 0.94rem;
   }
 
   .s4-character-card,
   .s4-character-card.is-featured {
-    min-height: 220px;
+    min-height: 210px;
 
     grid-template-columns:
-      92px
+      86px
       minmax(0, 1fr);
   }
 
@@ -2973,9 +2841,9 @@ body.s4-dialog-open {
 
   .s4-detail-scroll {
     max-height:
-      calc(88svh - 54px);
+      calc(88svh - 52px);
 
-    padding: 1.15rem;
+    padding: 1.1rem;
   }
 
   .s4-detail-character {
@@ -2984,14 +2852,9 @@ body.s4-dialog-open {
 
   .s4-detail-character figure {
     width:
-      min(210px, 70%);
+      min(205px, 70%);
   }
 }
-
-
-/* ==========================================================================
-   REDUCED MOTION
-   ========================================================================== */
 
 @media (prefers-reduced-motion: reduce) {
   .section-cover-rain *,
@@ -3020,279 +2883,5 @@ body.s4-dialog-open {
   .s4-character-portrait img {
     transform:
       none !important;
-  }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* ==========================================================================
-   SECTION 4 — VISIBILITY, FITTING AND CENTERED DETAIL WINDOW FIX
-   Add this at the very bottom of the Section 4 stylesheet.
-   ========================================================================== */
-
-/* --------------------------------------------------------------------------
-   Remove the reader-panel scrollbars.
-   The complete panels are fitted into the available desktop viewport by JS.
-   -------------------------------------------------------------------------- */
-
-.s4-reader-side {
-  max-height: none;
-  overflow: visible;
-  overscroll-behavior: auto;
-  scrollbar-width: none;
-}
-
-.s4-reader-side::-webkit-scrollbar {
-  display: none;
-}
-
-/*
- * Independent scale is used so it does not interfere with the GSAP
- * translate animation applied to the comparison stage.
- */
-
-.s4-compare-stage {
-  scale: var(--s4-fit-scale, 1);
-  transform-origin: top center;
-}
-
-
-/* --------------------------------------------------------------------------
-   Full quote visibility
-   -------------------------------------------------------------------------- */
-
-.s4-quote-grid {
-  grid-template-rows: auto auto;
-  align-items: stretch;
-}
-
-.s4-quote-card,
-.s4-quote-card.is-featured {
-  height: auto;
-}
-
-.s4-quote-card {
-  min-height: 190px;
-}
-
-.s4-quote-card.is-featured {
-  min-height: 235px;
-}
-
-/*
- * Cancel every line-clamp and hidden-overflow rule from the original CSS.
- */
-
-.s4-quote-card blockquote,
-.s4-quote-card.is-featured blockquote,
-.s4-quote-card:not(.is-featured) blockquote {
-  display: block;
-
-  overflow: visible;
-
-  -webkit-line-clamp: unset;
-  -webkit-box-orient: initial;
-
-  line-clamp: unset;
-}
-
-.s4-quote-card blockquote p {
-  margin: 0;
-}
-
-.s4-quote-card blockquote p + p {
-  margin-top: 0.68rem;
-}
-
-/*
- * Long quotes use slightly more compact typography but are not shortened.
- */
-
-.s4-quote-card.quote-long blockquote {
-  font-size: clamp(0.94rem, 0.93vw, 1.02rem);
-  line-height: 1.39;
-}
-
-.s4-quote-card.quote-medium blockquote {
-  font-size: clamp(0.98rem, 1vw, 1.08rem);
-  line-height: 1.4;
-}
-
-.s4-quote-card.quote-short blockquote {
-  font-size: clamp(1.22rem, 1.42vw, 1.44rem);
-  line-height: 1.28;
-}
-
-.s4-quote-card cite {
-  margin-top: 0.9rem;
-}
-
-/*
- * The button now opens the reader's interpretation rather than the quote.
- */
-
-.s4-quote-card .s4-card-actions {
-  padding-top: 0.8rem;
-}
-
-
-/* --------------------------------------------------------------------------
-   Properly center the detail window
-   -------------------------------------------------------------------------- */
-
-.s4-detail-dialog {
-  position: fixed !important;
-
-  left: 50% !important;
-  top: 50% !important;
-  right: auto !important;
-  bottom: auto !important;
-
-  inset: auto !important;
-
-  margin: 0 !important;
-
-  transform:
-    translate(-50%, -50%);
-
-  transform-origin: center;
-}
-
-/*
- * Do not lock body scrolling when opening the dialog.
- * Native modal dialogs already prevent background interaction.
- * Removing overflow:hidden prevents the page from jumping.
- */
-
-body.s4-dialog-open {
-  overflow: visible;
-}
-
-.s4-detail-dialog[open] {
-  animation:
-    s4-dialog-centered-in
-    260ms
-    cubic-bezier(0.22, 1, 0.36, 1)
-    both;
-}
-
-@keyframes s4-dialog-centered-in {
-  from {
-    opacity: 0;
-
-    transform:
-      translate(-50%, calc(-50% + 18px))
-      scale(0.965);
-  }
-
-  to {
-    opacity: 1;
-
-    transform:
-      translate(-50%, -50%)
-      scale(1);
-  }
-}
-
-/*
- * Reader-takeaway content inside the window.
- */
-
-.s4-detail-takeaway {
-  padding:
-    clamp(1.15rem, 2.5vw, 1.65rem);
-
-  color: var(--s4-text-mid);
-
-  border:
-    1px solid rgba(184, 192, 255, 0.2);
-
-  border-radius: 17px;
-
-  background:
-    radial-gradient(
-      circle at 90% 8%,
-      rgba(124, 140, 255, 0.12),
-      transparent 34%
-    ),
-    rgba(124, 140, 255, 0.06);
-}
-
-.s4-detail-takeaway-label {
-  display: block;
-
-  margin-bottom: 0.7rem;
-
-  color: rgba(184, 192, 255, 0.76);
-
-  font-family:
-    var(--font-body, system-ui, sans-serif);
-
-  font-size: 0.62rem;
-  font-weight: 900;
-
-  line-height: 1;
-
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-.s4-detail-takeaway p {
-  margin: 0;
-
-  color: var(--s4-text-mid);
-
-  font-family:
-    var(--font-body, system-ui, sans-serif);
-
-  font-size: clamp(0.92rem, 1.3vw, 1rem);
-  line-height: 1.75;
-}
-
-
-/* --------------------------------------------------------------------------
-   Static/mobile layouts should not be scaled.
-   Their content can use normal page scrolling.
-   -------------------------------------------------------------------------- */
-
-.section-cover-rain.is-static
-.s4-compare-stage {
-  --s4-fit-scale: 1;
-
-  scale: 1;
-}
-
-@media (max-width: 899px), (max-height: 719px) {
-  .s4-compare-stage {
-    --s4-fit-scale: 1;
-
-    scale: 1;
-  }
-
-  .s4-reader-side {
-    overflow: visible;
-  }
-}
-
-@media (max-width: 680px) {
-  .s4-quote-card,
-  .s4-quote-card.is-featured {
-    min-height: 0;
-  }
-
-  .s4-quote-card.quote-long blockquote,
-  .s4-quote-card.quote-medium blockquote {
-    font-size: 0.98rem;
   }
 }

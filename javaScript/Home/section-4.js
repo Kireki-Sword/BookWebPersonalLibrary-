@@ -1117,16 +1117,18 @@
         story,
         index
       ) => {
-        elements.rainLeft.appendChild(
-          createRainItem(
-            story,
-            'left',
-            index,
-            isChosenStoryTitle(
-              story.title
+        elements
+          .rainLeft
+          .appendChild(
+            createRainItem(
+              story,
+              'left',
+              index,
+              isChosenStoryTitle(
+                story.title
+              )
             )
-          )
-        );
+          );
       }
     );
 
@@ -1135,16 +1137,18 @@
         story,
         index
       ) => {
-        elements.rainRight.appendChild(
-          createRainItem(
-            story,
-            'right',
-            index,
-            isChosenStoryTitle(
-              story.title
+        elements
+          .rainRight
+          .appendChild(
+            createRainItem(
+              story,
+              'right',
+              index,
+              isChosenStoryTitle(
+                story.title
+              )
             )
-          )
-        );
+          );
       }
     );
   }
@@ -1575,272 +1579,273 @@
     let focusMode =
       'both';
 
-    let comparisonResizeTimer =
-      null;
-
     fillProfileCards(
       elements.section
     );
 
-    function renderBothSides() {
-      elements.readerContents.forEach(
-        (container) => {
-          const readerId =
-            container.dataset.readerContent;
+    const renderBothSides =
+      () => {
+        elements
+          .readerContents
+          .forEach(
+            (container) => {
+              const readerId =
+                container
+                  .dataset
+                  .readerContent;
 
-          const reader =
-            READERS[
-              readerId
-            ];
+              const reader =
+                READERS[
+                  readerId
+                ];
 
-          if (
-            !reader
-          ) {
-            return;
-          }
+              if (
+                !reader
+              ) {
+                return;
+              }
 
-          if (
-            activeLayer ===
-            'quotes'
-          ) {
-            renderQuotes(
-              container,
-              readerId,
-              reader
-            );
-          } else if (
-            activeLayer ===
-            'characters'
-          ) {
-            renderCharacters(
-              container,
-              readerId,
-              reader
-            );
-          } else {
-            renderThoughts(
-              container,
-              readerId,
-              reader
-            );
-          }
+              if (
+                activeLayer ===
+                'quotes'
+              ) {
+                renderQuotes(
+                  container,
+                  readerId,
+                  reader
+                );
+              } else if (
+                activeLayer ===
+                'characters'
+              ) {
+                renderCharacters(
+                  container,
+                  readerId,
+                  reader
+                );
+              } else {
+                renderThoughts(
+                  container,
+                  readerId,
+                  reader
+                );
+              }
 
-          animateContent(
-            container
+              animateContent(
+                container
+              );
+            }
           );
+      };
+
+    const setLayer =
+      (
+        layer
+      ) => {
+        if (
+          ![
+            'quotes',
+            'characters',
+            'thoughts'
+          ].includes(
+            layer
+          )
+        ) {
+          return;
         }
-      );
 
-      requestAnimationFrame(
-        () => {
-          fitComparisonToViewport(
-            elements
+        activeLayer =
+          layer;
+
+        elements
+          .layerButtons
+          .forEach(
+            (button) => {
+              const selected =
+                button
+                  .dataset
+                  .layer ===
+                layer;
+
+              button
+                .classList
+                .toggle(
+                  'is-active',
+                  selected
+                );
+
+              button.setAttribute(
+                'aria-pressed',
+                String(
+                  selected
+                )
+              );
+            }
           );
+
+        renderBothSides();
+      };
+
+    const setFocus =
+      (
+        mode
+      ) => {
+        if (
+          ![
+            'both',
+            'left',
+            'right'
+          ].includes(
+            mode
+          )
+        ) {
+          return;
         }
-      );
-    }
 
-    function setLayer(
-      layer
-    ) {
-      if (
-        ![
-          'quotes',
-          'characters',
-          'thoughts'
-        ].includes(
-          layer
-        )
-      ) {
-        return;
-      }
+        focusMode =
+          mode;
 
-      activeLayer =
-        layer;
-
-      elements.layerButtons.forEach(
-        (button) => {
-          const selected =
-            button.dataset.layer ===
-            layer;
-
-          button.classList.toggle(
-            'is-active',
-            selected
-          );
-
-          button.setAttribute(
-            'aria-pressed',
-            String(
-              selected
-            )
-          );
-        }
-      );
-
-      renderBothSides();
-    }
-
-    function setFocus(
-      mode
-    ) {
-      if (
-        ![
-          'both',
-          'left',
-          'right'
-        ].includes(
-          mode
-        )
-      ) {
-        return;
-      }
-
-      focusMode =
-        mode;
-
-      elements.compareStage.dataset.focus =
-        focusMode;
-
-      elements.profileButtons.forEach(
-        (button) => {
-          const selected =
-            button.dataset.focusReader ===
+        elements
+          .compareStage
+          .dataset
+          .focus =
             focusMode;
 
-          button.setAttribute(
+        elements
+          .profileButtons
+          .forEach(
+            (button) => {
+              const selected =
+                button
+                  .dataset
+                  .focusReader ===
+                focusMode;
+
+              button.setAttribute(
+                'aria-pressed',
+                String(
+                  selected
+                )
+              );
+            }
+          );
+
+        elements
+          .compareBoth
+          ?.setAttribute(
             'aria-pressed',
             String(
-              selected
+              focusMode ===
+              'both'
             )
           );
-        }
-      );
 
-      elements.compareBoth.setAttribute(
-        'aria-pressed',
-        String(
+        if (
           focusMode ===
-          'both'
-        )
-      );
+          'left'
+        ) {
+          updateScoreDisplay(
+            elements,
+            READERS.kai.score,
+            `Kai rated this story ${READERS.kai.score}. ${READERS.kai.ratingReason}`,
+            READERS.kai.ratingReason
+          );
 
-      if (
-        focusMode ===
-        'left'
-      ) {
-        updateScoreDisplay(
-          elements,
-          READERS.kai.score,
-          `Kai rated this story ${READERS.kai.score}. ${READERS.kai.ratingReason}`,
-          READERS.kai.ratingReason
-        );
+          elements
+            .readerStatus
+            .textContent =
+              READERS
+                .kai
+                .status;
+        } else if (
+          focusMode ===
+          'right'
+        ) {
+          updateScoreDisplay(
+            elements,
+            READERS.nova.score,
+            `Nova rated this story ${READERS.nova.score}. ${READERS.nova.ratingReason}`,
+            READERS.nova.ratingReason
+          );
 
-        elements.readerStatus.textContent =
-          READERS.kai.status;
-      } else if (
-        focusMode ===
-        'right'
-      ) {
-        updateScoreDisplay(
-          elements,
-          READERS.nova.score,
-          `Nova rated this story ${READERS.nova.score}. ${READERS.nova.ratingReason}`,
-          READERS.nova.ratingReason
-        );
+          elements
+            .readerStatus
+            .textContent =
+              READERS
+                .nova
+                .status;
+        } else {
+          const combinedScore =
+            getCombinedScore();
 
-        elements.readerStatus.textContent =
-          READERS.nova.status;
-      } else {
-        const combinedScore =
-          getCombinedScore();
+          const combinedReason =
+            `Average of Kai's ${READERS.kai.score} and Nova's ${READERS.nova.score}. ` +
+            'Focus either profile to see the reason behind that reader’s score.';
 
-        const combinedReason =
-          `Average of Kai's ${READERS.kai.score} and Nova's ${READERS.nova.score}. ` +
-          'Focus either profile to see the reason behind that reader’s score.';
+          updateScoreDisplay(
+            elements,
+            combinedScore,
+            `Average reader rating ${combinedScore}. Kai rated it ${READERS.kai.score} and Nova rated it ${READERS.nova.score}.`,
+            combinedReason
+          );
 
-        updateScoreDisplay(
-          elements,
-          combinedScore,
-          `Average reader rating ${combinedScore}. Kai rated it ${READERS.kai.score} and Nova rated it ${READERS.nova.score}.`,
-          combinedReason
-        );
+          elements
+            .readerStatus
+            .textContent =
+              'Both completed';
+        }
+      };
 
-        elements.readerStatus.textContent =
-          'Both completed';
-      }
-
-      requestAnimationFrame(
-        () => {
-          fitComparisonToViewport(
-            elements
+    elements
+      .layerButtons
+      .forEach(
+        (button) => {
+          button.addEventListener(
+            'click',
+            () => {
+              setLayer(
+                button
+                  .dataset
+                  .layer
+              );
+            }
           );
         }
       );
-    }
 
-    elements.layerButtons.forEach(
-      (button) => {
-        button.addEventListener(
-          'click',
-          () => {
-            setLayer(
-              button.dataset.layer
-            );
-          }
-        );
-      }
-    );
-
-    elements.profileButtons.forEach(
-      (button) => {
-        button.addEventListener(
-          'click',
-          () => {
-            const requested =
-              button.dataset.focusReader;
-
-            setFocus(
-              focusMode ===
-              requested
-                ? 'both'
-                : requested
-            );
-          }
-        );
-      }
-    );
-
-    elements.compareBoth?.addEventListener(
-      'click',
-      () => {
-        setFocus(
-          'both'
-        );
-      }
-    );
-
-    window.addEventListener(
-      'resize',
-      () => {
-        window.clearTimeout(
-          comparisonResizeTimer
-        );
-
-        comparisonResizeTimer =
-          window.setTimeout(
+    elements
+      .profileButtons
+      .forEach(
+        (button) => {
+          button.addEventListener(
+            'click',
             () => {
-              fitComparisonToViewport(
-                elements
+              const requested =
+                button
+                  .dataset
+                  .focusReader;
+
+              setFocus(
+                focusMode ===
+                requested
+                  ? 'both'
+                  : requested
               );
-            },
-            120
+            }
           );
-      },
-      {
-        passive: true
-      }
-    );
+        }
+      );
+
+    elements
+      .compareBoth
+      ?.addEventListener(
+        'click',
+        () => {
+          setFocus(
+            'both'
+          );
+        }
+      );
 
     setLayer(
       activeLayer
@@ -1860,20 +1865,27 @@
     if (
       elements.scoreText
     ) {
-      elements.scoreText.textContent =
-        visibleScore;
+      elements
+        .scoreText
+        .textContent =
+          visibleScore;
     }
 
     if (
       elements.score
     ) {
-      elements.score.setAttribute(
-        'aria-label',
-        ariaLabel
-      );
+      elements
+        .score
+        .setAttribute(
+          'aria-label',
+          ariaLabel
+        );
 
-      elements.score.dataset.scoreTooltip =
-        tooltip;
+      elements
+        .score
+        .dataset
+        .scoreTooltip =
+          tooltip;
     }
   }
 
@@ -1918,88 +1930,90 @@
   function fillProfileCards(
     section
   ) {
-    Object.entries(
-      READERS
-    ).forEach(
-      ([
-        readerId,
-        reader
-      ]) => {
-        section
-          .querySelectorAll(
-            `[data-profile-name="${readerId}"]`
-          )
-          .forEach(
-            (node) => {
-              node.textContent =
-                reader.name;
-            }
-          );
+    Object
+      .entries(
+        READERS
+      )
+      .forEach(
+        ([
+          readerId,
+          reader
+        ]) => {
+          section
+            .querySelectorAll(
+              `[data-profile-name="${readerId}"]`
+            )
+            .forEach(
+              (node) => {
+                node.textContent =
+                  reader.name;
+              }
+            );
 
-        section
-          .querySelectorAll(
-            `[data-profile-bio="${readerId}"]`
-          )
-          .forEach(
-            (node) => {
-              node.textContent =
-                reader.bio;
-            }
-          );
+          section
+            .querySelectorAll(
+              `[data-profile-bio="${readerId}"]`
+            )
+            .forEach(
+              (node) => {
+                node.textContent =
+                  reader.bio;
+              }
+            );
 
-        section
-          .querySelectorAll(
-            `[data-avatar-fallback="${readerId}"]`
-          )
-          .forEach(
-            (node) => {
-              node.textContent =
-                reader.initial;
-            }
-          );
+          section
+            .querySelectorAll(
+              `[data-avatar-fallback="${readerId}"]`
+            )
+            .forEach(
+              (node) => {
+                node.textContent =
+                  reader.initial;
+              }
+            );
 
-        const image =
-          section.querySelector(
-            `[data-avatar-image="${readerId}"]`
-          );
+          const image =
+            section.querySelector(
+              `[data-avatar-image="${readerId}"]`
+            );
 
-        if (
-          !image
-        ) {
-          return;
+          if (
+            !image
+          ) {
+            return;
+          }
+
+          const fallbackPortrait =
+            createPortraitPlaceholder(
+              reader.name,
+              reader.side
+            );
+
+          image.src =
+            reader.avatarUrl ||
+            fallbackPortrait;
+
+          image.alt =
+            `${reader.name} profile picture`;
+
+          image.hidden =
+            false;
+
+          image.onerror =
+            () => {
+              if (
+                image.src !==
+                fallbackPortrait
+              ) {
+                image.src =
+                  fallbackPortrait;
+              } else {
+                image.hidden =
+                  true;
+              }
+            };
         }
-
-        const fallbackPortrait =
-          createPortraitPlaceholder(
-            reader.name,
-            reader.side
-          );
-
-        image.src =
-          reader.avatarUrl ||
-          fallbackPortrait;
-
-        image.alt =
-          `${reader.name} profile picture`;
-
-        image.hidden =
-          false;
-
-        image.onerror =
-          () => {
-            if (
-              image.src !==
-              fallbackPortrait
-            ) {
-              image.src =
-                fallbackPortrait;
-            } else {
-              image.hidden =
-                true;
-            }
-          };
-      }
-    );
+      );
   }
 
   function renderQuotes(
@@ -2025,27 +2039,30 @@
               quote,
               index
             ) => {
-              const quoteParagraphs =
-                quote.paragraphs
+              const paragraphs =
+                quote
+                  .paragraphs
                   .map(
                     (
                       paragraph,
                       paragraphIndex
                     ) => {
-                      const openingMark =
-                        paragraphIndex === 0
+                      const opening =
+                        paragraphIndex ===
+                        0
                           ? '“'
                           : '';
 
-                      const closingMark =
+                      const closing =
                         paragraphIndex ===
-                        quote.paragraphs.length - 1
+                        quote.paragraphs.length -
+                        1
                           ? '”'
                           : '';
 
                       return `
                         <p>
-                          ${openingMark}${escapeHtml(paragraph)}${closingMark}
+                          ${opening}${escapeHtml(paragraph)}${closing}
                         </p>
                       `;
                     }
@@ -2066,7 +2083,7 @@
                   </span>
 
                   <blockquote>
-                    ${quoteParagraphs}
+                    ${paragraphs}
                   </blockquote>
 
                   <cite>
@@ -2092,48 +2109,6 @@
           .join('')}
       </div>
     `;
-
-    prepareQuoteVisibility(
-      container
-    );
-  }
-
-  function prepareQuoteVisibility(
-    container
-  ) {
-    container
-      .querySelectorAll(
-        '.s4-quote-card'
-      )
-      .forEach(
-        (card) => {
-          card.style.height =
-            'auto';
-
-          card.style.overflow =
-            'visible';
-        }
-      );
-
-    container
-      .querySelectorAll(
-        '.s4-quote-card blockquote'
-      )
-      .forEach(
-        (blockquote) => {
-          blockquote.style.display =
-            'block';
-
-          blockquote.style.overflow =
-            'visible';
-
-          blockquote.style.webkitLineClamp =
-            'unset';
-
-          blockquote.style.webkitBoxOrient =
-            'initial';
-        }
-      );
   }
 
   function renderCharacters(
@@ -2237,7 +2212,9 @@
             'error',
             () => {
               image.src =
-                image.dataset.fallbackSrc;
+                image
+                  .dataset
+                  .fallbackSrc;
             },
             {
               once: true
@@ -2263,7 +2240,12 @@
         </h4>
       </header>
 
-      <article class="s4-evidence-card s4-thought-card">
+      <article
+        class="
+          s4-evidence-card
+          s4-thought-card
+        "
+      >
         <span class="s4-card-theme">
           Full reflection
         </span>
@@ -2320,7 +2302,7 @@
     let preservedScrollY =
       0;
 
-    const restoreSectionPosition =
+    const restorePosition =
       () => {
         window.scrollTo(
           preservedScrollX,
@@ -2332,9 +2314,11 @@
       'click',
       (event) => {
         const opener =
-          event.target.closest(
-            '[data-open-detail]'
-          );
+          event
+            .target
+            .closest(
+              '[data-open-detail]'
+            );
 
         if (
           !opener ||
@@ -2362,11 +2346,11 @@
           opener
         );
 
-        restoreSectionPosition();
+        restorePosition();
 
         requestAnimationFrame(
           () => {
-            restoreSectionPosition();
+            restorePosition();
 
             dialogClose.focus({
               preventScroll:
@@ -2376,12 +2360,12 @@
         );
 
         window.setTimeout(
-          restoreSectionPosition,
+          restorePosition,
           40
         );
 
         window.setTimeout(
-          restoreSectionPosition,
+          restorePosition,
           120
         );
       }
@@ -2426,18 +2410,15 @@
     dialog.addEventListener(
       'close',
       () => {
-        document.body.classList.remove(
-          's4-dialog-open'
-        );
-
-        restoreSectionPosition();
+        restorePosition();
 
         requestAnimationFrame(
           () => {
-            restoreSectionPosition();
+            restorePosition();
 
             if (
-              returnFocus?.isConnected
+              returnFocus
+                ?.isConnected
             ) {
               returnFocus.focus({
                 preventScroll:
@@ -2455,14 +2436,20 @@
     opener
   ) {
     const type =
-      opener.dataset.detailType;
+      opener
+        .dataset
+        .detailType;
 
     const readerId =
-      opener.dataset.readerId;
+      opener
+        .dataset
+        .readerId;
 
     const index =
       Number(
-        opener.dataset.itemIndex ||
+        opener
+          .dataset
+          .itemIndex ||
         0
       );
 
@@ -2491,9 +2478,10 @@
       'quote'
     ) {
       const quote =
-        reader.quotes[
-          index
-        ];
+        reader
+          .quotes[
+            index
+          ];
 
       if (
         !quote
@@ -2523,9 +2511,10 @@
       'character'
     ) {
       const character =
-        reader.characters[
-          index
-        ];
+        reader
+          .characters[
+            index
+          ];
 
       if (
         !character
@@ -2544,13 +2533,7 @@
         fallbackImage;
 
       eyebrow =
-        `${reader.name} · reader pick #` +
-        String(
-          character.rank
-        ).padStart(
-          2,
-          '0'
-        );
+        `${reader.name} · reader pick #${String(character.rank).padStart(2, '0')}`;
 
       title =
         character.name;
@@ -2587,10 +2570,14 @@
         `${reader.name} · full reflection`;
 
       title =
-        reader.thoughts.title;
+        reader
+          .thoughts
+          .title;
 
       body =
-        reader.thoughts.paragraphs
+        reader
+          .thoughts
+          .paragraphs
           .map(
             (paragraph) => {
               return `
@@ -2605,19 +2592,27 @@
       return;
     }
 
-    elements.dialogEyebrow.textContent =
-      eyebrow;
+    elements
+      .dialogEyebrow
+      .textContent =
+        eyebrow;
 
-    elements.dialogTitle.textContent =
-      title;
+    elements
+      .dialogTitle
+      .textContent =
+        title;
 
-    elements.dialogBody.innerHTML =
-      body;
+    elements
+      .dialogBody
+      .innerHTML =
+        body;
 
     const detailScroll =
-      elements.dialog.querySelector(
-        '.s4-detail-scroll'
-      );
+      elements
+        .dialog
+        .querySelector(
+          '.s4-detail-scroll'
+        );
 
     if (
       detailScroll
@@ -2626,24 +2621,28 @@
         0;
     }
 
-    document.body.classList.add(
-      's4-dialog-open'
-    );
-
     if (
-      typeof elements.dialog.showModal ===
+      typeof elements
+        .dialog
+        .showModal ===
       'function'
     ) {
       if (
-        !elements.dialog.open
+        !elements
+          .dialog
+          .open
       ) {
-        elements.dialog.showModal();
+        elements
+          .dialog
+          .showModal();
       }
     } else {
-      elements.dialog.setAttribute(
-        'open',
-        ''
-      );
+      elements
+        .dialog
+        .setAttribute(
+          'open',
+          ''
+        );
     }
   }
 
@@ -2652,7 +2651,7 @@
   ) {
     if (
       typeof dialog.close ===
-      'function' &&
+        'function' &&
       dialog.open
     ) {
       dialog.close();
@@ -2663,157 +2662,6 @@
     dialog.removeAttribute(
       'open'
     );
-
-    document.body.classList.remove(
-      's4-dialog-open'
-    );
-  }
-
-  function fitComparisonToViewport(
-    elements
-  ) {
-    const {
-      section,
-      stage,
-      compareStage
-    } =
-      elements;
-
-    if (
-      !stage ||
-      !compareStage
-    ) {
-      return;
-    }
-
-    const readerSides = [
-      ...compareStage.querySelectorAll(
-        '.s4-reader-side'
-      )
-    ];
-
-    readerSides.forEach(
-      (side) => {
-        side.style.maxHeight =
-          'none';
-
-        side.style.overflow =
-          'visible';
-
-        side.style.overflowX =
-          'visible';
-
-        side.style.overflowY =
-          'visible';
-
-        side.style.scrollbarWidth =
-          'none';
-      }
-    );
-
-    const usesPinnedDesktop =
-      window.matchMedia(
-        '(min-width: 900px) and ' +
-        '(min-height: 720px) and ' +
-        '(prefers-reduced-motion: no-preference)'
-      ).matches;
-
-    if (
-      !usesPinnedDesktop ||
-      section.classList.contains(
-        'is-static'
-      )
-    ) {
-      compareStage.style.setProperty(
-        '--s4-fit-scale',
-        '1'
-      );
-
-      compareStage.style.scale =
-        '1';
-
-      return;
-    }
-
-    compareStage.style.setProperty(
-      '--s4-fit-scale',
-      '1'
-    );
-
-    compareStage.style.scale =
-      '1';
-
-    const stageStyles =
-      window.getComputedStyle(
-        stage
-      );
-
-    const compareTopValue =
-      Number.parseFloat(
-        stageStyles.getPropertyValue(
-          '--s4-compare-top'
-        )
-      );
-
-    const compareTop =
-      Number.isFinite(
-        compareTopValue
-      )
-        ? compareTopValue
-        : compareStage.offsetTop;
-
-    const readerHeight =
-      Math.max(
-        0,
-        ...readerSides.map(
-          (side) => {
-            return Math.max(
-              side.scrollHeight,
-              side.offsetHeight
-            );
-          }
-        )
-      );
-
-    const comparisonHeight =
-      Math.max(
-        compareStage.scrollHeight,
-        compareStage.offsetHeight,
-        readerHeight
-      );
-
-    const availableHeight =
-      Math.max(
-        1,
-        stage.clientHeight -
-        compareTop -
-        10
-      );
-
-    const fittedScale =
-      comparisonHeight >
-      availableHeight
-        ? availableHeight /
-          comparisonHeight
-        : 1;
-
-    const safeScale =
-      Math.min(
-        1,
-        fittedScale
-      );
-
-    compareStage.style.setProperty(
-      '--s4-fit-scale',
-      safeScale.toFixed(
-        4
-      )
-    );
-
-    compareStage.style.scale =
-      safeScale.toFixed(
-        4
-      );
   }
 
   function createPortraitPlaceholder(
@@ -2963,7 +2811,7 @@
     if (
       prefersReducedMotion() ||
       typeof container.animate !==
-      'function'
+        'function'
     ) {
       return;
     }
@@ -2975,7 +2823,7 @@
             0.25,
 
           transform:
-            'translateY(9px)'
+            'translateY(8px)'
         },
 
         {
@@ -2988,7 +2836,7 @@
       ],
       {
         duration:
-          280,
+          260,
 
         easing:
           'cubic-bezier(.22,1,.36,1)'
@@ -3026,37 +2874,43 @@
       ScrollTrigger
     );
 
-    gsap.matchMedia().add(
-      {
-        animated:
-          '(min-width: 900px) and (min-height: 720px) and (prefers-reduced-motion: no-preference)',
+    gsap
+      .matchMedia()
+      .add(
+        {
+          animated:
+            '(min-width: 1100px) and (min-height: 760px) and (prefers-reduced-motion: no-preference)',
 
-        static:
-          '(max-width: 899px), (max-height: 719px), (prefers-reduced-motion: reduce)'
-      },
-      (context) => {
-        if (
-          context.conditions.static
-        ) {
-          showStaticLayout(
+          static:
+            '(max-width: 1099px), (max-height: 759px), (prefers-reduced-motion: reduce)'
+        },
+        (context) => {
+          if (
+            context
+              .conditions
+              .static
+          ) {
+            showStaticLayout(
+              section,
+              elements
+            );
+
+            return;
+          }
+
+          section
+            .classList
+            .remove(
+              'is-static'
+            );
+
+          return createPinnedTimeline(
             section,
-            elements
+            elements,
+            gsap
           );
-
-          return;
         }
-
-        section.classList.remove(
-          'is-static'
-        );
-
-        return createPinnedTimeline(
-          section,
-          elements,
-          gsap
-        );
-      }
-    );
+      );
   }
 
   function createPinnedTimeline(
@@ -3077,14 +2931,18 @@
       );
 
     const chosenLeft =
-      elements.stage.querySelector(
-        '[data-chosen-rain-cover="left"]'
-      );
+      elements
+        .stage
+        .querySelector(
+          '[data-chosen-rain-cover="left"]'
+        );
 
     const chosenRight =
-      elements.stage.querySelector(
-        '[data-chosen-rain-cover="right"]'
-      );
+      elements
+        .stage
+        .querySelector(
+          '[data-chosen-rain-cover="right"]'
+        );
 
     if (
       !chosenLeft ||
@@ -3129,7 +2987,9 @@
 
     const viewportHeight =
       () => {
-        return elements.stage.clientHeight;
+        return elements
+          .stage
+          .clientHeight;
       };
 
     const maximumCount =
@@ -3187,61 +3047,62 @@
       5.02;
 
     const DOCK_TOP =
-      70;
+      58;
 
     const DOCK_SCALE =
-      0.79;
+      0.78;
 
-    const expandedCardHeight =
-      elements.sharedCard
-        .getBoundingClientRect()
-        .height;
-
-    function updateFinalLayoutMetrics() {
-      const introHeight =
-        Math.max(
-          elements.contentIntro
+    const updateFinalLayoutMetrics =
+      () => {
+        const cardHeight =
+          elements
+            .sharedCard
             .getBoundingClientRect()
-            .height,
-          30
-        );
+            .height;
 
-      const cardVisualBottom =
-        DOCK_TOP +
-        expandedCardHeight *
-        DOCK_SCALE;
-
-      const introTop =
-        Math.ceil(
-          cardVisualBottom +
-          12
-        );
-
-      const compareTop =
-        Math.ceil(
-          introTop +
-          introHeight +
-          10
-        );
-
-      elements.stage.style.setProperty(
-        '--s4-intro-top',
-        `${introTop}px`
-      );
-
-      elements.stage.style.setProperty(
-        '--s4-compare-top',
-        `${compareTop}px`
-      );
-
-      requestAnimationFrame(
-        () => {
-          fitComparisonToViewport(
+        const introHeight =
+          Math.max(
             elements
+              .contentIntro
+              .getBoundingClientRect()
+              .height,
+            28
           );
-        }
-      );
-    }
+
+        const cardVisualBottom =
+          DOCK_TOP +
+          cardHeight *
+          DOCK_SCALE;
+
+        const introTop =
+          Math.ceil(
+            cardVisualBottom +
+            9
+          );
+
+        const compareTop =
+          Math.ceil(
+            introTop +
+            introHeight +
+            7
+          );
+
+        elements
+          .stage
+          .style
+          .setProperty(
+            '--s4-intro-top',
+            `${introTop}px`
+          );
+
+        elements
+          .stage
+          .style
+          .setProperty(
+            '--s4-compare-top',
+            `${compareTop}px`
+          );
+      };
 
     updateFinalLayoutMetrics();
 
@@ -3351,7 +3212,7 @@
           0,
 
         y:
-          12
+          10
       }
     );
 
@@ -3362,7 +3223,7 @@
           0,
 
         y:
-          24,
+          20,
 
         pointerEvents:
           'none'
@@ -3376,7 +3237,7 @@
           0,
 
         y:
-          16
+          12
       }
     );
 
@@ -3387,7 +3248,7 @@
           0,
 
         y:
-          20
+          16
       }
     );
 
@@ -3424,32 +3285,28 @@
             true,
 
           onRefreshInit:
-            updateFinalLayoutMetrics,
-
-          onRefresh:
-            () => {
-              fitComparisonToViewport(
-                elements
-              );
-            }
+            updateFinalLayoutMetrics
         }
       });
 
-    function getStartTime(
-      item
-    ) {
-      const index =
-        Number(
-          item.dataset.rainIndex ||
-          0
-        );
+    const getStartTime =
+      (
+        item
+      ) => {
+        const index =
+          Number(
+            item
+              .dataset
+              .rainIndex ||
+            0
+          );
 
-      return (
-        rainStart +
-        index *
-        stagger
-      );
-    }
+        return (
+          rainStart +
+          index *
+          stagger
+        );
+      };
 
     regularLeft.forEach(
       (
@@ -4003,7 +3860,7 @@
           },
 
         borderRadius:
-          '14px',
+          '13px',
 
         rotation:
           -1.2,
@@ -4091,19 +3948,19 @@
           'auto',
 
         marginTop:
-          '0.3rem',
+          '0.22rem',
 
         paddingTop:
-          '0.38rem',
+          '0.32rem',
 
         duration:
-          0.32,
+          0.3,
 
         ease:
           'power2.out'
       },
       cardDockTime +
-      0.36
+      0.34
     );
 
     timeline.to(
@@ -4116,7 +3973,7 @@
           0,
 
         duration:
-          0.26
+          0.24
       },
       comparisonTime
     );
@@ -4134,7 +3991,7 @@
           'auto',
 
         duration:
-          0.42,
+          0.4,
 
         ease:
           'power2.out'
@@ -4153,16 +4010,16 @@
           0,
 
         duration:
-          0.34,
+          0.3,
 
         stagger:
-          0.08,
+          0.07,
 
         ease:
           'power2.out'
       },
       comparisonTime +
-      0.14
+      0.13
     );
 
     timeline.to(
@@ -4175,16 +4032,16 @@
           0,
 
         duration:
-          0.42,
+          0.38,
 
         stagger:
-          0.08,
+          0.07,
 
         ease:
           'power2.out'
       },
       comparisonTime +
-      0.25
+      0.22
     );
 
     timeline.set(
@@ -4194,25 +4051,14 @@
           'auto'
       },
       comparisonTime +
-      0.2
-    );
-
-    timeline.call(
-      () => {
-        fitComparisonToViewport(
-          elements
-        );
-      },
-      null,
-      comparisonTime +
-      0.45
+      0.18
     );
 
     timeline.to(
       {},
       {
         duration:
-          1.15
+          1.1
       }
     );
 
@@ -4223,13 +4069,17 @@
         () => {
           updateFinalLayoutMetrics();
 
-          timeline.scrollTrigger?.refresh();
+          timeline
+            .scrollTrigger
+            ?.refresh();
         }
       );
     }
 
     return () => {
-      timeline.scrollTrigger?.kill();
+      timeline
+        .scrollTrigger
+        ?.kill();
 
       timeline.kill();
 
@@ -4269,51 +4119,76 @@
         '[data-cover-fallback]'
       );
 
-    elements.handoffFallback.textContent =
-      sourceFallback?.textContent ||
-      'Attack on Titan';
+    elements
+      .handoffFallback
+      .textContent =
+        sourceFallback
+          ?.textContent ||
+        'Attack on Titan';
 
-    elements.handoffFallback.hidden =
-      false;
+    elements
+      .handoffFallback
+      .hidden =
+        false;
 
-    elements.handoffImage.hidden =
-      true;
+    elements
+      .handoffImage
+      .hidden =
+        true;
 
     const sourceUrl =
-      sourceImage?.currentSrc ||
-      sourceImage?.src ||
+      sourceImage
+        ?.currentSrc ||
+      sourceImage
+        ?.src ||
       '';
 
     if (
       !sourceUrl
     ) {
-      elements.handoffImage.removeAttribute(
-        'src'
-      );
+      elements
+        .handoffImage
+        .removeAttribute(
+          'src'
+        );
 
       return;
     }
 
-    elements.handoffImage.onload =
-      () => {
-        elements.handoffImage.hidden =
-          false;
+    elements
+      .handoffImage
+      .onload =
+        () => {
+          elements
+            .handoffImage
+            .hidden =
+              false;
 
-        elements.handoffFallback.hidden =
-          true;
-      };
+          elements
+            .handoffFallback
+            .hidden =
+              true;
+        };
 
-    elements.handoffImage.onerror =
-      () => {
-        elements.handoffImage.hidden =
-          true;
+    elements
+      .handoffImage
+      .onerror =
+        () => {
+          elements
+            .handoffImage
+            .hidden =
+              true;
 
-        elements.handoffFallback.hidden =
-          false;
-      };
+          elements
+            .handoffFallback
+            .hidden =
+              false;
+        };
 
-    elements.handoffImage.src =
-      sourceUrl;
+    elements
+      .handoffImage
+      .src =
+        sourceUrl;
   }
 
   function getCenterTarget(
@@ -4324,10 +4199,12 @@
       item.offsetParent;
 
     const stageRect =
-      stage.getBoundingClientRect();
+      stage
+        .getBoundingClientRect();
 
     const laneRect =
-      lane.getBoundingClientRect();
+      lane
+        .getBoundingClientRect();
 
     return {
       x:
@@ -4355,10 +4232,12 @@
     relativeTo
   ) {
     const rect =
-      element.getBoundingClientRect();
+      element
+        .getBoundingClientRect();
 
     const parentRect =
-      relativeTo.getBoundingClientRect();
+      relativeTo
+        .getBoundingClientRect();
 
     return {
       left:
@@ -4381,49 +4260,47 @@
     section,
     elements
   ) {
-    section.classList.add(
-      'is-static'
-    );
+    section
+      .classList
+      .add(
+        'is-static'
+      );
 
     if (
       elements?.cardCover
     ) {
-      elements.cardCover.style.opacity =
-        '1';
+      elements
+        .cardCover
+        .style
+        .opacity =
+          '1';
 
-      elements.cardCover.style.visibility =
-        'visible';
+      elements
+        .cardCover
+        .style
+        .visibility =
+          'visible';
     }
 
     if (
       elements?.sharedCardWrap
     ) {
-      elements.sharedCardWrap.style.pointerEvents =
-        'auto';
+      elements
+        .sharedCardWrap
+        .style
+        .pointerEvents =
+          'auto';
     }
 
     if (
       elements?.compareStage
     ) {
-      elements.compareStage.style.pointerEvents =
-        'auto';
-
-      elements.compareStage.style.scale =
-        '1';
-
-      elements.compareStage.style.setProperty(
-        '--s4-fit-scale',
-        '1'
-      );
+      elements
+        .compareStage
+        .style
+        .pointerEvents =
+          'auto';
     }
-
-    requestAnimationFrame(
-      () => {
-        fitComparisonToViewport(
-          elements
-        );
-      }
-    );
   }
 
   function showDatabaseError(
@@ -4433,13 +4310,17 @@
     if (
       elements.empty
     ) {
-      elements.empty.hidden =
-        false;
+      elements
+        .empty
+        .hidden =
+          false;
 
       const paragraph =
-        elements.empty.querySelector(
-          'p'
-        );
+        elements
+          .empty
+          .querySelector(
+            'p'
+          );
 
       if (
         paragraph
@@ -4462,15 +4343,19 @@
     if (
       elements.status
     ) {
-      elements.status.textContent =
-        message;
+      elements
+        .status
+        .textContent =
+          message;
     }
   }
 
   function prefersReducedMotion() {
-    return window.matchMedia(
-      '(prefers-reduced-motion: reduce)'
-    ).matches;
+    return window
+      .matchMedia(
+        '(prefers-reduced-motion: reduce)'
+      )
+      .matches;
   }
 
   function normalizeText(
