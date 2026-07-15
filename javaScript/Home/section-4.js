@@ -25,7 +25,7 @@
   ];
 
   const PIN_DISTANCE =
-    4200;
+    4300;
 
   let supabaseClient =
     null;
@@ -53,30 +53,73 @@
       status:
         'Completed',
 
+      quoteHeading:
+        '3 quotes — the characters’ inner world',
+
       ratingReason:
         'Kai gives it 9/10 because the emotional decisions remain powerful and memorable. The characters feel vulnerable even during the largest moments. Some middle sections feel crowded, but the consequences keep the story grounded.',
 
       quotes: [
         {
-          text:
-            'Fear can be present and a choice can still be yours.',
+          theme:
+            'Freedom',
 
-          note:
-            'This stays with Kai because the series rarely treats courage as the absence of fear. The characters often move while they are still uncertain or overwhelmed. That makes their decisions feel human rather than simply heroic.'
+          author:
+            'Eren Yeager',
+
+          size:
+            'long',
+
+          paragraphs: [
+            'Ever since the day we were born... every single one of us is free.',
+
+            "It doesn't matter how strong those who would deny us that freedom are.",
+
+            "Flaming water, frozen earth... I don't care what it is! The one who sees them will be the freest person in the entire world!",
+
+            "Fight! Who cares if you lose your life? The world is a terrible place, but I don't care!",
+
+            'Because I was born into this world!'
+          ],
+
+          detail:
+            'Kai reads this as the clearest expression of Eren’s earliest idea of freedom: not safety, comfort, or permission, but the right to keep moving toward a world someone else says is unreachable. The speech is inspiring and unsettling at the same time because that desire can create courage while also becoming absolute.'
         },
-        {
-          text:
-            'Freedom can become another kind of burden.',
 
-          note:
-            'Kai connects this idea to characters who imagine freedom as a final destination. When they move closer to it, they also gain responsibility and uncertainty. Escaping one limit does not automatically remove every internal pressure.'
+        {
+          theme:
+            'Beauty and cruelty',
+
+          author:
+            'Mikasa Ackerman',
+
+          size:
+            'short',
+
+          paragraphs: [
+            "This world is cruel... but it's also very beautiful."
+          ],
+
+          detail:
+            'Kai keeps this quote because it allows two truths to remain present together. The series never asks beauty to erase suffering, and it never lets suffering make every loving or beautiful moment meaningless.'
         },
-        {
-          text:
-            'Being believed in can change what courage looks like.',
 
-          note:
-            'The quieter relationships matter because support often arrives before a character can support themselves. Trust does not remove fear, but it can give someone a reason to move through it. Kai remembers courage as something people help build together.'
+        {
+          theme:
+            'Doubt',
+
+          author:
+            'Eren Yeager',
+
+          size:
+            'short',
+
+          paragraphs: [
+            'If we kill all our enemies over there… will we finally be free?'
+          ],
+
+          detail:
+            'The question changes freedom from a destination into a moral problem. Kai sees this as the moment the dream beyond the walls stops being simple, because reaching the ocean does not remove fear, enemies, memory, or responsibility.'
         }
       ],
 
@@ -92,8 +135,12 @@
             '',
 
           reason:
-            'His curiosity and empathy turn intelligence into a form of bravery. He continues thinking when everyone else is overwhelmed. His confidence grows without completely replacing his sensitivity.'
+            'His curiosity and empathy turn intelligence into a form of bravery. He continues thinking when everyone else is overwhelmed.',
+
+          details:
+            'Armin’s strength is not certainty. It is his willingness to keep imagining another option when fear makes every path look closed. Kai values how his confidence grows without completely replacing his sensitivity, doubt, or awareness of what decisions cost other people.'
         },
+
         {
           rank:
             2,
@@ -105,8 +152,12 @@
             '',
 
           reason:
-            'Her loyalty is powerful, but its emotional cost is what stays with Kai. She is extremely capable while still being shaped by fear and attachment. That conflict is more interesting than her physical strength alone.'
+            'Her loyalty is powerful, but its emotional cost is what stays with Kai. She is extremely capable while still being shaped by fear and attachment.',
+
+          details:
+            'Mikasa can survive almost anything physically, yet her most difficult conflicts are emotional. Kai sees her story as a struggle to distinguish love from fear, loyalty from identity, and protecting someone from allowing that person to decide who she must become.'
         },
+
         {
           rank:
             3,
@@ -118,7 +169,10 @@
             '',
 
           reason:
-            'His control is impressive, but the grief underneath it matters more. He carries the consequences of decisions with no completely good outcome. His restraint makes the smaller signs of care feel stronger.'
+            'His control is impressive, but the grief underneath it matters more. He carries decisions that have no completely good outcome.',
+
+          details:
+            'Levi’s restraint makes every small sign of care feel stronger. Kai remembers the way he continues after loss without pretending that sacrifice becomes acceptable simply because it was necessary. His discipline is less about being untouched and more about functioning while carrying what cannot be repaired.'
         }
       ],
 
@@ -126,8 +180,18 @@
         title:
           'Freedom matters most when fear is no longer making every decision.',
 
-        text:
-          'Kai remembers the series through small emotional decisions inside enormous events: a pause before answering, a promise made under pressure, or the moment someone moves while still afraid. Freedom is never presented as a simple place that can finally be reached, because every character carries fear, love, guilt, expectation, and responsibility with them even after an external wall disappears. The relationships matter because courage is rarely created alone; characters borrow confidence from one another, disappoint one another, and sometimes continue only because another person believed they could. Kai leaves the story thinking about how easily fear can make decisions for someone without them noticing, and how real freedom begins when a person recognizes that pressure and still chooses what kind of person to become.'
+        preview:
+          'Kai remembers the series through small emotional decisions inside enormous events: a pause before answering, a promise made under pressure, or the moment someone moves while still afraid.',
+
+        paragraphs: [
+          'Kai remembers the series through small emotional decisions inside enormous events: a pause before answering, a promise made under pressure, or the moment someone moves while still afraid.',
+
+          'Freedom is never presented as a simple place that can finally be reached, because every character carries fear, love, guilt, expectation, and responsibility with them even after an external wall disappears.',
+
+          'The relationships matter because courage is rarely created alone. Characters borrow confidence from one another, disappoint one another, and sometimes continue only because another person believed they could.',
+
+          'Kai leaves the story thinking about how easily fear can make decisions for someone without them noticing, and how real freedom begins when a person recognizes that pressure and still chooses what kind of person to become.'
+        ]
       }
     },
 
@@ -153,30 +217,69 @@
       status:
         'Completed',
 
+      quoteHeading:
+        '3 quotes — the series’ larger message',
+
       ratingReason:
         'Nova gives it 10/10 because perspective continually changes the meaning of earlier events. History, identity, duty, and responsibility remain connected throughout the story. New information changes how earlier decisions must be judged.',
 
       quotes: [
         {
-          text:
-            'The world changes when the story around it changes.',
+          theme:
+            'Desire',
 
-          note:
-            'Nova saves this because new information repeatedly rebuilds what the audience thinks it understands. The physical world may stay the same while its meaning changes. Earlier actions can appear heroic, cruel, necessary, or avoidable depending on who explains them.'
+          author:
+            'Kenny Ackerman',
+
+          size:
+            'medium',
+
+          paragraphs: [
+            'Everybody I met was all the same. Drinking, women, worshiping God, even family... The king, dreams, children, power...',
+
+            "Everyone had to be drunk on somethin' to keep pushing on.",
+
+            "Everyone was a slave to somethin'. Even him..."
+          ],
+
+          detail:
+            'Nova reads this as one of the series’ sharpest summaries of motivation. People call their pursuits duty, love, faith, ambition, or survival, but those pursuits can still become dependencies that organize identity and justify harm. Kenny’s observation also refuses to place one supposedly free person outside the pattern.'
         },
-        {
-          text:
-            'Understanding a side does not erase what that side has done.',
 
-          note:
-            'The series is strongest when empathy and accountability are allowed to exist together. Learning why someone acted does not remove the damage they caused. Refusing to understand the conditions behind that action can also make future harm more likely.'
+        {
+          theme:
+            'Inherited violence',
+
+          author:
+            'Mr. Braus',
+
+          size:
+            'medium',
+
+          paragraphs: [
+            'At the very least, we need to keep the children out of this forest. Otherwise, the exact same things will just keep happening. It\'s up to us adults to shoulder the sins of the past.'
+          ],
+
+          detail:
+            'Nova sees the forest as a way of describing inherited conflict. Children enter systems, prejudices, and debts they did not create. The adults’ responsibility is not merely to explain the cycle, but to absorb enough of its cost that the next generation is not forced to repeat it.'
         },
-        {
-          text:
-            'An enemy can be created long before two people meet.',
 
-          note:
-            'Inherited stories can turn fear into identity before personal experience has a chance. People are taught what another group represents and which suffering matters. By the time two individuals meet, they may already be carrying generations of expectations.'
+        {
+          theme:
+            'Truth and belief',
+
+          author:
+            'Eren Kruger',
+
+          size:
+            'medium',
+
+          paragraphs: [
+            'The only truth in this world is that there is no truth. That is our reality. Anyone can become a god or a devil. All it takes is for people to believe it.'
+          ],
+
+          detail:
+            'Nova keeps this quote because the story repeatedly shows public truth being built through memory, authority, fear, and repetition. The line does not mean facts are irrelevant; it warns that a person’s social meaning can be transformed when enough people accept a story about them.'
         }
       ],
 
@@ -192,8 +295,12 @@
             '',
 
           reason:
-            'He brings duty, identity, guilt, and survival into the same conflict. He is responsible for serious harm while also being shaped by a system that defined him early. That makes him both accountable and trapped.'
+            'He brings duty, identity, guilt, and survival into the same conflict. He is responsible for serious harm while also being shaped by a system that defined him early.',
+
+          details:
+            'Nova values Reiner because accountability and conditioning are allowed to exist together. His actions cannot be erased, but understanding the machinery that formed him reveals how states turn children into symbols, weapons, and enemies before they can understand the roles they have been given.'
         },
+
         {
           rank:
             2,
@@ -205,8 +312,12 @@
             '',
 
           reason:
-            'His leadership makes sacrifice, truth, and obsession difficult to separate. He can inspire people while using their lives to move closer to an answer he personally needs. His public purpose and private motive are never identical.'
+            'His leadership makes sacrifice, truth, and obsession difficult to separate. His public purpose and private motive are never identical.',
+
+          details:
+            'Erwin can inspire people while using their lives to move closer to an answer he personally needs. Nova sees him as a study of how leadership can be sincere and self-serving at once, and how a noble goal does not automatically purify the methods used to reach it.'
         },
+
         {
           rank:
             3,
@@ -218,7 +329,10 @@
             '',
 
           reason:
-            'Her growth turns an inherited role into a question of self-definition. She has to decide whether kindness means obeying what others need or choosing honestly for herself. Her personal identity is tied directly to political responsibility.'
+            'Her growth turns an inherited role into a question of self-definition. Her personal identity is tied directly to political responsibility.',
+
+          details:
+            'Historia has to decide whether kindness means performing the identity other people need or living honestly enough to choose for herself. Nova remembers how her private struggle becomes political, showing that institutions often depend on individuals accepting stories written for them.'
         }
       ],
 
@@ -226,8 +340,18 @@
         title:
           'The most dangerous wall is the story that makes cruelty feel necessary.',
 
-        text:
-          'Nova reads the series as a study of systems rather than only individual heroes and enemies, because every personal decision happens inside inherited histories, institutions, military structures, and repeated stories about who deserves safety. Perspective changes the meaning of nearly everything: the same event can become liberation, invasion, revenge, protection, or tragedy depending on who remembers it and who is allowed to explain it. Responsibility becomes difficult because people can cause harm while also being shaped by forces larger than themselves, so understanding those forces is necessary without allowing understanding to become an automatic excuse. The lasting question is what a person should do after learning that their identity, duty, enemy, and history were built from incomplete information, and Nova sees that realization as the beginning of responsibility rather than the end of the argument.'
+        preview:
+          'Nova reads the series as a study of systems rather than only individual heroes and enemies, because every personal decision happens inside inherited histories and institutions.',
+
+        paragraphs: [
+          'Nova reads the series as a study of systems rather than only individual heroes and enemies, because every personal decision happens inside inherited histories, institutions, military structures, and repeated stories about who deserves safety.',
+
+          'Perspective changes the meaning of nearly everything. The same event can become liberation, invasion, revenge, protection, or tragedy depending on who remembers it and who is allowed to explain it.',
+
+          'Responsibility becomes difficult because people can cause harm while also being shaped by forces larger than themselves. Understanding those forces is necessary without allowing understanding to become an automatic excuse.',
+
+          'The lasting question is what a person should do after learning that their identity, duty, enemy, and history were built from incomplete information. Nova sees that realization as the beginning of responsibility rather than the end of the argument.'
+        ]
       }
     }
   };
@@ -285,15 +409,19 @@
         section
       );
 
-    setupReaderContent(
+    setupReaderExperience(
+      elements
+    );
+
+    setupDetailDialog(
       elements
     );
 
     if (
       !window.supabase?.createClient
     ) {
-      console.error(
-        'Section 4: Supabase is not loaded.'
+      console.warn(
+        'Section 4: Supabase is not loaded. Showing the static fallback.'
       );
 
       renderStory(
@@ -302,7 +430,8 @@
       );
 
       showStaticLayout(
-        section
+        section,
+        elements
       );
 
       setStatus(
@@ -374,7 +503,8 @@
       );
 
       showStaticLayout(
-        section
+        section,
+        elements
       );
     }
   }
@@ -418,6 +548,11 @@
       sharedCard:
         section.querySelector(
           '[data-shared-card]'
+        ),
+
+      cardCover:
+        section.querySelector(
+          '[data-card-cover]'
         ),
 
       cardLayers:
@@ -471,6 +606,46 @@
       readerStatus:
         section.querySelector(
           '[data-reader-status]'
+        ),
+
+      handoff:
+        section.querySelector(
+          '[data-cover-handoff]'
+        ),
+
+      handoffImage:
+        section.querySelector(
+          '[data-handoff-image]'
+        ),
+
+      handoffFallback:
+        section.querySelector(
+          '[data-handoff-fallback]'
+        ),
+
+      dialog:
+        section.querySelector(
+          '[data-detail-dialog]'
+        ),
+
+      dialogClose:
+        section.querySelector(
+          '[data-detail-close]'
+        ),
+
+      dialogEyebrow:
+        section.querySelector(
+          '[data-detail-eyebrow]'
+        ),
+
+      dialogTitle:
+        section.querySelector(
+          '[data-detail-title]'
+        ),
+
+      dialogBody:
+        section.querySelector(
+          '[data-detail-body]'
         ),
 
       empty:
@@ -552,7 +727,7 @@
     if (
       CHOSEN_STORY_ID
     ) {
-      const match =
+      const idMatch =
         storyPool.find(
           (story) => {
             return (
@@ -567,9 +742,9 @@
         );
 
       if (
-        match
+        idMatch
       ) {
-        return match;
+        return idMatch;
       }
     }
 
@@ -877,7 +1052,7 @@
       seededShuffle(
         ordinaryPool,
         hashString(
-          `${chosenStory.title}-all-rain-final`
+          `${chosenStory.title}-section-four-rain`
         )
       );
 
@@ -1030,8 +1205,8 @@
     ).filter(
       (story) => {
         const key =
-          storyKey(
-            story
+          normalizeText(
+            story?.title
           );
 
         if (
@@ -1049,14 +1224,6 @@
 
         return true;
       }
-    );
-  }
-
-  function storyKey(
-    story
-  ) {
-    return normalizeText(
-      story?.title
     );
   }
 
@@ -1396,7 +1563,7 @@
       : 'Manga / Anime';
   }
 
-  function setupReaderContent(
+  function setupReaderExperience(
     elements
   ) {
     let activeLayer =
@@ -1414,11 +1581,14 @@
         .readerContents
         .forEach(
           (container) => {
+            const readerId =
+              container
+                .dataset
+                .readerContent;
+
             const reader =
               READERS[
-                container
-                  .dataset
-                  .readerContent
+                readerId
               ];
 
             if (
@@ -1433,6 +1603,7 @@
             ) {
               renderQuotes(
                 container,
+                readerId,
                 reader
               );
             } else if (
@@ -1441,11 +1612,13 @@
             ) {
               renderCharacters(
                 container,
+                readerId,
                 reader
               );
             } else {
               renderThoughts(
                 container,
+                readerId,
                 reader
               );
             }
@@ -1485,7 +1658,8 @@
                 .layer ===
               layer;
 
-            button.classList
+            button
+              .classList
               .toggle(
                 'is-active',
                 selected
@@ -1570,9 +1744,7 @@
         elements
           .readerStatus
           .textContent =
-            READERS
-              .kai
-              .status;
+            READERS.kai.status;
       } else if (
         focusMode ===
         'right'
@@ -1587,9 +1759,7 @@
         elements
           .readerStatus
           .textContent =
-            READERS
-              .nova
-              .status;
+            READERS.nova.status;
       } else {
         const combinedScore =
           getCombinedScore();
@@ -1834,6 +2004,7 @@
 
   function renderQuotes(
     container,
+    readerId,
     reader
   ) {
     container.innerHTML = `
@@ -1843,7 +2014,7 @@
         </span>
 
         <h4>
-          ${reader.quotes.length} ideas — and why they stayed
+          ${escapeHtml(reader.quoteHeading)}
         </h4>
       </header>
 
@@ -1854,25 +2025,46 @@
               quote,
               index
             ) => {
+              const preview =
+                quote
+                  .paragraphs
+                  .join(' ');
+
               return `
                 <article
-                  class="s4-quote-card ${index === 0 ? 'is-featured' : ''}"
+                  class="
+                    s4-evidence-card
+                    s4-quote-card
+                    quote-${escapeHtml(quote.size)}
+                    ${index === 0 ? 'is-featured' : ''}
+                  "
                 >
-                  <span class="s4-card-number">
-                    Saved idea ${String(index + 1).padStart(2, '0')}
+                  <span class="s4-card-theme">
+                    ${escapeHtml(quote.theme)}
                   </span>
 
                   <blockquote>
-                    “${escapeHtml(quote.text)}”
+                    <p>
+                      “${escapeHtml(preview)}”
+                    </p>
                   </blockquote>
 
-                  <span class="s4-quote-note-label">
-                    Why it stayed
-                  </span>
+                  <cite>
+                    — ${escapeHtml(quote.author)}
+                  </cite>
 
-                  <p>
-                    ${escapeHtml(quote.note)}
-                  </p>
+                  <div class="s4-card-actions">
+                    <button
+                      class="s4-detail-button"
+                      type="button"
+                      data-open-detail
+                      data-detail-type="quote"
+                      data-reader-id="${escapeHtml(readerId)}"
+                      data-item-index="${index}"
+                    >
+                      Read full quote
+                    </button>
+                  </div>
                 </article>
               `;
             }
@@ -1884,6 +2076,7 @@
 
   function renderCharacters(
     container,
+    readerId,
     reader
   ) {
     container.innerHTML = `
@@ -1893,7 +2086,8 @@
         </span>
 
         <h4>
-          ${reader.characters.length} characters and what I see in them
+          ${reader.characters.length}
+          characters — and what this reader sees in them
         </h4>
       </header>
 
@@ -1916,7 +2110,11 @@
 
               return `
                 <article
-                  class="s4-character-card ${index === 0 ? 'is-featured' : ''}"
+                  class="
+                    s4-evidence-card
+                    s4-character-card
+                    ${index === 0 ? 'is-featured' : ''}
+                  "
                 >
                   <figure class="s4-character-portrait">
                     <img
@@ -1945,6 +2143,19 @@
                     <p>
                       ${escapeHtml(character.reason)}
                     </p>
+
+                    <div class="s4-card-actions">
+                      <button
+                        class="s4-detail-button"
+                        type="button"
+                        data-open-detail
+                        data-detail-type="character"
+                        data-reader-id="${escapeHtml(readerId)}"
+                        data-item-index="${index}"
+                      >
+                        View character
+                      </button>
+                    </div>
                   </div>
                 </article>
               `;
@@ -1978,12 +2189,28 @@
 
   function renderThoughts(
     container,
+    readerId,
     reader
   ) {
     container.innerHTML = `
-      <article class="s4-thought-card">
-        <span class="s4-card-number">
-          ${escapeHtml(reader.name)} · full reflection
+      <header class="s4-evidence-header">
+        <span>
+          ${escapeHtml(reader.name)} · reflection
+        </span>
+
+        <h4>
+          One complete reading of the shared story
+        </h4>
+      </header>
+
+      <article
+        class="
+          s4-evidence-card
+          s4-thought-card
+        "
+      >
+        <span class="s4-card-theme">
+          Full reflection
         </span>
 
         <h4>
@@ -1992,11 +2219,364 @@
 
         <div class="s4-thought-copy">
           <p>
-            ${escapeHtml(reader.thoughts.text)}
+            ${escapeHtml(reader.thoughts.preview)}
           </p>
+        </div>
+
+        <div class="s4-card-actions">
+          <button
+            class="s4-detail-button"
+            type="button"
+            data-open-detail
+            data-detail-type="thought"
+            data-reader-id="${escapeHtml(readerId)}"
+            data-item-index="0"
+          >
+            Read reflection
+          </button>
         </div>
       </article>
     `;
+  }
+
+  function setupDetailDialog(
+    elements
+  ) {
+    const {
+      section,
+      dialog,
+      dialogClose
+    } =
+      elements;
+
+    if (
+      !dialog ||
+      !dialogClose
+    ) {
+      return;
+    }
+
+    let returnFocus =
+      null;
+
+    section.addEventListener(
+      'click',
+      (event) => {
+        const opener =
+          event
+            .target
+            .closest(
+              '[data-open-detail]'
+            );
+
+        if (
+          !opener ||
+          !section.contains(
+            opener
+          )
+        ) {
+          return;
+        }
+
+        returnFocus =
+          opener;
+
+        openDetailWindow(
+          elements,
+          opener
+        );
+      }
+    );
+
+    dialogClose.addEventListener(
+      'click',
+      () => {
+        closeDetailWindow(
+          dialog
+        );
+      }
+    );
+
+    dialog.addEventListener(
+      'click',
+      (event) => {
+        if (
+          event.target ===
+          dialog
+        ) {
+          closeDetailWindow(
+            dialog
+          );
+        }
+      }
+    );
+
+    dialog.addEventListener(
+      'close',
+      () => {
+        document
+          .body
+          .classList
+          .remove(
+            's4-dialog-open'
+          );
+
+        if (
+          returnFocus
+            ?.isConnected
+        ) {
+          returnFocus.focus({
+            preventScroll:
+              true
+          });
+        }
+      }
+    );
+  }
+
+  function openDetailWindow(
+    elements,
+    opener
+  ) {
+    const type =
+      opener
+        .dataset
+        .detailType;
+
+    const readerId =
+      opener
+        .dataset
+        .readerId;
+
+    const index =
+      Number(
+        opener
+          .dataset
+          .itemIndex ||
+        0
+      );
+
+    const reader =
+      READERS[
+        readerId
+      ];
+
+    if (
+      !reader
+    ) {
+      return;
+    }
+
+    let eyebrow =
+      reader.name;
+
+    let title =
+      '';
+
+    let body =
+      '';
+
+    if (
+      type ===
+      'quote'
+    ) {
+      const quote =
+        reader
+          .quotes[
+            index
+          ];
+
+      if (
+        !quote
+      ) {
+        return;
+      }
+
+      eyebrow =
+        `${reader.name} · ${quote.theme}`;
+
+      title =
+        quote.author;
+
+      body = `
+        <blockquote class="s4-detail-quote">
+          ${quote.paragraphs
+            .map(
+              (paragraph) => {
+                return `
+                  <p>
+                    “${escapeHtml(paragraph)}”
+                  </p>
+                `;
+              }
+            )
+            .join('')}
+
+          <cite>
+            — ${escapeHtml(quote.author)}
+          </cite>
+        </blockquote>
+
+        <div class="s4-detail-analysis">
+          <p>
+            ${escapeHtml(quote.detail)}
+          </p>
+        </div>
+      `;
+    } else if (
+      type ===
+      'character'
+    ) {
+      const character =
+        reader
+          .characters[
+            index
+          ];
+
+      if (
+        !character
+      ) {
+        return;
+      }
+
+      const fallbackImage =
+        createPortraitPlaceholder(
+          character.name,
+          reader.side
+        );
+
+      const imageUrl =
+        character.imageUrl ||
+        fallbackImage;
+
+      eyebrow =
+        `${reader.name} · reader pick #${String(character.rank).padStart(2, '0')}`;
+
+      title =
+        character.name;
+
+      body = `
+        <div class="s4-detail-character">
+          <figure>
+            <img
+              src="${escapeHtml(imageUrl)}"
+              alt="Portrait for ${escapeHtml(character.name)}"
+            >
+          </figure>
+
+          <div class="s4-detail-character-copy">
+            <h4>
+              ${escapeHtml(character.name)}
+            </h4>
+
+            <p>
+              ${escapeHtml(character.reason)}
+            </p>
+
+            <p>
+              ${escapeHtml(character.details)}
+            </p>
+          </div>
+        </div>
+      `;
+    } else if (
+      type ===
+      'thought'
+    ) {
+      eyebrow =
+        `${reader.name} · full reflection`;
+
+      title =
+        reader
+          .thoughts
+          .title;
+
+      body =
+        reader
+          .thoughts
+          .paragraphs
+          .map(
+            (paragraph) => {
+              return `
+                <p>
+                  ${escapeHtml(paragraph)}
+                </p>
+              `;
+            }
+          )
+          .join('');
+    } else {
+      return;
+    }
+
+    elements
+      .dialogEyebrow
+      .textContent =
+        eyebrow;
+
+    elements
+      .dialogTitle
+      .textContent =
+        title;
+
+    elements
+      .dialogBody
+      .innerHTML =
+        body;
+
+    document
+      .body
+      .classList
+      .add(
+        's4-dialog-open'
+      );
+
+    if (
+      typeof elements
+        .dialog
+        .showModal ===
+      'function'
+    ) {
+      if (
+        !elements
+          .dialog
+          .open
+      ) {
+        elements
+          .dialog
+          .showModal();
+      }
+    } else {
+      elements
+        .dialog
+        .setAttribute(
+          'open',
+          ''
+        );
+    }
+  }
+
+  function closeDetailWindow(
+    dialog
+  ) {
+    if (
+      typeof dialog.close ===
+        'function' &&
+      dialog.open
+    ) {
+      dialog.close();
+    } else {
+      dialog.removeAttribute(
+        'open'
+      );
+
+      document
+        .body
+        .classList
+        .remove(
+          's4-dialog-open'
+        );
+    }
   }
 
   function createPortraitPlaceholder(
@@ -2072,14 +2652,14 @@
 
           <radialGradient
             id="r"
-            cx="0.3"
-            cy="0.18"
-            r="0.8"
+            cx="35%"
+            cy="20%"
+            r="70%"
           >
             <stop
               offset="0"
               stop-color="#ffffff"
-              stop-opacity="0.34"
+              stop-opacity="0.36"
             />
 
             <stop
@@ -2106,28 +2686,28 @@
 
         <circle
           cx="120"
-          cy="118"
+          cy="114"
           r="54"
-          fill="#f7f4ff"
-          fill-opacity="0.18"
+          fill="#ffffff"
+          fill-opacity="0.12"
         />
 
         <path
-          d="M42 296c8-70 42-108 78-108s70 38 78 108"
-          fill="#070b17"
-          fill-opacity="0.46"
+          d="M34 320c10-79 53-119 86-119s76 40 86 119"
+          fill="#050817"
+          fill-opacity="0.55"
         />
 
         <text
           x="120"
-          y="139"
+          y="132"
           text-anchor="middle"
           font-family="Georgia,serif"
           font-size="54"
           font-weight="700"
           fill="#ffffff"
         >
-          ${initials}
+          ${escapeHtml(initials)}
         </text>
       </svg>
     `;
@@ -2146,7 +2726,7 @@
     if (
       prefersReducedMotion() ||
       typeof container.animate !==
-      'function'
+        'function'
     ) {
       return;
     }
@@ -2160,6 +2740,7 @@
           transform:
             'translateY(9px)'
         },
+
         {
           opacity:
             1,
@@ -2191,7 +2772,8 @@
       );
 
       showStaticLayout(
-        section
+        section,
+        elements
       );
 
       return;
@@ -2222,15 +2804,18 @@
             .static
         ) {
           showStaticLayout(
-            section
+            section,
+            elements
           );
 
           return;
         }
 
-        section.classList.remove(
-          'is-static'
-        );
+        section
+          .classList
+          .remove(
+            'is-static'
+          );
 
         return createPinnedTimeline(
           section,
@@ -2259,13 +2844,15 @@
       );
 
     const chosenLeft =
-      elements.stage
+      elements
+        .stage
         .querySelector(
           '[data-chosen-rain-cover="left"]'
         );
 
     const chosenRight =
-      elements.stage
+      elements
+        .stage
         .querySelector(
           '[data-chosen-rain-cover="right"]'
         );
@@ -2274,14 +2861,22 @@
       !chosenLeft ||
       !chosenRight ||
       !elements.sharedCardWrap ||
+      !elements.cardCover ||
+      !elements.handoff ||
       !elements.compareStage
     ) {
       showStaticLayout(
-        section
+        section,
+        elements
       );
 
       return undefined;
     }
+
+    syncHandoffCover(
+      chosenLeft,
+      elements
+    );
 
     const regularLeft =
       leftItems.filter(
@@ -2355,13 +2950,16 @@
       3.02;
 
     const cardRevealTime =
-      3.68;
+      3.72;
+
+    const handoffEndTime =
+      4.48;
 
     const cardDockTime =
-      4.22;
+      4.62;
 
     const comparisonTime =
-      4.52;
+      5.02;
 
     const DOCK_TOP =
       70;
@@ -2370,14 +2968,16 @@
       0.79;
 
     const expandedCardHeight =
-      elements.sharedCard
+      elements
+        .sharedCard
         .getBoundingClientRect()
         .height;
 
     function updateFinalLayoutMetrics() {
       const introHeight =
         Math.max(
-          elements.contentIntro
+          elements
+            .contentIntro
             .getBoundingClientRect()
             .height,
           30
@@ -2401,15 +3001,21 @@
           10
         );
 
-      elements.stage.style.setProperty(
-        '--s4-intro-top',
-        `${introTop}px`
-      );
+      elements
+        .stage
+        .style
+        .setProperty(
+          '--s4-intro-top',
+          `${introTop}px`
+        );
 
-      elements.stage.style.setProperty(
-        '--s4-compare-top',
-        `${compareTop}px`
-      );
+      elements
+        .stage
+        .style
+        .setProperty(
+          '--s4-compare-top',
+          `${compareTop}px`
+        );
     }
 
     updateFinalLayoutMetrics();
@@ -2455,10 +3061,41 @@
           -50,
 
         scale:
-          1.04,
+          1.03,
 
         pointerEvents:
           'none'
+      }
+    );
+
+    gsap.set(
+      elements.cardCover,
+      {
+        autoAlpha:
+          0
+      }
+    );
+
+    gsap.set(
+      elements.handoff,
+      {
+        autoAlpha:
+          0,
+
+        x:
+          0,
+
+        y:
+          0,
+
+        width:
+          100,
+
+        height:
+          150,
+
+        rotation:
+          0
       }
     );
 
@@ -2913,7 +3550,9 @@
           'rgba(225,229,255,.84)',
 
         boxShadow:
-          '0 38px 90px rgba(0,0,0,.62), 0 0 72px rgba(155,124,255,.44), 0 0 0 2px rgba(255,255,255,.12)',
+          '0 38px 90px rgba(0,0,0,.62), ' +
+          '0 0 72px rgba(155,124,255,.44), ' +
+          '0 0 0 2px rgba(255,255,255,.12)',
 
         duration:
           0.22,
@@ -2981,6 +3620,70 @@
       0.3
     );
 
+    /*
+     * Show the card around the merged cover.
+     *
+     * The real cover inside the card stays invisible until the
+     * moving cover has reached the correct left-side position.
+     */
+    timeline.set(
+      elements.sharedCardWrap,
+      {
+        autoAlpha:
+          1,
+
+        scale:
+          1.03
+      },
+      cardRevealTime
+    );
+
+    timeline.set(
+      elements.handoff,
+      {
+        autoAlpha:
+          1,
+
+        x: () => {
+          return getRelativeRect(
+            chosenLeft,
+            elements.stage
+          ).left;
+        },
+
+        y: () => {
+          return getRelativeRect(
+            chosenLeft,
+            elements.stage
+          ).top;
+        },
+
+        width: () => {
+          return getRelativeRect(
+            chosenLeft,
+            elements.stage
+          ).width;
+        },
+
+        height: () => {
+          return getRelativeRect(
+            chosenLeft,
+            elements.stage
+          ).height;
+        },
+
+        borderRadius:
+          '14px',
+
+        rotation:
+          0
+      },
+      cardRevealTime
+    );
+
+    /*
+     * The second cover is absorbed into the first.
+     */
     timeline.to(
       chosenRight,
       {
@@ -2988,28 +3691,33 @@
           0,
 
         scale:
-          1.38,
+          0.72,
 
         duration:
-          0.18
+          0.24,
+
+        ease:
+          'power2.in'
       },
       cardRevealTime -
       0.12
     );
 
+    /*
+     * Hide the original left cover only after the handoff copy
+     * is in the exact same place.
+     */
     timeline.to(
       chosenLeft,
       {
         autoAlpha:
           0,
 
-        scale:
-          1.45,
-
         duration:
-          0.22
+          0.08
       },
-      cardRevealTime
+      cardRevealTime +
+      0.03
     );
 
     timeline.to(
@@ -3025,27 +3733,113 @@
           0.16
       },
       cardRevealTime -
-      0.08
+      0.05
     );
 
+    /*
+     * Move the cover into the left cover slot.
+     *
+     * back.out creates the small bounce as it settles.
+     */
     timeline.to(
-      elements.sharedCardWrap,
+      elements.handoff,
       {
-        autoAlpha:
-          1,
+        x: () => {
+          return getRelativeRect(
+            elements.cardCover,
+            elements.stage
+          ).left;
+        },
 
-        scale:
-          1.03,
+        y: () => {
+          return getRelativeRect(
+            elements.cardCover,
+            elements.stage
+          ).top;
+        },
+
+        width: () => {
+          return getRelativeRect(
+            elements.cardCover,
+            elements.stage
+          ).width;
+        },
+
+        height: () => {
+          return getRelativeRect(
+            elements.cardCover,
+            elements.stage
+          ).height;
+        },
+
+        borderRadius:
+          '14px',
+
+        rotation:
+          -1.2,
 
         duration:
-          0.42,
+          handoffEndTime -
+          cardRevealTime,
 
         ease:
-          'power2.out'
+          'back.out(1.75)'
       },
       cardRevealTime
     );
 
+    timeline.to(
+      elements.handoff,
+      {
+        rotation:
+          0,
+
+        duration:
+          0.14,
+
+        ease:
+          'power2.out'
+      },
+      handoffEndTime -
+      0.14
+    );
+
+    /*
+     * Crossfade from the moving cover to the real card cover.
+     *
+     * They occupy the exact same coordinates, so the replacement
+     * is not visible to the user.
+     */
+    timeline.to(
+      elements.cardCover,
+      {
+        autoAlpha:
+          1,
+
+        duration:
+          0.08
+      },
+      handoffEndTime -
+      0.07
+    );
+
+    timeline.to(
+      elements.handoff,
+      {
+        autoAlpha:
+          0,
+
+        duration:
+          0.08
+      },
+      handoffEndTime -
+      0.04
+    );
+
+    /*
+     * Once the cover is inside the card, move the complete card
+     * toward its final top position.
+     */
     timeline.to(
       elements.sharedCardWrap,
       {
@@ -3059,13 +3853,12 @@
           DOCK_SCALE,
 
         duration:
-          cardDockTime -
-          cardRevealTime,
+          0.58,
 
         ease:
           'power2.inOut'
       },
-      cardRevealTime
+      cardDockTime
     );
 
     timeline.to(
@@ -3089,8 +3882,8 @@
         ease:
           'power2.out'
       },
-      cardDockTime -
-      0.08
+      cardDockTime +
+      0.36
     );
 
     timeline.to(
@@ -3212,7 +4005,113 @@
         ?.kill();
 
       timeline.kill();
+
+      gsap.set(
+        [
+          ...leftItems,
+          ...rightItems,
+          elements.selectionCopy,
+          elements.sharedCardWrap,
+          elements.cardCover,
+          elements.handoff,
+          elements.cardLayers,
+          elements.contentIntro,
+          elements.compareStage,
+          ...elements.profileButtons,
+          ...elements.readerContents
+        ],
+        {
+          clearProps:
+            'all'
+        }
+      );
     };
+  }
+
+  function syncHandoffCover(
+    source,
+    elements
+  ) {
+    const sourceImage =
+      source.querySelector(
+        'img'
+      );
+
+    const sourceFallback =
+      source.querySelector(
+        '[data-cover-fallback]'
+      );
+
+    elements
+      .handoffFallback
+      .textContent =
+        sourceFallback
+          ?.textContent ||
+        'Attack on Titan';
+
+    elements
+      .handoffFallback
+      .hidden =
+        false;
+
+    elements
+      .handoffImage
+      .hidden =
+        true;
+
+    const sourceUrl =
+      sourceImage
+        ?.currentSrc ||
+      sourceImage
+        ?.src ||
+      '';
+
+    if (
+      !sourceUrl
+    ) {
+      elements
+        .handoffImage
+        .removeAttribute(
+          'src'
+        );
+
+      return;
+    }
+
+    elements
+      .handoffImage
+      .onload =
+        () => {
+          elements
+            .handoffImage
+            .hidden =
+              false;
+
+          elements
+            .handoffFallback
+            .hidden =
+              true;
+        };
+
+    elements
+      .handoffImage
+      .onerror =
+        () => {
+          elements
+            .handoffImage
+            .hidden =
+              true;
+
+          elements
+            .handoffFallback
+            .hidden =
+              false;
+        };
+
+    elements
+      .handoffImage
+      .src =
+        sourceUrl;
   }
 
   function getCenterTarget(
@@ -3223,10 +4122,12 @@
       item.offsetParent;
 
     const stageRect =
-      stage.getBoundingClientRect();
+      stage
+        .getBoundingClientRect();
 
     const laneRect =
-      lane.getBoundingClientRect();
+      lane
+        .getBoundingClientRect();
 
     return {
       x:
@@ -3249,12 +4150,80 @@
     };
   }
 
-  function showStaticLayout(
-    section
+  function getRelativeRect(
+    element,
+    relativeTo
   ) {
-    section.classList.add(
-      'is-static'
-    );
+    const rect =
+      element
+        .getBoundingClientRect();
+
+    const parentRect =
+      relativeTo
+        .getBoundingClientRect();
+
+    return {
+      left:
+        rect.left -
+        parentRect.left,
+
+      top:
+        rect.top -
+        parentRect.top,
+
+      width:
+        rect.width,
+
+      height:
+        rect.height
+    };
+  }
+
+  function showStaticLayout(
+    section,
+    elements
+  ) {
+    section
+      .classList
+      .add(
+        'is-static'
+      );
+
+    if (
+      elements?.cardCover
+    ) {
+      elements
+        .cardCover
+        .style
+        .opacity =
+          '1';
+
+      elements
+        .cardCover
+        .style
+        .visibility =
+          'visible';
+    }
+
+    if (
+      elements?.sharedCardWrap
+    ) {
+      elements
+        .sharedCardWrap
+        .style
+        .pointerEvents =
+          'auto';
+    }
+
+    if (
+      elements?.compareStage
+    ) {
+      elements
+        .compareStage
+        .style
+        .pointerEvents =
+          'auto';
+    }
   }
 
   function showDatabaseError(
@@ -3264,8 +4233,24 @@
     if (
       elements.empty
     ) {
-      elements.empty.hidden =
-        false;
+      elements
+        .empty
+        .hidden =
+          false;
+
+      const paragraph =
+        elements
+          .empty
+          .querySelector(
+            'p'
+          );
+
+      if (
+        paragraph
+      ) {
+        paragraph.textContent =
+          message;
+      }
     }
 
     setStatus(
@@ -3288,6 +4273,14 @@
     }
   }
 
+  function prefersReducedMotion() {
+    return window
+      .matchMedia(
+        '(prefers-reduced-motion: reduce)'
+      )
+      .matches;
+  }
+
   function normalizeText(
     value
   ) {
@@ -3295,21 +4288,27 @@
       value ||
       ''
     )
-      .trim()
-      .toLowerCase();
-  }
-
-  function prefersReducedMotion() {
-    return window.matchMedia(
-      '(prefers-reduced-motion: reduce)'
-    ).matches;
+      .normalize(
+        'NFKD'
+      )
+      .replace(
+        /[\u0300-\u036f]/g,
+        ''
+      )
+      .toLowerCase()
+      .replace(
+        /[^a-z0-9]+/g,
+        ' '
+      )
+      .trim();
   }
 
   function escapeHtml(
     value
   ) {
     return String(
-      value
+      value ??
+      ''
     )
       .replaceAll(
         '&',

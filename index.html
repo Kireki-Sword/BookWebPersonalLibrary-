@@ -1416,7 +1416,7 @@
     </div>
     </section>
 
-    <!-- SECTION 4 SAME STORY, DIFFERENT SOULS-->
+    <!-- SECTION 4 — SAME STORY, DIFFERENT SOULS -->
     <section
     id="section-4"
     class="section section-cover-rain"
@@ -1466,11 +1466,31 @@
         </div>
 
         <!--
-        This is the only Attack on Titan card.
+        This temporary cover creates the seamless handoff.
 
-        It forms in the center, shrinks toward the top, receives its buttons,
-        and remains visible while the profiles and reader content appear below.
+        One of the two Attack on Titan covers moves from the middle
+        into the card's cover slot, shrinks, and bounces into place.
+        The real card cover is hidden until that handoff finishes.
         -->
+        <figure
+        class="s4-cover-handoff"
+        data-cover-handoff
+        aria-hidden="true"
+        >
+        <img
+            data-handoff-image
+            alt=""
+            decoding="async"
+        >
+
+        <span
+            class="s4-cover-fallback"
+            data-handoff-fallback
+        >
+            Attack on Titan
+        </span>
+        </figure>
+
         <div
         class="s4-shared-card-wrap"
         data-shared-card-wrap
@@ -1483,10 +1503,10 @@
             <figure
             class="s4-card-cover"
             data-cover-shell
+            data-card-cover
             >
             <img
                 data-story-cover
-                src=""
                 alt="Attack on Titan cover"
                 decoding="async"
             >
@@ -1635,7 +1655,6 @@
             >
                 <img
                 data-avatar-image="kai"
-                src=""
                 alt=""
                 hidden
                 >
@@ -1707,7 +1726,6 @@
             >
                 <img
                 data-avatar-image="nova"
-                src=""
                 alt=""
                 hidden
                 >
@@ -1769,6 +1787,61 @@
         role="status"
         aria-live="polite"
     ></p>
+
+    <!--
+        Medium Apple-style detail window.
+
+        Every quote, character, and thought card receives a button that
+        opens its complete content inside this window.
+    -->
+    <dialog
+        class="s4-detail-dialog"
+        data-detail-dialog
+        aria-labelledby="s4-detail-title"
+    >
+        <div class="s4-detail-window">
+        <header class="s4-detail-toolbar">
+            <div
+            class="s4-window-dots"
+            aria-hidden="true"
+            >
+            <span></span>
+            <span></span>
+            <span></span>
+            </div>
+
+            <span class="s4-detail-toolbar-title">
+            Inkwell detail
+            </span>
+
+            <button
+            class="s4-detail-close"
+            type="button"
+            data-detail-close
+            aria-label="Close detail window"
+            >
+            <span aria-hidden="true">×</span>
+            </button>
+        </header>
+
+        <div class="s4-detail-scroll">
+            <span
+            class="s4-detail-eyebrow"
+            data-detail-eyebrow
+            ></span>
+
+            <h3
+            id="s4-detail-title"
+            data-detail-title
+            ></h3>
+
+            <div
+            class="s4-detail-body"
+            data-detail-body
+            ></div>
+        </div>
+        </div>
+    </dialog>
     </section>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
