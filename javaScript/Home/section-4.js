@@ -2007,101 +2007,156 @@
         }
       );
   }
+  function getQuoteFitClass(
+  quote
+) {
+  const completeText =
+    Array.isArray(
+      quote?.paragraphs
+    )
+      ? quote.paragraphs.join(
+          ' '
+        )
+      : '';
 
-  function renderQuotes(
-    container,
-    readerId,
-    reader
+  const wordCount =
+    completeText
+      .trim()
+      .split(
+        /\s+/
+      )
+      .filter(
+        Boolean
+      )
+      .length;
+
+  if (
+    wordCount >
+    75
   ) {
-    container.innerHTML = `
-      <header class="s4-evidence-header">
-        <span>
-          ${escapeHtml(reader.name)} · quote collection
-        </span>
-
-        <h4>
-          ${escapeHtml(reader.quoteHeading)}
-        </h4>
-      </header>
-
-      <div class="s4-quote-grid">
-        ${reader.quotes
-          .map(
-            (
-              quote,
-              index
-            ) => {
-              const paragraphs =
-                quote
-                  .paragraphs
-                  .map(
-                    (
-                      paragraph,
-                      paragraphIndex
-                    ) => {
-                      const opening =
-                        paragraphIndex ===
-                        0
-                          ? '“'
-                          : '';
-
-                      const closing =
-                        paragraphIndex ===
-                        quote.paragraphs.length -
-                        1
-                          ? '”'
-                          : '';
-
-                      return `
-                        <p>
-                          ${opening}${escapeHtml(paragraph)}${closing}
-                        </p>
-                      `;
-                    }
-                  )
-                  .join('');
-
-              return `
-                <article
-                  class="
-                    s4-evidence-card
-                    s4-quote-card
-                    quote-${escapeHtml(quote.size)}
-                    ${index === 0 ? 'is-featured' : ''}
-                  "
-                >
-                  <span class="s4-card-theme">
-                    ${escapeHtml(quote.theme)}
-                  </span>
-
-                  <blockquote>
-                    ${paragraphs}
-                  </blockquote>
-
-                  <cite>
-                    — ${escapeHtml(quote.author)}
-                  </cite>
-
-                  <div class="s4-card-actions">
-                    <button
-                      class="s4-detail-button"
-                      type="button"
-                      data-open-detail
-                      data-detail-type="quote"
-                      data-reader-id="${escapeHtml(readerId)}"
-                      data-item-index="${index}"
-                    >
-                      Reader's takeaway
-                    </button>
-                  </div>
-                </article>
-              `;
-            }
-          )
-          .join('')}
-      </div>
-    `;
+    return 'quote-fit--very-long';
   }
+
+  if (
+    wordCount >
+    50
+  ) {
+    return 'quote-fit--long';
+  }
+
+  if (
+    wordCount >
+    28
+  ) {
+    return 'quote-fit--medium';
+  }
+
+  return 'quote-fit--short';
+}
+  function renderQuotes(
+  container,
+  readerId,
+  reader
+) {
+  container.innerHTML = `
+    <header class="s4-evidence-header">
+      <span>
+        ${escapeHtml(reader.name)} · quote collection
+      </span>
+
+      <h4>
+        ${escapeHtml(reader.quoteHeading)}
+      </h4>
+    </header>
+
+    <div class="s4-quote-grid">
+      ${reader.quotes
+        .map(
+          (
+            quote,
+            index
+          ) => {
+            const fitClass =
+              getQuoteFitClass(
+                quote
+              );
+
+            const quoteParagraphs =
+              quote.paragraphs
+                .map(
+                  (
+                    paragraph,
+                    paragraphIndex
+                  ) => {
+                    const isFirst =
+                      paragraphIndex ===
+                      0;
+
+                    const isLast =
+                      paragraphIndex ===
+                      quote.paragraphs.length -
+                      1;
+
+                    const openingMark =
+                      isFirst
+                        ? '“'
+                        : '';
+
+                    const closingMark =
+                      isLast
+                        ? '”'
+                        : '';
+
+                    return `
+                      <p>
+                        ${openingMark}${escapeHtml(paragraph)}${closingMark}
+                      </p>
+                    `;
+                  }
+                )
+                .join('');
+
+            return `
+              <article
+                class="
+                  s4-evidence-card
+                  s4-quote-card
+                  ${fitClass}
+                  ${index === 0 ? 'is-featured' : ''}
+                "
+              >
+                <span class="s4-card-theme">
+                  ${escapeHtml(quote.theme)}
+                </span>
+
+                <blockquote>
+                  ${quoteParagraphs}
+                </blockquote>
+
+                <cite>
+                  — ${escapeHtml(quote.author)}
+                </cite>
+
+                <div class="s4-card-actions">
+                  <button
+                    class="s4-detail-button"
+                    type="button"
+                    data-open-detail
+                    data-detail-type="quote"
+                    data-reader-id="${escapeHtml(readerId)}"
+                    data-item-index="${index}"
+                  >
+                    Reader's takeaway
+                  </button>
+                </div>
+              </article>
+            `;
+          }
+        )
+        .join('')}
+    </div>
+  `;
+}
 
   function renderCharacters(
     container,
@@ -3039,7 +3094,7 @@
       5.02;
 
     const DOCK_TOP =
-      58;
+      64;
 
     const DOCK_SCALE =
       0.78;

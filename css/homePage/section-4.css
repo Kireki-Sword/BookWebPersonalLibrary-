@@ -2885,3 +2885,362 @@ blockquote {
       none !important;
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ==========================================================================
+   QUOTE CARDS — AUTOMATIC TEXT FITTING
+   ========================================================================== */
+
+/*
+ * Both reader panels stretch to the height of the taller panel.
+ * This keeps the left and right sides visually aligned without scrollbars.
+ */
+
+.s4-compare-stage {
+  align-items: stretch;
+}
+
+.s4-reader-side {
+  height: 100%;
+  max-height: none;
+
+  display: flex;
+  flex-direction: column;
+
+  overflow: visible;
+}
+
+.s4-reader-content {
+  flex: 1;
+
+  min-height: 0;
+
+  display: flex;
+  flex-direction: column;
+}
+
+/*
+ * Every side uses the same structure:
+ *
+ * ┌──────────────────────────────┐
+ * │ Featured quote               │
+ * ├──────────────┬───────────────┤
+ * │ Quote 02     │ Quote 03      │
+ * └──────────────┴───────────────┘
+ */
+
+.s4-quote-grid {
+  flex: 1;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  grid-template-rows:
+    minmax(205px, auto)
+    minmax(218px, auto);
+
+  gap: 10px;
+
+  align-items: stretch;
+}
+
+.s4-quote-card {
+  min-width: 0;
+  min-height: 218px;
+  height: 100%;
+
+  padding:
+    16px 17px;
+
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
+}
+
+.s4-quote-card.is-featured {
+  grid-column:
+    1 / -1;
+
+  min-height: 205px;
+}
+
+/*
+ * Quote text is always fully visible.
+ * No line clamping is used.
+ */
+
+.s4-quote-card blockquote,
+.s4-quote-card.is-featured blockquote,
+.s4-quote-card:not(.is-featured) blockquote {
+  position: relative;
+  z-index: 1;
+
+  display: block;
+
+  margin:
+    0.56rem 0 0;
+
+  overflow: visible;
+
+  color: var(--s4-text);
+
+  font-family:
+    var(--font-display, Georgia, serif);
+
+  font-weight: 700;
+
+  text-wrap: pretty;
+  overflow-wrap: anywhere;
+
+  -webkit-line-clamp: unset;
+  -webkit-box-orient: initial;
+
+  line-clamp: unset;
+}
+
+.s4-quote-card blockquote p {
+  margin: 0;
+}
+
+.s4-quote-card blockquote p + p {
+  margin-top: 0.28rem;
+}
+
+/*
+ * JavaScript assigns one of these classes by counting the words.
+ *
+ * This means replacing a short quote with a long quote no longer leaves
+ * the old large-font styling attached to it.
+ */
+
+/* More than 75 words. */
+
+.s4-quote-card.quote-fit--very-long {
+  padding:
+    14px 16px;
+}
+
+.s4-quote-card.quote-fit--very-long
+blockquote {
+  font-size:
+    clamp(0.77rem, 0.69vw, 0.84rem);
+
+  line-height: 1.3;
+}
+
+/* Between 51 and 75 words. */
+
+.s4-quote-card.quote-fit--long
+blockquote {
+  font-size:
+    clamp(0.84rem, 0.77vw, 0.92rem);
+
+  line-height: 1.33;
+}
+
+/* Between 29 and 50 words. */
+
+.s4-quote-card.quote-fit--medium
+blockquote {
+  font-size:
+    clamp(0.92rem, 0.88vw, 1rem);
+
+  line-height: 1.36;
+}
+
+/* Twenty-eight words or fewer. */
+
+.s4-quote-card.quote-fit--short
+blockquote {
+  font-size:
+    clamp(1.12rem, 1.2vw, 1.3rem);
+
+  line-height: 1.25;
+}
+
+/*
+ * Featured cards have more horizontal space, so their typography can be
+ * slightly larger than a bottom card containing the same number of words.
+ */
+
+.s4-quote-card.is-featured.quote-fit--very-long
+blockquote {
+  font-size:
+    clamp(0.83rem, 0.78vw, 0.92rem);
+}
+
+.s4-quote-card.is-featured.quote-fit--long
+blockquote {
+  font-size:
+    clamp(0.91rem, 0.86vw, 1rem);
+}
+
+.s4-quote-card.is-featured.quote-fit--medium
+blockquote {
+  font-size:
+    clamp(1rem, 0.96vw, 1.08rem);
+}
+
+.s4-quote-card.is-featured.quote-fit--short
+blockquote {
+  font-size:
+    clamp(1.22rem, 1.38vw, 1.48rem);
+}
+
+.s4-quote-card cite {
+  position: relative;
+  z-index: 1;
+
+  margin-top: 0.52rem;
+
+  color: var(--s4-text-mid);
+
+  font-family:
+    var(--font-body, system-ui, sans-serif);
+
+  font-size: 0.64rem;
+  font-style: normal;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+/*
+ * Keeps every button aligned at the bottom-right of its card.
+ */
+
+.s4-quote-card
+.s4-card-actions {
+  margin-top: auto;
+
+  padding-top: 0.56rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.s4-quote-card
+.s4-detail-button {
+  min-height: 28px;
+
+  padding:
+    0 0.67rem;
+
+  font-size: 0.55rem;
+}
+
+/*
+ * When the second quote is much longer than the third quote, both cards
+ * remain the same height because they occupy the same grid row.
+ */
+
+.s4-quote-grid
+.s4-quote-card:nth-child(2),
+.s4-quote-grid
+.s4-quote-card:nth-child(3) {
+  align-self: stretch;
+}
+
+
+/* ==========================================================================
+   QUOTE RESPONSIVENESS
+   ========================================================================== */
+
+@media (max-width: 1099px) {
+  .s4-reader-side {
+    height: auto;
+  }
+
+  .s4-quote-grid {
+    flex: initial;
+  }
+}
+
+@media (max-width: 680px) {
+  .s4-quote-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+
+    gap: 10px;
+  }
+
+  .s4-quote-card,
+  .s4-quote-card.is-featured {
+    grid-column: auto;
+
+    min-height: 0;
+    height: auto;
+
+    padding:
+      1rem;
+  }
+
+  .s4-quote-card.quote-fit--very-long
+  blockquote,
+  .s4-quote-card.quote-fit--long
+  blockquote {
+    font-size: 0.92rem;
+    line-height: 1.4;
+  }
+
+  .s4-quote-card.quote-fit--medium
+  blockquote {
+    font-size: 1rem;
+  }
+
+  .s4-quote-card.quote-fit--short
+  blockquote {
+    font-size: 1.2rem;
+  }
+}
