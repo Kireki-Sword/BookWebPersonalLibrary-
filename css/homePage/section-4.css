@@ -4813,3 +4813,889 @@ body.s4-modal-open {
       1.6;
   }
 }
+
+/* ==========================================================================
+   PORTRAIT MOMENT SIDE CONTROLS
+   Landscape controls stay underneath.
+   Portrait controls move to the right side.
+   ========================================================================== */
+
+.s4-moment-carousel {
+  position:
+    relative;
+}
+
+
+/*
+ * Give portrait images room for the vertical control column.
+ */
+.s4-moment-carousel.is-portrait {
+  width:
+    min(
+      100%,
+      390px
+    );
+
+  padding-right:
+    64px;
+
+  margin-inline:
+    auto;
+}
+
+
+/*
+ * Keep the portrait card centered in the remaining space.
+ */
+.s4-moment-carousel.is-portrait
+.s4-moment-stage {
+  width:
+    100%;
+
+  display:
+    grid;
+
+  place-items:
+    center;
+}
+
+.s4-moment-carousel.is-portrait
+.s4-moment-card.is-portrait {
+  width:
+    min(
+      100%,
+      280px
+    );
+
+  max-width:
+    280px;
+}
+
+
+/*
+ * Move the complete navigation control to the right side.
+ */
+.s4-moment-carousel.is-portrait
+.s4-moment-controls {
+  position:
+    absolute;
+
+  top:
+    50%;
+
+  right:
+    4px;
+
+  width:
+    48px;
+
+  margin:
+    0;
+
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  gap:
+    0.6rem;
+
+  transform:
+    translateY(-50%);
+}
+
+
+/*
+ * Place the counter and dots vertically.
+ */
+.s4-moment-carousel.is-portrait
+.s4-moment-progress {
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  gap:
+    0.45rem;
+}
+
+.s4-moment-carousel.is-portrait
+.s4-moment-dots {
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  align-items:
+    center;
+
+  gap:
+    0.38rem;
+}
+
+.s4-moment-carousel.is-portrait
+.s4-moment-counter {
+  font-size:
+    0.56rem;
+
+  white-space:
+    nowrap;
+}
+
+
+/*
+ * Convert the left and right arrows into up and down arrows.
+ *
+ * Previous becomes up.
+ * Next becomes down.
+ */
+.s4-moment-carousel.is-portrait
+.s4-moment-nav svg {
+  transform:
+    rotate(90deg);
+}
+
+
+/*
+ * Give the side buttons the purple-blue accent.
+ */
+.s4-moment-carousel.is-portrait
+.s4-moment-nav {
+  width:
+    38px;
+
+  height:
+    38px;
+
+  flex:
+    0 0 38px;
+
+  border-color:
+    rgba(
+      137,
+      153,
+      255,
+      0.38
+    );
+
+  background:
+    rgba(
+      86,
+      101,
+      190,
+      0.12
+    );
+
+  transition:
+    color 180ms ease,
+    border-color 180ms ease,
+    background 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+
+.s4-moment-carousel.is-portrait
+.s4-moment-nav:hover,
+.s4-moment-carousel.is-portrait
+.s4-moment-nav:focus-visible {
+  color:
+    #ffffff;
+
+  border-color:
+    rgba(
+      185,
+      195,
+      255,
+      0.9
+    );
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(
+        127,
+        102,
+        255,
+        0.96
+      ),
+      rgba(
+        95,
+        141,
+        255,
+        0.92
+      )
+    );
+
+  box-shadow:
+    0 8px 20px
+      rgba(
+        48,
+        59,
+        148,
+        0.34
+      ),
+    0 0 24px
+      rgba(
+        112,
+        120,
+        255,
+        0.24
+      );
+
+  transform:
+    scale(1.06);
+}
+
+
+/*
+ * Highlight the currently selected portrait dot.
+ */
+.s4-moment-carousel.is-portrait
+.s4-moment-dot.is-active {
+  border-color:
+    rgba(
+      198,
+      205,
+      255,
+      0.94
+    );
+
+  background:
+    linear-gradient(
+      135deg,
+      #8a72ff,
+      #6591ff
+    );
+
+  box-shadow:
+    0 0 15px
+      rgba(
+        117,
+        128,
+        255,
+        0.48
+      );
+}
+
+
+/* ==========================================================================
+   MOBILE FALLBACK
+   On small screens the controls return underneath because there is not
+   enough side space.
+   ========================================================================== */
+
+@media
+  (max-width: 680px) {
+
+  .s4-moment-carousel.is-portrait {
+    width:
+      100%;
+
+    padding-right:
+      0;
+  }
+
+  .s4-moment-carousel.is-portrait
+  .s4-moment-card.is-portrait {
+    width:
+      100%;
+
+    max-width:
+      none;
+  }
+
+  .s4-moment-carousel.is-portrait
+  .s4-moment-controls {
+    position:
+      static;
+
+    width:
+      100%;
+
+    margin-top:
+      0.75rem;
+
+    flex-direction:
+      row;
+
+    transform:
+      none;
+  }
+
+  .s4-moment-carousel.is-portrait
+  .s4-moment-progress {
+    flex-direction:
+      row;
+  }
+
+  .s4-moment-carousel.is-portrait
+  .s4-moment-dots {
+    flex-direction:
+      row;
+  }
+
+  .s4-moment-carousel.is-portrait
+  .s4-moment-nav svg {
+    transform:
+      none;
+  }
+}
+
+/* ==========================================================================
+   FINAL MOMENT SIZE FIX
+   Keeps the complete card visible, including its rounded bottom edge.
+   ========================================================================== */
+
+/*
+ * Do not allow the carousel or card to stretch outside its reader panel.
+ */
+.s4-moment-carousel,
+.s4-moment-stage,
+.s4-moment-card {
+  max-width:
+    100%;
+
+  box-sizing:
+    border-box;
+}
+
+
+/*
+ * Keep the complete moment card clipped to its rounded shape.
+ */
+.s4-moment-card {
+  overflow:
+    hidden;
+
+  border-radius:
+    16px;
+}
+
+
+/* ==========================================================================
+   HORIZONTAL MOMENTS
+   ========================================================================== */
+
+.s4-moment-carousel.is-landscape {
+  width:
+    min(
+      100%,
+      540px
+    );
+
+  margin-inline:
+    auto;
+}
+
+.s4-moment-carousel.is-landscape
+.s4-moment-card {
+  width:
+    100%;
+
+  max-width:
+    540px;
+
+  height:
+    auto;
+
+  max-height:
+    min(
+      58svh,
+      470px
+    );
+
+  display:
+    flex;
+
+  flex-direction:
+    column;
+}
+
+.s4-moment-carousel.is-landscape
+.s4-moment-media {
+  width:
+    100%;
+
+  height:
+    clamp(
+      190px,
+      29svh,
+      285px
+    );
+
+  min-height:
+    0;
+
+  aspect-ratio:
+    auto;
+
+  flex:
+    0 0 auto;
+
+  overflow:
+    hidden;
+}
+
+.s4-moment-carousel.is-landscape
+.s4-moment-media img {
+  width:
+    100%;
+
+  height:
+    100%;
+
+  object-fit:
+    cover;
+
+  object-position:
+    center;
+}
+
+
+/* ==========================================================================
+   VERTICAL MOMENTS
+   Keep the card short enough for the bottom to remain visible.
+   ========================================================================== */
+
+.s4-moment-carousel.is-portrait {
+  width:
+    min(
+      100%,
+      390px
+    );
+
+  margin-inline:
+    auto;
+
+  padding-right:
+    62px;
+}
+
+.s4-moment-carousel.is-portrait
+.s4-moment-stage {
+  width:
+    100%;
+
+  min-height:
+    0;
+
+  display:
+    grid;
+
+  place-items:
+    center;
+}
+
+.s4-moment-carousel.is-portrait
+.s4-moment-card {
+  width:
+    min(
+      100%,
+      290px
+    );
+
+  max-width:
+    290px;
+
+  height:
+    auto;
+
+  max-height:
+    min(
+      58svh,
+      490px
+    );
+
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  overflow:
+    hidden;
+}
+
+.s4-moment-carousel.is-portrait
+.s4-moment-media {
+  width:
+    100%;
+
+  height:
+    clamp(
+      230px,
+      36svh,
+      340px
+    );
+
+  min-height:
+    0;
+
+  aspect-ratio:
+    auto;
+
+  flex:
+    0 0 auto;
+
+  overflow:
+    hidden;
+}
+
+.s4-moment-carousel.is-portrait
+.s4-moment-media img {
+  width:
+    100%;
+
+  height:
+    100%;
+
+  display:
+    block;
+
+  object-fit:
+    cover;
+
+  object-position:
+    center;
+}
+
+
+/*
+ * Keep the title and description inside the remaining card space.
+ */
+.s4-moment-carousel
+.s4-moment-copy {
+  min-height:
+    0;
+
+  padding:
+    0.72rem
+    0.82rem
+    0.8rem;
+
+  flex:
+    1 1 auto;
+
+  overflow:
+    hidden;
+}
+
+.s4-moment-carousel
+.s4-moment-copy h5 {
+  margin:
+    0.3rem 0 0;
+
+  font-size:
+    clamp(
+      0.92rem,
+      1.1vw,
+      1.08rem
+    );
+
+  line-height:
+    1.18;
+}
+
+.s4-moment-carousel
+.s4-moment-copy p {
+  margin-top:
+    0.34rem;
+
+  font-size:
+    0.66rem;
+
+  line-height:
+    1.42;
+}
+
+
+/* ==========================================================================
+   PORTRAIT SIDE CONTROLS
+   ========================================================================== */
+
+.s4-moment-carousel.is-portrait
+.s4-moment-controls {
+  position:
+    absolute;
+
+  top:
+    50%;
+
+  right:
+    3px;
+
+  width:
+    48px;
+
+  margin:
+    0;
+
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  gap:
+    0.52rem;
+
+  transform:
+    translateY(-50%);
+}
+
+.s4-moment-carousel.is-portrait
+.s4-moment-progress {
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  align-items:
+    center;
+
+  gap:
+    0.4rem;
+}
+
+.s4-moment-carousel.is-portrait
+.s4-moment-dots {
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  align-items:
+    center;
+
+  gap:
+    0.34rem;
+}
+
+.s4-moment-carousel.is-portrait
+.s4-moment-nav {
+  width:
+    36px;
+
+  height:
+    36px;
+
+  min-width:
+    36px;
+
+  flex:
+    0 0 36px;
+}
+
+.s4-moment-carousel.is-portrait
+.s4-moment-nav svg {
+  transform:
+    rotate(90deg);
+}
+
+
+/* ==========================================================================
+   SPOILER OVERLAY
+   Ensure the filter follows the complete card shape.
+   ========================================================================== */
+
+.s4-moment-card
+.s4-spoiler-cover {
+  position:
+    absolute;
+
+  inset:
+    0;
+
+  width:
+    100%;
+
+  height:
+    100%;
+
+  border-radius:
+    inherit;
+
+  overflow:
+    hidden;
+}
+
+.s4-moment-card.is-spoiler:not(.is-revealed)
+.s4-moment-content {
+  filter:
+    blur(16px);
+
+  transform:
+    scale(1.025);
+}
+
+.s4-moment-card.is-spoiler.is-revealed
+.s4-moment-content {
+  filter:
+    none;
+
+  transform:
+    none;
+}
+
+
+/* ==========================================================================
+   SHORT LAPTOP SCREENS
+   Reduce the image height further when little vertical room is available.
+   ========================================================================== */
+
+@media
+  (min-width: 681px)
+  and
+  (max-height: 820px) {
+
+  .s4-moment-carousel.is-landscape
+  .s4-moment-card {
+    max-height:
+      420px;
+  }
+
+  .s4-moment-carousel.is-landscape
+  .s4-moment-media {
+    height:
+      clamp(
+        175px,
+        25svh,
+        245px
+      );
+  }
+
+  .s4-moment-carousel.is-portrait
+  .s4-moment-card {
+    width:
+      min(
+        100%,
+        260px
+      );
+
+    max-width:
+      260px;
+
+    max-height:
+      430px;
+  }
+
+  .s4-moment-carousel.is-portrait
+  .s4-moment-media {
+    height:
+      clamp(
+        205px,
+        31svh,
+        285px
+      );
+  }
+}
+
+
+/* ==========================================================================
+   PHONE LAYOUT
+   Return portrait controls underneath the card.
+   ========================================================================== */
+
+@media
+  (max-width: 680px) {
+
+  .s4-moment-carousel.is-landscape,
+  .s4-moment-carousel.is-portrait {
+    width:
+      100%;
+
+    padding-right:
+      0;
+  }
+
+  .s4-moment-carousel.is-landscape
+  .s4-moment-card,
+  .s4-moment-carousel.is-portrait
+  .s4-moment-card {
+    width:
+      100%;
+
+    max-width:
+      none;
+
+    max-height:
+      none;
+  }
+
+  .s4-moment-carousel.is-landscape
+  .s4-moment-media {
+    height:
+      auto;
+
+    aspect-ratio:
+      16 / 10;
+  }
+
+  .s4-moment-carousel.is-portrait
+  .s4-moment-media {
+    height:
+      auto;
+
+    aspect-ratio:
+      4 / 5;
+  }
+
+  .s4-moment-carousel.is-portrait
+  .s4-moment-controls {
+    position:
+      static;
+
+    width:
+      100%;
+
+    margin-top:
+      0.72rem;
+
+    flex-direction:
+      row;
+
+    transform:
+      none;
+  }
+
+  .s4-moment-carousel.is-portrait
+  .s4-moment-progress {
+    flex-direction:
+      row;
+  }
+
+  .s4-moment-carousel.is-portrait
+  .s4-moment-dots {
+    flex-direction:
+      row;
+  }
+
+  .s4-moment-carousel.is-portrait
+  .s4-moment-nav svg {
+    transform:
+      none;
+  }
+}

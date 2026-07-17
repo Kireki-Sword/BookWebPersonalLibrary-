@@ -62,12 +62,12 @@
         {
           id: "kai-moment-1",
           title: "The world beyond the walls",
-          label: "Visible moment",
+          label: "Spoiler moment",
           description:
             "Kai saves this moment for the feeling of possibility it creates before the story complicates that hope.",
           imageUrl: "images/kai-moment-1.jpg",
           orientation: "landscape",
-          isSpoiler: false,
+          isSpoiler: true,
         },
 
         {
@@ -219,12 +219,12 @@
         {
           id: "nova-moment-1",
           title: "A truth changes the map",
-          label: "Visible moment",
+          label: "Spoiler moment",
           description:
             "Nova saves this moment because one discovery reorganizes the meaning of everything that came before it.",
           imageUrl: "images/nova-moment-1.jpg",
           orientation: "landscape",
-          isSpoiler: false,
+          isSpoiler: true,
         },
 
         {
@@ -1607,9 +1607,9 @@
           ${totalMoments} moments — use the arrows to view one at a time
         </h4>
       </header>
-
+      
       <div
-        class="s4-moment-carousel"
+        class="s4-moment-carousel is-${escapeHtml(moment.orientation)}"
         data-moment-carousel
         data-reader-id="${escapeHtml(readerId)}"
       >
