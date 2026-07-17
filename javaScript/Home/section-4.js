@@ -91,6 +91,17 @@
           orientation: "portrait",
           isSpoiler: true,
         },
+
+        {
+          id: "kai-moment-4",
+          title: "What remains after the choice",
+          label: "Spoiler moment",
+          description:
+            "This final saved moment focuses on the emotional cost that remains after the immediate conflict has ended.",
+          imageUrl: "images/kai-moment-4.jpg",
+          orientation: "portrait",
+          isSpoiler: true,
+        },
       ],
 
       characters: [
@@ -101,6 +112,7 @@
           reason:
             "His pursuit of freedom keeps changing as the world becomes larger, making every confident answer more difficult.",
           hasActorView: true,
+
           actorEssay: [
             "The performance behind Eren has to preserve several versions of the character at once: the impulsive child, the determined soldier, and the increasingly guarded person who understands more than he says.",
 
@@ -117,6 +129,7 @@
           reason:
             "His divided identity makes duty, guilt, friendship, and survival feel impossible to separate.",
           hasActorView: true,
+
           actorEssay: [
             "Reiner’s performance depends on contradiction. He can sound dependable in one scene and emotionally absent in the next, while both states still feel like parts of the same exhausted person.",
 
@@ -148,10 +161,10 @@
       ],
 
       thoughts: {
-        title: "Freedom, Knowledge, and the Value of Life in Attack on Titan",
+        title:
+          "Freedom, Knowledge, and the Value of Life in Attack on Titan",
 
-        preview:
-          "Attack on Titan begins as a story about humanity attempting to escape physical imprisonment, before revealing the deeper prisons created by history, fear, desire, and fixed ideas of freedom.",
+        preview: `Attack on Titan begins as a story about humanity attempting to escape physical imprisonment. The people inside the Walls believe freedom exists somewhere beyond them, while the Titans appear to be the monsters preventing humanity from reaching it. As the story develops, however, the conflict becomes much more complicated. The Walls are not humanity’s only prison, and the Titans are not entirely separate from the people they consume. The series gradually reveals that people can also be imprisoned by history, fear, inherited hatred, political systems, memories, relationships, desires, and even their own ideas of freedom. Through the Titans, Grisha’s basement, Levi’s understanding of choice, Kenny’s theory of desire, Eren’s future memories, Armin and Zeke’s conversation about life, the infant raised above the crowd during the Rumbling, Ymir’s enslavement, and Mikasa’s final decision, the story asks whether freedom is something that can be conquered externally or something that must first be recognized internally. The tragedy of Eren Yeager is not simply that he fails to become free. It is that he spends his entire life pursuing freedom while becoming increasingly enslaved by his own narrow image of it.`,
 
         templateId: "kai-thoughts-template",
       },
@@ -173,6 +186,7 @@
         {
           theme: "Desire",
           author: "Armin",
+
           paragraphs: [
             "Everybody I met was all the same. Drinking, women, worshiping God, even family... The king, dreams, children, power...",
 
@@ -185,6 +199,7 @@
         {
           theme: "Inherited violence",
           author: "Mr. Braus",
+
           paragraphs: [
             "At the very least, we need to keep the children out of this forest. Otherwise, the exact same things will just keep happening. It's up to us adults to shoulder the sins of the past.",
           ],
@@ -193,6 +208,7 @@
         {
           theme: "Truth and belief",
           author: "Kruger",
+
           paragraphs: [
             "The only truth in this world is that there is no truth. That is our reality. Anyone can become a god or a devil. All it takes is for people to believe it.",
           ],
@@ -218,7 +234,7 @@
           description:
             "The scene connects public history to a private decision, showing how systems enter individual lives.",
           imageUrl: "images/nova-moment-2.jpg",
-          orientation: "portrait",
+          orientation: "landscape",
           isSpoiler: true,
         },
 
@@ -229,6 +245,17 @@
           description:
             "Nova keeps this moment as an example of strategy becoming inseparable from responsibility.",
           imageUrl: "images/nova-moment-3.jpg",
+          orientation: "landscape",
+          isSpoiler: true,
+        },
+
+        {
+          id: "nova-moment-4",
+          title: "A person behind the label",
+          label: "Spoiler moment",
+          description:
+            "The portrait reminds Nova that political categories become weaker when an individual life is seen clearly.",
+          imageUrl: "images/nova-moment-4.jpg",
           orientation: "portrait",
           isSpoiler: true,
         },
@@ -242,6 +269,7 @@
           reason:
             "His imagination remains practical: he looks for another path while understanding the cost of every available choice.",
           hasActorView: true,
+
           actorEssay: [
             "Armin’s performance balances sensitivity with intellectual urgency. The voice can begin carefully, almost as if the character is testing whether he deserves to speak, and then sharpen once an idea becomes clear.",
 
@@ -258,6 +286,7 @@
           reason:
             "His calm explanations make ideology sound reasonable until the human cost of that reasoning becomes impossible to ignore.",
           hasActorView: true,
+
           actorEssay: [
             "Zeke’s performance gains power from understatement. Instead of presenting every belief as a declaration, the actor often uses a conversational calm that makes extreme conclusions sound rehearsed and ordinary.",
 
@@ -284,8 +313,7 @@
         title:
           "Indoctrination, Dehumanization, Freedom, and the Cycle of Violence in Attack on Titan",
 
-        preview:
-          "At the heart of Attack on Titan is an anti-war idea: no entire race, nation, or group can simply be called the true enemy.",
+        preview: `At the heart of Attack on Titan is an anti-war idea: no entire race, nation, or group can simply be called the true enemy. War continues because people inherit hatred from conflicts they did not create, while indoctrination and propaganda teach them which history to believe, whom to fear, and which violence is necessary. Once these beliefs begin to feel like truth and common sense, dehumanization turns people into devils, traitors, weapons, or obstacles, making their suffering easier to ignore and atrocities easier to justify or even enjoy from a safe distance. Fear then opens the way to authoritarianism and fascism, where people seek one leader, one answer, and one enemy, while loyalty replaces independent judgment. Yet the series refuses to say that violence is simply human nature or that the cycle can never change. It argues that enemies remain human, victims can become perpetrators, and the cycle weakens only when people speak, truly see one another, and refuse to pass hatred to the next generation. Most importantly, it turns these contradictions back on the viewer, asking whose suffering we recognize, whose violence we excuse, and when we stop seeing another person as human.`,
 
         templateId: "nova-thoughts-template",
       },
@@ -334,7 +362,10 @@
 
       showStaticLayout(section, elements);
 
-      setStatus(elements, "Supabase is missing. Showing the static fallback.");
+      setStatus(
+        elements,
+        "Supabase is missing. Showing the static fallback.",
+      );
 
       return;
     }
@@ -383,15 +414,18 @@
 
       stage: section.querySelector("[data-s4-stage]"),
 
-      cinematicCopy: section.querySelector("[data-cinematic-copy]"),
+      cinematicCopy:
+        section.querySelector("[data-cinematic-copy]"),
 
       rainLeft: section.querySelector("[data-rain-left]"),
 
       rainRight: section.querySelector("[data-rain-right]"),
 
-      selectionCopy: section.querySelector("[data-selection-copy]"),
+      selectionCopy:
+        section.querySelector("[data-selection-copy]"),
 
-      sharedCardWrap: section.querySelector("[data-shared-card-wrap]"),
+      sharedCardWrap:
+        section.querySelector("[data-shared-card-wrap]"),
 
       sharedCard: section.querySelector("[data-shared-card]"),
 
@@ -409,7 +443,9 @@
         ...section.querySelectorAll("[data-focus-reader]"),
       ],
 
-      layerButtons: [...section.querySelectorAll("[data-layer]")],
+      layerButtons: [
+        ...section.querySelectorAll("[data-layer]"),
+      ],
 
       readerContents: [
         ...section.querySelectorAll("[data-reader-content]"),
@@ -417,29 +453,39 @@
 
       score: section.querySelector("[data-reader-score]"),
 
-      scoreText: section.querySelector("[data-reader-score] span"),
+      scoreText:
+        section.querySelector("[data-reader-score] span"),
 
-      readerStatus: section.querySelector("[data-reader-status]"),
+      readerStatus:
+        section.querySelector("[data-reader-status]"),
 
       handoff: section.querySelector("[data-cover-handoff]"),
 
-      handoffImage: section.querySelector("[data-handoff-image]"),
+      handoffImage:
+        section.querySelector("[data-handoff-image]"),
 
-      handoffFallback: section.querySelector("[data-handoff-fallback]"),
+      handoffFallback:
+        section.querySelector("[data-handoff-fallback]"),
 
       dialog: section.querySelector("[data-detail-dialog]"),
 
-      dialogClose: section.querySelector("[data-detail-close]"),
+      dialogClose:
+        section.querySelector("[data-detail-close]"),
 
-      dialogEyebrow: section.querySelector("[data-detail-eyebrow]"),
+      dialogEyebrow:
+        section.querySelector("[data-detail-eyebrow]"),
 
-      dialogTitle: section.querySelector("[data-detail-title]"),
+      dialogTitle:
+        section.querySelector("[data-detail-title]"),
 
-      dialogBody: section.querySelector("[data-detail-body]"),
+      dialogBody:
+        section.querySelector("[data-detail-body]"),
 
-      empty: section.querySelector("[data-section-4-empty]"),
+      empty:
+        section.querySelector("[data-section-4-empty]"),
 
-      status: section.querySelector("[data-section-4-status]"),
+      status:
+        section.querySelector("[data-section-4-status]"),
     };
   }
 
@@ -453,7 +499,9 @@
       throw result.error;
     }
 
-    return dedupeStories(normalizeStoryRows(result.data || []));
+    return dedupeStories(
+      normalizeStoryRows(result.data || []),
+    );
   }
 
   function normalizeStoryRows(rows) {
@@ -463,7 +511,9 @@
       })
       .map(normalizeStory)
       .filter((story) => {
-        const typeText = story.type.join(" ").toLowerCase();
+        const typeText = story.type
+          .join(" ")
+          .toLowerCase();
 
         return (
           typeText.includes("anime") ||
@@ -475,7 +525,10 @@
   async function findChosenStory(storyPool) {
     if (CHOSEN_STORY_ID) {
       const idMatch = storyPool.find((story) => {
-        return String(story.id) === String(CHOSEN_STORY_ID);
+        return (
+          String(story.id) ===
+          String(CHOSEN_STORY_ID)
+        );
       });
 
       if (idMatch) {
@@ -483,10 +536,13 @@
       }
     }
 
-    const aliasKeys = CHOSEN_STORY_ALIASES.map(normalizeText);
+    const aliasKeys =
+      CHOSEN_STORY_ALIASES.map(normalizeText);
 
     const poolMatch = storyPool.find((story) => {
-      return aliasKeys.includes(normalizeText(story.title));
+      return aliasKeys.includes(
+        normalizeText(story.title),
+      );
     });
 
     if (poolMatch) {
@@ -501,11 +557,15 @@
         .limit(10);
 
       if (!result.error && result.data?.length) {
-        const normalized = result.data.map(normalizeStory);
+        const normalized =
+          result.data.map(normalizeStory);
 
         return (
           normalized.find((story) => {
-            return normalizeText(story.title) === normalizeText(alias);
+            return (
+              normalizeText(story.title) ===
+              normalizeText(alias)
+            );
           }) || normalized[0]
         );
       }
@@ -520,7 +580,9 @@
     return {
       id: String(item.id ?? ""),
 
-      title: String(item.title || "Untitled story"),
+      title: String(
+        item.title || "Untitled story",
+      ),
 
       creator: String(
         item.creator ??
@@ -578,14 +640,17 @@
   }
 
   function renderStory(section, story) {
-    section.querySelectorAll("[data-story-title]").forEach((node) => {
-      node.textContent = story.title;
-    });
+    section
+      .querySelectorAll("[data-story-title]")
+      .forEach((node) => {
+        node.textContent = story.title;
+      });
 
     section
       .querySelectorAll("[data-story-creator]")
       .forEach((node) => {
-        node.textContent = story.creator || "Unknown creator";
+        node.textContent =
+          story.creator || "Unknown creator";
       });
 
     section
@@ -594,27 +659,37 @@
         node.textContent = formatType(story.type);
       });
 
-    section.querySelectorAll("[data-story-cover]").forEach((image) => {
-      const shell = image.closest("[data-cover-shell]");
+    section
+      .querySelectorAll("[data-story-cover]")
+      .forEach((image) => {
+        const shell = image.closest(
+          "[data-cover-shell]",
+        );
 
-      const fallback = shell?.querySelector("[data-cover-fallback]");
+        const fallback = shell?.querySelector(
+          "[data-cover-fallback]",
+        );
 
-      if (!fallback) {
-        return;
-      }
+        if (!fallback) {
+          return;
+        }
 
-      fallback.textContent = story.title;
+        fallback.textContent = story.title;
 
-      loadCover(
-        image,
-        fallback,
-        story,
-        `${story.title} cover`,
-      );
-    });
+        loadCover(
+          image,
+          fallback,
+          story,
+          `${story.title} cover`,
+        );
+      });
   }
 
-  function renderRain(elements, storyPool, chosenStory) {
+  function renderRain(
+    elements,
+    storyPool,
+    chosenStory,
+  ) {
     if (!elements.rainLeft || !elements.rainRight) {
       return;
     }
@@ -631,21 +706,31 @@
 
     const shuffled = seededShuffle(
       ordinaryPool,
-      hashString(`${chosenStory.title}-section-four-rain`),
+      hashString(
+        `${chosenStory.title}-section-four-rain`,
+      ),
     );
 
-    const leftCount = Math.ceil(shuffled.length / 2);
+    const leftCount = Math.ceil(
+      shuffled.length / 2,
+    );
 
-    const leftOrdinary = shuffled.slice(0, leftCount);
+    const leftOrdinary = shuffled.slice(
+      0,
+      leftCount,
+    );
 
-    const rightOrdinary = shuffled.slice(leftCount);
+    const rightOrdinary =
+      shuffled.slice(leftCount);
 
     const leftStories = insertChosenStory(
       leftOrdinary,
       chosenStory,
       Math.max(
         1,
-        Math.floor((leftOrdinary.length + 1) * 0.44),
+        Math.floor(
+          (leftOrdinary.length + 1) * 0.44,
+        ),
       ),
     );
 
@@ -654,7 +739,9 @@
       chosenStory,
       Math.max(
         1,
-        Math.floor((rightOrdinary.length + 1) * 0.56),
+        Math.floor(
+          (rightOrdinary.length + 1) * 0.56,
+        ),
       ),
     );
 
@@ -693,7 +780,11 @@
       result.length,
     );
 
-    result.splice(safeIndex, 0, chosenStory);
+    result.splice(
+      safeIndex,
+      0,
+      chosenStory,
+    );
 
     return result;
   }
@@ -701,9 +792,11 @@
   function isChosenStoryTitle(title) {
     const key = normalizeText(title);
 
-    return CHOSEN_STORY_ALIASES.some((alias) => {
-      return normalizeText(alias) === key;
-    });
+    return CHOSEN_STORY_ALIASES.some(
+      (alias) => {
+        return normalizeText(alias) === key;
+      },
+    );
   }
 
   function dedupeStories(stories) {
@@ -728,13 +821,20 @@
     let state = seed || 1;
 
     const random = () => {
-      state = (state * 1664525 + 1013904223) >>> 0;
+      state =
+        (state * 1664525 + 1013904223) >>> 0;
 
       return state / 4294967296;
     };
 
-    for (let index = copy.length - 1; index > 0; index -= 1) {
-      const swapIndex = Math.floor(random() * (index + 1));
+    for (
+      let index = copy.length - 1;
+      index > 0;
+      index -= 1
+    ) {
+      const swapIndex = Math.floor(
+        random() * (index + 1),
+      );
 
       [copy[index], copy[swapIndex]] = [
         copy[swapIndex],
@@ -763,11 +863,13 @@
     itemIndex,
     isChosen,
   ) {
-    const figure = document.createElement("figure");
+    const figure =
+      document.createElement("figure");
 
     const image = document.createElement("img");
 
-    const fallback = document.createElement("span");
+    const fallback =
+      document.createElement("span");
 
     const leftPositions = [
       8,
@@ -815,7 +917,9 @@
     ];
 
     const positions =
-      side === "left" ? leftPositions : rightPositions;
+      side === "left"
+        ? leftPositions
+        : rightPositions;
 
     figure.className = isChosen
       ? "s4-rain-item is-chosen-story"
@@ -825,7 +929,8 @@
 
     figure.dataset.rainSide = side;
 
-    figure.dataset.rainIndex = String(itemIndex);
+    figure.dataset.rainIndex =
+      String(itemIndex);
 
     if (isChosen) {
       figure.dataset.chosenRainCover = side;
@@ -839,7 +944,9 @@
       `${widths[itemIndex % widths.length]}px`,
     );
 
-    figure.style.zIndex = String(2 + (itemIndex % 5));
+    figure.style.zIndex = String(
+      2 + (itemIndex % 5),
+    );
 
     image.alt = "";
 
@@ -860,7 +967,12 @@
     return figure;
   }
 
-  function loadCover(image, fallback, story, alt) {
+  function loadCover(
+    image,
+    fallback,
+    story,
+    alt,
+  ) {
     const url = getCoverUrlFromId(story.id);
 
     image.hidden = true;
@@ -921,6 +1033,11 @@
 
     const revealedMoments = new Set();
 
+    const currentMomentIndexes = {
+      kai: 0,
+      nova: 0,
+    };
+
     const allowedLayers = [
       "quotes",
       "moments",
@@ -932,39 +1049,81 @@
     fillProfileCards(elements.section);
 
     const renderBothSides = () => {
-      elements.readerContents.forEach((container) => {
-        const readerId = container.dataset.readerContent;
+      elements.readerContents.forEach(
+        (container) => {
+          const readerId =
+            container.dataset.readerContent;
 
-        const reader = READERS[readerId];
+          const reader = READERS[readerId];
 
-        if (!reader) {
-          return;
-        }
+          if (!reader) {
+            return;
+          }
 
-        const renderers = {
-          quotes: () => renderQuotes(container, reader),
+          const renderers = {
+            quotes: () =>
+              renderQuotes(container, reader),
 
-          moments: () =>
-            renderMoments(
-              container,
-              readerId,
-              reader,
-              revealedMoments,
-            ),
+            moments: () =>
+              renderMoments(
+                container,
+                readerId,
+                reader,
+                revealedMoments,
+                currentMomentIndexes[readerId] || 0,
+              ),
 
-          characters: () =>
-            renderCharacters(container, readerId, reader),
+            characters: () =>
+              renderCharacters(
+                container,
+                readerId,
+                reader,
+              ),
 
-          notes: () => renderNotes(container, reader),
+            notes: () =>
+              renderNotes(container, reader),
 
-          thoughts: () =>
-            renderThoughts(container, readerId, reader),
-        };
+            thoughts: () =>
+              renderThoughts(
+                container,
+                readerId,
+                reader,
+              ),
+          };
 
-        renderers[activeLayer]?.();
+          renderers[activeLayer]?.();
 
-        animateContent(container);
-      });
+          animateContent(container);
+        },
+      );
+    };
+
+    const renderMomentReader = (readerId) => {
+      const container =
+        elements.readerContents.find(
+          (item) =>
+            item.dataset.readerContent === readerId,
+        );
+
+      const reader = READERS[readerId];
+
+      if (
+        !container ||
+        !reader ||
+        activeLayer !== "moments"
+      ) {
+        return;
+      }
+
+      renderMoments(
+        container,
+        readerId,
+        reader,
+        revealedMoments,
+        currentMomentIndexes[readerId] || 0,
+      );
+
+      animateContent(container);
     };
 
     const setLayer = (layer) => {
@@ -975,9 +1134,13 @@
       activeLayer = layer;
 
       elements.layerButtons.forEach((button) => {
-        const selected = button.dataset.layer === layer;
+        const selected =
+          button.dataset.layer === layer;
 
-        button.classList.toggle("is-active", selected);
+        button.classList.toggle(
+          "is-active",
+          selected,
+        );
 
         button.setAttribute(
           "aria-pressed",
@@ -989,23 +1152,29 @@
     };
 
     const setFocus = (mode) => {
-      if (!["both", "left", "right"].includes(mode)) {
+      if (
+        !["both", "left", "right"].includes(mode)
+      ) {
         return;
       }
 
       focusMode = mode;
 
-      elements.compareStage.dataset.focus = focusMode;
+      elements.compareStage.dataset.focus =
+        focusMode;
 
-      elements.profileButtons.forEach((button) => {
-        const selected =
-          button.dataset.focusReader === focusMode;
+      elements.profileButtons.forEach(
+        (button) => {
+          const selected =
+            button.dataset.focusReader ===
+            focusMode;
 
-        button.setAttribute(
-          "aria-pressed",
-          String(selected),
-        );
-      });
+          button.setAttribute(
+            "aria-pressed",
+            String(selected),
+          );
+        },
+      );
 
       elements.compareBoth?.setAttribute(
         "aria-pressed",
@@ -1033,7 +1202,8 @@
         elements.readerStatus.textContent =
           READERS.nova.status;
       } else {
-        const combinedScore = getCombinedScore();
+        const combinedScore =
+          getCombinedScore();
 
         const combinedReason =
           `Average of Kai's ${READERS.kai.score} and Nova's ${READERS.nova.score}. ` +
@@ -1057,36 +1227,126 @@
       });
     });
 
-    elements.profileButtons.forEach((button) => {
-      button.addEventListener("click", () => {
-        const requested = button.dataset.focusReader;
+    elements.profileButtons.forEach(
+      (button) => {
+        button.addEventListener("click", () => {
+          const requested =
+            button.dataset.focusReader;
 
-        setFocus(
-          focusMode === requested
-            ? "both"
-            : requested,
-        );
-      });
-    });
+          setFocus(
+            focusMode === requested
+              ? "both"
+              : requested,
+          );
+        });
+      },
+    );
 
-    elements.compareBoth?.addEventListener("click", () => {
-      setFocus("both");
-    });
+    elements.compareBoth?.addEventListener(
+      "click",
+      () => {
+        setFocus("both");
+      },
+    );
 
-    elements.section.addEventListener("click", (event) => {
-      const revealButton = event.target.closest(
-        "[data-reveal-moment]",
-      );
+    elements.section.addEventListener(
+      "click",
+      (event) => {
+        const revealButton =
+          event.target.closest(
+            "[data-reveal-moment]",
+          );
 
-      if (
-        !revealButton ||
-        !elements.section.contains(revealButton)
-      ) {
-        return;
-      }
+        if (
+          revealButton &&
+          elements.section.contains(revealButton)
+        ) {
+          revealMoment(
+            revealButton,
+            revealedMoments,
+          );
 
-      revealMoment(revealButton, revealedMoments);
-    });
+          return;
+        }
+
+        const navigationButton =
+          event.target.closest(
+            "[data-moment-nav]",
+          );
+
+        if (
+          navigationButton &&
+          elements.section.contains(
+            navigationButton,
+          )
+        ) {
+          const readerId =
+            navigationButton.dataset.readerId;
+
+          const reader = READERS[readerId];
+
+          if (!reader?.moments?.length) {
+            return;
+          }
+
+          const direction =
+            navigationButton.dataset
+              .momentNav === "previous"
+              ? -1
+              : 1;
+
+          const total = reader.moments.length;
+
+          const current =
+            currentMomentIndexes[readerId] || 0;
+
+          currentMomentIndexes[readerId] =
+            (current + direction + total) %
+            total;
+
+          renderMomentReader(readerId);
+
+          return;
+        }
+
+        const positionButton =
+          event.target.closest(
+            "[data-moment-position]",
+          );
+
+        if (
+          positionButton &&
+          elements.section.contains(
+            positionButton,
+          )
+        ) {
+          const readerId =
+            positionButton.dataset.readerId;
+
+          const reader = READERS[readerId];
+
+          const requestedIndex = Number(
+            positionButton.dataset
+              .momentPosition,
+          );
+
+          if (
+            !reader?.moments?.length ||
+            !Number.isInteger(requestedIndex) ||
+            requestedIndex < 0 ||
+            requestedIndex >=
+              reader.moments.length
+          ) {
+            return;
+          }
+
+          currentMomentIndexes[readerId] =
+            requestedIndex;
+
+          renderMomentReader(readerId);
+        }
+      },
+    );
 
     setLayer(activeLayer);
 
@@ -1100,7 +1360,8 @@
     tooltip,
   ) {
     if (elements.scoreText) {
-      elements.scoreText.textContent = visibleScore;
+      elements.scoreText.textContent =
+        visibleScore;
     }
 
     if (elements.score) {
@@ -1109,7 +1370,8 @@
         ariaLabel,
       );
 
-      elements.score.dataset.scoreTooltip = tooltip;
+      elements.score.dataset.scoreTooltip =
+        tooltip;
     }
   }
 
@@ -1175,9 +1437,11 @@
           );
 
         image.src =
-          reader.avatarUrl || fallbackPortrait;
+          reader.avatarUrl ||
+          fallbackPortrait;
 
-        image.alt = `${reader.name} profile picture`;
+        image.alt =
+          `${reader.name} profile picture`;
 
         image.hidden = false;
 
@@ -1297,7 +1561,42 @@
     readerId,
     reader,
     revealedMoments,
+    requestedIndex = 0,
   ) {
+    const totalMoments =
+      reader.moments.length;
+
+    const activeIndex = Math.min(
+      Math.max(
+        Number(requestedIndex) || 0,
+        0,
+      ),
+      Math.max(totalMoments - 1, 0),
+    );
+
+    const moment =
+      reader.moments[activeIndex];
+
+    if (!moment) {
+      container.innerHTML = "";
+
+      return;
+    }
+
+    const momentKey =
+      `${readerId}:${moment.id}`;
+
+    const isRevealed =
+      !moment.isSpoiler ||
+      revealedMoments.has(momentKey);
+
+    const fallbackImage =
+      createMomentPlaceholder(
+        moment.title,
+        reader.side,
+        moment.orientation,
+      );
+
     container.innerHTML = `
       <header class="s4-evidence-header">
         <span>
@@ -1305,112 +1604,189 @@
         </span>
 
         <h4>
-          ${reader.moments.length} moments — reveal spoilers one at a time
+          ${totalMoments} moments — use the arrows to view one at a time
         </h4>
       </header>
 
-      <div class="s4-moment-grid">
-        ${reader.moments
-          .map((moment, index) => {
-            const momentKey =
-              `${readerId}:${moment.id}`;
-
-            const isRevealed =
-              !moment.isSpoiler ||
-              revealedMoments.has(momentKey);
-
-            const fallbackImage =
-              createMomentPlaceholder(
-                moment.title,
-                reader.side,
-                moment.orientation,
-              );
-
-            return `
-              <article
-                class="
-                  s4-evidence-card
-                  s4-moment-card
-                  is-${escapeHtml(moment.orientation)}
-                  ${index === 0 ? "is-featured" : ""}
-                  ${moment.isSpoiler ? "is-spoiler" : ""}
-                  ${isRevealed ? "is-revealed" : ""}
-                "
-                data-moment-card
-                data-moment-key="${escapeHtml(momentKey)}"
-              >
-                <div
-                  class="s4-moment-content"
-                  data-moment-content
-                  aria-hidden="${String(!isRevealed)}"
+      <div
+        class="s4-moment-carousel"
+        data-moment-carousel
+        data-reader-id="${escapeHtml(readerId)}"
+      >
+        <div class="s4-moment-stage">
+          <article
+            class="
+              s4-evidence-card
+              s4-moment-card
+              is-${escapeHtml(moment.orientation)}
+              ${moment.isSpoiler ? "is-spoiler" : ""}
+              ${isRevealed ? "is-revealed" : ""}
+            "
+            data-moment-card
+            data-moment-key="${escapeHtml(momentKey)}"
+          >
+            <div
+              class="s4-moment-content"
+              data-moment-content
+              aria-hidden="${String(!isRevealed)}"
+            >
+              <figure class="s4-moment-media">
+                <img
+                  src="${escapeHtml(moment.imageUrl)}"
+                  data-moment-image
+                  data-fallback-src="${escapeHtml(fallbackImage)}"
+                  alt="${escapeHtml(moment.title)}"
+                  loading="lazy"
+                  decoding="async"
                 >
-                  <figure class="s4-moment-media">
-                    <img
-                      src="${escapeHtml(moment.imageUrl)}"
-                      data-moment-image
-                      data-fallback-src="${escapeHtml(fallbackImage)}"
-                      alt="${escapeHtml(moment.title)}"
-                      loading="lazy"
-                      decoding="async"
-                    >
-                  </figure>
+              </figure>
 
-                  <div class="s4-moment-copy">
-                    <span class="s4-card-theme">
-                      ${escapeHtml(moment.label)}
-                    </span>
+              <div class="s4-moment-copy">
+                <div class="s4-moment-meta">
+                  <span class="s4-card-theme">
+                    ${escapeHtml(moment.label)}
+                  </span>
 
-                    <h5>
-                      ${escapeHtml(moment.title)}
-                    </h5>
-
-                    <p>
-                      ${escapeHtml(moment.description)}
-                    </p>
-                  </div>
+                  <span class="s4-moment-orientation">
+                    ${
+                      moment.orientation ===
+                      "portrait"
+                        ? "Vertical image"
+                        : "Horizontal image"
+                    }
+                  </span>
                 </div>
 
-                ${
-                  moment.isSpoiler && !isRevealed
-                    ? `
-                    <div class="s4-spoiler-cover">
-                      <span class="s4-spoiler-label">
-                        This content contains spoilers.
-                      </span>
+                <h5>
+                  ${escapeHtml(moment.title)}
+                </h5>
 
-                      <button
-                        class="s4-spoiler-button"
-                        type="button"
-                        data-reveal-moment
-                        aria-label="Reveal spoiler moment: ${escapeHtml(moment.title)}"
-                      >
-                        <svg
-                          viewBox="0 0 24 24"
-                          aria-hidden="true"
-                        >
-                          <path
-                            d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"
-                          ></path>
+                <p>
+                  ${escapeHtml(moment.description)}
+                </p>
+              </div>
+            </div>
 
-                          <circle
-                            cx="12"
-                            cy="12"
-                            r="2.75"
-                          ></circle>
-                        </svg>
+            ${
+              moment.isSpoiler && !isRevealed
+                ? `
+                <div class="s4-spoiler-cover">
+                  <span class="s4-spoiler-label">
+                    This content contains spoilers.
+                  </span>
 
-                        <span>
-                          Reveal moment
-                        </span>
-                      </button>
-                    </div>
-                  `
-                    : ""
-                }
-              </article>
-            `;
-          })
-          .join("")}
+                  <button
+                    class="s4-spoiler-button"
+                    type="button"
+                    data-reveal-moment
+                    aria-label="Reveal spoiler moment: ${escapeHtml(moment.title)}"
+                  >
+                    <svg
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"
+                      ></path>
+
+                      <circle
+                        cx="12"
+                        cy="12"
+                        r="2.75"
+                      ></circle>
+                    </svg>
+
+                    <span>
+                      Reveal moment
+                    </span>
+                  </button>
+                </div>
+              `
+                : ""
+            }
+          </article>
+        </div>
+
+        <nav
+          class="s4-moment-controls"
+          aria-label="${escapeHtml(reader.name)} moment controls"
+        >
+          <button
+            class="s4-moment-nav"
+            type="button"
+            data-moment-nav="previous"
+            data-reader-id="${escapeHtml(readerId)}"
+            aria-label="Show the previous moment for ${escapeHtml(reader.name)}"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path
+                d="m14.5 5-7 7 7 7"
+              ></path>
+            </svg>
+          </button>
+
+          <div class="s4-moment-progress">
+            <span
+              class="s4-moment-counter"
+              aria-live="polite"
+            >
+              ${activeIndex + 1} / ${totalMoments}
+            </span>
+
+            <div
+              class="s4-moment-dots"
+              role="group"
+              aria-label="Choose a saved moment"
+            >
+              ${reader.moments
+                .map(
+                  (item, index) => `
+                  <button
+                    class="s4-moment-dot ${
+                      index === activeIndex
+                        ? "is-active"
+                        : ""
+                    }"
+                    type="button"
+                    data-moment-position="${index}"
+                    data-reader-id="${escapeHtml(readerId)}"
+                    aria-label="Show moment ${index + 1} of ${totalMoments}: ${escapeHtml(item.title)}"
+                    aria-current="${
+                      index === activeIndex
+                        ? "true"
+                        : "false"
+                    }"
+                  >
+                    <span class="s4-visually-hidden">
+                      Moment ${index + 1}
+                    </span>
+                  </button>
+                `,
+                )
+                .join("")}
+            </div>
+          </div>
+
+          <button
+            class="s4-moment-nav"
+            type="button"
+            data-moment-nav="next"
+            data-reader-id="${escapeHtml(readerId)}"
+            aria-label="Show the next moment for ${escapeHtml(reader.name)}"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path
+                d="m9.5 5 7 7-7 7"
+              ></path>
+            </svg>
+          </button>
+        </nav>
       </div>
     `;
 
@@ -1432,7 +1808,8 @@
       return;
     }
 
-    const momentKey = card.dataset.momentKey;
+    const momentKey =
+      card.dataset.momentKey;
 
     if (momentKey) {
       revealedMoments.add(momentKey);
@@ -1442,11 +1819,15 @@
 
     card
       .querySelector("[data-moment-content]")
-      ?.setAttribute("aria-hidden", "false");
+      ?.setAttribute(
+        "aria-hidden",
+        "false",
+      );
 
-    const spoilerCover = card.querySelector(
-      ".s4-spoiler-cover",
-    );
+    const spoilerCover =
+      card.querySelector(
+        ".s4-spoiler-cover",
+      );
 
     if (spoilerCover) {
       spoilerCover.hidden = true;
@@ -1480,7 +1861,8 @@
               );
 
             const imageUrl =
-              character.imageUrl || fallbackImage;
+              character.imageUrl ||
+              fallbackImage;
 
             const actorAction =
               character.hasActorView
@@ -1582,7 +1964,9 @@
             ${notes
               .map(
                 (note, index) => `
-                <article class="s4-evidence-card s4-note-card">
+                <article
+                  class="s4-evidence-card s4-note-card"
+                >
                   <span class="s4-note-number">
                     ${String(index + 1).padStart(2, "0")}
                   </span>
@@ -1641,7 +2025,9 @@
         </h4>
       </header>
 
-      <article class="s4-evidence-card s4-thought-card">
+      <article
+        class="s4-evidence-card s4-thought-card"
+      >
         <span class="s4-card-theme">
           Full reflection
         </span>
@@ -1676,25 +2062,27 @@
     container,
     selector,
   ) {
-    container.querySelectorAll(selector).forEach((image) => {
-      image.addEventListener(
-        "error",
-        () => {
-          const fallbackSrc =
-            image.dataset.fallbackSrc;
+    container
+      .querySelectorAll(selector)
+      .forEach((image) => {
+        image.addEventListener(
+          "error",
+          () => {
+            const fallbackSrc =
+              image.dataset.fallbackSrc;
 
-          if (
-            fallbackSrc &&
-            image.src !== fallbackSrc
-          ) {
-            image.src = fallbackSrc;
-          }
-        },
-        {
-          once: true,
-        },
-      );
-    });
+            if (
+              fallbackSrc &&
+              image.src !== fallbackSrc
+            ) {
+              image.src = fallbackSrc;
+            }
+          },
+          {
+            once: true,
+          },
+        );
+      });
   }
 
   function setupDetailDialog(elements) {
@@ -1710,65 +2098,85 @@
 
     let returnFocus = null;
 
-    section.addEventListener("click", (event) => {
-      const opener = event.target.closest(
-        "[data-open-detail]",
-      );
+    section.addEventListener(
+      "click",
+      (event) => {
+        const opener = event.target.closest(
+          "[data-open-detail]",
+        );
 
-      if (
-        !opener ||
-        !section.contains(opener)
-      ) {
-        return;
-      }
+        if (
+          !opener ||
+          !section.contains(opener)
+        ) {
+          return;
+        }
 
-      event.preventDefault();
+        event.preventDefault();
 
-      returnFocus = opener;
+        returnFocus = opener;
 
-      openDetailFromTrigger(elements, opener);
+        openDetailFromTrigger(
+          elements,
+          opener,
+        );
 
-      requestAnimationFrame(() => {
-        dialogClose.focus({
-          preventScroll: true,
+        requestAnimationFrame(() => {
+          dialogClose.focus({
+            preventScroll: true,
+          });
         });
-      });
-    });
+      },
+    );
 
-    dialogClose.addEventListener("click", () => {
-      closeModal(dialog);
-    });
-
-    dialog.addEventListener("click", (event) => {
-      if (event.target === dialog) {
+    dialogClose.addEventListener(
+      "click",
+      () => {
         closeModal(dialog);
-      }
-    });
+      },
+    );
 
-    dialog.addEventListener("cancel", (event) => {
-      event.preventDefault();
+    dialog.addEventListener(
+      "click",
+      (event) => {
+        if (event.target === dialog) {
+          closeModal(dialog);
+        }
+      },
+    );
 
-      closeModal(dialog);
-    });
+    dialog.addEventListener(
+      "cancel",
+      (event) => {
+        event.preventDefault();
 
-    dialog.addEventListener("close", () => {
-      unlockPageScroll();
+        closeModal(dialog);
+      },
+    );
 
-      if (returnFocus?.isConnected) {
-        returnFocus.focus({
-          preventScroll: true,
-        });
-      }
-    });
+    dialog.addEventListener(
+      "close",
+      () => {
+        unlockPageScroll();
+
+        if (returnFocus?.isConnected) {
+          returnFocus.focus({
+            preventScroll: true,
+          });
+        }
+      },
+    );
   }
 
   function openDetailFromTrigger(
     elements,
     opener,
   ) {
-    const type = opener.dataset.detailType;
+    const type =
+      opener.dataset.detailType;
 
-    const readerId = opener.dataset.readerId;
+    const readerId =
+      opener.dataset.readerId;
 
     const index = Number(
       opener.dataset.itemIndex || 0,
@@ -1796,7 +2204,8 @@
     reader,
     index,
   ) {
-    const character = reader.characters[index];
+    const character =
+      reader.characters[index];
 
     if (!character?.hasActorView) {
       return;
@@ -1809,7 +2218,8 @@
       );
 
     const imageUrl =
-      character.imageUrl || fallbackImage;
+      character.imageUrl ||
+      fallbackImage;
 
     const essayParagraphs = Array.isArray(
       character.actorEssay,
@@ -2247,8 +2657,14 @@
     );
   }
 
-  function setupMotion(section, elements) {
-    if (!window.gsap || !window.ScrollTrigger) {
+  function setupMotion(
+    section,
+    elements,
+  ) {
+    if (
+      !window.gsap ||
+      !window.ScrollTrigger
+    ) {
       console.warn(
         "Section 4: GSAP or ScrollTrigger is missing.",
       );
@@ -2284,7 +2700,9 @@
           return;
         }
 
-        section.classList.remove("is-static");
+        section.classList.remove(
+          "is-static",
+        );
 
         return createPinnedTimeline(
           section,
@@ -2300,15 +2718,17 @@
     elements,
     gsap,
   ) {
-    const leftItems = gsap.utils.toArray(
-      '[data-rain-side="left"]',
-      elements.stage,
-    );
+    const leftItems =
+      gsap.utils.toArray(
+        '[data-rain-side="left"]',
+        elements.stage,
+      );
 
-    const rightItems = gsap.utils.toArray(
-      '[data-rain-side="right"]',
-      elements.stage,
-    );
+    const rightItems =
+      gsap.utils.toArray(
+        '[data-rain-side="right"]',
+        elements.stage,
+      );
 
     const chosenLeft =
       elements.stage.querySelector(
@@ -2333,19 +2753,20 @@
       return undefined;
     }
 
-    syncHandoffCover(chosenLeft, elements);
+    syncHandoffCover(
+      chosenLeft,
+      elements,
+    );
 
-    const regularLeft = leftItems.filter(
-      (item) => {
+    const regularLeft =
+      leftItems.filter((item) => {
         return item !== chosenLeft;
-      },
-    );
+      });
 
-    const regularRight = rightItems.filter(
-      (item) => {
+    const regularRight =
+      rightItems.filter((item) => {
         return item !== chosenRight;
-      },
-    );
+      });
 
     const viewportHeight = () => {
       return elements.stage.clientHeight;
@@ -2392,16 +2813,20 @@
 
     const comparisonTime = 5.02;
 
-    const DOCK_TOP = 64;
+    const DOCK_TOP = 74;
 
     const DOCK_SCALE = 0.78;
 
     const updateFinalLayoutMetrics = () => {
       const cardHeight =
-        elements.sharedCard.getBoundingClientRect().height;
+        elements.sharedCard
+          .getBoundingClientRect()
+          .height;
 
       const introHeight = Math.max(
-        elements.contentIntro.getBoundingClientRect().height,
+        elements.contentIntro
+          .getBoundingClientRect()
+          .height,
         28,
       );
 
@@ -2555,137 +2980,141 @@
       return rainStart + index * stagger;
     };
 
-    regularLeft.forEach((item, index) => {
-      const startTime =
-        getStartTime(item);
+    regularLeft.forEach(
+      (item, index) => {
+        const startTime =
+          getStartTime(item);
 
-      const rotation =
-        -8 +
-        (index % 5) * 3.4;
+        const rotation =
+          -8 +
+          (index % 5) * 3.4;
 
-      timeline.fromTo(
-        item,
+        timeline.fromTo(
+          item,
 
-        {
-          y: () => {
-            return (
-              -item.offsetHeight -
-              85 -
-              (index % 4) * 30
-            );
+          {
+            y: () => {
+              return (
+                -item.offsetHeight -
+                85 -
+                (index % 4) * 30
+              );
+            },
+
+            rotation,
+
+            scale:
+              0.9 +
+              (index % 3) * 0.045,
+
+            autoAlpha: 0,
           },
 
-          rotation,
+          {
+            y: () => {
+              return (
+                viewportHeight() +
+                item.offsetHeight +
+                95 +
+                (index % 4) * 30
+              );
+            },
 
-          scale:
-            0.9 +
-            (index % 3) * 0.045,
+            rotation:
+              rotation * -0.5,
 
-          autoAlpha: 0,
-        },
+            autoAlpha: 1,
 
-        {
-          y: () => {
-            return (
-              viewportHeight() +
-              item.offsetHeight +
-              95 +
-              (index % 4) * 30
-            );
+            duration:
+              travelDuration,
           },
 
-          rotation:
-            rotation * -0.5,
+          startTime,
+        );
 
-          autoAlpha: 1,
+        timeline.to(
+          item,
 
-          duration:
-            travelDuration,
-        },
+          {
+            autoAlpha: 0,
 
-        startTime,
-      );
-
-      timeline.to(
-        item,
-
-        {
-          autoAlpha: 0,
-
-          duration: 0.1,
-        },
-
-        startTime +
-          travelDuration -
-          0.08,
-      );
-    });
-
-    regularRight.forEach((item, index) => {
-      const startTime =
-        getStartTime(item);
-
-      const rotation =
-        8 -
-        (index % 5) * 3.4;
-
-      timeline.fromTo(
-        item,
-
-        {
-          y: () => {
-            return (
-              viewportHeight() +
-              item.offsetHeight +
-              85 +
-              (index % 4) * 30
-            );
+            duration: 0.1,
           },
 
-          rotation,
+          startTime +
+            travelDuration -
+            0.08,
+        );
+      },
+    );
 
-          scale:
-            0.9 +
-            (index % 3) * 0.045,
+    regularRight.forEach(
+      (item, index) => {
+        const startTime =
+          getStartTime(item);
 
-          autoAlpha: 0,
-        },
+        const rotation =
+          8 -
+          (index % 5) * 3.4;
 
-        {
-          y: () => {
-            return (
-              -item.offsetHeight -
-              95 -
-              (index % 4) * 30
-            );
+        timeline.fromTo(
+          item,
+
+          {
+            y: () => {
+              return (
+                viewportHeight() +
+                item.offsetHeight +
+                85 +
+                (index % 4) * 30
+              );
+            },
+
+            rotation,
+
+            scale:
+              0.9 +
+              (index % 3) * 0.045,
+
+            autoAlpha: 0,
           },
 
-          rotation:
-            rotation * -0.5,
+          {
+            y: () => {
+              return (
+                -item.offsetHeight -
+                95 -
+                (index % 4) * 30
+              );
+            },
 
-          autoAlpha: 1,
+            rotation:
+              rotation * -0.5,
 
-          duration:
-            travelDuration,
-        },
+            autoAlpha: 1,
 
-        startTime,
-      );
+            duration:
+              travelDuration,
+          },
 
-      timeline.to(
-        item,
+          startTime,
+        );
 
-        {
-          autoAlpha: 0,
+        timeline.to(
+          item,
 
-          duration: 0.1,
-        },
+          {
+            autoAlpha: 0,
 
-        startTime +
-          travelDuration -
-          0.08,
-      );
-    });
+            duration: 0.1,
+          },
+
+          startTime +
+            travelDuration -
+            0.08,
+        );
+      },
+    );
 
     const chosenLeftStart =
       getStartTime(chosenLeft);
@@ -3218,13 +3647,17 @@
     };
   }
 
-  function syncHandoffCover(source, elements) {
+  function syncHandoffCover(
+    source,
+    elements,
+  ) {
     const sourceImage =
       source.querySelector("img");
 
-    const sourceFallback = source.querySelector(
-      "[data-cover-fallback]",
-    );
+    const sourceFallback =
+      source.querySelector(
+        "[data-cover-fallback]",
+      );
 
     elements.handoffFallback.textContent =
       sourceFallback?.textContent ||
@@ -3240,7 +3673,9 @@
       "";
 
     if (!sourceUrl) {
-      elements.handoffImage.removeAttribute("src");
+      elements.handoffImage.removeAttribute(
+        "src",
+      );
 
       return;
     }
@@ -3302,11 +3737,9 @@
         rect.top -
         parentRect.top,
 
-      width:
-        rect.width,
+      width: rect.width,
 
-      height:
-        rect.height,
+      height: rect.height,
     };
   }
 
@@ -3354,7 +3787,8 @@
 
   function setStatus(elements, message) {
     if (elements.status) {
-      elements.status.textContent = message;
+      elements.status.textContent =
+        message;
     }
   }
 

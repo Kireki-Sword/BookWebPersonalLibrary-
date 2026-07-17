@@ -3680,3 +3680,266 @@ body.s4-modal-open {
     padding: 0.9rem;
   }
 }
+
+
+/* ==========================================================================
+   MOMENT CAROUSEL — FOUR IMAGE SLOTS, ONE VISIBLE AT A TIME
+   ========================================================================== */
+
+.s4-moment-grid {
+  display: block;
+}
+
+.s4-moment-carousel {
+  width: 100%;
+  display: grid;
+  gap: 0.8rem;
+}
+
+.s4-moment-stage {
+  width: 100%;
+  min-height: 430px;
+  display: grid;
+  place-items: start center;
+}
+
+.s4-moment-card {
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.s4-moment-card.is-landscape {
+  max-width: none;
+}
+
+.s4-moment-card.is-portrait {
+  width: min(76%, 390px);
+}
+
+.s4-moment-card.is-featured {
+  grid-column: auto;
+}
+
+.s4-moment-card.is-landscape .s4-moment-media,
+.s4-moment-card.is-featured.is-landscape .s4-moment-media {
+  aspect-ratio: 16 / 8.6;
+}
+
+.s4-moment-card.is-portrait .s4-moment-media {
+  aspect-ratio: 3 / 4;
+}
+
+.s4-moment-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.s4-moment-orientation {
+  color: var(--s4-muted);
+  font-family: var(--font-body, system-ui, sans-serif);
+  font-size: 0.56rem;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: 0.075em;
+  text-transform: uppercase;
+}
+
+.s4-moment-controls {
+  width: 100%;
+  min-height: 48px;
+  padding: 0.42rem 0.5rem;
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) 40px;
+  align-items: center;
+  gap: 0.65rem;
+  border: 1px solid rgba(184, 192, 255, 0.18);
+  border-radius: 14px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(20, 28, 53, 0.84),
+      rgba(8, 13, 29, 0.88)
+    );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.s4-moment-nav {
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  display: inline-grid;
+  place-items: center;
+  color: #f5f3ff;
+  border: 1px solid rgba(201, 209, 255, 0.3);
+  border-radius: 999px;
+  background: rgba(124, 140, 255, 0.12);
+  cursor: pointer;
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    background 180ms ease;
+}
+
+.s4-moment-nav svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.s4-moment-nav:hover {
+  transform: translateY(-1px);
+  border-color: rgba(226, 231, 255, 0.7);
+  background: rgba(124, 140, 255, 0.22);
+}
+
+.s4-moment-nav:focus-visible,
+.s4-moment-dot:focus-visible {
+  outline: 2px solid rgba(190, 200, 255, 0.82);
+  outline-offset: 3px;
+}
+
+.s4-moment-progress {
+  min-width: 0;
+  display: grid;
+  justify-items: center;
+  gap: 0.36rem;
+}
+
+.s4-moment-counter {
+  color: var(--s4-text-mid);
+  font-family: var(--font-body, system-ui, sans-serif);
+  font-size: 0.66rem;
+  font-weight: 850;
+  line-height: 1;
+  letter-spacing: 0.08em;
+}
+
+.s4-moment-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.42rem;
+}
+
+.s4-moment-dot {
+  width: 9px;
+  height: 9px;
+  padding: 0;
+  border: 1px solid rgba(205, 213, 255, 0.44);
+  border-radius: 999px;
+  background: rgba(205, 213, 255, 0.12);
+  cursor: pointer;
+  transition:
+    width 180ms ease,
+    border-color 180ms ease,
+    background 180ms ease,
+    transform 180ms ease;
+}
+
+.s4-moment-dot:hover {
+  transform: scale(1.12);
+  border-color: rgba(235, 238, 255, 0.78);
+}
+
+.s4-moment-dot.is-active {
+  width: 26px;
+  border-color: rgba(215, 222, 255, 0.7);
+  background:
+    linear-gradient(
+      90deg,
+      rgba(155, 124, 255, 0.9),
+      rgba(103, 201, 232, 0.9)
+    );
+}
+
+.s4-visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+
+/* ==========================================================================
+   THOUGHT PREVIEWS — LONGER TEXT, SMALLER TYPE, LARGER CARDS
+   ========================================================================== */
+
+.s4-thought-card {
+  min-height: 470px;
+  padding: 1.08rem 1.15rem 1rem;
+}
+
+.s4-thought-card h4 {
+  max-width: 34ch;
+  font-size: clamp(1.02rem, 1.28vw, 1.3rem);
+  line-height: 1.12;
+  letter-spacing: -0.032em;
+}
+
+.s4-thought-copy {
+  flex: 1 1 auto;
+  margin-top: 0.72rem;
+}
+
+.s4-thought-copy p {
+  max-width: none;
+  font-size: clamp(0.64rem, 0.76vw, 0.72rem);
+  line-height: 1.58;
+  text-wrap: pretty;
+}
+
+.s4-thought-card .s4-card-actions {
+  margin-top: 1rem;
+}
+
+
+/* Lower the docked shared-story card slightly so its top edge is not clipped. */
+
+.section-cover-rain.is-static .s4-stage {
+  padding-top: calc(var(--s4-nav-height) + 20px);
+}
+
+@media (max-width: 680px) {
+  .s4-moment-stage {
+    min-height: 0;
+  }
+
+  .s4-moment-card.is-landscape,
+  .s4-moment-card.is-portrait {
+    width: 100%;
+    max-width: none;
+  }
+
+  .s4-moment-card.is-landscape .s4-moment-media,
+  .s4-moment-card.is-featured.is-landscape .s4-moment-media {
+    aspect-ratio: 16 / 10;
+  }
+
+  .s4-moment-card.is-portrait .s4-moment-media {
+    aspect-ratio: 4 / 5;
+  }
+
+  .s4-thought-card {
+    min-height: 0;
+  }
+
+  .s4-thought-copy p {
+    font-size: 0.72rem;
+    line-height: 1.62;
+  }
+}
