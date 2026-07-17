@@ -1,41 +1,725 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>InkWell-Search</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <meta
+    name="description"
+    content="Search and explore manga, anime, books, films, and stories on Inkwell."
+  >
+
+  <title>Search Stories | Inkwell</title>
+
+  <!-- Existing global variables, fonts, background, and navigation -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Search-page-only styles -->
+  <link rel="stylesheet" href="search.css">
+
+  <!-- Existing icon library -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css"
+  >
 </head>
+
 <body>
-    <nav>
-                    <!-- LEFT  Logo -->
-        <a href="index.html" class="nav-logo">
-            <div class="nav-logo-icon">
-            <i class="ti ti-book-2"></i>
-            </div>
-            <span class="nav-logo-text">Inkwell</span>
+  <!-- =====================================================
+       PRIMARY NAVIGATION
+       ===================================================== -->
+
+  <nav aria-label="Primary navigation">
+    <!-- Left: logo -->
+    <a href="index.html" class="nav-logo">
+      <span class="nav-logo-icon" aria-hidden="true">
+        <i class="ti ti-book-2"></i>
+      </span>
+
+      <span class="nav-logo-text">
+        Inkwell
+      </span>
+    </a>
+
+    <!-- Center: navigation -->
+    <ul class="nav-links">
+      <li>
+        <a href="index.html">
+          Home
         </a>
-        
-        <!-- CENTER  Links -->
-        <ul class="nav-links">
-            <li><a href="index.html" class="active">Home</a></li>
-            <li><a href="search.html">Search</a></li>
-            <li><a href="library.html">My Library</a></li>
-            <li><a href="social.html">Social</a></li>
-        </ul>
-        
-        <!-- RIGHT  Auth -->
-        <div class="nav-auth">
-            <a href="login.html" class="btn-ghost">Log in</a>
-            <a href="login.html" class="btn-primary">Sign up</a>
+      </li>
+
+      <li>
+        <a
+          href="search.html"
+          class="active"
+          aria-current="page"
+        >
+          Search
+        </a>
+      </li>
+
+      <li>
+        <a href="library.html">
+          My Library
+        </a>
+      </li>
+
+      <li>
+        <a href="social.html">
+          Social
+        </a>
+      </li>
+    </ul>
+
+    <!-- Right: authentication -->
+    <div class="nav-auth">
+      <a href="login.html" class="btn-ghost">
+        Log in
+      </a>
+
+      <a href="login.html" class="btn-primary">
+        Sign up
+      </a>
+    </div>
+  </nav>
+
+
+  <!-- =====================================================
+       SEARCH PAGE
+       ===================================================== -->
+
+  <main class="search-page">
+    <!-- ===================================================
+         SEARCH HERO
+         =================================================== -->
+
+    <section
+      class="search-hero"
+      aria-labelledby="search-page-title"
+    >
+      <div class="search-hero-inner">
+        <span class="search-eyebrow">
+          Explore the catalogue
+        </span>
+
+        <h1 id="search-page-title">
+          Find the story that stays with you.
+        </h1>
+
+        <p class="search-hero-description">
+          Search by title, alternative title, creator, format,
+          or genre. Then narrow the results until the right
+          story remains.
+        </p>
+
+
+        <!-- Main search field -->
+        <div class="catalogue-search">
+          <form
+            id="catalogue-search-form"
+            class="catalogue-search-form"
+            role="search"
+            novalidate
+          >
+            <label
+              for="catalogue-search-input"
+              class="sr-only"
+            >
+              Search the Inkwell story catalogue
+            </label>
+
+            <span
+              class="catalogue-search-icon"
+              aria-hidden="true"
+            >
+              <i class="ti ti-search"></i>
+            </span>
+
+            <input
+              id="catalogue-search-input"
+              name="q"
+              type="search"
+              placeholder="Search a title, creator, genre, or format"
+              autocomplete="off"
+              spellcheck="false"
+              role="combobox"
+              aria-autocomplete="list"
+              aria-haspopup="listbox"
+              aria-expanded="false"
+              aria-controls="search-suggestions"
+            >
+
+            <button
+              id="catalogue-search-clear"
+              class="catalogue-search-clear"
+              type="button"
+              aria-label="Clear search"
+              hidden
+            >
+              <i
+                class="ti ti-x"
+                aria-hidden="true"
+              ></i>
+            </button>
+
+            <button
+              class="catalogue-search-submit"
+              type="submit"
+            >
+              <span>Search</span>
+
+              <i
+                class="ti ti-arrow-right"
+                aria-hidden="true"
+              ></i>
+            </button>
+          </form>
+
+
+          <!-- Autocomplete suggestions -->
+          <div
+            id="search-suggestions"
+            class="search-suggestions"
+            role="listbox"
+            aria-label="Search suggestions"
+            hidden
+          ></div>
         </div>
 
-    </nav>
+
+        <p class="search-helper">
+          Try “Vagabond,” “Hajime Isayama,” “psychological,”
+          or “anime.”
+        </p>
+      </div>
+    </section>
 
 
+    <!-- ===================================================
+         FILTERS AND RESULTS
+         =================================================== -->
 
-    <script src="index.js"></script>
-    
+    <section
+      class="search-workspace"
+      aria-label="Story catalogue"
+    >
+      <!-- Mobile drawer backdrop -->
+      <button
+        id="filter-drawer-overlay"
+        class="filter-drawer-overlay"
+        type="button"
+        aria-label="Close filters"
+        hidden
+      ></button>
+
+
+      <!-- =================================================
+           FILTER PANEL
+           ================================================= -->
+
+      <aside
+        id="filter-panel"
+        class="filter-panel"
+        aria-labelledby="filter-panel-title"
+      >
+        <header class="filter-panel-header">
+          <div>
+            <span class="filter-panel-eyebrow">
+              Refine results
+            </span>
+
+            <h2 id="filter-panel-title">
+              Filters
+            </h2>
+          </div>
+
+          <button
+            id="filter-panel-close"
+            class="filter-panel-close"
+            type="button"
+            aria-label="Close filters"
+          >
+            <i
+              class="ti ti-x"
+              aria-hidden="true"
+            ></i>
+          </button>
+        </header>
+
+
+        <div class="filter-panel-body">
+          <!-- Format filter -->
+          <fieldset class="filter-group">
+            <legend>Format</legend>
+
+            <div
+              id="format-filter-list"
+              class="filter-list"
+            >
+              <!-- Generated by search.js -->
+            </div>
+          </fieldset>
+
+
+          <!-- Genre filter -->
+          <fieldset class="filter-group">
+            <legend>Genre</legend>
+
+            <div
+              id="genre-filter-list"
+              class="filter-list"
+            >
+              <!-- Generated by search.js -->
+            </div>
+
+            <button
+              id="genre-show-more"
+              class="filter-show-more"
+              type="button"
+              hidden
+            >
+              <span>Show all genres</span>
+
+              <i
+                class="ti ti-chevron-down"
+                aria-hidden="true"
+              ></i>
+            </button>
+          </fieldset>
+
+
+          <!-- Score filter -->
+          <fieldset class="filter-group">
+            <legend>Minimum score</legend>
+
+            <div class="filter-list">
+              <label class="filter-option">
+                <input
+                  type="radio"
+                  name="minimum-score"
+                  value="0"
+                  data-score-filter
+                  checked
+                >
+
+                <span class="filter-option-main">
+                  Any score
+                </span>
+              </label>
+
+              <label class="filter-option">
+                <input
+                  type="radio"
+                  name="minimum-score"
+                  value="7"
+                  data-score-filter
+                >
+
+                <span class="filter-option-main">
+                  7 and above
+                </span>
+              </label>
+
+              <label class="filter-option">
+                <input
+                  type="radio"
+                  name="minimum-score"
+                  value="8"
+                  data-score-filter
+                >
+
+                <span class="filter-option-main">
+                  8 and above
+                </span>
+              </label>
+
+              <label class="filter-option">
+                <input
+                  type="radio"
+                  name="minimum-score"
+                  value="9"
+                  data-score-filter
+                >
+
+                <span class="filter-option-main">
+                  9 and above
+                </span>
+              </label>
+            </div>
+          </fieldset>
+
+
+          <!-- Featured filter -->
+          <fieldset
+            id="featured-filter-group"
+            class="filter-group"
+          >
+            <legend>Collection</legend>
+
+            <label class="filter-option">
+              <input
+                id="featured-filter"
+                type="checkbox"
+              >
+
+              <span class="filter-option-main">
+                Featured stories only
+              </span>
+            </label>
+          </fieldset>
+        </div>
+
+
+        <footer class="filter-panel-footer">
+          <button
+            id="clear-all-filters"
+            class="clear-filters-button"
+            type="button"
+          >
+            <i
+              class="ti ti-filter-off"
+              aria-hidden="true"
+            ></i>
+
+            Clear filters
+          </button>
+        </footer>
+      </aside>
+
+
+      <!-- =================================================
+           RESULTS PANEL
+           ================================================= -->
+
+      <section
+        class="results-panel"
+        aria-labelledby="results-heading"
+      >
+        <!-- Results toolbar -->
+        <header class="results-toolbar">
+          <div class="results-heading-group">
+            <p
+              id="results-status"
+              class="results-status"
+              role="status"
+              aria-live="polite"
+            >
+              Loading stories…
+            </p>
+
+            <h2 id="results-heading">
+              Browse all stories
+            </h2>
+          </div>
+
+
+          <div class="results-controls">
+            <!-- Mobile filter button -->
+            <button
+              id="mobile-filter-button"
+              class="mobile-filter-button"
+              type="button"
+              aria-controls="filter-panel"
+              aria-expanded="false"
+            >
+              <i
+                class="ti ti-adjustments-horizontal"
+                aria-hidden="true"
+              ></i>
+
+              <span>Filters</span>
+
+              <span
+                id="mobile-filter-count"
+                class="mobile-filter-count"
+                hidden
+              >
+                0
+              </span>
+            </button>
+
+
+            <!-- Sort control -->
+            <label class="result-select-control">
+              <span>Sort by</span>
+
+              <select id="sort-select">
+                <option value="relevance">
+                  Relevance
+                </option>
+
+                <option value="score-desc">
+                  Highest score
+                </option>
+
+                <option value="score-asc">
+                  Lowest score
+                </option>
+
+                <option value="title-asc">
+                  Title A–Z
+                </option>
+
+                <option value="title-desc">
+                  Title Z–A
+                </option>
+              </select>
+            </label>
+
+
+            <!-- Page-size control -->
+            <label class="result-select-control">
+              <span>Show</span>
+
+              <select id="per-page-select">
+                <option value="12">
+                  12 per page
+                </option>
+
+                <option value="24">
+                  24 per page
+                </option>
+
+                <option value="48">
+                  48 per page
+                </option>
+              </select>
+            </label>
+          </div>
+        </header>
+
+
+        <!-- Applied filters -->
+        <div
+          id="active-filters"
+          class="active-filters"
+          aria-label="Applied filters"
+          hidden
+        >
+          <span class="active-filters-label">
+            Applied
+          </span>
+
+          <div
+            id="active-filter-list"
+            class="active-filter-list"
+          ></div>
+
+          <button
+            id="active-filters-clear"
+            class="active-filters-clear"
+            type="button"
+          >
+            Clear all
+          </button>
+        </div>
+
+
+        <!-- Loading state -->
+        <div
+          id="results-loading"
+          class="results-loading"
+          aria-label="Loading search results"
+        >
+          <!-- Generated by search.js -->
+        </div>
+
+
+        <!-- Error state -->
+        <div
+          id="results-error"
+          class="results-message"
+          role="alert"
+          hidden
+        >
+          <span
+            class="results-message-icon"
+            aria-hidden="true"
+          >
+            <i class="ti ti-cloud-off"></i>
+          </span>
+
+          <h3>Stories could not be loaded.</h3>
+
+          <p id="results-error-message">
+            Check the browser console and your Supabase
+            permissions.
+          </p>
+
+          <button
+            id="retry-results"
+            class="results-message-button"
+            type="button"
+          >
+            Try again
+          </button>
+        </div>
+
+
+        <!-- Empty state -->
+        <div
+          id="results-empty"
+          class="results-message"
+          hidden
+        >
+          <span
+            class="results-message-icon"
+            aria-hidden="true"
+          >
+            <i class="ti ti-search-off"></i>
+          </span>
+
+          <h3>No matching stories found.</h3>
+
+          <p>
+            Try removing a filter, using fewer words, or
+            searching an alternative title.
+          </p>
+
+          <div class="results-message-actions">
+            <button
+              id="empty-clear-filters"
+              class="results-message-button results-message-button-secondary"
+              type="button"
+            >
+              Clear filters
+            </button>
+
+            <button
+              id="empty-browse-all"
+              class="results-message-button"
+              type="button"
+            >
+              Browse all stories
+            </button>
+          </div>
+        </div>
+
+
+        <!-- Results grid -->
+        <div
+          id="results-grid"
+          class="results-grid"
+          aria-live="polite"
+        ></div>
+
+
+        <!-- Pagination -->
+        <nav
+          id="results-pagination"
+          class="results-pagination"
+          aria-label="Search result pages"
+          hidden
+        ></nav>
+      </section>
+    </section>
+  </main>
+
+
+  <!-- =====================================================
+       RESULT CARD TEMPLATE
+       ===================================================== -->
+
+  <template id="story-card-template">
+    <article class="story-card">
+      <a
+        class="story-card-cover"
+        data-story-link
+      >
+        <img
+          src=""
+          alt=""
+          loading="lazy"
+          decoding="async"
+          data-story-cover
+        >
+
+        <span
+          class="story-card-cover-fallback"
+          aria-hidden="true"
+        >
+          <i class="ti ti-book-2"></i>
+        </span>
+
+        <span
+          class="story-card-format"
+          data-story-format
+        ></span>
+      </a>
+
+
+      <div class="story-card-body">
+        <div class="story-card-heading">
+          <div class="story-card-title-group">
+            <h3>
+              <a
+                data-story-title
+                data-story-link
+              ></a>
+            </h3>
+
+            <p data-story-creator></p>
+          </div>
+
+          <span
+            class="story-card-score"
+            data-story-score-wrap
+          >
+            <i
+              class="ti ti-star"
+              aria-hidden="true"
+            ></i>
+
+            <span data-story-score></span>
+          </span>
+        </div>
+
+
+        <div
+          class="story-card-genres"
+          data-story-genres
+          aria-label="Genres"
+        ></div>
+
+
+        <a
+          class="story-card-action"
+          data-story-link
+        >
+          <span>View story</span>
+
+          <i
+            class="ti ti-arrow-up-right"
+            aria-hidden="true"
+          ></i>
+        </a>
+      </div>
+    </article>
+  </template>
+
+
+  <!-- =====================================================
+       FOOTER
+       ===================================================== -->
+
+  <footer class="search-footer">
+    <p>
+      Inkwell — remember what a story meant to you.
+    </p>
+  </footer>
+
+
+  <!-- Supabase must load before search.js -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+    defer
+  ></script>
+
+  <script src="search.js" defer></script>
 </body>
 </html>

@@ -8,6 +8,7 @@
 @import url("./css/homePage/section-3.css");
 @import url("./css/homePage/section-4.css");
 
+@import url("./css/Search/search.css");
 
 *, *::before, *::after {
   box-sizing: border-box;
