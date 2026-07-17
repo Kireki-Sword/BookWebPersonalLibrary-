@@ -3943,3 +3943,873 @@ body.s4-modal-open {
     line-height: 1.62;
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ==========================================================================
+   FINAL LAYOUT REFINEMENTS
+   Moments, characters, thoughts, compare controls, and accent colours
+   ========================================================================== */
+
+/*
+ * Give the comparison area more horizontal room.
+ * It still keeps space between the content and the sides of the screen.
+ */
+.section-cover-rain {
+  --s4-layout-width:
+    min(
+      1380px,
+      calc(100vw - 48px)
+    );
+}
+
+
+/* ==========================================================================
+   READER PANELS
+   Add more space along the sides and bottom.
+   ========================================================================== */
+
+.s4-reader-side {
+  padding:
+    12px
+    12px
+    16px;
+}
+
+.s4-reader-content {
+  padding-bottom:
+    0.35rem;
+}
+
+
+/* ==========================================================================
+   MOMENT CAROUSEL
+   Prevent horizontal and vertical images from leaving the screen.
+   ========================================================================== */
+
+.s4-moment-carousel {
+  width:
+    100%;
+
+  max-width:
+    100%;
+
+  margin-inline:
+    auto;
+}
+
+.s4-moment-stage {
+  width:
+    100%;
+
+  min-height:
+    0;
+
+  height:
+    auto;
+
+  display:
+    grid;
+
+  place-items:
+    start center;
+}
+
+
+/*
+ * Horizontal cards stop at 520px.
+ * This prevents them from becoming too large inside each reader panel.
+ */
+.s4-moment-card.is-landscape {
+  width:
+    min(
+      100%,
+      520px
+    );
+
+  max-width:
+    520px;
+}
+
+
+/*
+ * Vertical cards are narrower so their height stays inside the screen.
+ */
+.s4-moment-card.is-portrait {
+  width:
+    min(
+      68%,
+      280px
+    );
+
+  max-width:
+    280px;
+}
+
+
+/*
+ * Horizontal image shape.
+ */
+.s4-moment-card.is-landscape
+.s4-moment-media,
+.s4-moment-card.is-featured.is-landscape
+.s4-moment-media {
+  width:
+    100%;
+
+  aspect-ratio:
+    16 / 9;
+
+  max-height:
+    292px;
+}
+
+
+/*
+ * Vertical image shape.
+ */
+.s4-moment-card.is-portrait
+.s4-moment-media {
+  width:
+    100%;
+
+  aspect-ratio:
+    4 / 5;
+
+  max-height:
+    350px;
+}
+
+
+/*
+ * Images fill the available frame without stretching.
+ */
+.s4-moment-media img {
+  width:
+    100%;
+
+  height:
+    100%;
+
+  display:
+    block;
+
+  object-fit:
+    cover;
+}
+
+
+/*
+ * Slightly reduce the copy area so the complete carousel fits.
+ */
+.s4-moment-copy {
+  padding:
+    0.82rem
+    0.92rem
+    0.88rem;
+}
+
+.s4-moment-copy h5 {
+  font-size:
+    clamp(
+      0.98rem,
+      1.12vw,
+      1.2rem
+    );
+}
+
+.s4-moment-copy p {
+  font-size:
+    0.68rem;
+
+  line-height:
+    1.5;
+}
+
+
+/*
+ * Keep the navigation controls aligned with the image card.
+ */
+.s4-moment-controls {
+  width:
+    min(
+      100%,
+      520px
+    );
+
+  margin-inline:
+    auto;
+}
+
+
+/* ==========================================================================
+   CHARACTER CARDS
+   Make the cards wider and more horizontal.
+   ========================================================================== */
+
+/*
+ * Every character now gets one full-width row.
+ * This removes the narrow vertical cards.
+ */
+.s4-character-grid {
+  display:
+    grid;
+
+  grid-template-columns:
+    1fr;
+
+  gap:
+    11px;
+
+  padding:
+    0 2px 5px;
+}
+
+
+/*
+ * Normal character cards.
+ */
+.s4-character-card,
+.s4-character-card.is-featured {
+  grid-column:
+    auto;
+
+  min-height:
+    128px;
+
+  padding:
+    12px 14px;
+
+  display:
+    grid;
+
+  grid-template-columns:
+    86px
+    minmax(0, 1fr);
+
+  gap:
+    0.86rem;
+
+  align-items:
+    stretch;
+}
+
+
+/*
+ * The first character remains slightly larger.
+ */
+.s4-character-card.is-featured {
+  min-height:
+    146px;
+
+  grid-template-columns:
+    98px
+    minmax(0, 1fr);
+}
+
+.s4-character-copy h5 {
+  margin-top:
+    0.28rem;
+
+  font-size:
+    clamp(
+      1.02rem,
+      1.22vw,
+      1.3rem
+    );
+}
+
+.s4-character-copy p {
+  max-width:
+    72ch;
+
+  margin-top:
+    0.38rem;
+
+  font-size:
+    0.69rem;
+
+  line-height:
+    1.52;
+}
+
+.s4-character-card
+.s4-card-actions {
+  padding-top:
+    0.42rem;
+}
+
+
+/* ==========================================================================
+   THOUGHT PREVIEW CARDS
+   Increase the title and paragraph size to use the available space.
+   ========================================================================== */
+
+.s4-thought-card {
+  min-height:
+    500px;
+
+  padding:
+    1.28rem
+    1.35rem
+    1.15rem;
+}
+
+.s4-thought-card h4 {
+  max-width:
+    32ch;
+
+  font-size:
+    clamp(
+      1.22rem,
+      1.5vw,
+      1.58rem
+    );
+
+  line-height:
+    1.1;
+
+  letter-spacing:
+    -0.038em;
+}
+
+.s4-thought-copy {
+  flex:
+    1 1 auto;
+
+  margin-top:
+    0.86rem;
+}
+
+.s4-thought-copy p {
+  max-width:
+    none;
+
+  font-size:
+    clamp(
+      0.76rem,
+      0.82vw,
+      0.84rem
+    );
+
+  line-height:
+    1.62;
+
+  text-wrap:
+    pretty;
+}
+
+.s4-thought-card
+.s4-card-actions {
+  margin-top:
+    1.15rem;
+}
+
+
+/* ==========================================================================
+   PURPLE-BLUE ACCENT
+   Matches the logo and Sign up button.
+   ========================================================================== */
+
+/*
+ * Selected layer button.
+ */
+.s4-layer-button.is-active,
+.s4-layer-button:hover {
+  color:
+    #ffffff;
+
+  border-color:
+    rgba(
+      164,
+      174,
+      255,
+      0.82
+    );
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(
+        127,
+        102,
+        255,
+        0.92
+      ),
+      rgba(
+        95,
+        141,
+        255,
+        0.88
+      )
+    );
+
+  box-shadow:
+    0 9px 22px
+      rgba(
+        46,
+        60,
+        145,
+        0.34
+      ),
+    0 0 26px
+      rgba(
+        112,
+        120,
+        255,
+        0.24
+      ),
+    inset 0 1px 0
+      rgba(
+        255,
+        255,
+        255,
+        0.22
+      );
+
+  transform:
+    translateY(-1px);
+}
+
+
+/*
+ * Focused reader card.
+ */
+.s4-profile-card:hover,
+.s4-profile-card[aria-pressed="true"] {
+  border-color:
+    rgba(
+      137,
+      153,
+      255,
+      0.74
+    );
+
+  box-shadow:
+    0 18px 42px
+      rgba(
+        0,
+        0,
+        0,
+        0.34
+      ),
+    0 0 30px
+      rgba(
+        94,
+        111,
+        255,
+        0.18
+      ),
+    inset 0 1px 0
+      rgba(
+        255,
+        255,
+        255,
+        0.1
+      );
+}
+
+
+/*
+ * Focus label animation.
+ */
+.s4-profile-command {
+  transition:
+    color 180ms ease,
+    border-color 180ms ease,
+    background 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+
+
+/*
+ * Focus label selected and hover colour.
+ */
+.s4-profile-card:hover
+.s4-profile-command,
+.s4-profile-card[aria-pressed="true"]
+.s4-profile-command {
+  color:
+    #ffffff;
+
+  border-color:
+    rgba(
+      188,
+      198,
+      255,
+      0.78
+    );
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(
+        127,
+        102,
+        255,
+        0.96
+      ),
+      rgba(
+        95,
+        141,
+        255,
+        0.92
+      )
+    );
+
+  box-shadow:
+    0 7px 16px
+      rgba(
+        44,
+        56,
+        140,
+        0.34
+      ),
+    0 0 18px
+      rgba(
+        112,
+        120,
+        255,
+        0.22
+      );
+
+  transform:
+    translateY(-1px);
+}
+
+
+/* ==========================================================================
+   COMPARE BOTH BUTTON
+   Correct the two-line text alignment.
+   ========================================================================== */
+
+.s4-compare-both {
+  width:
+    58px;
+
+  min-height:
+    58px;
+
+  padding:
+    0.52rem
+    0.35rem;
+
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  gap:
+    0.06rem;
+
+  color:
+    var(--s4-text-mid);
+
+  font-size:
+    0.48rem;
+
+  font-weight:
+    900;
+
+  line-height:
+    0.96;
+
+  letter-spacing:
+    0.045em;
+
+  text-align:
+    center;
+
+  text-transform:
+    uppercase;
+
+  white-space:
+    nowrap;
+}
+
+.s4-compare-both span {
+  display:
+    block;
+
+  width:
+    100%;
+
+  text-align:
+    center;
+}
+
+.s4-compare-both:hover,
+.s4-compare-both[aria-pressed="true"] {
+  color:
+    #ffffff;
+
+  border-color:
+    rgba(
+      183,
+      194,
+      255,
+      0.88
+    );
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(
+        127,
+        102,
+        255,
+        0.98
+      ),
+      rgba(
+        95,
+        141,
+        255,
+        0.94
+      )
+    );
+
+  box-shadow:
+    0 10px 24px
+      rgba(
+        42,
+        53,
+        138,
+        0.38
+      ),
+    0 0 30px
+      rgba(
+        112,
+        120,
+        255,
+        0.28
+      ),
+    inset 0 1px 0
+      rgba(
+        255,
+        255,
+        255,
+        0.24
+      );
+
+  transform:
+    scale(1.04);
+}
+
+
+/* ==========================================================================
+   OTHER BUTTON HOVER COLOURS
+   ========================================================================== */
+
+.s4-moment-nav:hover,
+.s4-detail-button:hover,
+.s4-spoiler-button:hover {
+  color:
+    #ffffff;
+
+  border-color:
+    rgba(
+      181,
+      193,
+      255,
+      0.82
+    );
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(
+        127,
+        102,
+        255,
+        0.9
+      ),
+      rgba(
+        95,
+        141,
+        255,
+        0.86
+      )
+    );
+
+  box-shadow:
+    0 8px 20px
+      rgba(
+        44,
+        56,
+        140,
+        0.3
+      ),
+    0 0 22px
+      rgba(
+        112,
+        120,
+        255,
+        0.2
+      );
+
+  transform:
+    translateY(-1px);
+}
+
+
+/* ==========================================================================
+   TABLET AND SHORT-SCREEN FALLBACK
+   ========================================================================== */
+
+@media
+  (max-width: 1099px),
+  (max-height: 759px) {
+
+  .section-cover-rain {
+    --s4-layout-width:
+      min(
+        1280px,
+        calc(100vw - 28px)
+      );
+  }
+
+  .s4-moment-card.is-landscape {
+    width:
+      min(
+        100%,
+        640px
+      );
+
+    max-width:
+      640px;
+  }
+
+  .s4-moment-card.is-portrait {
+    width:
+      min(
+        76%,
+        340px
+      );
+
+    max-width:
+      340px;
+  }
+
+  .s4-moment-controls {
+    width:
+      min(
+        100%,
+        640px
+      );
+  }
+
+  .s4-thought-card {
+    min-height:
+      0;
+  }
+}
+
+
+/* ==========================================================================
+   PHONE LAYOUT
+   ========================================================================== */
+
+@media
+  (max-width: 680px) {
+
+  .s4-reader-side {
+    padding:
+      10px
+      10px
+      14px;
+  }
+
+  .s4-moment-card.is-landscape,
+  .s4-moment-card.is-portrait {
+    width:
+      100%;
+
+    max-width:
+      none;
+  }
+
+  .s4-moment-card.is-landscape
+  .s4-moment-media,
+  .s4-moment-card.is-featured.is-landscape
+  .s4-moment-media {
+    aspect-ratio:
+      16 / 10;
+
+    max-height:
+      none;
+  }
+
+  .s4-moment-card.is-portrait
+  .s4-moment-media {
+    aspect-ratio:
+      4 / 5;
+
+    max-height:
+      none;
+  }
+
+  .s4-character-card,
+  .s4-character-card.is-featured {
+    min-height:
+      118px;
+
+    padding:
+      10px;
+
+    grid-template-columns:
+      72px
+      minmax(0, 1fr);
+
+    gap:
+      0.68rem;
+  }
+
+  .s4-character-copy p {
+    font-size:
+      0.67rem;
+  }
+
+  .s4-thought-card {
+    min-height:
+      0;
+
+    padding:
+      1.05rem;
+  }
+
+  .s4-thought-card h4 {
+    font-size:
+      clamp(
+        1.12rem,
+        6.2vw,
+        1.42rem
+      );
+  }
+
+  .s4-thought-copy p {
+    font-size:
+      0.78rem;
+
+    line-height:
+      1.6;
+  }
+}
