@@ -1,13 +1,13 @@
 // search.js
-// Inkwell catalogue search, filtering, sorting, and pagination.
-// Load this file after the Supabase browser library.
+// Inkwell catalogue search, filters, custom sorting,
+// result cards, URL state, and pagination.
 
 (() => {
   "use strict";
 
 
   /* =======================================================
-     DATABASE CONFIGURATION
+     SUPABASE CONFIGURATION
      ======================================================= */
 
   const SUPABASE_URL =
@@ -25,27 +25,19 @@
   const COVER_FOLDER =
     "covers";
 
-  const SEARCH_COLUMNS = [
-    "id",
-    "title",
-    "alternativeTitles",
-    "type",
-    "creator",
-    "heroScore",
-    "genres",
-    "featured"
-  ].join(", ");
-
 
   /* =======================================================
-     PAGE CONFIGURATION
+     SEARCH CONFIGURATION
      ======================================================= */
 
   const DATABASE_BATCH_SIZE =
     1000;
 
+  const DATABASE_TIMEOUT_MS =
+    15000;
+
   const SEARCH_DEBOUNCE_MS =
-    260;
+    220;
 
   const MAX_SEARCH_SUGGESTIONS =
     6;
@@ -62,13 +54,14 @@
     48
   ];
 
-  const ALLOWED_SORT_OPTIONS = new Set([
-    "relevance",
-    "score-desc",
-    "score-asc",
-    "title-asc",
-    "title-desc"
-  ]);
+  const ALLOWED_SORT_OPTIONS =
+    new Set([
+      "relevance",
+      "score-desc",
+      "score-asc",
+      "title-asc",
+      "title-desc"
+    ]);
 
   const PREFERRED_TYPE_ORDER = [
     "manga",
@@ -80,7 +73,8 @@
     "film",
     "movie",
     "tv",
-    "television"
+    "television",
+    "game"
   ];
 
 
@@ -108,6 +102,7 @@
 
   let isCatalogueLoaded =
     false;
+
 
   const state = {
     query: "",
@@ -138,10 +133,6 @@
   };
 
 
-  /* =======================================================
-     DOM REFERENCES
-     ======================================================= */
-
   const elements = {};
 
 
@@ -167,7 +158,7 @@
 
     if (!hasRequiredElements()) {
       console.error(
-        "Inkwell search page is missing one or more required elements.",
+        "Search page is missing one or more required elements.",
         elements
       );
 
@@ -175,6 +166,7 @@
     }
 
     bindEvents();
+    initializeCustomSelects();
     readStateFromUrl();
     syncStaticControls();
     renderLoadingSkeletons(
@@ -183,7 +175,8 @@
 
     if (!window.supabase?.createClient) {
       showError(
-        "The Supabase browser library did not load."
+        "The Supabase browser library did not load. " +
+        "Check that its script appears before search.js."
       );
 
       return;
@@ -198,6 +191,10 @@
     await loadAndRenderCatalogue();
   }
 
+
+  /* =======================================================
+     ELEMENT COLLECTION
+     ======================================================= */
 
   function collectElements() {
     elements.searchForm =
@@ -275,16 +272,6 @@
         "clear-all-filters"
       );
 
-    elements.sortSelect =
-      document.getElementById(
-        "sort-select"
-      );
-
-    elements.perPageSelect =
-      document.getElementById(
-        "per-page-select"
-      );
-
     elements.resultsStatus =
       document.getElementById(
         "results-status"
@@ -335,6 +322,11 @@
         "results-empty"
       );
 
+    elements.emptyCopy =
+      document.getElementById(
+        "results-empty-copy"
+      );
+
     elements.emptyClearFilters =
       document.getElementById(
         "empty-clear-filters"
@@ -359,6 +351,12 @@
       document.getElementById(
         "story-card-template"
       );
+
+    elements.customSelects = [
+      ...document.querySelectorAll(
+        "[data-custom-select]"
+      )
+    ];
   }
 
 
@@ -379,8 +377,6 @@
       elements.featuredFilterGroup &&
       elements.featuredFilter &&
       elements.clearAllFilters &&
-      elements.sortSelect &&
-      elements.perPageSelect &&
       elements.resultsStatus &&
       elements.resultsHeading &&
       elements.activeFilters &&
@@ -391,11 +387,13 @@
       elements.errorMessage &&
       elements.retry &&
       elements.empty &&
+      elements.emptyCopy &&
       elements.emptyClearFilters &&
       elements.emptyBrowseAll &&
       elements.resultsGrid &&
       elements.pagination &&
-      elements.cardTemplate
+      elements.cardTemplate &&
+      elements.customSelects.length === 2
     );
   }
 
@@ -408,11 +406,23 @@
     setLoadingState(true);
 
     try {
+      const loadedCatalogue =
+        await withTimeout(
+          loadCatalogue(),
+          DATABASE_TIMEOUT_MS,
+          "The catalogue request timed out."
+        );
+
       catalogue =
-        await loadCatalogue();
+        loadedCatalogue;
 
       isCatalogueLoaded =
         true;
+
+      if (!catalogue.length) {
+        showEmptyCatalogueState();
+        return;
+      }
 
       elements.featuredFilterGroup.hidden =
         !catalogue.some((item) => {
@@ -428,7 +438,7 @@
       });
     } catch (error) {
       console.error(
-        "Could not load the Inkwell catalogue:",
+        "INKWELL SEARCH: catalogue load failed.",
         error
       );
 
@@ -458,21 +468,19 @@
         error
       } = await supabaseClient
         .from(TABLE_NAME)
-        .select(SEARCH_COLUMNS)
-        .order(
-          "heroScore",
-          {
-            ascending: false,
-            nullsFirst: false
-          }
-        )
+        .select("*")
         .range(
           from,
           to
         );
 
       if (error) {
-        throw error;
+        throw new Error(
+          `Supabase ${
+            error.code ||
+            "error"
+          }: ${error.message}`
+        );
       }
 
       const page =
@@ -497,12 +505,56 @@
       normalizeCatalogue(rows);
 
     console.log(
-      `INKWELL SEARCH: loaded ${normalized.length} searchable stories.`
+      `INKWELL SEARCH: received ${rows.length} rows ` +
+      `and normalized ${normalized.length} stories.`
     );
 
     return normalized;
   }
 
+
+  function withTimeout(
+    promise,
+    milliseconds,
+    message
+  ) {
+    let timer =
+      null;
+
+    const timeout =
+      new Promise(
+        (
+          _,
+          reject
+        ) => {
+          timer =
+            window.setTimeout(
+              () => {
+                reject(
+                  new Error(message)
+                );
+              },
+              milliseconds
+            );
+        }
+      );
+
+    return Promise
+      .race([
+        promise,
+        timeout
+      ])
+      .finally(() => {
+        window.clearTimeout(
+          timer
+        );
+      });
+  }
+
+
+  /* =======================================================
+     DATABASE NORMALIZATION
+     ======================================================= */
 
   function normalizeCatalogue(rows) {
     const uniqueItems =
@@ -512,7 +564,10 @@
       if (
         !row ||
         row.id == null ||
-        !String(row.title || "").trim()
+        !String(
+          row.title ||
+          ""
+        ).trim()
       ) {
         return;
       }
@@ -534,8 +589,10 @@
 
   function normalizeStory(row) {
     const title =
-      String(row.title || "")
-        .trim();
+      String(
+        row.title ||
+        ""
+      ).trim();
 
     const alternativeTitles =
       normalizeValueList(
@@ -562,6 +619,11 @@
         row.genres
       );
 
+    const tags =
+      normalizeFacetList(
+        row.tags
+      );
+
     const score =
       getNumericScore(
         row.heroScore ??
@@ -570,18 +632,38 @@
         row.rating
       );
 
+    const description =
+      String(
+        row.description ||
+        ""
+      ).trim();
+
     const searchText =
-      normalizeSearchText([
-        title,
-        ...alternativeTitles,
-        creator,
-        ...types.map((type) => {
-          return type.label;
-        }),
-        ...genres.map((genre) => {
-          return genre.label;
-        })
-      ].join(" "));
+      normalizeSearchText(
+        [
+          title,
+          ...alternativeTitles,
+          creator,
+
+          ...types.map(
+            (item) => {
+              return item.label;
+            }
+          ),
+
+          ...genres.map(
+            (item) => {
+              return item.label;
+            }
+          ),
+
+          ...tags.map(
+            (item) => {
+              return item.label;
+            }
+          )
+        ].join(" ")
+      );
 
     return {
       id:
@@ -590,7 +672,9 @@
       title,
 
       titleSearch:
-        normalizeSearchText(title),
+        normalizeSearchText(
+          title
+        ),
 
       alternativeTitles,
 
@@ -602,19 +686,27 @@
       creator,
 
       creatorSearch:
-        normalizeSearchText(creator),
+        normalizeSearchText(
+          creator
+        ),
 
       types,
 
       genres,
+
+      tags,
 
       score,
 
       featured:
         row.featured === true,
 
+      description,
+
       coverUrl:
-        getCoverUrlFromId(row.id),
+        getCoverUrlFromId(
+          row.id
+        ),
 
       searchText,
 
@@ -640,7 +732,9 @@
     } = supabaseClient
       .storage
       .from(BUCKET_NAME)
-      .getPublicUrl(coverPath);
+      .getPublicUrl(
+        coverPath
+      );
 
     return (
       data?.publicUrl ||
@@ -650,7 +744,7 @@
 
 
   /* =======================================================
-     NORMALIZATION UTILITIES
+     VALUE NORMALIZATION
      ======================================================= */
 
   function normalizeValueList(value) {
@@ -663,20 +757,30 @@
 
     if (Array.isArray(value)) {
       return value
-        .flatMap(normalizeValueList)
+        .flatMap(
+          normalizeValueList
+        )
         .map((entry) => {
-          return String(entry).trim();
+          return String(
+            entry
+          ).trim();
         })
         .filter(Boolean);
     }
 
     if (
-      typeof value === "object"
+      typeof value ===
+      "object"
     ) {
-      return Object.values(value)
-        .flatMap(normalizeValueList)
+      return Object
+        .values(value)
+        .flatMap(
+          normalizeValueList
+        )
         .map((entry) => {
-          return String(entry).trim();
+          return String(
+            entry
+          ).trim();
         })
         .filter(Boolean);
     }
@@ -693,19 +797,18 @@
       text.startsWith("{")
     ) {
       try {
-        const parsed =
-          JSON.parse(text);
-
         return normalizeValueList(
-          parsed
+          JSON.parse(text)
         );
       } catch {
-        // Continue to the regular separator logic.
+        // Continue with normal delimiter splitting.
       }
     }
 
     return text
-      .split(/\s*(?:\/|\||,|;)\s*/g)
+      .split(
+        /\s*(?:\/|\||,|;)\s*/g
+      )
       .map((entry) => {
         return entry.trim();
       })
@@ -718,13 +821,17 @@
     fallback = ""
   ) {
     const source =
-      normalizeValueList(value);
+      normalizeValueList(
+        value
+      );
 
     if (
       !source.length &&
       fallback
     ) {
-      source.push(fallback);
+      source.push(
+        fallback
+      );
     }
 
     const unique =
@@ -766,7 +873,8 @@
 
   function normalizeSearchText(value) {
     return String(
-      value ?? ""
+      value ??
+      ""
     )
       .normalize("NFKD")
       .replace(
@@ -787,21 +895,27 @@
 
 
   function normalizeFacetKey(value) {
-    return normalizeSearchText(value)
-      .replace(
-        /\s+/g,
-        "-"
-      );
+    return normalizeSearchText(
+      value
+    ).replace(
+      /\s+/g,
+      "-"
+    );
   }
 
 
   function formatKeyAsLabel(key) {
-    return String(key || "")
+    return String(
+      key ||
+      ""
+    )
       .split("-")
       .filter(Boolean)
       .map((word) => {
         return (
-          word.charAt(0).toUpperCase() +
+          word
+            .charAt(0)
+            .toUpperCase() +
           word.slice(1)
         );
       })
@@ -813,7 +927,9 @@
     const number =
       Number(value);
 
-    return Number.isFinite(number)
+    return Number.isFinite(
+      number
+    )
       ? number
       : 0;
   }
@@ -821,13 +937,17 @@
 
   function formatScore(value) {
     const number =
-      getNumericScore(value);
+      getNumericScore(
+        value
+      );
 
     if (!number) {
       return "";
     }
 
-    return Number.isInteger(number)
+    return Number.isInteger(
+      number
+    )
       ? String(number)
       : number.toFixed(1);
   }
@@ -857,13 +977,15 @@
       "focus",
       () => {
         if (
-          elements.searchInput.value
+          elements.searchInput
+            .value
             .trim()
             .length >= 2 &&
           isCatalogueLoaded
         ) {
           renderSuggestions(
-            elements.searchInput.value
+            elements.searchInput
+              .value
           );
         }
       }
@@ -892,10 +1014,9 @@
     elements.clearAllFilters.addEventListener(
       "click",
       () => {
-        clearFilters({
-          historyMode:
-            "push"
-        });
+        clearFilters(
+          "push"
+        );
       }
     );
 
@@ -907,21 +1028,10 @@
     elements.activeFiltersClear.addEventListener(
       "click",
       () => {
-        clearFilters({
-          historyMode:
-            "push"
-        });
+        clearFilters(
+          "push"
+        );
       }
-    );
-
-    elements.sortSelect.addEventListener(
-      "change",
-      handleSortChange
-    );
-
-    elements.perPageSelect.addEventListener(
-      "change",
-      handlePerPageChange
     );
 
     elements.pagination.addEventListener(
@@ -947,10 +1057,9 @@
     elements.emptyClearFilters.addEventListener(
       "click",
       () => {
-        clearFilters({
-          historyMode:
-            "push"
-        });
+        clearFilters(
+          "push"
+        );
       }
     );
 
@@ -983,9 +1092,12 @@
       "resize",
       () => {
         if (
-          window.innerWidth > 940
+          window.innerWidth >
+          980
         ) {
-          closeFilterDrawer();
+          closeFilterDrawer(
+            false
+          );
         }
       }
     );
@@ -993,7 +1105,511 @@
 
 
   /* =======================================================
-     SEARCH EVENTS
+     CUSTOM SELECT CONTROLS
+     ======================================================= */
+
+  function initializeCustomSelects() {
+    elements.customSelects.forEach(
+      (select) => {
+        const trigger =
+          select.querySelector(
+            "[data-select-trigger]"
+          );
+
+        const menu =
+          select.querySelector(
+            "[data-select-menu]"
+          );
+
+        const options = [
+          ...menu.querySelectorAll(
+            "[data-option-value]"
+          )
+        ];
+
+        trigger.addEventListener(
+          "click",
+          () => {
+            if (
+              select.classList.contains(
+                "is-open"
+              )
+            ) {
+              closeCustomSelect(
+                select
+              );
+            } else {
+              openCustomSelect(
+                select
+              );
+            }
+          }
+        );
+
+        trigger.addEventListener(
+          "keydown",
+          (event) => {
+            handleCustomSelectTriggerKeydown(
+              event,
+              select
+            );
+          }
+        );
+
+        menu.addEventListener(
+          "click",
+          (event) => {
+            const option =
+              event.target.closest(
+                "[data-option-value]"
+              );
+
+            if (option) {
+              chooseCustomSelectOption(
+                select,
+                option.dataset
+                  .optionValue
+              );
+            }
+          }
+        );
+
+        menu.addEventListener(
+          "keydown",
+          (event) => {
+            handleCustomSelectMenuKeydown(
+              event,
+              select
+            );
+          }
+        );
+
+        options.forEach(
+          (option) => {
+            option.setAttribute(
+              "aria-selected",
+              "false"
+            );
+
+            option.tabIndex =
+              -1;
+          }
+        );
+      }
+    );
+  }
+
+
+  function openCustomSelect(select) {
+    closeAllCustomSelects(
+      select
+    );
+
+    const trigger =
+      select.querySelector(
+        "[data-select-trigger]"
+      );
+
+    const menu =
+      select.querySelector(
+        "[data-select-menu]"
+      );
+
+    select.classList.add(
+      "is-open"
+    );
+
+    menu.hidden =
+      false;
+
+    trigger.setAttribute(
+      "aria-expanded",
+      "true"
+    );
+
+    const selected =
+      menu.querySelector(
+        '[aria-selected="true"]'
+      ) ||
+      menu.querySelector(
+        "[data-option-value]"
+      );
+
+    updateCustomSelectHighlight(
+      select,
+      selected
+    );
+  }
+
+
+  function closeCustomSelect(
+    select,
+    returnFocus = false
+  ) {
+    const trigger =
+      select.querySelector(
+        "[data-select-trigger]"
+      );
+
+    const menu =
+      select.querySelector(
+        "[data-select-menu]"
+      );
+
+    select.classList.remove(
+      "is-open"
+    );
+
+    menu.hidden =
+      true;
+
+    trigger.setAttribute(
+      "aria-expanded",
+      "false"
+    );
+
+    menu
+      .querySelectorAll(
+        "[data-option-value]"
+      )
+      .forEach((option) => {
+        option.classList.remove(
+          "is-active"
+        );
+
+        option.tabIndex =
+          -1;
+      });
+
+    if (returnFocus) {
+      trigger.focus();
+    }
+  }
+
+
+  function closeAllCustomSelects(
+    except = null
+  ) {
+    elements.customSelects.forEach(
+      (select) => {
+        if (select !== except) {
+          closeCustomSelect(
+            select
+          );
+        }
+      }
+    );
+  }
+
+
+  function chooseCustomSelectOption(
+    select,
+    value
+  ) {
+    const option =
+      select.querySelector(
+        `[data-option-value="${
+          CSS.escape(
+            String(value)
+          )
+        }"]`
+      );
+
+    if (!option) {
+      return;
+    }
+
+    select.dataset.value =
+      String(value);
+
+    select
+      .querySelector(
+        "[data-select-value]"
+      )
+      .textContent =
+        option.textContent.trim();
+
+    select
+      .querySelectorAll(
+        "[data-option-value]"
+      )
+      .forEach((item) => {
+        item.setAttribute(
+          "aria-selected",
+          String(
+            item === option
+          )
+        );
+      });
+
+    closeCustomSelect(
+      select,
+      true
+    );
+
+    if (
+      select.querySelector(
+        "#sort-select-trigger"
+      )
+    ) {
+      state.sort =
+        ALLOWED_SORT_OPTIONS.has(
+          value
+        )
+          ? value
+          : "relevance";
+    } else {
+      const requested =
+        Number(value);
+
+      state.perPage =
+        ALLOWED_PER_PAGE.includes(
+          requested
+        )
+          ? requested
+          : DEFAULT_PER_PAGE;
+    }
+
+    state.page =
+      1;
+
+    applyStateAndRender({
+      historyMode:
+        "push"
+    });
+  }
+
+
+  function handleCustomSelectTriggerKeydown(
+    event,
+    select
+  ) {
+    if (
+      event.key === "ArrowDown" ||
+      event.key === "ArrowUp" ||
+      event.key === "Enter" ||
+      event.key === " "
+    ) {
+      event.preventDefault();
+
+      openCustomSelect(
+        select
+      );
+
+      const menu =
+        select.querySelector(
+          "[data-select-menu]"
+        );
+
+      const selected =
+        menu.querySelector(
+          '[aria-selected="true"]'
+        ) ||
+        menu.querySelector(
+          "[data-option-value]"
+        );
+
+      selected?.focus();
+    }
+  }
+
+
+  function handleCustomSelectMenuKeydown(
+    event,
+    select
+  ) {
+    const options = [
+      ...select.querySelectorAll(
+        "[data-option-value]"
+      )
+    ];
+
+    const currentIndex =
+      options.indexOf(
+        document.activeElement
+      );
+
+    if (
+      event.key ===
+      "ArrowDown"
+    ) {
+      event.preventDefault();
+
+      const next =
+        options[
+          Math.min(
+            currentIndex + 1,
+            options.length - 1
+          )
+        ];
+
+      updateCustomSelectHighlight(
+        select,
+        next
+      );
+
+      next?.focus();
+
+      return;
+    }
+
+    if (
+      event.key ===
+      "ArrowUp"
+    ) {
+      event.preventDefault();
+
+      const previous =
+        options[
+          Math.max(
+            currentIndex - 1,
+            0
+          )
+        ];
+
+      updateCustomSelectHighlight(
+        select,
+        previous
+      );
+
+      previous?.focus();
+
+      return;
+    }
+
+    if (
+      event.key ===
+      "Home"
+    ) {
+      event.preventDefault();
+
+      updateCustomSelectHighlight(
+        select,
+        options[0]
+      );
+
+      options[0]?.focus();
+
+      return;
+    }
+
+    if (
+      event.key ===
+      "End"
+    ) {
+      event.preventDefault();
+
+      const last =
+        options[
+          options.length - 1
+        ];
+
+      updateCustomSelectHighlight(
+        select,
+        last
+      );
+
+      last?.focus();
+
+      return;
+    }
+
+    if (
+      event.key === "Enter" ||
+      event.key === " "
+    ) {
+      event.preventDefault();
+
+      const option =
+        document.activeElement
+          .closest?.(
+            "[data-option-value]"
+          );
+
+      if (option) {
+        chooseCustomSelectOption(
+          select,
+          option.dataset
+            .optionValue
+        );
+      }
+
+      return;
+    }
+
+    if (
+      event.key === "Escape" ||
+      event.key === "Tab"
+    ) {
+      closeCustomSelect(
+        select,
+        event.key === "Escape"
+      );
+    }
+  }
+
+
+  function updateCustomSelectHighlight(
+    select,
+    activeOption
+  ) {
+    select
+      .querySelectorAll(
+        "[data-option-value]"
+      )
+      .forEach((option) => {
+        option.classList.toggle(
+          "is-active",
+          option === activeOption
+        );
+      });
+  }
+
+
+  function syncCustomSelect(
+    select,
+    value
+  ) {
+    const option =
+      select.querySelector(
+        `[data-option-value="${
+          CSS.escape(
+            String(value)
+          )
+        }"]`
+      );
+
+    if (!option) {
+      return;
+    }
+
+    select.dataset.value =
+      String(value);
+
+    select
+      .querySelector(
+        "[data-select-value]"
+      )
+      .textContent =
+        option.textContent.trim();
+
+    select
+      .querySelectorAll(
+        "[data-option-value]"
+      )
+      .forEach((item) => {
+        item.setAttribute(
+          "aria-selected",
+          String(
+            item === option
+          )
+        );
+      });
+  }
+
+
+  /* =======================================================
+     SEARCH INPUT
      ======================================================= */
 
   function handleSearchSubmit(event) {
@@ -1035,7 +1651,9 @@
       value.trim().length >= 2 &&
       isCatalogueLoaded
     ) {
-      renderSuggestions(value);
+      renderSuggestions(
+        value
+      );
     } else {
       closeSuggestions();
     }
@@ -1049,7 +1667,9 @@
           state.page =
             1;
 
-          if (isCatalogueLoaded) {
+          if (
+            isCatalogueLoaded
+          ) {
             applyStateAndRender({
               historyMode:
                 "replace"
@@ -1067,11 +1687,15 @@
       currentSuggestions.length > 0;
 
     if (
-      event.key === "ArrowDown"
+      event.key ===
+      "ArrowDown"
     ) {
-      if (!suggestionsVisible) {
+      if (
+        !suggestionsVisible
+      ) {
         renderSuggestions(
-          elements.searchInput.value
+          elements.searchInput
+            .value
         );
       }
 
@@ -1095,7 +1719,8 @@
     }
 
     if (
-      event.key === "ArrowUp"
+      event.key ===
+      "ArrowUp"
     ) {
       if (
         !currentSuggestions.length
@@ -1133,7 +1758,8 @@
     }
 
     if (
-      event.key === "Escape"
+      event.key ===
+      "Escape"
     ) {
       closeSuggestions();
     }
@@ -1195,12 +1821,15 @@
 
 
   /* =======================================================
-     AUTOCOMPLETE
+     SEARCH SUGGESTIONS
      ======================================================= */
 
   function renderSuggestions(value) {
     const query =
-      String(value || "").trim();
+      String(
+        value ||
+        ""
+      ).trim();
 
     if (
       query.length < 2 ||
@@ -1211,8 +1840,25 @@
     }
 
     currentSuggestions =
-      buildRankedEntries(query)
-        .sort(compareByRelevance)
+      buildRankedEntries(
+        query
+      )
+        .sort((a, b) => {
+          return (
+            b.rank -
+            a.rank ||
+
+            compareScoreDescending(
+              a.item,
+              b.item
+            ) ||
+
+            compareTitleAscending(
+              a.item,
+              b.item
+            )
+          );
+        })
         .slice(
           0,
           MAX_SEARCH_SUGGESTIONS
@@ -1235,7 +1881,10 @@
     }
 
     currentSuggestions.forEach(
-      (item, index) => {
+      (
+        item,
+        index
+      ) => {
         const button =
           document.createElement(
             "button"
@@ -1250,6 +1899,9 @@
         button.id =
           `search-suggestion-${index}`;
 
+        button.dataset.suggestionIndex =
+          String(index);
+
         button.setAttribute(
           "role",
           "option"
@@ -1259,9 +1911,6 @@
           "aria-selected",
           "false"
         );
-
-        button.dataset.suggestionIndex =
-          String(index);
 
 
         const cover =
@@ -1297,7 +1946,9 @@
           }
         );
 
-        cover.append(image);
+        cover.append(
+          image
+        );
 
 
         const info =
@@ -1326,7 +1977,9 @@
         meta.textContent =
           [
             item.creator,
-            getPrimaryTypeLabel(item)
+            getPrimaryTypeLabel(
+              item
+            )
           ]
             .filter(Boolean)
             .join(" · ");
@@ -1346,7 +1999,9 @@
           "search-suggestion-score";
 
         const scoreValue =
-          formatScore(item.score);
+          formatScore(
+            item.score
+          );
 
         score.textContent =
           scoreValue
@@ -1386,16 +2041,18 @@
       return;
     }
 
-    const index =
-      Number(
-        button.dataset.suggestionIndex
-      );
-
     const item =
-      currentSuggestions[index];
+      currentSuggestions[
+        Number(
+          button.dataset
+            .suggestionIndex
+        )
+      ];
 
     if (item) {
-      selectSuggestion(item);
+      selectSuggestion(
+        item
+      );
     }
   }
 
@@ -1426,13 +2083,17 @@
 
   function updateSuggestionHighlight() {
     const buttons = [
-      ...elements.suggestions.querySelectorAll(
-        ".search-suggestion"
-      )
+      ...elements.suggestions
+        .querySelectorAll(
+          ".search-suggestion"
+        )
     ];
 
     buttons.forEach(
-      (button, index) => {
+      (
+        button,
+        index
+      ) => {
         const active =
           index ===
           suggestionIndex;
@@ -1519,7 +2180,9 @@
       )
     ) {
       state.minimumScore =
-        Number(target.value) || 0;
+        Number(
+          target.value
+        ) || 0;
     } else if (
       target ===
       elements.featuredFilter
@@ -1544,7 +2207,9 @@
     set,
     checkbox
   ) {
-    if (checkbox.checked) {
+    if (
+      checkbox.checked
+    ) {
       set.add(
         checkbox.value
       );
@@ -1571,7 +2236,8 @@
 
 
   function clearFilters(
-    options = {}
+    historyMode =
+      "replace"
   ) {
     clearFilterState();
 
@@ -1579,9 +2245,7 @@
       1;
 
     applyStateAndRender({
-      historyMode:
-        options.historyMode ||
-        "replace"
+      historyMode
     });
   }
 
@@ -1612,86 +2276,40 @@
     }
 
     const kind =
-      button.dataset.filterKind;
+      button.dataset
+        .filterKind;
 
     const key =
-      button.dataset.filterKey;
+      button.dataset
+        .filterKey;
 
     if (
-      kind === "type"
+      kind ===
+      "type"
     ) {
       state.selectedTypes.delete(
         key
       );
-    }
-
-    if (
-      kind === "genre"
+    } else if (
+      kind ===
+      "genre"
     ) {
       state.selectedGenres.delete(
         key
       );
-    }
-
-    if (
-      kind === "score"
+    } else if (
+      kind ===
+      "score"
     ) {
       state.minimumScore =
         0;
-    }
-
-    if (
-      kind === "featured"
+    } else if (
+      kind ===
+      "featured"
     ) {
       state.featuredOnly =
         false;
     }
-
-    state.page =
-      1;
-
-    applyStateAndRender({
-      historyMode:
-        "push"
-    });
-  }
-
-
-  /* =======================================================
-     SORTING AND PAGE SIZE
-     ======================================================= */
-
-  function handleSortChange() {
-    const value =
-      elements.sortSelect.value;
-
-    state.sort =
-      ALLOWED_SORT_OPTIONS.has(value)
-        ? value
-        : "relevance";
-
-    state.page =
-      1;
-
-    applyStateAndRender({
-      historyMode:
-        "push"
-    });
-  }
-
-
-  function handlePerPageChange() {
-    const requested =
-      Number(
-        elements.perPageSelect.value
-      );
-
-    state.perPage =
-      ALLOWED_PER_PAGE.includes(
-        requested
-      )
-        ? requested
-        : DEFAULT_PER_PAGE;
 
     state.page =
       1;
@@ -1709,7 +2327,9 @@
 
   function buildRankedEntries(query) {
     const normalizedQuery =
-      normalizeSearchText(query);
+      normalizeSearchText(
+        query
+      );
 
     if (!normalizedQuery) {
       return catalogue.map(
@@ -1741,7 +2361,10 @@
         };
       })
       .filter((entry) => {
-        return entry.rank > 0;
+        return (
+          entry.rank >
+          0
+        );
       });
   }
 
@@ -1764,6 +2387,7 @@
 
     let rank =
       1;
+
 
     if (
       item.titleSearch ===
@@ -1791,7 +2415,10 @@
     if (
       item.alternativeTitleSearch
         .some((title) => {
-          return title === query;
+          return (
+            title ===
+            query
+          );
         })
     ) {
       rank +=
@@ -1858,13 +2485,15 @@
 
 
   /* =======================================================
-     FILTERING AND SORTING
+     APPLY SEARCH STATE
      ======================================================= */
 
   function applyStateAndRender(
     options = {}
   ) {
-    if (!isCatalogueLoaded) {
+    if (
+      !isCatalogueLoaded
+    ) {
       return;
     }
 
@@ -1923,7 +2552,8 @@
     }
 
     if (
-      options.announce !== false
+      options.announce !==
+      false
     ) {
       announceResultCount();
     }
@@ -1936,46 +2566,36 @@
   ) {
     if (
       skipGroup !== "type" &&
-      state.selectedTypes.size
-    ) {
-      const typeMatch =
-        item.types.some((type) => {
-          return state.selectedTypes.has(
-            type.key
-          );
-        });
-
-      if (!typeMatch) {
-        return false;
-      }
-    }
-
-
-    if (
-      skipGroup !== "genre" &&
-      state.selectedGenres.size
-    ) {
-      const genreMatch =
-        item.genres.some((genre) => {
-          return state.selectedGenres.has(
-            genre.key
-          );
-        });
-
-      if (!genreMatch) {
-        return false;
-      }
-    }
-
-
-    if (
-      skipGroup !== "score" &&
-      state.minimumScore > 0 &&
-      item.score < state.minimumScore
+      state.selectedTypes.size &&
+      !item.types.some((type) => {
+        return state.selectedTypes.has(
+          type.key
+        );
+      })
     ) {
       return false;
     }
 
+    if (
+      skipGroup !== "genre" &&
+      state.selectedGenres.size &&
+      !item.genres.some((genre) => {
+        return state.selectedGenres.has(
+          genre.key
+        );
+      })
+    ) {
+      return false;
+    }
+
+    if (
+      skipGroup !== "score" &&
+      state.minimumScore > 0 &&
+      item.score <
+      state.minimumScore
+    ) {
+      return false;
+    }
 
     if (
       skipGroup !== "featured" &&
@@ -1989,8 +2609,14 @@
   }
 
 
+  /* =======================================================
+     SORTING
+     ======================================================= */
+
   function getResultComparator() {
-    switch (state.sort) {
+    switch (
+      state.sort
+    ) {
       case "score-desc":
         return (
           a,
@@ -2001,6 +2627,7 @@
               a.item,
               b.item
             ) ||
+
             compareTitleAscending(
               a.item,
               b.item
@@ -2019,6 +2646,7 @@
               a.item,
               b.item
             ) ||
+
             compareTitleAscending(
               a.item,
               b.item
@@ -2064,7 +2692,8 @@
   ) {
     if (
       state.query &&
-      b.rank !== a.rank
+      b.rank !==
+      a.rank
     ) {
       return (
         b.rank -
@@ -2077,8 +2706,12 @@
       a.item.featured
     ) {
       return (
-        Number(b.item.featured) -
-        Number(a.item.featured)
+        Number(
+          b.item.featured
+        ) -
+        Number(
+          a.item.featured
+        )
       );
     }
 
@@ -2087,6 +2720,7 @@
         a.item,
         b.item
       ) ||
+
       compareTitleAscending(
         a.item,
         b.item
@@ -2162,7 +2796,7 @@
 
 
   /* =======================================================
-     DYNAMIC FACET FILTERS
+     FACET FILTERS
      ======================================================= */
 
   function renderFacetFilters(
@@ -2188,24 +2822,18 @@
         }
       );
 
-    const typeOptions =
+    renderTypeFilters(
       buildFacetOptions(
         typeEntries,
         "types"
-      );
-
-    const genreOptions =
-      buildFacetOptions(
-        genreEntries,
-        "genres"
-      );
-
-    renderTypeFilters(
-      typeOptions
+      )
     );
 
     renderGenreFilters(
-      genreOptions
+      buildFacetOptions(
+        genreEntries,
+        "genres"
+      )
     );
   }
 
@@ -2221,7 +2849,9 @@
       entry.item[property]
         .forEach((facet) => {
           const existing =
-            facets.get(facet.key);
+            facets.get(
+              facet.key
+            );
 
           if (existing) {
             existing.count +=
@@ -2251,15 +2881,13 @@
 
 
   function renderTypeFilters(options) {
-    const selectedMissing =
-      getMissingSelectedOptions(
-        state.selectedTypes,
-        options
-      );
-
     const completeOptions = [
       ...options,
-      ...selectedMissing
+
+      ...getMissingSelectedOptions(
+        state.selectedTypes,
+        options
+      )
     ];
 
     completeOptions.sort(
@@ -2283,22 +2911,24 @@
 
 
   function renderGenreFilters(options) {
-    const selectedMissing =
-      getMissingSelectedOptions(
-        state.selectedGenres,
-        options
-      );
-
     const completeOptions = [
       ...options,
-      ...selectedMissing
+
+      ...getMissingSelectedOptions(
+        state.selectedGenres,
+        options
+      )
     ];
 
     completeOptions.sort(
-      (a, b) => {
+      (
+        a,
+        b
+      ) => {
         return (
           b.count -
           a.count ||
+
           a.label.localeCompare(
             b.label,
             undefined,
@@ -2320,7 +2950,7 @@
         }
       );
 
-    const normalOptions =
+    const unselectedOptions =
       completeOptions.filter(
         (option) => {
           return !state.selectedGenres.has(
@@ -2329,24 +2959,22 @@
         }
       );
 
-    let visibleOptions;
+    let visibleOptions =
+      completeOptions;
 
-    if (state.showAllGenres) {
-      visibleOptions =
-        completeOptions;
-    } else {
-      const firstOptions =
-        normalOptions.slice(
-          0,
-          COLLAPSED_GENRE_LIMIT
-        );
-
+    if (
+      !state.showAllGenres
+    ) {
       const visibleMap =
         new Map();
 
       [
         ...selectedOptions,
-        ...firstOptions
+
+        ...unselectedOptions.slice(
+          0,
+          COLLAPSED_GENRE_LIMIT
+        )
       ].forEach((option) => {
         visibleMap.set(
           option.key,
@@ -2373,12 +3001,9 @@
         "data-genre-filter"
     });
 
-    const hasHiddenOptions =
-      completeOptions.length >
-      COLLAPSED_GENRE_LIMIT;
-
     elements.genreShowMore.hidden =
-      !hasHiddenOptions;
+      completeOptions.length <=
+      COLLAPSED_GENRE_LIMIT;
 
     elements.genreShowMore.classList.toggle(
       "is-expanded",
@@ -2420,7 +3045,9 @@
       empty.textContent =
         "No options available";
 
-      container.append(empty);
+      container.append(
+        empty
+      );
 
       return;
     }
@@ -2478,7 +3105,9 @@
         "filter-option-count";
 
       count.textContent =
-        String(option.count);
+        String(
+          option.count
+        );
 
 
       label.append(
@@ -2487,7 +3116,9 @@
         count
       );
 
-      container.append(label);
+      container.append(
+        label
+      );
     });
   }
 
@@ -2509,15 +3140,21 @@
       ...selectedSet
     ]
       .filter((key) => {
-        return !existingKeys.has(key);
+        return !existingKeys.has(
+          key
+        );
       })
       .map((key) => {
         return {
           key,
 
           label:
-            findFacetLabel(key) ||
-            formatKeyAsLabel(key),
+            findFacetLabel(
+              key
+            ) ||
+            formatKeyAsLabel(
+              key
+            ),
 
           count:
             0
@@ -2553,8 +3190,10 @@
     return (
       orderA -
       orderB ||
+
       b.count -
       a.count ||
+
       a.label.localeCompare(
         b.label,
         undefined,
@@ -2574,9 +3213,13 @@
     ) {
       const facet = [
         ...item.types,
-        ...item.genres
+        ...item.genres,
+        ...item.tags
       ].find((entry) => {
-        return entry.key === key;
+        return (
+          entry.key ===
+          key
+        );
       });
 
       if (facet) {
@@ -2589,7 +3232,7 @@
 
 
   /* =======================================================
-     RESULT RENDERING
+     RESULTS
      ======================================================= */
 
   function renderResults() {
@@ -2615,6 +3258,12 @@
       elements.pagination.hidden =
         true;
 
+      elements.emptyCopy.textContent =
+        state.query ||
+        getActiveFilterCount()
+          ? "Try removing a filter or searching with fewer words."
+          : "No public stories were returned from the manga table. Check its rows and anonymous SELECT policy.";
+
       return;
     }
 
@@ -2625,17 +3274,17 @@
       false;
 
     const start =
-      (state.page - 1) *
-      state.perPage;
-
-    const end =
-      start +
+      (
+        state.page -
+        1
+      ) *
       state.perPage;
 
     const pageEntries =
       currentResults.slice(
         start,
-        end
+        start +
+        state.perPage
       );
 
     const fragment =
@@ -2703,6 +3352,11 @@
         "[data-story-score]"
       );
 
+    const description =
+      fragment.querySelector(
+        "[data-story-description]"
+      );
+
     const genres =
       fragment.querySelector(
         "[data-story-genres]"
@@ -2716,7 +3370,11 @@
 
 
     const storyUrl =
-      `story.html?id=${encodeURIComponent(item.id)}`;
+      `story.html?id=${
+        encodeURIComponent(
+          item.id
+        )
+      }`;
 
     links.forEach((link) => {
       link.href =
@@ -2724,31 +3382,43 @@
     });
 
 
-    cover.src =
-      item.coverUrl;
+    if (item.coverUrl) {
+      cover.src =
+        item.coverUrl;
 
-    cover.alt =
-      `${item.title} cover`;
+      cover.alt =
+        `${item.title} cover`;
 
-    cover.addEventListener(
-      "error",
-      () => {
-        coverWrap.classList.add(
-          "has-cover-error"
-        );
+      cover.addEventListener(
+        "error",
+        () => {
+          coverWrap.classList.add(
+            "has-cover-error"
+          );
 
-        cover.removeAttribute(
-          "src"
-        );
-      },
-      {
-        once: true
-      }
-    );
+          cover.removeAttribute(
+            "src"
+          );
+        },
+        {
+          once: true
+        }
+      );
+    } else {
+      coverWrap.classList.add(
+        "has-cover-error"
+      );
+
+      cover.removeAttribute(
+        "src"
+      );
+    }
 
 
     format.textContent =
-      getTypeDisplay(item);
+      getTypeDisplay(
+        item
+      );
 
     title.textContent =
       item.title;
@@ -2760,7 +3430,9 @@
 
 
     const scoreValue =
-      formatScore(item.score);
+      formatScore(
+        item.score
+      );
 
     if (scoreValue) {
       score.textContent =
@@ -2771,31 +3443,38 @@
     }
 
 
-    const visibleGenres =
-      item.genres.slice(
-        0,
-        2
-      );
+    if (item.description) {
+      description.textContent =
+        item.description;
+    } else {
+      description.hidden =
+        true;
+    }
 
-    visibleGenres.forEach((genre) => {
-      const genreElement =
-        document.createElement(
-          "span"
+
+    item.genres
+      .slice(0, 2)
+      .forEach((genre) => {
+        const genreElement =
+          document.createElement(
+            "span"
+          );
+
+        genreElement.className =
+          "story-card-genre";
+
+        genreElement.textContent =
+          genre.label;
+
+        genres.append(
+          genreElement
         );
+      });
 
-      genreElement.className =
-        "story-card-genre";
-
-      genreElement.textContent =
-        genre.label;
-
-      genres.append(
-        genreElement
-      );
-    });
 
     if (
-      item.genres.length > 2
+      item.genres.length >
+      2
     ) {
       const remaining =
         document.createElement(
@@ -2806,12 +3485,16 @@
         "story-card-genre";
 
       remaining.textContent =
-        `+${item.genres.length - 2}`;
+        `+${
+          item.genres.length -
+          2
+        }`;
 
       genres.append(
         remaining
       );
     }
+
 
     if (
       !item.genres.length
@@ -2826,6 +3509,7 @@
       [
         item.title,
         item.creator,
+
         scoreValue
           ? `${scoreValue} out of 10`
           : ""
@@ -2857,7 +3541,7 @@
         `${state.query} — Search | Inkwell`;
     } else {
       elements.resultsHeading.textContent =
-        "Browse all stories";
+        "All stories";
 
       document.title =
         "Search Stories | Inkwell";
@@ -2895,10 +3579,14 @@
         });
 
     if (
-      item.types.length > 2
+      item.types.length >
+      2
     ) {
       labels.push(
-        `+${item.types.length - 2}`
+        `+${
+          item.types.length -
+          2
+        }`
       );
     }
 
@@ -2930,8 +3618,12 @@
           key,
 
           label:
-            findFacetLabel(key) ||
-            formatKeyAsLabel(key)
+            findFacetLabel(
+              key
+            ) ||
+            formatKeyAsLabel(
+              key
+            )
         });
       }
     );
@@ -2946,22 +3638,29 @@
           key,
 
           label:
-            findFacetLabel(key) ||
-            formatKeyAsLabel(key)
+            findFacetLabel(
+              key
+            ) ||
+            formatKeyAsLabel(
+              key
+            )
         });
       }
     );
 
 
     if (
-      state.minimumScore > 0
+      state.minimumScore >
+      0
     ) {
       chips.push({
         kind:
           "score",
 
         key:
-          String(state.minimumScore),
+          String(
+            state.minimumScore
+          ),
 
         label:
           `Score ${state.minimumScore}+`
@@ -3055,11 +3754,14 @@
     return (
       state.selectedTypes.size +
       state.selectedGenres.size +
+
       (
-        state.minimumScore > 0
+        state.minimumScore >
+        0
           ? 1
           : 0
       ) +
+
       (
         state.featuredOnly
           ? 1
@@ -3128,15 +3830,13 @@
     );
 
 
-    const tokens =
-      getPaginationTokens(
-        state.page,
-        totalPages
-      );
-
-    tokens.forEach((token) => {
+    getPaginationTokens(
+      state.page,
+      totalPages
+    ).forEach((token) => {
       if (
-        typeof token === "string"
+        typeof token ===
+        "string"
       ) {
         const ellipsis =
           document.createElement(
@@ -3192,7 +3892,8 @@
           true,
 
         disabled:
-          state.page === totalPages,
+          state.page ===
+          totalPages,
 
         className:
           "pagination-next"
@@ -3206,7 +3907,8 @@
     totalPages
   ) {
     if (
-      totalPages <= 7
+      totalPages <=
+      7
     ) {
       return Array.from(
         {
@@ -3233,7 +3935,8 @@
 
 
     if (
-      currentPage <= 4
+      currentPage <=
+      4
     ) {
       [
         2,
@@ -3279,9 +3982,14 @@
       [];
 
     sortedPages.forEach(
-      (page, index) => {
+      (
+        page,
+        index
+      ) => {
         const previous =
-          sortedPages[index - 1];
+          sortedPages[
+            index - 1
+          ];
 
         if (
           index > 0 &&
@@ -3292,7 +4000,9 @@
           );
         }
 
-        tokens.push(page);
+        tokens.push(
+          page
+        );
       }
     );
 
@@ -3345,6 +4055,7 @@
     } else {
       button.setAttribute(
         "aria-label",
+
         label === "Previous" ||
         label === "Next"
           ? `${label} page`
@@ -3375,7 +4086,9 @@
       !iconAfter
     ) {
       button.append(
-        createIcon(icon)
+        createIcon(
+          icon
+        )
       );
     }
 
@@ -3388,7 +4101,9 @@
       iconAfter
     ) {
       button.append(
-        createIcon(icon)
+        createIcon(
+          icon
+        )
       );
     }
 
@@ -3466,11 +4181,14 @@
         .getBoundingClientRect()
         .top +
       window.scrollY -
-      96;
+      92;
 
     window.scrollTo({
       top:
-        Math.max(0, top),
+        Math.max(
+          0,
+          top
+        ),
 
       behavior:
         window.matchMedia(
@@ -3512,7 +4230,9 @@
   }
 
 
-  function closeFilterDrawer() {
+  function closeFilterDrawer(
+    returnFocus = true
+  ) {
     const wasOpen =
       elements.filterPanel.classList.contains(
         "is-open"
@@ -3535,8 +4255,9 @@
     );
 
     if (
+      returnFocus &&
       wasOpen &&
-      window.innerWidth <= 940
+      window.innerWidth <= 980
     ) {
       elements.mobileFilterButton.focus();
     }
@@ -3553,29 +4274,29 @@
         window.location.search
       );
 
-
     state.query =
       params.get("q") ||
       "";
-
 
     state.selectedTypes =
       new Set(
         params
           .getAll("type")
-          .map(normalizeFacetKey)
+          .map(
+            normalizeFacetKey
+          )
           .filter(Boolean)
       );
-
 
     state.selectedGenres =
       new Set(
         params
           .getAll("genre")
-          .map(normalizeFacetKey)
+          .map(
+            normalizeFacetKey
+          )
           .filter(Boolean)
       );
-
 
     const minimumScore =
       Number(
@@ -3588,15 +4309,15 @@
         7,
         8,
         9
-      ].includes(minimumScore)
+      ].includes(
+        minimumScore
+      )
         ? minimumScore
         : 0;
-
 
     state.featuredOnly =
       params.get("featured") ===
       "1";
-
 
     const requestedSort =
       params.get("sort") ||
@@ -3608,7 +4329,6 @@
       )
         ? requestedSort
         : "relevance";
-
 
     const requestedPage =
       Number(
@@ -3623,7 +4343,6 @@
         ? requestedPage
         : 1;
 
-
     const requestedPerPage =
       Number(
         params.get("perPage")
@@ -3635,13 +4354,6 @@
       )
         ? requestedPerPage
         : DEFAULT_PER_PAGE;
-
-
-    elements.searchInput.value =
-      state.query;
-
-    elements.searchClear.hidden =
-      !state.query;
   }
 
 
@@ -3685,7 +4397,8 @@
 
 
     if (
-      state.minimumScore > 0
+      state.minimumScore >
+      0
     ) {
       params.set(
         "score",
@@ -3718,11 +4431,14 @@
 
 
     if (
-      state.page > 1
+      state.page >
+      1
     ) {
       params.set(
         "page",
-        String(state.page)
+        String(
+          state.page
+        )
       );
     }
 
@@ -3733,7 +4449,9 @@
     ) {
       params.set(
         "perPage",
-        String(state.perPage)
+        String(
+          state.perPage
+        )
       );
     }
 
@@ -3750,7 +4468,8 @@
 
 
     if (
-      historyMode === "push"
+      historyMode ===
+      "push"
     ) {
       window.history.pushState(
         {},
@@ -3769,12 +4488,15 @@
 
   function handleHistoryNavigation() {
     closeSuggestions();
-    closeFilterDrawer();
+    closeAllCustomSelects();
+    closeFilterDrawer(false);
 
     readStateFromUrl();
     syncStaticControls();
 
-    if (isCatalogueLoaded) {
+    if (
+      isCatalogueLoaded
+    ) {
       applyStateAndRender({
         historyMode:
           null
@@ -3794,27 +4516,60 @@
     elements.searchClear.hidden =
       !state.query;
 
-    elements.sortSelect.value =
-      state.sort;
-
-    elements.perPageSelect.value =
-      String(state.perPage);
-
     elements.featuredFilter.checked =
       state.featuredOnly;
 
 
     const scoreRadios = [
-      ...elements.filterPanel.querySelectorAll(
-        "[data-score-filter]"
-      )
+      ...elements.filterPanel
+        .querySelectorAll(
+          "[data-score-filter]"
+        )
     ];
 
     scoreRadios.forEach((radio) => {
       radio.checked =
-        Number(radio.value) ===
+        Number(
+          radio.value
+        ) ===
         state.minimumScore;
     });
+
+
+    const sortSelect =
+      document
+        .querySelector(
+          "#sort-select-trigger"
+        )
+        ?.closest(
+          "[data-custom-select]"
+        );
+
+    const perPageSelect =
+      document
+        .querySelector(
+          "#per-page-select-trigger"
+        )
+        ?.closest(
+          "[data-custom-select]"
+        );
+
+
+    if (sortSelect) {
+      syncCustomSelect(
+        sortSelect,
+        state.sort
+      );
+    }
+
+    if (perPageSelect) {
+      syncCustomSelect(
+        perPageSelect,
+        String(
+          state.perPage
+        )
+      );
+    }
   }
 
 
@@ -3958,44 +4713,86 @@
 
     elements.errorMessage.textContent =
       message;
+
+    elements.resultsStatus.textContent =
+      "Catalogue unavailable";
+  }
+
+
+  function showEmptyCatalogueState() {
+    setLoadingState(false);
+
+    elements.resultsGrid.hidden =
+      true;
+
+    elements.error.hidden =
+      true;
+
+    elements.empty.hidden =
+      false;
+
+    elements.pagination.hidden =
+      true;
+
+    elements.resultsStatus.textContent =
+      "0 stories";
+
+    elements.resultsHeading.textContent =
+      "All stories";
+
+    elements.emptyCopy.textContent =
+      "Supabase returned zero public rows. " +
+      "Check that the manga table contains rows and that " +
+      "the anonymous role has a SELECT policy.";
   }
 
 
   /* =======================================================
-     DOCUMENT-LEVEL EVENTS
+     DOCUMENT EVENTS
      ======================================================= */
 
   function handleDocumentClick(event) {
-    const insideSearch =
-      event.target.closest(
+    if (
+      !event.target.closest(
         ".catalogue-search"
-      );
-
-    if (!insideSearch) {
+      )
+    ) {
       closeSuggestions();
+    }
+
+    if (
+      !event.target.closest(
+        "[data-custom-select]"
+      )
+    ) {
+      closeAllCustomSelects();
     }
   }
 
 
   function handleDocumentKeydown(event) {
     if (
-      event.key === "Escape"
+      event.key !==
+      "Escape"
     ) {
-      if (
-        elements.filterPanel.classList.contains(
-          "is-open"
-        )
-      ) {
-        closeFilterDrawer();
-      }
-
-      closeSuggestions();
+      return;
     }
+
+    if (
+      elements.filterPanel.classList.contains(
+        "is-open"
+      )
+    ) {
+      closeFilterDrawer();
+    }
+
+    closeSuggestions();
+    closeAllCustomSelects();
   }
 
 
   /* =======================================================
-     SMALL UTILITIES
+     SMALL UTILITY
      ======================================================= */
 
   function clamp(
