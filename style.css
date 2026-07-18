@@ -1,14 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&display=swap');
 
 
-/* All the sections in Home Page */
-
-@import url("./css/homePage/section-1.css");
-@import url("./css/homePage/section-2.css");
-@import url("./css/homePage/section-3.css");
-@import url("./css/homePage/section-4.css");
-
-@import url("./css/Search/search.css");
 
 *, *::before, *::after {
   box-sizing: border-box;
