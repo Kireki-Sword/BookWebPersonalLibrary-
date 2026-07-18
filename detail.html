@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <meta
+    name="description"
+    content="View story details and save titles to your Inkwell library."
+  >
+
+  <title>Title Details | Inkwell</title>
+
+  <!-- Global Inkwell styles -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Detail-page styles -->
+  <link rel="stylesheet" href="detail.css?v=1">
+
+  <!-- Tabler icons -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css"
+  >
+</head>
+
+<body>
+  <!-- =====================================================
+       PRIMARY NAVIGATION
+       ===================================================== -->
+
+  <nav aria-label="Primary navigation">
+    <a href="index.html" class="nav-logo">
+      <span class="nav-logo-icon" aria-hidden="true">
+        <i class="ti ti-book-2"></i>
+      </span>
+
+      <span class="nav-logo-text">
+        Inkwell
+      </span>
+    </a>
+
+
+    <ul class="nav-links">
+      <li>
+        <a href="index.html">
+          Home
+        </a>
+      </li>
+
+      <li>
+        <a
+          href="search.html"
+          class="active"
+          aria-current="page"
+        >
+          Search
+        </a>
+      </li>
+
+      <li>
+        <a href="library.html">
+          My Library
+        </a>
+      </li>
+
+      <li>
+        <a href="social.html">
+          Social
+        </a>
+      </li>
+    </ul>
+
+
+    <div class="nav-auth">
+      <a href="login.html" class="btn-ghost">
+        Log in
+      </a>
+
+      <a href="login.html" class="btn-primary">
+        Sign up
+      </a>
+    </div>
+  </nav>
+
+
+  <!-- =====================================================
+       DETAIL PAGE
+       ===================================================== -->
+
+  <main class="detail-page">
+    <div
+      class="detail-background-orb detail-background-orb-left"
+      aria-hidden="true"
+    ></div>
+
+    <div
+      class="detail-background-orb detail-background-orb-right"
+      aria-hidden="true"
+    ></div>
+
+
+    <div class="detail-container">
+      <!-- =================================================
+           BREADCRUMBS
+           ================================================= -->
+
+      <nav
+        class="detail-breadcrumb"
+        aria-label="Breadcrumb"
+      >
+        <ol>
+          <li>
+            <a href="index.html">
+              Home
+            </a>
+          </li>
+
+          <li>
+            <a href="search.html">
+              Search
+            </a>
+          </li>
+
+          <li>
+            <a
+              id="detail-breadcrumb-format"
+              href="search.html"
+            >
+              Story
+            </a>
+          </li>
+
+          <li>
+            <span
+              id="detail-breadcrumb-title"
+              aria-current="page"
+            >
+              Loading…
+            </span>
+          </li>
+        </ol>
+      </nav>
+
+
+      <!-- =================================================
+           LOADING STATE
+           ================================================= -->
+
+      <section
+        id="detail-loading"
+        class="detail-state-card"
+        aria-live="polite"
+      >
+        <div
+          class="detail-loading-dots"
+          aria-hidden="true"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+
+        <h1>
+          Loading details
+        </h1>
+
+        <p>
+          Gathering this title’s information from the Inkwell catalogue.
+        </p>
+      </section>
+
+
+      <!-- =================================================
+           ERROR STATE
+           ================================================= -->
+
+      <section
+        id="detail-error"
+        class="detail-state-card"
+        role="alert"
+        hidden
+      >
+        <span
+          class="detail-state-icon"
+          aria-hidden="true"
+        >
+          <i class="ti ti-book-off"></i>
+        </span>
+
+        <h1>
+          This title could not be opened.
+        </h1>
+
+        <p id="detail-error-message">
+          The requested catalogue entry could not be found.
+        </p>
+
+        <div class="detail-state-actions">
+          <button
+            id="detail-retry-button"
+            class="detail-state-button detail-state-button-primary"
+            type="button"
+          >
+            <i
+              class="ti ti-refresh"
+              aria-hidden="true"
+            ></i>
+
+            Try again
+          </button>
+
+          <a
+            href="search.html"
+            class="detail-state-button"
+          >
+            Back to search
+          </a>
+        </div>
+      </section>
+
+
+      <!-- =================================================
+           COMPLETE DETAIL CONTENT
+           ================================================= -->
+
+      <div
+        id="detail-content"
+        class="detail-content"
+        hidden
+      >
+        <!-- ===============================================
+             MAIN TITLE HERO
+             =============================================== -->
+
+        <article class="detail-hero">
+          <div
+            id="detail-ambient-cover"
+            class="detail-ambient-cover"
+            aria-hidden="true"
+          ></div>
+
+
+          <!-- =============================================
+               COVER AND LIBRARY COLUMN
+               ============================================= -->
+
+          <div class="detail-cover-column">
+            <figure class="detail-cover-frame">
+              <img
+                id="detail-cover"
+                src=""
+                alt=""
+                decoding="async"
+              >
+
+              <span
+                class="detail-cover-fallback"
+                aria-hidden="true"
+              >
+                <i class="ti ti-book-2"></i>
+              </span>
+            </figure>
+
+
+            <aside
+              class="detail-library-card"
+              aria-labelledby="detail-library-title"
+            >
+              <header class="detail-library-header">
+                <span
+                  class="detail-library-icon"
+                  aria-hidden="true"
+                >
+                  <i class="ti ti-books"></i>
+                </span>
+
+                <div>
+                  <span class="detail-library-eyebrow">
+                    Your collection
+                  </span>
+
+                  <h2 id="detail-library-title">
+                    Library
+                  </h2>
+                </div>
+              </header>
+
+
+              <p class="detail-library-description">
+                Save this title and keep track of your progress.
+              </p>
+
+
+              <div
+                class="detail-library-picker"
+                data-detail-library-picker
+              >
+                <button
+                  id="detail-library-trigger"
+                  class="detail-library-trigger"
+                  type="button"
+                  aria-haspopup="menu"
+                  aria-expanded="false"
+                  aria-controls="detail-library-menu"
+                >
+                  <i
+                    id="detail-library-trigger-icon"
+                    class="ti ti-plus"
+                    aria-hidden="true"
+                  ></i>
+
+                  <span id="detail-library-trigger-label">
+                    Add to library
+                  </span>
+
+                  <i
+                    class="ti ti-chevron-down detail-library-chevron"
+                    aria-hidden="true"
+                  ></i>
+                </button>
+
+
+                <div
+                  id="detail-library-menu"
+                  class="detail-library-menu"
+                  role="menu"
+                  aria-label="Choose library status"
+                  hidden
+                >
+                  <button
+                    type="button"
+                    role="menuitemradio"
+                    aria-checked="false"
+                    data-library-status="in-progress"
+                  >
+                    <i
+                      class="ti ti-book"
+                      aria-hidden="true"
+                    ></i>
+
+                    <span id="detail-progress-status-label">
+                      Reading
+                    </span>
+                  </button>
+
+
+                  <button
+                    type="button"
+                    role="menuitemradio"
+                    aria-checked="false"
+                    data-library-status="completed"
+                  >
+                    <i
+                      class="ti ti-circle-check"
+                      aria-hidden="true"
+                    ></i>
+
+                    <span>
+                      Completed
+                    </span>
+                  </button>
+
+
+                  <button
+                    type="button"
+                    role="menuitemradio"
+                    aria-checked="false"
+                    data-library-status="planned"
+                  >
+                    <i
+                      class="ti ti-clock-plus"
+                      aria-hidden="true"
+                    ></i>
+
+                    <span>
+                      Planned
+                    </span>
+                  </button>
+
+
+                  <button
+                    type="button"
+                    role="menuitemradio"
+                    aria-checked="false"
+                    data-library-status="paused"
+                  >
+                    <i
+                      class="ti ti-player-pause"
+                      aria-hidden="true"
+                    ></i>
+
+                    <span>
+                      Paused
+                    </span>
+                  </button>
+
+
+                  <button
+                    type="button"
+                    role="menuitemradio"
+                    aria-checked="false"
+                    data-library-status="dropped"
+                  >
+                    <i
+                      class="ti ti-circle-minus"
+                      aria-hidden="true"
+                    ></i>
+
+                    <span>
+                      Dropped
+                    </span>
+                  </button>
+
+
+                  <div
+                    class="detail-library-menu-divider"
+                    role="separator"
+                  ></div>
+
+
+                  <button
+                    id="detail-library-remove"
+                    class="detail-library-remove"
+                    type="button"
+                    role="menuitem"
+                    hidden
+                  >
+                    <i
+                      class="ti ti-trash"
+                      aria-hidden="true"
+                    ></i>
+
+                    <span>
+                      Remove from library
+                    </span>
+                  </button>
+                </div>
+              </div>
+
+
+              <p
+                id="detail-library-note"
+                class="detail-library-note"
+                role="status"
+                aria-live="polite"
+              >
+                Saved locally on this device.
+              </p>
+            </aside>
+          </div>
+
+
+          <!-- =============================================
+               TITLE INFORMATION
+               ============================================= -->
+
+          <div class="detail-main-information">
+            <header class="detail-heading">
+              <div class="detail-heading-content">
+                <div class="detail-badges">
+                  <span
+                    id="detail-type"
+                    class="detail-type-badge"
+                  >
+                    Story
+                  </span>
+
+                  <span
+                    id="detail-featured"
+                    class="detail-featured-badge"
+                    hidden
+                  >
+                    <i
+                      class="ti ti-sparkles"
+                      aria-hidden="true"
+                    ></i>
+
+                    Featured
+                  </span>
+                </div>
+
+
+                <h1 id="detail-title">
+                  Title
+                </h1>
+
+
+                <p
+                  id="detail-alternative-titles"
+                  class="detail-alternative-titles"
+                  hidden
+                ></p>
+
+
+                <p class="detail-creator">
+                  By
+
+                  <span id="detail-creator">
+                    Unknown creator
+                  </span>
+                </p>
+
+
+                <div
+                  id="detail-genres"
+                  class="detail-genres"
+                  aria-label="Genres"
+                ></div>
+              </div>
+
+
+              <aside
+                id="detail-score-card"
+                class="detail-score-card"
+                aria-label="Inkwell score"
+                hidden
+              >
+                <span class="detail-score-label">
+                  Inkwell score
+                </span>
+
+                <div class="detail-score-value">
+                  <i
+                    class="ti ti-star-filled"
+                    aria-hidden="true"
+                  ></i>
+
+                  <strong id="detail-score">
+                    0
+                  </strong>
+
+                  <small>
+                    /10
+                  </small>
+                </div>
+              </aside>
+            </header>
+
+
+            <!-- ===========================================
+                 PUBLICATION AND MEDIA DETAILS
+                 =========================================== -->
+
+            <section
+              class="detail-facts-card"
+              aria-labelledby="detail-facts-title"
+            >
+              <header class="detail-facts-header">
+                <div>
+                  <span class="detail-section-eyebrow">
+                    Publication information
+                  </span>
+
+                  <h2 id="detail-facts-title">
+                    Details
+                  </h2>
+                </div>
+
+                <span
+                  class="detail-section-icon"
+                  aria-hidden="true"
+                >
+                  <i class="ti ti-list-details"></i>
+                </span>
+              </header>
+
+
+              <div
+                id="detail-facts-grid"
+                class="detail-facts-grid"
+              ></div>
+
+
+              <p
+                id="detail-facts-empty"
+                class="detail-facts-empty"
+                hidden
+              >
+                More publication information has not been added yet.
+              </p>
+            </section>
+
+
+            <div class="detail-hero-actions">
+              <button
+                id="detail-back-button"
+                class="detail-secondary-button"
+                type="button"
+              >
+                <i
+                  class="ti ti-arrow-left"
+                  aria-hidden="true"
+                ></i>
+
+                Back to results
+              </button>
+
+
+              <a
+                id="detail-similar-link"
+                class="detail-text-link"
+                href="search.html"
+              >
+                Explore similar titles
+
+                <i
+                  class="ti ti-arrow-up-right"
+                  aria-hidden="true"
+                ></i>
+              </a>
+            </div>
+          </div>
+        </article>
+
+
+        <!-- ===============================================
+             DESCRIPTION
+             =============================================== -->
+
+        <section
+          class="detail-section"
+          aria-labelledby="detail-description-title"
+        >
+          <header class="detail-section-header">
+            <div>
+              <span class="detail-section-eyebrow">
+                About this title
+              </span>
+
+              <h2 id="detail-description-title">
+                Description
+              </h2>
+            </div>
+
+            <span
+              class="detail-section-icon"
+              aria-hidden="true"
+            >
+              <i class="ti ti-align-left"></i>
+            </span>
+          </header>
+
+
+          <p
+            id="detail-description"
+            class="detail-description"
+          >
+            No description has been added yet.
+          </p>
+        </section>
+
+
+        <!-- ===============================================
+             THEMES
+             =============================================== -->
+
+        <section
+          id="detail-themes-section"
+          class="detail-section"
+          aria-labelledby="detail-themes-title"
+          hidden
+        >
+          <header class="detail-section-header">
+            <div>
+              <span class="detail-section-eyebrow">
+                What it explores
+              </span>
+
+              <h2 id="detail-themes-title">
+                Themes
+              </h2>
+            </div>
+
+            <span
+              class="detail-section-icon"
+              aria-hidden="true"
+            >
+              <i class="ti ti-sparkles"></i>
+            </span>
+          </header>
+
+
+          <div
+            id="detail-themes"
+            class="detail-themes"
+            aria-label="Themes"
+          ></div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+
+  <footer class="detail-footer">
+    <p>
+      Inkwell — remember what a story meant to you.
+    </p>
+  </footer>
+
+
+  <!-- Supabase must load before detail.js -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script src="./detail.js?v=1"></script>
+</body>
+</html>
