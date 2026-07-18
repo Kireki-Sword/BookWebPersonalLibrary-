@@ -49,18 +49,28 @@ const STATUS_CONFIG =
   });
 
 
+/* =========================================================
+   LIBRARY CONTROLLER
+   ========================================================= */
+
 export function createDetailLibraryController(
   elements
 ) {
   let currentTitle =
     null;
 
+
   let currentStatus =
     "";
+
 
   let hasBoundEvents =
     false;
 
+
+  /* =======================================================
+     BIND EVENTS
+     ======================================================= */
 
   function bindEvents() {
     if (
@@ -158,6 +168,10 @@ export function createDetailLibraryController(
   }
 
 
+  /* =======================================================
+     SET CURRENT TITLE
+     ======================================================= */
+
   function setTitle(
     title
   ) {
@@ -176,6 +190,10 @@ export function createDetailLibraryController(
     updateInterface();
   }
 
+
+  /* =======================================================
+     MENU CONTROLS
+     ======================================================= */
 
   function toggleMenu() {
     const isOpen =
@@ -300,6 +318,10 @@ export function createDetailLibraryController(
   }
 
 
+  /* =======================================================
+     SAVE STATUS
+     ======================================================= */
+
   function setStatus(
     status
   ) {
@@ -340,9 +362,28 @@ export function createDetailLibraryController(
     };
 
 
-    writeLibrary(
-      library
-    );
+    const wasSaved =
+      writeLibrary(
+        library
+      );
+
+
+    if (
+      !wasSaved
+    ) {
+      elements
+        .libraryNote
+        .textContent =
+          "This browser could not save your library change.";
+
+
+      closeMenu(
+        true
+      );
+
+
+      return;
+    }
 
 
     currentStatus =
@@ -368,6 +409,10 @@ export function createDetailLibraryController(
   }
 
 
+  /* =======================================================
+     REMOVE TITLE
+     ======================================================= */
+
   function removeTitle() {
     if (
       !currentTitle
@@ -385,9 +430,28 @@ export function createDetailLibraryController(
     ];
 
 
-    writeLibrary(
-      library
-    );
+    const wasRemoved =
+      writeLibrary(
+        library
+      );
+
+
+    if (
+      !wasRemoved
+    ) {
+      elements
+        .libraryNote
+        .textContent =
+          "This browser could not update your library.";
+
+
+      closeMenu(
+        true
+      );
+
+
+      return;
+    }
 
 
     currentStatus =
@@ -408,6 +472,10 @@ export function createDetailLibraryController(
         "Removed from your local library.";
   }
 
+
+  /* =======================================================
+     UPDATE LIBRARY INTERFACE
+     ======================================================= */
 
   function updateInterface() {
     const selectedConfig =
@@ -474,6 +542,10 @@ export function createDetailLibraryController(
   }
 
 
+  /* =======================================================
+     KEYBOARD NAVIGATION
+     ======================================================= */
+
   function handleMenuKeydown(
     event
   ) {
@@ -507,9 +579,11 @@ export function createDetailLibraryController(
     ) {
       event.preventDefault();
 
+
       closeMenu(
         true
       );
+
 
       return;
     }
@@ -520,6 +594,7 @@ export function createDetailLibraryController(
       "Tab"
     ) {
       closeMenu();
+
 
       return;
     }
@@ -592,6 +667,10 @@ export function createDetailLibraryController(
 }
 
 
+/* =========================================================
+   READ LIBRARY
+   ========================================================= */
+
 function readLibrary() {
   try {
     const parsedValue =
@@ -614,11 +693,23 @@ function readLibrary() {
     )
       ? parsedValue
       : {};
-  } catch {
+  } catch (
+    error
+  ) {
+    console.error(
+      "INKWELL LIBRARY READ ERROR:",
+      error
+    );
+
+
     return {};
   }
 }
 
+
+/* =========================================================
+   WRITE LIBRARY
+   ========================================================= */
 
 function writeLibrary(
   library
@@ -631,6 +722,9 @@ function writeLibrary(
           library
         )
       );
+
+
+    return true;
   } catch (
     error
   ) {
@@ -638,5 +732,8 @@ function writeLibrary(
       "INKWELL LIBRARY STORAGE ERROR:",
       error
     );
+
+
+    return false;
   }
 }

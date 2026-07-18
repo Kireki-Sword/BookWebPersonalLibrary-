@@ -397,7 +397,21 @@ export async function loadTitleFromDatabase(
       .from(
         DETAIL_CONFIG.TABLE_NAME
       )
-      .select("*")
+      .select(`
+        id,
+        title,
+        alternativeTitles,
+        type,
+        creator,
+        heroScore,
+        genres,
+        tags,
+        description,
+        animeInfo,
+        mangaInfo,
+        novelInfo,
+        gameInfo
+      `)
       .eq(
         "id",
         titleId
@@ -405,7 +419,9 @@ export async function loadTitleFromDatabase(
       .maybeSingle();
 
 
-  if (error) {
+  if (
+    error
+  ) {
     throw new Error(
       `Supabase ${
         error.code ||
@@ -415,7 +431,9 @@ export async function loadTitleFromDatabase(
   }
 
 
-  if (!data) {
+  if (
+    !data
+  ) {
     throw new Error(
       "No catalogue entry matched this title ID."
     );
@@ -425,6 +443,10 @@ export async function loadTitleFromDatabase(
   return data;
 }
 
+
+/* =========================================================
+   REQUEST TIMEOUT
+   ========================================================= */
 
 export function withTimeout(
   promise,
@@ -450,6 +472,7 @@ export function withTimeout(
                 )
               );
             },
+
             milliseconds
           );
       }
@@ -464,11 +487,13 @@ export function withTimeout(
 
       timeoutPromise
     ])
-    .finally(() => {
-      window.clearTimeout(
-        timeoutId
-      );
-    });
+    .finally(
+      () => {
+        window.clearTimeout(
+          timeoutId
+        );
+      }
+    );
 }
 
 
@@ -621,7 +646,7 @@ export function normalizeTitle(
 
 
 /* =========================================================
-   MEDIA ENTRIES
+   MEDIA ENTRY NORMALIZATION
    ========================================================= */
 
 export function normalizeEntries(
@@ -678,6 +703,10 @@ export function normalizeEntries(
 }
 
 
+/* =========================================================
+   AVAILABLE MEDIA TYPES
+   ========================================================= */
+
 export function getAvailableMediaTypes(
   title
 ) {
@@ -697,6 +726,10 @@ export function getAvailableMediaTypes(
     );
 }
 
+
+/* =========================================================
+   MEDIA LABELS
+   ========================================================= */
 
 export function getMediaLabel(
   mediaType
@@ -782,6 +815,7 @@ export function buildOverviewStats(
               .length
           );
         },
+
         0
       );
 
@@ -871,7 +905,7 @@ export function buildOverviewStats(
 
 
 /* =========================================================
-   ENTRY DISPLAY DATA
+   MEDIA ENTRY DISPLAY DATA
    ========================================================= */
 
 export function buildMediaEntryView(
@@ -894,10 +928,12 @@ export function buildMediaEntryView(
   const titleField =
     takeField(
       entry,
+
       [
         "title",
         "name"
       ],
+
       consumedKeys
     );
 
@@ -905,12 +941,14 @@ export function buildMediaEntryView(
   const statusField =
     takeField(
       entry,
+
       [
         "status",
         "publicationStatus",
         "airingStatus",
         "releaseStatus"
       ],
+
       consumedKeys
     );
 
@@ -918,11 +956,13 @@ export function buildMediaEntryView(
   const formatField =
     takeField(
       entry,
+
       [
         "format",
         "type",
         "mediaType"
       ],
+
       consumedKeys
     );
 
@@ -975,13 +1015,17 @@ export function buildMediaEntryView(
           );
 
 
-        if (!field) {
+        if (
+          !field
+        ) {
           return;
         }
 
 
         const firstAlias =
-          aliases[0]
+          aliases[
+            0
+          ]
             .toLowerCase();
 
 
@@ -1221,7 +1265,9 @@ export function formatLabel(
     );
 
 
-  if (!text) {
+  if (
+    !text
+  ) {
     return "";
   }
 
@@ -1326,10 +1372,8 @@ export function formatValue(
             nestedValue
           ]
         ) => {
-          return (
-            isDisplayableValue(
-              nestedValue
-            )
+          return isDisplayableValue(
+            nestedValue
           );
         }
       )
@@ -1374,7 +1418,7 @@ export function formatValue(
 
 
 /* =========================================================
-   COVER
+   COVER URL
    ========================================================= */
 
 function getCoverUrlFromId(
@@ -1418,7 +1462,7 @@ function getCoverUrlFromId(
 
 
 /* =========================================================
-   INTERNAL HELPERS
+   PARSE JSON
    ========================================================= */
 
 function parseJsonValue(
@@ -1436,7 +1480,9 @@ function parseJsonValue(
     value.trim();
 
 
-  if (!text) {
+  if (
+    !text
+  ) {
     return null;
   }
 
@@ -1462,6 +1508,10 @@ function parseJsonValue(
   }
 }
 
+
+/* =========================================================
+   EXTRACT STRINGS
+   ========================================================= */
 
 function extractStrings(
   value
@@ -1558,6 +1608,10 @@ function extractStrings(
 }
 
 
+/* =========================================================
+   UNIQUE STRINGS
+   ========================================================= */
+
 function uniqueStrings(
   values
 ) {
@@ -1604,6 +1658,10 @@ function uniqueStrings(
 }
 
 
+/* =========================================================
+   CLEAN STRING
+   ========================================================= */
+
 function cleanString(
   value
 ) {
@@ -1613,6 +1671,10 @@ function cleanString(
   ).trim();
 }
 
+
+/* =========================================================
+   SCORE NORMALIZATION
+   ========================================================= */
 
 function getNumericScore(
   value
@@ -1642,6 +1704,7 @@ function getNumericScore(
 
   return Math.min(
     10,
+
     Math.max(
       0,
       number
@@ -1649,6 +1712,10 @@ function getNumericScore(
   );
 }
 
+
+/* =========================================================
+   INFER MEDIA TYPES
+   ========================================================= */
 
 function inferTypesFromMedia(
   media
@@ -1679,6 +1746,10 @@ function inferTypesFromMedia(
         ];
 }
 
+
+/* =========================================================
+   SORT MEDIA ENTRIES
+   ========================================================= */
 
 function sortMediaEntries(
   entries
@@ -1744,14 +1815,20 @@ function sortMediaEntries(
       }
     )
     .map(
-      ({
-        entry
-      }) => {
+      (
+        {
+          entry
+        }
+      ) => {
         return entry;
       }
     );
 }
 
+
+/* =========================================================
+   SORT YEAR
+   ========================================================= */
 
 function getSortYear(
   entry
@@ -1800,11 +1877,17 @@ function getSortYear(
 
   return match
     ? Number(
-        match[0]
+        match[
+          0
+        ]
       )
     : null;
 }
 
+
+/* =========================================================
+   EXTRACT YEARS
+   ========================================================= */
 
 function extractYearsFromEntry(
   entry
@@ -1880,6 +1963,10 @@ function extractYearsFromEntry(
 }
 
 
+/* =========================================================
+   ENTRY YEAR LABEL
+   ========================================================= */
+
 function getEntryYearLabel(
   entry
 ) {
@@ -1932,6 +2019,10 @@ function getEntryYearLabel(
   );
 }
 
+
+/* =========================================================
+   TAKE FIELD
+   ========================================================= */
 
 function takeField(
   entry,
@@ -1996,6 +2087,10 @@ function takeField(
 }
 
 
+/* =========================================================
+   DISPLAYABLE VALUE
+   ========================================================= */
+
 function isDisplayableValue(
   value
 ) {
@@ -2037,6 +2132,10 @@ function isDisplayableValue(
 }
 
 
+/* =========================================================
+   FORMAT COUNT
+   ========================================================= */
+
 function formatCount(
   value,
   unit
@@ -2066,6 +2165,10 @@ function formatCount(
         }`;
 }
 
+
+/* =========================================================
+   SINGULARIZE LABEL
+   ========================================================= */
 
 function singularize(
   noun

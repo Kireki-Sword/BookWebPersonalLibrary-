@@ -61,6 +61,10 @@ if (
 }
 
 
+/* =========================================================
+   MAIN DETAIL PAGE STARTUP
+   ========================================================= */
+
 async function startDetailPage() {
   elements =
     collectDetailElements();
@@ -71,10 +75,112 @@ async function startDetailPage() {
       elements
     )
   ) {
+    const missingElements =
+      Object.entries(
+        elements
+      )
+        .filter(
+          (
+            [
+              key,
+              value
+            ]
+          ) => {
+            if (
+              key ===
+              "libraryStatusButtons"
+            ) {
+              return (
+                !Array.isArray(
+                  value
+                ) ||
+                value.length === 0
+              );
+            }
+
+
+            return !value;
+          }
+        )
+        .map(
+          (
+            [
+              key
+            ]
+          ) => {
+            return key;
+          }
+        );
+
+
     console.error(
-      "The detail page is missing required HTML elements.",
+      "The detail page is missing required HTML elements:",
+      missingElements,
       elements
     );
+
+
+    if (
+      elements.loading
+    ) {
+      elements.loading.innerHTML = `
+        <span class="detail-eyebrow">
+          Page setup error
+        </span>
+
+        <h1>
+          Required HTML elements are missing
+        </h1>
+
+        <p>
+          Missing elements:
+          ${missingElements.join(", ")}
+        </p>
+      `;
+    } else {
+      const fallbackError =
+        document.createElement(
+          "section"
+        );
+
+
+      fallbackError.style.padding =
+        "2rem";
+
+
+      const heading =
+        document.createElement(
+          "h1"
+        );
+
+
+      const message =
+        document.createElement(
+          "p"
+        );
+
+
+      heading.textContent =
+        "Detail page setup error";
+
+
+      message.textContent =
+        `Missing elements: ${
+          missingElements.join(", ")
+        }`;
+
+
+      fallbackError.append(
+        heading,
+        message
+      );
+
+
+      document.body.prepend(
+        fallbackError
+      );
+    }
+
 
     return;
   }
@@ -116,6 +222,7 @@ async function startDetailPage() {
       "No title ID was provided. Open a title from the search page."
     );
 
+
     return;
   }
 
@@ -130,23 +237,24 @@ async function startDetailPage() {
       "The Supabase browser library did not load."
     );
 
+
     return;
   }
 
 
-  const supabaseClient =
-    window
-      .supabase
-      .createClient(
-        DETAIL_CONFIG
-          .SUPABASE_URL,
-
-        DETAIL_CONFIG
-          .SUPABASE_KEY
-      );
-
-
   try {
+    const supabaseClient =
+      window
+        .supabase
+        .createClient(
+          DETAIL_CONFIG
+            .SUPABASE_URL,
+
+          DETAIL_CONFIG
+            .SUPABASE_KEY
+        );
+
+
     const databaseRow =
       await withTimeout(
         loadTitleFromDatabase(
@@ -239,6 +347,7 @@ function handleBackToResults() {
     ) {
       window.location.href =
         "search.html";
+
 
       return;
     }

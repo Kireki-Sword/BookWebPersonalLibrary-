@@ -96,15 +96,20 @@ export function bindMediaTabEvents(
             );
 
 
-        if (!tab) {
+        if (
+          !tab
+        ) {
           return;
         }
 
 
         activateMediaTab(
-          tab.dataset
+          tab
+            .dataset
             .tabId,
+
           elements,
+
           true
         );
       }
@@ -206,7 +211,9 @@ export function bindMediaTabEvents(
             currentTab
               .dataset
               .tabId,
+
             elements,
+
             true
           );
 
@@ -231,7 +238,9 @@ export function bindMediaTabEvents(
           ]
             .dataset
             .tabId,
+
           elements,
+
           true
         );
       }
@@ -311,14 +320,19 @@ function renderCover(
       elements
     );
 
+
     return;
   }
 
 
   elements
     .cover
-    .src =
-      title.coverUrl;
+    .onerror =
+      () => {
+        showCoverFallback(
+          elements
+        );
+      };
 
 
   elements
@@ -340,12 +354,8 @@ function renderCover(
 
   elements
     .cover
-    .onerror =
-      () => {
-        showCoverFallback(
-          elements
-        );
-      };
+    .src =
+      title.coverUrl;
 }
 
 
@@ -544,6 +554,7 @@ function renderGenres(
       .hidden =
         true;
 
+
     return;
   }
 
@@ -613,6 +624,7 @@ function renderScore(
       .scoreCard
       .hidden =
         true;
+
 
     return;
   }
@@ -704,6 +716,7 @@ function renderMediaWorkspace(
             panel:
               buildMediaPanel(
                 mediaType,
+
                 title.media[
                   mediaType
                 ]
@@ -1086,6 +1099,7 @@ function buildOverviewPanel(
         count.textContent =
           getMediaCountLabel(
             mediaType,
+
             title.media[
               mediaType
             ].length
@@ -1730,6 +1744,7 @@ function renderThemes(
       .hidden =
         true;
 
+
     return;
   }
 
@@ -1799,10 +1814,13 @@ function configureSimilarLink(
         `search.html?genre=${
           encodeURIComponent(
             normalizeSearchParameter(
-              title.genres[0]
+              title.genres[
+                0
+              ]
             )
           )
         }`;
+
 
     return;
   }
@@ -1814,7 +1832,9 @@ function configureSimilarLink(
       `search.html?type=${
         encodeURIComponent(
           normalizeSearchParameter(
-            title.types[0] ||
+            title.types[
+              0
+            ] ||
             "story"
           )
         )
