@@ -1,74 +1,78 @@
 // search-data.js
-// Shared configuration, Supabase loading, normalization,
-// ranking, filtering, sorting, and data helpers.
+// Supabase loading, database normalization, filtering,
+// search ranking, sorting, and shared data helpers.
 
-export const CONFIG = Object.freeze({
-  SUPABASE_URL:
-    "https://hsruxfpslxguhwnccwuj.supabase.co",
+export const CONFIG =
+  Object.freeze({
+    SUPABASE_URL:
+      "https://hsruxfpslxguhwnccwuj.supabase.co",
 
-  SUPABASE_KEY:
-    "sb_publishable_Z2upBCdemNtdB4j5jry65A_XD_u8BsD",
+    SUPABASE_KEY:
+      "sb_publishable_Z2upBCdemNtdB4j5jry65A_XD_u8BsD",
 
-  TABLE_NAME:
-    "manga",
+    TABLE_NAME:
+      "manga",
 
-  BUCKET_NAME:
-    "img",
+    BUCKET_NAME:
+      "img",
 
-  COVER_FOLDER:
-    "covers",
+    COVER_FOLDER:
+      "covers",
 
-  DATABASE_BATCH_SIZE:
-    1000,
+    DATABASE_BATCH_SIZE:
+      1000,
 
-  DATABASE_TIMEOUT_MS:
-    15000,
+    DATABASE_TIMEOUT_MS:
+      15000,
 
-  SEARCH_DEBOUNCE_MS:
-    220,
+    SEARCH_DEBOUNCE_MS:
+      220,
 
-  MAX_SEARCH_SUGGESTIONS:
-    6,
+    MAX_SEARCH_SUGGESTIONS:
+      6,
 
-  COLLAPSED_GENRE_LIMIT:
-    10,
+    MAX_LOADING_SKELETONS:
+      15,
 
-  DEFAULT_PER_PAGE:
-    12,
+    COLLAPSED_GENRE_LIMIT:
+      10,
 
-  ALLOWED_PER_PAGE: [
-    12,
-    24,
-    48
-  ],
+    DEFAULT_PER_PAGE:
+      15,
 
-  ALLOWED_SORT_OPTIONS:
-    new Set([
-      "relevance",
-      "score-desc",
-      "score-asc",
-      "title-asc",
-      "title-desc"
-    ]),
+    ALLOWED_PER_PAGE: [
+      15,
+      30,
+      45
+    ],
 
-  PREFERRED_TYPE_ORDER: [
-    "manga",
-    "anime",
-    "light-novel",
-    "visual-novel",
-    "novel",
-    "book",
-    "film",
-    "movie",
-    "tv",
-    "television",
-    "game"
-  ]
-});
+    ALLOWED_SORT_OPTIONS:
+      new Set([
+        "relevance",
+        "score-desc",
+        "score-asc",
+        "title-asc",
+        "title-desc"
+      ]),
+
+    PREFERRED_TYPE_ORDER: [
+      "manga",
+      "anime",
+      "light-novel",
+      "visual-novel",
+      "novel",
+      "book",
+      "film",
+      "movie",
+      "tv",
+      "television",
+      "game"
+    ]
+  });
 
 
 /* =========================================================
-   INITIAL APPLICATION STATE
+   INITIAL STATE
    ========================================================= */
 
 export function createInitialState() {
@@ -84,9 +88,6 @@ export function createInitialState() {
 
     minimumScore:
       0,
-
-    featuredOnly:
-      false,
 
     sort:
       "relevance",
@@ -144,17 +145,17 @@ export async function loadCatalogue(
       );
     }
 
-    const page =
+    const databasePage =
       Array.isArray(data)
         ? data
         : [];
 
     rows.push(
-      ...page
+      ...databasePage
     );
 
     if (
-      page.length <
+      databasePage.length <
       CONFIG.DATABASE_BATCH_SIZE
     ) {
       break;
@@ -180,7 +181,7 @@ export async function loadCatalogue(
 
 
 /* =========================================================
-   DATABASE NORMALIZATION
+   CATALOGUE NORMALIZATION
    ========================================================= */
 
 export function normalizeCatalogue(
@@ -281,29 +282,25 @@ export function normalizeStory(
         ...alternativeTitles,
         creator,
 
-        ...types.map(
-          (item) => {
-            return item.label;
-          }
-        ),
+        ...types.map((item) => {
+          return item.label;
+        }),
 
-        ...genres.map(
-          (item) => {
-            return item.label;
-          }
-        ),
+        ...genres.map((item) => {
+          return item.label;
+        }),
 
-        ...tags.map(
-          (item) => {
-            return item.label;
-          }
-        )
+        ...tags.map((item) => {
+          return item.label;
+        })
       ].join(" ")
     );
 
   return {
     id:
-      String(row.id),
+      String(
+        row.id
+      ),
 
     title,
 
@@ -389,9 +386,7 @@ export function getCoverUrlFromId(
    JSONB AND VALUE NORMALIZATION
    ========================================================= */
 
-export function normalizeValueList(
-  value
-) {
+export function normalizeValueList(value) {
   if (
     value == null ||
     value === ""
@@ -399,17 +394,13 @@ export function normalizeValueList(
     return [];
   }
 
-  if (
-    Array.isArray(value)
-  ) {
+  if (Array.isArray(value)) {
     return value
       .flatMap(
         normalizeValueList
       )
       .map((entry) => {
-        return String(
-          entry
-        ).trim();
+        return String(entry).trim();
       })
       .filter(Boolean);
   }
@@ -424,9 +415,7 @@ export function normalizeValueList(
         normalizeValueList
       )
       .map((entry) => {
-        return String(
-          entry
-        ).trim();
+        return String(entry).trim();
       })
       .filter(Boolean);
   }
@@ -447,7 +436,7 @@ export function normalizeValueList(
         JSON.parse(text)
       );
     } catch {
-      // Continue parsing it as ordinary text.
+      // Continue with ordinary text parsing.
     }
   }
 
@@ -517,9 +506,7 @@ export function normalizeFacetList(
 }
 
 
-export function normalizeSearchText(
-  value
-) {
+export function normalizeSearchText(value) {
   return String(
     value ??
     ""
@@ -542,9 +529,7 @@ export function normalizeSearchText(
 }
 
 
-export function normalizeFacetKey(
-  value
-) {
+export function normalizeFacetKey(value) {
   return normalizeSearchText(
     value
   ).replace(
@@ -554,9 +539,7 @@ export function normalizeFacetKey(
 }
 
 
-export function formatKeyAsLabel(
-  key
-) {
+export function formatKeyAsLabel(key) {
   return String(
     key ||
     ""
@@ -565,9 +548,7 @@ export function formatKeyAsLabel(
     .filter(Boolean)
     .map((word) => {
       return (
-        word
-          .charAt(0)
-          .toUpperCase() +
+        word.charAt(0).toUpperCase() +
         word.slice(1)
       );
     })
@@ -579,9 +560,7 @@ export function formatKeyAsLabel(
    SCORE HELPERS
    ========================================================= */
 
-export function getNumericScore(
-  value
-) {
+export function getNumericScore(value) {
   const number =
     Number(value);
 
@@ -593,9 +572,7 @@ export function getNumericScore(
 }
 
 
-export function formatScore(
-  value
-) {
+export function formatScore(value) {
   const number =
     getNumericScore(
       value
@@ -627,14 +604,13 @@ export function buildRankedEntries(
     );
 
   if (!normalizedQuery) {
-    return catalogue.map(
-      (item) => {
-        return {
-          item,
-          rank: 0
-        };
-      }
-    );
+    return catalogue.map((item) => {
+      return {
+        item,
+        rank:
+          0
+      };
+    });
   }
 
   const words =
@@ -706,33 +682,27 @@ function getSearchRank(
   }
 
   if (
-    item.alternativeTitleSearch
-      .some((title) => {
-        return (
-          title ===
-          query
-        );
-      })
+    item.alternativeTitleSearch.some((title) => {
+      return title === query;
+    })
   ) {
     rank +=
       155;
   } else if (
-    item.alternativeTitleSearch
-      .some((title) => {
-        return title.startsWith(
-          query
-        );
-      })
+    item.alternativeTitleSearch.some((title) => {
+      return title.startsWith(
+        query
+      );
+    })
   ) {
     rank +=
       115;
   } else if (
-    item.alternativeTitleSearch
-      .some((title) => {
-        return title.includes(
-          query
-        );
-      })
+    item.alternativeTitleSearch.some((title) => {
+      return title.includes(
+        query
+      );
+    })
   ) {
     rank +=
       85;
@@ -812,15 +782,7 @@ export function passesFilters(
     skipGroup !== "score" &&
     state.minimumScore > 0 &&
     item.score <
-    state.minimumScore
-  ) {
-    return false;
-  }
-
-  if (
-    skipGroup !== "featured" &&
-    state.featuredOnly &&
-    !item.featured
+      state.minimumScore
   ) {
     return false;
   }
@@ -833,17 +795,10 @@ export function passesFilters(
    SORTING
    ========================================================= */
 
-export function getResultComparator(
-  state
-) {
-  switch (
-    state.sort
-  ) {
+export function getResultComparator(state) {
+  switch (state.sort) {
     case "score-desc":
-      return (
-        a,
-        b
-      ) => {
+      return (a, b) => {
         return (
           compareScoreDescending(
             a.item,
@@ -859,10 +814,7 @@ export function getResultComparator(
 
 
     case "score-asc":
-      return (
-        a,
-        b
-      ) => {
+      return (a, b) => {
         return (
           compareScoreAscending(
             a.item,
@@ -878,10 +830,7 @@ export function getResultComparator(
 
 
     case "title-asc":
-      return (
-        a,
-        b
-      ) => {
+      return (a, b) => {
         return compareTitleAscending(
           a.item,
           b.item
@@ -890,10 +839,7 @@ export function getResultComparator(
 
 
     case "title-desc":
-      return (
-        a,
-        b
-      ) => {
+      return (a, b) => {
         return compareTitleDescending(
           a.item,
           b.item
@@ -903,10 +849,7 @@ export function getResultComparator(
 
     case "relevance":
     default:
-      return (
-        a,
-        b
-      ) => {
+      return (a, b) => {
         return compareByRelevance(
           a,
           b,
@@ -924,8 +867,7 @@ function compareByRelevance(
 ) {
   if (
     state.query &&
-    b.rank !==
-    a.rank
+    b.rank !== a.rank
   ) {
     return (
       b.rank -
@@ -1039,32 +981,31 @@ export function buildFacetOptions(
     new Map();
 
   entries.forEach((entry) => {
-    entry.item[property]
-      .forEach((facet) => {
-        const existing =
-          facets.get(
-            facet.key
-          );
+    entry.item[property].forEach((facet) => {
+      const existing =
+        facets.get(
+          facet.key
+        );
 
-        if (existing) {
-          existing.count +=
-            1;
-        } else {
-          facets.set(
-            facet.key,
-            {
-              key:
-                facet.key,
+      if (existing) {
+        existing.count +=
+          1;
+      } else {
+        facets.set(
+          facet.key,
+          {
+            key:
+              facet.key,
 
-              label:
-                facet.label,
+            label:
+              facet.label,
 
-              count:
-                1
-            }
-          );
-        }
-      });
+            count:
+              1
+          }
+        );
+      }
+    });
   });
 
   return [
@@ -1120,10 +1061,7 @@ export function findFacetLabel(
   catalogue,
   key
 ) {
-  for (
-    const item
-    of catalogue
-  ) {
+  for (const item of catalogue) {
     const facet = [
       ...item.types,
       ...item.genres,
@@ -1144,9 +1082,7 @@ export function findFacetLabel(
 }
 
 
-export function getPrimaryTypeLabel(
-  item
-) {
+export function getPrimaryTypeLabel(item) {
   return (
     item.types[0]?.label ||
     "Story"
@@ -1154,9 +1090,7 @@ export function getPrimaryTypeLabel(
 }
 
 
-export function getTypeDisplay(
-  item
-) {
+export function getTypeDisplay(item) {
   const labels =
     item.types
       .slice(0, 2)

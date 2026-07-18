@@ -10,17 +10,18 @@
 
   <meta
     name="description"
-    content="Search and explore stories in the Inkwell catalogue."
+    content="Search and filter stories in the Inkwell catalogue."
   >
 
   <title>Search Stories | Inkwell</title>
 
-  <!-- Global Inkwell design system -->
+  <!-- Global website styles -->
   <link rel="stylesheet" href="style.css">
 
   <!-- Search-page styles -->
-  <link rel="stylesheet" href="./css/Search/search.css">
+  <link rel="stylesheet" href="search.css?v=9">
 
+  <!-- Tabler icons -->
   <link
     rel="stylesheet"
     href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css"
@@ -93,19 +94,16 @@
 
   <main class="search-page">
     <!-- ===================================================
-         COMPACT SEARCH INTRODUCTION
+         SEARCH INTRODUCTION
          =================================================== -->
 
-    <section
-      class="search-intro"
-      aria-labelledby="search-page-title"
-    >
+    <section class="search-intro">
       <div class="search-intro-inner">
-        <span class="search-eyebrow">
+        <p class="search-eyebrow">
           Explore the catalogue
-        </span>
+        </p>
 
-        <h1 id="search-page-title">
+        <h1>
           Search stories
         </h1>
 
@@ -114,41 +112,39 @@
         </p>
 
 
+        <!-- ===============================================
+             MAIN SEARCH FIELD
+             =============================================== -->
+
         <div class="catalogue-search">
           <form
             id="catalogue-search-form"
             class="catalogue-search-form"
             role="search"
-            novalidate
+            autocomplete="off"
           >
-            <label
-              for="catalogue-search-input"
-              class="sr-only"
-            >
-              Search the Inkwell catalogue
-            </label>
-
-
             <i
               class="ti ti-search catalogue-search-icon"
               aria-hidden="true"
             ></i>
 
+            <label
+              class="sr-only"
+              for="catalogue-search-input"
+            >
+              Search the Inkwell catalogue
+            </label>
 
             <input
               id="catalogue-search-input"
-              name="q"
               type="search"
               placeholder="Search a title, creator, genre, format, or tag"
-              autocomplete="off"
-              spellcheck="false"
               role="combobox"
               aria-autocomplete="list"
-              aria-haspopup="listbox"
-              aria-expanded="false"
               aria-controls="search-suggestions"
+              aria-expanded="false"
+              spellcheck="false"
             >
-
 
             <button
               id="catalogue-search-clear"
@@ -157,18 +153,16 @@
               aria-label="Clear search"
               hidden
             >
-              <i
-                class="ti ti-x"
-                aria-hidden="true"
-              ></i>
+              <i class="ti ti-x" aria-hidden="true"></i>
             </button>
-
 
             <button
               class="catalogue-search-submit"
               type="submit"
             >
-              <span>Search</span>
+              <span>
+                Search
+              </span>
 
               <i
                 class="ti ti-arrow-right"
@@ -182,7 +176,7 @@
             id="search-suggestions"
             class="search-suggestions"
             role="listbox"
-            aria-label="Search suggestions"
+            aria-label="Search recommendations"
             hidden
           ></div>
         </div>
@@ -191,26 +185,16 @@
 
 
     <!-- ===================================================
-         FILTERS AND RESULTS
+         SEARCH WORKSPACE
          =================================================== -->
 
     <section
       class="search-workspace"
-      aria-label="Story catalogue"
+      aria-label="Catalogue search results"
     >
-      <!-- Mobile filter backdrop -->
-      <button
-        id="filter-drawer-overlay"
-        class="filter-drawer-overlay"
-        type="button"
-        aria-label="Close filters"
-        hidden
-      ></button>
-
-
-      <!-- =================================================
+      <!-- ===============================================
            FILTER PANEL
-           ================================================= -->
+           =============================================== -->
 
       <aside
         id="filter-panel"
@@ -228,23 +212,22 @@
             </h2>
           </div>
 
-
           <button
             id="filter-panel-close"
             class="filter-panel-close"
             type="button"
             aria-label="Close filters"
           >
-            <i
-              class="ti ti-x"
-              aria-hidden="true"
-            ></i>
+            <i class="ti ti-x" aria-hidden="true"></i>
           </button>
         </header>
 
 
         <div class="filter-panel-body">
-          <!-- Format -->
+          <!-- =============================================
+               FORMAT FILTER
+               ============================================= -->
+
           <fieldset class="filter-group">
             <legend>
               Format
@@ -257,7 +240,10 @@
           </fieldset>
 
 
-          <!-- Genre -->
+          <!-- =============================================
+               GENRE FILTER
+               ============================================= -->
+
           <fieldset class="filter-group">
             <legend>
               Genre
@@ -267,7 +253,6 @@
               id="genre-filter-list"
               class="filter-list"
             ></div>
-
 
             <button
               id="genre-show-more"
@@ -287,12 +272,14 @@
           </fieldset>
 
 
-          <!-- Score -->
+          <!-- =============================================
+               SCORE FILTER
+               ============================================= -->
+
           <fieldset class="filter-group">
             <legend>
               Minimum score
             </legend>
-
 
             <div class="filter-list">
               <label class="filter-option">
@@ -352,29 +339,6 @@
               </label>
             </div>
           </fieldset>
-
-
-          <!-- Featured -->
-          <fieldset
-            id="featured-filter-group"
-            class="filter-group"
-          >
-            <legend>
-              Collection
-            </legend>
-
-
-            <label class="filter-option">
-              <input
-                id="featured-filter"
-                type="checkbox"
-              >
-
-              <span class="filter-option-main">
-                Featured stories only
-              </span>
-            </label>
-          </fieldset>
         </div>
 
 
@@ -395,20 +359,30 @@
       </aside>
 
 
-      <!-- =================================================
-           RESULTS
-           ================================================= -->
+      <!-- Mobile filter overlay -->
+      <button
+        id="filter-drawer-overlay"
+        class="filter-drawer-overlay"
+        type="button"
+        aria-label="Close filters"
+        hidden
+      ></button>
 
-      <section
-        class="results-panel"
-        aria-labelledby="results-heading"
-      >
+
+      <!-- ===============================================
+           RESULTS PANEL
+           =============================================== -->
+
+      <div class="results-panel">
+        <!-- =============================================
+             RESULTS TOOLBAR
+             ============================================= -->
+
         <header class="results-toolbar">
           <div class="results-heading-group">
             <p
               id="results-status"
               class="results-status"
-              role="status"
               aria-live="polite"
             >
               Loading stories…
@@ -421,7 +395,8 @@
 
 
           <div class="results-controls">
-            <!-- Mobile filter button -->
+            <!-- Mobile filters button -->
+
             <button
               id="mobile-filter-button"
               class="mobile-filter-button"
@@ -434,9 +409,7 @@
                 aria-hidden="true"
               ></i>
 
-              <span>
-                Filters
-              </span>
+              Filters
 
               <span
                 id="mobile-filter-count"
@@ -448,40 +421,32 @@
             </button>
 
 
-            <!-- Custom sorting combobox -->
+            <!-- Sort select -->
+
             <div
               class="catalogue-select"
               data-custom-select
               data-value="relevance"
             >
-              <span
-                class="catalogue-select-label"
-                id="sort-control-label"
-              >
+              <span class="catalogue-select-label">
                 Sort by
               </span>
-
 
               <button
                 id="sort-select-trigger"
                 class="catalogue-select-trigger"
                 type="button"
-                role="combobox"
-                aria-labelledby="sort-control-label sort-select-value"
+                data-select-trigger
                 aria-haspopup="listbox"
                 aria-expanded="false"
-                aria-controls="sort-select-options"
-                data-select-trigger
+                aria-controls="sort-select-menu"
               >
                 <i
                   class="ti ti-arrows-sort"
                   aria-hidden="true"
                 ></i>
 
-                <span
-                  id="sort-select-value"
-                  data-select-value
-                >
+                <span data-select-value>
                   Relevance
                 </span>
 
@@ -491,13 +456,11 @@
                 ></i>
               </button>
 
-
               <div
-                id="sort-select-options"
+                id="sort-select-menu"
                 class="catalogue-select-menu"
-                role="listbox"
-                aria-labelledby="sort-control-label"
                 data-select-menu
+                role="listbox"
                 hidden
               >
                 <button
@@ -543,36 +506,28 @@
             </div>
 
 
-            <!-- Custom page-size combobox -->
+            <!-- Page-size select -->
+
             <div
               class="catalogue-select catalogue-select-compact"
               data-custom-select
-              data-value="12"
+              data-value="15"
             >
-              <span
-                class="catalogue-select-label"
-                id="per-page-control-label"
-              >
+              <span class="catalogue-select-label">
                 Show
               </span>
 
-
               <button
-                id="per-page-select-trigger"
+                id="page-size-select-trigger"
                 class="catalogue-select-trigger"
                 type="button"
-                role="combobox"
-                aria-labelledby="per-page-control-label per-page-select-value"
+                data-select-trigger
                 aria-haspopup="listbox"
                 aria-expanded="false"
-                aria-controls="per-page-select-options"
-                data-select-trigger
+                aria-controls="page-size-select-menu"
               >
-                <span
-                  id="per-page-select-value"
-                  data-select-value
-                >
-                  12 per page
+                <span data-select-value>
+                  15 per page
                 </span>
 
                 <i
@@ -581,37 +536,35 @@
                 ></i>
               </button>
 
-
               <div
-                id="per-page-select-options"
+                id="page-size-select-menu"
                 class="catalogue-select-menu"
-                role="listbox"
-                aria-labelledby="per-page-control-label"
                 data-select-menu
+                role="listbox"
                 hidden
               >
                 <button
                   type="button"
                   role="option"
-                  data-option-value="12"
+                  data-option-value="15"
                 >
-                  12 per page
+                  15 per page
                 </button>
 
                 <button
                   type="button"
                   role="option"
-                  data-option-value="24"
+                  data-option-value="30"
                 >
-                  24 per page
+                  30 per page
                 </button>
 
                 <button
                   type="button"
                   role="option"
-                  data-option-value="48"
+                  data-option-value="45"
                 >
-                  48 per page
+                  45 per page
                 </button>
               </div>
             </div>
@@ -619,11 +572,13 @@
         </header>
 
 
-        <!-- Applied filters -->
+        <!-- =============================================
+             ACTIVE FILTER CHIPS
+             ============================================= -->
+
         <div
           id="active-filters"
           class="active-filters"
-          aria-label="Applied filters"
           hidden
         >
           <span class="active-filters-label">
@@ -645,16 +600,22 @@
         </div>
 
 
-        <!-- Loading -->
+        <!-- =============================================
+             LOADING STATE
+             ============================================= -->
+
         <div
           id="results-loading"
           class="results-loading"
-          aria-label="Loading stories"
+          aria-hidden="true"
         ></div>
 
 
-        <!-- Error -->
-        <div
+        <!-- =============================================
+             ERROR STATE
+             ============================================= -->
+
+        <section
           id="results-error"
           class="results-message"
           role="alert"
@@ -664,16 +625,15 @@
             class="results-message-icon"
             aria-hidden="true"
           >
-            <i class="ti ti-cloud-off"></i>
+            <i class="ti ti-database-off"></i>
           </span>
 
           <h3>
-            Stories could not be loaded.
+            The catalogue could not be loaded.
           </h3>
 
           <p id="results-error-message">
-            Check the browser console and your Supabase
-            permissions.
+            An unexpected database error occurred.
           </p>
 
           <button
@@ -683,11 +643,14 @@
           >
             Try again
           </button>
-        </div>
+        </section>
 
 
-        <!-- Empty -->
-        <div
+        <!-- =============================================
+             EMPTY STATE
+             ============================================= -->
+
+        <section
           id="results-empty"
           class="results-message"
           hidden
@@ -700,19 +663,17 @@
           </span>
 
           <h3>
-            No matching stories found.
+            No matching stories
           </h3>
 
           <p id="results-empty-copy">
-            Try removing a filter or searching with fewer
-            words.
+            Try removing a filter or searching with fewer words.
           </p>
-
 
           <div class="results-message-actions">
             <button
               id="empty-clear-filters"
-              class="results-message-button results-message-button-secondary"
+              class="results-message-button"
               type="button"
             >
               Clear filters
@@ -720,36 +681,50 @@
 
             <button
               id="empty-browse-all"
-              class="results-message-button"
+              class="results-message-button results-message-button-secondary"
               type="button"
             >
-              Browse all stories
+              Browse all
             </button>
           </div>
-        </div>
+        </section>
 
 
-        <!-- Cards -->
+        <!-- =============================================
+             RESULTS GRID
+             ============================================= -->
+
         <div
           id="results-grid"
           class="results-grid"
+          hidden
         ></div>
 
 
-        <!-- Pagination -->
+        <!-- =============================================
+             PAGINATION
+             ============================================= -->
+
         <nav
           id="results-pagination"
           class="results-pagination"
           aria-label="Search result pages"
           hidden
         ></nav>
-      </section>
+      </div>
     </section>
   </main>
 
 
+  <footer class="search-footer">
+    <p>
+      Inkwell — remember what a story meant to you.
+    </p>
+  </footer>
+
+
   <!-- =====================================================
-       RESULT CARD TEMPLATE
+       STORY CARD TEMPLATE
        ===================================================== -->
 
   <template id="story-card-template">
@@ -757,13 +732,14 @@
       <a
         class="story-card-cover"
         data-story-link
+        href="#"
       >
         <img
+          data-story-cover
           src=""
           alt=""
           loading="lazy"
           decoding="async"
-          data-story-cover
         >
 
         <span
@@ -787,12 +763,12 @@
               <a
                 data-story-title
                 data-story-link
+                href="#"
               ></a>
             </h3>
 
             <p data-story-creator></p>
           </div>
-
 
           <span
             class="story-card-score"
@@ -817,17 +793,15 @@
         <div
           class="story-card-genres"
           data-story-genres
-          aria-label="Genres"
         ></div>
 
 
         <a
           class="story-card-action"
           data-story-link
+          href="#"
         >
-          <span>
-            View story
-          </span>
+          View story
 
           <i
             class="ti ti-arrow-up-right"
@@ -839,23 +813,13 @@
   </template>
 
 
-  <footer class="search-footer">
-    <p>
-      Inkwell — remember what a story meant to you.
-    </p>
-  </footer>
-
-
-  <!--
-    Sequential loading at the end of body.
-    Supabase finishes loading before search.js executes.
-  -->
-
+  <!-- Supabase must load before the search module -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Version 9 forces the browser to load these updates -->
   <script
-  type="module"
-  src="./javaScript/search/search.js?v=8"
+    type="module"
+    src="./javaScript/Search/search.js?v=9"
   ></script>
-  
 </body>
 </html>

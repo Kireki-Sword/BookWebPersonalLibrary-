@@ -1,15 +1,5 @@
 // search.js
-// Main controller for the Inkwell search page.
-//
-// This file coordinates:
-// - Supabase loading
-// - Search input and suggestions
-// - Filter changes
-// - Custom sort controls
-// - Pagination
-// - URL state
-// - Mobile filter drawer
-// - Rendering through search-render.js
+// Main controller for the Inkwell catalogue search page.
 
 import {
   CONFIG,
@@ -97,9 +87,7 @@ if (
 async function startSearchPage() {
   collectElements();
 
-  if (
-    !hasRequiredElements()
-  ) {
+  if (!hasRequiredElements()) {
     console.error(
       "Search page is missing one or more required elements.",
       elements
@@ -131,9 +119,7 @@ async function startSearchPage() {
     CONFIG.DEFAULT_PER_PAGE
   );
 
-  if (
-    !window.supabase?.createClient
-  ) {
+  if (!window.supabase?.createClient) {
     renderer.showError(
       "The Supabase browser library did not load. " +
       "Check that its script appears before search.js.",
@@ -195,12 +181,6 @@ function collectElements() {
     genreShowMore:
       "genre-show-more",
 
-    featuredFilterGroup:
-      "featured-filter-group",
-
-    featuredFilter:
-      "featured-filter",
-
     clearAllFilters:
       "clear-all-filters",
 
@@ -255,19 +235,15 @@ function collectElements() {
 
   Object
     .entries(ids)
-    .forEach(
-      (
-        [
-          key,
+    .forEach(([
+      key,
+      id
+    ]) => {
+      elements[key] =
+        document.getElementById(
           id
-        ]
-      ) => {
-        elements[key] =
-          document.getElementById(
-            id
-          );
-      }
-    );
+        );
+    });
 
   elements.customSelects = [
     ...document.querySelectorAll(
@@ -291,8 +267,6 @@ function hasRequiredElements() {
     "formatFilterList",
     "genreFilterList",
     "genreShowMore",
-    "featuredFilterGroup",
-    "featuredFilter",
     "clearAllFilters",
     "resultsStatus",
     "resultsHeading",
@@ -350,20 +324,13 @@ async function loadAndRenderCatalogue() {
     isCatalogueLoaded =
       true;
 
-    if (
-      !catalogue.length
-    ) {
+    if (!catalogue.length) {
       renderer.showEmptyCatalogueState(
         state
       );
 
       return;
     }
-
-    elements.featuredFilterGroup.hidden =
-      !catalogue.some((item) => {
-        return item.featured;
-      });
 
     applyStateAndRender({
       historyMode:
@@ -418,8 +385,7 @@ function bindEvents() {
         isCatalogueLoaded
       ) {
         renderSuggestions(
-          elements.searchInput
-            .value
+          elements.searchInput.value
         );
       }
     }
@@ -544,7 +510,7 @@ function bindEvents() {
 
 
 /* =========================================================
-   CUSTOM SORT AND PAGE-SIZE CONTROLS
+   CUSTOM SELECTS
    ========================================================= */
 
 function handleCustomSelectChange(
@@ -563,7 +529,9 @@ function handleCustomSelectChange(
         : "relevance";
   } else {
     const requested =
-      Number(rawValue);
+      Number(
+        rawValue
+      );
 
     state.perPage =
       CONFIG
@@ -587,9 +555,7 @@ function handleCustomSelectChange(
    SEARCH INPUT
    ========================================================= */
 
-function handleSearchSubmit(
-  event
-) {
+function handleSearchSubmit(event) {
   event.preventDefault();
 
   window.clearTimeout(
@@ -644,9 +610,7 @@ function handleSearchInput() {
         state.page =
           1;
 
-        if (
-          isCatalogueLoaded
-        ) {
+        if (isCatalogueLoaded) {
           applyStateAndRender({
             historyMode:
               "replace"
@@ -659,9 +623,7 @@ function handleSearchInput() {
 }
 
 
-function handleSearchKeydown(
-  event
-) {
+function handleSearchKeydown(event) {
   const suggestionsVisible =
     !elements.suggestions.hidden &&
     currentSuggestions.length > 0;
@@ -671,18 +633,13 @@ function handleSearchKeydown(
     event.key ===
     "ArrowDown"
   ) {
-    if (
-      !suggestionsVisible
-    ) {
+    if (!suggestionsVisible) {
       renderSuggestions(
-        elements.searchInput
-          .value
+        elements.searchInput.value
       );
     }
 
-    if (
-      !currentSuggestions.length
-    ) {
+    if (!currentSuggestions.length) {
       return;
     }
 
@@ -704,9 +661,7 @@ function handleSearchKeydown(
     event.key ===
     "ArrowUp"
   ) {
-    if (
-      !currentSuggestions.length
-    ) {
+    if (!currentSuggestions.length) {
       return;
     }
 
@@ -808,9 +763,7 @@ function browseAllStories() {
    SEARCH SUGGESTIONS
    ========================================================= */
 
-function renderSuggestions(
-  value
-) {
+function renderSuggestions(value) {
   const query =
     String(
       value ||
@@ -831,27 +784,22 @@ function renderSuggestions(
       catalogue,
       query
     )
-      .sort(
-        (
-          a,
-          b
-        ) => {
-          return (
-            b.rank -
-            a.rank ||
+      .sort((a, b) => {
+        return (
+          b.rank -
+          a.rank ||
 
-            compareScoreDescending(
-              a.item,
-              b.item
-            ) ||
+          compareScoreDescending(
+            a.item,
+            b.item
+          ) ||
 
-            compareTitleAscending(
-              a.item,
-              b.item
-            )
-          );
-        }
-      )
+          compareTitleAscending(
+            a.item,
+            b.item
+          )
+        );
+      })
       .slice(
         0,
         CONFIG.MAX_SEARCH_SUGGESTIONS
@@ -866,157 +814,155 @@ function renderSuggestions(
   elements.suggestions.innerHTML =
     "";
 
-  if (
-    !currentSuggestions.length
-  ) {
+  if (!currentSuggestions.length) {
     closeSuggestions();
 
     return;
   }
 
-  currentSuggestions.forEach(
-    (
-      item,
-      index
-    ) => {
-      const button =
-        document.createElement(
-          "button"
-        );
-
-      button.type =
-        "button";
-
-      button.className =
-        "search-suggestion";
-
-      button.id =
-        `search-suggestion-${index}`;
-
-      button.dataset.suggestionIndex =
-        String(index);
-
-      button.setAttribute(
-        "role",
-        "option"
+  currentSuggestions.forEach((
+    item,
+    index
+  ) => {
+    const button =
+      document.createElement(
+        "button"
       );
 
-      button.setAttribute(
-        "aria-selected",
-        "false"
+    button.type =
+      "button";
+
+    button.className =
+      "search-suggestion";
+
+    button.id =
+      `search-suggestion-${index}`;
+
+    button.dataset.suggestionIndex =
+      String(
+        index
       );
 
+    button.setAttribute(
+      "role",
+      "option"
+    );
 
-      const cover =
-        document.createElement(
-          "span"
-        );
-
-      cover.className =
-        "search-suggestion-cover";
-
-
-      if (item.coverUrl) {
-        const image =
-          document.createElement(
-            "img"
-          );
-
-        image.src =
-          item.coverUrl;
-
-        image.alt =
-          "";
-
-        image.loading =
-          "lazy";
-
-        image.addEventListener(
-          "error",
-          () => {
-            image.remove();
-          },
-          {
-            once: true
-          }
-        );
-
-        cover.append(
-          image
-        );
-      }
+    button.setAttribute(
+      "aria-selected",
+      "false"
+    );
 
 
-      const info =
-        document.createElement(
-          "span"
-        );
-
-      info.className =
-        "search-suggestion-info";
-
-
-      const title =
-        document.createElement(
-          "strong"
-        );
-
-      title.textContent =
-        item.title;
-
-
-      const meta =
-        document.createElement(
-          "small"
-        );
-
-      meta.textContent =
-        [
-          item.creator,
-
-          getPrimaryTypeLabel(
-            item
-          )
-        ]
-          .filter(Boolean)
-          .join(" · ");
-
-      info.append(
-        title,
-        meta
+    const cover =
+      document.createElement(
+        "span"
       );
 
+    cover.className =
+      "search-suggestion-cover";
 
-      const score =
+
+    if (item.coverUrl) {
+      const image =
         document.createElement(
-          "span"
+          "img"
         );
 
-      score.className =
-        "search-suggestion-score";
+      image.src =
+        item.coverUrl;
 
-      const scoreValue =
-        formatScore(
-          item.score
-        );
+      image.alt =
+        "";
 
-      score.textContent =
-        scoreValue
-          ? `★ ${scoreValue}`
-          : "";
+      image.loading =
+        "lazy";
 
-
-      button.append(
-        cover,
-        info,
-        score
+      image.addEventListener(
+        "error",
+        () => {
+          image.remove();
+        },
+        {
+          once: true
+        }
       );
 
-      elements.suggestions.append(
-        button
+      cover.append(
+        image
       );
     }
-  );
+
+
+    const info =
+      document.createElement(
+        "span"
+      );
+
+    info.className =
+      "search-suggestion-info";
+
+
+    const title =
+      document.createElement(
+        "strong"
+      );
+
+    title.textContent =
+      item.title;
+
+
+    const meta =
+      document.createElement(
+        "small"
+      );
+
+    meta.textContent =
+      [
+        item.creator,
+
+        getPrimaryTypeLabel(
+          item
+        )
+      ]
+        .filter(Boolean)
+        .join(" · ");
+
+    info.append(
+      title,
+      meta
+    );
+
+
+    const score =
+      document.createElement(
+        "span"
+      );
+
+    score.className =
+      "search-suggestion-score";
+
+    const scoreValue =
+      formatScore(
+        item.score
+      );
+
+    score.textContent =
+      scoreValue
+        ? `★ ${scoreValue}`
+        : "";
+
+
+    button.append(
+      cover,
+      info,
+      score
+    );
+
+    elements.suggestions.append(
+      button
+    );
+  });
 
   elements.suggestions.hidden =
     false;
@@ -1028,9 +974,7 @@ function renderSuggestions(
 }
 
 
-function handleSuggestionClick(
-  event
-) {
+function handleSuggestionClick(event) {
   const button =
     event.target.closest(
       "[data-suggestion-index]"
@@ -1043,8 +987,7 @@ function handleSuggestionClick(
   const item =
     currentSuggestions[
       Number(
-        button.dataset
-          .suggestionIndex
+        button.dataset.suggestionIndex
       )
     ];
 
@@ -1056,9 +999,7 @@ function handleSuggestionClick(
 }
 
 
-function selectSuggestion(
-  item
-) {
+function selectSuggestion(item) {
   elements.searchInput.value =
     item.title;
 
@@ -1084,44 +1025,43 @@ function selectSuggestion(
 
 function updateSuggestionHighlight() {
   const buttons = [
-    ...elements.suggestions
-      .querySelectorAll(
-        ".search-suggestion"
-      )
+    ...elements.suggestions.querySelectorAll(
+      ".search-suggestion"
+    )
   ];
 
-  buttons.forEach(
-    (
-      button,
-      index
-    ) => {
-      const active =
-        index ===
-        suggestionIndex;
+  buttons.forEach((
+    button,
+    index
+  ) => {
+    const active =
+      index ===
+      suggestionIndex;
 
-      button.classList.toggle(
-        "is-active",
+    button.classList.toggle(
+      "is-active",
+      active
+    );
+
+    button.setAttribute(
+      "aria-selected",
+      String(
         active
+      )
+    );
+
+    if (active) {
+      elements.searchInput.setAttribute(
+        "aria-activedescendant",
+        button.id
       );
 
-      button.setAttribute(
-        "aria-selected",
-        String(active)
-      );
-
-      if (active) {
-        elements.searchInput.setAttribute(
-          "aria-activedescendant",
-          button.id
-        );
-
-        button.scrollIntoView({
-          block:
-            "nearest"
-        });
-      }
+      button.scrollIntoView({
+        block:
+          "nearest"
+      });
     }
-  );
+  });
 }
 
 
@@ -1153,9 +1093,7 @@ function closeSuggestions() {
    FILTER EVENTS
    ========================================================= */
 
-function handleFilterChange(
-  event
-) {
+function handleFilterChange(event) {
   const target =
     event.target;
 
@@ -1186,12 +1124,6 @@ function handleFilterChange(
       Number(
         target.value
       ) || 0;
-  } else if (
-    target ===
-    elements.featuredFilter
-  ) {
-    state.featuredOnly =
-      target.checked;
   } else {
     return;
   }
@@ -1210,9 +1142,7 @@ function updateSetFromCheckbox(
   set,
   checkbox
 ) {
-  if (
-    checkbox.checked
-  ) {
+  if (checkbox.checked) {
     set.add(
       checkbox.value
     );
@@ -1260,17 +1190,12 @@ function clearFilterState() {
   state.minimumScore =
     0;
 
-  state.featuredOnly =
-    false;
-
   state.showAllGenres =
     false;
 }
 
 
-function handleActiveFilterClick(
-  event
-) {
+function handleActiveFilterClick(event) {
   const button =
     event.target.closest(
       "[data-remove-filter]"
@@ -1281,12 +1206,10 @@ function handleActiveFilterClick(
   }
 
   const kind =
-    button.dataset
-      .filterKind;
+    button.dataset.filterKind;
 
   const key =
-    button.dataset
-      .filterKey;
+    button.dataset.filterKey;
 
   if (
     kind ===
@@ -1308,12 +1231,6 @@ function handleActiveFilterClick(
   ) {
     state.minimumScore =
       0;
-  } else if (
-    kind ===
-    "featured"
-  ) {
-    state.featuredOnly =
-      false;
   }
 
   state.page =
@@ -1327,15 +1244,13 @@ function handleActiveFilterClick(
 
 
 /* =========================================================
-   APPLY SEARCH, FILTERING, AND SORTING
+   APPLY SEARCH, FILTERS, AND SORTING
    ========================================================= */
 
 function applyStateAndRender(
   options = {}
 ) {
-  if (
-    !isCatalogueLoaded
-  ) {
+  if (!isCatalogueLoaded) {
     return;
   }
 
@@ -1398,9 +1313,7 @@ function applyStateAndRender(
 
   syncAllControls();
 
-  if (
-    options.historyMode
-  ) {
+  if (options.historyMode) {
     writeStateToUrl(
       options.historyMode
     );
@@ -1421,9 +1334,7 @@ function applyStateAndRender(
    PAGINATION
    ========================================================= */
 
-function handlePaginationClick(
-  event
-) {
+function handlePaginationClick(event) {
   const button =
     event.target.closest(
       "[data-page]"
@@ -1609,10 +1520,6 @@ function readStateFromUrl() {
       ? minimumScore
       : 0;
 
-  state.featuredOnly =
-    params.get("featured") ===
-    "1";
-
   const requestedSort =
     params.get("sort") ||
     "relevance";
@@ -1653,9 +1560,7 @@ function readStateFromUrl() {
 }
 
 
-function writeStateToUrl(
-  historyMode
-) {
+function writeStateToUrl(historyMode) {
   const params =
     new URLSearchParams();
 
@@ -1697,15 +1602,6 @@ function writeStateToUrl(
       String(
         state.minimumScore
       )
-    );
-  }
-
-  if (
-    state.featuredOnly
-  ) {
-    params.set(
-      "featured",
-      "1"
     );
   }
 
@@ -1775,14 +1671,14 @@ function writeStateToUrl(
 function handleHistoryNavigation() {
   closeSuggestions();
   selectController.closeAll();
-  closeFilterDrawer(false);
+  closeFilterDrawer(
+    false
+  );
 
   readStateFromUrl();
   syncAllControls();
 
-  if (
-    isCatalogueLoaded
-  ) {
+  if (isCatalogueLoaded) {
     applyStateAndRender({
       historyMode:
         null
@@ -1815,12 +1711,10 @@ function syncAllControls() {
 
 
 /* =========================================================
-   GLOBAL DOCUMENT EVENTS
+   DOCUMENT EVENTS
    ========================================================= */
 
-function handleDocumentClick(
-  event
-) {
+function handleDocumentClick(event) {
   if (
     !event.target.closest(
       ".catalogue-search"
@@ -1839,9 +1733,7 @@ function handleDocumentClick(
 }
 
 
-function handleDocumentKeydown(
-  event
-) {
+function handleDocumentKeydown(event) {
   if (
     event.key !==
     "Escape"

@@ -14,9 +14,7 @@ import {
 } from "./search-data.js";
 
 
-export function createSearchRenderer(
-  elements
-) {
+export function createSearchRenderer(elements) {
   /* =======================================================
      FILTER FACETS
      ======================================================= */
@@ -114,55 +112,40 @@ export function createSearchRenderer(
       )
     ];
 
-    completeOptions.sort(
-      (
-        a,
-        b
-      ) => {
-        return (
-          b.count -
-          a.count ||
+    completeOptions.sort((a, b) => {
+      return (
+        b.count -
+        a.count ||
 
-          a.label.localeCompare(
-            b.label,
-            undefined,
-            {
-              sensitivity:
-                "base"
-            }
-          )
-        );
-      }
-    );
+        a.label.localeCompare(
+          b.label,
+          undefined,
+          {
+            sensitivity:
+              "base"
+          }
+        )
+      );
+    });
 
     const selectedOptions =
-      completeOptions.filter(
-        (option) => {
-          return state
-            .selectedGenres
-            .has(
-              option.key
-            );
-        }
-      );
+      completeOptions.filter((option) => {
+        return state.selectedGenres.has(
+          option.key
+        );
+      });
 
     const unselectedOptions =
-      completeOptions.filter(
-        (option) => {
-          return !state
-            .selectedGenres
-            .has(
-              option.key
-            );
-        }
-      );
+      completeOptions.filter((option) => {
+        return !state.selectedGenres.has(
+          option.key
+        );
+      });
 
     let visibleOptions =
       completeOptions;
 
-    if (
-      !state.showAllGenres
-    ) {
+    if (!state.showAllGenres) {
       const visibleMap =
         new Map();
 
@@ -238,7 +221,7 @@ export function createSearchRenderer(
         );
 
       empty.className =
-        "filter-option";
+        "filter-option filter-option-empty";
 
       empty.textContent =
         "No options available";
@@ -328,11 +311,9 @@ export function createSearchRenderer(
   ) {
     const existingKeys =
       new Set(
-        existingOptions.map(
-          (option) => {
-            return option.key;
-          }
-        )
+        existingOptions.map((option) => {
+          return option.key;
+        })
       );
 
     return [
@@ -387,9 +368,7 @@ export function createSearchRenderer(
       state
     );
 
-    if (
-      !currentResults.length
-    ) {
+    if (!currentResults.length) {
       elements.empty.hidden =
         false;
 
@@ -401,11 +380,9 @@ export function createSearchRenderer(
 
       elements.emptyCopy.textContent =
         state.query ||
-        getActiveFilterCount(
-          state
-        )
+        getActiveFilterCount(state)
           ? "Try removing a filter or searching with fewer words."
-          : "No public stories were returned from the manga table. Check its rows and anonymous SELECT policy.";
+          : "No public stories were returned from the manga table.";
 
       return;
     }
@@ -452,9 +429,7 @@ export function createSearchRenderer(
   }
 
 
-  function createStoryCard(
-    item
-  ) {
+  function createStoryCard(item) {
     const fragment =
       elements.cardTemplate
         .content
@@ -516,11 +491,6 @@ export function createSearchRenderer(
       )
     ];
 
-
-    /*
-      Correct detail-page URL.
-      This replaces the old story.html link.
-    */
 
     const detailUrl =
       `detail.html?id=${
@@ -649,9 +619,7 @@ export function createSearchRenderer(
     }
 
 
-    if (
-      !item.genres.length
-    ) {
+    if (!item.genres.length) {
       genres.hidden =
         true;
     }
@@ -705,9 +673,7 @@ export function createSearchRenderer(
   }
 
 
-  function announceResultCount(
-    currentResults
-  ) {
+  function announceResultCount(currentResults) {
     const count =
       currentResults.length;
 
@@ -735,46 +701,42 @@ export function createSearchRenderer(
       [];
 
 
-    state.selectedTypes.forEach(
-      (key) => {
-        chips.push({
-          kind:
-            "type",
+    state.selectedTypes.forEach((key) => {
+      chips.push({
+        kind:
+          "type",
 
-          key,
+        key,
 
-          label:
-            findFacetLabel(
-              catalogue,
-              key
-            ) ||
-            formatKeyAsLabel(
-              key
-            )
-        });
-      }
-    );
+        label:
+          findFacetLabel(
+            catalogue,
+            key
+          ) ||
+          formatKeyAsLabel(
+            key
+          )
+      });
+    });
 
 
-    state.selectedGenres.forEach(
-      (key) => {
-        chips.push({
-          kind:
-            "genre",
+    state.selectedGenres.forEach((key) => {
+      chips.push({
+        kind:
+          "genre",
 
-          key,
+        key,
 
-          label:
-            findFacetLabel(
-              catalogue,
-              key
-            ) ||
-            formatKeyAsLabel(
-              key
-            )
-        });
-      }
-    );
+        label:
+          findFacetLabel(
+            catalogue,
+            key
+          ) ||
+          formatKeyAsLabel(
+            key
+          )
+      });
+    });
 
 
     if (
@@ -792,22 +754,6 @@ export function createSearchRenderer(
 
         label:
           `Score ${state.minimumScore}+`
-      });
-    }
-
-
-    if (
-      state.featuredOnly
-    ) {
-      chips.push({
-        kind:
-          "featured",
-
-        key:
-          "featured",
-
-        label:
-          "Featured"
       });
     }
 
@@ -878,9 +824,7 @@ export function createSearchRenderer(
   }
 
 
-  function getActiveFilterCount(
-    state
-  ) {
+  function getActiveFilterCount(state) {
     return (
       state.selectedTypes.size +
       state.selectedGenres.size +
@@ -890,20 +834,12 @@ export function createSearchRenderer(
         0
           ? 1
           : 0
-      ) +
-
-      (
-        state.featuredOnly
-          ? 1
-          : 0
       )
     );
   }
 
 
-  function updateMobileFilterCount(
-    state
-  ) {
+  function updateMobileFilterCount(state) {
     const count =
       getActiveFilterCount(
         state
@@ -913,7 +849,9 @@ export function createSearchRenderer(
       count === 0;
 
     elements.mobileFilterCount.textContent =
-      String(count);
+      String(
+        count
+      );
   }
 
 
@@ -935,7 +873,8 @@ export function createSearchRenderer(
       );
 
     if (
-      totalPages <= 1
+      totalPages <=
+      1
     ) {
       elements.pagination.hidden =
         true;
@@ -1081,7 +1020,9 @@ export function createSearchRenderer(
         4,
         5
       ].forEach((page) => {
-        pages.add(page);
+        pages.add(
+          page
+        );
       });
     }
 
@@ -1096,7 +1037,9 @@ export function createSearchRenderer(
         totalPages - 2,
         totalPages - 1
       ].forEach((page) => {
-        pages.add(page);
+        pages.add(
+          page
+        );
       });
     }
 
@@ -1118,30 +1061,25 @@ export function createSearchRenderer(
     const tokens =
       [];
 
-    sortedPages.forEach(
-      (
-        page,
-        index
-      ) => {
-        const previous =
-          sortedPages[
-            index - 1
-          ];
+    sortedPages.forEach((page, index) => {
+      const previous =
+        sortedPages[
+          index - 1
+        ];
 
-        if (
-          index > 0 &&
-          page - previous > 1
-        ) {
-          tokens.push(
-            `ellipsis-${index}`
-          );
-        }
-
+      if (
+        index > 0 &&
+        page - previous > 1
+      ) {
         tokens.push(
-          page
+          `ellipsis-${index}`
         );
       }
-    );
+
+      tokens.push(
+        page
+      );
+    });
 
     return tokens;
   }
@@ -1173,7 +1111,9 @@ export function createSearchRenderer(
         .join(" ");
 
     button.dataset.page =
-      String(page);
+      String(
+        page
+      );
 
     button.disabled =
       disabled;
@@ -1248,9 +1188,7 @@ export function createSearchRenderer(
   }
 
 
-  function createIcon(
-    name
-  ) {
+  function createIcon(name) {
     const icon =
       document.createElement(
         "i"
@@ -1272,16 +1210,14 @@ export function createSearchRenderer(
      LOADING AND ERROR STATES
      ======================================================= */
 
-  function renderLoadingSkeletons(
-    count
-  ) {
+  function renderLoadingSkeletons(count) {
     elements.loading.innerHTML =
       "";
 
     const amount =
       Math.min(
         count,
-        12
+        CONFIG.MAX_LOADING_SKELETONS
       );
 
     for (
@@ -1413,9 +1349,7 @@ export function createSearchRenderer(
   }
 
 
-  function showEmptyCatalogueState(
-    state
-  ) {
+  function showEmptyCatalogueState(state) {
     setLoadingState(
       false,
       state
@@ -1450,18 +1384,12 @@ export function createSearchRenderer(
      STATIC CONTROL SYNCHRONIZATION
      ======================================================= */
 
-  function syncStaticControls(
-    state
-  ) {
+  function syncStaticControls(state) {
     elements.searchInput.value =
       state.query;
 
     elements.searchClear.hidden =
       !state.query;
-
-    elements.featuredFilter.checked =
-      state.featuredOnly;
-
 
     elements.filterPanel
       .querySelectorAll(
