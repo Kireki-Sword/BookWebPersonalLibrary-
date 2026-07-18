@@ -1,5 +1,5 @@
 // detail-dom.js
-// Finds the HTML elements used by the detail page.
+// Collects the elements used by the detail page.
 
 export function collectDetailElements() {
   return {
@@ -29,17 +29,6 @@ export function collectDetailElements() {
       ),
 
 
-    breadcrumbFormat:
-      document.getElementById(
-        "detail-breadcrumb-format"
-      ),
-
-    breadcrumbTitle:
-      document.getElementById(
-        "detail-breadcrumb-title"
-      ),
-
-
     ambientCover:
       document.getElementById(
         "detail-ambient-cover"
@@ -56,14 +45,9 @@ export function collectDetailElements() {
       ),
 
 
-    type:
+    types:
       document.getElementById(
-        "detail-type"
-      ),
-
-    featured:
-      document.getElementById(
-        "detail-featured"
+        "detail-types"
       ),
 
     title:
@@ -74,6 +58,11 @@ export function collectDetailElements() {
     alternativeTitles:
       document.getElementById(
         "detail-alternative-titles"
+      ),
+
+    creatorRow:
+      document.getElementById(
+        "detail-creator-row"
       ),
 
     creator:
@@ -97,21 +86,36 @@ export function collectDetailElements() {
         "detail-score"
       ),
 
-
-    factsGrid:
+    scoreCaption:
       document.getElementById(
-        "detail-facts-grid"
+        "detail-score-caption"
       ),
 
-    factsEmpty:
+
+    mediaSection:
       document.getElementById(
-        "detail-facts-empty"
+        "detail-media-section"
+      ),
+
+    mediaTabs:
+      document.getElementById(
+        "detail-media-tabs"
+      ),
+
+    mediaPanels:
+      document.getElementById(
+        "detail-media-panels"
       ),
 
 
     description:
       document.getElementById(
         "detail-description"
+      ),
+
+    descriptionToggle:
+      document.getElementById(
+        "detail-description-toggle"
       ),
 
     themesSection:
@@ -167,11 +171,6 @@ export function collectDetailElements() {
       )
     ],
 
-    progressStatusLabel:
-      document.getElementById(
-        "detail-progress-status-label"
-      ),
-
     libraryRemove:
       document.getElementById(
         "detail-library-remove"
@@ -195,27 +194,27 @@ export function hasRequiredDetailElements(
     "retryButton",
     "content",
 
-    "breadcrumbFormat",
-    "breadcrumbTitle",
-
     "ambientCover",
     "coverFrame",
     "cover",
 
-    "type",
-    "featured",
+    "types",
     "title",
     "alternativeTitles",
+    "creatorRow",
     "creator",
     "genres",
 
     "scoreCard",
     "score",
+    "scoreCaption",
 
-    "factsGrid",
-    "factsEmpty",
+    "mediaSection",
+    "mediaTabs",
+    "mediaPanels",
 
     "description",
+    "descriptionToggle",
     "themesSection",
     "themes",
 
@@ -227,17 +226,24 @@ export function hasRequiredDetailElements(
     "libraryTriggerIcon",
     "libraryTriggerLabel",
     "libraryMenu",
-    "progressStatusLabel",
     "libraryRemove",
     "libraryNote"
   ];
 
+
   return (
-    requiredKeys.every((key) => {
-      return Boolean(
-        elements[key]
-      );
-    }) &&
+    requiredKeys
+      .every(
+        (
+          key
+        ) => {
+          return Boolean(
+            elements[
+              key
+            ]
+          );
+        }
+      ) &&
 
     elements
       .libraryStatusButtons

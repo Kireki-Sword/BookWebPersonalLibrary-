@@ -1,6 +1,5 @@
 // detail.js
-// Main entry file for the Inkwell detail page.
-// It connects the database, rendering, and library modules.
+// Main entry point for the Inkwell detail page.
 
 import {
   DETAIL_CONFIG,
@@ -9,16 +8,20 @@ import {
   withTimeout
 } from "./detail-data.js";
 
+
 import {
   collectDetailElements,
   hasRequiredDetailElements
 } from "./detail-dom.js";
 
+
 import {
+  bindMediaTabEvents,
   renderDetailPage,
   showDetailContent,
   showDetailError
 } from "./detail-render.js";
+
 
 import {
   createDetailLibraryController
@@ -29,21 +32,28 @@ import {
    APPLICATION STATE
    ========================================================= */
 
-let supabaseClient = null;
-let elements = null;
-let libraryController = null;
+let elements =
+  null;
+
+
+let libraryController =
+  null;
 
 
 /* =========================================================
    STARTUP
    ========================================================= */
 
-if (document.readyState === "loading") {
+if (
+  document.readyState ===
+  "loading"
+) {
   document.addEventListener(
     "DOMContentLoaded",
     startDetailPage,
     {
-      once: true
+      once:
+        true
     }
   );
 } else {
@@ -52,9 +62,15 @@ if (document.readyState === "loading") {
 
 
 async function startDetailPage() {
-  elements = collectDetailElements();
+  elements =
+    collectDetailElements();
 
-  if (!hasRequiredDetailElements(elements)) {
+
+  if (
+    !hasRequiredDetailElements(
+      elements
+    )
+  ) {
     console.error(
       "The detail page is missing required HTML elements.",
       elements
@@ -63,19 +79,38 @@ async function startDetailPage() {
     return;
   }
 
-  libraryController =
-    createDetailLibraryController(elements);
 
-  libraryController.bindEvents();
+  libraryController =
+    createDetailLibraryController(
+      elements
+    );
+
+
+  libraryController
+    .bindEvents();
+
+
+  bindMediaTabEvents(
+    elements
+  );
+
 
   bindPageEvents();
 
+
   const titleId =
     new URLSearchParams(
-      window.location.search
-    ).get("id");
+      window
+        .location
+        .search
+    ).get(
+      "id"
+    );
 
-  if (!titleId) {
+
+  if (
+    !titleId
+  ) {
     showDetailError(
       elements,
       "No title ID was provided. Open a title from the search page."
@@ -84,7 +119,12 @@ async function startDetailPage() {
     return;
   }
 
-  if (!window.supabase?.createClient) {
+
+  if (
+    !window
+      .supabase
+      ?.createClient
+  ) {
     showDetailError(
       elements,
       "The Supabase browser library did not load."
@@ -93,11 +133,18 @@ async function startDetailPage() {
     return;
   }
 
-  supabaseClient =
-    window.supabase.createClient(
-      DETAIL_CONFIG.SUPABASE_URL,
-      DETAIL_CONFIG.SUPABASE_KEY
-    );
+
+  const supabaseClient =
+    window
+      .supabase
+      .createClient(
+        DETAIL_CONFIG
+          .SUPABASE_URL,
+
+        DETAIL_CONFIG
+          .SUPABASE_KEY
+      );
+
 
   try {
     const databaseRow =
@@ -106,9 +153,13 @@ async function startDetailPage() {
           supabaseClient,
           titleId
         ),
-        DETAIL_CONFIG.REQUEST_TIMEOUT_MS,
+
+        DETAIL_CONFIG
+          .REQUEST_TIMEOUT_MS,
+
         "The title request took too long."
       );
+
 
     const currentTitle =
       normalizeTitle(
@@ -116,26 +167,34 @@ async function startDetailPage() {
         supabaseClient
       );
 
+
     renderDetailPage(
       currentTitle,
       elements
     );
 
-    libraryController.setTitle(
-      currentTitle
-    );
+
+    libraryController
+      .setTitle(
+        currentTitle
+      );
+
 
     showDetailContent(
       elements
     );
-  } catch (error) {
+  } catch (
+    error
+  ) {
     console.error(
       "INKWELL DETAIL PAGE ERROR:",
       error
     );
 
+
     showDetailError(
       elements,
+
       error?.message ||
       "The title could not be loaded."
     );
@@ -148,49 +207,66 @@ async function startDetailPage() {
    ========================================================= */
 
 function bindPageEvents() {
-  elements.retryButton.addEventListener(
-    "click",
-    () => {
-      window.location.reload();
-    }
-  );
+  elements
+    .retryButton
+    .addEventListener(
+      "click",
+      () => {
+        window
+          .location
+          .reload();
+      }
+    );
 
-  elements.backButton.addEventListener(
-    "click",
-    handleBackToResults
-  );
+
+  elements
+    .backButton
+    .addEventListener(
+      "click",
+      handleBackToResults
+    );
 }
 
 
 /* =========================================================
-   RETURN TO SEARCH RESULTS
+   BACK TO SEARCH RESULTS
    ========================================================= */
 
 function handleBackToResults() {
   try {
-    if (!document.referrer) {
+    if (
+      !document.referrer
+    ) {
       window.location.href =
         "search.html";
 
       return;
     }
 
+
     const referrer =
       new URL(
         document.referrer
       );
 
+
     const cameFromSearch =
       referrer.origin ===
         window.location.origin &&
-      referrer.pathname
+      referrer
+        .pathname
         .toLowerCase()
         .endsWith(
           "/search.html"
         );
 
-    if (cameFromSearch) {
-      window.history.back();
+
+    if (
+      cameFromSearch
+    ) {
+      window
+        .history
+        .back();
     } else {
       window.location.href =
         "search.html";

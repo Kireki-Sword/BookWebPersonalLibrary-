@@ -1,6 +1,6 @@
 // detail-data.js
-// Supabase configuration, database loading, normalization,
-// media information parsing, and fact building.
+// Loads one catalogue title and preserves every separate
+// manga, anime, novel, and game record.
 
 export const DETAIL_CONFIG =
   Object.freeze({
@@ -24,6 +24,363 @@ export const DETAIL_CONFIG =
   });
 
 
+const MEDIA_ORDER = [
+  "manga",
+  "anime",
+  "novel",
+  "game"
+];
+
+
+const MEDIA_LABELS =
+  Object.freeze({
+    manga:
+      "Manga",
+
+    anime:
+      "Anime",
+
+    novel:
+      "Novel",
+
+    game:
+      "Game"
+  });
+
+
+const MEDIA_FIELD_CONFIG =
+  Object.freeze({
+    anime: {
+      countLabel:
+        "releases",
+
+      countAliases: [
+        [
+          "episodes",
+          "episodeCount",
+          "totalEpisodes",
+          "numberOfEpisodes"
+        ],
+
+        [
+          "movies",
+          "movieCount",
+          "totalMovies",
+          "numberOfMovies"
+        ]
+      ],
+
+      factGroups: [
+        {
+          label:
+            "Studio",
+
+          aliases: [
+            "studios",
+            "studio",
+            "animationStudio"
+          ]
+        },
+
+        {
+          label:
+            "Start year",
+
+          aliases: [
+            "startYear",
+            "airedFrom",
+            "releaseYear"
+          ]
+        },
+
+        {
+          label:
+            "End year",
+
+          aliases: [
+            "endYear",
+            "airedTo"
+          ]
+        }
+      ],
+
+      periodAliases: [
+        "releasePeriod",
+        "airingPeriod",
+        "aired",
+        "publicationPeriod"
+      ],
+
+      notesAliases: [
+        "notes",
+        "note",
+        "description",
+        "adaptationNotes"
+      ]
+    },
+
+
+    manga: {
+      countLabel:
+        "publications",
+
+      countAliases: [
+        [
+          "volumes",
+          "volumeCount",
+          "totalVolumes",
+          "numberOfVolumes"
+        ],
+
+        [
+          "chapters",
+          "chapterCount",
+          "totalChapters",
+          "numberOfChapters"
+        ]
+      ],
+
+      factGroups: [
+        {
+          label:
+            "Publisher",
+
+          aliases: [
+            "publisher",
+            "publishers"
+          ]
+        },
+
+        {
+          label:
+            "Magazine",
+
+          aliases: [
+            "magazines",
+            "magazine",
+            "serialization"
+          ]
+        },
+
+        {
+          label:
+            "Demographic",
+
+          aliases: [
+            "demographic",
+            "audience",
+            "targetAudience"
+          ]
+        },
+
+        {
+          label:
+            "Release year",
+
+          aliases: [
+            "releaseYear",
+            "startYear"
+          ]
+        },
+
+        {
+          label:
+            "End year",
+
+          aliases: [
+            "endYear"
+          ]
+        }
+      ],
+
+      periodAliases: [
+        "publicationPeriod",
+        "releasePeriod",
+        "published",
+        "serializationPeriod"
+      ],
+
+      notesAliases: [
+        "notes",
+        "note",
+        "description",
+        "publicationNotes"
+      ]
+    },
+
+
+    novel: {
+      countLabel:
+        "publications",
+
+      countAliases: [
+        [
+          "volumes",
+          "volumeCount",
+          "totalVolumes",
+          "numberOfVolumes"
+        ],
+
+        [
+          "chapters",
+          "chapterCount",
+          "totalChapters",
+          "numberOfChapters"
+        ]
+      ],
+
+      factGroups: [
+        {
+          label:
+            "Publisher",
+
+          aliases: [
+            "publisher",
+            "publishers"
+          ]
+        },
+
+        {
+          label:
+            "Imprint",
+
+          aliases: [
+            "imprint",
+            "label"
+          ]
+        },
+
+        {
+          label:
+            "Author",
+
+          aliases: [
+            "author",
+            "writer"
+          ]
+        },
+
+        {
+          label:
+            "Illustrator",
+
+          aliases: [
+            "illustrator",
+            "artist"
+          ]
+        },
+
+        {
+          label:
+            "Release year",
+
+          aliases: [
+            "releaseYear",
+            "startYear"
+          ]
+        },
+
+        {
+          label:
+            "End year",
+
+          aliases: [
+            "endYear"
+          ]
+        }
+      ],
+
+      periodAliases: [
+        "publicationPeriod",
+        "releasePeriod",
+        "published"
+      ],
+
+      notesAliases: [
+        "notes",
+        "note",
+        "description",
+        "publicationNotes"
+      ]
+    },
+
+
+    game: {
+      countLabel:
+        "releases",
+
+      countAliases:
+        [],
+
+      factGroups: [
+        {
+          label:
+            "Platform",
+
+          aliases: [
+            "platforms",
+            "platform",
+            "systems"
+          ]
+        },
+
+        {
+          label:
+            "Developer",
+
+          aliases: [
+            "developer",
+            "developers",
+            "studio"
+          ]
+        },
+
+        {
+          label:
+            "Publisher",
+
+          aliases: [
+            "publisher",
+            "publishers"
+          ]
+        },
+
+        {
+          label:
+            "Release year",
+
+          aliases: [
+            "releaseYear",
+            "startYear"
+          ]
+        },
+
+        {
+          label:
+            "End year",
+
+          aliases: [
+            "endYear"
+          ]
+        }
+      ],
+
+      periodAliases: [
+        "releasePeriod",
+        "publicationPeriod",
+        "released"
+      ],
+
+      notesAliases: [
+        "notes",
+        "note",
+        "description",
+        "releaseNotes"
+      ]
+    }
+  });
+
+
 /* =========================================================
    DATABASE
    ========================================================= */
@@ -35,16 +392,18 @@ export async function loadTitleFromDatabase(
   const {
     data,
     error
-  } = await supabaseClient
-    .from(
-      DETAIL_CONFIG.TABLE_NAME
-    )
-    .select("*")
-    .eq(
-      "id",
-      titleId
-    )
-    .maybeSingle();
+  } =
+    await supabaseClient
+      .from(
+        DETAIL_CONFIG.TABLE_NAME
+      )
+      .select("*")
+      .eq(
+        "id",
+        titleId
+      )
+      .maybeSingle();
+
 
   if (error) {
     throw new Error(
@@ -55,11 +414,13 @@ export async function loadTitleFromDatabase(
     );
   }
 
+
   if (!data) {
     throw new Error(
       "No catalogue entry matched this title ID."
     );
   }
+
 
   return data;
 }
@@ -72,6 +433,7 @@ export function withTimeout(
 ) {
   let timeoutId =
     null;
+
 
   const timeoutPromise =
     new Promise(
@@ -93,11 +455,13 @@ export function withTimeout(
       }
     );
 
+
   return Promise
     .race([
       Promise.resolve(
         promise
       ),
+
       timeoutPromise
     ])
     .finally(() => {
@@ -117,10 +481,11 @@ export function normalizeTitle(
   supabaseClient
 ) {
   const title =
-    String(
-      row.title ||
-      "Untitled"
-    ).trim();
+    cleanString(
+      row.title
+    ) ||
+    "Untitled";
+
 
   const alternativeTitles =
     uniqueStrings(
@@ -128,23 +493,29 @@ export function normalizeTitle(
         row.alternativeTitles
       )
     )
-      .filter((alternativeTitle) => {
-        return (
-          normalizeText(
-            alternativeTitle
-          ) !==
-          normalizeText(
-            title
-          )
-        );
-      });
+      .filter(
+        (
+          alternativeTitle
+        ) => {
+          return (
+            normalizeText(
+              alternativeTitle
+            ) !==
+            normalizeText(
+              title
+            )
+          );
+        }
+      );
 
-  const types =
+
+  const rowTypes =
     uniqueStrings(
       extractStrings(
         row.type
       )
     );
+
 
   const genres =
     uniqueStrings(
@@ -153,6 +524,7 @@ export function normalizeTitle(
       )
     );
 
+
   const tags =
     uniqueStrings(
       extractStrings(
@@ -160,32 +532,41 @@ export function normalizeTitle(
       )
     );
 
-  const creator =
-    String(
-      row.creator ??
-      row.author ??
-      row.writer ??
-      row.artist ??
-      ""
-    ).trim();
 
-  const score =
-    getNumericScore(
-      row.heroScore ??
-      row.hero_score ??
-      row.score ??
-      row.rating
-    );
+  const media = {
+    manga:
+      sortMediaEntries(
+        normalizeEntries(
+          row.mangaInfo
+        )
+      ),
 
-  const description =
-    String(
-      row.description ||
-      ""
-    ).trim();
+    anime:
+      sortMediaEntries(
+        normalizeEntries(
+          row.animeInfo
+        )
+      ),
+
+    novel:
+      sortMediaEntries(
+        normalizeEntries(
+          row.novelInfo
+        )
+      ),
+
+    game:
+      sortMediaEntries(
+        normalizeEntries(
+          row.gameInfo
+        )
+      )
+  };
+
 
   return {
     id:
-      String(
+      cleanString(
         row.id
       ),
 
@@ -194,22 +575,36 @@ export function normalizeTitle(
     alternativeTitles,
 
     types:
-      types.length
-        ? types
-        : ["Story"],
+      rowTypes.length
+        ? rowTypes
+        : inferTypesFromMedia(
+            media
+          ),
 
-    creator,
+    creator:
+      cleanString(
+        row.creator ??
+        row.author ??
+        row.writer ??
+        row.artist
+      ),
+
+    score:
+      getNumericScore(
+        row.heroScore ??
+        row.hero_score ??
+        row.score ??
+        row.rating
+      ),
 
     genres,
 
     tags,
 
-    score,
-
-    featured:
-      row.featured === true,
-
-    description,
+    description:
+      cleanString(
+        row.description
+      ),
 
     coverUrl:
       getCoverUrlFromId(
@@ -217,11 +612,7 @@ export function normalizeTitle(
         row.id
       ),
 
-    mediaInformation:
-      combineMediaInformation(
-        row,
-        types
-      ),
+    media,
 
     raw:
       row
@@ -229,171 +620,581 @@ export function normalizeTitle(
 }
 
 
-function getCoverUrlFromId(
-  supabaseClient,
-  id
-) {
-  if (
-    !supabaseClient ||
-    id == null
-  ) {
-    return "";
-  }
-
-  const coverPath =
-    `${
-      DETAIL_CONFIG.COVER_FOLDER
-    }/${id}.jpg`;
-
-  const {
-    data
-  } = supabaseClient
-    .storage
-    .from(
-      DETAIL_CONFIG.BUCKET_NAME
-    )
-    .getPublicUrl(
-      coverPath
-    );
-
-  return (
-    data?.publicUrl ||
-    ""
-  );
-}
-
-
 /* =========================================================
-   JSONB AND ARRAY HELPERS
+   MEDIA ENTRIES
    ========================================================= */
 
-function extractStrings(value) {
+export function normalizeEntries(
+  value
+) {
+  const parsedValue =
+    parseJsonValue(
+      value
+    );
+
+
   if (
-    value == null ||
-    value === ""
+    parsedValue == null ||
+    parsedValue === ""
   ) {
     return [];
   }
 
+
+  const entries =
+    Array.isArray(
+      parsedValue
+    )
+      ? parsedValue
+      : [
+          parsedValue
+        ];
+
+
+  return entries
+    .filter(
+      (
+        entry
+      ) => {
+        return (
+          entry &&
+          typeof entry ===
+            "object" &&
+          !Array.isArray(
+            entry
+          )
+        );
+      }
+    )
+    .map(
+      (
+        entry
+      ) => {
+        return {
+          ...entry
+        };
+      }
+    );
+}
+
+
+export function getAvailableMediaTypes(
+  title
+) {
+  return MEDIA_ORDER
+    .filter(
+      (
+        mediaType
+      ) => {
+        return (
+          title
+            .media[
+              mediaType
+            ]
+            ?.length > 0
+        );
+      }
+    );
+}
+
+
+export function getMediaLabel(
+  mediaType
+) {
+  return (
+    MEDIA_LABELS[
+      mediaType
+    ] ||
+    formatLabel(
+      mediaType
+    )
+  );
+}
+
+
+export function getMediaCountLabel(
+  mediaType,
+  count
+) {
+  const noun =
+    MEDIA_FIELD_CONFIG[
+      mediaType
+    ]
+      ?.countLabel ||
+    "entries";
+
+
+  return `${
+    count
+  } ${
+    count === 1
+      ? singularize(
+          noun
+        )
+      : noun
+  }`;
+}
+
+
+/* =========================================================
+   OVERVIEW
+   ========================================================= */
+
+export function buildOverviewStats(
+  title
+) {
+  const availableTypes =
+    getAvailableMediaTypes(
+      title
+    );
+
+
+  const years =
+    availableTypes
+      .flatMap(
+        (
+          mediaType
+        ) => {
+          return title
+            .media[
+              mediaType
+            ]
+            .flatMap(
+              extractYearsFromEntry
+            );
+        }
+      );
+
+
+  const totalEntries =
+    availableTypes
+      .reduce(
+        (
+          total,
+          mediaType
+        ) => {
+          return (
+            total +
+            title
+              .media[
+                mediaType
+              ]
+              .length
+          );
+        },
+        0
+      );
+
+
+  const stats = [
+    {
+      label:
+        "Available formats",
+
+      value:
+        availableTypes.length
+          ? availableTypes
+              .map(
+                getMediaLabel
+              )
+              .join(
+                " • "
+              )
+          : title.types
+              .map(
+                formatLabel
+              )
+              .join(
+                " • "
+              ) ||
+            "Story"
+    },
+
+    {
+      label:
+        "Catalogue entries",
+
+      value:
+        String(
+          totalEntries
+        )
+    }
+  ];
+
+
   if (
-    Array.isArray(value)
+    years.length
   ) {
-    return value.flatMap(
-      extractStrings
+    stats.push(
+      {
+        label:
+          "First release",
+
+        value:
+          String(
+            Math.min(
+              ...years
+            )
+          )
+      },
+
+      {
+        label:
+          "Latest release",
+
+        value:
+          String(
+            Math.max(
+              ...years
+            )
+          )
+      }
     );
   }
 
+
   if (
-    typeof value ===
-    "object"
+    title.creator
   ) {
-    if (
-      typeof value.name ===
-      "string"
-    ) {
-      return [
-        value.name
-      ];
-    }
+    stats.push({
+      label:
+        "Creator",
 
-    if (
-      typeof value.title ===
-      "string"
-    ) {
-      return [
-        value.title
-      ];
-    }
-
-    return Object
-      .values(value)
-      .flatMap(
-        extractStrings
-      );
+      value:
+        title.creator
+    });
   }
 
+
+  return stats;
+}
+
+
+/* =========================================================
+   ENTRY DISPLAY DATA
+   ========================================================= */
+
+export function buildMediaEntryView(
+  mediaType,
+  entry,
+  index
+) {
+  const config =
+    MEDIA_FIELD_CONFIG[
+      mediaType
+    ] ||
+    MEDIA_FIELD_CONFIG
+      .manga;
+
+
+  const consumedKeys =
+    new Set();
+
+
+  const titleField =
+    takeField(
+      entry,
+      [
+        "title",
+        "name"
+      ],
+      consumedKeys
+    );
+
+
+  const statusField =
+    takeField(
+      entry,
+      [
+        "status",
+        "publicationStatus",
+        "airingStatus",
+        "releaseStatus"
+      ],
+      consumedKeys
+    );
+
+
+  const formatField =
+    takeField(
+      entry,
+      [
+        "format",
+        "type",
+        "mediaType"
+      ],
+      consumedKeys
+    );
+
+
+  const periodField =
+    takeField(
+      entry,
+      config.periodAliases,
+      consumedKeys
+    );
+
+
+  const summaryItems =
+    [];
+
+
   if (
-    typeof value ===
-    "string"
+    formatField
   ) {
-    const text =
-      value.trim();
+    summaryItems.push(
+      formatValue(
+        formatField.value
+      )
+    );
+  }
 
-    if (!text) {
-      return [];
-    }
 
-    if (
-      text.startsWith("[") ||
-      text.startsWith("{")
-    ) {
-      try {
-        return extractStrings(
-          JSON.parse(text)
+  if (
+    periodField
+  ) {
+    summaryItems.push(
+      formatValue(
+        periodField.value
+      )
+    );
+  }
+
+
+  config
+    .countAliases
+    .forEach(
+      (
+        aliases
+      ) => {
+        const field =
+          takeField(
+            entry,
+            aliases,
+            consumedKeys
+          );
+
+
+        if (!field) {
+          return;
+        }
+
+
+        const firstAlias =
+          aliases[0]
+            .toLowerCase();
+
+
+        let unit =
+          "chapters";
+
+
+        if (
+          firstAlias.includes(
+            "episode"
+          )
+        ) {
+          unit =
+            "episodes";
+        } else if (
+          firstAlias.includes(
+            "movie"
+          )
+        ) {
+          unit =
+            "movies";
+        } else if (
+          firstAlias.includes(
+            "volume"
+          )
+        ) {
+          unit =
+            "volumes";
+        }
+
+
+        summaryItems.push(
+          formatCount(
+            field.value,
+            unit
+          )
         );
-      } catch {
-        // The value was ordinary text.
       }
-    }
+    );
 
-    return text
-      .split(
-        /\s*(?:\||,|;)\s*/g
+
+  const facts =
+    [];
+
+
+  config
+    .factGroups
+    .forEach(
+      (
+        group
+      ) => {
+        const field =
+          takeField(
+            entry,
+            group.aliases,
+            consumedKeys
+          );
+
+
+        if (
+          field
+        ) {
+          facts.push({
+            label:
+              group.label,
+
+            value:
+              formatValue(
+                field.value
+              )
+          });
+        }
+      }
+    );
+
+
+  const notesField =
+    takeField(
+      entry,
+      config.notesAliases,
+      consumedKeys
+    );
+
+
+  const additional =
+    Object
+      .entries(
+        entry
       )
-      .map((entry) => {
-        return entry.trim();
-      })
-      .filter(Boolean);
-  }
+      .filter(
+        (
+          [
+            key,
+            value
+          ]
+        ) => {
+          return (
+            !consumedKeys.has(
+              key
+            ) &&
+            isDisplayableValue(
+              value
+            )
+          );
+        }
+      )
+      .map(
+        (
+          [
+            key,
+            value
+          ]
+        ) => {
+          return {
+            label:
+              formatLabel(
+                key
+              ),
 
-  return [
-    String(value)
-  ];
+            value:
+              formatValue(
+                value
+              )
+          };
+        }
+      );
+
+
+  return {
+    title:
+      titleField
+        ?.value
+        ? formatValue(
+            titleField.value
+          )
+        : `${
+            getMediaLabel(
+              mediaType
+            )
+          } ${
+            index + 1
+          }`,
+
+    status:
+      statusField
+        ? formatLabel(
+            formatValue(
+              statusField.value
+            )
+          )
+        : "",
+
+    summaryItems:
+      summaryItems
+        .filter(
+          Boolean
+        ),
+
+    facts:
+      facts
+        .filter(
+          (
+            fact
+          ) => {
+            return Boolean(
+              fact.value
+            );
+          }
+        ),
+
+    notes:
+      notesField
+        ? formatValue(
+            notesField.value
+          )
+        : "",
+
+    additional,
+
+    yearLabel:
+      getEntryYearLabel(
+        entry
+      )
+  };
 }
 
 
-function uniqueStrings(values) {
-  const uniqueValues =
-    new Map();
+/* =========================================================
+   TEXT FORMATTING
+   ========================================================= */
 
-  values.forEach((value) => {
-    const cleanValue =
-      String(value).trim();
-
-    if (!cleanValue) {
-      return;
-    }
-
-    const normalizedValue =
-      normalizeText(
-        cleanValue
-      );
-
-    if (
-      normalizedValue &&
-      !uniqueValues.has(
-        normalizedValue
-      )
-    ) {
-      uniqueValues.set(
-        normalizedValue,
-        cleanValue
-      );
-    }
-  });
-
-  return [
-    ...uniqueValues.values()
-  ];
+export function normalizeSearchParameter(
+  value
+) {
+  return normalizeText(
+    value
+  ).replace(
+    /\s+/g,
+    "-"
+  );
 }
 
 
-export function normalizeText(value) {
+export function normalizeText(
+  value
+) {
   return String(
     value ??
     ""
   )
-    .normalize("NFKD")
+    .normalize(
+      "NFKD"
+    )
     .replace(
       /[\u0300-\u036f]/g,
       ""
@@ -411,708 +1212,19 @@ export function normalizeText(value) {
 }
 
 
-function normalizeKey(value) {
-  return normalizeText(
-    value
-  ).replace(
-    /\s+/g,
-    ""
-  );
-}
-
-
-export function normalizeSearchParameter(
+export function formatLabel(
   value
 ) {
-  return normalizeText(
-    value
-  ).replace(
-    /\s+/g,
-    "-"
-  );
-}
-
-
-/* =========================================================
-   SCORE
-   ========================================================= */
-
-function getNumericScore(value) {
-  const number =
-    Number(value);
-
-  return Number.isFinite(
-    number
-  )
-    ? number
-    : 0;
-}
-
-
-export function formatScore(value) {
-  const number =
-    getNumericScore(
+  const text =
+    cleanString(
       value
     );
 
-  if (!number) {
-    return "";
-  }
-
-  return Number.isInteger(
-    number
-  )
-    ? String(number)
-    : number.toFixed(1);
-}
-
-
-/* =========================================================
-   MEDIA INFORMATION
-   ========================================================= */
-
-function combineMediaInformation(
-  row,
-  types
-) {
-  const informationSources = {
-    manga:
-      normalizeObject(
-        row.mangaInfo
-      ),
-
-    anime:
-      normalizeObject(
-        row.animeInfo
-      ),
-
-    novel:
-      normalizeObject(
-        row.novelInfo
-      ),
-
-    game:
-      normalizeObject(
-        row.gameInfo
-      )
-  };
-
-  const primaryMode =
-    getMediaMode(
-      types
-    );
-
-  const modes = [
-    "manga",
-    "anime",
-    "novel",
-    "game"
-  ];
-
-  const orderedModes = [
-    ...modes.filter((mode) => {
-      return (
-        mode !==
-        primaryMode
-      );
-    }),
-
-    primaryMode
-  ];
-
-  return orderedModes.reduce(
-    (
-      combined,
-      mode
-    ) => {
-      return {
-        ...combined,
-        ...informationSources[mode]
-      };
-    },
-    {}
-  );
-}
-
-
-function normalizeObject(value) {
-  if (
-    value == null ||
-    value === ""
-  ) {
-    return {};
-  }
-
-  if (
-    typeof value ===
-    "string"
-  ) {
-    try {
-      return normalizeObject(
-        JSON.parse(value)
-      );
-    } catch {
-      return {};
-    }
-  }
-
-  if (
-    Array.isArray(value)
-  ) {
-    return value.reduce(
-      (
-        combined,
-        item
-      ) => {
-        return {
-          ...combined,
-          ...normalizeObject(
-            item
-          )
-        };
-      },
-      {}
-    );
-  }
-
-  if (
-    typeof value ===
-    "object"
-  ) {
-    return {
-      ...value
-    };
-  }
-
-  return {};
-}
-
-
-function createInformationMap(
-  information
-) {
-  const map =
-    new Map();
-
-  walkInformation(
-    information,
-    map
-  );
-
-  return map;
-}
-
-
-function walkInformation(
-  value,
-  map
-) {
-  if (
-    !value ||
-    typeof value !==
-    "object"
-  ) {
-    return;
-  }
-
-  Object
-    .entries(value)
-    .forEach(
-      (
-        [
-          key,
-          entryValue
-        ]
-      ) => {
-        const normalizedKey =
-          normalizeKey(
-            key
-          );
-
-        if (
-          isDisplayableValue(
-            entryValue
-          ) &&
-          !map.has(
-            normalizedKey
-          )
-        ) {
-          map.set(
-            normalizedKey,
-            entryValue
-          );
-        }
-
-        if (
-          entryValue &&
-          typeof entryValue ===
-            "object" &&
-          !Array.isArray(
-            entryValue
-          )
-        ) {
-          walkInformation(
-            entryValue,
-            map
-          );
-        }
-      }
-    );
-}
-
-
-function isDisplayableValue(value) {
-  if (
-    value == null ||
-    value === ""
-  ) {
-    return false;
-  }
-
-  if (
-    typeof value ===
-      "object" &&
-    !Array.isArray(value)
-  ) {
-    return Boolean(
-      value.year ||
-      value.name ||
-      value.title
-    );
-  }
-
-  return true;
-}
-
-
-function readInformation(
-  informationMap,
-  aliases
-) {
-  for (
-    const alias
-    of aliases
-  ) {
-    const value =
-      informationMap.get(
-        normalizeKey(
-          alias
-        )
-      );
-
-    if (
-      isDisplayableValue(
-        value
-      )
-    ) {
-      return value;
-    }
-  }
-
-  return "";
-}
-
-
-/* =========================================================
-   DETAIL FACTS
-   ========================================================= */
-
-export function buildFacts(title) {
-  const informationMap =
-    createInformationMap(
-      title.mediaInformation
-    );
-
-  const mediaMode =
-    getMediaMode(
-      title.types
-    );
-
-  const facts =
-    [];
-
-  addFact(
-    facts,
-    "Status",
-    formatInformationValue(
-      readInformation(
-        informationMap,
-        [
-          "status",
-          "publicationStatus",
-          "publishingStatus",
-          "airingStatus",
-          "releaseStatus"
-        ]
-      )
-    )
-  );
-
-
-  if (
-    mediaMode === "manga" ||
-    mediaMode === "novel"
-  ) {
-    addCountFact(
-      facts,
-      "Chapters",
-      readInformation(
-        informationMap,
-        [
-          "chapters",
-          "chapterCount",
-          "totalChapters",
-          "numberOfChapters"
-        ]
-      ),
-      "chapters"
-    );
-
-    addCountFact(
-      facts,
-      "Volumes",
-      readInformation(
-        informationMap,
-        [
-          "volumes",
-          "volumeCount",
-          "totalVolumes",
-          "numberOfVolumes"
-        ]
-      ),
-      "volumes"
-    );
-  }
-
-
-  if (
-    mediaMode === "anime"
-  ) {
-    addCountFact(
-      facts,
-      "Episodes",
-      readInformation(
-        informationMap,
-        [
-          "episodes",
-          "episodeCount",
-          "totalEpisodes",
-          "numberOfEpisodes"
-        ]
-      ),
-      "episodes"
-    );
-
-    addCountFact(
-      facts,
-      "Seasons",
-      readInformation(
-        informationMap,
-        [
-          "seasons",
-          "seasonCount",
-          "totalSeasons"
-        ]
-      ),
-      "seasons"
-    );
-  }
-
-
-  if (
-    mediaMode === "game"
-  ) {
-    addFact(
-      facts,
-      "Platforms",
-      formatInformationValue(
-        readInformation(
-          informationMap,
-          [
-            "platform",
-            "platforms",
-            "systems"
-          ]
-        )
-      )
-    );
-  }
-
-
-  const startDate =
-    readInformation(
-      informationMap,
-      [
-        "startDate",
-        "startYear",
-        "publishedFrom",
-        "airedFrom",
-        "releaseDate",
-        "firstPublished",
-        "publicationStart"
-      ]
-    );
-
-  const endDate =
-    readInformation(
-      informationMap,
-      [
-        "endDate",
-        "endYear",
-        "publishedTo",
-        "airedTo",
-        "lastPublished",
-        "publicationEnd"
-      ]
-    );
-
-
-  addFact(
-    facts,
-    getDateFactLabel(
-      mediaMode
-    ),
-    formatDateRange(
-      startDate,
-      endDate
-    )
-  );
-
-
-  if (
-    mediaMode === "anime"
-  ) {
-    addFact(
-      facts,
-      "Studio",
-      formatInformationValue(
-        readInformation(
-          informationMap,
-          [
-            "studio",
-            "studios",
-            "animationStudio"
-          ]
-        )
-      )
-    );
-  } else if (
-    mediaMode === "game"
-  ) {
-    addFact(
-      facts,
-      "Developer",
-      formatInformationValue(
-        readInformation(
-          informationMap,
-          [
-            "developer",
-            "developers",
-            "studio"
-          ]
-        )
-      )
-    );
-  } else {
-    addFact(
-      facts,
-      "Publisher",
-      formatInformationValue(
-        readInformation(
-          informationMap,
-          [
-            "publisher",
-            "publishers",
-            "serialization",
-            "magazine",
-            "imprint"
-          ]
-        )
-      )
-    );
-  }
-
-
-  addFact(
-    facts,
-    "Demographic",
-    formatInformationValue(
-      readInformation(
-        informationMap,
-        [
-          "demographic",
-          "audience",
-          "targetAudience"
-        ]
-      )
-    )
-  );
-
-
-  addFact(
-    facts,
-    "Country",
-    formatInformationValue(
-      readInformation(
-        informationMap,
-        [
-          "country",
-          "countryOfOrigin",
-          "origin"
-        ]
-      )
-    )
-  );
-
-
-  return facts.slice(
-    0,
-    9
-  );
-}
-
-
-function addFact(
-  facts,
-  label,
-  value
-) {
-  const cleanValue =
-    String(
-      value ||
-      ""
-    ).trim();
-
-  if (!cleanValue) {
-    return;
-  }
-
-  const alreadyExists =
-    facts.some((fact) => {
-      return (
-        normalizeText(
-          fact.value
-        ) ===
-        normalizeText(
-          cleanValue
-        )
-      );
-    });
-
-  if (!alreadyExists) {
-    facts.push({
-      label,
-      value:
-        cleanValue
-    });
-  }
-}
-
-
-function addCountFact(
-  facts,
-  label,
-  rawValue,
-  unit
-) {
-  const formattedValue =
-    formatInformationValue(
-      rawValue
-    );
-
-  if (!formattedValue) {
-    return;
-  }
-
-  const alreadyContainsLetters =
-    /[a-z]/i.test(
-      formattedValue
-    );
-
-  addFact(
-    facts,
-    label,
-    alreadyContainsLetters
-      ? formattedValue
-      : `${formattedValue} ${unit}`
-  );
-}
-
-
-function formatInformationValue(value) {
-  if (
-    value == null ||
-    value === ""
-  ) {
-    return "";
-  }
-
-  if (
-    Array.isArray(value)
-  ) {
-    return uniqueStrings(
-      value.flatMap(
-        extractStrings
-      )
-    ).join(" • ");
-  }
-
-  if (
-    typeof value ===
-    "object"
-  ) {
-    if (value.year) {
-      return formatDateValue(
-        value
-      );
-    }
-
-    if (value.name) {
-      return String(
-        value.name
-      );
-    }
-
-    if (value.title) {
-      return String(
-        value.title
-      );
-    }
-
-    return uniqueStrings(
-      Object
-        .values(value)
-        .flatMap(
-          extractStrings
-        )
-    ).join(" • ");
-  }
-
-  if (
-    typeof value ===
-    "boolean"
-  ) {
-    return value
-      ? "Yes"
-      : "No";
-  }
-
-  return formatLabel(
-    String(value)
-  );
-}
-
-
-export function formatLabel(value) {
-  const text =
-    String(
-      value ||
-      ""
-    ).trim();
 
   if (!text) {
     return "";
   }
+
 
   if (
     text ===
@@ -1122,7 +1234,12 @@ export function formatLabel(value) {
     return text;
   }
 
+
   return text
+    .replace(
+      /([a-z0-9])([A-Z])/g,
+      "$1 $2"
+    )
     .replace(
       /[_-]+/g,
       " "
@@ -1133,244 +1250,851 @@ export function formatLabel(value) {
     )
     .replace(
       /\b\w/g,
-      (character) => {
-        return character.toUpperCase();
+      (
+        character
+      ) => {
+        return character
+          .toUpperCase();
       }
     );
 }
 
 
-function formatDateRange(
-  startValue,
-  endValue
+export function formatScore(
+  value
 ) {
-  const start =
-    formatDateValue(
-      startValue
-    );
-
-  const end =
-    formatDateValue(
-      endValue
-    );
-
   if (
-    !start &&
-    !end
+    value == null
   ) {
     return "";
   }
 
-  if (
-    start &&
-    end &&
-    normalizeText(start) ===
-      normalizeText(end)
-  ) {
-    return start;
-  }
 
-  if (
-    start &&
-    end
-  ) {
-    return `${start}–${end}`;
-  }
-
-  return (
-    start ||
-    end
-  );
+  return Number
+    .isInteger(
+      value
+    )
+      ? String(
+          value
+        )
+      : value
+          .toFixed(
+            1
+          );
 }
 
 
-function formatDateValue(value) {
+export function formatValue(
+  value
+) {
   if (
-    value == null ||
-    value === ""
+    !isDisplayableValue(
+      value
+    )
   ) {
     return "";
   }
 
+
   if (
-    Array.isArray(value)
+    Array.isArray(
+      value
+    )
   ) {
-    return value
-      .map(
-        formatDateValue
+    return uniqueStrings(
+      value.flatMap(
+        extractStrings
       )
-      .filter(Boolean)
-      .join(" • ");
+    ).join(
+      " • "
+    );
   }
+
 
   if (
     typeof value ===
     "object"
   ) {
-    const year =
-      Number(
-        value.year
-      );
-
-    const month =
-      Number(
-        value.month
-      );
-
-    const day =
-      Number(
-        value.day
-      );
-
-    if (
-      Number.isFinite(
-        year
+    return Object
+      .entries(
+        value
       )
-    ) {
-      if (
-        Number.isFinite(
-          month
-        ) &&
-        Number.isFinite(
-          day
-        )
-      ) {
-        const date =
-          new Date(
-            year,
-            month - 1,
-            day
+      .filter(
+        (
+          [
+            ,
+            nestedValue
+          ]
+        ) => {
+          return (
+            isDisplayableValue(
+              nestedValue
+            )
           );
-
-        return new Intl
-          .DateTimeFormat(
-            undefined,
-            {
-              year:
-                "numeric",
-
-              month:
-                "short",
-
-              day:
-                "numeric"
-            }
-          )
-          .format(date);
-      }
-
-      if (
-        Number.isFinite(
-          month
-        )
-      ) {
-        const date =
-          new Date(
-            year,
-            month - 1,
-            1
-          );
-
-        return new Intl
-          .DateTimeFormat(
-            undefined,
-            {
-              year:
-                "numeric",
-
-              month:
-                "short"
-            }
-          )
-          .format(date);
-      }
-
-      return String(year);
-    }
-
-    return formatInformationValue(
-      value
-    );
+        }
+      )
+      .map(
+        (
+          [
+            key,
+            nestedValue
+          ]
+        ) => {
+          return `${
+            formatLabel(
+              key
+            )
+          }: ${
+            formatValue(
+              nestedValue
+            )
+          }`;
+        }
+      )
+      .join(
+        " • "
+      );
   }
 
-  return String(value).trim();
-}
-
-
-function getDateFactLabel(
-  mediaMode
-) {
-  if (
-    mediaMode ===
-    "anime"
-  ) {
-    return "Aired";
-  }
 
   if (
-    mediaMode ===
-    "game"
+    typeof value ===
+    "boolean"
   ) {
-    return "Released";
+    return value
+      ? "Yes"
+      : "No";
   }
 
-  return "Published";
+
+  return cleanString(
+    value
+  );
 }
 
 
 /* =========================================================
-   MEDIA MODE
+   COVER
    ========================================================= */
 
-export function getMediaMode(types) {
-  const typeText =
-    types
-      .map(
-        normalizeText
+function getCoverUrlFromId(
+  supabaseClient,
+  id
+) {
+  if (
+    !supabaseClient ||
+    id == null
+  ) {
+    return "";
+  }
+
+
+  const coverPath =
+    `${
+      DETAIL_CONFIG
+        .COVER_FOLDER
+    }/${id}.jpg`;
+
+
+  const {
+    data
+  } =
+    supabaseClient
+      .storage
+      .from(
+        DETAIL_CONFIG
+          .BUCKET_NAME
       )
-      .join(" ");
+      .getPublicUrl(
+        coverPath
+      );
 
+
+  return (
+    data?.publicUrl ||
+    ""
+  );
+}
+
+
+/* =========================================================
+   INTERNAL HELPERS
+   ========================================================= */
+
+function parseJsonValue(
+  value
+) {
   if (
-    typeText.includes(
-      "game"
-    ) ||
-    typeText.includes(
-      "visual novel"
-    )
+    typeof value !==
+    "string"
   ) {
-    return "game";
+    return value;
   }
 
-  if (
-    typeText.includes(
-      "anime"
-    ) ||
-    typeText.includes(
-      "film"
-    ) ||
-    typeText.includes(
-      "movie"
-    ) ||
-    typeText.includes(
-      "television"
-    ) ||
-    typeText.includes(
-      "tv"
-    )
-  ) {
-    return "anime";
+
+  const text =
+    value.trim();
+
+
+  if (!text) {
+    return null;
   }
 
+
   if (
-    typeText.includes(
-      "novel"
-    ) ||
-    typeText.includes(
-      "book"
+    !text.startsWith(
+      "["
+    ) &&
+    !text.startsWith(
+      "{"
     )
   ) {
-    return "novel";
+    return value;
   }
 
-  return "manga";
+
+  try {
+    return JSON.parse(
+      text
+    );
+  } catch {
+    return value;
+  }
+}
+
+
+function extractStrings(
+  value
+) {
+  const parsedValue =
+    parseJsonValue(
+      value
+    );
+
+
+  if (
+    parsedValue == null ||
+    parsedValue === ""
+  ) {
+    return [];
+  }
+
+
+  if (
+    Array.isArray(
+      parsedValue
+    )
+  ) {
+    return parsedValue
+      .flatMap(
+        extractStrings
+      );
+  }
+
+
+  if (
+    typeof parsedValue ===
+    "object"
+  ) {
+    if (
+      typeof parsedValue
+        .name ===
+      "string"
+    ) {
+      return [
+        parsedValue.name
+      ];
+    }
+
+
+    if (
+      typeof parsedValue
+        .title ===
+      "string"
+    ) {
+      return [
+        parsedValue.title
+      ];
+    }
+
+
+    return Object
+      .values(
+        parsedValue
+      )
+      .flatMap(
+        extractStrings
+      );
+  }
+
+
+  if (
+    typeof parsedValue ===
+    "string"
+  ) {
+    return parsedValue
+      .split(
+        /\s*(?:\||,|;)\s*/g
+      )
+      .map(
+        (
+          entry
+        ) => {
+          return entry
+            .trim();
+        }
+      )
+      .filter(
+        Boolean
+      );
+  }
+
+
+  return [
+    String(
+      parsedValue
+    )
+  ];
+}
+
+
+function uniqueStrings(
+  values
+) {
+  const uniqueValues =
+    new Map();
+
+
+  values.forEach(
+    (
+      value
+    ) => {
+      const cleanValue =
+        cleanString(
+          value
+        );
+
+
+      const normalizedValue =
+        normalizeText(
+          cleanValue
+        );
+
+
+      if (
+        cleanValue &&
+        normalizedValue &&
+        !uniqueValues.has(
+          normalizedValue
+        )
+      ) {
+        uniqueValues.set(
+          normalizedValue,
+          cleanValue
+        );
+      }
+    }
+  );
+
+
+  return [
+    ...uniqueValues
+      .values()
+  ];
+}
+
+
+function cleanString(
+  value
+) {
+  return String(
+    value ??
+    ""
+  ).trim();
+}
+
+
+function getNumericScore(
+  value
+) {
+  if (
+    value == null ||
+    value === ""
+  ) {
+    return null;
+  }
+
+
+  const number =
+    Number(
+      value
+    );
+
+
+  if (
+    !Number.isFinite(
+      number
+    )
+  ) {
+    return null;
+  }
+
+
+  return Math.min(
+    10,
+    Math.max(
+      0,
+      number
+    )
+  );
+}
+
+
+function inferTypesFromMedia(
+  media
+) {
+  const inferredTypes =
+    MEDIA_ORDER
+      .filter(
+        (
+          mediaType
+        ) => {
+          return (
+            media[
+              mediaType
+            ].length > 0
+          );
+        }
+      )
+      .map(
+        getMediaLabel
+      );
+
+
+  return inferredTypes
+    .length
+      ? inferredTypes
+      : [
+          "Story"
+        ];
+}
+
+
+function sortMediaEntries(
+  entries
+) {
+  return entries
+    .map(
+      (
+        entry,
+        originalIndex
+      ) => {
+        return {
+          entry,
+          originalIndex
+        };
+      }
+    )
+    .sort(
+      (
+        left,
+        right
+      ) => {
+        const leftYear =
+          getSortYear(
+            left.entry
+          );
+
+
+        const rightYear =
+          getSortYear(
+            right.entry
+          );
+
+
+        if (
+          leftYear ===
+          rightYear
+        ) {
+          return (
+            left.originalIndex -
+            right.originalIndex
+          );
+        }
+
+
+        if (
+          leftYear == null
+        ) {
+          return 1;
+        }
+
+
+        if (
+          rightYear == null
+        ) {
+          return -1;
+        }
+
+
+        return (
+          leftYear -
+          rightYear
+        );
+      }
+    )
+    .map(
+      ({
+        entry
+      }) => {
+        return entry;
+      }
+    );
+}
+
+
+function getSortYear(
+  entry
+) {
+  const directCandidates = [
+    entry.startYear,
+    entry.releaseYear,
+    entry.endYear
+  ];
+
+
+  for (
+    const candidate
+    of directCandidates
+  ) {
+    const year =
+      Number(
+        candidate
+      );
+
+
+    if (
+      Number.isInteger(
+        year
+      ) &&
+      year > 0
+    ) {
+      return year;
+    }
+  }
+
+
+  const periodText =
+    cleanString(
+      entry.releasePeriod ??
+      entry.publicationPeriod ??
+      entry.airingPeriod
+    );
+
+
+  const match =
+    periodText.match(
+      /\b(19|20)\d{2}\b/
+    );
+
+
+  return match
+    ? Number(
+        match[0]
+      )
+    : null;
+}
+
+
+function extractYearsFromEntry(
+  entry
+) {
+  const years =
+    [];
+
+
+  Object
+    .entries(
+      entry
+    )
+    .forEach(
+      (
+        [
+          key,
+          value
+        ]
+      ) => {
+        const normalizedKey =
+          normalizeText(
+            key
+          );
+
+
+        if (
+          !normalizedKey.includes(
+            "year"
+          ) &&
+          !normalizedKey.includes(
+            "period"
+          )
+        ) {
+          return;
+        }
+
+
+        const matches =
+          String(
+            value
+          ).match(
+            /\b(19|20)\d{2}\b/g
+          ) ||
+          [];
+
+
+        matches.forEach(
+          (
+            match
+          ) => {
+            years.push(
+              Number(
+                match
+              )
+            );
+          }
+        );
+      }
+    );
+
+
+  return years
+    .filter(
+      (
+        year
+      ) => {
+        return Number
+          .isInteger(
+            year
+          );
+      }
+    );
+}
+
+
+function getEntryYearLabel(
+  entry
+) {
+  const explicitPeriod =
+    cleanString(
+      entry.releasePeriod ??
+      entry.publicationPeriod ??
+      entry.airingPeriod
+    );
+
+
+  if (
+    explicitPeriod
+  ) {
+    return explicitPeriod;
+  }
+
+
+  const startYear =
+    cleanString(
+      entry.startYear ??
+      entry.releaseYear
+    );
+
+
+  const endYear =
+    cleanString(
+      entry.endYear
+    );
+
+
+  if (
+    startYear &&
+    endYear &&
+    startYear !==
+      endYear
+  ) {
+    return `${
+      startYear
+    }–${
+      endYear
+    }`;
+  }
+
+
+  return (
+    startYear ||
+    endYear ||
+    ""
+  );
+}
+
+
+function takeField(
+  entry,
+  aliases,
+  consumedKeys
+) {
+  const aliasKeys =
+    aliases.map(
+      (
+        alias
+      ) => {
+        return normalizeText(
+          alias
+        ).replace(
+          /\s+/g,
+          ""
+        );
+      }
+    );
+
+
+  for (
+    const [
+      key,
+      value
+    ]
+    of Object.entries(
+      entry
+    )
+  ) {
+    const normalizedKey =
+      normalizeText(
+        key
+      ).replace(
+        /\s+/g,
+        ""
+      );
+
+
+    if (
+      aliasKeys.includes(
+        normalizedKey
+      ) &&
+      isDisplayableValue(
+        value
+      )
+    ) {
+      consumedKeys.add(
+        key
+      );
+
+
+      return {
+        key,
+        value
+      };
+    }
+  }
+
+
+  return null;
+}
+
+
+function isDisplayableValue(
+  value
+) {
+  if (
+    value == null ||
+    value === ""
+  ) {
+    return false;
+  }
+
+
+  if (
+    Array.isArray(
+      value
+    )
+  ) {
+    return value
+      .some(
+        isDisplayableValue
+      );
+  }
+
+
+  if (
+    typeof value ===
+    "object"
+  ) {
+    return Object
+      .values(
+        value
+      )
+      .some(
+        isDisplayableValue
+      );
+  }
+
+
+  return true;
+}
+
+
+function formatCount(
+  value,
+  unit
+) {
+  const formattedValue =
+    formatValue(
+      value
+    );
+
+
+  if (
+    !formattedValue
+  ) {
+    return "";
+  }
+
+
+  return /[a-z]/i
+    .test(
+      formattedValue
+    )
+      ? formattedValue
+      : `${
+          formattedValue
+        } ${
+          unit
+        }`;
+}
+
+
+function singularize(
+  noun
+) {
+  if (
+    noun.endsWith(
+      "ies"
+    )
+  ) {
+    return `${
+      noun.slice(
+        0,
+        -3
+      )
+    }y`;
+  }
+
+
+  if (
+    noun.endsWith(
+      "s"
+    )
+  ) {
+    return noun.slice(
+      0,
+      -1
+    );
+  }
+
+
+  return noun;
 }

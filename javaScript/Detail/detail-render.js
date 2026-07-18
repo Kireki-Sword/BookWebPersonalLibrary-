@@ -1,69 +1,71 @@
 // detail-render.js
-// Places the normalized title data into the detail-page HTML.
+// Renders the normalized title into the premium detail page.
 
 import {
-  buildFacts,
+  buildMediaEntryView,
+  buildOverviewStats,
   formatLabel,
   formatScore,
+  getAvailableMediaTypes,
+  getMediaCountLabel,
+  getMediaLabel,
   normalizeSearchParameter
 } from "./detail-data.js";
 
 
 /* =========================================================
-   COMPLETE PAGE RENDER
+   COMPLETE PAGE
    ========================================================= */
 
 export function renderDetailPage(
   title,
   elements
 ) {
-  const primaryType =
-    title.types[0] ||
-    "Story";
-
   document.title =
     `${title.title} | Inkwell`;
 
-  renderBreadcrumbs(
-    title,
-    primaryType,
-    elements
-  );
 
   renderCover(
     title,
     elements
   );
 
-  renderHeading(
+
+  renderIdentity(
     title,
     elements
   );
+
 
   renderGenres(
     title.genres,
     elements
   );
 
+
   renderScore(
     title.score,
     elements
   );
 
-  renderFacts(
+
+  renderMediaWorkspace(
     title,
     elements
   );
+
 
   renderDescription(
     title.description,
     elements
   );
 
+
   renderThemes(
     title.tags,
     elements
   );
+
 
   configureSimilarLink(
     title,
@@ -73,28 +75,210 @@ export function renderDetailPage(
 
 
 /* =========================================================
-   BREADCRUMBS
+   INTERACTIVE EVENTS
    ========================================================= */
 
-function renderBreadcrumbs(
-  title,
-  primaryType,
+export function bindMediaTabEvents(
   elements
 ) {
-  elements.breadcrumbFormat.textContent =
-    primaryType;
+  elements
+    .mediaTabs
+    .addEventListener(
+      "click",
+      (
+        event
+      ) => {
+        const tab =
+          event
+            .target
+            .closest(
+              '[role="tab"]'
+            );
 
-  elements.breadcrumbFormat.href =
-    `search.html?type=${
-      encodeURIComponent(
-        normalizeSearchParameter(
-          primaryType
-        )
-      )
-    }`;
 
-  elements.breadcrumbTitle.textContent =
-    title.title;
+        if (!tab) {
+          return;
+        }
+
+
+        activateMediaTab(
+          tab.dataset
+            .tabId,
+          elements,
+          true
+        );
+      }
+    );
+
+
+  elements
+    .mediaTabs
+    .addEventListener(
+      "keydown",
+      (
+        event
+      ) => {
+        const currentTab =
+          event
+            .target
+            .closest(
+              '[role="tab"]'
+            );
+
+
+        if (
+          !currentTab
+        ) {
+          return;
+        }
+
+
+        const tabs = [
+          ...elements
+            .mediaTabs
+            .querySelectorAll(
+              '[role="tab"]'
+            )
+        ];
+
+
+        const currentIndex =
+          tabs.indexOf(
+            currentTab
+          );
+
+
+        if (
+          currentIndex < 0
+        ) {
+          return;
+        }
+
+
+        let nextIndex =
+          null;
+
+
+        if (
+          event.key ===
+          "ArrowRight"
+        ) {
+          nextIndex =
+            (
+              currentIndex +
+              1
+            ) %
+            tabs.length;
+        } else if (
+          event.key ===
+          "ArrowLeft"
+        ) {
+          nextIndex =
+            (
+              currentIndex -
+              1 +
+              tabs.length
+            ) %
+            tabs.length;
+        } else if (
+          event.key ===
+          "Home"
+        ) {
+          nextIndex =
+            0;
+        } else if (
+          event.key ===
+          "End"
+        ) {
+          nextIndex =
+            tabs.length -
+            1;
+        } else if (
+          event.key ===
+            "Enter" ||
+          event.key ===
+            " "
+        ) {
+          event.preventDefault();
+
+
+          activateMediaTab(
+            currentTab
+              .dataset
+              .tabId,
+            elements,
+            true
+          );
+
+
+          return;
+        }
+
+
+        if (
+          nextIndex == null
+        ) {
+          return;
+        }
+
+
+        event.preventDefault();
+
+
+        activateMediaTab(
+          tabs[
+            nextIndex
+          ]
+            .dataset
+            .tabId,
+          elements,
+          true
+        );
+      }
+    );
+
+
+  elements
+    .descriptionToggle
+    .addEventListener(
+      "click",
+      () => {
+        const isExpanded =
+          elements
+            .descriptionToggle
+            .getAttribute(
+              "aria-expanded"
+            ) ===
+          "true";
+
+
+        elements
+          .description
+          .classList
+          .toggle(
+            "is-collapsed",
+            isExpanded
+          );
+
+
+        elements
+          .descriptionToggle
+          .setAttribute(
+            "aria-expanded",
+            String(
+              !isExpanded
+            )
+          );
+
+
+        elements
+          .descriptionToggle
+          .textContent =
+            isExpanded
+              ? "Show full description"
+              : "Show less";
+      }
+    );
 }
 
 
@@ -106,11 +290,23 @@ function renderCover(
   title,
   elements
 ) {
-  elements.coverFrame.classList.remove(
-    "has-cover-error"
-  );
+  elements
+    .coverFrame
+    .classList
+    .remove(
+      "has-cover-error"
+    );
 
-  if (!title.coverUrl) {
+
+  elements
+    .cover
+    .onerror =
+      null;
+
+
+  if (
+    !title.coverUrl
+  ) {
     showCoverFallback(
       elements
     );
@@ -118,13 +314,21 @@ function renderCover(
     return;
   }
 
-  elements.cover.src =
-    title.coverUrl;
 
-  elements.cover.alt =
-    `${title.title} cover`;
+  elements
+    .cover
+    .src =
+      title.coverUrl;
 
-  elements.ambientCover
+
+  elements
+    .cover
+    .alt =
+      `${title.title} cover`;
+
+
+  elements
+    .ambientCover
     .style
     .backgroundImage =
       `url("${
@@ -133,38 +337,56 @@ function renderCover(
         )
       }")`;
 
-  elements.cover.addEventListener(
-    "error",
-    () => {
-      showCoverFallback(
-        elements
-      );
-    },
-    {
-      once: true
-    }
-  );
+
+  elements
+    .cover
+    .onerror =
+      () => {
+        showCoverFallback(
+          elements
+        );
+      };
 }
 
 
-function showCoverFallback(elements) {
-  elements.coverFrame.classList.add(
-    "has-cover-error"
-  );
+function showCoverFallback(
+  elements
+) {
+  elements
+    .coverFrame
+    .classList
+    .add(
+      "has-cover-error"
+    );
 
-  elements.cover.removeAttribute(
-    "src"
-  );
 
-  elements.ambientCover
+  elements
+    .cover
+    .removeAttribute(
+      "src"
+    );
+
+
+  elements
+    .cover
+    .alt =
+      "";
+
+
+  elements
+    .ambientCover
     .style
     .backgroundImage =
       "none";
 }
 
 
-function escapeCssUrl(value) {
-  return String(value)
+function escapeCssUrl(
+  value
+) {
+  return String(
+    value
+  )
     .replace(
       /\\/g,
       "\\\\"
@@ -177,46 +399,126 @@ function escapeCssUrl(value) {
 
 
 /* =========================================================
-   HEADING
+   TITLE IDENTITY
    ========================================================= */
 
-function renderHeading(
+function renderIdentity(
   title,
   elements
 ) {
-  elements.type.textContent =
-    title.types.join(
-      " / "
+  elements
+    .types
+    .replaceChildren();
+
+
+  const availableMediaTypes =
+    getAvailableMediaTypes(
+      title
     );
 
-  elements.featured.hidden =
-    !title.featured;
 
-  elements.title.textContent =
-    title.title;
+  const displayTypes =
+    availableMediaTypes.length
+      ? availableMediaTypes
+          .map(
+            getMediaLabel
+          )
+      : title.types
+          .map(
+            formatLabel
+          );
 
-  elements.creator.textContent =
-    title.creator ||
-    "Unknown creator";
+
+  displayTypes.forEach(
+    (
+      type
+    ) => {
+      const badge =
+        document.createElement(
+          "span"
+        );
+
+
+      badge.className =
+        "detail-format-badge";
+
+
+      badge.textContent =
+        type;
+
+
+      elements
+        .types
+        .append(
+          badge
+        );
+    }
+  );
+
+
+  elements
+    .title
+    .textContent =
+      title.title;
+
 
   if (
     title
       .alternativeTitles
       .length
   ) {
-    elements.alternativeTitles.hidden =
-      false;
+    elements
+      .alternativeTitles
+      .hidden =
+        false;
 
-    elements.alternativeTitles.textContent =
-      title.alternativeTitles.join(
-        " / "
-      );
+
+    elements
+      .alternativeTitles
+      .textContent =
+        title
+          .alternativeTitles
+          .join(
+            " · "
+          );
   } else {
-    elements.alternativeTitles.hidden =
-      true;
+    elements
+      .alternativeTitles
+      .hidden =
+        true;
 
-    elements.alternativeTitles.textContent =
-      "";
+
+    elements
+      .alternativeTitles
+      .textContent =
+        "";
+  }
+
+
+  if (
+    title.creator
+  ) {
+    elements
+      .creatorRow
+      .hidden =
+        false;
+
+
+    elements
+      .creator
+      .textContent =
+        title.creator;
+  } else {
+    elements
+      .creatorRow
+      .hidden =
+        true;
+
+
+    elements
+      .creator
+      .textContent =
+        "";
   }
 }
 
@@ -229,35 +531,64 @@ function renderGenres(
   genres,
   elements
 ) {
-  elements.genres.innerHTML =
-    "";
+  elements
+    .genres
+    .replaceChildren();
 
-  if (!genres.length) {
-    elements.genres.hidden =
-      true;
+
+  if (
+    !genres.length
+  ) {
+    elements
+      .genres
+      .hidden =
+        true;
 
     return;
   }
 
-  elements.genres.hidden =
-    false;
 
-  genres.forEach((genre) => {
-    const genreElement =
-      document.createElement(
-        "span"
-      );
+  elements
+    .genres
+    .hidden =
+      false;
 
-    genreElement.className =
-      "detail-genre";
 
-    genreElement.textContent =
-      genre;
+  genres.forEach(
+    (
+      genre
+    ) => {
+      const link =
+        document.createElement(
+          "a"
+        );
 
-    elements.genres.append(
-      genreElement
-    );
-  });
+
+      link.className =
+        "detail-chip detail-chip-genre";
+
+
+      link.href =
+        `search.html?genre=${
+          encodeURIComponent(
+            normalizeSearchParameter(
+              genre
+            )
+          )
+        }`;
+
+
+      link.textContent =
+        genre;
+
+
+      elements
+        .genres
+        .append(
+          link
+        );
+    }
+  );
 }
 
 
@@ -274,77 +605,1052 @@ function renderScore(
       score
     );
 
-  if (!formattedScore) {
-    elements.scoreCard.hidden =
-      true;
+
+  if (
+    !formattedScore
+  ) {
+    elements
+      .scoreCard
+      .hidden =
+        true;
 
     return;
   }
 
-  elements.scoreCard.hidden =
-    false;
 
-  elements.score.textContent =
-    formattedScore;
+  elements
+    .scoreCard
+    .hidden =
+      false;
+
+
+  elements
+    .score
+    .textContent =
+      formattedScore;
+
+
+  elements
+    .scoreCaption
+    .textContent =
+      "Editorial rating";
 }
 
 
 /* =========================================================
-   FACTS
+   MEDIA WORKSPACE
    ========================================================= */
 
-function renderFacts(
+function renderMediaWorkspace(
   title,
   elements
 ) {
-  elements.factsGrid.innerHTML =
-    "";
+  elements
+    .mediaTabs
+    .replaceChildren();
 
-  const facts =
-    buildFacts(
+
+  elements
+    .mediaPanels
+    .replaceChildren();
+
+
+  const availableTypes =
+    getAvailableMediaTypes(
       title
     );
 
-  elements.factsEmpty.hidden =
-    facts.length > 0;
 
-  facts.forEach((fact) => {
-    const factElement =
+  const tabs = [
+    {
+      id:
+        "overview",
+
+      label:
+        "Overview",
+
+      count:
+        null,
+
+      panel:
+        buildOverviewPanel(
+          title,
+          availableTypes,
+          elements
+        )
+    },
+
+    ...availableTypes
+      .map(
+        (
+          mediaType
+        ) => {
+          return {
+            id:
+              mediaType,
+
+            label:
+              getMediaLabel(
+                mediaType
+              ),
+
+            count:
+              title
+                .media[
+                  mediaType
+                ]
+                .length,
+
+            panel:
+              buildMediaPanel(
+                mediaType,
+                title.media[
+                  mediaType
+                ]
+              )
+          };
+        }
+      )
+  ];
+
+
+  tabs.forEach(
+    (
+      tabDefinition,
+      index
+    ) => {
+      const tabButton =
+        document.createElement(
+          "button"
+        );
+
+
+      const tabId =
+        `detail-tab-${
+          tabDefinition.id
+        }`;
+
+
+      const panelId =
+        `detail-panel-${
+          tabDefinition.id
+        }`;
+
+
+      tabButton.className =
+        "detail-media-tab";
+
+
+      tabButton.type =
+        "button";
+
+
+      tabButton.id =
+        tabId;
+
+
+      tabButton
+        .dataset
+        .tabId =
+          tabDefinition.id;
+
+
+      tabButton.setAttribute(
+        "role",
+        "tab"
+      );
+
+
+      tabButton.setAttribute(
+        "aria-controls",
+        panelId
+      );
+
+
+      tabButton.setAttribute(
+        "aria-selected",
+        index === 0
+          ? "true"
+          : "false"
+      );
+
+
+      tabButton.tabIndex =
+        index === 0
+          ? 0
+          : -1;
+
+
+      const label =
+        document.createElement(
+          "span"
+        );
+
+
+      label.textContent =
+        tabDefinition.label;
+
+
+      tabButton.append(
+        label
+      );
+
+
+      if (
+        tabDefinition
+          .count != null
+      ) {
+        const count =
+          document.createElement(
+            "span"
+          );
+
+
+        count.className =
+          "detail-media-tab-count";
+
+
+        count.textContent =
+          String(
+            tabDefinition
+              .count
+          );
+
+
+        tabButton.append(
+          count
+        );
+      }
+
+
+      const panel =
+        tabDefinition.panel;
+
+
+      panel.id =
+        panelId;
+
+
+      panel
+        .dataset
+        .panelId =
+          tabDefinition.id;
+
+
+      panel.setAttribute(
+        "role",
+        "tabpanel"
+      );
+
+
+      panel.setAttribute(
+        "aria-labelledby",
+        tabId
+      );
+
+
+      panel.tabIndex =
+        0;
+
+
+      panel.hidden =
+        index !== 0;
+
+
+      elements
+        .mediaTabs
+        .append(
+          tabButton
+        );
+
+
+      elements
+        .mediaPanels
+        .append(
+          panel
+        );
+    }
+  );
+
+
+  elements
+    .mediaSection
+    .hidden =
+      false;
+}
+
+
+/* =========================================================
+   OVERVIEW PANEL
+   ========================================================= */
+
+function buildOverviewPanel(
+  title,
+  availableTypes,
+  elements
+) {
+  const panel =
+    document.createElement(
+      "div"
+    );
+
+
+  panel.className =
+    "detail-media-panel detail-overview-panel";
+
+
+  const intro =
+    document.createElement(
+      "div"
+    );
+
+
+  intro.className =
+    "detail-panel-intro";
+
+
+  const headingBlock =
+    document.createElement(
+      "div"
+    );
+
+
+  const eyebrow =
+    document.createElement(
+      "span"
+    );
+
+
+  const heading =
+    document.createElement(
+      "h3"
+    );
+
+
+  const copy =
+    document.createElement(
+      "p"
+    );
+
+
+  eyebrow.className =
+    "detail-eyebrow";
+
+
+  eyebrow.textContent =
+    "Story overview";
+
+
+  heading.textContent =
+    "One title, every available format";
+
+
+  copy.textContent =
+    availableTypes.length
+      ? "Use the format tabs to explore each publication, adaptation, novel, or game as its own catalogue record."
+      : "More release information has not been added to this catalogue entry yet.";
+
+
+  headingBlock.append(
+    eyebrow,
+    heading,
+    copy
+  );
+
+
+  intro.append(
+    headingBlock
+  );
+
+
+  panel.append(
+    intro
+  );
+
+
+  const stats =
+    document.createElement(
+      "dl"
+    );
+
+
+  stats.className =
+    "detail-overview-stats";
+
+
+  buildOverviewStats(
+    title
+  ).forEach(
+    (
+      stat
+    ) => {
+      const item =
+        document.createElement(
+          "div"
+        );
+
+
+      const term =
+        document.createElement(
+          "dt"
+        );
+
+
+      const value =
+        document.createElement(
+          "dd"
+        );
+
+
+      term.textContent =
+        stat.label;
+
+
+      value.textContent =
+        stat.value;
+
+
+      item.append(
+        term,
+        value
+      );
+
+
+      stats.append(
+        item
+      );
+    }
+  );
+
+
+  panel.append(
+    stats
+  );
+
+
+  if (
+    availableTypes.length
+  ) {
+    const formatList =
       document.createElement(
         "div"
       );
 
-    factElement.className =
-      "detail-fact";
+
+    formatList.className =
+      "detail-format-summary-list";
 
 
-    const factLabel =
+    availableTypes.forEach(
+      (
+        mediaType
+      ) => {
+        const row =
+          document.createElement(
+            "button"
+          );
+
+
+        const text =
+          document.createElement(
+            "span"
+          );
+
+
+        const count =
+          document.createElement(
+            "strong"
+          );
+
+
+        const icon =
+          document.createElement(
+            "i"
+          );
+
+
+        row.className =
+          "detail-format-summary";
+
+
+        row.type =
+          "button";
+
+
+        text.textContent =
+          getMediaLabel(
+            mediaType
+          );
+
+
+        count.textContent =
+          getMediaCountLabel(
+            mediaType,
+            title.media[
+              mediaType
+            ].length
+          );
+
+
+        icon.className =
+          "ti ti-arrow-right";
+
+
+        icon.setAttribute(
+          "aria-hidden",
+          "true"
+        );
+
+
+        row.append(
+          text,
+          count,
+          icon
+        );
+
+
+        row.addEventListener(
+          "click",
+          () => {
+            activateMediaTab(
+              mediaType,
+              elements,
+              true
+            );
+          }
+        );
+
+
+        formatList.append(
+          row
+        );
+      }
+    );
+
+
+    panel.append(
+      formatList
+    );
+  }
+
+
+  return panel;
+}
+
+
+/* =========================================================
+   FORMAT PANEL
+   ========================================================= */
+
+function buildMediaPanel(
+  mediaType,
+  entries
+) {
+  const panel =
+    document.createElement(
+      "div"
+    );
+
+
+  panel.className =
+    "detail-media-panel";
+
+
+  const intro =
+    document.createElement(
+      "div"
+    );
+
+
+  intro.className =
+    "detail-panel-intro";
+
+
+  const headingBlock =
+    document.createElement(
+      "div"
+    );
+
+
+  const eyebrow =
+    document.createElement(
+      "span"
+    );
+
+
+  const heading =
+    document.createElement(
+      "h3"
+    );
+
+
+  const copy =
+    document.createElement(
+      "p"
+    );
+
+
+  const count =
+    document.createElement(
+      "span"
+    );
+
+
+  eyebrow.className =
+    "detail-eyebrow";
+
+
+  eyebrow.textContent =
+    `${
+      getMediaLabel(
+        mediaType
+      )
+    } information`;
+
+
+  heading.textContent =
+    getMediaPanelHeading(
+      mediaType
+    );
+
+
+  copy.textContent =
+    getMediaPanelDescription(
+      mediaType
+    );
+
+
+  count.className =
+    "detail-panel-count";
+
+
+  count.textContent =
+    getMediaCountLabel(
+      mediaType,
+      entries.length
+    );
+
+
+  headingBlock.append(
+    eyebrow,
+    heading,
+    copy
+  );
+
+
+  intro.append(
+    headingBlock,
+    count
+  );
+
+
+  panel.append(
+    intro
+  );
+
+
+  const list =
+    document.createElement(
+      "div"
+    );
+
+
+  list.className =
+    "detail-release-list";
+
+
+  entries.forEach(
+    (
+      entry,
+      index
+    ) => {
+      list.append(
+        buildMediaEntry(
+          mediaType,
+          entry,
+          index
+        )
+      );
+    }
+  );
+
+
+  panel.append(
+    list
+  );
+
+
+  return panel;
+}
+
+
+/* =========================================================
+   INDIVIDUAL RELEASE
+   ========================================================= */
+
+function buildMediaEntry(
+  mediaType,
+  entry,
+  index
+) {
+  const view =
+    buildMediaEntryView(
+      mediaType,
+      entry,
+      index
+    );
+
+
+  const article =
+    document.createElement(
+      "article"
+    );
+
+
+  article.className =
+    "detail-release-entry";
+
+
+  const marker =
+    document.createElement(
+      "div"
+    );
+
+
+  marker.className =
+    "detail-release-marker";
+
+
+  marker.textContent =
+    view.yearLabel ||
+    String(
+      index + 1
+    ).padStart(
+      2,
+      "0"
+    );
+
+
+  const body =
+    document.createElement(
+      "div"
+    );
+
+
+  body.className =
+    "detail-release-body";
+
+
+  const header =
+    document.createElement(
+      "header"
+    );
+
+
+  header.className =
+    "detail-release-header";
+
+
+  const headingGroup =
+    document.createElement(
+      "div"
+    );
+
+
+  const heading =
+    document.createElement(
+      "h4"
+    );
+
+
+  heading.textContent =
+    view.title;
+
+
+  headingGroup.append(
+    heading
+  );
+
+
+  if (
+    view
+      .summaryItems
+      .length
+  ) {
+    const summary =
+      document.createElement(
+        "p"
+      );
+
+
+    summary.className =
+      "detail-release-summary";
+
+
+    summary.textContent =
+      view
+        .summaryItems
+        .join(
+          " · "
+        );
+
+
+    headingGroup.append(
+      summary
+    );
+  }
+
+
+  header.append(
+    headingGroup
+  );
+
+
+  if (
+    view.status
+  ) {
+    const status =
       document.createElement(
         "span"
       );
 
-    factLabel.textContent =
-      fact.label;
+
+    status.className =
+      `detail-status detail-status-${
+        slugify(
+          view.status
+        )
+      }`;
 
 
-    const factValue =
-      document.createElement(
-        "strong"
+    status.textContent =
+      view.status;
+
+
+    header.append(
+      status
+    );
+  }
+
+
+  body.append(
+    header
+  );
+
+
+  if (
+    view
+      .facts
+      .length
+  ) {
+    body.append(
+      buildDefinitionGrid(
+        view.facts,
+        "detail-release-facts"
+      )
+    );
+  }
+
+
+  if (
+    view.notes
+  ) {
+    body.append(
+      buildDisclosure(
+        getNotesLabel(
+          mediaType
+        ),
+
+        view.notes,
+
+        "detail-release-disclosure"
+      )
+    );
+  }
+
+
+  if (
+    view
+      .additional
+      .length
+  ) {
+    body.append(
+      buildDisclosure(
+        "Additional details",
+
+        buildDefinitionGrid(
+          view.additional,
+          "detail-additional-grid"
+        ),
+
+        "detail-release-disclosure"
+      )
+    );
+  }
+
+
+  article.append(
+    marker,
+    body
+  );
+
+
+  return article;
+}
+
+
+/* =========================================================
+   DEFINITION LIST
+   ========================================================= */
+
+function buildDefinitionGrid(
+  items,
+  className
+) {
+  const list =
+    document.createElement(
+      "dl"
+    );
+
+
+  list.className =
+    className;
+
+
+  items.forEach(
+    (
+      item
+    ) => {
+      const wrapper =
+        document.createElement(
+          "div"
+        );
+
+
+      const term =
+        document.createElement(
+          "dt"
+        );
+
+
+      const definition =
+        document.createElement(
+          "dd"
+        );
+
+
+      term.textContent =
+        item.label;
+
+
+      definition.textContent =
+        item.value;
+
+
+      wrapper.append(
+        term,
+        definition
       );
 
-    factValue.textContent =
-      fact.value;
+
+      list.append(
+        wrapper
+      );
+    }
+  );
 
 
-    factElement.append(
-      factLabel,
-      factValue
+  return list;
+}
+
+
+/* =========================================================
+   COLLAPSIBLE DISCLOSURE
+   ========================================================= */
+
+function buildDisclosure(
+  label,
+  content,
+  className
+) {
+  const details =
+    document.createElement(
+      "details"
     );
 
-    elements.factsGrid.append(
-      factElement
+
+  const summary =
+    document.createElement(
+      "summary"
     );
-  });
+
+
+  const labelElement =
+    document.createElement(
+      "span"
+    );
+
+
+  const icon =
+    document.createElement(
+      "i"
+    );
+
+
+  details.className =
+    className;
+
+
+  labelElement.textContent =
+    label;
+
+
+  icon.className =
+    "ti ti-chevron-down";
+
+
+  icon.setAttribute(
+    "aria-hidden",
+    "true"
+  );
+
+
+  summary.append(
+    labelElement,
+    icon
+  );
+
+
+  details.append(
+    summary
+  );
+
+
+  if (
+    typeof content ===
+    "string"
+  ) {
+    const paragraph =
+      document.createElement(
+        "p"
+      );
+
+
+    paragraph.textContent =
+      content;
+
+
+    details.append(
+      paragraph
+    );
+  } else {
+    details.append(
+      content
+    );
+  }
+
+
+  return details;
 }
 
 
@@ -356,9 +1662,50 @@ function renderDescription(
   description,
   elements
 ) {
-  elements.description.textContent =
+  const copy =
     description ||
     "No description has been added to this catalogue entry yet.";
+
+
+  const shouldCollapse =
+    copy.length > 720;
+
+
+  elements
+    .description
+    .textContent =
+      copy;
+
+
+  elements
+    .description
+    .classList
+    .toggle(
+      "is-collapsed",
+      shouldCollapse
+    );
+
+
+  elements
+    .descriptionToggle
+    .hidden =
+      !shouldCollapse;
+
+
+  elements
+    .descriptionToggle
+    .setAttribute(
+      "aria-expanded",
+      String(
+        !shouldCollapse
+      )
+    );
+
+
+  elements
+    .descriptionToggle
+    .textContent =
+      "Show full description";
 }
 
 
@@ -370,37 +1717,66 @@ function renderThemes(
   tags,
   elements
 ) {
-  elements.themes.innerHTML =
-    "";
+  elements
+    .themes
+    .replaceChildren();
 
-  if (!tags.length) {
-    elements.themesSection.hidden =
-      true;
+
+  if (
+    !tags.length
+  ) {
+    elements
+      .themesSection
+      .hidden =
+        true;
 
     return;
   }
 
-  elements.themesSection.hidden =
-    false;
 
-  tags.forEach((tag) => {
-    const theme =
-      document.createElement(
-        "span"
-      );
+  elements
+    .themesSection
+    .hidden =
+      false;
 
-    theme.className =
-      "detail-theme";
 
-    theme.textContent =
-      formatLabel(
-        tag
-      );
+  tags.forEach(
+    (
+      tag
+    ) => {
+      const link =
+        document.createElement(
+          "a"
+        );
 
-    elements.themes.append(
-      theme
-    );
-  });
+
+      link.className =
+        "detail-chip detail-chip-theme";
+
+
+      link.href =
+        `search.html?tag=${
+          encodeURIComponent(
+            normalizeSearchParameter(
+              tag
+            )
+          )
+        }`;
+
+
+      link.textContent =
+        formatLabel(
+          tag
+        );
+
+
+      elements
+        .themes
+        .append(
+          link
+        );
+    }
+  );
 }
 
 
@@ -413,28 +1789,251 @@ function configureSimilarLink(
   elements
 ) {
   if (
-    title.genres.length
+    title
+      .genres
+      .length
   ) {
-    elements.similarLink.href =
-      `search.html?genre=${
-        encodeURIComponent(
-          normalizeSearchParameter(
-            title.genres[0]
+    elements
+      .similarLink
+      .href =
+        `search.html?genre=${
+          encodeURIComponent(
+            normalizeSearchParameter(
+              title.genres[0]
+            )
           )
-        )
-      }`;
+        }`;
 
     return;
   }
 
-  elements.similarLink.href =
-    `search.html?type=${
-      encodeURIComponent(
-        normalizeSearchParameter(
-          title.types[0]
+
+  elements
+    .similarLink
+    .href =
+      `search.html?type=${
+        encodeURIComponent(
+          normalizeSearchParameter(
+            title.types[0] ||
+            "story"
+          )
         )
+      }`;
+}
+
+
+/* =========================================================
+   TAB ACTIVATION
+   ========================================================= */
+
+function activateMediaTab(
+  tabId,
+  elements,
+  moveFocus
+) {
+  const tabs = [
+    ...elements
+      .mediaTabs
+      .querySelectorAll(
+        '[role="tab"]'
       )
-    }`;
+  ];
+
+
+  const panels = [
+    ...elements
+      .mediaPanels
+      .querySelectorAll(
+        '[role="tabpanel"]'
+      )
+  ];
+
+
+  const activeTab =
+    tabs.find(
+      (
+        tab
+      ) => {
+        return (
+          tab
+            .dataset
+            .tabId ===
+          tabId
+        );
+      }
+    );
+
+
+  if (
+    !activeTab
+  ) {
+    return;
+  }
+
+
+  tabs.forEach(
+    (
+      tab
+    ) => {
+      const selected =
+        tab ===
+        activeTab;
+
+
+      tab.setAttribute(
+        "aria-selected",
+        String(
+          selected
+        )
+      );
+
+
+      tab.tabIndex =
+        selected
+          ? 0
+          : -1;
+    }
+  );
+
+
+  panels.forEach(
+    (
+      panel
+    ) => {
+      panel.hidden =
+        panel
+          .dataset
+          .panelId !==
+        tabId;
+    }
+  );
+
+
+  if (
+    moveFocus
+  ) {
+    activeTab.focus({
+      preventScroll:
+        true
+    });
+
+
+    activeTab.scrollIntoView({
+      behavior:
+        "smooth",
+
+      block:
+        "nearest",
+
+      inline:
+        "nearest"
+    });
+  }
+}
+
+
+/* =========================================================
+   LABEL HELPERS
+   ========================================================= */
+
+function getMediaPanelHeading(
+  mediaType
+) {
+  const headings = {
+    anime:
+      "Anime adaptations",
+
+    manga:
+      "Manga publications",
+
+    novel:
+      "Novel publications",
+
+    game:
+      "Game releases"
+  };
+
+
+  return (
+    headings[
+      mediaType
+    ] ||
+    `${
+      getMediaLabel(
+        mediaType
+      )
+    } entries`
+  );
+}
+
+
+function getMediaPanelDescription(
+  mediaType
+) {
+  const descriptions = {
+    anime:
+      "Each season, special, OVA, and film remains a separate record so its facts never become mixed with another release.",
+
+    manga:
+      "Each publication is shown independently with its own chapters, volumes, publisher, magazine, and demographic.",
+
+    novel:
+      "Each novel publication remains separate, including its creators, imprint, release period, and volume information.",
+
+    game:
+      "Each game release remains separate, including its platform, developer, publisher, and release information."
+  };
+
+
+  return (
+    descriptions[
+      mediaType
+    ] ||
+    "Every catalogue entry is preserved and displayed independently."
+  );
+}
+
+
+function getNotesLabel(
+  mediaType
+) {
+  if (
+    mediaType ===
+    "anime"
+  ) {
+    return "Adaptation notes";
+  }
+
+
+  if (
+    mediaType ===
+      "manga" ||
+    mediaType ===
+      "novel"
+  ) {
+    return "Publication notes";
+  }
+
+
+  return "Release notes";
+}
+
+
+function slugify(
+  value
+) {
+  return String(
+    value
+  )
+    .toLowerCase()
+    .replace(
+      /[^a-z0-9]+/g,
+      "-"
+    )
+    .replace(
+      /^-|-$/g,
+      ""
+    );
 }
 
 
@@ -445,14 +2044,22 @@ function configureSimilarLink(
 export function showDetailContent(
   elements
 ) {
-  elements.loading.hidden =
-    true;
+  elements
+    .loading
+    .hidden =
+      true;
 
-  elements.error.hidden =
-    true;
 
-  elements.content.hidden =
-    false;
+  elements
+    .error
+    .hidden =
+      true;
+
+
+  elements
+    .content
+    .hidden =
+      false;
 }
 
 
@@ -460,20 +2067,29 @@ export function showDetailError(
   elements,
   message
 ) {
-  elements.loading.hidden =
-    true;
+  elements
+    .loading
+    .hidden =
+      true;
 
-  elements.content.hidden =
-    true;
 
-  elements.error.hidden =
-    false;
+  elements
+    .content
+    .hidden =
+      true;
 
-  elements.errorMessage.textContent =
-    message;
 
-  elements.breadcrumbTitle.textContent =
-    "Title unavailable";
+  elements
+    .error
+    .hidden =
+      false;
+
+
+  elements
+    .errorMessage
+    .textContent =
+      message;
+
 
   document.title =
     "Title Unavailable | Inkwell";

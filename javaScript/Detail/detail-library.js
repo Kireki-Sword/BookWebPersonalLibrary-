@@ -1,22 +1,53 @@
 // detail-library.js
-// Handles localStorage, library statuses, and the library menu.
+// Stores one format-neutral library status for the whole story.
 
-import {
-  getMediaMode
-} from "./detail-data.js";
-
-
-/* =========================================================
-   CONFIGURATION
-   ========================================================= */
-
-const LIBRARY_STORAGE_KEY =
-  "inkwell-library-v1";
+const STORAGE_KEY =
+  "inkwell-library";
 
 
-/* =========================================================
-   LIBRARY CONTROLLER
-   ========================================================= */
+const STATUS_CONFIG =
+  Object.freeze({
+    "in-progress": {
+      label:
+        "In progress",
+
+      icon:
+        "ti ti-progress"
+    },
+
+    completed: {
+      label:
+        "Completed",
+
+      icon:
+        "ti ti-circle-check"
+    },
+
+    planned: {
+      label:
+        "Planned",
+
+      icon:
+        "ti ti-clock-plus"
+    },
+
+    paused: {
+      label:
+        "Paused",
+
+      icon:
+        "ti ti-player-pause"
+    },
+
+    dropped: {
+      label:
+        "Dropped",
+
+      icon:
+        "ti ti-circle-minus"
+    }
+  });
+
 
 export function createDetailLibraryController(
   elements
@@ -24,101 +55,84 @@ export function createDetailLibraryController(
   let currentTitle =
     null;
 
-  let menuOpen =
+  let currentStatus =
+    "";
+
+  let hasBoundEvents =
     false;
 
 
-  /* =======================================================
-     TITLE SETUP
-     ======================================================= */
-
-  function setTitle(title) {
-    currentTitle =
-      title;
-
-    configureProgressStatus();
-    synchronizeInterface();
-  }
-
-
-  /* =======================================================
-     EVENTS
-     ======================================================= */
-
   function bindEvents() {
-    elements.libraryTrigger.addEventListener(
-      "click",
-      () => {
-        if (menuOpen) {
-          closeMenu();
-        } else {
-          openMenu();
+    if (
+      hasBoundEvents
+    ) {
+      return;
+    }
+
+
+    hasBoundEvents =
+      true;
+
+
+    elements
+      .libraryTrigger
+      .addEventListener(
+        "click",
+        () => {
+          toggleMenu();
         }
-      }
-    );
+      );
 
 
-    /*
-      Enter and Space already activate a normal button click.
-
-      We only add Arrow Up and Arrow Down here so keyboard
-      users can open the menu and immediately enter it.
-    */
-
-    elements.libraryTrigger.addEventListener(
-      "keydown",
-      (event) => {
-        if (
-          event.key ===
-            "ArrowDown" ||
-          event.key ===
-            "ArrowUp"
-        ) {
-          event.preventDefault();
-
-          openMenu(
-            true,
-            event.key ===
-              "ArrowUp"
+    elements
+      .libraryStatusButtons
+      .forEach(
+        (
+          button
+        ) => {
+          button.addEventListener(
+            "click",
+            () => {
+              setStatus(
+                button
+                  .dataset
+                  .libraryStatus
+              );
+            }
           );
         }
-      }
-    );
+      );
 
 
-    elements.libraryStatusButtons
-      .forEach((button) => {
-        button.addEventListener(
-          "click",
-          () => {
-            saveCurrentTitle(
-              button.dataset
-                .libraryStatus
-            );
-          }
-        );
-      });
+    elements
+      .libraryRemove
+      .addEventListener(
+        "click",
+        () => {
+          removeTitle();
+        }
+      );
 
 
-    elements.libraryRemove.addEventListener(
-      "click",
-      removeCurrentTitle
-    );
-
-
-    elements.libraryMenu.addEventListener(
-      "keydown",
-      handleMenuKeydown
-    );
+    elements
+      .libraryMenu
+      .addEventListener(
+        "keydown",
+        handleMenuKeydown
+      );
 
 
     document.addEventListener(
       "click",
-      (event) => {
+      (
+        event
+      ) => {
         if (
-          !event.target.closest(
-            "[data-detail-library-picker]"
-          )
+          !elements
+            .libraryPicker
+            .contains(
+              event.target
+            )
         ) {
           closeMenu();
         }
@@ -128,11 +142,12 @@ export function createDetailLibraryController(
 
     document.addEventListener(
       "keydown",
-      (event) => {
+      (
+        event
+      ) => {
         if (
           event.key ===
-            "Escape" &&
-          menuOpen
+          "Escape"
         ) {
           closeMenu(
             true
@@ -143,519 +158,348 @@ export function createDetailLibraryController(
   }
 
 
-  /* =======================================================
-     MEDIA STATUS WORDS
-     ======================================================= */
+  function setTitle(
+    title
+  ) {
+    currentTitle =
+      title;
 
-  function configureProgressStatus() {
-    if (!currentTitle) {
-      return;
-    }
 
-    const mediaMode =
-      getMediaMode(
-        currentTitle.types
-      );
+    currentStatus =
+      readLibrary()[
+        title.id
+      ]
+        ?.status ||
+      "";
+
+
+    updateInterface();
+  }
+
+
+  function toggleMenu() {
+    const isOpen =
+      elements
+        .libraryTrigger
+        .getAttribute(
+          "aria-expanded"
+        ) ===
+      "true";
+
 
     if (
-      mediaMode ===
-      "anime"
+      isOpen
     ) {
-      elements
-        .progressStatusLabel
-        .textContent =
-          "Watching";
-
-      return;
+      closeMenu();
+    } else {
+      openMenu();
     }
+  }
 
-    if (
-      mediaMode ===
-      "game"
-    ) {
-      elements
-        .progressStatusLabel
-        .textContent =
-          "Playing";
 
-      return;
-    }
+  function openMenu() {
+    elements
+      .libraryMenu
+      .hidden =
+        false;
+
 
     elements
-      .progressStatusLabel
-      .textContent =
-        "Reading";
+      .libraryPicker
+      .classList
+      .add(
+        "is-open"
+      );
+
+
+    elements
+      .libraryTrigger
+      .setAttribute(
+        "aria-expanded",
+        "true"
+      );
+
+
+    const selectedButton =
+      elements
+        .libraryStatusButtons
+        .find(
+          (
+            button
+          ) => {
+            return (
+              button
+                .dataset
+                .libraryStatus ===
+              currentStatus
+            );
+          }
+        );
+
+
+    const firstButton =
+      selectedButton ||
+      elements
+        .libraryStatusButtons[
+          0
+        ];
+
+
+    window
+      .requestAnimationFrame(
+        () => {
+          firstButton
+            ?.focus();
+        }
+      );
   }
 
 
-  function getLibraryStatusLabel(
-    status
+  function closeMenu(
+    returnFocus =
+      false
   ) {
-    const mediaMode =
-      currentTitle
-        ? getMediaMode(
-            currentTitle.types
-          )
-        : "manga";
-
-    const inProgressLabel =
-      mediaMode === "anime"
-        ? "Watching"
-        : mediaMode === "game"
-          ? "Playing"
-          : "Reading";
-
-    const labels = {
-      "in-progress":
-        inProgressLabel,
-
-      completed:
-        "Completed",
-
-      planned:
-        "Planned",
-
-      paused:
-        "Paused",
-
-      dropped:
-        "Dropped"
-    };
-
-    return (
-      labels[status] ||
-      "In library"
-    );
-  }
-
-
-  /* =======================================================
-     LOCAL STORAGE
-     ======================================================= */
-
-  function readLibrary() {
-    try {
-      const storedValue =
-        window.localStorage.getItem(
-          LIBRARY_STORAGE_KEY
-        );
-
-      if (!storedValue) {
-        return [];
-      }
-
-      const parsedValue =
-        JSON.parse(
-          storedValue
-        );
-
-      return Array.isArray(
-        parsedValue
-      )
-        ? parsedValue
-        : [];
-    } catch (error) {
-      console.error(
-        "Could not read the local library:",
-        error
-      );
-
-      return [];
-    }
-  }
-
-
-  function writeLibrary(items) {
-    try {
-      window.localStorage.setItem(
-        LIBRARY_STORAGE_KEY,
-        JSON.stringify(
-          items
-        )
-      );
-
-      return true;
-    } catch (error) {
-      console.error(
-        "Could not save the local library:",
-        error
-      );
-
-      return false;
-    }
-  }
-
-
-  function findCurrentLibraryItem() {
-    if (!currentTitle) {
-      return null;
-    }
-
-    return (
-      readLibrary().find((item) => {
-        return (
-          String(item.id) ===
-          String(
-            currentTitle.id
-          )
-        );
-      }) ||
-      null
-    );
-  }
-
-
-  /* =======================================================
-     SAVE TITLE
-     ======================================================= */
-
-  function saveCurrentTitle(status) {
-    if (!currentTitle) {
+    if (
+      elements
+        .libraryMenu
+        .hidden
+    ) {
       return;
     }
+
+
+    elements
+      .libraryMenu
+      .hidden =
+        true;
+
+
+    elements
+      .libraryPicker
+      .classList
+      .remove(
+        "is-open"
+      );
+
+
+    elements
+      .libraryTrigger
+      .setAttribute(
+        "aria-expanded",
+        "false"
+      );
+
+
+    if (
+      returnFocus
+    ) {
+      elements
+        .libraryTrigger
+        .focus();
+    }
+  }
+
+
+  function setStatus(
+    status
+  ) {
+    if (
+      !currentTitle ||
+      !STATUS_CONFIG[
+        status
+      ]
+    ) {
+      return;
+    }
+
 
     const library =
       readLibrary();
 
-    const existingIndex =
-      library.findIndex((item) => {
-        return (
-          String(item.id) ===
-          String(
-            currentTitle.id
-          )
-        );
-      });
 
-    const existingItem =
-      existingIndex >= 0
-        ? library[
-            existingIndex
-          ]
-        : null;
-
-    const libraryItem = {
+    library[
+      currentTitle.id
+    ] = {
       id:
         currentTitle.id,
 
       title:
         currentTitle.title,
 
-      creator:
-        currentTitle.creator,
+      status,
 
-      type: [
-        ...currentTitle.types
-      ],
-
-      genres: [
-        ...currentTitle.genres
-      ],
+      types:
+        currentTitle.types,
 
       coverUrl:
         currentTitle.coverUrl,
 
-      status,
-
-      addedAt:
-        existingItem?.addedAt ||
-        Date.now(),
-
       updatedAt:
-        Date.now()
+        new Date()
+          .toISOString()
     };
 
-    if (
-      existingIndex >= 0
-    ) {
-      library[
-        existingIndex
-      ] = libraryItem;
-    } else {
-      library.push(
-        libraryItem
-      );
-    }
 
-    const saved =
-      writeLibrary(
-        library
-      );
+    writeLibrary(
+      library
+    );
 
-    elements.libraryNote.textContent =
-      saved
-        ? `${currentTitle.title} was saved as ${getLibraryStatusLabel(
+
+    currentStatus =
+      status;
+
+
+    updateInterface();
+
+
+    closeMenu(
+      true
+    );
+
+
+    elements
+      .libraryNote
+      .textContent =
+        `${
+          STATUS_CONFIG[
             status
-          )}.`
-        : "Your browser prevented this title from being saved.";
-
-    synchronizeInterface();
-    closeMenu();
+          ].label
+        } — saved locally on this device.`;
   }
 
 
-  /* =======================================================
-     REMOVE TITLE
-     ======================================================= */
-
-  function removeCurrentTitle() {
-    if (!currentTitle) {
+  function removeTitle() {
+    if (
+      !currentTitle
+    ) {
       return;
     }
 
-    const filteredLibrary =
-      readLibrary().filter((item) => {
-        return (
-          String(item.id) !==
-          String(
-            currentTitle.id
-          )
-        );
-      });
 
-    const saved =
-      writeLibrary(
-        filteredLibrary
+    const library =
+      readLibrary();
+
+
+    delete library[
+      currentTitle.id
+    ];
+
+
+    writeLibrary(
+      library
+    );
+
+
+    currentStatus =
+      "";
+
+
+    updateInterface();
+
+
+    closeMenu(
+      true
+    );
+
+
+    elements
+      .libraryNote
+      .textContent =
+        "Removed from your local library.";
+  }
+
+
+  function updateInterface() {
+    const selectedConfig =
+      STATUS_CONFIG[
+        currentStatus
+      ];
+
+
+    elements
+      .libraryTriggerLabel
+      .textContent =
+        selectedConfig
+          ? selectedConfig
+              .label
+          : "Add to library";
+
+
+    elements
+      .libraryTriggerIcon
+      .className =
+        selectedConfig
+          ? selectedConfig
+              .icon
+          : "ti ti-plus";
+
+
+    elements
+      .libraryStatusButtons
+      .forEach(
+        (
+          button
+        ) => {
+          const selected =
+            button
+              .dataset
+              .libraryStatus ===
+            currentStatus;
+
+
+          button.setAttribute(
+            "aria-checked",
+            String(
+              selected
+            )
+          );
+        }
       );
 
-    elements.libraryNote.textContent =
-      saved
-        ? `${currentTitle.title} was removed from your library.`
-        : "Your browser prevented this change from being saved.";
 
-    synchronizeInterface();
-    closeMenu();
-  }
+    elements
+      .libraryRemove
+      .hidden =
+        !selectedConfig;
 
 
-  /* =======================================================
-     UPDATE VISIBLE LIBRARY CONTROLS
-     ======================================================= */
-
-  function synchronizeInterface() {
-    const savedItem =
-      findCurrentLibraryItem();
-
-    elements.libraryStatusButtons
-      .forEach((button) => {
-        const selected =
-          Boolean(
-            savedItem &&
-            button.dataset
-              .libraryStatus ===
-              savedItem.status
-          );
-
-        button.setAttribute(
-          "aria-checked",
-          String(
-            selected
-          )
-        );
-      });
-
-    elements.libraryRemove.hidden =
-      !savedItem;
-
-    if (!savedItem) {
-      elements.libraryTriggerIcon.className =
-        "ti ti-plus";
-
-      elements.libraryTriggerLabel.textContent =
-        "Add to library";
-
-      return;
+    if (
+      !selectedConfig
+    ) {
+      elements
+        .libraryNote
+        .textContent =
+          "Saved locally on this device.";
     }
-
-    elements.libraryTriggerIcon.className =
-      "ti ti-check";
-
-    elements.libraryTriggerLabel.textContent =
-      `In library · ${
-        getLibraryStatusLabel(
-          savedItem.status
-        )
-      }`;
   }
 
 
-  /* =======================================================
-     OPEN AND CLOSE MENU
-     ======================================================= */
-
-  function openMenu(
-    focusFirstItem = false,
-    focusLastItem = false
+  function handleMenuKeydown(
+    event
   ) {
-    menuOpen =
-      true;
+    const menuButtons = [
+      ...elements
+        .libraryStatusButtons,
 
-    elements.libraryPicker.classList.add(
-      "is-open"
-    );
-
-    elements.libraryMenu.hidden =
-      false;
-
-    elements.libraryTrigger.setAttribute(
-      "aria-expanded",
-      "true"
-    );
-
-    if (!focusFirstItem) {
-      return;
-    }
-
-    const menuButtons =
-      getVisibleMenuButtons();
-
-    if (!menuButtons.length) {
-      return;
-    }
-
-    if (focusLastItem) {
-      menuButtons[
-        menuButtons.length - 1
-      ].focus();
-
-      return;
-    }
-
-    const selectedButton =
-      elements.libraryStatusButtons
-        .find((button) => {
-          return (
-            button.getAttribute(
-              "aria-checked"
-            ) === "true"
-          );
-        });
-
-    (
-      selectedButton ||
-      menuButtons[0]
-    ).focus();
-  }
-
-
-  function closeMenu(
-    returnFocus = false
-  ) {
-    if (!menuOpen) {
-      return;
-    }
-
-    menuOpen =
-      false;
-
-    elements.libraryPicker.classList.remove(
-      "is-open"
-    );
-
-    elements.libraryMenu.hidden =
-      true;
-
-    elements.libraryTrigger.setAttribute(
-      "aria-expanded",
-      "false"
-    );
-
-    if (returnFocus) {
-      elements.libraryTrigger.focus();
-    }
-  }
-
-
-  function getVisibleMenuButtons() {
-    return [
-      ...elements.libraryMenu
-        .querySelectorAll(
-          "button:not([hidden])"
-        )
+      ...(
+        elements
+          .libraryRemove
+          .hidden
+          ? []
+          : [
+              elements
+                .libraryRemove
+            ]
+      )
     ];
-  }
 
-
-  /* =======================================================
-     MENU KEYBOARD NAVIGATION
-     ======================================================= */
-
-  function handleMenuKeydown(event) {
-    const menuButtons =
-      getVisibleMenuButtons();
-
-    if (!menuButtons.length) {
-      return;
-    }
 
     const currentIndex =
       menuButtons.indexOf(
-        document.activeElement
+        document
+          .activeElement
       );
 
-    if (
-      event.key ===
-      "ArrowDown"
-    ) {
-      event.preventDefault();
-
-      const nextIndex =
-        currentIndex < 0
-          ? 0
-          : (
-              currentIndex +
-              1
-            ) %
-            menuButtons.length;
-
-      menuButtons[
-        nextIndex
-      ].focus();
-
-      return;
-    }
-
-    if (
-      event.key ===
-      "ArrowUp"
-    ) {
-      event.preventDefault();
-
-      const previousIndex =
-        currentIndex <= 0
-          ? menuButtons.length - 1
-          : currentIndex - 1;
-
-      menuButtons[
-        previousIndex
-      ].focus();
-
-      return;
-    }
-
-    if (
-      event.key ===
-      "Home"
-    ) {
-      event.preventDefault();
-
-      menuButtons[0].focus();
-
-      return;
-    }
-
-    if (
-      event.key ===
-      "End"
-    ) {
-      event.preventDefault();
-
-      menuButtons[
-        menuButtons.length - 1
-      ].focus();
-
-      return;
-    }
 
     if (
       event.key ===
@@ -666,18 +510,133 @@ export function createDetailLibraryController(
       closeMenu(
         true
       );
+
+      return;
+    }
+
+
+    if (
+      event.key ===
+      "Tab"
+    ) {
+      closeMenu();
+
+      return;
+    }
+
+
+    let nextIndex =
+      null;
+
+
+    if (
+      event.key ===
+      "ArrowDown"
+    ) {
+      nextIndex =
+        currentIndex < 0
+          ? 0
+          : (
+              currentIndex +
+              1
+            ) %
+            menuButtons.length;
+    } else if (
+      event.key ===
+      "ArrowUp"
+    ) {
+      nextIndex =
+        currentIndex < 0
+          ? menuButtons.length -
+            1
+          : (
+              currentIndex -
+              1 +
+              menuButtons.length
+            ) %
+            menuButtons.length;
+    } else if (
+      event.key ===
+      "Home"
+    ) {
+      nextIndex =
+        0;
+    } else if (
+      event.key ===
+      "End"
+    ) {
+      nextIndex =
+        menuButtons.length -
+        1;
+    }
+
+
+    if (
+      nextIndex != null
+    ) {
+      event.preventDefault();
+
+
+      menuButtons[
+        nextIndex
+      ]
+        ?.focus();
     }
   }
 
 
-  /* =======================================================
-     PUBLIC FUNCTIONS
-     ======================================================= */
-
   return {
     bindEvents,
-    setTitle,
-    synchronizeInterface,
-    closeMenu
+    setTitle
   };
+}
+
+
+function readLibrary() {
+  try {
+    const parsedValue =
+      JSON.parse(
+        localStorage
+          .getItem(
+            STORAGE_KEY
+          ) ||
+        "{}"
+      );
+
+
+    return (
+      parsedValue &&
+      typeof parsedValue ===
+        "object" &&
+      !Array.isArray(
+        parsedValue
+      )
+    )
+      ? parsedValue
+      : {};
+  } catch {
+    return {};
+  }
+}
+
+
+function writeLibrary(
+  library
+) {
+  try {
+    localStorage
+      .setItem(
+        STORAGE_KEY,
+        JSON.stringify(
+          library
+        )
+      );
+  } catch (
+    error
+  ) {
+    console.error(
+      "INKWELL LIBRARY STORAGE ERROR:",
+      error
+    );
+  }
 }
