@@ -1,5 +1,5 @@
 // detail-library.js
-// Tracks Manga and Anime separately for the same overall story.
+// Tracks Manga and Anime independently for the same story.
 
 const STORAGE_KEY =
   "inkwell-library";
@@ -171,6 +171,10 @@ export function createDetailLibraryController(
     null;
 
 
+  /* =======================================================
+     EVENT SETUP
+     ======================================================= */
+
   function bindEvents() {
     if (
       hasBoundEvents
@@ -204,6 +208,8 @@ export function createDetailLibraryController(
         (
           event
         ) => {
+          event.preventDefault();
+
           event.stopPropagation();
 
 
@@ -216,7 +222,14 @@ export function createDetailLibraryController(
       .libraryMenuBack
       .addEventListener(
         "click",
-        () => {
+        (
+          event
+        ) => {
+          event.preventDefault();
+
+          event.stopPropagation();
+
+
           showFormatScreen(
             true
           );
@@ -225,26 +238,21 @@ export function createDetailLibraryController(
 
 
     elements
-      .libraryOptions
+      .librarySummary
       .addEventListener(
         "click",
-        handleOptionClick
+        handleSummaryClick
       );
 
 
     elements
-      .librarySummary
+      .libraryMenu
       .addEventListener(
         "click",
         (
           event
         ) => {
           event.stopPropagation();
-
-
-          handleSummaryClick(
-            event
-          );
         }
       );
 
@@ -263,11 +271,40 @@ export function createDetailLibraryController(
         event
       ) => {
         if (
-          !elements
-            .libraryPicker
+          !isMenuOpen()
+        ) {
+          return;
+        }
+
+
+        const clickedTrigger =
+          elements
+            .libraryTrigger
             .contains(
               event.target
-            )
+            );
+
+
+        const clickedMenu =
+          elements
+            .libraryMenu
+            .contains(
+              event.target
+            );
+
+
+        const clickedSummary =
+          elements
+            .librarySummary
+            .contains(
+              event.target
+            );
+
+
+        if (
+          !clickedTrigger &&
+          !clickedMenu &&
+          !clickedSummary
         ) {
           closeMenu();
         }
@@ -309,6 +346,10 @@ export function createDetailLibraryController(
     );
   }
 
+
+  /* =======================================================
+     TITLE SETUP
+     ======================================================= */
 
   function setTitle(
     title
@@ -362,10 +403,16 @@ export function createDetailLibraryController(
   }
 
 
+  /* =======================================================
+     MENU OPEN AND CLOSE
+     ======================================================= */
+
   function isMenuOpen() {
-    return !elements
-      .libraryMenu
-      .hidden;
+    return (
+      !elements
+        .libraryMenu
+        .hidden
+    );
   }
 
 
@@ -383,8 +430,7 @@ export function createDetailLibraryController(
   function openMenu() {
     if (
       !currentTitle ||
-      !availableFormats
-        .length ||
+      !availableFormats.length ||
       isMenuOpen()
     ) {
       return;
@@ -471,6 +517,13 @@ export function createDetailLibraryController(
       );
 
 
+    elements
+      .libraryMenu
+      .removeAttribute(
+        "data-placement"
+      );
+
+
     if (
       returnFocus
     ) {
@@ -480,6 +533,10 @@ export function createDetailLibraryController(
     }
   }
 
+
+  /* =======================================================
+     FORMAT SCREEN
+     ======================================================= */
 
   function showFormatScreen(
     moveFocus
@@ -520,7 +577,7 @@ export function createDetailLibraryController(
         (
           format
         ) => {
-          const config =
+          const formatConfig =
             FORMAT_CONFIG[
               format
             ];
@@ -542,32 +599,63 @@ export function createDetailLibraryController(
             );
 
 
+          const button =
+            createMenuButton({
+              icon:
+                formatConfig.icon,
+
+              label:
+                formatConfig.label,
+
+              meta:
+                savedStatusConfig
+                  ?.label ||
+                "Not tracked",
+
+              selected:
+                Boolean(
+                  savedStatus
+                ),
+
+              trailing:
+                "→"
+            });
+
+
+          button
+            .dataset
+            .libraryFormat =
+              format;
+
+
+          /*
+           * A direct click listener is used instead of
+           * event delegation. This ensures Manga and Anime
+           * always open their status screen.
+           */
+
+          button.addEventListener(
+            "click",
+            (
+              event
+            ) => {
+              event.preventDefault();
+
+              event.stopPropagation();
+
+
+              showStatusScreen(
+                format,
+                true
+              );
+            }
+          );
+
+
           elements
             .libraryOptions
             .append(
-              createMenuButton({
-                action:
-                  "choose-format",
-
-                value:
-                  format,
-
-                icon:
-                  config.icon,
-
-                label:
-                  config.label,
-
-                meta:
-                  savedStatusConfig
-                    ?.label ||
-                  "Not tracked",
-
-                selected:
-                  Boolean(
-                    savedStatus
-                  )
-              })
+              button
             );
         }
       );
@@ -587,6 +675,10 @@ export function createDetailLibraryController(
   }
 
 
+  /* =======================================================
+     STATUS SCREEN
+     ======================================================= */
+
   function showStatusScreen(
     format,
     moveFocus =
@@ -602,18 +694,25 @@ export function createDetailLibraryController(
     }
 
 
+    const formatConfig =
+      FORMAT_CONFIG[
+        format
+      ];
+
+
+    if (
+      !formatConfig
+    ) {
+      return;
+    }
+
+
     activeFormat =
       format;
 
 
     currentScreen =
       "statuses";
-
-
-    const config =
-      FORMAT_CONFIG[
-        format
-      ];
 
 
     const savedStatus =
@@ -634,16 +733,16 @@ export function createDetailLibraryController(
     elements
       .libraryMenuEyebrow
       .textContent =
-        config.label;
+        formatConfig.label;
 
 
     elements
       .libraryMenuTitle
       .textContent =
-        `Choose your ${
-          config.label
-            .toLowerCase()
-        } status`;
+        format ===
+          "anime"
+          ? "Choose your anime status"
+          : "Choose your manga status";
 
 
     elements
@@ -651,32 +750,69 @@ export function createDetailLibraryController(
       .replaceChildren();
 
 
-    config
+    formatConfig
       .statuses
       .forEach(
         (
           status
         ) => {
+          const button =
+            createMenuButton({
+              icon:
+                status.icon,
+
+              label:
+                status.label,
+
+              selected:
+                savedStatus ===
+                status.id,
+
+              trailing:
+                savedStatus ===
+                  status.id
+                  ? "✓"
+                  : ""
+            });
+
+
+          button.setAttribute(
+            "role",
+            "menuitemradio"
+          );
+
+
+          button.setAttribute(
+            "aria-checked",
+            String(
+              savedStatus ===
+              status.id
+            )
+          );
+
+
+          button.addEventListener(
+            "click",
+            (
+              event
+            ) => {
+              event.preventDefault();
+
+              event.stopPropagation();
+
+
+              saveFormatStatus(
+                format,
+                status.id
+              );
+            }
+          );
+
+
           elements
             .libraryOptions
             .append(
-              createMenuButton({
-                action:
-                  "choose-status",
-
-                value:
-                  status.id,
-
-                icon:
-                  status.icon,
-
-                label:
-                  status.label,
-
-                selected:
-                  savedStatus ===
-                  status.id
-              })
+              button
             );
         }
       );
@@ -692,27 +828,42 @@ export function createDetailLibraryController(
         );
 
 
+      const removeButton =
+        createMenuButton({
+          icon:
+            "ti ti-trash",
+
+          label:
+            `Remove ${
+              formatConfig.label
+            }`,
+
+          danger:
+            true
+        });
+
+
+      removeButton.addEventListener(
+        "click",
+        (
+          event
+        ) => {
+          event.preventDefault();
+
+          event.stopPropagation();
+
+
+          removeFormat(
+            format
+          );
+        }
+      );
+
+
       elements
         .libraryOptions
         .append(
-          createMenuButton({
-            action:
-              "remove-format",
-
-            value:
-              format,
-
-            icon:
-              "ti ti-trash",
-
-            label:
-              `Remove ${
-                config.label
-              }`,
-
-            danger:
-              true
-          })
+          removeButton
         );
     }
 
@@ -731,73 +882,9 @@ export function createDetailLibraryController(
   }
 
 
-  function handleOptionClick(
-    event
-  ) {
-    const button =
-      event
-        .target
-        .closest(
-          "[data-library-action]"
-        );
-
-
-    if (
-      !button
-    ) {
-      return;
-    }
-
-
-    const action =
-      button
-        .dataset
-        .libraryAction;
-
-
-    const value =
-      button
-        .dataset
-        .libraryValue;
-
-
-    if (
-      action ===
-      "choose-format"
-    ) {
-      showStatusScreen(
-        value
-      );
-
-
-      return;
-    }
-
-
-    if (
-      action ===
-      "choose-status"
-    ) {
-      saveFormatStatus(
-        activeFormat,
-        value
-      );
-
-
-      return;
-    }
-
-
-    if (
-      action ===
-      "remove-format"
-    ) {
-      removeFormat(
-        value
-      );
-    }
-  }
-
+  /* =======================================================
+     SUMMARY BUTTONS
+     ======================================================= */
 
   function handleSummaryClick(
     event
@@ -815,6 +902,11 @@ export function createDetailLibraryController(
     ) {
       return;
     }
+
+
+    event.preventDefault();
+
+    event.stopPropagation();
 
 
     const format =
@@ -860,19 +952,21 @@ export function createDetailLibraryController(
 
 
     showStatusScreen(
-      format
+      format,
+      true
     );
-
-
-    scheduleMenuPosition();
   }
 
+
+  /* =======================================================
+     SAVE STATUS
+     ======================================================= */
 
   function saveFormatStatus(
     format,
     status
   ) {
-    const config =
+    const formatConfig =
       FORMAT_CONFIG[
         format
       ];
@@ -887,7 +981,7 @@ export function createDetailLibraryController(
 
     if (
       !currentTitle ||
-      !config ||
+      !formatConfig ||
       !statusConfig
     ) {
       return;
@@ -908,6 +1002,11 @@ export function createDetailLibraryController(
       );
 
 
+    const currentTime =
+      new Date()
+        .toISOString();
+
+
     entry
       .formats[
         format
@@ -915,14 +1014,12 @@ export function createDetailLibraryController(
         status,
 
         updatedAt:
-          new Date()
-            .toISOString()
+          currentTime
       };
 
 
     entry.updatedAt =
-      new Date()
-        .toISOString();
+      currentTime;
 
 
     library[
@@ -931,10 +1028,14 @@ export function createDetailLibraryController(
       entry;
 
 
-    if (
-      !writeLibrary(
+    const wasSaved =
+      writeLibrary(
         library
-      )
+      );
+
+
+    if (
+      !wasSaved
     ) {
       elements
         .libraryNote
@@ -957,11 +1058,16 @@ export function createDetailLibraryController(
       .libraryNote
       .textContent =
         `${
-          config.label
+          formatConfig.label
         } · ${
           statusConfig.label
         } saved.`;
 
+
+    /*
+     * Return to the format screen without closing.
+     * This allows Anime and Manga to both be added.
+     */
 
     showFormatScreen(
       false
@@ -981,6 +1087,10 @@ export function createDetailLibraryController(
       );
   }
 
+
+  /* =======================================================
+     REMOVE ONE FORMAT
+     ======================================================= */
 
   function removeFormat(
     format
@@ -1026,7 +1136,7 @@ export function createDetailLibraryController(
         .keys(
           entry.formats
         )
-        .length
+        .length > 0
     ) {
       library[
         currentTitle.id
@@ -1039,10 +1149,14 @@ export function createDetailLibraryController(
     }
 
 
-    if (
-      !writeLibrary(
+    const wasRemoved =
+      writeLibrary(
         library
-      )
+      );
+
+
+    if (
+      !wasRemoved
     ) {
       elements
         .libraryNote
@@ -1096,6 +1210,10 @@ export function createDetailLibraryController(
   }
 
 
+  /* =======================================================
+     UPDATE LIBRARY CARD
+     ======================================================= */
+
   function updateInterface() {
     const trackedFormats =
       availableFormats
@@ -1124,7 +1242,7 @@ export function createDetailLibraryController(
         (
           format
         ) => {
-          const config =
+          const formatConfig =
             FORMAT_CONFIG[
               format
             ];
@@ -1169,7 +1287,7 @@ export function createDetailLibraryController(
             "aria-label",
 
             `Manage ${
-              config.label
+              formatConfig.label
             }: ${
               statusConfig
                 ?.label ||
@@ -1185,7 +1303,7 @@ export function createDetailLibraryController(
 
 
           icon.className =
-            config.icon;
+            formatConfig.icon;
 
 
           icon.setAttribute(
@@ -1202,7 +1320,7 @@ export function createDetailLibraryController(
 
           text.textContent =
             `${
-              config.label
+              formatConfig.label
             } · ${
               statusConfig
                 ?.label ||
@@ -1210,9 +1328,26 @@ export function createDetailLibraryController(
             }`;
 
 
+          const arrow =
+            document.createElement(
+              "i"
+            );
+
+
+          arrow.className =
+            "ti ti-chevron-right";
+
+
+          arrow.setAttribute(
+            "aria-hidden",
+            "true"
+          );
+
+
           button.append(
             icon,
-            text
+            text,
+            arrow
           );
 
 
@@ -1228,13 +1363,12 @@ export function createDetailLibraryController(
     elements
       .librarySummary
       .hidden =
-        trackedFormats
-          .length === 0;
+        trackedFormats.length ===
+        0;
 
 
     if (
-      !availableFormats
-        .length
+      !availableFormats.length
     ) {
       elements
         .libraryTrigger
@@ -1279,8 +1413,8 @@ export function createDetailLibraryController(
 
 
     if (
-      trackedFormats
-        .length === 0
+      trackedFormats.length ===
+      0
     ) {
       elements
         .libraryTriggerLabel
@@ -1293,8 +1427,8 @@ export function createDetailLibraryController(
         .textContent =
           "Choose Manga or Anime, then choose its status.";
     } else if (
-      trackedFormats
-        .length === 1
+      trackedFormats.length ===
+      1
     ) {
       elements
         .libraryTriggerLabel
@@ -1311,15 +1445,19 @@ export function createDetailLibraryController(
   }
 
 
+  /* =======================================================
+     CREATE MENU ELEMENTS
+     ======================================================= */
+
   function createMenuButton({
-    action,
-    value,
     icon,
     label,
     meta =
       "",
     selected =
       false,
+    trailing =
+      "",
     danger =
       false
   }) {
@@ -1337,39 +1475,10 @@ export function createDetailLibraryController(
       "detail-library-option";
 
 
-    button
-      .dataset
-      .libraryAction =
-        action;
-
-
-    button
-      .dataset
-      .libraryValue =
-        value;
-
-
     button.setAttribute(
       "role",
-
-      action ===
-        "choose-status"
-        ? "menuitemradio"
-        : "menuitem"
+      "menuitem"
     );
-
-
-    if (
-      action ===
-      "choose-status"
-    ) {
-      button.setAttribute(
-        "aria-checked",
-        String(
-          selected
-        )
-      );
-    }
 
 
     if (
@@ -1454,35 +1563,30 @@ export function createDetailLibraryController(
     }
 
 
-    const trailing =
+    const trailingElement =
       document.createElement(
         "span"
       );
 
 
-    trailing.className =
+    trailingElement.className =
       "detail-library-option-trailing";
 
 
-    trailing.setAttribute(
+    trailingElement.setAttribute(
       "aria-hidden",
       "true"
     );
 
 
-    trailing.textContent =
-      selected
-        ? "✓"
-        : action ===
-          "choose-format"
-          ? "→"
-          : "";
+    trailingElement.textContent =
+      trailing;
 
 
     button.append(
       iconElement,
       copy,
-      trailing
+      trailingElement
     );
 
 
@@ -1511,6 +1615,10 @@ export function createDetailLibraryController(
   }
 
 
+  /* =======================================================
+     STATUS HELPERS
+     ======================================================= */
+
   function getStatusConfig(
     format,
     status
@@ -1534,6 +1642,10 @@ export function createDetailLibraryController(
     );
   }
 
+
+  /* =======================================================
+     KEYBOARD NAVIGATION
+     ======================================================= */
 
   function getMenuButtons() {
     return [
@@ -1560,7 +1672,7 @@ export function createDetailLibraryController(
     elements
       .libraryOptions
       .querySelector(
-        `[data-library-action="choose-format"][data-library-value="${format}"]`
+        `[data-library-format="${format}"]`
       )
       ?.focus();
   }
@@ -1582,12 +1694,9 @@ export function createDetailLibraryController(
 
     const currentIndex =
       buttons.indexOf(
-        document.activeElement
+        document
+          .activeElement
       );
-
-
-    let nextIndex =
-      null;
 
 
     if (
@@ -1604,6 +1713,28 @@ export function createDetailLibraryController(
 
       return;
     }
+
+
+    if (
+      event.key ===
+        "ArrowLeft" &&
+      currentScreen ===
+        "statuses"
+    ) {
+      event.preventDefault();
+
+
+      showFormatScreen(
+        true
+      );
+
+
+      return;
+    }
+
+
+    let nextIndex =
+      null;
 
 
     if (
@@ -1645,21 +1776,6 @@ export function createDetailLibraryController(
       nextIndex =
         buttons.length -
         1;
-    } else if (
-      event.key ===
-        "ArrowLeft" &&
-      currentScreen ===
-        "statuses"
-    ) {
-      event.preventDefault();
-
-
-      showFormatScreen(
-        true
-      );
-
-
-      return;
     }
 
 
@@ -1679,6 +1795,10 @@ export function createDetailLibraryController(
       ?.focus();
   }
 
+
+  /* =======================================================
+     MENU POSITION
+     ======================================================= */
 
   function scheduleMenuPosition() {
     if (
@@ -1720,18 +1840,12 @@ export function createDetailLibraryController(
     }
 
 
-    const triggerRect =
-      elements
-        .libraryTrigger
-        .getBoundingClientRect();
-
-
-    const viewportMargin =
-      12;
-
-
-    const gap =
-      10;
+    elements
+      .libraryMenu
+      .classList
+      .remove(
+        "is-positioned"
+      );
 
 
     const viewportWidth =
@@ -1742,17 +1856,110 @@ export function createDetailLibraryController(
       window.innerHeight;
 
 
-    const width =
-      Math.min(
-        340,
+    const viewportMargin =
+      12;
 
-        Math.max(
-          270,
 
-          viewportWidth -
+    const menuGap =
+      12;
+
+
+    /*
+     * Mobile layout: bottom sheet.
+     */
+
+    if (
+      viewportWidth <=
+      580
+    ) {
+      const mobileWidth =
+        viewportWidth -
+        viewportMargin *
+        2;
+
+
+      elements
+        .libraryMenu
+        .style
+        .width =
+          `${mobileWidth}px`;
+
+
+      const mobileHeight =
+        Math.min(
+          elements
+            .libraryMenu
+            .scrollHeight,
+
+          viewportHeight -
           viewportMargin *
           2
+        );
+
+
+      elements
+        .libraryMenu
+        .style
+        .left =
+          `${viewportMargin}px`;
+
+
+      elements
+        .libraryMenu
+        .style
+        .top =
+          `${
+            Math.max(
+              viewportMargin,
+
+              viewportHeight -
+              mobileHeight -
+              viewportMargin
+            )
+          }px`;
+
+
+      elements
+        .libraryMenu
+        .dataset
+        .placement =
+          "sheet";
+
+
+      elements
+        .libraryMenu
+        .classList
+        .add(
+          "is-positioned"
+        );
+
+
+      return;
+    }
+
+
+    const triggerRect =
+      elements
+        .libraryTrigger
+        .getBoundingClientRect();
+
+
+    const heroRect =
+      elements
+        .libraryTrigger
+        .closest(
+          ".detail-hero"
         )
+        ?.getBoundingClientRect();
+
+
+    const menuWidth =
+      Math.min(
+        330,
+
+        viewportWidth -
+        viewportMargin *
+        2
       );
 
 
@@ -1760,7 +1967,7 @@ export function createDetailLibraryController(
       .libraryMenu
       .style
       .width =
-        `${width}px`;
+        `${menuWidth}px`;
 
 
     const menuHeight =
@@ -1775,9 +1982,17 @@ export function createDetailLibraryController(
       );
 
 
+    /*
+     * Centre the menu under the trigger.
+     */
+
     let left =
-      triggerRect.right -
-      width;
+      triggerRect.left +
+      (
+        triggerRect.width -
+        menuWidth
+      ) /
+      2;
 
 
     left =
@@ -1788,66 +2003,116 @@ export function createDetailLibraryController(
           left,
 
           viewportWidth -
-          width -
+          menuWidth -
           viewportMargin
         )
       );
 
 
-    let top =
+    const preferredBelowTop =
       triggerRect.bottom +
-      gap;
+      menuGap;
 
 
-    const fitsBelow =
-      top +
+    const preferredAboveTop =
+      triggerRect.top -
+      menuGap -
+      menuHeight;
+
+
+    const fitsBelowViewport =
+      preferredBelowTop +
       menuHeight <=
       viewportHeight -
       viewportMargin;
 
 
-    const fitsAbove =
-      triggerRect.top -
-      gap -
-      menuHeight >=
+    const fitsAboveViewport =
+      preferredAboveTop >=
       viewportMargin;
 
 
+    let top =
+      preferredBelowTop;
+
+
+    let placement =
+      "bottom";
+
+
+    /*
+     * The small format menu is kept inside the hero with
+     * 16 pixels of breathing room whenever possible.
+     */
+
     if (
-      !fitsBelow &&
-      fitsAbove
+      currentScreen ===
+        "formats" &&
+      heroRect
     ) {
-      top =
-        triggerRect.top -
-        gap -
+      const heroBottomLimit =
+        heroRect.bottom -
+        16;
+
+
+      const insideHeroTop =
+        heroBottomLimit -
         menuHeight;
 
 
-      elements
-        .libraryMenu
-        .dataset
-        .placement =
-          "top";
-    } else {
-      top =
-        Math.max(
-          viewportMargin,
+      const canFitInsideHero =
+        insideHeroTop >=
+        heroRect.top +
+        16;
 
-          Math.min(
-            top,
+
+      if (
+        preferredBelowTop +
+        menuHeight >
+        heroBottomLimit &&
+        canFitInsideHero
+      ) {
+        top =
+          insideHeroTop;
+      }
+    }
+
+
+    /*
+     * Flip above only when the menu cannot fit inside
+     * the visible browser window.
+     */
+
+    if (
+      top +
+      menuHeight >
+      viewportHeight -
+      viewportMargin
+    ) {
+      if (
+        fitsAboveViewport
+      ) {
+        top =
+          preferredAboveTop;
+
+
+        placement =
+          "top";
+      } else {
+        top =
+          Math.max(
+            viewportMargin,
 
             viewportHeight -
             menuHeight -
             viewportMargin
-          )
-        );
-
-
-      elements
-        .libraryMenu
-        .dataset
-        .placement =
-          "bottom";
+          );
+      }
+    } else if (
+      fitsBelowViewport
+    ) {
+      placement =
+        "bottom";
     }
 
 
@@ -1875,6 +2140,13 @@ export function createDetailLibraryController(
 
     elements
       .libraryMenu
+      .dataset
+      .placement =
+        placement;
+
+
+    elements
+      .libraryMenu
       .classList
       .add(
         "is-positioned"
@@ -1888,6 +2160,10 @@ export function createDetailLibraryController(
   };
 }
 
+
+/* =========================================================
+   STORED ENTRY NORMALIZATION
+   ========================================================= */
 
 function normalizeStoredEntry(
   storedEntry,
@@ -1967,6 +2243,10 @@ function normalizeStoredEntry(
 }
 
 
+/* =========================================================
+   STATUS VALIDATION
+   ========================================================= */
+
 function getValidStatus(
   format,
   status
@@ -1987,6 +2267,10 @@ function getValidStatus(
     );
 }
 
+
+/* =========================================================
+   LOCAL STORAGE
+   ========================================================= */
 
 function readLibrary() {
   try {
