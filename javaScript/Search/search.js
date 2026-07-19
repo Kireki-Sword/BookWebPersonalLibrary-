@@ -1,15 +1,12 @@
 // search.js
 // Main controller for the Inkwell catalogue search page.
+// Search suggestions are disabled. Results are rendered in the normal results grid.
 
 import {
   CONFIG,
   buildRankedEntries,
   clamp,
-  compareScoreDescending,
-  compareTitleAscending,
   createInitialState,
-  formatScore,
-  getPrimaryTypeLabel,
   getResultComparator,
   loadCatalogue,
   normalizeFacetKey,
@@ -30,38 +27,23 @@ import {
    APPLICATION STATE
    ========================================================= */
 
-const state =
-  createInitialState();
+const state = createInitialState();
 
-const elements =
-  {};
+const elements = {};
 
-let supabaseClient =
-  null;
+let supabaseClient = null;
 
-let catalogue =
-  [];
+let catalogue = [];
 
-let currentResults =
-  [];
+let currentResults = [];
 
-let currentSuggestions =
-  [];
+let searchTimer = null;
 
-let suggestionIndex =
-  -1;
+let isCatalogueLoaded = false;
 
-let searchTimer =
-  null;
+let renderer = null;
 
-let isCatalogueLoaded =
-  false;
-
-let renderer =
-  null;
-
-let selectController =
-  null;
+let selectController = null;
 
 
 /* =========================================================
@@ -111,8 +93,11 @@ async function startSearchPage() {
     });
 
   readStateFromUrl();
+
   bindEvents();
+
   selectController.initialize();
+
   syncAllControls();
 
   renderer.renderLoadingSkeletons(
@@ -153,9 +138,6 @@ function collectElements() {
 
     searchClear:
       "catalogue-search-clear",
-
-    suggestions:
-      "search-suggestions",
 
     filterPanel:
       "filter-panel",
@@ -258,7 +240,6 @@ function hasRequiredElements() {
     "searchForm",
     "searchInput",
     "searchClear",
-    "suggestions",
     "filterPanel",
     "filterPanelClose",
     "filterOverlay",
@@ -369,38 +350,10 @@ function bindEvents() {
     handleSearchInput
   );
 
-  elements.searchInput.addEventListener(
-    "keydown",
-    handleSearchKeydown
-  );
-
-  elements.searchInput.addEventListener(
-    "focus",
-    () => {
-      if (
-        elements.searchInput
-          .value
-          .trim()
-          .length >= 2 &&
-        isCatalogueLoaded
-      ) {
-        renderSuggestions(
-          elements.searchInput.value
-        );
-      }
-    }
-  );
-
   elements.searchClear.addEventListener(
     "click",
     clearSearchQuery
   );
-
-  elements.suggestions.addEventListener(
-    "click",
-    handleSuggestionClick
-  );
-
 
   elements.filterPanel.addEventListener(
     "change",
@@ -435,12 +388,10 @@ function bindEvents() {
     }
   );
 
-
   elements.pagination.addEventListener(
     "click",
     handlePaginationClick
   );
-
 
   elements.mobileFilterButton.addEventListener(
     "click",
@@ -456,7 +407,6 @@ function bindEvents() {
     "click",
     closeFilterDrawer
   );
-
 
   elements.emptyClearFilters.addEventListener(
     "click",
@@ -476,7 +426,6 @@ function bindEvents() {
     "click",
     loadAndRenderCatalogue
   );
-
 
   document.addEventListener(
     "click",
@@ -570,12 +519,12 @@ function handleSearchSubmit(event) {
   state.page =
     1;
 
-  closeSuggestions();
-
   applyStateAndRender({
     historyMode:
       "push"
   });
+
+  scrollToResults();
 }
 
 
@@ -589,17 +538,6 @@ function handleSearchInput() {
   window.clearTimeout(
     searchTimer
   );
-
-  if (
-    value.trim().length >= 2 &&
-    isCatalogueLoaded
-  ) {
-    renderSuggestions(
-      value
-    );
-  } else {
-    closeSuggestions();
-  }
 
   searchTimer =
     window.setTimeout(
@@ -623,88 +561,6 @@ function handleSearchInput() {
 }
 
 
-function handleSearchKeydown(event) {
-  const suggestionsVisible =
-    !elements.suggestions.hidden &&
-    currentSuggestions.length > 0;
-
-
-  if (
-    event.key ===
-    "ArrowDown"
-  ) {
-    if (!suggestionsVisible) {
-      renderSuggestions(
-        elements.searchInput.value
-      );
-    }
-
-    if (!currentSuggestions.length) {
-      return;
-    }
-
-    event.preventDefault();
-
-    suggestionIndex =
-      Math.min(
-        suggestionIndex + 1,
-        currentSuggestions.length - 1
-      );
-
-    updateSuggestionHighlight();
-
-    return;
-  }
-
-
-  if (
-    event.key ===
-    "ArrowUp"
-  ) {
-    if (!currentSuggestions.length) {
-      return;
-    }
-
-    event.preventDefault();
-
-    suggestionIndex =
-      Math.max(
-        suggestionIndex - 1,
-        0
-      );
-
-    updateSuggestionHighlight();
-
-    return;
-  }
-
-
-  if (
-    event.key === "Enter" &&
-    suggestionsVisible &&
-    suggestionIndex >= 0
-  ) {
-    event.preventDefault();
-
-    selectSuggestion(
-      currentSuggestions[
-        suggestionIndex
-      ]
-    );
-
-    return;
-  }
-
-
-  if (
-    event.key ===
-    "Escape"
-  ) {
-    closeSuggestions();
-  }
-}
-
-
 function clearSearchQuery() {
   window.clearTimeout(
     searchTimer
@@ -721,8 +577,6 @@ function clearSearchQuery() {
 
   state.page =
     1;
-
-  closeSuggestions();
 
   applyStateAndRender({
     historyMode:
@@ -748,344 +602,12 @@ function browseAllStories() {
   state.page =
     1;
 
-  closeSuggestions();
-
   applyStateAndRender({
     historyMode:
       "push"
   });
 
   elements.searchInput.focus();
-}
-
-
-/* =========================================================
-   SEARCH SUGGESTIONS
-   ========================================================= */
-
-function renderSuggestions(value) {
-  const query =
-    String(
-      value ||
-      ""
-    ).trim();
-
-  if (
-    query.length < 2 ||
-    !catalogue.length
-  ) {
-    closeSuggestions();
-
-    return;
-  }
-
-  currentSuggestions =
-    buildRankedEntries(
-      catalogue,
-      query
-    )
-      .sort((a, b) => {
-        return (
-          b.rank -
-          a.rank ||
-
-          compareScoreDescending(
-            a.item,
-            b.item
-          ) ||
-
-          compareTitleAscending(
-            a.item,
-            b.item
-          )
-        );
-      })
-      .slice(
-        0,
-        CONFIG.MAX_SEARCH_SUGGESTIONS
-      )
-      .map((entry) => {
-        return entry.item;
-      });
-
-  suggestionIndex =
-    -1;
-
-  elements.suggestions.innerHTML =
-    "";
-
-  if (!currentSuggestions.length) {
-    closeSuggestions();
-
-    return;
-  }
-
-  currentSuggestions.forEach((
-    item,
-    index
-  ) => {
-    const button =
-      document.createElement(
-        "button"
-      );
-
-    button.type =
-      "button";
-
-    button.className =
-      "search-suggestion";
-
-    button.id =
-      `search-suggestion-${index}`;
-
-    button.dataset.suggestionIndex =
-      String(
-        index
-      );
-
-    button.setAttribute(
-      "role",
-      "option"
-    );
-
-    button.setAttribute(
-      "aria-selected",
-      "false"
-    );
-
-
-    const cover =
-      document.createElement(
-        "span"
-      );
-
-    cover.className =
-      "search-suggestion-cover";
-
-
-    if (item.coverUrl) {
-      const image =
-        document.createElement(
-          "img"
-        );
-
-      image.src =
-        item.coverUrl;
-
-      image.alt =
-        "";
-
-      image.loading =
-        "lazy";
-
-      image.addEventListener(
-        "error",
-        () => {
-          image.remove();
-        },
-        {
-          once: true
-        }
-      );
-
-      cover.append(
-        image
-      );
-    }
-
-
-    const info =
-      document.createElement(
-        "span"
-      );
-
-    info.className =
-      "search-suggestion-info";
-
-
-    const title =
-      document.createElement(
-        "strong"
-      );
-
-    title.textContent =
-      item.title;
-
-
-    const meta =
-      document.createElement(
-        "small"
-      );
-
-    meta.textContent =
-      [
-        item.creator,
-
-        getPrimaryTypeLabel(
-          item
-        )
-      ]
-        .filter(Boolean)
-        .join(" · ");
-
-    info.append(
-      title,
-      meta
-    );
-
-
-    const score =
-      document.createElement(
-        "span"
-      );
-
-    score.className =
-      "search-suggestion-score";
-
-    const scoreValue =
-      formatScore(
-        item.score
-      );
-
-    score.textContent =
-      scoreValue
-        ? `★ ${scoreValue}`
-        : "";
-
-
-    button.append(
-      cover,
-      info,
-      score
-    );
-
-    elements.suggestions.append(
-      button
-    );
-  });
-
-  elements.suggestions.hidden =
-    false;
-
-  elements.searchInput.setAttribute(
-    "aria-expanded",
-    "true"
-  );
-}
-
-
-function handleSuggestionClick(event) {
-  const button =
-    event.target.closest(
-      "[data-suggestion-index]"
-    );
-
-  if (!button) {
-    return;
-  }
-
-  const item =
-    currentSuggestions[
-      Number(
-        button.dataset.suggestionIndex
-      )
-    ];
-
-  if (item) {
-    selectSuggestion(
-      item
-    );
-  }
-}
-
-
-function selectSuggestion(item) {
-  elements.searchInput.value =
-    item.title;
-
-  elements.searchClear.hidden =
-    false;
-
-  state.query =
-    item.title;
-
-  state.page =
-    1;
-
-  closeSuggestions();
-
-  applyStateAndRender({
-    historyMode:
-      "push"
-  });
-
-  elements.searchInput.focus();
-}
-
-
-function updateSuggestionHighlight() {
-  const buttons = [
-    ...elements.suggestions.querySelectorAll(
-      ".search-suggestion"
-    )
-  ];
-
-  buttons.forEach((
-    button,
-    index
-  ) => {
-    const active =
-      index ===
-      suggestionIndex;
-
-    button.classList.toggle(
-      "is-active",
-      active
-    );
-
-    button.setAttribute(
-      "aria-selected",
-      String(
-        active
-      )
-    );
-
-    if (active) {
-      elements.searchInput.setAttribute(
-        "aria-activedescendant",
-        button.id
-      );
-
-      button.scrollIntoView({
-        block:
-          "nearest"
-      });
-    }
-  });
-}
-
-
-function closeSuggestions() {
-  currentSuggestions =
-    [];
-
-  suggestionIndex =
-    -1;
-
-  elements.suggestions.hidden =
-    true;
-
-  elements.suggestions.innerHTML =
-    "";
-
-  elements.searchInput.setAttribute(
-    "aria-expanded",
-    "false"
-  );
-
-  elements.searchInput.removeAttribute(
-    "aria-activedescendant"
-  );
 }
 
 
@@ -1185,6 +707,7 @@ function clearFilters(
 
 function clearFilterState() {
   state.selectedTypes.clear();
+
   state.selectedGenres.clear();
 
   state.minimumScore =
@@ -1430,13 +953,15 @@ function openFilterDrawer() {
     () => {
       elements.filterPanelClose.focus();
     },
+
     40
   );
 }
 
 
 function closeFilterDrawer(
-  returnFocus = true
+  returnFocus =
+    true
 ) {
   const wasOpen =
     elements.filterPanel.classList.contains(
@@ -1560,7 +1085,9 @@ function readStateFromUrl() {
 }
 
 
-function writeStateToUrl(historyMode) {
+function writeStateToUrl(
+  historyMode
+) {
   const params =
     new URLSearchParams();
 
@@ -1669,13 +1196,14 @@ function writeStateToUrl(historyMode) {
 
 
 function handleHistoryNavigation() {
-  closeSuggestions();
   selectController.closeAll();
+
   closeFilterDrawer(
     false
   );
 
   readStateFromUrl();
+
   syncAllControls();
 
   if (isCatalogueLoaded) {
@@ -1717,14 +1245,6 @@ function syncAllControls() {
 function handleDocumentClick(event) {
   if (
     !event.target.closest(
-      ".catalogue-search"
-    )
-  ) {
-    closeSuggestions();
-  }
-
-  if (
-    !event.target.closest(
       "[data-custom-select]"
     )
   ) {
@@ -1749,6 +1269,5 @@ function handleDocumentKeydown(event) {
     closeFilterDrawer();
   }
 
-  closeSuggestions();
   selectController.closeAll();
 }
