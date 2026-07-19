@@ -3243,45 +3243,418 @@ summary i {
 
 
 /* =========================================================
-   LIBRARY MENU — CONTAINED HERO FLYOUT
+   LIBRARY CARD — STABLE IN-CARD STEPPER
 
-   Desktop:
-   Opens to the left of the library card.
-
-   Medium screens:
-   Opens inside the hero.
-
-   Mobile:
-   Opens as a bottom sheet.
+   The menu is now contained inside the library card.
+   It never follows the viewport or overlaps another section.
    ========================================================= */
 
 
-/* The JavaScript calculates the exact position. */
+/* =========================================================
+   STABLE CARD SIZE
+
+   Space for two tracked formats is reserved before anything
+   has been saved. The score therefore never moves.
+   ========================================================= */
+
+body.detail-site
+.detail-library-block {
+  position:
+    relative;
+
+  height:
+    350px;
+
+  min-height:
+    350px;
+
+  max-height:
+    350px;
+
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  overflow:
+    hidden;
+}
+
+
+body.detail-site
+.detail-action-panel {
+  align-self:
+    center;
+}
+
+
+/* =========================================================
+   RESERVED SUMMARY AREA
+   ========================================================= */
+
+body.detail-site
+.detail-library-summary {
+  min-height:
+    86px;
+
+  height:
+    86px;
+
+  max-height:
+    86px;
+
+  margin-top:
+    0.85rem;
+
+  display:
+    grid;
+
+  grid-template-rows:
+    repeat(
+      2,
+      minmax(
+        0,
+        1fr
+      )
+    );
+
+  align-content:
+    start;
+
+  gap:
+    0.42rem;
+
+  overflow:
+    hidden;
+}
+
+
+body.detail-site
+.detail-library-summary-item {
+  width:
+    100%;
+
+  min-height:
+    39px;
+
+  display:
+    grid;
+
+  grid-template-columns:
+    19px
+    minmax(
+      0,
+      1fr
+    )
+    auto;
+
+  align-items:
+    center;
+
+  gap:
+    0.55rem;
+
+  padding:
+    0.52rem
+    0.65rem;
+
+  color:
+    #cbd3ea;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(
+        255,
+        255,
+        255,
+        0.04
+      ),
+      rgba(
+        255,
+        255,
+        255,
+        0.018
+      )
+    );
+
+  border:
+    1px solid
+    rgba(
+      187,
+      196,
+      255,
+      0.11
+    );
+
+  border-radius:
+    10px;
+
+  font-family:
+    var(
+      --font-body,
+      system-ui,
+      sans-serif
+    );
+
+  font-size:
+    0.67rem;
+
+  font-weight:
+    680;
+
+  text-align:
+    left;
+
+  cursor:
+    pointer;
+
+  transition:
+    color
+    160ms
+    ease,
+
+    background
+    160ms
+    ease,
+
+    border-color
+    160ms
+    ease;
+}
+
+
+body.detail-site
+.detail-library-summary-item:hover {
+  color:
+    #ffffff;
+
+  background:
+    rgba(
+      124,
+      140,
+      255,
+      0.11
+    );
+
+  border-color:
+    rgba(
+      187,
+      196,
+      255,
+      0.25
+    );
+}
+
+
+/* =========================================================
+   EMPTY SUMMARY PLACEHOLDER
+
+   This occupies the same reserved space as saved formats.
+   ========================================================= */
+
+body.detail-site
+.detail-library-summary-empty {
+  grid-row:
+    1 / -1;
+
+  min-height:
+    86px;
+
+  display:
+    grid;
+
+  grid-template-columns:
+    30px
+    minmax(
+      0,
+      1fr
+    );
+
+  align-items:
+    center;
+
+  gap:
+    0.7rem;
+
+  padding:
+    0.75rem;
+
+  color:
+    #9da8c2;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(
+        255,
+        255,
+        255,
+        0.025
+      ),
+      rgba(
+        255,
+        255,
+        255,
+        0.01
+      )
+    );
+
+  border:
+    1px dashed
+    rgba(
+      187,
+      196,
+      255,
+      0.13
+    );
+
+  border-radius:
+    11px;
+}
+
+
+body.detail-site
+.detail-library-summary-empty > i {
+  width:
+    30px;
+
+  height:
+    30px;
+
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  color:
+    #aeb7ef;
+
+  background:
+    rgba(
+      124,
+      140,
+      255,
+      0.1
+    );
+
+  border-radius:
+    9px;
+}
+
+
+body.detail-site
+.detail-library-summary-empty div {
+  min-width:
+    0;
+
+  display:
+    grid;
+
+  gap:
+    0.2rem;
+}
+
+
+body.detail-site
+.detail-library-summary-empty strong {
+  color:
+    #cbd3e8;
+
+  font-size:
+    0.67rem;
+
+  font-weight:
+    700;
+}
+
+
+body.detail-site
+.detail-library-summary-empty small {
+  color:
+    #747f99;
+
+  font-size:
+    0.59rem;
+
+  line-height:
+    1.35;
+}
+
+
+/* =========================================================
+   TRIGGER AND NOTE
+   ========================================================= */
+
+body.detail-site
+.detail-library-picker {
+  position:
+    static;
+
+  margin-top:
+    0.75rem;
+}
+
+
+body.detail-site
+.detail-library-note {
+  min-height:
+    30px;
+
+  margin-top:
+    0.55rem;
+
+  overflow:
+    hidden;
+
+  font-size:
+    0.6rem;
+
+  line-height:
+    1.4;
+}
+
+
+/* =========================================================
+   IN-CARD MENU
+
+   This replaces the old position:fixed dropdown.
+   ========================================================= */
 
 body.detail-site
 .detail-library-menu {
   position:
-    fixed !important;
+    absolute !important;
 
   inset:
-    auto !important;
+    70px
+    12px
+    12px
+    12px
+    !important;
 
   z-index:
-    1400 !important;
+    30 !important;
 
   width:
-    330px;
+    auto !important;
+
+  min-width:
+    0 !important;
 
   max-width:
-    calc(
-      100vw -
-      24px
-    );
+    none !important;
 
-  /*
-   * No internal scrollbar is needed on desktop.
-   * Five compact status options fit inside the panel.
-   */
+  height:
+    auto !important;
+
+  min-height:
+    0 !important;
 
   max-height:
     none !important;
@@ -3292,8 +3665,14 @@ body.detail-site
   padding:
     0.55rem;
 
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
   overflow:
-    visible !important;
+    hidden !important;
 
   opacity:
     0;
@@ -3305,15 +3684,15 @@ body.detail-site
     none;
 
   transform:
-    translateX(
+    translateY(
       7px
     )
     scale(
-      0.985
+      0.99
     );
 
   transform-origin:
-    right center;
+    center;
 
   color:
     #f5f7ff;
@@ -3321,7 +3700,7 @@ body.detail-site
   background:
     radial-gradient(
       circle
-      at 82% 0%,
+      at 50% 0%,
       rgba(
         124,
         140,
@@ -3329,21 +3708,21 @@ body.detail-site
         0.18
       ),
       transparent
-      46%
+      47%
     ),
 
     linear-gradient(
       155deg,
       rgba(
-        21,
-        30,
-        58,
+        22,
+        31,
+        59,
         0.995
       ),
       rgba(
-        7,
-        12,
-        27,
+        8,
+        13,
+        29,
         0.998
       )
     );
@@ -3354,27 +3733,19 @@ body.detail-site
       116,
       215,
       255,
-      0.3
+      0.26
     );
 
   border-radius:
-    15px;
+    13px;
 
   box-shadow:
-    0 30px 80px
+    0 18px 45px
     rgba(
       0,
       0,
       0,
-      0.62
-    ),
-
-    0 0 38px
-    rgba(
-      113,
-      140,
-      255,
-      0.12
+      0.38
     ),
 
     inset 0 1px 0
@@ -3382,7 +3753,7 @@ body.detail-site
       255,
       255,
       255,
-      0.07
+      0.065
     );
 
   transition:
@@ -3412,7 +3783,7 @@ body.detail-site
     auto;
 
   transform:
-    translateX(
+    translateY(
       0
     )
     scale(
@@ -3428,81 +3799,41 @@ body.detail-site
 }
 
 
-/* =========================================================
-   DESKTOP POINTER
-
-   The pointer faces the library card when the panel is
-   positioned to its left.
-   ========================================================= */
+/*
+ * Remove all old dropdown arrows because this is no longer
+ * a floating panel pointing toward another element.
+ */
 
 body.detail-site
-.detail-library-menu::before {
-  content:
-    "";
-
-  position:
-    absolute;
-
-  top:
-    50%;
-
-  right:
-    -7px;
-
-  width:
-    13px;
-
-  height:
-    13px;
-
-  background:
-    rgba(
-      17,
-      25,
-      49,
-      0.995
-    );
-
-  border-top:
-    1px solid
-    rgba(
-      116,
-      215,
-      255,
-      0.28
-    );
-
-  border-right:
-    1px solid
-    rgba(
-      116,
-      215,
-      255,
-      0.28
-    );
-
-  transform:
-    translateY(
-      -50%
-    )
-    rotate(
-      45deg
-    );
-
-  pointer-events:
-    none;
+.detail-library-menu::before,
+body.detail-site
+.detail-library-menu::after {
+  display:
+    none !important;
 }
 
 
+/* =========================================================
+   HIDE THE CLOSED CARD CONTROLS WHILE THE STEPPER IS OPEN
+
+   Visibility keeps their reserved layout space intact.
+   ========================================================= */
+
 body.detail-site
-.detail-library-menu[
-  data-placement="contained"
-]::before,
+.detail-library-block.is-library-menu-open
+.detail-library-summary,
+
 body.detail-site
-.detail-library-menu[
-  data-placement="sheet"
-]::before {
-  display:
+.detail-library-block.is-library-menu-open
+.detail-library-trigger,
+
+body.detail-site
+.detail-library-block.is-library-menu-open
+.detail-library-note {
+  visibility:
+    hidden;
+
+  pointer-events:
     none;
 }
 
@@ -3513,14 +3844,17 @@ body.detail-site
 
 body.detail-site
 .detail-library-menu-header {
+  flex:
+    0 0 auto;
+
   min-height:
-    54px;
+    50px;
 
   display:
     grid;
 
   grid-template-columns:
-    auto
+    34px
     minmax(
       0,
       1fr
@@ -3530,12 +3864,12 @@ body.detail-site
     center;
 
   gap:
-    0.65rem;
+    0.62rem;
 
   padding:
+    0.28rem
     0.3rem
-    0.35rem
-    0.65rem;
+    0.62rem;
 
   border-bottom:
     1px solid
@@ -3546,13 +3880,12 @@ body.detail-site
 
 
 body.detail-site
-.detail-library-menu-header
-strong {
+.detail-library-menu-header strong {
   display:
     block;
 
   margin-top:
-    0.16rem;
+    0.14rem;
 
   color:
     #ffffff;
@@ -3565,19 +3898,15 @@ strong {
     );
 
   font-size:
-    0.98rem;
+    0.94rem;
 
   font-weight:
     620;
 
   line-height:
-    1.15;
+    1.14;
 }
 
-
-/* =========================================================
-   BACK BUTTON
-   ========================================================= */
 
 body.detail-site
 .detail-library-menu-back {
@@ -3621,15 +3950,15 @@ body.detail-site
 
   transition:
     color
-    160ms
+    150ms
     ease,
 
     background
-    160ms
+    150ms
     ease,
 
     border-color
-    160ms
+    150ms
     ease;
 }
 
@@ -3655,19 +3984,51 @@ body.detail-site
 
 
 /* =========================================================
-   OPTIONS
+   MENU OPTIONS
    ========================================================= */
 
 body.detail-site
 .detail-library-options {
+  min-height:
+    0;
+
+  flex:
+    1 1 auto;
+
   padding-top:
     0.42rem;
 
   display:
     grid;
 
+  align-content:
+    start;
+
   gap:
     0.18rem;
+
+  overflow:
+    hidden;
+}
+
+
+body.detail-site
+.detail-library-menu[
+  data-screen="formats"
+]
+.detail-library-option {
+  min-height:
+    58px;
+}
+
+
+body.detail-site
+.detail-library-menu[
+  data-screen="statuses"
+]
+.detail-library-option {
+  min-height:
+    38px;
 }
 
 
@@ -3676,14 +4037,11 @@ body.detail-site
   width:
     100%;
 
-  min-height:
-    44px;
-
   display:
     grid;
 
   grid-template-columns:
-    22px
+    21px
     minmax(
       0,
       1fr
@@ -3694,11 +4052,11 @@ body.detail-site
     center;
 
   gap:
-    0.65rem;
+    0.62rem;
 
   padding:
-    0.55rem
-    0.68rem;
+    0.48rem
+    0.62rem;
 
   color:
     #bec7dd;
@@ -3711,7 +4069,7 @@ body.detail-site
     transparent;
 
   border-radius:
-    10px;
+    9px;
 
   font-family:
     var(
@@ -3737,18 +4095,16 @@ body.detail-site
 
     border-color
     150ms
-    ease,
-
-    transform
-    150ms
     ease;
 }
 
 
 body.detail-site
 .detail-library-option:hover,
+
 body.detail-site
 .detail-library-option:focus-visible,
+
 body.detail-site
 .detail-library-option.is-selected {
   color:
@@ -3761,13 +4117,13 @@ body.detail-site
         124,
         140,
         255,
-        0.21
+        0.2
       ),
       rgba(
         116,
         215,
         255,
-        0.05
+        0.045
       )
     );
 
@@ -3777,11 +4133,6 @@ body.detail-site
       196,
       255,
       0.11
-    );
-
-  transform:
-    translateX(
-      2px
     );
 }
 
@@ -3804,38 +4155,36 @@ body.detail-site
     grid;
 
   gap:
-    0.12rem;
+    0.1rem;
 }
 
 
 body.detail-site
-.detail-library-option-copy
-strong {
+.detail-library-option-copy strong {
   color:
     inherit;
 
   font-size:
-    0.73rem;
+    0.7rem;
 
   font-weight:
-    730;
+    720;
 
   line-height:
-    1.22;
+    1.2;
 }
 
 
 body.detail-site
-.detail-library-option-copy
-small {
+.detail-library-option-copy small {
   color:
     #7f8aa5;
 
   font-size:
-    0.6rem;
+    0.58rem;
 
   font-weight:
-    620;
+    610;
 
   line-height:
     1.2;
@@ -3853,7 +4202,7 @@ body.detail-site
     );
 
   font-size:
-    0.73rem;
+    0.72rem;
 
   font-weight:
     850;
@@ -3869,8 +4218,8 @@ body.detail-site
     1px;
 
   margin:
-    0.34rem
-    0.4rem;
+    0.28rem
+    0.35rem;
 
   background:
     var(
@@ -3880,62 +4229,32 @@ body.detail-site
 
 
 /* =========================================================
-   SUMMARY ITEMS
-   ========================================================= */
-
-body.detail-site
-.detail-library-summary-item {
-  grid-template-columns:
-    20px
-    minmax(
-      0,
-      1fr
-    )
-    auto;
-}
-
-
-/* =========================================================
-   MEDIUM SCREENS
-
-   The JavaScript centres and clamps the panel inside
-   the hero. The pointer is hidden.
+   TABLET
    ========================================================= */
 
 @media (
   max-width:
-  1240px
+  900px
 ) {
   body.detail-site
-  .detail-library-menu {
-    transform-origin:
-      center;
+  .detail-library-block {
+    width:
+      100%;
 
-    transform:
-      translateY(
-        6px
-      )
-      scale(
-        0.985
-      );
-  }
+    height:
+      355px;
 
+    min-height:
+      355px;
 
-  body.detail-site
-  .detail-library-menu.is-positioned {
-    transform:
-      translateY(
-        0
-      )
-      scale(
-        1
-      );
+    max-height:
+      355px;
   }
 }
 
 
 /* =========================================================
-   MOBILE BOTTOM SHEET
+   MOBILE
    ========================================================= */
 
 @media (
@@ -3943,57 +4262,38 @@ body.detail-site
   580px
 ) {
   body.detail-site
-  .detail-library-menu {
+  .detail-library-block {
+    height:
+      365px;
+
+    min-height:
+      365px;
+
     max-height:
-      min(
-        72vh,
-        450px
-      )
-      !important;
+      365px;
+  }
 
-    overflow-x:
-      hidden
-      !important;
 
-    overflow-y:
-      auto
+  body.detail-site
+  .detail-library-menu {
+    inset:
+      70px
+      10px
+      10px
+      10px
       !important;
 
     border-radius:
-      19px;
-
-    transform-origin:
-      bottom center;
-
-    transform:
-      translateY(
-        16px
-      )
-      scale(
-        0.99
-      );
+      12px;
   }
 
 
   body.detail-site
-  .detail-library-menu.is-positioned {
-    transform:
-      translateY(
-        0
-      )
-      scale(
-        1
-      );
-  }
-
-
-  body.detail-site
+  .detail-library-menu[
+    data-screen="statuses"
+  ]
   .detail-library-option {
     min-height:
-      49px;
-
-    padding:
-      0.65rem
-      0.72rem;
+      42px;
   }
 }

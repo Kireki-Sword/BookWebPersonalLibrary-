@@ -1,175 +1,111 @@
 // detail-library.js
-// Tracks Manga and Anime independently for the same story.
-// The menu stays inside the hero and does not resize it.
+// Tracks Manga and Anime independently inside a stable,
+// contained library card.
 
-const STORAGE_KEY =
-  "inkwell-library";
-
+const STORAGE_KEY = "inkwell-library";
 
 const SUPPORTED_FORMATS = [
   "manga",
   "anime"
 ];
 
+const FORMAT_CONFIG = Object.freeze({
+  manga: {
+    label: "Manga",
+    icon: "ti ti-book-2",
 
-const FORMAT_CONFIG =
-  Object.freeze({
-    manga: {
-      label:
-        "Manga",
+    statuses: [
+      {
+        id: "reading",
+        label: "Reading",
+        icon: "ti ti-book"
+      },
 
-      icon:
-        "ti ti-book-2",
+      {
+        id: "completed",
+        label: "Completed",
+        icon: "ti ti-circle-check"
+      },
 
-      statuses: [
-        {
-          id:
-            "reading",
+      {
+        id: "plan-to-read",
+        label: "Plan to read",
+        icon: "ti ti-clock-plus"
+      },
 
-          label:
-            "Reading",
+      {
+        id: "paused",
+        label: "Paused",
+        icon: "ti ti-player-pause"
+      },
 
-          icon:
-            "ti ti-book"
-        },
+      {
+        id: "dropped",
+        label: "Dropped",
+        icon: "ti ti-circle-minus"
+      }
+    ]
+  },
 
-        {
-          id:
-            "completed",
+  anime: {
+    label: "Anime",
+    icon: "ti ti-device-tv",
 
-          label:
-            "Completed",
+    statuses: [
+      {
+        id: "watching",
+        label: "Watching",
+        icon: "ti ti-player-play"
+      },
 
-          icon:
-            "ti ti-circle-check"
-        },
+      {
+        id: "completed",
+        label: "Completed",
+        icon: "ti ti-circle-check"
+      },
 
-        {
-          id:
-            "plan-to-read",
+      {
+        id: "plan-to-watch",
+        label: "Plan to watch",
+        icon: "ti ti-clock-plus"
+      },
 
-          label:
-            "Plan to read",
+      {
+        id: "paused",
+        label: "Paused",
+        icon: "ti ti-player-pause"
+      },
 
-          icon:
-            "ti ti-clock-plus"
-        },
-
-        {
-          id:
-            "paused",
-
-          label:
-            "Paused",
-
-          icon:
-            "ti ti-player-pause"
-        },
-
-        {
-          id:
-            "dropped",
-
-          label:
-            "Dropped",
-
-          icon:
-            "ti ti-circle-minus"
-        }
-      ]
-    },
-
-
-    anime: {
-      label:
-        "Anime",
-
-      icon:
-        "ti ti-device-tv",
-
-      statuses: [
-        {
-          id:
-            "watching",
-
-          label:
-            "Watching",
-
-          icon:
-            "ti ti-player-play"
-        },
-
-        {
-          id:
-            "completed",
-
-          label:
-            "Completed",
-
-          icon:
-            "ti ti-circle-check"
-        },
-
-        {
-          id:
-            "plan-to-watch",
-
-          label:
-            "Plan to watch",
-
-          icon:
-            "ti ti-clock-plus"
-        },
-
-        {
-          id:
-            "paused",
-
-          label:
-            "Paused",
-
-          icon:
-            "ti ti-player-pause"
-        },
-
-        {
-          id:
-            "dropped",
-
-          label:
-            "Dropped",
-
-          icon:
-            "ti ti-circle-minus"
-        }
-      ]
-    }
-  });
+      {
+        id: "dropped",
+        label: "Dropped",
+        icon: "ti ti-circle-minus"
+      }
+    ]
+  }
+});
 
 
-export function createDetailLibraryController(
-  elements
-) {
-  let currentTitle =
-    null;
+export function createDetailLibraryController(elements) {
+  const libraryBlock =
+    elements.libraryPicker.closest(
+      ".detail-library-block"
+    );
 
-  let currentEntry =
-    null;
+  const menuBackIcon =
+    elements.libraryMenuBack.querySelector(
+      "i"
+    );
 
-  let availableFormats =
-    [];
+  let currentTitle = null;
+  let currentEntry = null;
 
-  let activeFormat =
-    "";
+  let availableFormats = [];
 
-  let currentScreen =
-    "formats";
+  let activeFormat = "";
+  let currentScreen = "formats";
 
-  let hasBoundEvents =
-    false;
-
-  let positionFrame =
-    null;
+  let hasBoundEvents = false;
 
 
   /* =======================================================
@@ -177,174 +113,102 @@ export function createDetailLibraryController(
      ======================================================= */
 
   function bindEvents() {
-    if (
-      hasBoundEvents
-    ) {
+    if (hasBoundEvents) {
       return;
     }
 
+    hasBoundEvents = true;
 
-    hasBoundEvents =
-      true;
+    elements.libraryMenu.hidden = true;
 
+    elements.libraryTrigger.setAttribute(
+      "aria-expanded",
+      "false"
+    );
 
-    elements
-      .libraryMenu
-      .hidden =
-        true;
+    elements.libraryTrigger.addEventListener(
+      "click",
+      handleTriggerClick
+    );
 
+    elements.libraryMenuBack.addEventListener(
+      "click",
+      handleMenuBackClick
+    );
 
-    elements
-      .libraryTrigger
-      .setAttribute(
-        "aria-expanded",
-        "false"
-      );
+    elements.librarySummary.addEventListener(
+      "click",
+      handleSummaryClick
+    );
 
+    elements.libraryMenu.addEventListener(
+      "click",
+      (event) => {
+        event.stopPropagation();
+      }
+    );
 
-    elements
-      .libraryTrigger
-      .addEventListener(
-        "click",
-        (
-          event
-        ) => {
-          event.preventDefault();
-
-          event.stopPropagation();
-
-
-          toggleMenu();
-        }
-      );
-
-
-    elements
-      .libraryMenuBack
-      .addEventListener(
-        "click",
-        (
-          event
-        ) => {
-          event.preventDefault();
-
-          event.stopPropagation();
-
-
-          showFormatScreen(
-            true
-          );
-        }
-      );
-
-
-    elements
-      .librarySummary
-      .addEventListener(
-        "click",
-        handleSummaryClick
-      );
-
-
-    elements
-      .libraryMenu
-      .addEventListener(
-        "click",
-        (
-          event
-        ) => {
-          event.stopPropagation();
-        }
-      );
-
-
-    elements
-      .libraryMenu
-      .addEventListener(
-        "keydown",
-        handleMenuKeydown
-      );
-
+    elements.libraryMenu.addEventListener(
+      "keydown",
+      handleMenuKeydown
+    );
 
     document.addEventListener(
       "click",
-      (
-        event
-      ) => {
-        if (
-          !isMenuOpen()
-        ) {
-          return;
-        }
-
-
-        const clickedTrigger =
-          elements
-            .libraryTrigger
-            .contains(
-              event.target
-            );
-
-
-        const clickedMenu =
-          elements
-            .libraryMenu
-            .contains(
-              event.target
-            );
-
-
-        const clickedSummary =
-          elements
-            .librarySummary
-            .contains(
-              event.target
-            );
-
-
-        if (
-          !clickedTrigger &&
-          !clickedMenu &&
-          !clickedSummary
-        ) {
-          closeMenu();
-        }
-      }
+      handleDocumentClick
     );
-
 
     document.addEventListener(
       "keydown",
-      (
-        event
-      ) => {
-        if (
-          event.key ===
-            "Escape" &&
-          isMenuOpen()
-        ) {
-          event.preventDefault();
-
-
-          closeMenu(
-            true
-          );
-        }
-      }
+      handleDocumentKeydown
     );
+  }
 
 
-    window.addEventListener(
-      "resize",
-      scheduleMenuPosition
-    );
+  function handleTriggerClick(event) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    toggleMenu();
+  }
 
 
-    window.addEventListener(
-      "scroll",
-      scheduleMenuPosition,
-      true
-    );
+  function handleMenuBackClick(event) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (currentScreen === "formats") {
+      closeMenu(true);
+      return;
+    }
+
+    showFormatScreen(true);
+  }
+
+
+  function handleDocumentClick(event) {
+    if (!isMenuOpen()) {
+      return;
+    }
+
+    if (
+      libraryBlock &&
+      !libraryBlock.contains(event.target)
+    ) {
+      closeMenu();
+    }
+  }
+
+
+  function handleDocumentKeydown(event) {
+    if (
+      event.key === "Escape" &&
+      isMenuOpen()
+    ) {
+      event.preventDefault();
+
+      closeMenu(true);
+    }
   }
 
 
@@ -352,75 +216,45 @@ export function createDetailLibraryController(
      TITLE SETUP
      ======================================================= */
 
-  function setTitle(
-    title
-  ) {
-    currentTitle =
-      title;
-
+  function setTitle(title) {
+    currentTitle = title;
 
     availableFormats =
-      SUPPORTED_FORMATS
-        .filter(
-          (
-            format
-          ) => {
-            return (
-              title
-                .media
-                ?.[
-                  format
-                ]
-                ?.length > 0
-            );
-          }
-        );
-
+      SUPPORTED_FORMATS.filter(
+        (format) => {
+          return (
+            title.media?.[format]?.length > 0
+          );
+        }
+      );
 
     currentEntry =
       normalizeStoredEntry(
-        readLibrary()[
-          title.id
-        ],
-
+        readLibrary()[title.id],
         title
       );
 
+    activeFormat = "";
+    currentScreen = "formats";
 
-    activeFormat =
-      "";
-
-
-    currentScreen =
-      "formats";
-
+    closeMenu();
 
     updateInterface();
-
-
-    showFormatScreen(
-      false
-    );
+    showFormatScreen(false);
   }
 
 
   /* =======================================================
-     MENU OPEN AND CLOSE
+     OPEN AND CLOSE
      ======================================================= */
 
   function isMenuOpen() {
-    return (
-      !elements
-        .libraryMenu
-        .hidden
-    );
+    return !elements.libraryMenu.hidden;
   }
 
 
   function toggleMenu() {
-    if (
-      isMenuOpen()
-    ) {
+    if (isMenuOpen()) {
       closeMenu();
     } else {
       openMenu();
@@ -437,124 +271,57 @@ export function createDetailLibraryController(
       return;
     }
 
+    showFormatScreen(false);
 
-    showFormatScreen(
-      false
+    elements.libraryMenu.hidden = false;
+
+    elements.libraryPicker.classList.add(
+      "is-open"
     );
 
+    libraryBlock?.classList.add(
+      "is-library-menu-open"
+    );
 
-    elements
-      .libraryMenu
-      .hidden =
-        false;
+    elements.libraryTrigger.setAttribute(
+      "aria-expanded",
+      "true"
+    );
 
+    window.requestAnimationFrame(
+      () => {
+        elements.libraryMenu.classList.add(
+          "is-positioned"
+        );
 
-    elements
-      .libraryPicker
-      .classList
-      .add(
-        "is-open"
-      );
-
-
-    elements
-      .libraryTrigger
-      .setAttribute(
-        "aria-expanded",
-        "true"
-      );
-
-
-    window
-      .requestAnimationFrame(
-        () => {
-          positionMenu();
-
-
-          focusFirstMenuButton();
-        }
-      );
+        focusFirstOption();
+      }
+    );
   }
 
 
-  function closeMenu(
-    returnFocus =
-      false
-  ) {
-    if (
-      !isMenuOpen()
-    ) {
-      return;
-    }
+  function closeMenu(returnFocus = false) {
+    elements.libraryMenu.hidden = true;
 
+    elements.libraryMenu.classList.remove(
+      "is-positioned"
+    );
 
-    elements
-      .libraryMenu
-      .hidden =
-        true;
+    elements.libraryPicker.classList.remove(
+      "is-open"
+    );
 
+    libraryBlock?.classList.remove(
+      "is-library-menu-open"
+    );
 
-    elements
-      .libraryPicker
-      .classList
-      .remove(
-        "is-open"
-      );
+    elements.libraryTrigger.setAttribute(
+      "aria-expanded",
+      "false"
+    );
 
-
-    elements
-      .libraryTrigger
-      .setAttribute(
-        "aria-expanded",
-        "false"
-      );
-
-
-    elements
-      .libraryMenu
-      .classList
-      .remove(
-        "is-positioned"
-      );
-
-
-    elements
-      .libraryMenu
-      .removeAttribute(
-        "data-placement"
-      );
-
-
-    elements
-      .libraryMenu
-      .style
-      .removeProperty(
-        "left"
-      );
-
-
-    elements
-      .libraryMenu
-      .style
-      .removeProperty(
-        "top"
-      );
-
-
-    elements
-      .libraryMenu
-      .style
-      .removeProperty(
-        "width"
-      );
-
-
-    if (
-      returnFocus
-    ) {
-      elements
-        .libraryTrigger
-        .focus();
+    if (returnFocus) {
+      elements.libraryTrigger.focus();
     }
   }
 
@@ -563,133 +330,90 @@ export function createDetailLibraryController(
      FORMAT SCREEN
      ======================================================= */
 
-  function showFormatScreen(
-    moveFocus
-  ) {
-    activeFormat =
-      "";
+  function showFormatScreen(moveFocus) {
+    activeFormat = "";
+    currentScreen = "formats";
 
-
-    currentScreen =
+    elements.libraryMenu.dataset.screen =
       "formats";
 
+    elements.libraryMenuBack.hidden = false;
 
-    elements
-      .libraryMenuBack
-      .hidden =
-        true;
+    elements.libraryMenuBack.setAttribute(
+      "aria-label",
+      "Close library menu"
+    );
 
+    if (menuBackIcon) {
+      menuBackIcon.className =
+        "ti ti-x";
+    }
 
-    elements
-      .libraryMenuEyebrow
-      .textContent =
-        "Choose a format";
+    elements.libraryMenuEyebrow.textContent =
+      "Choose a format";
 
+    elements.libraryMenuTitle.textContent =
+      "What are you tracking?";
 
-    elements
-      .libraryMenuTitle
-      .textContent =
-        "What are you tracking?";
+    elements.libraryOptions.replaceChildren();
 
+    availableFormats.forEach(
+      (format) => {
+        const formatConfig =
+          FORMAT_CONFIG[format];
 
-    elements
-      .libraryOptions
-      .replaceChildren();
+        const savedStatus =
+          currentEntry.formats[format]
+            ?.status || "";
 
-
-    availableFormats
-      .forEach(
-        (
-          format
-        ) => {
-          const formatConfig =
-            FORMAT_CONFIG[
-              format
-            ];
-
-
-          const savedStatus =
-            currentEntry
-              .formats[
-                format
-              ]
-              ?.status ||
-            "";
-
-
-          const savedStatusConfig =
-            getStatusConfig(
-              format,
-              savedStatus
-            );
-
-
-          const button =
-            createMenuButton({
-              icon:
-                formatConfig.icon,
-
-              label:
-                formatConfig.label,
-
-              meta:
-                savedStatusConfig
-                  ?.label ||
-                "Not tracked",
-
-              selected:
-                Boolean(
-                  savedStatus
-                ),
-
-              trailing:
-                "→"
-            });
-
-
-          button
-            .dataset
-            .libraryFormat =
-              format;
-
-
-          button.addEventListener(
-            "click",
-            (
-              event
-            ) => {
-              event.preventDefault();
-
-              event.stopPropagation();
-
-
-              showStatusScreen(
-                format,
-                true
-              );
-            }
+        const savedStatusConfig =
+          getStatusConfig(
+            format,
+            savedStatus
           );
 
+        const button =
+          createMenuButton({
+            icon: formatConfig.icon,
+            label: formatConfig.label,
 
-          elements
-            .libraryOptions
-            .append(
-              button
+            meta:
+              savedStatusConfig?.label ||
+              "Not tracked",
+
+            selected:
+              Boolean(savedStatus),
+
+            trailing:
+              "→"
+          });
+
+        button.dataset.libraryFormat =
+          format;
+
+        button.addEventListener(
+          "click",
+          (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            showStatusScreen(
+              format,
+              true
             );
-        }
-      );
-
-
-    scheduleMenuPosition();
-
-
-    if (
-      moveFocus
-    ) {
-      window
-        .requestAnimationFrame(
-          focusFirstMenuButton
+          }
         );
+
+        elements.libraryOptions.append(
+          button
+        );
+      }
+    );
+
+    if (moveFocus) {
+      window.requestAnimationFrame(
+        focusFirstOption
+      );
     }
   }
 
@@ -700,281 +424,186 @@ export function createDetailLibraryController(
 
   function showStatusScreen(
     format,
-    moveFocus =
-      true
+    moveFocus = true
   ) {
     if (
-      !availableFormats
-        .includes(
-          format
-        )
+      !availableFormats.includes(format)
     ) {
       return;
     }
-
 
     const formatConfig =
-      FORMAT_CONFIG[
-        format
-      ];
+      FORMAT_CONFIG[format];
 
-
-    if (
-      !formatConfig
-    ) {
+    if (!formatConfig) {
       return;
     }
 
+    activeFormat = format;
+    currentScreen = "statuses";
 
-    activeFormat =
-      format;
-
-
-    currentScreen =
+    elements.libraryMenu.dataset.screen =
       "statuses";
 
-
     const savedStatus =
-      currentEntry
-        .formats[
-          format
-        ]
-        ?.status ||
-      "";
+      currentEntry.formats[format]
+        ?.status || "";
 
+    elements.libraryMenuBack.hidden = false;
 
-    elements
-      .libraryMenuBack
-      .hidden =
-        false;
+    elements.libraryMenuBack.setAttribute(
+      "aria-label",
+      "Back to formats"
+    );
 
+    if (menuBackIcon) {
+      menuBackIcon.className =
+        "ti ti-arrow-left";
+    }
 
-    elements
-      .libraryMenuEyebrow
-      .textContent =
-        formatConfig.label;
+    elements.libraryMenuEyebrow.textContent =
+      formatConfig.label;
 
+    elements.libraryMenuTitle.textContent =
+      format === "anime"
+        ? "Choose your anime status"
+        : "Choose your manga status";
 
-    elements
-      .libraryMenuTitle
-      .textContent =
-        format ===
-          "anime"
-          ? "Choose your anime status"
-          : "Choose your manga status";
+    elements.libraryOptions.replaceChildren();
 
+    formatConfig.statuses.forEach(
+      (status) => {
+        const selected =
+          savedStatus === status.id;
 
-    elements
-      .libraryOptions
-      .replaceChildren();
+        const button =
+          createMenuButton({
+            icon: status.icon,
+            label: status.label,
+            selected,
 
-
-    formatConfig
-      .statuses
-      .forEach(
-        (
-          status
-        ) => {
-          const selected =
-            savedStatus ===
-            status.id;
-
-
-          const button =
-            createMenuButton({
-              icon:
-                status.icon,
-
-              label:
-                status.label,
-
-              selected,
-
-              trailing:
-                selected
-                  ? "✓"
-                  : ""
-            });
-
-
-          button.setAttribute(
-            "role",
-            "menuitemradio"
-          );
-
-
-          button.setAttribute(
-            "aria-checked",
-            String(
+            trailing:
               selected
-            )
-          );
+                ? "✓"
+                : ""
+          });
 
-
-          button.addEventListener(
-            "click",
-            (
-              event
-            ) => {
-              event.preventDefault();
-
-              event.stopPropagation();
-
-
-              saveFormatStatus(
-                format,
-                status.id
-              );
-            }
-          );
-
-
-          elements
-            .libraryOptions
-            .append(
-              button
-            );
-        }
-      );
-
-
-    if (
-      savedStatus
-    ) {
-      elements
-        .libraryOptions
-        .append(
-          createMenuDivider()
+        button.setAttribute(
+          "role",
+          "menuitemradio"
         );
 
+        button.setAttribute(
+          "aria-checked",
+          String(selected)
+        );
+
+        button.addEventListener(
+          "click",
+          (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            saveFormatStatus(
+              format,
+              status.id
+            );
+          }
+        );
+
+        elements.libraryOptions.append(
+          button
+        );
+      }
+    );
+
+    if (savedStatus) {
+      elements.libraryOptions.append(
+        createMenuDivider()
+      );
 
       const removeButton =
         createMenuButton({
-          icon:
-            "ti ti-trash",
+          icon: "ti ti-trash",
 
           label:
-            `Remove ${
-              formatConfig.label
-            }`,
+            `Remove ${formatConfig.label}`,
 
-          danger:
-            true
+          danger: true
         });
-
 
       removeButton.addEventListener(
         "click",
-        (
-          event
-        ) => {
+        (event) => {
           event.preventDefault();
-
           event.stopPropagation();
 
-
-          removeFormat(
-            format
-          );
+          removeFormat(format);
         }
       );
 
-
-      elements
-        .libraryOptions
-        .append(
-          removeButton
-        );
+      elements.libraryOptions.append(
+        removeButton
+      );
     }
 
-
-    scheduleMenuPosition();
-
-
-    if (
-      moveFocus
-    ) {
-      window
-        .requestAnimationFrame(
-          focusFirstMenuButton
-        );
+    if (moveFocus) {
+      window.requestAnimationFrame(
+        focusFirstOption
+      );
     }
   }
 
 
   /* =======================================================
-     SUMMARY ACTIONS
+     SAVED FORMAT SUMMARY
      ======================================================= */
 
-  function handleSummaryClick(
-    event
-  ) {
+  function handleSummaryClick(event) {
     const button =
-      event
-        .target
-        .closest(
-          "[data-library-summary-format]"
-        );
+      event.target.closest(
+        "[data-library-summary-format]"
+      );
 
-
-    if (
-      !button
-    ) {
+    if (!button) {
       return;
     }
-
 
     event.preventDefault();
-
     event.stopPropagation();
 
-
     const format =
-      button
-        .dataset
+      button.dataset
         .librarySummaryFormat;
 
-
     if (
-      !availableFormats
-        .includes(
-          format
-        )
+      !availableFormats.includes(format)
     ) {
       return;
     }
 
+    if (!isMenuOpen()) {
+      elements.libraryMenu.hidden = false;
 
-    if (
-      !isMenuOpen()
-    ) {
-      elements
-        .libraryMenu
-        .hidden =
-          false;
+      elements.libraryPicker.classList.add(
+        "is-open"
+      );
 
+      libraryBlock?.classList.add(
+        "is-library-menu-open"
+      );
 
-      elements
-        .libraryPicker
-        .classList
-        .add(
-          "is-open"
-        );
+      elements.libraryTrigger.setAttribute(
+        "aria-expanded",
+        "true"
+      );
 
-
-      elements
-        .libraryTrigger
-        .setAttribute(
-          "aria-expanded",
-          "true"
-        );
+      elements.libraryMenu.classList.add(
+        "is-positioned"
+      );
     }
 
-
-    showStatusScreen(
-      format,
-      true
-    );
+    showStatusScreen(format, true);
   }
 
 
@@ -987,17 +616,13 @@ export function createDetailLibraryController(
     status
   ) {
     const formatConfig =
-      FORMAT_CONFIG[
-        format
-      ];
-
+      FORMAT_CONFIG[format];
 
     const statusConfig =
       getStatusConfig(
         format,
         status
       );
-
 
     if (
       !currentTitle ||
@@ -1007,100 +632,54 @@ export function createDetailLibraryController(
       return;
     }
 
-
     const library =
       readLibrary();
 
-
     const entry =
       normalizeStoredEntry(
-        library[
-          currentTitle.id
-        ],
-
+        library[currentTitle.id],
         currentTitle
       );
 
-
     const currentTime =
-      new Date()
-        .toISOString();
+      new Date().toISOString();
 
+    entry.formats[format] = {
+      status,
+      updatedAt: currentTime
+    };
 
-    entry
-      .formats[
-        format
-      ] = {
-        status,
+    entry.updatedAt = currentTime;
 
-        updatedAt:
-          currentTime
-      };
-
-
-    entry.updatedAt =
-      currentTime;
-
-
-    library[
-      currentTitle.id
-    ] =
+    library[currentTitle.id] =
       entry;
 
-
-    if (
-      !writeLibrary(
-        library
-      )
-    ) {
-      elements
-        .libraryNote
-        .textContent =
-          "This browser could not save your library change.";
-
+    if (!writeLibrary(library)) {
+      elements.libraryNote.textContent =
+        "This browser could not save your library change.";
 
       return;
     }
 
-
-    currentEntry =
-      entry;
-
+    currentEntry = entry;
 
     updateInterface();
 
-
-    elements
-      .libraryNote
-      .textContent =
-        `${
-          formatConfig.label
-        } · ${
-          statusConfig.label
-        } saved.`;
-
+    elements.libraryNote.textContent =
+      `${formatConfig.label} · ${statusConfig.label} saved.`;
 
     /*
-     * Return to the format screen so the user can
-     * also save the other format.
+     * Return to format selection so the other
+     * format can also be saved.
      */
 
-    showFormatScreen(
-      false
+    showFormatScreen(false);
+
+    window.requestAnimationFrame(
+      () => {
+        focusFormatButton(format);
+      }
     );
-
-
-    window
-      .requestAnimationFrame(
-        () => {
-          positionMenu();
-
-
-          focusFormatButton(
-            format
-          );
-        }
-      );
   }
 
 
@@ -1108,165 +687,103 @@ export function createDetailLibraryController(
      REMOVE ONE FORMAT
      ======================================================= */
 
-  function removeFormat(
-    format
-  ) {
+  function removeFormat(format) {
     if (
       !currentTitle ||
-      !currentEntry
-        .formats[
-          format
-        ]
+      !currentEntry.formats[format]
     ) {
       return;
     }
-
 
     const library =
       readLibrary();
 
-
     const entry =
       normalizeStoredEntry(
-        library[
-          currentTitle.id
-        ],
-
+        library[currentTitle.id],
         currentTitle
       );
 
-
-    delete entry
-      .formats[
-        format
-      ];
-
+    delete entry.formats[format];
 
     entry.updatedAt =
-      new Date()
-        .toISOString();
-
+      new Date().toISOString();
 
     if (
-      Object
-        .keys(
-          entry.formats
-        )
+      Object.keys(entry.formats)
         .length > 0
     ) {
-      library[
-        currentTitle.id
-      ] =
+      library[currentTitle.id] =
         entry;
     } else {
-      delete library[
-        currentTitle.id
-      ];
+      delete library[currentTitle.id];
     }
 
-
-    if (
-      !writeLibrary(
-        library
-      )
-    ) {
-      elements
-        .libraryNote
-        .textContent =
-          "This browser could not update your library.";
-
+    if (!writeLibrary(library)) {
+      elements.libraryNote.textContent =
+        "This browser could not update your library.";
 
       return;
     }
 
-
     currentEntry =
       normalizeStoredEntry(
-        library[
-          currentTitle.id
-        ],
-
+        library[currentTitle.id],
         currentTitle
       );
 
-
     updateInterface();
 
+    elements.libraryNote.textContent =
+      `${FORMAT_CONFIG[format].label} removed from your library.`;
 
-    elements
-      .libraryNote
-      .textContent =
-        `${
-          FORMAT_CONFIG[
-            format
-          ].label
-        } removed from your library.`;
+    showFormatScreen(false);
 
-
-    showFormatScreen(
-      false
+    window.requestAnimationFrame(
+      () => {
+        focusFormatButton(format);
+      }
     );
-
-
-    window
-      .requestAnimationFrame(
-        () => {
-          positionMenu();
-
-
-          focusFormatButton(
-            format
-          );
-        }
-      );
   }
 
 
   /* =======================================================
-     LIBRARY CARD SUMMARY
+     UPDATE CARD
      ======================================================= */
 
   function updateInterface() {
     const trackedFormats =
-      availableFormats
-        .filter(
-          (
-            format
-          ) => {
-            return Boolean(
-              currentEntry
-                .formats[
-                  format
-                ]
-                ?.status
-            );
-          }
-        );
+      availableFormats.filter(
+        (format) => {
+          return Boolean(
+            currentEntry.formats[format]
+              ?.status
+          );
+        }
+      );
 
+    elements.librarySummary.replaceChildren();
 
-    elements
-      .librarySummary
-      .replaceChildren();
+    /*
+     * Always render something in the summary area.
+     * Its reserved height prevents the library card
+     * and score card from moving.
+     */
 
-
-    trackedFormats
-      .forEach(
-        (
-          format
-        ) => {
+    if (!trackedFormats.length) {
+      elements.librarySummary.append(
+        createEmptySummary()
+      );
+    } else {
+      trackedFormats.forEach(
+        (format) => {
           const formatConfig =
-            FORMAT_CONFIG[
-              format
-            ];
-
+            FORMAT_CONFIG[format];
 
           const status =
             currentEntry
-              .formats[
-                format
-              ]
+              .formats[format]
               .status;
-
 
           const statusConfig =
             getStatusConfig(
@@ -1274,87 +791,65 @@ export function createDetailLibraryController(
               status
             );
 
-
           const button =
             document.createElement(
               "button"
             );
 
-
-          button.type =
-            "button";
-
+          button.type = "button";
 
           button.className =
             "detail-library-summary-item";
 
-
-          button
-            .dataset
+          button.dataset
             .librarySummaryFormat =
               format;
-
 
           button.setAttribute(
             "aria-label",
 
-            `Manage ${
-              formatConfig.label
-            }: ${
-              statusConfig
-                ?.label ||
+            `Manage ${formatConfig.label}: ${
+              statusConfig?.label ||
               status
             }`
           );
-
 
           const icon =
             document.createElement(
               "i"
             );
 
-
           icon.className =
             formatConfig.icon;
-
 
           icon.setAttribute(
             "aria-hidden",
             "true"
           );
 
-
           const text =
             document.createElement(
               "span"
             );
 
-
           text.textContent =
-            `${
-              formatConfig.label
-            } · ${
-              statusConfig
-                ?.label ||
+            `${formatConfig.label} · ${
+              statusConfig?.label ||
               status
             }`;
-
 
           const arrow =
             document.createElement(
               "i"
             );
 
-
           arrow.className =
             "ti ti-chevron-right";
-
 
           arrow.setAttribute(
             "aria-hidden",
             "true"
           );
-
 
           button.append(
             icon,
@@ -1362,98 +857,112 @@ export function createDetailLibraryController(
             arrow
           );
 
-
-          elements
-            .librarySummary
-            .append(
-              button
-            );
+          elements.librarySummary.append(
+            button
+          );
         }
       );
+    }
 
+    elements.librarySummary.hidden =
+      false;
 
-    elements
-      .librarySummary
-      .hidden =
-        trackedFormats.length ===
-        0;
+    if (!availableFormats.length) {
+      elements.libraryTrigger.disabled =
+        true;
 
+      elements.libraryTriggerLabel.textContent =
+        "No trackable formats";
 
-    if (
-      !availableFormats.length
-    ) {
-      elements
-        .libraryTrigger
-        .disabled =
-          true;
+      elements.libraryTriggerIcon.className =
+        "ti ti-ban";
 
-
-      elements
-        .libraryTriggerLabel
-        .textContent =
-          "No trackable formats";
-
-
-      elements
-        .libraryTriggerIcon
-        .className =
-          "ti ti-ban";
-
-
-      elements
-        .libraryNote
-        .textContent =
-          "This title has no manga or anime record to track.";
-
+      elements.libraryNote.textContent =
+        "This title has no manga or anime record to track.";
 
       return;
     }
 
+    elements.libraryTrigger.disabled =
+      false;
 
-    elements
-      .libraryTrigger
-      .disabled =
-        false;
+    elements.libraryTriggerIcon.className =
+      trackedFormats.length
+        ? "ti ti-books"
+        : "ti ti-plus";
 
+    if (trackedFormats.length === 0) {
+      elements.libraryTriggerLabel.textContent =
+        "Add to library";
 
-    elements
-      .libraryTriggerIcon
-      .className =
-        trackedFormats.length
-          ? "ti ti-books"
-          : "ti ti-plus";
-
-
-    if (
-      trackedFormats.length ===
-      0
-    ) {
-      elements
-        .libraryTriggerLabel
-        .textContent =
-          "Add to library";
-
-
-      elements
-        .libraryNote
-        .textContent =
-          "Choose Manga or Anime, then choose its status.";
+      elements.libraryNote.textContent =
+        "Choose Manga or Anime, then choose its status.";
     } else if (
-      trackedFormats.length ===
-      1
+      trackedFormats.length === 1
     ) {
-      elements
-        .libraryTriggerLabel
-        .textContent =
-          "1 format tracked";
+      elements.libraryTriggerLabel.textContent =
+        "1 format tracked";
     } else {
-      elements
-        .libraryTriggerLabel
-        .textContent =
-          `${
-            trackedFormats.length
-          } formats tracked`;
+      elements.libraryTriggerLabel.textContent =
+        `${trackedFormats.length} formats tracked`;
     }
+  }
+
+
+  function createEmptySummary() {
+    const empty =
+      document.createElement(
+        "div"
+      );
+
+    empty.className =
+      "detail-library-summary-empty";
+
+    const icon =
+      document.createElement(
+        "i"
+      );
+
+    icon.className =
+      "ti ti-books";
+
+    icon.setAttribute(
+      "aria-hidden",
+      "true"
+    );
+
+    const copy =
+      document.createElement(
+        "div"
+      );
+
+    const title =
+      document.createElement(
+        "strong"
+      );
+
+    title.textContent =
+      "No formats tracked yet";
+
+    const description =
+      document.createElement(
+        "small"
+      );
+
+    description.textContent =
+      "Manga and Anime can be saved separately.";
+
+    copy.append(
+      title,
+      description
+    );
+
+    empty.append(
+      icon,
+      copy
+    );
+
+    return empty;
   }
 
 
@@ -1464,143 +973,106 @@ export function createDetailLibraryController(
   function createMenuButton({
     icon,
     label,
-    meta =
-      "",
-    selected =
-      false,
-    trailing =
-      "",
-    danger =
-      false
+    meta = "",
+    selected = false,
+    trailing = "",
+    danger = false
   }) {
     const button =
       document.createElement(
         "button"
       );
 
-
-    button.type =
-      "button";
-
+    button.type = "button";
 
     button.className =
       "detail-library-option";
-
 
     button.setAttribute(
       "role",
       "menuitem"
     );
 
-
-    if (
-      selected
-    ) {
-      button
-        .classList
-        .add(
-          "is-selected"
-        );
+    if (selected) {
+      button.classList.add(
+        "is-selected"
+      );
     }
 
-
-    if (
-      danger
-    ) {
-      button
-        .classList
-        .add(
-          "is-danger"
-        );
+    if (danger) {
+      button.classList.add(
+        "is-danger"
+      );
     }
-
 
     const iconElement =
       document.createElement(
         "i"
       );
 
-
     iconElement.className =
       icon;
-
 
     iconElement.setAttribute(
       "aria-hidden",
       "true"
     );
 
-
     const copy =
       document.createElement(
         "span"
       );
 
-
     copy.className =
       "detail-library-option-copy";
-
 
     const labelElement =
       document.createElement(
         "strong"
       );
 
-
     labelElement.textContent =
       label;
-
 
     copy.append(
       labelElement
     );
 
-
-    if (
-      meta
-    ) {
+    if (meta) {
       const metaElement =
         document.createElement(
           "small"
         );
 
-
       metaElement.textContent =
         meta;
-
 
       copy.append(
         metaElement
       );
     }
 
-
     const trailingElement =
       document.createElement(
         "span"
       );
 
-
     trailingElement.className =
       "detail-library-option-trailing";
-
 
     trailingElement.setAttribute(
       "aria-hidden",
       "true"
     );
 
-
     trailingElement.textContent =
       trailing;
-
 
     button.append(
       iconElement,
       copy,
       trailingElement
     );
-
 
     return button;
   }
@@ -1612,16 +1084,13 @@ export function createDetailLibraryController(
         "div"
       );
 
-
     divider.className =
       "detail-library-menu-divider";
-
 
     divider.setAttribute(
       "role",
       "separator"
     );
-
 
     return divider;
   }
@@ -1636,18 +1105,11 @@ export function createDetailLibraryController(
     status
   ) {
     return (
-      FORMAT_CONFIG[
-        format
-      ]
+      FORMAT_CONFIG[format]
         ?.statuses
         .find(
-          (
-            item
-          ) => {
-            return (
-              item.id ===
-              status
-            );
+          (item) => {
+            return item.id === status;
           }
         ) ||
       null
@@ -1661,8 +1123,7 @@ export function createDetailLibraryController(
 
   function getMenuButtons() {
     return [
-      ...elements
-        .libraryMenu
+      ...elements.libraryMenu
         .querySelectorAll(
           "button:not([hidden]):not(:disabled)"
         )
@@ -1670,19 +1131,20 @@ export function createDetailLibraryController(
   }
 
 
-  function focusFirstMenuButton() {
-    getMenuButtons()[
-      0
-    ]
+  function focusFirstOption() {
+    const firstOption =
+      elements.libraryOptions
+        .querySelector(
+          "button:not(:disabled)"
+        );
+
+    firstOption
       ?.focus();
   }
 
 
-  function focusFormatButton(
-    format
-  ) {
-    elements
-      .libraryOptions
+  function focusFormatButton(format) {
+    elements.libraryOptions
       .querySelector(
         `[data-library-format="${format}"]`
       )
@@ -1690,579 +1152,75 @@ export function createDetailLibraryController(
   }
 
 
-  function handleMenuKeydown(
-    event
-  ) {
+  function handleMenuKeydown(event) {
     const buttons =
       getMenuButtons();
 
-
-    if (
-      !buttons.length
-    ) {
+    if (!buttons.length) {
       return;
     }
-
 
     const currentIndex =
       buttons.indexOf(
-        document
-          .activeElement
+        document.activeElement
       );
 
-
-    if (
-      event.key ===
-      "Escape"
-    ) {
+    if (event.key === "Escape") {
       event.preventDefault();
 
-
-      closeMenu(
-        true
-      );
-
-
+      closeMenu(true);
       return;
     }
 
-
     if (
-      event.key ===
-        "ArrowLeft" &&
-      currentScreen ===
-        "statuses"
+      event.key === "ArrowLeft" &&
+      currentScreen === "statuses"
     ) {
       event.preventDefault();
 
-
-      showFormatScreen(
-        true
-      );
-
-
+      showFormatScreen(true);
       return;
     }
 
+    let nextIndex = null;
 
-    let nextIndex =
-      null;
-
-
-    if (
-      event.key ===
-      "ArrowDown"
-    ) {
+    if (event.key === "ArrowDown") {
       nextIndex =
         currentIndex < 0
           ? 0
           : (
-              currentIndex +
-              1
-            ) %
-            buttons.length;
+              currentIndex + 1
+            ) % buttons.length;
     } else if (
-      event.key ===
-      "ArrowUp"
+      event.key === "ArrowUp"
     ) {
       nextIndex =
         currentIndex < 0
-          ? buttons.length -
-            1
+          ? buttons.length - 1
           : (
               currentIndex -
               1 +
               buttons.length
-            ) %
-            buttons.length;
+            ) % buttons.length;
     } else if (
-      event.key ===
-      "Home"
+      event.key === "Home"
+    ) {
+      nextIndex = 0;
+    } else if (
+      event.key === "End"
     ) {
       nextIndex =
-        0;
-    } else if (
-      event.key ===
-      "End"
-    ) {
-      nextIndex =
-        buttons.length -
-        1;
+        buttons.length - 1;
     }
 
-
-    if (
-      nextIndex == null
-    ) {
+    if (nextIndex == null) {
       return;
     }
-
 
     event.preventDefault();
 
-
-    buttons[
-      nextIndex
-    ]
+    buttons[nextIndex]
       ?.focus();
-  }
-
-
-  /* =======================================================
-     MENU POSITIONING
-     ======================================================= */
-
-  function scheduleMenuPosition() {
-    if (
-      !isMenuOpen()
-    ) {
-      return;
-    }
-
-
-    if (
-      positionFrame != null
-    ) {
-      window
-        .cancelAnimationFrame(
-          positionFrame
-        );
-    }
-
-
-    positionFrame =
-      window
-        .requestAnimationFrame(
-          () => {
-            positionFrame =
-              null;
-
-
-            positionMenu();
-          }
-        );
-  }
-
-
-  function positionMenu() {
-    if (
-      !isMenuOpen()
-    ) {
-      return;
-    }
-
-
-    const menu =
-      elements
-        .libraryMenu;
-
-
-    menu
-      .classList
-      .remove(
-        "is-positioned"
-      );
-
-
-    const viewportWidth =
-      window.innerWidth;
-
-
-    const viewportHeight =
-      window.innerHeight;
-
-
-    const viewportMargin =
-      12;
-
-
-    /*
-     * Phone layout:
-     * display the menu as a bottom sheet.
-     */
-
-    if (
-      viewportWidth <=
-      580
-    ) {
-      const menuWidth =
-        viewportWidth -
-        viewportMargin *
-        2;
-
-
-      menu
-        .style
-        .width =
-          `${menuWidth}px`;
-
-
-      const menuHeight =
-        Math.min(
-          menu.scrollHeight,
-
-          viewportHeight -
-          viewportMargin *
-          2
-        );
-
-
-      menu
-        .style
-        .left =
-          `${viewportMargin}px`;
-
-
-      menu
-        .style
-        .top =
-          `${
-            Math.max(
-              viewportMargin,
-
-              viewportHeight -
-              menuHeight -
-              viewportMargin
-            )
-          }px`;
-
-
-      menu
-        .dataset
-        .placement =
-          "sheet";
-
-
-      menu
-        .classList
-        .add(
-          "is-positioned"
-        );
-
-
-      return;
-    }
-
-
-    const hero =
-      elements
-        .libraryTrigger
-        .closest(
-          ".detail-hero"
-        );
-
-
-    const libraryBlock =
-      elements
-        .libraryTrigger
-        .closest(
-          ".detail-library-block"
-        );
-
-
-    if (
-      !hero ||
-      !libraryBlock
-    ) {
-      return;
-    }
-
-
-    const heroRect =
-      hero
-        .getBoundingClientRect();
-
-
-    const libraryRect =
-      libraryBlock
-        .getBoundingClientRect();
-
-
-    const heroPadding =
-      18;
-
-
-    const menuGap =
-      18;
-
-
-    const menuWidth =
-      Math.min(
-        330,
-
-        viewportWidth -
-        viewportMargin *
-        2
-      );
-
-
-    menu
-      .style
-      .width =
-        `${menuWidth}px`;
-
-
-    const menuHeight =
-      menu.scrollHeight;
-
-
-    /*
-     * Wide desktop:
-     * place both format and status screens to the left
-     * of the library card.
-     */
-
-    if (
-      viewportWidth >
-      1240
-    ) {
-      const leftPosition =
-        libraryRect.left -
-        menuGap -
-        menuWidth;
-
-
-      const minimumLeft =
-        heroRect.left +
-        heroPadding;
-
-
-      const maximumLeft =
-        heroRect.right -
-        menuWidth -
-        heroPadding;
-
-
-      let left =
-        Math.max(
-          minimumLeft,
-
-          Math.min(
-            leftPosition,
-            maximumLeft
-          )
-        );
-
-
-      const minimumTop =
-        heroRect.top +
-        heroPadding;
-
-
-      const maximumTop =
-        heroRect.bottom -
-        menuHeight -
-        heroPadding;
-
-
-      let top =
-        libraryRect.top +
-        (
-          libraryRect.height -
-          menuHeight
-        ) /
-        2;
-
-
-      if (
-        maximumTop >=
-        minimumTop
-      ) {
-        top =
-          Math.max(
-            minimumTop,
-
-            Math.min(
-              top,
-              maximumTop
-            )
-          );
-      } else {
-        top =
-          minimumTop;
-      }
-
-
-      menu
-        .style
-        .left =
-          `${Math.round(
-            left
-          )}px`;
-
-
-      menu
-        .style
-        .top =
-          `${Math.round(
-            top
-          )}px`;
-
-
-      menu
-        .dataset
-        .placement =
-          "left";
-
-
-      menu
-        .classList
-        .add(
-          "is-positioned"
-        );
-
-
-      return;
-    }
-
-
-    /*
-     * Medium desktop and tablet:
-     * centre the menu within the hero and clamp it
-     * inside the hero border.
-     */
-
-    const minimumLeft =
-      Math.max(
-        viewportMargin,
-
-        heroRect.left +
-        heroPadding
-      );
-
-
-    const maximumLeft =
-      Math.min(
-        viewportWidth -
-        menuWidth -
-        viewportMargin,
-
-        heroRect.right -
-        menuWidth -
-        heroPadding
-      );
-
-
-    let left =
-      libraryRect.left +
-      (
-        libraryRect.width -
-        menuWidth
-      ) /
-      2;
-
-
-    if (
-      maximumLeft >=
-      minimumLeft
-    ) {
-      left =
-        Math.max(
-          minimumLeft,
-
-          Math.min(
-            left,
-            maximumLeft
-          )
-        );
-    } else {
-      left =
-        Math.max(
-          viewportMargin,
-
-          (
-            viewportWidth -
-            menuWidth
-          ) /
-          2
-        );
-    }
-
-
-    const minimumTop =
-      Math.max(
-        viewportMargin,
-
-        heroRect.top +
-        heroPadding
-      );
-
-
-    const maximumTop =
-      Math.min(
-        viewportHeight -
-        menuHeight -
-        viewportMargin,
-
-        heroRect.bottom -
-        menuHeight -
-        heroPadding
-      );
-
-
-    let top =
-      libraryRect.top +
-      (
-        libraryRect.height -
-        menuHeight
-      ) /
-      2;
-
-
-    if (
-      maximumTop >=
-      minimumTop
-    ) {
-      top =
-        Math.max(
-          minimumTop,
-
-          Math.min(
-            top,
-            maximumTop
-          )
-        );
-    } else {
-      top =
-        Math.max(
-          viewportMargin,
-
-          (
-            viewportHeight -
-            menuHeight
-          ) /
-          2
-        );
-    }
-
-
-    menu
-      .style
-      .left =
-        `${Math.round(
-          left
-        )}px`;
-
-
-    menu
-      .style
-      .top =
-        `${Math.round(
-          top
-        )}px`;
-
-
-    menu
-      .dataset
-      .placement =
-        "contained";
-
-
-    menu
-      .classList
-      .add(
-        "is-positioned"
-      );
   }
 
 
@@ -2281,75 +1239,50 @@ function normalizeStoredEntry(
   storedEntry,
   title
 ) {
-  const formats =
-    {};
-
+  const formats = {};
 
   if (
-    storedEntry
-      ?.formats &&
-    typeof storedEntry
-      .formats ===
+    storedEntry?.formats &&
+    typeof storedEntry.formats ===
       "object"
   ) {
-    SUPPORTED_FORMATS
-      .forEach(
-        (
-          format
-        ) => {
-          const status =
-            storedEntry
-              .formats[
-                format
-              ]
-              ?.status;
+    SUPPORTED_FORMATS.forEach(
+      (format) => {
+        const status =
+          storedEntry
+            .formats[format]
+            ?.status;
 
+        if (
+          getValidStatus(
+            format,
+            status
+          )
+        ) {
+          formats[format] = {
+            status,
 
-          if (
-            getValidStatus(
-              format,
-              status
-            )
-          ) {
-            formats[
-              format
-            ] = {
-              status,
-
-              updatedAt:
-                storedEntry
-                  .formats[
-                    format
-                  ]
-                  ?.updatedAt ||
-                storedEntry
-                  .updatedAt ||
-                ""
-            };
-          }
+            updatedAt:
+              storedEntry
+                .formats[format]
+                ?.updatedAt ||
+              storedEntry.updatedAt ||
+              ""
+          };
         }
-      );
+      }
+    );
   }
 
-
   return {
-    id:
-      title.id,
-
-    title:
-      title.title,
-
-    coverUrl:
-      title.coverUrl,
-
-    types:
-      title.types,
-
+    id: title.id,
+    title: title.title,
+    coverUrl: title.coverUrl,
+    types: title.types,
     formats,
 
     updatedAt:
-      storedEntry
-        ?.updatedAt ||
+      storedEntry?.updatedAt ||
       ""
   };
 }
@@ -2363,18 +1296,11 @@ function getValidStatus(
   format,
   status
 ) {
-  return FORMAT_CONFIG[
-    format
-  ]
+  return FORMAT_CONFIG[format]
     ?.statuses
     .some(
-      (
-        item
-      ) => {
-        return (
-          item.id ===
-          status
-        );
+      (item) => {
+        return item.id === status;
       }
     );
 }
@@ -2388,61 +1314,43 @@ function readLibrary() {
   try {
     const parsedValue =
       JSON.parse(
-        localStorage
-          .getItem(
-            STORAGE_KEY
-          ) ||
-        "{}"
+        localStorage.getItem(
+          STORAGE_KEY
+        ) || "{}"
       );
-
 
     return (
       parsedValue &&
       typeof parsedValue ===
         "object" &&
-      !Array.isArray(
-        parsedValue
-      )
+      !Array.isArray(parsedValue)
     )
       ? parsedValue
       : {};
-  } catch (
-    error
-  ) {
+  } catch (error) {
     console.error(
       "INKWELL LIBRARY READ ERROR:",
       error
     );
-
 
     return {};
   }
 }
 
 
-function writeLibrary(
-  library
-) {
+function writeLibrary(library) {
   try {
-    localStorage
-      .setItem(
-        STORAGE_KEY,
-
-        JSON.stringify(
-          library
-        )
-      );
-
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify(library)
+    );
 
     return true;
-  } catch (
-    error
-  ) {
+  } catch (error) {
     console.error(
       "INKWELL LIBRARY STORAGE ERROR:",
       error
     );
-
 
     return false;
   }
