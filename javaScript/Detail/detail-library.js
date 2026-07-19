@@ -1,5 +1,6 @@
 // detail-library.js
 // Tracks Manga and Anime independently for the same story.
+// The menu stays inside the hero and does not resize it.
 
 const STORAGE_KEY =
   "inkwell-library";
@@ -524,6 +525,30 @@ export function createDetailLibraryController(
       );
 
 
+    elements
+      .libraryMenu
+      .style
+      .removeProperty(
+        "left"
+      );
+
+
+    elements
+      .libraryMenu
+      .style
+      .removeProperty(
+        "top"
+      );
+
+
+    elements
+      .libraryMenu
+      .style
+      .removeProperty(
+        "width"
+      );
+
+
     if (
       returnFocus
     ) {
@@ -627,12 +652,6 @@ export function createDetailLibraryController(
             .libraryFormat =
               format;
 
-
-          /*
-           * A direct click listener is used instead of
-           * event delegation. This ensures Manga and Anime
-           * always open their status screen.
-           */
 
           button.addEventListener(
             "click",
@@ -756,6 +775,11 @@ export function createDetailLibraryController(
         (
           status
         ) => {
+          const selected =
+            savedStatus ===
+            status.id;
+
+
           const button =
             createMenuButton({
               icon:
@@ -764,13 +788,10 @@ export function createDetailLibraryController(
               label:
                 status.label,
 
-              selected:
-                savedStatus ===
-                status.id,
+              selected,
 
               trailing:
-                savedStatus ===
-                  status.id
+                selected
                   ? "✓"
                   : ""
             });
@@ -785,8 +806,7 @@ export function createDetailLibraryController(
           button.setAttribute(
             "aria-checked",
             String(
-              savedStatus ===
-              status.id
+              selected
             )
           );
 
@@ -883,7 +903,7 @@ export function createDetailLibraryController(
 
 
   /* =======================================================
-     SUMMARY BUTTONS
+     SUMMARY ACTIONS
      ======================================================= */
 
   function handleSummaryClick(
@@ -959,7 +979,7 @@ export function createDetailLibraryController(
 
 
   /* =======================================================
-     SAVE STATUS
+     SAVE ONE FORMAT
      ======================================================= */
 
   function saveFormatStatus(
@@ -1028,14 +1048,10 @@ export function createDetailLibraryController(
       entry;
 
 
-    const wasSaved =
-      writeLibrary(
-        library
-      );
-
-
     if (
-      !wasSaved
+      !writeLibrary(
+        library
+      )
     ) {
       elements
         .libraryNote
@@ -1065,8 +1081,8 @@ export function createDetailLibraryController(
 
 
     /*
-     * Return to the format screen without closing.
-     * This allows Anime and Manga to both be added.
+     * Return to the format screen so the user can
+     * also save the other format.
      */
 
     showFormatScreen(
@@ -1149,14 +1165,10 @@ export function createDetailLibraryController(
     }
 
 
-    const wasRemoved =
-      writeLibrary(
-        library
-      );
-
-
     if (
-      !wasRemoved
+      !writeLibrary(
+        library
+      )
     ) {
       elements
         .libraryNote
@@ -1211,7 +1223,7 @@ export function createDetailLibraryController(
 
 
   /* =======================================================
-     UPDATE LIBRARY CARD
+     LIBRARY CARD SUMMARY
      ======================================================= */
 
   function updateInterface() {
@@ -1797,7 +1809,7 @@ export function createDetailLibraryController(
 
 
   /* =======================================================
-     MENU POSITION
+     MENU POSITIONING
      ======================================================= */
 
   function scheduleMenuPosition() {
@@ -1840,8 +1852,12 @@ export function createDetailLibraryController(
     }
 
 
-    elements
-      .libraryMenu
+    const menu =
+      elements
+        .libraryMenu;
+
+
+    menu
       .classList
       .remove(
         "is-positioned"
@@ -1860,36 +1876,30 @@ export function createDetailLibraryController(
       12;
 
 
-    const menuGap =
-      12;
-
-
     /*
-     * Mobile layout: bottom sheet.
+     * Phone layout:
+     * display the menu as a bottom sheet.
      */
 
     if (
       viewportWidth <=
       580
     ) {
-      const mobileWidth =
+      const menuWidth =
         viewportWidth -
         viewportMargin *
         2;
 
 
-      elements
-        .libraryMenu
+      menu
         .style
         .width =
-          `${mobileWidth}px`;
+          `${menuWidth}px`;
 
 
-      const mobileHeight =
+      const menuHeight =
         Math.min(
-          elements
-            .libraryMenu
-            .scrollHeight,
+          menu.scrollHeight,
 
           viewportHeight -
           viewportMargin *
@@ -1897,15 +1907,13 @@ export function createDetailLibraryController(
         );
 
 
-      elements
-        .libraryMenu
+      menu
         .style
         .left =
           `${viewportMargin}px`;
 
 
-      elements
-        .libraryMenu
+      menu
         .style
         .top =
           `${
@@ -1913,21 +1921,19 @@ export function createDetailLibraryController(
               viewportMargin,
 
               viewportHeight -
-              mobileHeight -
+              menuHeight -
               viewportMargin
             )
           }px`;
 
 
-      elements
-        .libraryMenu
+      menu
         .dataset
         .placement =
           "sheet";
 
 
-      elements
-        .libraryMenu
+      menu
         .classList
         .add(
           "is-positioned"
@@ -1938,19 +1944,46 @@ export function createDetailLibraryController(
     }
 
 
-    const triggerRect =
-      elements
-        .libraryTrigger
-        .getBoundingClientRect();
-
-
-    const heroRect =
+    const hero =
       elements
         .libraryTrigger
         .closest(
           ".detail-hero"
-        )
-        ?.getBoundingClientRect();
+        );
+
+
+    const libraryBlock =
+      elements
+        .libraryTrigger
+        .closest(
+          ".detail-library-block"
+        );
+
+
+    if (
+      !hero ||
+      !libraryBlock
+    ) {
+      return;
+    }
+
+
+    const heroRect =
+      hero
+        .getBoundingClientRect();
+
+
+    const libraryRect =
+      libraryBlock
+        .getBoundingClientRect();
+
+
+    const heroPadding =
+      18;
+
+
+    const menuGap =
+      18;
 
 
     const menuWidth =
@@ -1963,190 +1996,269 @@ export function createDetailLibraryController(
       );
 
 
-    elements
-      .libraryMenu
+    menu
       .style
       .width =
         `${menuWidth}px`;
 
 
     const menuHeight =
-      Math.min(
-        elements
-          .libraryMenu
-          .scrollHeight,
-
-        viewportHeight -
-        viewportMargin *
-        2
-      );
+      menu.scrollHeight;
 
 
     /*
-     * Centre the menu under the trigger.
+     * Wide desktop:
+     * place both format and status screens to the left
+     * of the library card.
      */
 
+    if (
+      viewportWidth >
+      1240
+    ) {
+      const leftPosition =
+        libraryRect.left -
+        menuGap -
+        menuWidth;
+
+
+      const minimumLeft =
+        heroRect.left +
+        heroPadding;
+
+
+      const maximumLeft =
+        heroRect.right -
+        menuWidth -
+        heroPadding;
+
+
+      let left =
+        Math.max(
+          minimumLeft,
+
+          Math.min(
+            leftPosition,
+            maximumLeft
+          )
+        );
+
+
+      const minimumTop =
+        heroRect.top +
+        heroPadding;
+
+
+      const maximumTop =
+        heroRect.bottom -
+        menuHeight -
+        heroPadding;
+
+
+      let top =
+        libraryRect.top +
+        (
+          libraryRect.height -
+          menuHeight
+        ) /
+        2;
+
+
+      if (
+        maximumTop >=
+        minimumTop
+      ) {
+        top =
+          Math.max(
+            minimumTop,
+
+            Math.min(
+              top,
+              maximumTop
+            )
+          );
+      } else {
+        top =
+          minimumTop;
+      }
+
+
+      menu
+        .style
+        .left =
+          `${Math.round(
+            left
+          )}px`;
+
+
+      menu
+        .style
+        .top =
+          `${Math.round(
+            top
+          )}px`;
+
+
+      menu
+        .dataset
+        .placement =
+          "left";
+
+
+      menu
+        .classList
+        .add(
+          "is-positioned"
+        );
+
+
+      return;
+    }
+
+
+    /*
+     * Medium desktop and tablet:
+     * centre the menu within the hero and clamp it
+     * inside the hero border.
+     */
+
+    const minimumLeft =
+      Math.max(
+        viewportMargin,
+
+        heroRect.left +
+        heroPadding
+      );
+
+
+    const maximumLeft =
+      Math.min(
+        viewportWidth -
+        menuWidth -
+        viewportMargin,
+
+        heroRect.right -
+        menuWidth -
+        heroPadding
+      );
+
+
     let left =
-      triggerRect.left +
+      libraryRect.left +
       (
-        triggerRect.width -
+        libraryRect.width -
         menuWidth
       ) /
       2;
 
 
-    left =
+    if (
+      maximumLeft >=
+      minimumLeft
+    ) {
+      left =
+        Math.max(
+          minimumLeft,
+
+          Math.min(
+            left,
+            maximumLeft
+          )
+        );
+    } else {
+      left =
+        Math.max(
+          viewportMargin,
+
+          (
+            viewportWidth -
+            menuWidth
+          ) /
+          2
+        );
+    }
+
+
+    const minimumTop =
       Math.max(
         viewportMargin,
 
-        Math.min(
-          left,
-
-          viewportWidth -
-          menuWidth -
-          viewportMargin
-        )
+        heroRect.top +
+        heroPadding
       );
 
 
-    const preferredBelowTop =
-      triggerRect.bottom +
-      menuGap;
+    const maximumTop =
+      Math.min(
+        viewportHeight -
+        menuHeight -
+        viewportMargin,
 
-
-    const preferredAboveTop =
-      triggerRect.top -
-      menuGap -
-      menuHeight;
-
-
-    const fitsBelowViewport =
-      preferredBelowTop +
-      menuHeight <=
-      viewportHeight -
-      viewportMargin;
-
-
-    const fitsAboveViewport =
-      preferredAboveTop >=
-      viewportMargin;
+        heroRect.bottom -
+        menuHeight -
+        heroPadding
+      );
 
 
     let top =
-      preferredBelowTop;
+      libraryRect.top +
+      (
+        libraryRect.height -
+        menuHeight
+      ) /
+      2;
 
-
-    let placement =
-      "bottom";
-
-
-    /*
-     * The small format menu is kept inside the hero with
-     * 16 pixels of breathing room whenever possible.
-     */
 
     if (
-      currentScreen ===
-        "formats" &&
-      heroRect
+      maximumTop >=
+      minimumTop
     ) {
-      const heroBottomLimit =
-        heroRect.bottom -
-        16;
+      top =
+        Math.max(
+          minimumTop,
 
+          Math.min(
+            top,
+            maximumTop
+          )
+        );
+    } else {
+      top =
+        Math.max(
+          viewportMargin,
 
-      const insideHeroTop =
-        heroBottomLimit -
-        menuHeight;
-
-
-      const canFitInsideHero =
-        insideHeroTop >=
-        heroRect.top +
-        16;
-
-
-      if (
-        preferredBelowTop +
-        menuHeight >
-        heroBottomLimit &&
-        canFitInsideHero
-      ) {
-        top =
-          insideHeroTop;
-      }
-    }
-
-
-    /*
-     * Flip above only when the menu cannot fit inside
-     * the visible browser window.
-     */
-
-    if (
-      top +
-      menuHeight >
-      viewportHeight -
-      viewportMargin
-    ) {
-      if (
-        fitsAboveViewport
-      ) {
-        top =
-          preferredAboveTop;
-
-
-        placement =
-          "top";
-      } else {
-        top =
-          Math.max(
-            viewportMargin,
-
+          (
             viewportHeight -
-            menuHeight -
-            viewportMargin
-          );
-      }
-    } else if (
-      fitsBelowViewport
-    ) {
-      placement =
-        "bottom";
+            menuHeight
+          ) /
+          2
+        );
     }
 
 
-    elements
-      .libraryMenu
+    menu
       .style
       .left =
-        `${
-          Math.round(
-            left
-          )
-        }px`;
+        `${Math.round(
+          left
+        )}px`;
 
 
-    elements
-      .libraryMenu
+    menu
       .style
       .top =
-        `${
-          Math.round(
-            top
-          )
-        }px`;
+        `${Math.round(
+          top
+        )}px`;
 
 
-    elements
-      .libraryMenu
+    menu
       .dataset
       .placement =
-        placement;
+        "contained";
 
 
-    elements
-      .libraryMenu
+    menu
       .classList
       .add(
         "is-positioned"
