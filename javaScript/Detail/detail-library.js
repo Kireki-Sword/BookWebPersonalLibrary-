@@ -1,5 +1,7 @@
 // detail-library.js
 // Stores one format-neutral library status for the whole story.
+// The status menu uses the browser top layer when supported,
+// preventing it from resizing or overflowing the hero.
 
 const STORAGE_KEY =
   "inkwell-library";
@@ -49,27 +51,30 @@ const STATUS_CONFIG =
   });
 
 
-/* =========================================================
-   LIBRARY CONTROLLER
-   ========================================================= */
-
 export function createDetailLibraryController(
   elements
 ) {
   let currentTitle =
     null;
 
-
   let currentStatus =
     "";
-
 
   let hasBoundEvents =
     false;
 
+  let useNativePopover =
+    false;
+
+  let returnFocusAfterClose =
+    false;
+
+  let positionFrame =
+    null;
+
 
   /* =======================================================
-     BIND EVENTS
+     INITIALIZATION
      ======================================================= */
 
   function bindEvents() {
@@ -82,6 +87,9 @@ export function createDetailLibraryController(
 
     hasBoundEvents =
       true;
+
+
+    prepareMenu();
 
 
     elements
@@ -138,6 +146,13 @@ export function createDetailLibraryController(
         event
       ) => {
         if (
+          useNativePopover
+        ) {
+          return;
+        }
+
+
+        if (
           !elements
             .libraryPicker
             .contains(
@@ -156,20 +171,97 @@ export function createDetailLibraryController(
         event
       ) => {
         if (
-          event.key ===
-          "Escape"
+          event.key !==
+            "Escape" ||
+          !isMenuOpen()
         ) {
-          closeMenu(
-            true
-          );
+          return;
         }
+
+
+        closeMenu(
+          true
+        );
       }
+    );
+
+
+    window.addEventListener(
+      "resize",
+      scheduleMenuPosition
+    );
+
+
+    window.addEventListener(
+      "scroll",
+      scheduleMenuPosition,
+      true
+    );
+  }
+
+
+  function prepareMenu() {
+    useNativePopover =
+      typeof elements
+        .libraryMenu
+        .showPopover ===
+        "function" &&
+
+      typeof elements
+        .libraryMenu
+        .hidePopover ===
+        "function";
+
+
+    if (
+      useNativePopover
+    ) {
+      elements
+        .libraryMenu
+        .setAttribute(
+          "popover",
+          "auto"
+        );
+
+
+      elements
+        .libraryMenu
+        .removeAttribute(
+          "hidden"
+        );
+
+
+      elements
+        .libraryMenu
+        .addEventListener(
+          "toggle",
+          handlePopoverToggle
+        );
+
+
+      syncMenuState(
+        false
+      );
+
+
+      return;
+    }
+
+
+    elements
+      .libraryMenu
+      .hidden =
+        true;
+
+
+    syncMenuState(
+      false
     );
   }
 
 
   /* =======================================================
-     SET CURRENT TITLE
+     CURRENT TITLE
      ======================================================= */
 
   function setTitle(
@@ -192,21 +284,39 @@ export function createDetailLibraryController(
 
 
   /* =======================================================
-     MENU CONTROLS
+     MENU STATE
      ======================================================= */
 
-  function toggleMenu() {
-    const isOpen =
-      elements
-        .libraryTrigger
-        .getAttribute(
-          "aria-expanded"
-        ) ===
-      "true";
-
-
+  function isMenuOpen() {
     if (
-      isOpen
+      useNativePopover
+    ) {
+      try {
+        return elements
+          .libraryMenu
+          .matches(
+            ":popover-open"
+          );
+      } catch {
+        return elements
+          .libraryPicker
+          .classList
+          .contains(
+            "is-open"
+          );
+      }
+    }
+
+
+    return !elements
+      .libraryMenu
+      .hidden;
+  }
+
+
+  function toggleMenu() {
+    if (
+      isMenuOpen()
     ) {
       closeMenu();
     } else {
@@ -216,56 +326,104 @@ export function createDetailLibraryController(
 
 
   function openMenu() {
+    if (
+      isMenuOpen()
+    ) {
+      return;
+    }
+
+
+    returnFocusAfterClose =
+      false;
+
+
     elements
       .libraryMenu
-      .hidden =
-        false;
-
-
-    elements
-      .libraryPicker
       .classList
-      .add(
-        "is-open"
+      .remove(
+        "is-positioned"
       );
 
 
-    elements
-      .libraryTrigger
-      .setAttribute(
-        "aria-expanded",
-        "true"
-      );
-
-
-    const selectedButton =
-      elements
-        .libraryStatusButtons
-        .find(
-          (
-            button
-          ) => {
-            return (
-              button
-                .dataset
-                .libraryStatus ===
-              currentStatus
-            );
-          }
+    if (
+      useNativePopover
+    ) {
+      try {
+        elements
+          .libraryMenu
+          .showPopover();
+      } catch (
+        error
+      ) {
+        console.warn(
+          "Native popover could not be opened. Using fallback positioning.",
+          error
         );
 
 
-    const firstButton =
-      selectedButton ||
+        useNativePopover =
+          false;
+
+
+        elements
+          .libraryMenu
+          .removeAttribute(
+            "popover"
+          );
+
+
+        elements
+          .libraryMenu
+          .hidden =
+            false;
+      }
+    } else {
       elements
-        .libraryStatusButtons[
-          0
-        ];
+        .libraryMenu
+        .hidden =
+          false;
+    }
+
+
+    positionMenu();
+
+
+    syncMenuState(
+      true
+    );
 
 
     window
       .requestAnimationFrame(
         () => {
+          positionMenu();
+
+
+          const selectedButton =
+            elements
+              .libraryStatusButtons
+              .find(
+                (
+                  button
+                ) => {
+                  return (
+                    button
+                      .dataset
+                      .libraryStatus ===
+                    currentStatus
+                  );
+                }
+              );
+
+
+          const firstButton =
+            selectedButton ||
+            elements
+              .libraryStatusButtons[
+                0
+              ];
+
+
           firstButton
             ?.focus();
         }
@@ -278,11 +436,34 @@ export function createDetailLibraryController(
       false
   ) {
     if (
-      elements
-        .libraryMenu
-        .hidden
+      !isMenuOpen()
     ) {
       return;
+    }
+
+
+    returnFocusAfterClose =
+      returnFocus;
+
+
+    if (
+      useNativePopover
+    ) {
+      try {
+        elements
+          .libraryMenu
+          .hidePopover();
+
+
+        return;
+      } catch (
+        error
+      ) {
+        console.warn(
+          "Native popover could not be closed normally.",
+          error
+        );
+      }
     }
 
 
@@ -292,11 +473,50 @@ export function createDetailLibraryController(
         true;
 
 
+    syncMenuState(
+      false
+    );
+
+
+    completeMenuClose();
+  }
+
+
+  function handlePopoverToggle(
+    event
+  ) {
+    const isOpen =
+      event.newState ===
+      "open";
+
+
+    syncMenuState(
+      isOpen
+    );
+
+
+    if (
+      isOpen
+    ) {
+      positionMenu();
+
+      return;
+    }
+
+
+    completeMenuClose();
+  }
+
+
+  function syncMenuState(
+    isOpen
+  ) {
     elements
       .libraryPicker
       .classList
-      .remove(
-        "is-open"
+      .toggle(
+        "is-open",
+        isOpen
       );
 
 
@@ -304,17 +524,232 @@ export function createDetailLibraryController(
       .libraryTrigger
       .setAttribute(
         "aria-expanded",
-        "false"
+        String(
+          isOpen
+        )
       );
 
 
     if (
-      returnFocus
+      !isOpen
+    ) {
+      elements
+        .libraryMenu
+        .classList
+        .remove(
+          "is-positioned"
+        );
+    }
+  }
+
+
+  function completeMenuClose() {
+    if (
+      returnFocusAfterClose
     ) {
       elements
         .libraryTrigger
         .focus();
     }
+
+
+    returnFocusAfterClose =
+      false;
+  }
+
+
+  /* =======================================================
+     POPOVER POSITION
+     ======================================================= */
+
+  function scheduleMenuPosition() {
+    if (
+      !isMenuOpen()
+    ) {
+      return;
+    }
+
+
+    if (
+      positionFrame != null
+    ) {
+      window.cancelAnimationFrame(
+        positionFrame
+      );
+    }
+
+
+    positionFrame =
+      window.requestAnimationFrame(
+        () => {
+          positionFrame =
+            null;
+
+
+          positionMenu();
+        }
+      );
+  }
+
+
+  function positionMenu() {
+    if (
+      !isMenuOpen()
+    ) {
+      return;
+    }
+
+
+    const triggerRect =
+      elements
+        .libraryTrigger
+        .getBoundingClientRect();
+
+
+    const viewportWidth =
+      window.innerWidth;
+
+
+    const viewportHeight =
+      window.innerHeight;
+
+
+    const viewportMargin =
+      12;
+
+
+    const menuGap =
+      10;
+
+
+    const menuWidth =
+      Math.min(
+        292,
+
+        Math.max(
+          238,
+
+          viewportWidth -
+          viewportMargin *
+          2
+        )
+      );
+
+
+    elements
+      .libraryMenu
+      .style
+      .setProperty(
+        "--detail-library-menu-width",
+        `${menuWidth}px`
+      );
+
+
+    const measuredHeight =
+      Math.min(
+        elements
+          .libraryMenu
+          .scrollHeight,
+
+        viewportHeight -
+        viewportMargin *
+        2
+      );
+
+
+    let left =
+      triggerRect.right -
+      menuWidth;
+
+
+    left =
+      Math.max(
+        viewportMargin,
+
+        Math.min(
+          left,
+
+          viewportWidth -
+          menuWidth -
+          viewportMargin
+        )
+      );
+
+
+    let top =
+      triggerRect.bottom +
+      menuGap;
+
+
+    const fitsBelow =
+      top +
+      measuredHeight <=
+      viewportHeight -
+      viewportMargin;
+
+
+    const fitsAbove =
+      triggerRect.top -
+      menuGap -
+      measuredHeight >=
+      viewportMargin;
+
+
+    if (
+      !fitsBelow &&
+      fitsAbove
+    ) {
+      top =
+        triggerRect.top -
+        menuGap -
+        measuredHeight;
+    } else {
+      top =
+        Math.min(
+          top,
+
+          viewportHeight -
+          measuredHeight -
+          viewportMargin
+        );
+
+
+      top =
+        Math.max(
+          viewportMargin,
+          top
+        );
+    }
+
+
+    elements
+      .libraryMenu
+      .style
+      .setProperty(
+        "--detail-library-menu-left",
+        `${Math.round(
+          left
+        )}px`
+      );
+
+
+    elements
+      .libraryMenu
+      .style
+      .setProperty(
+        "--detail-library-menu-top",
+        `${Math.round(
+          top
+        )}px`
+      );
+
+
+    elements
+      .libraryMenu
+      .classList
+      .add(
+        "is-positioned"
+      );
   }
 
 
@@ -474,7 +909,7 @@ export function createDetailLibraryController(
 
 
   /* =======================================================
-     UPDATE LIBRARY INTERFACE
+     INTERFACE
      ======================================================= */
 
   function updateInterface() {
@@ -566,6 +1001,13 @@ export function createDetailLibraryController(
     ];
 
 
+    if (
+      !menuButtons.length
+    ) {
+      return;
+    }
+
+
     const currentIndex =
       menuButtons.indexOf(
         document
@@ -594,7 +1036,6 @@ export function createDetailLibraryController(
       "Tab"
     ) {
       closeMenu();
-
 
       return;
     }
@@ -647,16 +1088,19 @@ export function createDetailLibraryController(
 
 
     if (
-      nextIndex != null
+      nextIndex == null
     ) {
-      event.preventDefault();
-
-
-      menuButtons[
-        nextIndex
-      ]
-        ?.focus();
+      return;
     }
+
+
+    event.preventDefault();
+
+
+    menuButtons[
+      nextIndex
+    ]
+      ?.focus();
   }
 
 
@@ -668,7 +1112,7 @@ export function createDetailLibraryController(
 
 
 /* =========================================================
-   READ LIBRARY
+   LOCAL STORAGE
    ========================================================= */
 
 function readLibrary() {
@@ -706,10 +1150,6 @@ function readLibrary() {
   }
 }
 
-
-/* =========================================================
-   WRITE LIBRARY
-   ========================================================= */
 
 function writeLibrary(
   library
