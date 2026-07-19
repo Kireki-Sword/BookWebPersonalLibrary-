@@ -1,82 +1,136 @@
 // detail-library.js
-// Direct Manga and Anime library-status controls with a custom anchored menu.
+// Direct Manga and Anime library-status controls.
+//
+// The status menu:
+// - Matches the search-page dropdown style.
+// - Opens above or below depending on available room.
+// - Stays inside the detail hero.
+// - Does not cover the next major content card.
+// - Closes when the page scrolls to prevent shaking.
+// - Supports keyboard navigation.
+// - Stores Manga and Anime independently.
 
-const STORAGE_KEY = "inkwell-library";
-const STYLE_ELEMENT_ID = "inkwell-direct-library-styles";
-const STATUS_MENU_ID = "detail-library-status-menu";
+const STORAGE_KEY =
+  "inkwell-library";
+
+
+const STYLE_ELEMENT_ID =
+  "inkwell-direct-library-styles";
+
+
+const STATUS_MENU_ID =
+  "detail-library-status-menu";
+
 
 const SUPPORTED_FORMATS = [
   "manga",
   "anime"
 ];
 
-const FORMAT_CONFIG = Object.freeze({
-  manga: {
-    label: "Manga",
 
-    icon: "ti ti-book-2",
+const FORMAT_CONFIG =
+  Object.freeze({
+    manga: {
+      label:
+        "Manga",
 
-    statuses: [
-      {
-        id: "reading",
-        label: "Reading"
-      },
+      icon:
+        "ti ti-book-2",
 
-      {
-        id: "completed",
-        label: "Completed"
-      },
+      statuses: [
+        {
+          id:
+            "reading",
 
-      {
-        id: "plan-to-read",
-        label: "Plan to read"
-      },
+          label:
+            "Reading"
+        },
 
-      {
-        id: "paused",
-        label: "Paused"
-      },
+        {
+          id:
+            "completed",
 
-      {
-        id: "dropped",
-        label: "Dropped"
-      }
-    ]
-  },
+          label:
+            "Completed"
+        },
 
-  anime: {
-    label: "Anime",
+        {
+          id:
+            "plan-to-read",
 
-    icon: "ti ti-device-tv",
+          label:
+            "Plan to read"
+        },
 
-    statuses: [
-      {
-        id: "watching",
-        label: "Watching"
-      },
+        {
+          id:
+            "paused",
 
-      {
-        id: "completed",
-        label: "Completed"
-      },
+          label:
+            "Paused"
+        },
 
-      {
-        id: "plan-to-watch",
-        label: "Plan to watch"
-      },
+        {
+          id:
+            "dropped",
 
-      {
-        id: "paused",
-        label: "Paused"
-      },
+          label:
+            "Dropped"
+        }
+      ]
+    },
 
-      {
-        id: "dropped",
-        label: "Dropped"
-      }
-    ]
-  }
-});
+
+    anime: {
+      label:
+        "Anime",
+
+      icon:
+        "ti ti-device-tv",
+
+      statuses: [
+        {
+          id:
+            "watching",
+
+          label:
+            "Watching"
+        },
+
+        {
+          id:
+            "completed",
+
+          label:
+            "Completed"
+        },
+
+        {
+          id:
+            "plan-to-watch",
+
+          label:
+            "Plan to watch"
+        },
+
+        {
+          id:
+            "paused",
+
+          label:
+            "Paused"
+        },
+
+        {
+          id:
+            "dropped",
+
+          label:
+            "Dropped"
+        }
+      ]
+    }
+  });
 
 
 export function createDetailLibraryController(
@@ -89,34 +143,39 @@ export function createDetailLibraryController(
         ".detail-library-block"
       );
 
+
   const libraryTitle =
     document
       .getElementById(
         "detail-library-title"
       );
 
+
   let currentTitle =
     null;
+
 
   let currentEntry =
     null;
 
+
   let availableFormats =
     [];
+
 
   let hasBoundEvents =
     false;
 
+
   let statusMenu =
     null;
+
 
   let activeFormat =
     "";
 
-  let activeTrigger =
-    null;
 
-  let positionFrame =
+  let activeTrigger =
     null;
 
 
@@ -131,15 +190,20 @@ export function createDetailLibraryController(
       return;
     }
 
+
     hasBoundEvents =
       true;
 
+
     installDirectLibraryStyles();
+
 
     prepareDirectLibraryInterface();
 
+
     statusMenu =
       createStatusMenu();
+
 
     elements
       .librarySummary
@@ -148,6 +212,7 @@ export function createDetailLibraryController(
         handleSummaryClick
       );
 
+
     elements
       .librarySummary
       .addEventListener(
@@ -155,11 +220,13 @@ export function createDetailLibraryController(
         handleSummaryKeydown
       );
 
+
     statusMenu
       .addEventListener(
         "click",
         handleMenuClick
       );
+
 
     statusMenu
       .addEventListener(
@@ -167,23 +234,40 @@ export function createDetailLibraryController(
         handleMenuKeydown
       );
 
+
     document
       .addEventListener(
         "pointerdown",
         handleDocumentPointerDown
       );
 
+
     window
       .addEventListener(
         "resize",
-        scheduleMenuPosition
+        handleViewportResize,
+        {
+          passive:
+            true
+        }
       );
+
+
+    /*
+     * Close the menu when the page scrolls.
+     *
+     * Repositioning a fixed menu continuously during scrolling
+     * can make it shake or jump between top and bottom.
+     */
 
     window
       .addEventListener(
         "scroll",
-        scheduleMenuPosition,
-        true
+        handlePageScroll,
+        {
+          passive:
+            true
+        }
       );
   }
 
@@ -199,21 +283,28 @@ export function createDetailLibraryController(
         "is-direct-library"
       );
 
+
     if (
       libraryTitle
     ) {
-      libraryTitle.textContent =
-        "My status";
+      libraryTitle
+        .textContent =
+          "My status";
     }
+
 
     elements
       .librarySummary
       .hidden =
         false;
 
+
     /*
-     * Keep the old HTML elements hidden so detail-dom.js
-     * does not need to be changed.
+     * Keep the original menu elements in the HTML so the
+     * current detail-dom.js file does not need to change.
+     *
+     * The original elements are hidden because the new
+     * interface creates its own direct status controls.
      */
 
     elements
@@ -221,15 +312,18 @@ export function createDetailLibraryController(
       .hidden =
         true;
 
+
     elements
       .libraryTrigger
       .hidden =
         true;
 
+
     elements
       .libraryMenu
       .hidden =
         true;
+
 
     elements
       .libraryTrigger
@@ -237,6 +331,7 @@ export function createDetailLibraryController(
         "aria-expanded",
         "false"
       );
+
 
     elements
       .librarySummary
@@ -256,8 +351,10 @@ export function createDetailLibraryController(
   ) {
     closeStatusMenu();
 
+
     currentTitle =
       title;
+
 
     availableFormats =
       SUPPORTED_FORMATS
@@ -276,8 +373,10 @@ export function createDetailLibraryController(
           }
         );
 
+
     const library =
       readLibrary();
+
 
     currentEntry =
       normalizeStoredEntry(
@@ -289,6 +388,7 @@ export function createDetailLibraryController(
 
         availableFormats
       );
+
 
     renderInterface();
   }
@@ -308,20 +408,25 @@ export function createDetailLibraryController(
           "[data-library-status-trigger]"
         );
 
+
     if (
       !trigger
     ) {
       return;
     }
 
+
     event.preventDefault();
 
+
     event.stopPropagation();
+
 
     const format =
       trigger
         .dataset
         .libraryStatusTrigger;
+
 
     if (
       !availableFormats
@@ -331,6 +436,7 @@ export function createDetailLibraryController(
     ) {
       return;
     }
+
 
     if (
       activeTrigger ===
@@ -342,8 +448,10 @@ export function createDetailLibraryController(
           true
       });
 
+
       return;
     }
+
 
     openStatusMenu(
       format,
@@ -363,16 +471,19 @@ export function createDetailLibraryController(
           "[data-library-status-trigger]"
         );
 
+
     if (
       !trigger
     ) {
       return;
     }
 
+
     const format =
       trigger
         .dataset
         .libraryStatusTrigger;
+
 
     if (
       !availableFormats
@@ -383,6 +494,7 @@ export function createDetailLibraryController(
       return;
     }
 
+
     if (
       event.key ===
         "ArrowDown" ||
@@ -390,6 +502,7 @@ export function createDetailLibraryController(
         "ArrowUp"
     ) {
       event.preventDefault();
+
 
       openStatusMenu(
         format,
@@ -402,8 +515,10 @@ export function createDetailLibraryController(
           : "selected"
       );
 
+
       return;
     }
+
 
     if (
       event.key ===
@@ -412,6 +527,7 @@ export function createDetailLibraryController(
         " "
     ) {
       event.preventDefault();
+
 
       openStatusMenu(
         format,
@@ -433,36 +549,44 @@ export function createDetailLibraryController(
       )
       ?.remove();
 
+
     const menu =
       document
         .createElement(
           "div"
         );
 
+
     menu.id =
       STATUS_MENU_ID;
+
 
     menu.className =
       "detail-library-status-menu";
 
+
     menu.hidden =
       true;
+
 
     menu.setAttribute(
       "role",
       "listbox"
     );
 
+
     menu.setAttribute(
       "aria-label",
       "Choose a library status"
     );
+
 
     document
       .body
       .append(
         menu
       );
+
 
     return menu;
   }
@@ -491,12 +615,14 @@ export function createDetailLibraryController(
         format
       ];
 
+
     if (
       !formatConfig ||
       !statusMenu
     ) {
       return;
     }
+
 
     if (
       activeTrigger &&
@@ -510,15 +636,19 @@ export function createDetailLibraryController(
         );
     }
 
+
     activeFormat =
       format;
+
 
     activeTrigger =
       trigger;
 
+
     buildStatusMenuOptions(
       format
     );
+
 
     trigger
       .setAttribute(
@@ -526,16 +656,26 @@ export function createDetailLibraryController(
         "true"
       );
 
+
     statusMenu
       .setAttribute(
         "aria-label",
         `${formatConfig.label} library status`
       );
 
+
+    statusMenu
+      .style
+      .visibility =
+        "hidden";
+
+
     statusMenu.hidden =
       false;
 
+
     positionStatusMenu();
+
 
     window
       .requestAnimationFrame(
@@ -554,21 +694,9 @@ export function createDetailLibraryController(
         false
     } = {}
   ) {
-    if (
-      positionFrame !==
-      null
-    ) {
-      window
-        .cancelAnimationFrame(
-          positionFrame
-        );
-
-      positionFrame =
-        null;
-    }
-
     const triggerToFocus =
       activeTrigger;
+
 
     activeTrigger
       ?.setAttribute(
@@ -576,21 +704,65 @@ export function createDetailLibraryController(
         "false"
       );
 
+
     if (
       statusMenu
     ) {
       statusMenu.hidden =
         true;
 
+
       statusMenu
         .replaceChildren();
+
+
+      statusMenu
+        .style
+        .visibility =
+          "hidden";
+
+
+      statusMenu
+        .style
+        .removeProperty(
+          "left"
+        );
+
+
+      statusMenu
+        .style
+        .removeProperty(
+          "top"
+        );
+
+
+      statusMenu
+        .style
+        .removeProperty(
+          "width"
+        );
+
+
+      statusMenu
+        .style
+        .removeProperty(
+          "max-height"
+        );
+
+
+      delete statusMenu
+        .dataset
+        .placement;
     }
+
 
     activeFormat =
       "";
 
+
     activeTrigger =
       null;
+
 
     if (
       returnFocus
@@ -616,10 +788,14 @@ export function createDetailLibraryController(
         ?.status ||
       "";
 
+
     const options = [
       {
-        id: "",
-        label: "Not tracked"
+        id:
+          "",
+
+        label:
+          "Not tracked"
       },
 
       ...FORMAT_CONFIG[
@@ -628,9 +804,11 @@ export function createDetailLibraryController(
         .statuses
     ];
 
+
     const fragment =
       document
         .createDocumentFragment();
+
 
     options
       .forEach(
@@ -642,11 +820,13 @@ export function createDetailLibraryController(
             option.id ===
             savedStatus;
 
+
           const button =
             document
               .createElement(
                 "button"
               );
+
 
           const label =
             document
@@ -654,30 +834,37 @@ export function createDetailLibraryController(
                 "span"
               );
 
+
           const checkmark =
             document
               .createElement(
                 "i"
               );
 
+
           button.type =
             "button";
+
 
           button.id =
             `${STATUS_MENU_ID}-option-${format}-${index}`;
 
+
           button.className =
             "detail-library-status-option";
+
 
           button
             .dataset
             .libraryStatusOption =
               option.id;
 
+
           button.setAttribute(
             "role",
             "option"
           );
+
 
           button.setAttribute(
             "aria-selected",
@@ -686,30 +873,37 @@ export function createDetailLibraryController(
             )
           );
 
+
           button.tabIndex =
             -1;
+
 
           label.textContent =
             option.label;
 
+
           checkmark.className =
             "ti ti-check detail-library-status-check";
+
 
           checkmark.setAttribute(
             "aria-hidden",
             "true"
           );
 
+
           button.append(
             label,
             checkmark
           );
+
 
           fragment.append(
             button
           );
         }
       );
+
 
     statusMenu
       .replaceChildren(
@@ -732,6 +926,7 @@ export function createDetailLibraryController(
           "[data-library-status-option]"
         );
 
+
     if (
       !option ||
       !activeFormat
@@ -739,9 +934,12 @@ export function createDetailLibraryController(
       return;
     }
 
+
     event.preventDefault();
 
+
     event.stopPropagation();
+
 
     selectMenuOption(
       option
@@ -755,11 +953,13 @@ export function createDetailLibraryController(
     const options =
       getMenuOptions();
 
+
     if (
       !options.length
     ) {
       return;
     }
+
 
     const currentOption =
       event
@@ -767,6 +967,7 @@ export function createDetailLibraryController(
         .closest(
           "[data-library-status-option]"
         );
+
 
     const currentIndex =
       Math.max(
@@ -778,12 +979,14 @@ export function createDetailLibraryController(
           )
       );
 
+
     let nextIndex =
       null;
 
+
     if (
       event.key ===
-      "ArrowDown"
+        "ArrowDown"
     ) {
       nextIndex =
         (
@@ -793,7 +996,7 @@ export function createDetailLibraryController(
         options.length;
     } else if (
       event.key ===
-      "ArrowUp"
+        "ArrowUp"
     ) {
       nextIndex =
         (
@@ -804,13 +1007,13 @@ export function createDetailLibraryController(
         options.length;
     } else if (
       event.key ===
-      "Home"
+        "Home"
     ) {
       nextIndex =
         0;
     } else if (
       event.key ===
-      "End"
+        "End"
     ) {
       nextIndex =
         options.length -
@@ -823,6 +1026,7 @@ export function createDetailLibraryController(
     ) {
       event.preventDefault();
 
+
       if (
         currentOption
       ) {
@@ -831,27 +1035,32 @@ export function createDetailLibraryController(
         );
       }
 
+
       return;
     } else if (
       event.key ===
-      "Escape"
+        "Escape"
     ) {
       event.preventDefault();
+
 
       closeStatusMenu({
         returnFocus:
           true
       });
 
+
       return;
     } else if (
       event.key ===
-      "Tab"
+        "Tab"
     ) {
       closeStatusMenu();
 
+
       return;
     }
+
 
     if (
       nextIndex ===
@@ -860,7 +1069,9 @@ export function createDetailLibraryController(
       return;
     }
 
+
     event.preventDefault();
+
 
     options[
       nextIndex
@@ -875,13 +1086,16 @@ export function createDetailLibraryController(
     const format =
       activeFormat;
 
+
     const status =
       option
         .dataset
         .libraryStatusOption ||
       "";
 
+
     closeStatusMenu();
+
 
     updateFormatStatus(
       format,
@@ -896,6 +1110,7 @@ export function createDetailLibraryController(
     ) {
       return [];
     }
+
 
     return [
       ...statusMenu
@@ -912,20 +1127,23 @@ export function createDetailLibraryController(
     const options =
       getMenuOptions();
 
+
     if (
       !options.length
     ) {
       return;
     }
 
+
     let optionToFocus =
       options[
         0
       ];
 
+
     if (
       focusMode ===
-      "last"
+        "last"
     ) {
       optionToFocus =
         options[
@@ -953,36 +1171,51 @@ export function createDetailLibraryController(
         ];
     }
 
+
     optionToFocus
       .focus();
   }
 
 
   /* =======================================================
-     FLOATING-MENU POSITIONING
+     VIEWPORT EVENTS
      ======================================================= */
 
-  function scheduleMenuPosition() {
+  function handleViewportResize() {
     if (
-      !isStatusMenuOpen() ||
-      positionFrame !==
-        null
+      !isStatusMenuOpen()
     ) {
       return;
     }
 
-    positionFrame =
-      window
-        .requestAnimationFrame(
-          () => {
-            positionFrame =
-              null;
 
-            positionStatusMenu();
-          }
-        );
+    positionStatusMenu();
   }
 
+
+  function handlePageScroll() {
+    if (
+      !isStatusMenuOpen()
+    ) {
+      return;
+    }
+
+
+    /*
+     * A fixed overlay can appear to shake when it is
+     * continuously repositioned during scrolling.
+     *
+     * Closing it is more stable and matches common dropdown
+     * behavior on scrolling pages.
+     */
+
+    closeStatusMenu();
+  }
+
+
+  /* =======================================================
+     FLOATING-MENU POSITIONING
+     ======================================================= */
 
   function positionStatusMenu() {
     if (
@@ -993,15 +1226,131 @@ export function createDetailLibraryController(
       return;
     }
 
+
     const viewportPadding =
       12;
 
-    const gap =
+
+    const heroPadding =
+      12;
+
+
+    const menuGap =
       7;
+
+
+    const minimumMenuHeight =
+      72;
+
 
     const triggerRect =
       activeTrigger
         .getBoundingClientRect();
+
+
+    const hero =
+      activeTrigger
+        .closest(
+          ".detail-hero"
+        );
+
+
+    const heroRect =
+      hero
+        ?.getBoundingClientRect();
+
+
+    /*
+     * Use the viewport and the hero as boundaries.
+     *
+     * This stops the menu from extending over the separate
+     * Formats and releases card below the hero.
+     */
+
+    const leftBoundary =
+      Math.max(
+        viewportPadding,
+
+        heroRect
+          ? heroRect.left +
+            heroPadding
+          : viewportPadding
+      );
+
+
+    const rightBoundary =
+      Math.min(
+        window.innerWidth -
+          viewportPadding,
+
+        heroRect
+          ? heroRect.right -
+            heroPadding
+          : window.innerWidth -
+            viewportPadding
+      );
+
+
+    const topBoundary =
+      Math.max(
+        viewportPadding,
+
+        heroRect
+          ? heroRect.top +
+            heroPadding
+          : viewportPadding
+      );
+
+
+    const bottomBoundary =
+      Math.min(
+        window.innerHeight -
+          viewportPadding,
+
+        heroRect
+          ? heroRect.bottom -
+            heroPadding
+          : window.innerHeight -
+            viewportPadding
+      );
+
+
+    const triggerIsOutsideBoundary =
+      triggerRect.bottom <
+        topBoundary ||
+      triggerRect.top >
+        bottomBoundary;
+
+
+    if (
+      triggerIsOutsideBoundary
+    ) {
+      closeStatusMenu();
+
+
+      return;
+    }
+
+
+    const availableWidth =
+      Math.max(
+        0,
+
+        rightBoundary -
+          leftBoundary
+      );
+
+
+    if (
+      availableWidth <=
+        0
+    ) {
+      closeStatusMenu();
+
+
+      return;
+    }
+
 
     const preferredWidth =
       Math.max(
@@ -1009,131 +1358,185 @@ export function createDetailLibraryController(
         180
       );
 
-    const maximumWidth =
-      Math.max(
-        0,
-
-        window.innerWidth -
-        viewportPadding *
-        2
-      );
 
     const menuWidth =
       Math.min(
         preferredWidth,
-        maximumWidth
+        availableWidth
       );
+
+
+    /*
+     * Temporarily position the invisible menu so its natural
+     * dimensions can be measured.
+     */
 
     statusMenu
       .style
       .visibility =
         "hidden";
 
+
     statusMenu
       .style
       .width =
         `${menuWidth}px`;
+
 
     statusMenu
       .style
       .maxHeight =
         "320px";
 
+
     statusMenu
       .style
       .left =
         "0px";
+
 
     statusMenu
       .style
       .top =
         "0px";
 
+
     const naturalHeight =
-      statusMenu
-        .getBoundingClientRect()
-        .height;
+      Math.min(
+        statusMenu.scrollHeight,
+        320
+      );
+
 
     const spaceBelow =
-      window.innerHeight -
-      triggerRect.bottom -
-      gap -
-      viewportPadding;
+      Math.max(
+        0,
+
+        bottomBoundary -
+          triggerRect.bottom -
+          menuGap
+      );
+
 
     const spaceAbove =
-      triggerRect.top -
-      gap -
-      viewportPadding;
+      Math.max(
+        0,
 
-    const placeAbove =
-      naturalHeight >
-        spaceBelow &&
-      spaceAbove >
+        triggerRect.top -
+          topBoundary -
+          menuGap
+      );
+
+
+    const comfortableHeight =
+      Math.min(
+        naturalHeight,
+        220
+      );
+
+
+    let placeAbove =
+      false;
+
+
+    if (
+      spaceBelow >=
+        comfortableHeight
+    ) {
+      placeAbove =
+        false;
+    } else if (
+      spaceAbove >=
+        comfortableHeight
+    ) {
+      placeAbove =
+        true;
+    } else {
+      placeAbove =
+        spaceAbove >
         spaceBelow;
+    }
+
 
     const availableHeight =
-      Math.max(
-        120,
+      placeAbove
+        ? spaceAbove
+        : spaceBelow;
 
-        placeAbove
-          ? spaceAbove
-          : spaceBelow
+
+    if (
+      availableHeight <
+        minimumMenuHeight
+    ) {
+      closeStatusMenu();
+
+
+      return;
+    }
+
+
+    const finalMaximumHeight =
+      Math.min(
+        naturalHeight,
+        availableHeight,
+        320
       );
+
 
     statusMenu
       .style
       .maxHeight =
-        `${Math.min(
-          320,
-          availableHeight
-        )}px`;
+        `${finalMaximumHeight}px`;
+
 
     const menuRect =
       statusMenu
         .getBoundingClientRect();
 
+
+    /*
+     * Align the right edge of the menu with the trigger.
+     */
+
     let left =
       triggerRect.right -
-      menuRect.width;
+        menuRect.width;
 
-    let top =
-      triggerRect.bottom +
-      gap;
 
     left =
       Math.max(
-        viewportPadding,
+        leftBoundary,
 
         Math.min(
           left,
 
-          window.innerWidth -
-          menuRect.width -
-          viewportPadding
+          rightBoundary -
+            menuRect.width
         )
       );
 
-    if (
+
+    let top =
       placeAbove
-    ) {
-      top =
-        triggerRect.top -
-        menuRect.height -
-        gap;
-    }
+        ? triggerRect.top -
+          menuRect.height -
+          menuGap
+        : triggerRect.bottom +
+          menuGap;
+
 
     top =
       Math.max(
-        viewportPadding,
+        topBoundary,
 
         Math.min(
           top,
 
-          window.innerHeight -
-          menuRect.height -
-          viewportPadding
+          bottomBoundary -
+            menuRect.height
         )
       );
+
 
     statusMenu
       .dataset
@@ -1142,6 +1545,7 @@ export function createDetailLibraryController(
           ? "top"
           : "bottom";
 
+
     statusMenu
       .style
       .left =
@@ -1149,12 +1553,14 @@ export function createDetailLibraryController(
           left
         )}px`;
 
+
     statusMenu
       .style
       .top =
         `${Math.round(
           top
         )}px`;
+
 
     statusMenu
       .style
@@ -1176,6 +1582,7 @@ export function createDetailLibraryController(
       return;
     }
 
+
     if (
       statusMenu
         .contains(
@@ -1185,6 +1592,7 @@ export function createDetailLibraryController(
       return;
     }
 
+
     if (
       activeTrigger
         ?.contains(
@@ -1193,6 +1601,7 @@ export function createDetailLibraryController(
     ) {
       return;
     }
+
 
     closeStatusMenu();
   }
@@ -1212,6 +1621,7 @@ export function createDetailLibraryController(
       return;
     }
 
+
     if (
       status &&
       !getValidStatus(
@@ -1221,19 +1631,24 @@ export function createDetailLibraryController(
     ) {
       renderInterface();
 
+
       setLibraryNote(
         "That library status is not available."
       );
+
 
       focusFormatTrigger(
         format
       );
 
+
       return;
     }
 
+
     const library =
       readLibrary();
+
 
     const entry =
       normalizeStoredEntry(
@@ -1246,9 +1661,11 @@ export function createDetailLibraryController(
         availableFormats
       );
 
+
     const currentTime =
       new Date()
         .toISOString();
+
 
     if (
       status
@@ -1269,8 +1686,10 @@ export function createDetailLibraryController(
         ];
     }
 
+
     entry.updatedAt =
       currentTime;
+
 
     if (
       Object
@@ -1289,6 +1708,7 @@ export function createDetailLibraryController(
       ];
     }
 
+
     if (
       !writeLibrary(
         library
@@ -1296,16 +1716,20 @@ export function createDetailLibraryController(
     ) {
       renderInterface();
 
+
       setLibraryNote(
         "This browser could not save your library change."
       );
+
 
       focusFormatTrigger(
         format
       );
 
+
       return;
     }
+
 
     currentEntry =
       normalizeStoredEntry(
@@ -1318,13 +1742,16 @@ export function createDetailLibraryController(
         availableFormats
       );
 
+
     renderInterface();
+
 
     const formatLabel =
       FORMAT_CONFIG[
         format
       ]
         .label;
+
 
     const statusLabel =
       getStatusConfig(
@@ -1333,11 +1760,13 @@ export function createDetailLibraryController(
       )
         ?.label;
 
+
     setLibraryNote(
       statusLabel
         ? `${formatLabel} set to ${statusLabel}.`
         : `${formatLabel} removed from your library.`
     );
+
 
     focusFormatTrigger(
       format
@@ -1352,14 +1781,17 @@ export function createDetailLibraryController(
   function renderInterface() {
     closeStatusMenu();
 
+
     elements
       .librarySummary
       .replaceChildren();
+
 
     elements
       .librarySummary
       .hidden =
         false;
+
 
     if (
       !currentTitle
@@ -1368,12 +1800,15 @@ export function createDetailLibraryController(
         "Open a title to manage its library status."
       );
 
+
       setLibraryNote(
         ""
       );
 
+
       return;
     }
+
 
     if (
       !availableFormats
@@ -1383,16 +1818,20 @@ export function createDetailLibraryController(
         "This title has no Manga or Anime format available to save."
       );
 
+
       setLibraryNote(
         "No trackable format is available for this title."
       );
 
+
       return;
     }
+
 
     const fragment =
       document
         .createDocumentFragment();
+
 
     availableFormats
       .forEach(
@@ -1407,11 +1846,13 @@ export function createDetailLibraryController(
         }
       );
 
+
     elements
       .librarySummary
       .append(
         fragment
       );
+
 
     const trackedCount =
       availableFormats
@@ -1430,9 +1871,10 @@ export function createDetailLibraryController(
         )
         .length;
 
+
     if (
       trackedCount ===
-      0
+        0
     ) {
       setLibraryNote(
         availableFormats.length >
@@ -1441,19 +1883,23 @@ export function createDetailLibraryController(
           : "Choose a status to save this format."
       );
 
+
       return;
     }
 
+
     if (
       trackedCount <
-      availableFormats.length
+        availableFormats.length
     ) {
       setLibraryNote(
         "Each format keeps its own library status."
       );
 
+
       return;
     }
+
 
     setLibraryNote(
       availableFormats.length >
@@ -1476,6 +1922,7 @@ export function createDetailLibraryController(
         format
       ];
 
+
     const savedStatus =
       currentEntry
         .formats[
@@ -1483,6 +1930,7 @@ export function createDetailLibraryController(
         ]
         ?.status ||
       "";
+
 
     const statusLabel =
       getStatusConfig(
@@ -1492,19 +1940,23 @@ export function createDetailLibraryController(
         ?.label ||
       "Not tracked";
 
+
     const row =
       document
         .createElement(
           "div"
         );
 
+
     row.className =
       "detail-library-direct-row";
+
 
     row
       .dataset
       .format =
         format;
+
 
     row
       .dataset
@@ -1515,11 +1967,13 @@ export function createDetailLibraryController(
           )
         );
 
+
     const icon =
       document
         .createElement(
           "span"
         );
+
 
     const iconElement =
       document
@@ -1527,20 +1981,25 @@ export function createDetailLibraryController(
           "i"
         );
 
+
     icon.className =
       "detail-library-direct-icon";
+
 
     icon.setAttribute(
       "aria-hidden",
       "true"
     );
 
+
     iconElement.className =
       formatConfig.icon;
+
 
     icon.append(
       iconElement
     );
+
 
     const copy =
       document
@@ -1548,11 +2007,13 @@ export function createDetailLibraryController(
           "div"
         );
 
+
     const label =
       document
         .createElement(
           "strong"
         );
+
 
     const meta =
       document
@@ -1560,21 +2021,26 @@ export function createDetailLibraryController(
           "small"
         );
 
+
     copy.className =
       "detail-library-direct-copy";
 
+
     label.textContent =
       formatConfig.label;
+
 
     meta.textContent =
       savedStatus
         ? "Saved to library"
         : "Not tracked";
 
+
     copy.append(
       label,
       meta
     );
+
 
     const trigger =
       document
@@ -1582,11 +2048,13 @@ export function createDetailLibraryController(
           "button"
         );
 
+
     const triggerLabel =
       document
         .createElement(
           "span"
         );
+
 
     const chevron =
       document
@@ -1594,61 +2062,75 @@ export function createDetailLibraryController(
           "i"
         );
 
+
     trigger.type =
       "button";
 
+
     trigger.className =
       "detail-library-status-trigger";
+
 
     trigger
       .dataset
       .libraryStatusTrigger =
         format;
 
+
     trigger.setAttribute(
       "aria-haspopup",
       "listbox"
     );
+
 
     trigger.setAttribute(
       "aria-expanded",
       "false"
     );
 
+
     trigger.setAttribute(
       "aria-controls",
       STATUS_MENU_ID
     );
+
 
     trigger.setAttribute(
       "aria-label",
       `${formatConfig.label} status: ${statusLabel}`
     );
 
+
     triggerLabel.className =
       "detail-library-status-trigger-label";
+
 
     triggerLabel.textContent =
       statusLabel;
 
+
     chevron.className =
       "ti ti-chevron-down detail-library-status-chevron";
+
 
     chevron.setAttribute(
       "aria-hidden",
       "true"
     );
 
+
     trigger.append(
       triggerLabel,
       chevron
     );
+
 
     row.append(
       icon,
       copy,
       trigger
     );
+
 
     return row;
   }
@@ -1667,11 +2149,13 @@ export function createDetailLibraryController(
           "div"
         );
 
+
     const icon =
       document
         .createElement(
           "i"
         );
+
 
     const copy =
       document
@@ -1679,24 +2163,30 @@ export function createDetailLibraryController(
           "span"
         );
 
+
     emptyState.className =
       "detail-library-direct-empty";
 
+
     icon.className =
       "ti ti-book-off";
+
 
     icon.setAttribute(
       "aria-hidden",
       "true"
     );
 
+
     copy.textContent =
       message;
+
 
     emptyState.append(
       icon,
       copy
     );
+
 
     elements
       .librarySummary
@@ -1762,6 +2252,7 @@ function getStatusConfig(
     return null;
   }
 
+
   return (
     FORMAT_CONFIG[
       format
@@ -1794,6 +2285,7 @@ function normalizeStoredEntry(
   const formats =
     {};
 
+
   if (
     storedEntry
       ?.formats &&
@@ -1812,9 +2304,11 @@ function normalizeStoredEntry(
                 format
               ];
 
+
           const status =
             savedFormat
               ?.status;
+
 
           if (
             getValidStatus(
@@ -1849,11 +2343,13 @@ function normalizeStoredEntry(
         0
       ];
 
+
     const migratedStatus =
       migrateLegacyStatus(
         format,
         storedEntry.status
       );
+
 
     if (
       migratedStatus
@@ -1871,6 +2367,7 @@ function normalizeStoredEntry(
       };
     }
   }
+
 
   return {
     id:
@@ -1938,6 +2435,7 @@ function migrateLegacyStatus(
       .trim()
       .toLowerCase();
 
+
   const sharedStatuses = {
     completed:
       "completed",
@@ -1949,6 +2447,7 @@ function migrateLegacyStatus(
       "dropped"
   };
 
+
   if (
     sharedStatuses[
       status
@@ -1959,9 +2458,10 @@ function migrateLegacyStatus(
     ];
   }
 
+
   if (
     status ===
-    "in-progress"
+      "in-progress"
   ) {
     return format ===
       "anime"
@@ -1969,15 +2469,17 @@ function migrateLegacyStatus(
         : "reading";
   }
 
+
   if (
     status ===
-    "planned"
+      "planned"
   ) {
     return format ===
       "anime"
         ? "plan-to-watch"
         : "plan-to-read";
   }
+
 
   return "";
 }
@@ -1998,6 +2500,7 @@ function readLibrary() {
         "{}"
       );
 
+
     if (
       !parsedValue ||
       typeof parsedValue !==
@@ -2009,6 +2512,7 @@ function readLibrary() {
       return {};
     }
 
+
     return parsedValue;
   } catch (
     error
@@ -2017,6 +2521,7 @@ function readLibrary() {
       "INKWELL LIBRARY READ ERROR:",
       error
     );
+
 
     return {};
   }
@@ -2040,6 +2545,7 @@ function writeLibrary(
         )
       );
 
+
     return true;
   } catch (
     error
@@ -2048,6 +2554,7 @@ function writeLibrary(
       "INKWELL LIBRARY STORAGE ERROR:",
       error
     );
+
 
     return false;
   }
@@ -2068,14 +2575,17 @@ function installDirectLibraryStyles() {
     return;
   }
 
+
   const style =
     document
       .createElement(
         "style"
       );
 
+
   style.id =
     STYLE_ELEMENT_ID;
+
 
   style.textContent = `
     .detail-library-block.is-direct-library {
@@ -2117,7 +2627,6 @@ function installDirectLibraryStyles() {
       z-index: auto !important;
 
       grid-row: 2 !important;
-
       grid-column: 1 !important;
 
       align-self: stretch !important;
@@ -2229,13 +2738,11 @@ function installDirectLibraryStyles() {
 
     .detail-library-direct-icon {
       width: 32px;
-
       height: 32px;
 
       display: inline-flex;
 
       align-items: center;
-
       justify-content: center;
 
       color: #bfc8ff;
@@ -2301,9 +2808,9 @@ function installDirectLibraryStyles() {
     .detail-library-status-trigger {
       width: 136px;
 
-      min-height: 42px;
-
       min-width: 0;
+
+      min-height: 42px;
 
       display: flex;
 
@@ -2458,10 +2965,11 @@ function installDirectLibraryStyles() {
       padding: 6px;
 
       overflow-x: hidden;
-
       overflow-y: auto;
 
       overscroll-behavior: contain;
+
+      scrollbar-width: thin;
 
       color: #dfe5f7;
 
@@ -2559,9 +3067,9 @@ function installDirectLibraryStyles() {
 
 
     .detail-library-status-option {
-      min-height: 40px;
-
       width: 100%;
+
+      min-height: 40px;
 
       display: flex;
 
@@ -2711,6 +3219,7 @@ function installDirectLibraryStyles() {
       }
     }
   `;
+
 
   document
     .head
