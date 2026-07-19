@@ -3884,3 +3884,483 @@ summary i {
       none;
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* =========================================================
+   LIBRARY MENU POSITION AND TITLE SCALE FIX
+   Add this at the very bottom of detail.css.
+   ========================================================= */
+
+
+/* Allow the floating library menu to extend outside the hero
+   without changing the hero's height. */
+
+body.detail-site .detail-hero {
+  overflow:
+    visible;
+}
+
+
+body.detail-site .detail-action-panel,
+body.detail-site .detail-library-block,
+body.detail-site .detail-library-picker {
+  overflow:
+    visible;
+}
+
+
+body.detail-site .detail-action-panel {
+  z-index:
+    40;
+}
+
+
+/* =========================================================
+   DESKTOP LIBRARY FLYOUT
+
+   The menu opens beside the button instead of appearing
+   in the viewport's top-right corner.
+   ========================================================= */
+
+body.detail-site
+.detail-library-menu {
+  position:
+    absolute !important;
+
+  inset:
+    auto !important;
+
+  top:
+    50% !important;
+
+  right:
+    calc(
+      100% +
+      14px
+    ) !important;
+
+  bottom:
+    auto !important;
+
+  left:
+    auto !important;
+
+  z-index:
+    120 !important;
+
+  width:
+    280px !important;
+
+  max-width:
+    calc(
+      100vw -
+      32px
+    );
+
+  max-height:
+    340px;
+
+  margin:
+    0 !important;
+
+  overflow-x:
+    hidden;
+
+  overflow-y:
+    auto;
+
+  opacity:
+    1 !important;
+
+  visibility:
+    visible !important;
+
+  transform:
+    translateY(
+      -50%
+    ) !important;
+
+  transform-origin:
+    center right;
+
+  animation:
+    detail-library-flyout-enter
+    160ms
+    ease-out;
+
+  background:
+    radial-gradient(
+      circle at 80% 0%,
+      rgba(
+        124,
+        140,
+        255,
+        0.16
+      ),
+      transparent 44%
+    ),
+
+    linear-gradient(
+      155deg,
+      rgba(
+        21,
+        30,
+        58,
+        0.995
+      ),
+      rgba(
+        7,
+        12,
+        27,
+        0.998
+      )
+    );
+
+  border:
+    1px solid
+    rgba(
+      116,
+      215,
+      255,
+      0.28
+    );
+
+  border-radius:
+    14px;
+
+  box-shadow:
+    0 28px 75px
+    rgba(
+      0,
+      0,
+      0,
+      0.58
+    ),
+
+    0 0 34px
+    rgba(
+      113,
+      140,
+      255,
+      0.12
+    ),
+
+    inset 0 1px 0
+    rgba(
+      255,
+      255,
+      255,
+      0.065
+    );
+}
+
+
+body.detail-site
+.detail-library-menu[hidden] {
+  display:
+    none !important;
+}
+
+
+@keyframes detail-library-flyout-enter {
+  from {
+    opacity:
+      0;
+
+    transform:
+      translateY(
+        -50%
+      )
+      translateX(
+        8px
+      )
+      scale(
+        0.98
+      );
+  }
+
+  to {
+    opacity:
+      1;
+
+    transform:
+      translateY(
+        -50%
+      )
+      translateX(
+        0
+      )
+      scale(
+        1
+      );
+  }
+}
+
+
+/* =========================================================
+   SMALLER TITLE
+
+   The title remains dominant, but no longer overwhelms
+   the cover and metadata.
+   ========================================================= */
+
+body.detail-site
+.detail-identity h1 {
+  max-width:
+    780px;
+
+  font-size:
+    clamp(
+      3rem,
+      4.55vw,
+      5.15rem
+    );
+
+  line-height:
+    0.95;
+
+  letter-spacing:
+    -0.052em;
+}
+
+
+/* Slightly reduce the space occupied by extremely long titles. */
+
+body.detail-site
+.detail-identity:has(
+  h1
+) {
+  min-width:
+    0;
+}
+
+
+/* =========================================================
+   MEDIUM SCREENS
+
+   Use a centered floating menu when there is not enough
+   horizontal space beside the action card.
+   ========================================================= */
+
+@media (
+  max-width:
+  1240px
+) {
+  body.detail-site
+  .detail-library-menu {
+    position:
+      fixed !important;
+
+    top:
+      50% !important;
+
+    right:
+      auto !important;
+
+    bottom:
+      auto !important;
+
+    left:
+      50% !important;
+
+    width:
+      min(
+        360px,
+        calc(
+          100vw -
+          32px
+        )
+      ) !important;
+
+    max-height:
+      min(
+        420px,
+        calc(
+          100vh -
+          40px
+        )
+      );
+
+    transform:
+      translate(
+        -50%,
+        -50%
+      ) !important;
+
+    transform-origin:
+      center;
+  }
+
+
+  body.detail-site
+  .detail-library-menu {
+    animation:
+      detail-library-modal-enter
+      160ms
+      ease-out;
+  }
+
+
+  body.detail-site
+  .detail-identity h1 {
+    font-size:
+      clamp(
+        2.9rem,
+        6vw,
+        4.7rem
+      );
+  }
+}
+
+
+@keyframes detail-library-modal-enter {
+  from {
+    opacity:
+      0;
+
+    transform:
+      translate(
+        -50%,
+        -47%
+      )
+      scale(
+        0.98
+      );
+  }
+
+  to {
+    opacity:
+      1;
+
+    transform:
+      translate(
+        -50%,
+        -50%
+      )
+      scale(
+        1
+      );
+  }
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (
+  max-width:
+  900px
+) {
+  body.detail-site
+  .detail-identity h1 {
+    font-size:
+      clamp(
+        2.8rem,
+        10vw,
+        4.4rem
+      );
+
+    line-height:
+      0.97;
+  }
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (
+  max-width:
+  580px
+) {
+  body.detail-site
+  .detail-library-menu {
+    top:
+      auto !important;
+
+    right:
+      12px !important;
+
+    bottom:
+      12px !important;
+
+    left:
+      12px !important;
+
+    width:
+      auto !important;
+
+    max-width:
+      none;
+
+    max-height:
+      min(
+        70vh,
+        430px
+      );
+
+    transform:
+      none !important;
+
+    border-radius:
+      18px;
+
+    animation:
+      detail-library-sheet-enter
+      180ms
+      ease-out;
+  }
+
+
+  body.detail-site
+  .detail-identity h1 {
+    font-size:
+      clamp(
+        2.5rem,
+        12.5vw,
+        3.8rem
+      );
+
+    line-height:
+      0.98;
+
+    letter-spacing:
+      -0.047em;
+  }
+}
+
+
+@keyframes detail-library-sheet-enter {
+  from {
+    opacity:
+      0;
+
+    transform:
+      translateY(
+        18px
+      ) !important;
+  }
+
+  to {
+    opacity:
+      1;
+
+    transform:
+      translateY(
+        0
+      ) !important;
+  }
+}

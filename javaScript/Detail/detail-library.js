@@ -1,7 +1,7 @@
 // detail-library.js
 // Stores one format-neutral library status for the whole story.
-// The status menu uses the browser top layer when supported,
-// preventing it from resizing or overflowing the hero.
+// The menu stays anchored to the library control without
+// changing the hero's size.
 
 const STORAGE_KEY =
   "inkwell-library";
@@ -63,18 +63,9 @@ export function createDetailLibraryController(
   let hasBoundEvents =
     false;
 
-  let useNativePopover =
-    false;
-
-  let returnFocusAfterClose =
-    false;
-
-  let positionFrame =
-    null;
-
 
   /* =======================================================
-     INITIALIZATION
+     EVENT SETUP
      ======================================================= */
 
   function bindEvents() {
@@ -89,14 +80,57 @@ export function createDetailLibraryController(
       true;
 
 
-    prepareMenu();
+    /*
+     * Remove any popover configuration left behind
+     * by the previous version.
+     */
+
+    elements
+      .libraryMenu
+      .removeAttribute(
+        "popover"
+      );
+
+
+    elements
+      .libraryMenu
+      .removeAttribute(
+        "style"
+      );
+
+
+    elements
+      .libraryMenu
+      .classList
+      .remove(
+        "is-positioned"
+      );
+
+
+    elements
+      .libraryMenu
+      .hidden =
+        true;
+
+
+    elements
+      .libraryTrigger
+      .setAttribute(
+        "aria-expanded",
+        "false"
+      );
 
 
     elements
       .libraryTrigger
       .addEventListener(
         "click",
-        () => {
+        (
+          event
+        ) => {
+          event.stopPropagation();
+
+
           toggleMenu();
         }
       );
@@ -135,6 +169,18 @@ export function createDetailLibraryController(
     elements
       .libraryMenu
       .addEventListener(
+        "click",
+        (
+          event
+        ) => {
+          event.stopPropagation();
+        }
+      );
+
+
+    elements
+      .libraryMenu
+      .addEventListener(
         "keydown",
         handleMenuKeydown
       );
@@ -145,13 +191,6 @@ export function createDetailLibraryController(
       (
         event
       ) => {
-        if (
-          useNativePopover
-        ) {
-          return;
-        }
-
-
         if (
           !elements
             .libraryPicker
@@ -171,91 +210,18 @@ export function createDetailLibraryController(
         event
       ) => {
         if (
-          event.key !==
-            "Escape" ||
-          !isMenuOpen()
+          event.key ===
+          "Escape" &&
+          isMenuOpen()
         ) {
-          return;
+          event.preventDefault();
+
+
+          closeMenu(
+            true
+          );
         }
-
-
-        closeMenu(
-          true
-        );
       }
-    );
-
-
-    window.addEventListener(
-      "resize",
-      scheduleMenuPosition
-    );
-
-
-    window.addEventListener(
-      "scroll",
-      scheduleMenuPosition,
-      true
-    );
-  }
-
-
-  function prepareMenu() {
-    useNativePopover =
-      typeof elements
-        .libraryMenu
-        .showPopover ===
-        "function" &&
-
-      typeof elements
-        .libraryMenu
-        .hidePopover ===
-        "function";
-
-
-    if (
-      useNativePopover
-    ) {
-      elements
-        .libraryMenu
-        .setAttribute(
-          "popover",
-          "auto"
-        );
-
-
-      elements
-        .libraryMenu
-        .removeAttribute(
-          "hidden"
-        );
-
-
-      elements
-        .libraryMenu
-        .addEventListener(
-          "toggle",
-          handlePopoverToggle
-        );
-
-
-      syncMenuState(
-        false
-      );
-
-
-      return;
-    }
-
-
-    elements
-      .libraryMenu
-      .hidden =
-        true;
-
-
-    syncMenuState(
-      false
     );
   }
 
@@ -284,33 +250,15 @@ export function createDetailLibraryController(
 
 
   /* =======================================================
-     MENU STATE
+     MENU
      ======================================================= */
 
   function isMenuOpen() {
-    if (
-      useNativePopover
-    ) {
-      try {
-        return elements
-          .libraryMenu
-          .matches(
-            ":popover-open"
-          );
-      } catch {
-        return elements
-          .libraryPicker
-          .classList
-          .contains(
-            "is-open"
-          );
-      }
-    }
-
-
-    return !elements
-      .libraryMenu
-      .hidden;
+    return (
+      !elements
+        .libraryMenu
+        .hidden
+    );
   }
 
 
@@ -333,97 +281,64 @@ export function createDetailLibraryController(
     }
 
 
-    returnFocusAfterClose =
-      false;
+    elements
+      .libraryMenu
+      .hidden =
+        false;
 
 
     elements
-      .libraryMenu
+      .libraryPicker
       .classList
-      .remove(
-        "is-positioned"
+      .add(
+        "is-open"
       );
 
 
-    if (
-      useNativePopover
-    ) {
-      try {
-        elements
-          .libraryMenu
-          .showPopover();
-      } catch (
-        error
-      ) {
-        console.warn(
-          "Native popover could not be opened. Using fallback positioning.",
-          error
+    elements
+      .libraryTrigger
+      .setAttribute(
+        "aria-expanded",
+        "true"
+      );
+
+
+    document
+      .body
+      .classList
+      .add(
+        "detail-library-menu-open"
+      );
+
+
+    const selectedButton =
+      elements
+        .libraryStatusButtons
+        .find(
+          (
+            button
+          ) => {
+            return (
+              button
+                .dataset
+                .libraryStatus ===
+              currentStatus
+            );
+          }
         );
 
 
-        useNativePopover =
-          false;
-
-
-        elements
-          .libraryMenu
-          .removeAttribute(
-            "popover"
-          );
-
-
-        elements
-          .libraryMenu
-          .hidden =
-            false;
-      }
-    } else {
+    const firstButton =
+      selectedButton ||
       elements
-        .libraryMenu
-        .hidden =
-          false;
-    }
-
-
-    positionMenu();
-
-
-    syncMenuState(
-      true
-    );
+        .libraryStatusButtons[
+          0
+        ];
 
 
     window
       .requestAnimationFrame(
         () => {
-          positionMenu();
-
-
-          const selectedButton =
-            elements
-              .libraryStatusButtons
-              .find(
-                (
-                  button
-                ) => {
-                  return (
-                    button
-                      .dataset
-                      .libraryStatus ===
-                    currentStatus
-                  );
-                }
-              );
-
-
-          const firstButton =
-            selectedButton ||
-            elements
-              .libraryStatusButtons[
-                0
-              ];
-
-
           firstButton
             ?.focus();
         }
@@ -442,81 +357,17 @@ export function createDetailLibraryController(
     }
 
 
-    returnFocusAfterClose =
-      returnFocus;
-
-
-    if (
-      useNativePopover
-    ) {
-      try {
-        elements
-          .libraryMenu
-          .hidePopover();
-
-
-        return;
-      } catch (
-        error
-      ) {
-        console.warn(
-          "Native popover could not be closed normally.",
-          error
-        );
-      }
-    }
-
-
     elements
       .libraryMenu
       .hidden =
         true;
 
 
-    syncMenuState(
-      false
-    );
-
-
-    completeMenuClose();
-  }
-
-
-  function handlePopoverToggle(
-    event
-  ) {
-    const isOpen =
-      event.newState ===
-      "open";
-
-
-    syncMenuState(
-      isOpen
-    );
-
-
-    if (
-      isOpen
-    ) {
-      positionMenu();
-
-      return;
-    }
-
-
-    completeMenuClose();
-  }
-
-
-  function syncMenuState(
-    isOpen
-  ) {
     elements
       .libraryPicker
       .classList
-      .toggle(
-        "is-open",
-        isOpen
+      .remove(
+        "is-open"
       );
 
 
@@ -524,232 +375,25 @@ export function createDetailLibraryController(
       .libraryTrigger
       .setAttribute(
         "aria-expanded",
-        String(
-          isOpen
-        )
+        "false"
+      );
+
+
+    document
+      .body
+      .classList
+      .remove(
+        "detail-library-menu-open"
       );
 
 
     if (
-      !isOpen
-    ) {
-      elements
-        .libraryMenu
-        .classList
-        .remove(
-          "is-positioned"
-        );
-    }
-  }
-
-
-  function completeMenuClose() {
-    if (
-      returnFocusAfterClose
+      returnFocus
     ) {
       elements
         .libraryTrigger
         .focus();
     }
-
-
-    returnFocusAfterClose =
-      false;
-  }
-
-
-  /* =======================================================
-     POPOVER POSITION
-     ======================================================= */
-
-  function scheduleMenuPosition() {
-    if (
-      !isMenuOpen()
-    ) {
-      return;
-    }
-
-
-    if (
-      positionFrame != null
-    ) {
-      window.cancelAnimationFrame(
-        positionFrame
-      );
-    }
-
-
-    positionFrame =
-      window.requestAnimationFrame(
-        () => {
-          positionFrame =
-            null;
-
-
-          positionMenu();
-        }
-      );
-  }
-
-
-  function positionMenu() {
-    if (
-      !isMenuOpen()
-    ) {
-      return;
-    }
-
-
-    const triggerRect =
-      elements
-        .libraryTrigger
-        .getBoundingClientRect();
-
-
-    const viewportWidth =
-      window.innerWidth;
-
-
-    const viewportHeight =
-      window.innerHeight;
-
-
-    const viewportMargin =
-      12;
-
-
-    const menuGap =
-      10;
-
-
-    const menuWidth =
-      Math.min(
-        292,
-
-        Math.max(
-          238,
-
-          viewportWidth -
-          viewportMargin *
-          2
-        )
-      );
-
-
-    elements
-      .libraryMenu
-      .style
-      .setProperty(
-        "--detail-library-menu-width",
-        `${menuWidth}px`
-      );
-
-
-    const measuredHeight =
-      Math.min(
-        elements
-          .libraryMenu
-          .scrollHeight,
-
-        viewportHeight -
-        viewportMargin *
-        2
-      );
-
-
-    let left =
-      triggerRect.right -
-      menuWidth;
-
-
-    left =
-      Math.max(
-        viewportMargin,
-
-        Math.min(
-          left,
-
-          viewportWidth -
-          menuWidth -
-          viewportMargin
-        )
-      );
-
-
-    let top =
-      triggerRect.bottom +
-      menuGap;
-
-
-    const fitsBelow =
-      top +
-      measuredHeight <=
-      viewportHeight -
-      viewportMargin;
-
-
-    const fitsAbove =
-      triggerRect.top -
-      menuGap -
-      measuredHeight >=
-      viewportMargin;
-
-
-    if (
-      !fitsBelow &&
-      fitsAbove
-    ) {
-      top =
-        triggerRect.top -
-        menuGap -
-        measuredHeight;
-    } else {
-      top =
-        Math.min(
-          top,
-
-          viewportHeight -
-          measuredHeight -
-          viewportMargin
-        );
-
-
-      top =
-        Math.max(
-          viewportMargin,
-          top
-        );
-    }
-
-
-    elements
-      .libraryMenu
-      .style
-      .setProperty(
-        "--detail-library-menu-left",
-        `${Math.round(
-          left
-        )}px`
-      );
-
-
-    elements
-      .libraryMenu
-      .style
-      .setProperty(
-        "--detail-library-menu-top",
-        `${Math.round(
-          top
-        )}px`
-      );
-
-
-    elements
-      .libraryMenu
-      .classList
-      .add(
-        "is-positioned"
-      );
   }
 
 
@@ -909,7 +553,7 @@ export function createDetailLibraryController(
 
 
   /* =======================================================
-     INTERFACE
+     UPDATE INTERFACE
      ======================================================= */
 
   function updateInterface() {
@@ -1036,6 +680,7 @@ export function createDetailLibraryController(
       "Tab"
     ) {
       closeMenu();
+
 
       return;
     }
