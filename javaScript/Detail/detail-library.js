@@ -1,20 +1,19 @@
 // detail-library.js
-// Tracks Manga and Anime independently inside a stable
-// library card with three interface states:
+// Provides a compact, direct library-status editor for Manga and Anime.
 //
-// 1. Summary
-// 2. Choose format
-// 3. Choose status
+// This replacement keeps the current detail-page HTML and the existing
+// localStorage data shape. Manga and Anime remain independent, but the
+// old three-screen menu is replaced with one status selector per format.
 
-const STORAGE_KEY =
-  "inkwell-library";
+const STORAGE_KEY = "inkwell-library";
 
+const STYLE_ELEMENT_ID =
+  "inkwell-direct-library-styles";
 
 const SUPPORTED_FORMATS = [
   "manga",
   "anime"
 ];
-
 
 const FORMAT_CONFIG =
   Object.freeze({
@@ -31,10 +30,7 @@ const FORMAT_CONFIG =
             "reading",
 
           label:
-            "Reading",
-
-          icon:
-            "ti ti-book"
+            "Reading"
         },
 
         {
@@ -42,10 +38,7 @@ const FORMAT_CONFIG =
             "completed",
 
           label:
-            "Completed",
-
-          icon:
-            "ti ti-circle-check"
+            "Completed"
         },
 
         {
@@ -53,10 +46,7 @@ const FORMAT_CONFIG =
             "plan-to-read",
 
           label:
-            "Plan to read",
-
-          icon:
-            "ti ti-clock-plus"
+            "Plan to read"
         },
 
         {
@@ -64,10 +54,7 @@ const FORMAT_CONFIG =
             "paused",
 
           label:
-            "Paused",
-
-          icon:
-            "ti ti-player-pause"
+            "Paused"
         },
 
         {
@@ -75,14 +62,10 @@ const FORMAT_CONFIG =
             "dropped",
 
           label:
-            "Dropped",
-
-          icon:
-            "ti ti-circle-minus"
+            "Dropped"
         }
       ]
     },
-
 
     anime: {
       label:
@@ -97,10 +80,7 @@ const FORMAT_CONFIG =
             "watching",
 
           label:
-            "Watching",
-
-          icon:
-            "ti ti-player-play"
+            "Watching"
         },
 
         {
@@ -108,10 +88,7 @@ const FORMAT_CONFIG =
             "completed",
 
           label:
-            "Completed",
-
-          icon:
-            "ti ti-circle-check"
+            "Completed"
         },
 
         {
@@ -119,10 +96,7 @@ const FORMAT_CONFIG =
             "plan-to-watch",
 
           label:
-            "Plan to watch",
-
-          icon:
-            "ti ti-clock-plus"
+            "Plan to watch"
         },
 
         {
@@ -130,10 +104,7 @@ const FORMAT_CONFIG =
             "paused",
 
           label:
-            "Paused",
-
-          icon:
-            "ti ti-player-pause"
+            "Paused"
         },
 
         {
@@ -141,10 +112,7 @@ const FORMAT_CONFIG =
             "dropped",
 
           label:
-            "Dropped",
-
-          icon:
-            "ti ti-circle-minus"
+            "Dropped"
         }
       ]
     }
@@ -157,16 +125,15 @@ export function createDetailLibraryController(
   const libraryBlock =
     elements
       .libraryPicker
-      .closest(
+      ?.closest(
         ".detail-library-block"
       );
 
 
-  const menuBackIcon =
-    elements
-      .libraryMenuBack
-      .querySelector(
-        "i"
+  const libraryTitle =
+    document
+      .getElementById(
+        "detail-library-title"
       );
 
 
@@ -180,14 +147,6 @@ export function createDetailLibraryController(
 
   let availableFormats =
     [];
-
-
-  let activeFormat =
-    "";
-
-
-  let currentScreen =
-    "summary";
 
 
   let hasBoundEvents =
@@ -210,6 +169,68 @@ export function createDetailLibraryController(
       true;
 
 
+    installDirectLibraryStyles();
+
+
+    prepareDirectLibraryInterface();
+
+
+    elements
+      .librarySummary
+      .addEventListener(
+        "change",
+        handleStatusChange
+      );
+  }
+
+
+  /* =======================================================
+     PREPARE THE COMPACT INTERFACE
+     ======================================================= */
+
+  function prepareDirectLibraryInterface() {
+    libraryBlock
+      ?.classList
+      .add(
+        "is-direct-library"
+      );
+
+
+    if (
+      libraryTitle
+    ) {
+      libraryTitle
+        .textContent =
+          "My status";
+    }
+
+
+    elements
+      .librarySummary
+      .hidden =
+        false;
+
+
+    /*
+     * The original trigger and menu remain in the HTML.
+     * This means detail-dom.js does not need to change.
+     *
+     * They are hidden because the new interface uses one
+     * direct selector for each available format.
+     */
+
+    elements
+      .libraryPicker
+      .hidden =
+        true;
+
+
+    elements
+      .libraryTrigger
+      .hidden =
+        true;
+
+
     elements
       .libraryMenu
       .hidden =
@@ -225,196 +246,11 @@ export function createDetailLibraryController(
 
 
     elements
-      .libraryTrigger
-      .addEventListener(
-        "click",
-        handleTriggerClick
-      );
-
-
-    elements
-      .libraryMenuBack
-      .addEventListener(
-        "click",
-        handleMenuBackClick
-      );
-
-
-    elements
       .librarySummary
-      .addEventListener(
-        "click",
-        handleSummaryClick
+      .setAttribute(
+        "aria-label",
+        "Library status by format"
       );
-
-
-    elements
-      .libraryMenu
-      .addEventListener(
-        "click",
-        (
-          event
-        ) => {
-          event.stopPropagation();
-        }
-      );
-
-
-    elements
-      .libraryMenu
-      .addEventListener(
-        "keydown",
-        handleMenuKeydown
-      );
-
-
-    document.addEventListener(
-      "click",
-      handleDocumentClick
-    );
-
-
-    document.addEventListener(
-      "keydown",
-      handleDocumentKeydown
-    );
-  }
-
-
-  function handleTriggerClick(
-    event
-  ) {
-    event.preventDefault();
-
-    event.stopPropagation();
-
-
-    if (
-      isEditorOpen()
-    ) {
-      closeEditor(
-        true
-      );
-
-      return;
-    }
-
-
-    openFormatEditor();
-  }
-
-
-  function handleMenuBackClick(
-    event
-  ) {
-    event.preventDefault();
-
-    event.stopPropagation();
-
-
-    if (
-      currentScreen ===
-      "statuses"
-    ) {
-      showFormatScreen(
-        true
-      );
-
-      return;
-    }
-
-
-    closeEditor(
-      true
-    );
-  }
-
-
-  function handleSummaryClick(
-    event
-  ) {
-    const button =
-      event
-        .target
-        .closest(
-          "[data-library-summary-format]"
-        );
-
-
-    if (
-      !button
-    ) {
-      return;
-    }
-
-
-    event.preventDefault();
-
-    event.stopPropagation();
-
-
-    const format =
-      button
-        .dataset
-        .librarySummaryFormat;
-
-
-    if (
-      !availableFormats
-        .includes(
-          format
-        )
-    ) {
-      return;
-    }
-
-
-    openStatusEditor(
-      format
-    );
-  }
-
-
-  function handleDocumentClick(
-    event
-  ) {
-    if (
-      !isEditorOpen()
-    ) {
-      return;
-    }
-
-
-    if (
-      libraryBlock &&
-      !libraryBlock
-        .contains(
-          event.target
-        )
-    ) {
-      closeEditor();
-    }
-  }
-
-
-  function handleDocumentKeydown(
-    event
-  ) {
-    if (
-      event.key !==
-        "Escape" ||
-      !isEditorOpen()
-    ) {
-      return;
-    }
-
-
-    event.preventDefault();
-
-
-    closeEditor(
-      true
-    );
   }
 
 
@@ -435,21 +271,25 @@ export function createDetailLibraryController(
           (
             format
           ) => {
-            return (
+            return Boolean(
               title
                 .media
                 ?.[
                   format
                 ]
-                ?.length > 0
+                ?.length
             );
           }
         );
 
 
+    const library =
+      readLibrary();
+
+
     currentEntry =
       normalizeStoredEntry(
-        readLibrary()[
+        library[
           title.id
         ],
 
@@ -459,64 +299,43 @@ export function createDetailLibraryController(
       );
 
 
-    activeFormat =
-      "";
-
-
-    currentScreen =
-      "summary";
-
-
-    closeEditor();
-
-
-    updateInterface();
+    renderInterface();
   }
 
 
   /* =======================================================
-     EDITOR OPEN AND CLOSE
+     STATUS CHANGE EVENT
      ======================================================= */
 
-  function isEditorOpen() {
-    return (
-      !elements
-        .libraryMenu
-        .hidden
-    );
-  }
+  function handleStatusChange(
+    event
+  ) {
+    const select =
+      event
+        .target
+        .closest(
+          "[data-library-status-select]"
+        );
 
 
-  function openFormatEditor() {
     if (
-      !currentTitle ||
-      !availableFormats
-        .length
+      !select
     ) {
       return;
     }
 
 
-    showFormatScreen(
-      false
-    );
+    const format =
+      select
+        .dataset
+        .libraryStatusSelect;
 
 
-    openEditor();
+    const status =
+      select.value;
 
 
-    window
-      .requestAnimationFrame(
-        focusFirstOption
-      );
-  }
-
-
-  function openStatusEditor(
-    format
-  ) {
     if (
-      !currentTitle ||
       !availableFormats
         .includes(
           format
@@ -526,545 +345,62 @@ export function createDetailLibraryController(
     }
 
 
-    showStatusScreen(
+    updateFormatStatus(
       format,
-      false
+      status,
+      select
     );
-
-
-    openEditor();
-
-
-    window
-      .requestAnimationFrame(
-        focusSelectedOrFirstStatus
-      );
   }
 
 
-  function openEditor() {
-    elements
-      .libraryMenu
-      .hidden =
-        false;
+  /* =======================================================
+     SAVE OR REMOVE A FORMAT
+     ======================================================= */
 
-
-    elements
-      .libraryMenu
-      .classList
-      .add(
-        "is-visible"
-      );
-
-
-    elements
-      .libraryPicker
-      .classList
-      .add(
-        "is-open"
-      );
-
-
-    libraryBlock
-      ?.classList
-      .add(
-        "is-library-editor-open"
-      );
-
-
-    elements
-      .libraryTrigger
-      .setAttribute(
-        "aria-expanded",
-        "true"
-      );
-  }
-
-
-  function closeEditor(
-    returnFocus =
-      false
+  function updateFormatStatus(
+    format,
+    status,
+    changedSelect
   ) {
-    currentScreen =
-      "summary";
+    if (
+      !currentTitle
+    ) {
+      return;
+    }
 
 
-    activeFormat =
-      "";
+    if (
+      status &&
+      !getValidStatus(
+        format,
+        status
+      )
+    ) {
+      renderInterface();
 
 
-    elements
-      .libraryMenu
-      .hidden =
+      setLibraryNote(
+        "That library status is not available."
+      );
+
+
+      return;
+    }
+
+
+    changedSelect
+      .disabled =
         true;
 
 
-    elements
-      .libraryMenu
-      .classList
-      .remove(
-        "is-visible"
-      );
-
-
-    elements
-      .libraryPicker
-      .classList
-      .remove(
-        "is-open"
-      );
-
-
-    libraryBlock
+    changedSelect
+      .closest(
+        ".detail-library-direct-row"
+      )
       ?.classList
-      .remove(
-        "is-library-editor-open"
+      .add(
+        "is-saving"
       );
-
-
-    elements
-      .libraryTrigger
-      .setAttribute(
-        "aria-expanded",
-        "false"
-      );
-
-
-    if (
-      returnFocus
-    ) {
-      elements
-        .libraryTrigger
-        .focus();
-    }
-  }
-
-
-  /* =======================================================
-     FORMAT SCREEN
-     ======================================================= */
-
-  function showFormatScreen(
-    moveFocus =
-      false
-  ) {
-    currentScreen =
-      "formats";
-
-
-    activeFormat =
-      "";
-
-
-    elements
-      .libraryMenu
-      .dataset
-      .screen =
-        "formats";
-
-
-    elements
-      .libraryMenuBack
-      .hidden =
-        false;
-
-
-    elements
-      .libraryMenuBack
-      .setAttribute(
-        "aria-label",
-        "Close library editor"
-      );
-
-
-    if (
-      menuBackIcon
-    ) {
-      menuBackIcon.className =
-        "ti ti-x";
-    }
-
-
-    elements
-      .libraryMenuEyebrow
-      .textContent =
-        "Choose a format";
-
-
-    elements
-      .libraryMenuTitle
-      .textContent =
-        "What are you tracking?";
-
-
-    elements
-      .libraryOptions
-      .replaceChildren();
-
-
-    availableFormats
-      .forEach(
-        (
-          format
-        ) => {
-          const formatConfig =
-            FORMAT_CONFIG[
-              format
-            ];
-
-
-          const savedStatus =
-            currentEntry
-              .formats[
-                format
-              ]
-              ?.status ||
-            "";
-
-
-          const savedStatusConfig =
-            getStatusConfig(
-              format,
-              savedStatus
-            );
-
-
-          const button =
-            createMenuButton({
-              icon:
-                formatConfig.icon,
-
-              label:
-                formatConfig.label,
-
-              meta:
-                savedStatusConfig
-                  ?.label ||
-                "Not tracked",
-
-              selected:
-                Boolean(
-                  savedStatus
-                ),
-
-              trailingIcon:
-                "ti ti-chevron-right"
-            });
-
-
-          button
-            .dataset
-            .libraryFormat =
-              format;
-
-
-          button.addEventListener(
-            "click",
-            (
-              event
-            ) => {
-              event.preventDefault();
-
-              event.stopPropagation();
-
-
-              showStatusScreen(
-                format,
-                true
-              );
-            }
-          );
-
-
-          elements
-            .libraryOptions
-            .append(
-              button
-            );
-        }
-      );
-
-
-    if (
-      moveFocus
-    ) {
-      window
-        .requestAnimationFrame(
-          focusFirstOption
-        );
-    }
-  }
-
-
-  /* =======================================================
-     STATUS SCREEN
-     ======================================================= */
-
-  function showStatusScreen(
-    format,
-    moveFocus =
-      true
-  ) {
-    if (
-      !availableFormats
-        .includes(
-          format
-        )
-    ) {
-      return;
-    }
-
-
-    const formatConfig =
-      FORMAT_CONFIG[
-        format
-      ];
-
-
-    if (
-      !formatConfig
-    ) {
-      return;
-    }
-
-
-    currentScreen =
-      "statuses";
-
-
-    activeFormat =
-      format;
-
-
-    elements
-      .libraryMenu
-      .dataset
-      .screen =
-        "statuses";
-
-
-    const savedStatus =
-      currentEntry
-        .formats[
-          format
-        ]
-        ?.status ||
-      "";
-
-
-    elements
-      .libraryMenuBack
-      .hidden =
-        false;
-
-
-    elements
-      .libraryMenuBack
-      .setAttribute(
-        "aria-label",
-        "Back to formats"
-      );
-
-
-    if (
-      menuBackIcon
-    ) {
-      menuBackIcon.className =
-        "ti ti-arrow-left";
-    }
-
-
-    elements
-      .libraryMenuEyebrow
-      .textContent =
-        formatConfig.label;
-
-
-    elements
-      .libraryMenuTitle
-      .textContent =
-        format ===
-          "anime"
-          ? "Choose your anime status"
-          : "Choose your manga status";
-
-
-    elements
-      .libraryOptions
-      .replaceChildren();
-
-
-    formatConfig
-      .statuses
-      .forEach(
-        (
-          status
-        ) => {
-          const selected =
-            savedStatus ===
-            status.id;
-
-
-          const button =
-            createMenuButton({
-              icon:
-                status.icon,
-
-              label:
-                status.label,
-
-              selected,
-
-              trailingText:
-                selected
-                  ? "✓"
-                  : ""
-            });
-
-
-          button
-            .dataset
-            .libraryStatus =
-              status.id;
-
-
-          button.setAttribute(
-            "role",
-            "menuitemradio"
-          );
-
-
-          button.setAttribute(
-            "aria-checked",
-            String(
-              selected
-            )
-          );
-
-
-          button.addEventListener(
-            "click",
-            (
-              event
-            ) => {
-              event.preventDefault();
-
-              event.stopPropagation();
-
-
-              saveFormatStatus(
-                format,
-                status.id
-              );
-            }
-          );
-
-
-          elements
-            .libraryOptions
-            .append(
-              button
-            );
-        }
-      );
-
-
-    if (
-      savedStatus
-    ) {
-      elements
-        .libraryOptions
-        .append(
-          createMenuDivider()
-        );
-
-
-      const removeButton =
-        createMenuButton({
-          icon:
-            "ti ti-trash",
-
-          label:
-            `Remove ${
-              formatConfig.label
-            }`,
-
-          danger:
-            true
-        });
-
-
-      removeButton
-        .classList
-        .add(
-          "detail-library-option-remove"
-        );
-
-
-      removeButton.addEventListener(
-        "click",
-        (
-          event
-        ) => {
-          event.preventDefault();
-
-          event.stopPropagation();
-
-
-          removeFormat(
-            format
-          );
-        }
-      );
-
-
-      elements
-        .libraryOptions
-        .append(
-          removeButton
-        );
-    }
-
-
-    if (
-      moveFocus
-    ) {
-      window
-        .requestAnimationFrame(
-          focusSelectedOrFirstStatus
-        );
-    }
-  }
-
-
-  /* =======================================================
-     SAVE ONE FORMAT
-     ======================================================= */
-
-  function saveFormatStatus(
-    format,
-    status
-  ) {
-    const formatConfig =
-      FORMAT_CONFIG[
-        format
-      ];
-
-
-    const statusConfig =
-      getStatusConfig(
-        format,
-        status
-      );
-
-
-    if (
-      !currentTitle ||
-      !formatConfig ||
-      !statusConfig
-    ) {
-      return;
-    }
 
 
     const library =
@@ -1088,116 +424,28 @@ export function createDetailLibraryController(
         .toISOString();
 
 
-    entry
-      .formats[
-        format
-      ] = {
-        status,
+    if (
+      status
+    ) {
+      entry
+        .formats[
+          format
+        ] = {
+          status,
 
-        updatedAt:
-          currentTime
-      };
+          updatedAt:
+            currentTime
+        };
+    } else {
+      delete entry
+        .formats[
+          format
+        ];
+    }
 
 
     entry.updatedAt =
       currentTime;
-
-
-    library[
-      currentTitle.id
-    ] =
-      entry;
-
-
-    if (
-      !writeLibrary(
-        library
-      )
-    ) {
-      elements
-        .libraryNote
-        .textContent =
-          "This browser could not save your library change.";
-
-
-      return;
-    }
-
-
-    currentEntry =
-      entry;
-
-
-    updateInterface();
-
-
-    elements
-      .libraryNote
-      .textContent =
-        `${
-          formatConfig.label
-        } · ${
-          statusConfig.label
-        } saved.`;
-
-
-    closeEditor();
-
-
-    window
-      .requestAnimationFrame(
-        () => {
-          focusSummaryButton(
-            format
-          );
-        }
-      );
-  }
-
-
-  /* =======================================================
-     REMOVE ONE FORMAT
-     ======================================================= */
-
-  function removeFormat(
-    format
-  ) {
-    if (
-      !currentTitle ||
-      !currentEntry
-        .formats[
-          format
-        ]
-    ) {
-      return;
-    }
-
-
-    const library =
-      readLibrary();
-
-
-    const entry =
-      normalizeStoredEntry(
-        library[
-          currentTitle.id
-        ],
-
-        currentTitle,
-
-        availableFormats
-      );
-
-
-    delete entry
-      .formats[
-        format
-      ];
-
-
-    entry.updatedAt =
-      new Date()
-        .toISOString();
 
 
     if (
@@ -1223,10 +471,17 @@ export function createDetailLibraryController(
         library
       )
     ) {
-      elements
-        .libraryNote
-        .textContent =
-          "This browser could not update your library.";
+      renderInterface();
+
+
+      setLibraryNote(
+        "This browser could not save your library change."
+      );
+
+
+      focusFormatSelect(
+        format
+      );
 
 
       return;
@@ -1245,79 +500,121 @@ export function createDetailLibraryController(
       );
 
 
-    updateInterface();
+    renderInterface();
 
 
-    elements
-      .libraryNote
-      .textContent =
-        `${
-          FORMAT_CONFIG[
-            format
-          ].label
-        } removed from your library.`;
+    const formatLabel =
+      FORMAT_CONFIG[
+        format
+      ]
+        .label;
 
 
-    closeEditor();
+    const statusLabel =
+      getStatusConfig(
+        format,
+        status
+      )
+        ?.label;
 
 
-    window
-      .requestAnimationFrame(
-        () => {
-          focusSummaryButton(
-            format
-          );
-        }
+    if (
+      statusLabel
+    ) {
+      setLibraryNote(
+        `${formatLabel} set to ${statusLabel}.`
       );
+    } else {
+      setLibraryNote(
+        `${formatLabel} removed from your library.`
+      );
+    }
+
+
+    focusFormatSelect(
+      format
+    );
   }
 
 
   /* =======================================================
-     UPDATE SUMMARY INTERFACE
+     RENDER THE WHOLE LIBRARY CARD
      ======================================================= */
 
-  function updateInterface() {
+  function renderInterface() {
     elements
       .librarySummary
       .replaceChildren();
 
 
+    elements
+      .librarySummary
+      .hidden =
+        false;
+
+
     if (
-      !availableFormats
-        .length
+      !currentTitle
     ) {
-      renderUnavailableSummary();
+      renderEmptyState(
+        "Open a title to manage its library status."
+      );
 
 
-      elements
-        .libraryTrigger
-        .disabled =
-          true;
-
-
-      elements
-        .libraryTriggerLabel
-        .textContent =
-          "No trackable formats";
-
-
-      elements
-        .libraryTriggerIcon
-        .className =
-          "ti ti-ban";
-
-
-      elements
-        .libraryNote
-        .textContent =
-          "This title has no Manga or Anime record to track.";
+      setLibraryNote(
+        ""
+      );
 
 
       return;
     }
 
 
-    const trackedFormats =
+    if (
+      !availableFormats
+        .length
+    ) {
+      renderEmptyState(
+        "This title has no Manga or Anime format available to save."
+      );
+
+
+      setLibraryNote(
+        "No trackable format is available for this title."
+      );
+
+
+      return;
+    }
+
+
+    const fragment =
+      document
+        .createDocumentFragment();
+
+
+    availableFormats
+      .forEach(
+        (
+          format
+        ) => {
+          fragment.append(
+            createFormatRow(
+              format
+            )
+          );
+        }
+      );
+
+
+    elements
+      .librarySummary
+      .append(
+        fragment
+      );
+
+
+    const trackedCount =
       availableFormats
         .filter(
           (
@@ -1331,103 +628,51 @@ export function createDetailLibraryController(
                 ?.status
             );
           }
-        );
+        )
+        .length;
 
 
-    availableFormats
-      .forEach(
-        (
-          format
-        ) => {
-          elements
-            .librarySummary
-            .append(
-              createSummaryButton(
-                format
-              )
-            );
-        }
+    if (
+      trackedCount ===
+      0
+    ) {
+      setLibraryNote(
+        availableFormats.length > 1
+          ? "Manga and Anime can be saved separately."
+          : "Choose a status to save this format."
       );
 
 
-    elements
-      .librarySummary
-      .hidden =
-        false;
-
-
-    elements
-      .libraryTrigger
-      .disabled =
-        false;
-
-
-    if (
-      trackedFormats
-        .length
-    ) {
-      elements
-        .libraryTriggerIcon
-        .className =
-          "ti ti-adjustments-horizontal";
-
-
-      elements
-        .libraryTriggerLabel
-        .textContent =
-          "Manage formats";
-    } else {
-      elements
-        .libraryTriggerIcon
-        .className =
-          "ti ti-plus";
-
-
-      elements
-        .libraryTriggerLabel
-        .textContent =
-          "Add to library";
+      return;
     }
 
 
     if (
-      trackedFormats
-        .length === 0
+      trackedCount <
+      availableFormats.length
     ) {
-      elements
-        .libraryNote
-        .textContent =
-          availableFormats.length > 1
-            ? "Manga and Anime can be saved separately."
-            : `${
-                FORMAT_CONFIG[
-                  availableFormats[
-                    0
-                  ]
-                ].label
-              } can be saved to your library.`;
-    } else if (
-      trackedFormats
-        .length <
-      availableFormats
-        .length
-    ) {
-      elements
-        .libraryNote
-        .textContent =
-          "Select a format row to update it or add the other format.";
-    } else {
-      elements
-        .libraryNote
-        .textContent =
-          availableFormats.length > 1
-            ? "Manga and Anime are tracked separately."
-            : "Select the format row to update its status.";
+      setLibraryNote(
+        "Each format keeps its own library status."
+      );
+
+
+      return;
     }
+
+
+    setLibraryNote(
+      availableFormats.length > 1
+        ? "Manga and Anime are saved separately."
+        : "Change the selector whenever your status changes."
+    );
   }
 
 
-  function createSummaryButton(
+  /* =======================================================
+     CREATE ONE FORMAT ROW
+     ======================================================= */
+
+  function createFormatRow(
     format
   ) {
     const formatConfig =
@@ -1445,78 +690,49 @@ export function createDetailLibraryController(
       "";
 
 
-    const statusConfig =
+    const savedStatusConfig =
       getStatusConfig(
         format,
         savedStatus
       );
 
 
-    const tracked =
-      Boolean(
-        statusConfig
-      );
+    const row =
+      document
+        .createElement(
+          "div"
+        );
 
 
-    const button =
-      document.createElement(
-        "button"
-      );
+    row.className =
+      "detail-library-direct-row";
 
 
-    button.type =
-      "button";
-
-
-    button.className =
-      "detail-library-summary-item";
-
-
-    button
-      .classList
-      .toggle(
-        "is-tracked",
-        tracked
-      );
-
-
-    button
-      .classList
-      .toggle(
-        "is-untracked",
-        !tracked
-      );
-
-
-    button
+    row
       .dataset
-      .librarySummaryFormat =
+      .format =
         format;
 
 
-    button.setAttribute(
-      "aria-label",
-
-      tracked
-        ? `Manage ${
-            formatConfig.label
-          }: ${
-            statusConfig.label
-          }`
-        : `Add ${
-            formatConfig.label
-          } to your library`
-    );
+    row
+      .dataset
+      .tracked =
+        String(
+          Boolean(
+            savedStatus
+          )
+        );
 
 
     const icon =
-      document.createElement(
-        "i"
-      );
+      document
+        .createElement(
+          "span"
+        );
 
 
     icon.className =
-      formatConfig.icon;
+      "detail-library-direct-icon";
 
 
     icon.setAttribute(
@@ -1525,95 +741,213 @@ export function createDetailLibraryController(
     );
 
 
+    const iconElement =
+      document
+        .createElement(
+          "i"
+        );
+
+
+    iconElement.className =
+      formatConfig.icon;
+
+
+    icon.append(
+      iconElement
+    );
+
+
     const copy =
-      document.createElement(
-        "span"
-      );
+      document
+        .createElement(
+          "div"
+        );
 
 
     copy.className =
-      "detail-library-summary-copy";
+      "detail-library-direct-copy";
 
 
     const label =
-      document.createElement(
-        "strong"
-      );
+      document
+        .createElement(
+          "strong"
+        );
 
 
     label.textContent =
       formatConfig.label;
 
 
-    const status =
-      document.createElement(
-        "small"
-      );
+    const meta =
+      document
+        .createElement(
+          "small"
+        );
 
 
-    status.textContent =
-      statusConfig
-        ?.label ||
-      "Not tracked";
+    meta.textContent =
+      savedStatusConfig
+        ? savedStatusConfig.label
+        : "Not tracked";
 
 
     copy.append(
       label,
-      status
+      meta
     );
 
 
-    const arrow =
-      document.createElement(
-        "i"
+    const control =
+      document
+        .createElement(
+          "div"
+        );
+
+
+    control.className =
+      "detail-library-direct-control";
+
+
+    const select =
+      document
+        .createElement(
+          "select"
+        );
+
+
+    select.className =
+      "detail-library-direct-select";
+
+
+    select
+      .dataset
+      .libraryStatusSelect =
+        format;
+
+
+    select.setAttribute(
+      "aria-label",
+      `${formatConfig.label} library status`
+    );
+
+
+    select.append(
+      createSelectOption(
+        "",
+        "Not tracked"
+      )
+    );
+
+
+    formatConfig
+      .statuses
+      .forEach(
+        (
+          status
+        ) => {
+          select.append(
+            createSelectOption(
+              status.id,
+              status.label
+            )
+          );
+        }
       );
 
 
-    arrow.className =
-      "ti ti-chevron-right";
+    select.value =
+      savedStatus;
 
 
-    arrow.setAttribute(
+    const chevron =
+      document
+        .createElement(
+          "i"
+        );
+
+
+    chevron.className =
+      "ti ti-chevron-down detail-library-direct-chevron";
+
+
+    chevron.setAttribute(
       "aria-hidden",
       "true"
     );
 
 
-    button.append(
-      icon,
-      copy,
-      arrow
+    control.append(
+      select,
+      chevron
     );
 
 
-    return button;
+    row.append(
+      icon,
+      copy,
+      control
+    );
+
+
+    return row;
   }
 
 
-  function renderUnavailableSummary() {
-    elements
-      .librarySummary
-      .replaceChildren();
+  /* =======================================================
+     CREATE A SELECT OPTION
+     ======================================================= */
+
+  function createSelectOption(
+    value,
+    label
+  ) {
+    const option =
+      document
+        .createElement(
+          "option"
+        );
 
 
-    const message =
-      document.createElement(
-        "div"
-      );
+    option.value =
+      value;
 
 
-    message.className =
-      "detail-library-summary-unavailable";
+    option.textContent =
+      label;
+
+
+    return option;
+  }
+
+
+  /* =======================================================
+     EMPTY STATE
+     ======================================================= */
+
+  function renderEmptyState(
+    message
+  ) {
+    const emptyState =
+      document
+        .createElement(
+          "div"
+        );
+
+
+    emptyState.className =
+      "detail-library-direct-empty";
 
 
     const icon =
-      document.createElement(
-        "i"
-      );
+      document
+        .createElement(
+          "i"
+        );
 
 
     icon.className =
-      "ti ti-ban";
+      "ti ti-book-off";
 
 
     icon.setAttribute(
@@ -1622,431 +956,63 @@ export function createDetailLibraryController(
     );
 
 
-    const text =
-      document.createElement(
-        "span"
-      );
+    const copy =
+      document
+        .createElement(
+          "span"
+        );
 
 
-    text.textContent =
-      "No Manga or Anime information is available.";
+    copy.textContent =
+      message;
 
 
-    message.append(
+    emptyState.append(
       icon,
-      text
+      copy
     );
 
 
     elements
       .librarySummary
       .append(
-        message
+        emptyState
       );
-
-
-    elements
-      .librarySummary
-      .hidden =
-        false;
   }
 
 
   /* =======================================================
-     CREATE MENU ELEMENTS
+     STATUS MESSAGE
      ======================================================= */
 
-  function createMenuButton({
-    icon,
-    label,
-    meta =
-      "",
-    selected =
-      false,
-    trailingText =
-      "",
-    trailingIcon =
-      "",
-    danger =
-      false
-  }) {
-    const button =
-      document.createElement(
-        "button"
-      );
-
-
-    button.type =
-      "button";
-
-
-    button.className =
-      "detail-library-option";
-
-
-    button.setAttribute(
-      "role",
-      "menuitem"
-    );
-
-
-    if (
-      selected
-    ) {
-      button
-        .classList
-        .add(
-          "is-selected"
-        );
-    }
-
-
-    if (
-      danger
-    ) {
-      button
-        .classList
-        .add(
-          "is-danger"
-        );
-    }
-
-
-    const iconElement =
-      document.createElement(
-        "i"
-      );
-
-
-    iconElement.className =
-      icon;
-
-
-    iconElement.setAttribute(
-      "aria-hidden",
-      "true"
-    );
-
-
-    const copy =
-      document.createElement(
-        "span"
-      );
-
-
-    copy.className =
-      "detail-library-option-copy";
-
-
-    const labelElement =
-      document.createElement(
-        "strong"
-      );
-
-
-    labelElement.textContent =
-      label;
-
-
-    copy.append(
-      labelElement
-    );
-
-
-    if (
-      meta
-    ) {
-      const metaElement =
-        document.createElement(
-          "small"
-        );
-
-
-      metaElement.textContent =
-        meta;
-
-
-      copy.append(
-        metaElement
-      );
-    }
-
-
-    const trailing =
-      document.createElement(
-        "span"
-      );
-
-
-    trailing.className =
-      "detail-library-option-trailing";
-
-
-    trailing.setAttribute(
-      "aria-hidden",
-      "true"
-    );
-
-
-    if (
-      trailingIcon
-    ) {
-      const trailingIconElement =
-        document.createElement(
-          "i"
-        );
-
-
-      trailingIconElement.className =
-        trailingIcon;
-
-
-      trailing.append(
-        trailingIconElement
-      );
-    } else {
-      trailing.textContent =
-        trailingText;
-    }
-
-
-    button.append(
-      iconElement,
-      copy,
-      trailing
-    );
-
-
-    return button;
-  }
-
-
-  function createMenuDivider() {
-    const divider =
-      document.createElement(
-        "div"
-      );
-
-
-    divider.className =
-      "detail-library-menu-divider";
-
-
-    divider.setAttribute(
-      "role",
-      "separator"
-    );
-
-
-    return divider;
-  }
-
-
-  /* =======================================================
-     STATUS HELPERS
-     ======================================================= */
-
-  function getStatusConfig(
-    format,
-    status
+  function setLibraryNote(
+    message
   ) {
-    return (
-      FORMAT_CONFIG[
-        format
-      ]
-        ?.statuses
-        .find(
-          (
-            item
-          ) => {
-            return (
-              item.id ===
-              status
-            );
-          }
-        ) ||
-      null
-    );
+    elements
+      .libraryNote
+      .textContent =
+        message;
   }
 
 
   /* =======================================================
-     FOCUS AND KEYBOARD
+     RETURN FOCUS AFTER SAVING
      ======================================================= */
 
-  function getMenuButtons() {
-    return [
-      ...elements
-        .libraryMenu
-        .querySelectorAll(
-          "button:not([hidden]):not(:disabled)"
-        )
-    ];
-  }
-
-
-  function focusFirstOption() {
-    elements
-      .libraryOptions
-      .querySelector(
-        "button:not(:disabled)"
-      )
-      ?.focus();
-  }
-
-
-  function focusSelectedOrFirstStatus() {
-    const selected =
-      elements
-        .libraryOptions
-        .querySelector(
-          '[aria-checked="true"]'
-        );
-
-
-    const first =
-      elements
-        .libraryOptions
-        .querySelector(
-          "button:not(:disabled)"
-        );
-
-
-    (
-      selected ||
-      first
-    )
-      ?.focus();
-  }
-
-
-  function focusSummaryButton(
+  function focusFormatSelect(
     format
   ) {
-    elements
-      .librarySummary
-      .querySelector(
-        `[data-library-summary-format="${format}"]`
-      )
-      ?.focus();
-  }
-
-
-  function handleMenuKeydown(
-    event
-  ) {
-    const buttons =
-      getMenuButtons();
-
-
-    if (
-      !buttons.length
-    ) {
-      return;
-    }
-
-
-    const currentIndex =
-      buttons.indexOf(
-        document
-          .activeElement
+    window
+      .requestAnimationFrame(
+        () => {
+          elements
+            .librarySummary
+            .querySelector(
+              `[data-library-status-select="${format}"]`
+            )
+            ?.focus();
+        }
       );
-
-
-    if (
-      event.key ===
-      "Escape"
-    ) {
-      event.preventDefault();
-
-
-      closeEditor(
-        true
-      );
-
-
-      return;
-    }
-
-
-    if (
-      event.key ===
-        "ArrowLeft" &&
-      currentScreen ===
-        "statuses"
-    ) {
-      event.preventDefault();
-
-
-      showFormatScreen(
-        true
-      );
-
-
-      return;
-    }
-
-
-    let nextIndex =
-      null;
-
-
-    if (
-      event.key ===
-      "ArrowDown"
-    ) {
-      nextIndex =
-        currentIndex < 0
-          ? 0
-          : (
-              currentIndex +
-              1
-            ) %
-            buttons.length;
-    } else if (
-      event.key ===
-      "ArrowUp"
-    ) {
-      nextIndex =
-        currentIndex < 0
-          ? buttons.length -
-            1
-          : (
-              currentIndex -
-              1 +
-              buttons.length
-            ) %
-            buttons.length;
-    } else if (
-      event.key ===
-      "Home"
-    ) {
-      nextIndex =
-        0;
-    } else if (
-      event.key ===
-      "End"
-    ) {
-      nextIndex =
-        buttons.length -
-        1;
-    }
-
-
-    if (
-      nextIndex == null
-    ) {
-      return;
-    }
-
-
-    event.preventDefault();
-
-
-    buttons[
-      nextIndex
-    ]
-      ?.focus();
   }
 
 
@@ -2054,6 +1020,41 @@ export function createDetailLibraryController(
     bindEvents,
     setTitle
   };
+}
+
+
+/* =========================================================
+   FIND A STATUS CONFIGURATION
+   ========================================================= */
+
+function getStatusConfig(
+  format,
+  status
+) {
+  if (
+    !status
+  ) {
+    return null;
+  }
+
+
+  return (
+    FORMAT_CONFIG[
+      format
+    ]
+      ?.statuses
+      .find(
+        (
+          item
+        ) => {
+          return (
+            item.id ===
+            status
+          );
+        }
+      ) ||
+    null
+  );
 }
 
 
@@ -2188,22 +1189,28 @@ function getValidStatus(
   format,
   status
 ) {
-  return FORMAT_CONFIG[
-    format
-  ]
-    ?.statuses
-    .some(
-      (
-        item
-      ) => {
-        return (
-          item.id ===
-          status
-        );
-      }
-    );
+  return Boolean(
+    FORMAT_CONFIG[
+      format
+    ]
+      ?.statuses
+      .some(
+        (
+          item
+        ) => {
+          return (
+            item.id ===
+            status
+          );
+        }
+      )
+  );
 }
 
+
+/* =========================================================
+   MIGRATE AN OLDER SINGLE STATUS
+   ========================================================= */
 
 function migrateLegacyStatus(
   format,
@@ -2268,7 +1275,7 @@ function migrateLegacyStatus(
 
 
 /* =========================================================
-   LOCAL STORAGE
+   READ LOCAL STORAGE
    ========================================================= */
 
 function readLibrary() {
@@ -2283,16 +1290,19 @@ function readLibrary() {
       );
 
 
-    return (
-      parsedValue &&
-      typeof parsedValue ===
-        "object" &&
-      !Array.isArray(
+    if (
+      !parsedValue ||
+      typeof parsedValue !==
+        "object" ||
+      Array.isArray(
         parsedValue
       )
-    )
-      ? parsedValue
-      : {};
+    ) {
+      return {};
+    }
+
+
+    return parsedValue;
   } catch (
     error
   ) {
@@ -2306,6 +1316,10 @@ function readLibrary() {
   }
 }
 
+
+/* =========================================================
+   WRITE LOCAL STORAGE
+   ========================================================= */
 
 function writeLibrary(
   library
@@ -2333,4 +1347,448 @@ function writeLibrary(
 
     return false;
   }
+}
+
+
+/* =========================================================
+   INSTALL THE NEW LIBRARY CARD STYLES
+   ========================================================= */
+
+function installDirectLibraryStyles() {
+  if (
+    document
+      .getElementById(
+        STYLE_ELEMENT_ID
+      )
+  ) {
+    return;
+  }
+
+
+  const style =
+    document
+      .createElement(
+        "style"
+      );
+
+
+  style.id =
+    STYLE_ELEMENT_ID;
+
+
+  style.textContent = `
+    .detail-library-block.is-direct-library {
+      height: auto !important;
+      min-height: 0 !important;
+      max-height: none !important;
+
+      padding: 1.05rem !important;
+
+      display: grid !important;
+
+      grid-template-rows:
+        auto
+        auto
+        auto !important;
+
+      row-gap: 0.82rem !important;
+
+      overflow: visible !important;
+    }
+
+
+    .detail-library-block.is-direct-library
+    .detail-library-heading {
+      grid-row: 1;
+    }
+
+
+    .detail-library-block.is-direct-library
+    .detail-library-heading h2 {
+      font-size: 1.12rem;
+    }
+
+
+    .detail-library-block.is-direct-library
+    .detail-library-summary {
+      position: static !important;
+
+      z-index: auto !important;
+
+      grid-row: 2 !important;
+
+      grid-column: 1 !important;
+
+      align-self: stretch !important;
+
+      min-width: 0;
+
+      display: grid !important;
+
+      gap: 0.52rem !important;
+
+      padding: 0 !important;
+
+      opacity: 1 !important;
+
+      visibility: visible !important;
+
+      pointer-events: auto !important;
+    }
+
+
+    .detail-library-block.is-direct-library
+    .detail-library-picker {
+      display: none !important;
+    }
+
+
+    .detail-library-block.is-direct-library
+    .detail-library-note {
+      position: static !important;
+
+      grid-row: 3 !important;
+
+      left: auto !important;
+
+      right: auto !important;
+
+      bottom: auto !important;
+
+      min-height: 1.35em;
+
+      overflow: visible !important;
+
+      color: #7f8ba7;
+
+      font-size: 0.64rem;
+
+      line-height: 1.45;
+
+      text-overflow: clip !important;
+
+      white-space: normal !important;
+    }
+
+
+    .detail-library-direct-row {
+      min-height: 58px;
+
+      display: grid;
+
+      grid-template-columns:
+        32px
+        minmax(0, 1fr)
+        auto;
+
+      align-items: center;
+
+      gap: 0.62rem;
+
+      padding:
+        0.52rem
+        0.56rem;
+
+      background:
+        linear-gradient(
+          145deg,
+          rgba(255, 255, 255, 0.045),
+          rgba(255, 255, 255, 0.018)
+        );
+
+      border:
+        1px solid
+        rgba(187, 196, 255, 0.12);
+
+      border-radius: 11px;
+
+      transition:
+        background 160ms ease,
+        border-color 160ms ease,
+        opacity 160ms ease;
+    }
+
+
+    .detail-library-direct-row:hover,
+    .detail-library-direct-row:focus-within {
+      background:
+        linear-gradient(
+          145deg,
+          rgba(124, 140, 255, 0.11),
+          rgba(116, 215, 255, 0.025)
+        );
+
+      border-color:
+        rgba(187, 196, 255, 0.25);
+    }
+
+
+    .detail-library-direct-row[data-tracked="true"] {
+      border-color:
+        rgba(124, 140, 255, 0.24);
+    }
+
+
+    .detail-library-direct-row.is-saving {
+      opacity: 0.66;
+    }
+
+
+    .detail-library-direct-icon {
+      width: 32px;
+
+      height: 32px;
+
+      display: inline-flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      color: #bfc8ff;
+
+      background:
+        rgba(124, 140, 255, 0.1);
+
+      border:
+        1px solid
+        rgba(187, 196, 255, 0.13);
+
+      border-radius: 9px;
+
+      font-size: 0.9rem;
+    }
+
+
+    .detail-library-direct-copy {
+      min-width: 0;
+
+      display: grid;
+
+      gap: 0.15rem;
+    }
+
+
+    .detail-library-direct-copy strong {
+      overflow: hidden;
+
+      color: #e5e9f7;
+
+      font-size: 0.72rem;
+
+      font-weight: 740;
+
+      line-height: 1.2;
+
+      text-overflow: ellipsis;
+
+      white-space: nowrap;
+    }
+
+
+    .detail-library-direct-copy small {
+      overflow: hidden;
+
+      color: #7f8aa4;
+
+      font-size: 0.6rem;
+
+      font-weight: 620;
+
+      line-height: 1.2;
+
+      text-overflow: ellipsis;
+
+      white-space: nowrap;
+    }
+
+
+    .detail-library-direct-row[data-tracked="true"]
+    .detail-library-direct-copy small {
+      color: #aeb8d1;
+    }
+
+
+    .detail-library-direct-control {
+      position: relative;
+
+      width: 126px;
+
+      min-width: 0;
+    }
+
+
+    .detail-library-direct-select {
+      width: 100%;
+
+      min-height: 42px;
+
+      appearance: none;
+
+      -webkit-appearance: none;
+
+      padding:
+        0.56rem
+        1.85rem
+        0.56rem
+        0.68rem;
+
+      color: #e7ebfb;
+
+      background:
+        linear-gradient(
+          180deg,
+          rgba(124, 140, 255, 0.13),
+          rgba(124, 140, 255, 0.065)
+        );
+
+      border:
+        1px solid
+        rgba(187, 196, 255, 0.18);
+
+      border-radius: 9px;
+
+      outline: none;
+
+      font-family:
+        var(
+          --font-body,
+          system-ui,
+          sans-serif
+        );
+
+      font-size: 0.65rem;
+
+      font-weight: 690;
+
+      line-height: 1.2;
+
+      cursor: pointer;
+
+      transition:
+        background 150ms ease,
+        border-color 150ms ease,
+        box-shadow 150ms ease;
+    }
+
+
+    .detail-library-direct-select:hover {
+      background:
+        linear-gradient(
+          180deg,
+          rgba(124, 140, 255, 0.19),
+          rgba(124, 140, 255, 0.085)
+        );
+
+      border-color:
+        rgba(187, 196, 255, 0.3);
+    }
+
+
+    .detail-library-direct-select:focus-visible {
+      border-color:
+        rgba(116, 215, 255, 0.68);
+
+      box-shadow:
+        0 0 0 3px
+        rgba(116, 215, 255, 0.12),
+
+        0 8px 22px
+        rgba(0, 0, 0, 0.2);
+    }
+
+
+    .detail-library-direct-select:disabled {
+      cursor: wait;
+    }
+
+
+    .detail-library-direct-select option {
+      color: #eef1ff;
+
+      background: #10172d;
+    }
+
+
+    .detail-library-direct-chevron {
+      position: absolute;
+
+      top: 50%;
+
+      right: 0.62rem;
+
+      transform:
+        translateY(-50%);
+
+      color: #8f9ab5;
+
+      font-size: 0.73rem;
+
+      pointer-events: none;
+    }
+
+
+    .detail-library-direct-empty {
+      min-height: 82px;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      gap: 0.6rem;
+
+      padding: 0.9rem;
+
+      color: #7e89a3;
+
+      background:
+        rgba(255, 255, 255, 0.02);
+
+      border:
+        1px dashed
+        rgba(187, 196, 255, 0.14);
+
+      border-radius: 11px;
+
+      font-size: 0.66rem;
+
+      line-height: 1.5;
+
+      text-align: center;
+    }
+
+
+    @media (max-width: 390px) {
+      .detail-library-direct-row {
+        grid-template-columns:
+          32px
+          minmax(0, 1fr);
+      }
+
+
+      .detail-library-direct-control {
+        grid-column: 2;
+
+        width: 100%;
+      }
+    }
+
+
+    @media (prefers-reduced-motion: reduce) {
+      .detail-library-direct-row,
+      .detail-library-direct-select {
+        transition:
+          none !important;
+      }
+    }
+  `;
+
+
+  document
+    .head
+    .append(
+      style
+    );
 }
