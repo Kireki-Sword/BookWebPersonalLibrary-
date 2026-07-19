@@ -1,52 +1,147 @@
 // detail-library.js
-// Stores one format-neutral library status for the whole story.
-// The menu stays anchored to the library control without
-// changing the hero's size.
+// Tracks Manga and Anime separately for the same overall story.
 
 const STORAGE_KEY =
   "inkwell-library";
 
 
-const STATUS_CONFIG =
+const SUPPORTED_FORMATS = [
+  "manga",
+  "anime"
+];
+
+
+const FORMAT_CONFIG =
   Object.freeze({
-    "in-progress": {
+    manga: {
       label:
-        "In progress",
+        "Manga",
 
       icon:
-        "ti ti-progress"
+        "ti ti-book-2",
+
+      statuses: [
+        {
+          id:
+            "reading",
+
+          label:
+            "Reading",
+
+          icon:
+            "ti ti-book"
+        },
+
+        {
+          id:
+            "completed",
+
+          label:
+            "Completed",
+
+          icon:
+            "ti ti-circle-check"
+        },
+
+        {
+          id:
+            "plan-to-read",
+
+          label:
+            "Plan to read",
+
+          icon:
+            "ti ti-clock-plus"
+        },
+
+        {
+          id:
+            "paused",
+
+          label:
+            "Paused",
+
+          icon:
+            "ti ti-player-pause"
+        },
+
+        {
+          id:
+            "dropped",
+
+          label:
+            "Dropped",
+
+          icon:
+            "ti ti-circle-minus"
+        }
+      ]
     },
 
-    completed: {
+
+    anime: {
       label:
-        "Completed",
+        "Anime",
 
       icon:
-        "ti ti-circle-check"
-    },
+        "ti ti-device-tv",
 
-    planned: {
-      label:
-        "Planned",
+      statuses: [
+        {
+          id:
+            "watching",
 
-      icon:
-        "ti ti-clock-plus"
-    },
+          label:
+            "Watching",
 
-    paused: {
-      label:
-        "Paused",
+          icon:
+            "ti ti-player-play"
+        },
 
-      icon:
-        "ti ti-player-pause"
-    },
+        {
+          id:
+            "completed",
 
-    dropped: {
-      label:
-        "Dropped",
+          label:
+            "Completed",
 
-      icon:
-        "ti ti-circle-minus"
+          icon:
+            "ti ti-circle-check"
+        },
+
+        {
+          id:
+            "plan-to-watch",
+
+          label:
+            "Plan to watch",
+
+          icon:
+            "ti ti-clock-plus"
+        },
+
+        {
+          id:
+            "paused",
+
+          label:
+            "Paused",
+
+          icon:
+            "ti ti-player-pause"
+        },
+
+        {
+          id:
+            "dropped",
+
+          label:
+            "Dropped",
+
+          icon:
+            "ti ti-circle-minus"
+        }
+      ]
     }
   });
 
@@ -57,16 +152,24 @@ export function createDetailLibraryController(
   let currentTitle =
     null;
 
-  let currentStatus =
+  let currentEntry =
+    null;
+
+  let availableFormats =
+    [];
+
+  let activeFormat =
     "";
+
+  let currentScreen =
+    "formats";
 
   let hasBoundEvents =
     false;
 
+  let positionFrame =
+    null;
 
-  /* =======================================================
-     EVENT SETUP
-     ======================================================= */
 
   function bindEvents() {
     if (
@@ -78,33 +181,6 @@ export function createDetailLibraryController(
 
     hasBoundEvents =
       true;
-
-
-    /*
-     * Remove any popover configuration left behind
-     * by the previous version.
-     */
-
-    elements
-      .libraryMenu
-      .removeAttribute(
-        "popover"
-      );
-
-
-    elements
-      .libraryMenu
-      .removeAttribute(
-        "style"
-      );
-
-
-    elements
-      .libraryMenu
-      .classList
-      .remove(
-        "is-positioned"
-      );
 
 
     elements
@@ -137,43 +213,38 @@ export function createDetailLibraryController(
 
 
     elements
-      .libraryStatusButtons
-      .forEach(
-        (
-          button
-        ) => {
-          button.addEventListener(
-            "click",
-            () => {
-              setStatus(
-                button
-                  .dataset
-                  .libraryStatus
-              );
-            }
+      .libraryMenuBack
+      .addEventListener(
+        "click",
+        () => {
+          showFormatScreen(
+            true
           );
         }
       );
 
 
     elements
-      .libraryRemove
+      .libraryOptions
       .addEventListener(
         "click",
-        () => {
-          removeTitle();
-        }
+        handleOptionClick
       );
 
 
     elements
-      .libraryMenu
+      .librarySummary
       .addEventListener(
         "click",
         (
           event
         ) => {
           event.stopPropagation();
+
+
+          handleSummaryClick(
+            event
+          );
         }
       );
 
@@ -211,7 +282,7 @@ export function createDetailLibraryController(
       ) => {
         if (
           event.key ===
-          "Escape" &&
+            "Escape" &&
           isMenuOpen()
         ) {
           event.preventDefault();
@@ -223,12 +294,21 @@ export function createDetailLibraryController(
         }
       }
     );
+
+
+    window.addEventListener(
+      "resize",
+      scheduleMenuPosition
+    );
+
+
+    window.addEventListener(
+      "scroll",
+      scheduleMenuPosition,
+      true
+    );
   }
 
-
-  /* =======================================================
-     CURRENT TITLE
-     ======================================================= */
 
   function setTitle(
     title
@@ -237,28 +317,55 @@ export function createDetailLibraryController(
       title;
 
 
-    currentStatus =
-      readLibrary()[
-        title.id
-      ]
-        ?.status ||
+    availableFormats =
+      SUPPORTED_FORMATS
+        .filter(
+          (
+            format
+          ) => {
+            return (
+              title
+                .media
+                ?.[
+                  format
+                ]
+                ?.length > 0
+            );
+          }
+        );
+
+
+    currentEntry =
+      normalizeStoredEntry(
+        readLibrary()[
+          title.id
+        ],
+
+        title
+      );
+
+
+    activeFormat =
       "";
 
 
+    currentScreen =
+      "formats";
+
+
     updateInterface();
+
+
+    showFormatScreen(
+      false
+    );
   }
 
 
-  /* =======================================================
-     MENU
-     ======================================================= */
-
   function isMenuOpen() {
-    return (
-      !elements
-        .libraryMenu
-        .hidden
-    );
+    return !elements
+      .libraryMenu
+      .hidden;
   }
 
 
@@ -275,10 +382,18 @@ export function createDetailLibraryController(
 
   function openMenu() {
     if (
+      !currentTitle ||
+      !availableFormats
+        .length ||
       isMenuOpen()
     ) {
       return;
     }
+
+
+    showFormatScreen(
+      false
+    );
 
 
     elements
@@ -303,44 +418,13 @@ export function createDetailLibraryController(
       );
 
 
-    document
-      .body
-      .classList
-      .add(
-        "detail-library-menu-open"
-      );
-
-
-    const selectedButton =
-      elements
-        .libraryStatusButtons
-        .find(
-          (
-            button
-          ) => {
-            return (
-              button
-                .dataset
-                .libraryStatus ===
-              currentStatus
-            );
-          }
-        );
-
-
-    const firstButton =
-      selectedButton ||
-      elements
-        .libraryStatusButtons[
-          0
-        ];
-
-
     window
       .requestAnimationFrame(
         () => {
-          firstButton
-            ?.focus();
+          positionMenu();
+
+
+          focusFirstMenuButton();
         }
       );
   }
@@ -379,11 +463,11 @@ export function createDetailLibraryController(
       );
 
 
-    document
-      .body
+    elements
+      .libraryMenu
       .classList
       .remove(
-        "detail-library-menu-open"
+        "is-positioned"
       );
 
 
@@ -397,18 +481,414 @@ export function createDetailLibraryController(
   }
 
 
-  /* =======================================================
-     SAVE STATUS
-     ======================================================= */
+  function showFormatScreen(
+    moveFocus
+  ) {
+    activeFormat =
+      "";
 
-  function setStatus(
-    status
+
+    currentScreen =
+      "formats";
+
+
+    elements
+      .libraryMenuBack
+      .hidden =
+        true;
+
+
+    elements
+      .libraryMenuEyebrow
+      .textContent =
+        "Choose a format";
+
+
+    elements
+      .libraryMenuTitle
+      .textContent =
+        "What are you tracking?";
+
+
+    elements
+      .libraryOptions
+      .replaceChildren();
+
+
+    availableFormats
+      .forEach(
+        (
+          format
+        ) => {
+          const config =
+            FORMAT_CONFIG[
+              format
+            ];
+
+
+          const savedStatus =
+            currentEntry
+              .formats[
+                format
+              ]
+              ?.status ||
+            "";
+
+
+          const savedStatusConfig =
+            getStatusConfig(
+              format,
+              savedStatus
+            );
+
+
+          elements
+            .libraryOptions
+            .append(
+              createMenuButton({
+                action:
+                  "choose-format",
+
+                value:
+                  format,
+
+                icon:
+                  config.icon,
+
+                label:
+                  config.label,
+
+                meta:
+                  savedStatusConfig
+                    ?.label ||
+                  "Not tracked",
+
+                selected:
+                  Boolean(
+                    savedStatus
+                  )
+              })
+            );
+        }
+      );
+
+
+    scheduleMenuPosition();
+
+
+    if (
+      moveFocus
+    ) {
+      window
+        .requestAnimationFrame(
+          focusFirstMenuButton
+        );
+    }
+  }
+
+
+  function showStatusScreen(
+    format,
+    moveFocus =
+      true
   ) {
     if (
-      !currentTitle ||
-      !STATUS_CONFIG[
+      !availableFormats
+        .includes(
+          format
+        )
+    ) {
+      return;
+    }
+
+
+    activeFormat =
+      format;
+
+
+    currentScreen =
+      "statuses";
+
+
+    const config =
+      FORMAT_CONFIG[
+        format
+      ];
+
+
+    const savedStatus =
+      currentEntry
+        .formats[
+          format
+        ]
+        ?.status ||
+      "";
+
+
+    elements
+      .libraryMenuBack
+      .hidden =
+        false;
+
+
+    elements
+      .libraryMenuEyebrow
+      .textContent =
+        config.label;
+
+
+    elements
+      .libraryMenuTitle
+      .textContent =
+        `Choose your ${
+          config.label
+            .toLowerCase()
+        } status`;
+
+
+    elements
+      .libraryOptions
+      .replaceChildren();
+
+
+    config
+      .statuses
+      .forEach(
+        (
+          status
+        ) => {
+          elements
+            .libraryOptions
+            .append(
+              createMenuButton({
+                action:
+                  "choose-status",
+
+                value:
+                  status.id,
+
+                icon:
+                  status.icon,
+
+                label:
+                  status.label,
+
+                selected:
+                  savedStatus ===
+                  status.id
+              })
+            );
+        }
+      );
+
+
+    if (
+      savedStatus
+    ) {
+      elements
+        .libraryOptions
+        .append(
+          createMenuDivider()
+        );
+
+
+      elements
+        .libraryOptions
+        .append(
+          createMenuButton({
+            action:
+              "remove-format",
+
+            value:
+              format,
+
+            icon:
+              "ti ti-trash",
+
+            label:
+              `Remove ${
+                config.label
+              }`,
+
+            danger:
+              true
+          })
+        );
+    }
+
+
+    scheduleMenuPosition();
+
+
+    if (
+      moveFocus
+    ) {
+      window
+        .requestAnimationFrame(
+          focusFirstMenuButton
+        );
+    }
+  }
+
+
+  function handleOptionClick(
+    event
+  ) {
+    const button =
+      event
+        .target
+        .closest(
+          "[data-library-action]"
+        );
+
+
+    if (
+      !button
+    ) {
+      return;
+    }
+
+
+    const action =
+      button
+        .dataset
+        .libraryAction;
+
+
+    const value =
+      button
+        .dataset
+        .libraryValue;
+
+
+    if (
+      action ===
+      "choose-format"
+    ) {
+      showStatusScreen(
+        value
+      );
+
+
+      return;
+    }
+
+
+    if (
+      action ===
+      "choose-status"
+    ) {
+      saveFormatStatus(
+        activeFormat,
+        value
+      );
+
+
+      return;
+    }
+
+
+    if (
+      action ===
+      "remove-format"
+    ) {
+      removeFormat(
+        value
+      );
+    }
+  }
+
+
+  function handleSummaryClick(
+    event
+  ) {
+    const button =
+      event
+        .target
+        .closest(
+          "[data-library-summary-format]"
+        );
+
+
+    if (
+      !button
+    ) {
+      return;
+    }
+
+
+    const format =
+      button
+        .dataset
+        .librarySummaryFormat;
+
+
+    if (
+      !availableFormats
+        .includes(
+          format
+        )
+    ) {
+      return;
+    }
+
+
+    if (
+      !isMenuOpen()
+    ) {
+      elements
+        .libraryMenu
+        .hidden =
+          false;
+
+
+      elements
+        .libraryPicker
+        .classList
+        .add(
+          "is-open"
+        );
+
+
+      elements
+        .libraryTrigger
+        .setAttribute(
+          "aria-expanded",
+          "true"
+        );
+    }
+
+
+    showStatusScreen(
+      format
+    );
+
+
+    scheduleMenuPosition();
+  }
+
+
+  function saveFormatStatus(
+    format,
+    status
+  ) {
+    const config =
+      FORMAT_CONFIG[
+        format
+      ];
+
+
+    const statusConfig =
+      getStatusConfig(
+        format,
         status
-      ]
+      );
+
+
+    if (
+      !currentTitle ||
+      !config ||
+      !statusConfig
     ) {
       return;
     }
@@ -418,37 +898,43 @@ export function createDetailLibraryController(
       readLibrary();
 
 
-    library[
-      currentTitle.id
-    ] = {
-      id:
-        currentTitle.id,
+    const entry =
+      normalizeStoredEntry(
+        library[
+          currentTitle.id
+        ],
 
-      title:
-        currentTitle.title,
-
-      status,
-
-      types:
-        currentTitle.types,
-
-      coverUrl:
-        currentTitle.coverUrl,
-
-      updatedAt:
-        new Date()
-          .toISOString()
-    };
-
-
-    const wasSaved =
-      writeLibrary(
-        library
+        currentTitle
       );
 
 
+    entry
+      .formats[
+        format
+      ] = {
+        status,
+
+        updatedAt:
+          new Date()
+            .toISOString()
+      };
+
+
+    entry.updatedAt =
+      new Date()
+        .toISOString();
+
+
+    library[
+      currentTitle.id
+    ] =
+      entry;
+
+
     if (
-      !wasSaved
+      !writeLibrary(
+        library
+      )
     ) {
       elements
         .libraryNote
@@ -456,45 +942,55 @@ export function createDetailLibraryController(
           "This browser could not save your library change.";
 
 
-      closeMenu(
-        true
-      );
-
-
       return;
     }
 
 
-    currentStatus =
-      status;
+    currentEntry =
+      entry;
 
 
     updateInterface();
-
-
-    closeMenu(
-      true
-    );
 
 
     elements
       .libraryNote
       .textContent =
         `${
-          STATUS_CONFIG[
-            status
-          ].label
-        } — saved locally on this device.`;
+          config.label
+        } · ${
+          statusConfig.label
+        } saved.`;
+
+
+    showFormatScreen(
+      false
+    );
+
+
+    window
+      .requestAnimationFrame(
+        () => {
+          positionMenu();
+
+
+          focusFormatButton(
+            format
+          );
+        }
+      );
   }
 
 
-  /* =======================================================
-     REMOVE TITLE
-     ======================================================= */
-
-  function removeTitle() {
+  function removeFormat(
+    format
+  ) {
     if (
-      !currentTitle
+      !currentTitle ||
+      !currentEntry
+        .formats[
+          format
+        ]
     ) {
       return;
     }
@@ -504,19 +1000,49 @@ export function createDetailLibraryController(
       readLibrary();
 
 
-    delete library[
-      currentTitle.id
-    ];
+    const entry =
+      normalizeStoredEntry(
+        library[
+          currentTitle.id
+        ],
 
-
-    const wasRemoved =
-      writeLibrary(
-        library
+        currentTitle
       );
 
 
+    delete entry
+      .formats[
+        format
+      ];
+
+
+    entry.updatedAt =
+      new Date()
+        .toISOString();
+
+
     if (
-      !wasRemoved
+      Object
+        .keys(
+          entry.formats
+        )
+        .length
+    ) {
+      library[
+        currentTitle.id
+      ] =
+        entry;
+    } else {
+      delete library[
+        currentTitle.id
+      ];
+    }
+
+
+    if (
+      !writeLibrary(
+        library
+      )
     ) {
       elements
         .libraryNote
@@ -524,139 +1050,544 @@ export function createDetailLibraryController(
           "This browser could not update your library.";
 
 
-      closeMenu(
-        true
+      return;
+    }
+
+
+    currentEntry =
+      normalizeStoredEntry(
+        library[
+          currentTitle.id
+        ],
+
+        currentTitle
       );
+
+
+    updateInterface();
+
+
+    elements
+      .libraryNote
+      .textContent =
+        `${
+          FORMAT_CONFIG[
+            format
+          ].label
+        } removed from your library.`;
+
+
+    showFormatScreen(
+      false
+    );
+
+
+    window
+      .requestAnimationFrame(
+        () => {
+          positionMenu();
+
+
+          focusFormatButton(
+            format
+          );
+        }
+      );
+  }
+
+
+  function updateInterface() {
+    const trackedFormats =
+      availableFormats
+        .filter(
+          (
+            format
+          ) => {
+            return Boolean(
+              currentEntry
+                .formats[
+                  format
+                ]
+                ?.status
+            );
+          }
+        );
+
+
+    elements
+      .librarySummary
+      .replaceChildren();
+
+
+    trackedFormats
+      .forEach(
+        (
+          format
+        ) => {
+          const config =
+            FORMAT_CONFIG[
+              format
+            ];
+
+
+          const status =
+            currentEntry
+              .formats[
+                format
+              ]
+              .status;
+
+
+          const statusConfig =
+            getStatusConfig(
+              format,
+              status
+            );
+
+
+          const button =
+            document.createElement(
+              "button"
+            );
+
+
+          button.type =
+            "button";
+
+
+          button.className =
+            "detail-library-summary-item";
+
+
+          button
+            .dataset
+            .librarySummaryFormat =
+              format;
+
+
+          button.setAttribute(
+            "aria-label",
+
+            `Manage ${
+              config.label
+            }: ${
+              statusConfig
+                ?.label ||
+              status
+            }`
+          );
+
+
+          const icon =
+            document.createElement(
+              "i"
+            );
+
+
+          icon.className =
+            config.icon;
+
+
+          icon.setAttribute(
+            "aria-hidden",
+            "true"
+          );
+
+
+          const text =
+            document.createElement(
+              "span"
+            );
+
+
+          text.textContent =
+            `${
+              config.label
+            } · ${
+              statusConfig
+                ?.label ||
+              status
+            }`;
+
+
+          button.append(
+            icon,
+            text
+          );
+
+
+          elements
+            .librarySummary
+            .append(
+              button
+            );
+        }
+      );
+
+
+    elements
+      .librarySummary
+      .hidden =
+        trackedFormats
+          .length === 0;
+
+
+    if (
+      !availableFormats
+        .length
+    ) {
+      elements
+        .libraryTrigger
+        .disabled =
+          true;
+
+
+      elements
+        .libraryTriggerLabel
+        .textContent =
+          "No trackable formats";
+
+
+      elements
+        .libraryTriggerIcon
+        .className =
+          "ti ti-ban";
+
+
+      elements
+        .libraryNote
+        .textContent =
+          "This title has no manga or anime record to track.";
 
 
       return;
     }
 
 
-    currentStatus =
-      "";
-
-
-    updateInterface();
-
-
-    closeMenu(
-      true
-    );
-
-
     elements
-      .libraryNote
-      .textContent =
-        "Removed from your local library.";
-  }
-
-
-  /* =======================================================
-     UPDATE INTERFACE
-     ======================================================= */
-
-  function updateInterface() {
-    const selectedConfig =
-      STATUS_CONFIG[
-        currentStatus
-      ];
-
-
-    elements
-      .libraryTriggerLabel
-      .textContent =
-        selectedConfig
-          ? selectedConfig
-              .label
-          : "Add to library";
+      .libraryTrigger
+      .disabled =
+        false;
 
 
     elements
       .libraryTriggerIcon
       .className =
-        selectedConfig
-          ? selectedConfig
-              .icon
+        trackedFormats.length
+          ? "ti ti-books"
           : "ti ti-plus";
 
 
-    elements
-      .libraryStatusButtons
-      .forEach(
-        (
-          button
-        ) => {
-          const selected =
-            button
-              .dataset
-              .libraryStatus ===
-            currentStatus;
-
-
-          button.setAttribute(
-            "aria-checked",
-            String(
-              selected
-            )
-          );
-        }
-      );
-
-
-    elements
-      .libraryRemove
-      .hidden =
-        !selectedConfig;
-
-
     if (
-      !selectedConfig
+      trackedFormats
+        .length === 0
     ) {
+      elements
+        .libraryTriggerLabel
+        .textContent =
+          "Add to library";
+
+
       elements
         .libraryNote
         .textContent =
-          "Saved locally on this device.";
+          "Choose Manga or Anime, then choose its status.";
+    } else if (
+      trackedFormats
+        .length === 1
+    ) {
+      elements
+        .libraryTriggerLabel
+        .textContent =
+          "1 format tracked";
+    } else {
+      elements
+        .libraryTriggerLabel
+        .textContent =
+          `${
+            trackedFormats.length
+          } formats tracked`;
     }
   }
 
 
-  /* =======================================================
-     KEYBOARD NAVIGATION
-     ======================================================= */
+  function createMenuButton({
+    action,
+    value,
+    icon,
+    label,
+    meta =
+      "",
+    selected =
+      false,
+    danger =
+      false
+  }) {
+    const button =
+      document.createElement(
+        "button"
+      );
+
+
+    button.type =
+      "button";
+
+
+    button.className =
+      "detail-library-option";
+
+
+    button
+      .dataset
+      .libraryAction =
+        action;
+
+
+    button
+      .dataset
+      .libraryValue =
+        value;
+
+
+    button.setAttribute(
+      "role",
+
+      action ===
+        "choose-status"
+        ? "menuitemradio"
+        : "menuitem"
+    );
+
+
+    if (
+      action ===
+      "choose-status"
+    ) {
+      button.setAttribute(
+        "aria-checked",
+        String(
+          selected
+        )
+      );
+    }
+
+
+    if (
+      selected
+    ) {
+      button
+        .classList
+        .add(
+          "is-selected"
+        );
+    }
+
+
+    if (
+      danger
+    ) {
+      button
+        .classList
+        .add(
+          "is-danger"
+        );
+    }
+
+
+    const iconElement =
+      document.createElement(
+        "i"
+      );
+
+
+    iconElement.className =
+      icon;
+
+
+    iconElement.setAttribute(
+      "aria-hidden",
+      "true"
+    );
+
+
+    const copy =
+      document.createElement(
+        "span"
+      );
+
+
+    copy.className =
+      "detail-library-option-copy";
+
+
+    const labelElement =
+      document.createElement(
+        "strong"
+      );
+
+
+    labelElement.textContent =
+      label;
+
+
+    copy.append(
+      labelElement
+    );
+
+
+    if (
+      meta
+    ) {
+      const metaElement =
+        document.createElement(
+          "small"
+        );
+
+
+      metaElement.textContent =
+        meta;
+
+
+      copy.append(
+        metaElement
+      );
+    }
+
+
+    const trailing =
+      document.createElement(
+        "span"
+      );
+
+
+    trailing.className =
+      "detail-library-option-trailing";
+
+
+    trailing.setAttribute(
+      "aria-hidden",
+      "true"
+    );
+
+
+    trailing.textContent =
+      selected
+        ? "✓"
+        : action ===
+          "choose-format"
+          ? "→"
+          : "";
+
+
+    button.append(
+      iconElement,
+      copy,
+      trailing
+    );
+
+
+    return button;
+  }
+
+
+  function createMenuDivider() {
+    const divider =
+      document.createElement(
+        "div"
+      );
+
+
+    divider.className =
+      "detail-library-menu-divider";
+
+
+    divider.setAttribute(
+      "role",
+      "separator"
+    );
+
+
+    return divider;
+  }
+
+
+  function getStatusConfig(
+    format,
+    status
+  ) {
+    return (
+      FORMAT_CONFIG[
+        format
+      ]
+        ?.statuses
+        .find(
+          (
+            item
+          ) => {
+            return (
+              item.id ===
+              status
+            );
+          }
+        ) ||
+      null
+    );
+  }
+
+
+  function getMenuButtons() {
+    return [
+      ...elements
+        .libraryMenu
+        .querySelectorAll(
+          "button:not([hidden]):not(:disabled)"
+        )
+    ];
+  }
+
+
+  function focusFirstMenuButton() {
+    getMenuButtons()[
+      0
+    ]
+      ?.focus();
+  }
+
+
+  function focusFormatButton(
+    format
+  ) {
+    elements
+      .libraryOptions
+      .querySelector(
+        `[data-library-action="choose-format"][data-library-value="${format}"]`
+      )
+      ?.focus();
+  }
+
 
   function handleMenuKeydown(
     event
   ) {
-    const menuButtons = [
-      ...elements
-        .libraryStatusButtons,
-
-      ...(
-        elements
-          .libraryRemove
-          .hidden
-          ? []
-          : [
-              elements
-                .libraryRemove
-            ]
-      )
-    ];
+    const buttons =
+      getMenuButtons();
 
 
     if (
-      !menuButtons.length
+      !buttons.length
     ) {
       return;
     }
 
 
     const currentIndex =
-      menuButtons.indexOf(
-        document
-          .activeElement
+      buttons.indexOf(
+        document.activeElement
       );
+
+
+    let nextIndex =
+      null;
 
 
     if (
@@ -677,21 +1608,6 @@ export function createDetailLibraryController(
 
     if (
       event.key ===
-      "Tab"
-    ) {
-      closeMenu();
-
-
-      return;
-    }
-
-
-    let nextIndex =
-      null;
-
-
-    if (
-      event.key ===
       "ArrowDown"
     ) {
       nextIndex =
@@ -701,21 +1617,21 @@ export function createDetailLibraryController(
               currentIndex +
               1
             ) %
-            menuButtons.length;
+            buttons.length;
     } else if (
       event.key ===
       "ArrowUp"
     ) {
       nextIndex =
         currentIndex < 0
-          ? menuButtons.length -
+          ? buttons.length -
             1
           : (
               currentIndex -
               1 +
-              menuButtons.length
+              buttons.length
             ) %
-            menuButtons.length;
+            buttons.length;
     } else if (
       event.key ===
       "Home"
@@ -727,8 +1643,23 @@ export function createDetailLibraryController(
       "End"
     ) {
       nextIndex =
-        menuButtons.length -
+        buttons.length -
         1;
+    } else if (
+      event.key ===
+        "ArrowLeft" &&
+      currentScreen ===
+        "statuses"
+    ) {
+      event.preventDefault();
+
+
+      showFormatScreen(
+        true
+      );
+
+
+      return;
     }
 
 
@@ -742,10 +1673,212 @@ export function createDetailLibraryController(
     event.preventDefault();
 
 
-    menuButtons[
+    buttons[
       nextIndex
     ]
       ?.focus();
+  }
+
+
+  function scheduleMenuPosition() {
+    if (
+      !isMenuOpen()
+    ) {
+      return;
+    }
+
+
+    if (
+      positionFrame != null
+    ) {
+      window
+        .cancelAnimationFrame(
+          positionFrame
+        );
+    }
+
+
+    positionFrame =
+      window
+        .requestAnimationFrame(
+          () => {
+            positionFrame =
+              null;
+
+
+            positionMenu();
+          }
+        );
+  }
+
+
+  function positionMenu() {
+    if (
+      !isMenuOpen()
+    ) {
+      return;
+    }
+
+
+    const triggerRect =
+      elements
+        .libraryTrigger
+        .getBoundingClientRect();
+
+
+    const viewportMargin =
+      12;
+
+
+    const gap =
+      10;
+
+
+    const viewportWidth =
+      window.innerWidth;
+
+
+    const viewportHeight =
+      window.innerHeight;
+
+
+    const width =
+      Math.min(
+        340,
+
+        Math.max(
+          270,
+
+          viewportWidth -
+          viewportMargin *
+          2
+        )
+      );
+
+
+    elements
+      .libraryMenu
+      .style
+      .width =
+        `${width}px`;
+
+
+    const menuHeight =
+      Math.min(
+        elements
+          .libraryMenu
+          .scrollHeight,
+
+        viewportHeight -
+        viewportMargin *
+        2
+      );
+
+
+    let left =
+      triggerRect.right -
+      width;
+
+
+    left =
+      Math.max(
+        viewportMargin,
+
+        Math.min(
+          left,
+
+          viewportWidth -
+          width -
+          viewportMargin
+        )
+      );
+
+
+    let top =
+      triggerRect.bottom +
+      gap;
+
+
+    const fitsBelow =
+      top +
+      menuHeight <=
+      viewportHeight -
+      viewportMargin;
+
+
+    const fitsAbove =
+      triggerRect.top -
+      gap -
+      menuHeight >=
+      viewportMargin;
+
+
+    if (
+      !fitsBelow &&
+      fitsAbove
+    ) {
+      top =
+        triggerRect.top -
+        gap -
+        menuHeight;
+
+
+      elements
+        .libraryMenu
+        .dataset
+        .placement =
+          "top";
+    } else {
+      top =
+        Math.max(
+          viewportMargin,
+
+          Math.min(
+            top,
+
+            viewportHeight -
+            menuHeight -
+            viewportMargin
+          )
+        );
+
+
+      elements
+        .libraryMenu
+        .dataset
+        .placement =
+          "bottom";
+    }
+
+
+    elements
+      .libraryMenu
+      .style
+      .left =
+        `${
+          Math.round(
+            left
+          )
+        }px`;
+
+
+    elements
+      .libraryMenu
+      .style
+      .top =
+        `${
+          Math.round(
+            top
+          )
+        }px`;
+
+
+    elements
+      .libraryMenu
+      .classList
+      .add(
+        "is-positioned"
+      );
   }
 
 
@@ -756,9 +1889,104 @@ export function createDetailLibraryController(
 }
 
 
-/* =========================================================
-   LOCAL STORAGE
-   ========================================================= */
+function normalizeStoredEntry(
+  storedEntry,
+  title
+) {
+  const formats =
+    {};
+
+
+  if (
+    storedEntry
+      ?.formats &&
+    typeof storedEntry
+      .formats ===
+      "object"
+  ) {
+    SUPPORTED_FORMATS
+      .forEach(
+        (
+          format
+        ) => {
+          const status =
+            storedEntry
+              .formats[
+                format
+              ]
+              ?.status;
+
+
+          if (
+            getValidStatus(
+              format,
+              status
+            )
+          ) {
+            formats[
+              format
+            ] = {
+              status,
+
+              updatedAt:
+                storedEntry
+                  .formats[
+                    format
+                  ]
+                  ?.updatedAt ||
+                storedEntry
+                  .updatedAt ||
+                ""
+            };
+          }
+        }
+      );
+  }
+
+
+  return {
+    id:
+      title.id,
+
+    title:
+      title.title,
+
+    coverUrl:
+      title.coverUrl,
+
+    types:
+      title.types,
+
+    formats,
+
+    updatedAt:
+      storedEntry
+        ?.updatedAt ||
+      ""
+  };
+}
+
+
+function getValidStatus(
+  format,
+  status
+) {
+  return FORMAT_CONFIG[
+    format
+  ]
+    ?.statuses
+    .some(
+      (
+        item
+      ) => {
+        return (
+          item.id ===
+          status
+        );
+      }
+    );
+}
+
 
 function readLibrary() {
   try {
@@ -803,6 +2031,7 @@ function writeLibrary(
     localStorage
       .setItem(
         STORAGE_KEY,
+
         JSON.stringify(
           library
         )

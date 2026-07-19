@@ -160,20 +160,34 @@ export function collectDetailElements() {
         "detail-library-trigger-label"
       ),
 
+    librarySummary:
+      document.getElementById(
+        "detail-library-summary"
+      ),
+
     libraryMenu:
       document.getElementById(
         "detail-library-menu"
       ),
 
-    libraryStatusButtons: [
-      ...document.querySelectorAll(
-        "[data-library-status]"
-      )
-    ],
-
-    libraryRemove:
+    libraryMenuBack:
       document.getElementById(
-        "detail-library-remove"
+        "detail-library-menu-back"
+      ),
+
+    libraryMenuEyebrow:
+      document.getElementById(
+        "detail-library-menu-eyebrow"
+      ),
+
+    libraryMenuTitle:
+      document.getElementById(
+        "detail-library-menu-title"
+      ),
+
+    libraryOptions:
+      document.getElementById(
+        "detail-library-options"
       ),
 
     libraryNote:
@@ -225,28 +239,25 @@ export function hasRequiredDetailElements(
     "libraryTrigger",
     "libraryTriggerIcon",
     "libraryTriggerLabel",
+    "librarySummary",
     "libraryMenu",
-    "libraryRemove",
+    "libraryMenuBack",
+    "libraryMenuEyebrow",
+    "libraryMenuTitle",
+    "libraryOptions",
     "libraryNote"
   ];
 
 
-  return (
-    requiredKeys
-      .every(
-        (
+  return requiredKeys.every(
+    (
+      key
+    ) => {
+      return Boolean(
+        elements[
           key
-        ) => {
-          return Boolean(
-            elements[
-              key
-            ]
-          );
-        }
-      ) &&
-
-    elements
-      .libraryStatusButtons
-      .length > 0
+        ]
+      );
+    }
   );
 }

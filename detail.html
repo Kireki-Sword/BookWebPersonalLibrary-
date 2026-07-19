@@ -10,18 +10,21 @@
 
   <meta
     name="description"
-    content="Explore every available version and adaptation of a story in the Inkwell catalogue."
+    content="Explore every manga publication and anime adaptation available for a story."
   >
 
   <title>Title Details | Inkwell</title>
 
-  <!-- Global website styles: leave style.css unchanged -->
-  <link rel="stylesheet" href="style.css">
+  <link
+    rel="stylesheet"
+    href="style.css"
+  >
 
-  <!-- Detail-page-only styles -->
-  <link rel="stylesheet" href="css/detail.css">
+  <link
+    rel="stylesheet"
+    href="css/detail.css"
+  >
 
-  <!-- Tabler icons -->
   <link
     rel="stylesheet"
     href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css"
@@ -29,12 +32,11 @@
 </head>
 
 <body class="detail-site">
-  <!-- =====================================================
-       PRIMARY NAVIGATION
-       ===================================================== -->
-
   <nav aria-label="Primary navigation">
-    <a href="index.html" class="nav-logo">
+    <a
+      href="index.html"
+      class="nav-logo"
+    >
       <span
         class="nav-logo-icon"
         aria-hidden="true"
@@ -95,10 +97,6 @@
   </nav>
 
 
-  <!-- =====================================================
-       DETAIL PAGE
-       ===================================================== -->
-
   <main class="detail-page">
     <div
       class="detail-page-glow detail-page-glow-left"
@@ -112,10 +110,6 @@
 
 
     <div class="detail-container">
-      <!-- =================================================
-           PAGE TOOLS
-           ================================================= -->
-
       <div class="detail-page-tools">
         <button
           id="detail-back-button"
@@ -131,10 +125,6 @@
         </button>
       </div>
 
-
-      <!-- =================================================
-           LOADING STATE
-           ================================================= -->
 
       <section
         id="detail-loading"
@@ -159,14 +149,11 @@
         </h1>
 
         <p>
-          Gathering every available publication and adaptation.
+          Gathering every available manga publication
+          and anime adaptation.
         </p>
       </section>
 
-
-      <!-- =================================================
-           ERROR STATE
-           ================================================= -->
 
       <section
         id="detail-error"
@@ -217,19 +204,11 @@
       </section>
 
 
-      <!-- =================================================
-           COMPLETE DETAIL CONTENT
-           ================================================= -->
-
       <div
         id="detail-content"
         class="detail-content"
         hidden
       >
-        <!-- ===============================================
-             PREMIUM HERO
-             =============================================== -->
-
         <article
           class="detail-hero"
           aria-labelledby="detail-title"
@@ -240,8 +219,6 @@
             aria-hidden="true"
           ></div>
 
-
-          <!-- COVER -->
 
           <div class="detail-cover-column">
             <figure class="detail-cover-frame">
@@ -264,8 +241,6 @@
             </figure>
           </div>
 
-
-          <!-- TITLE IDENTITY -->
 
           <div class="detail-identity">
             <div
@@ -304,8 +279,6 @@
             ></div>
           </div>
 
-
-          <!-- SCORE AND LIBRARY -->
 
           <aside
             class="detail-action-panel"
@@ -372,6 +345,13 @@
 
 
               <div
+                id="detail-library-summary"
+                class="detail-library-summary"
+                hidden
+              ></div>
+
+
+              <div
                 class="detail-library-picker"
                 data-detail-library-picker
               >
@@ -402,118 +382,44 @@
 
                 <div
                   id="detail-library-menu"
-                  class="detail-library-menu premium-scrollbar"
+                  class="detail-library-menu"
                   role="menu"
-                  aria-label="Choose library status"
+                  aria-label="Choose a format and status"
                   hidden
                 >
-                  <button
-                    type="button"
-                    role="menuitemradio"
-                    aria-checked="false"
-                    data-library-status="in-progress"
-                  >
-                    <i
-                      class="ti ti-progress"
-                      aria-hidden="true"
-                    ></i>
+                  <header class="detail-library-menu-header">
+                    <button
+                      id="detail-library-menu-back"
+                      class="detail-library-menu-back"
+                      type="button"
+                      aria-label="Back to formats"
+                      hidden
+                    >
+                      <i
+                        class="ti ti-arrow-left"
+                        aria-hidden="true"
+                      ></i>
+                    </button>
 
-                    <span>
-                      In progress
-                    </span>
-                  </button>
+                    <div>
+                      <span
+                        id="detail-library-menu-eyebrow"
+                        class="detail-eyebrow"
+                      >
+                        Choose a format
+                      </span>
 
-
-                  <button
-                    type="button"
-                    role="menuitemradio"
-                    aria-checked="false"
-                    data-library-status="completed"
-                  >
-                    <i
-                      class="ti ti-circle-check"
-                      aria-hidden="true"
-                    ></i>
-
-                    <span>
-                      Completed
-                    </span>
-                  </button>
-
-
-                  <button
-                    type="button"
-                    role="menuitemradio"
-                    aria-checked="false"
-                    data-library-status="planned"
-                  >
-                    <i
-                      class="ti ti-clock-plus"
-                      aria-hidden="true"
-                    ></i>
-
-                    <span>
-                      Planned
-                    </span>
-                  </button>
-
-
-                  <button
-                    type="button"
-                    role="menuitemradio"
-                    aria-checked="false"
-                    data-library-status="paused"
-                  >
-                    <i
-                      class="ti ti-player-pause"
-                      aria-hidden="true"
-                    ></i>
-
-                    <span>
-                      Paused
-                    </span>
-                  </button>
-
-
-                  <button
-                    type="button"
-                    role="menuitemradio"
-                    aria-checked="false"
-                    data-library-status="dropped"
-                  >
-                    <i
-                      class="ti ti-circle-minus"
-                      aria-hidden="true"
-                    ></i>
-
-                    <span>
-                      Dropped
-                    </span>
-                  </button>
+                      <strong id="detail-library-menu-title">
+                        What are you tracking?
+                      </strong>
+                    </div>
+                  </header>
 
 
                   <div
-                    class="detail-library-menu-divider"
-                    role="separator"
+                    id="detail-library-options"
+                    class="detail-library-options"
                   ></div>
-
-
-                  <button
-                    id="detail-library-remove"
-                    class="detail-library-remove"
-                    type="button"
-                    role="menuitem"
-                    hidden
-                  >
-                    <i
-                      class="ti ti-trash"
-                      aria-hidden="true"
-                    ></i>
-
-                    <span>
-                      Remove from library
-                    </span>
-                  </button>
                 </div>
               </div>
 
@@ -524,16 +430,12 @@
                 role="status"
                 aria-live="polite"
               >
-                Saved locally on this device.
+                Choose Manga or Anime, then choose its status.
               </p>
             </section>
           </aside>
         </article>
 
-
-        <!-- ===============================================
-             FORMATS AND RELEASES
-             =============================================== -->
 
         <section
           id="detail-media-section"
@@ -553,15 +455,13 @@
             </div>
 
             <p>
-              Every manga publication, anime adaptation, novel,
-              and game remains a separate catalogue entry.
+              Every manga publication and anime adaptation
+              remains a separate catalogue entry.
             </p>
           </header>
 
 
-          <div
-            class="detail-media-tab-shell premium-scrollbar"
-          >
+          <div class="detail-media-tab-shell premium-scrollbar">
             <div
               id="detail-media-tabs"
               class="detail-media-tabs"
@@ -577,10 +477,6 @@
           ></div>
         </section>
 
-
-        <!-- ===============================================
-             DESCRIPTION AND THEMES
-             =============================================== -->
 
         <section
           class="detail-surface detail-about-section"
@@ -601,7 +497,6 @@
               </div>
             </header>
 
-
             <div class="detail-description-wrap">
               <p
                 id="detail-description"
@@ -610,7 +505,6 @@
                 No description has been added yet.
               </p>
             </div>
-
 
             <button
               id="detail-description-toggle"
@@ -646,10 +540,6 @@
           </aside>
         </section>
 
-
-        <!-- ===============================================
-             END ACTION
-             =============================================== -->
 
         <section
           class="detail-endcap"
@@ -690,14 +580,13 @@
   </footer>
 
 
-  <!-- Supabase loads before the page module -->
   <script
     src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
   ></script>
 
   <script
     type="module"
-    src="./javaScript/Detail/detail.js?v=3"
+    src="./javaScript/Detail/detail.js?v=4"
   ></script>
 </body>
 </html>

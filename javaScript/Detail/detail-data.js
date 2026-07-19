@@ -1,6 +1,6 @@
 // detail-data.js
-// Loads one catalogue title and preserves every separate
-// manga, anime, novel, and game record.
+// Loads one catalogue title and preserves separate
+// Manga and Anime records.
 
 export const DETAIL_CONFIG =
   Object.freeze({
@@ -26,10 +26,14 @@ export const DETAIL_CONFIG =
 
 const MEDIA_ORDER = [
   "manga",
-  "anime",
-  "novel",
-  "game"
+  "anime"
 ];
+
+
+const SUPPORTED_MEDIA_TYPES =
+  new Set(
+    MEDIA_ORDER
+  );
 
 
 const MEDIA_LABELS =
@@ -38,13 +42,7 @@ const MEDIA_LABELS =
       "Manga",
 
     anime:
-      "Anime",
-
-    novel:
-      "Novel",
-
-    game:
-      "Game"
+      "Anime"
   });
 
 
@@ -206,184 +204,9 @@ const MEDIA_FIELD_CONFIG =
         "description",
         "publicationNotes"
       ]
-    },
-
-
-    novel: {
-      countLabel:
-        "publications",
-
-      countAliases: [
-        [
-          "volumes",
-          "volumeCount",
-          "totalVolumes",
-          "numberOfVolumes"
-        ],
-
-        [
-          "chapters",
-          "chapterCount",
-          "totalChapters",
-          "numberOfChapters"
-        ]
-      ],
-
-      factGroups: [
-        {
-          label:
-            "Publisher",
-
-          aliases: [
-            "publisher",
-            "publishers"
-          ]
-        },
-
-        {
-          label:
-            "Imprint",
-
-          aliases: [
-            "imprint",
-            "label"
-          ]
-        },
-
-        {
-          label:
-            "Author",
-
-          aliases: [
-            "author",
-            "writer"
-          ]
-        },
-
-        {
-          label:
-            "Illustrator",
-
-          aliases: [
-            "illustrator",
-            "artist"
-          ]
-        },
-
-        {
-          label:
-            "Release year",
-
-          aliases: [
-            "releaseYear",
-            "startYear"
-          ]
-        },
-
-        {
-          label:
-            "End year",
-
-          aliases: [
-            "endYear"
-          ]
-        }
-      ],
-
-      periodAliases: [
-        "publicationPeriod",
-        "releasePeriod",
-        "published"
-      ],
-
-      notesAliases: [
-        "notes",
-        "note",
-        "description",
-        "publicationNotes"
-      ]
-    },
-
-
-    game: {
-      countLabel:
-        "releases",
-
-      countAliases:
-        [],
-
-      factGroups: [
-        {
-          label:
-            "Platform",
-
-          aliases: [
-            "platforms",
-            "platform",
-            "systems"
-          ]
-        },
-
-        {
-          label:
-            "Developer",
-
-          aliases: [
-            "developer",
-            "developers",
-            "studio"
-          ]
-        },
-
-        {
-          label:
-            "Publisher",
-
-          aliases: [
-            "publisher",
-            "publishers"
-          ]
-        },
-
-        {
-          label:
-            "Release year",
-
-          aliases: [
-            "releaseYear",
-            "startYear"
-          ]
-        },
-
-        {
-          label:
-            "End year",
-
-          aliases: [
-            "endYear"
-          ]
-        }
-      ],
-
-      periodAliases: [
-        "releasePeriod",
-        "publicationPeriod",
-        "released"
-      ],
-
-      notesAliases: [
-        "notes",
-        "note",
-        "description",
-        "releaseNotes"
-      ]
     }
   });
 
-
-/* =========================================================
-   DATABASE
-   ========================================================= */
 
 export async function loadTitleFromDatabase(
   supabaseClient,
@@ -395,7 +218,8 @@ export async function loadTitleFromDatabase(
   } =
     await supabaseClient
       .from(
-        DETAIL_CONFIG.TABLE_NAME
+        DETAIL_CONFIG
+          .TABLE_NAME
       )
       .select(`
         id,
@@ -408,9 +232,7 @@ export async function loadTitleFromDatabase(
         tags,
         description,
         animeInfo,
-        mangaInfo,
-        novelInfo,
-        gameInfo
+        mangaInfo
       `)
       .eq(
         "id",
@@ -426,7 +248,9 @@ export async function loadTitleFromDatabase(
       `Supabase ${
         error.code ||
         "error"
-      }: ${error.message}`
+      }: ${
+        error.message
+      }`
     );
   }
 
@@ -444,10 +268,6 @@ export async function loadTitleFromDatabase(
 }
 
 
-/* =========================================================
-   REQUEST TIMEOUT
-   ========================================================= */
-
 export function withTimeout(
   promise,
   milliseconds,
@@ -464,17 +284,18 @@ export function withTimeout(
         reject
       ) => {
         timeoutId =
-          window.setTimeout(
-            () => {
-              reject(
-                new Error(
-                  errorMessage
-                )
-              );
-            },
+          window
+            .setTimeout(
+              () => {
+                reject(
+                  new Error(
+                    errorMessage
+                  )
+                );
+              },
 
-            milliseconds
-          );
+              milliseconds
+            );
       }
     );
 
@@ -489,17 +310,14 @@ export function withTimeout(
     ])
     .finally(
       () => {
-        window.clearTimeout(
-          timeoutId
-        );
+        window
+          .clearTimeout(
+            timeoutId
+          );
       }
     );
 }
 
-
-/* =========================================================
-   TITLE NORMALIZATION
-   ========================================================= */
 
 export function normalizeTitle(
   row,
@@ -515,7 +333,8 @@ export function normalizeTitle(
   const alternativeTitles =
     uniqueStrings(
       extractStrings(
-        row.alternativeTitles
+        row
+          .alternativeTitles
       )
     )
       .filter(
@@ -539,7 +358,19 @@ export function normalizeTitle(
       extractStrings(
         row.type
       )
-    );
+    )
+      .filter(
+        (
+          mediaType
+        ) => {
+          return SUPPORTED_MEDIA_TYPES
+            .has(
+              normalizeText(
+                mediaType
+              )
+            );
+        }
+      );
 
 
   const genres =
@@ -570,20 +401,6 @@ export function normalizeTitle(
       sortMediaEntries(
         normalizeEntries(
           row.animeInfo
-        )
-      ),
-
-    novel:
-      sortMediaEntries(
-        normalizeEntries(
-          row.novelInfo
-        )
-      ),
-
-    game:
-      sortMediaEntries(
-        normalizeEntries(
-          row.gameInfo
         )
       )
   };
@@ -645,10 +462,6 @@ export function normalizeTitle(
 }
 
 
-/* =========================================================
-   MEDIA ENTRY NORMALIZATION
-   ========================================================= */
-
 export function normalizeEntries(
   value
 ) {
@@ -660,7 +473,8 @@ export function normalizeEntries(
 
   if (
     parsedValue == null ||
-    parsedValue === ""
+    parsedValue ===
+      ""
   ) {
     return [];
   }
@@ -703,10 +517,6 @@ export function normalizeEntries(
 }
 
 
-/* =========================================================
-   AVAILABLE MEDIA TYPES
-   ========================================================= */
-
 export function getAvailableMediaTypes(
   title
 ) {
@@ -726,10 +536,6 @@ export function getAvailableMediaTypes(
     );
 }
 
-
-/* =========================================================
-   MEDIA LABELS
-   ========================================================= */
 
 export function getMediaLabel(
   mediaType
@@ -768,10 +574,6 @@ export function getMediaCountLabel(
   }`;
 }
 
-
-/* =========================================================
-   OVERVIEW
-   ========================================================= */
 
 export function buildOverviewStats(
   title
@@ -904,10 +706,6 @@ export function buildOverviewStats(
 }
 
 
-/* =========================================================
-   MEDIA ENTRY DISPLAY DATA
-   ========================================================= */
-
 export function buildMediaEntryView(
   mediaType,
   entry,
@@ -1034,23 +832,26 @@ export function buildMediaEntryView(
 
 
         if (
-          firstAlias.includes(
-            "episode"
-          )
+          firstAlias
+            .includes(
+              "episode"
+            )
         ) {
           unit =
             "episodes";
         } else if (
-          firstAlias.includes(
-            "movie"
-          )
+          firstAlias
+            .includes(
+              "movie"
+            )
         ) {
           unit =
             "movies";
         } else if (
-          firstAlias.includes(
-            "volume"
-          )
+          firstAlias
+            .includes(
+              "volume"
+            )
         ) {
           unit =
             "volumes";
@@ -1123,9 +924,10 @@ export function buildMediaEntryView(
           ]
         ) => {
           return (
-            !consumedKeys.has(
-              key
-            ) &&
+            !consumedKeys
+              .has(
+                key
+              ) &&
             isDisplayableValue(
               value
             )
@@ -1213,10 +1015,6 @@ export function buildMediaEntryView(
 }
 
 
-/* =========================================================
-   TEXT FORMATTING
-   ========================================================= */
-
 export function normalizeSearchParameter(
   value
 ) {
@@ -1275,7 +1073,8 @@ export function formatLabel(
   if (
     text ===
       text.toUpperCase() &&
-    text.length <= 5
+    text.length <=
+      5
   ) {
     return text;
   }
@@ -1348,12 +1147,14 @@ export function formatValue(
     )
   ) {
     return uniqueStrings(
-      value.flatMap(
-        extractStrings
-      )
-    ).join(
-      " • "
-    );
+      value
+        .flatMap(
+          extractStrings
+        )
+    )
+      .join(
+        " • "
+      );
   }
 
 
@@ -1417,10 +1218,6 @@ export function formatValue(
 }
 
 
-/* =========================================================
-   COVER URL
-   ========================================================= */
-
 function getCoverUrlFromId(
   supabaseClient,
   id
@@ -1455,15 +1252,12 @@ function getCoverUrlFromId(
 
 
   return (
-    data?.publicUrl ||
+    data
+      ?.publicUrl ||
     ""
   );
 }
 
-
-/* =========================================================
-   PARSE JSON
-   ========================================================= */
 
 function parseJsonValue(
   value
@@ -1488,12 +1282,14 @@ function parseJsonValue(
 
 
   if (
-    !text.startsWith(
-      "["
-    ) &&
-    !text.startsWith(
-      "{"
-    )
+    !text
+      .startsWith(
+        "["
+      ) &&
+    !text
+      .startsWith(
+        "{"
+      )
   ) {
     return value;
   }
@@ -1509,10 +1305,6 @@ function parseJsonValue(
 }
 
 
-/* =========================================================
-   EXTRACT STRINGS
-   ========================================================= */
-
 function extractStrings(
   value
 ) {
@@ -1524,7 +1316,8 @@ function extractStrings(
 
   if (
     parsedValue == null ||
-    parsedValue === ""
+    parsedValue ===
+      ""
   ) {
     return [];
   }
@@ -1608,10 +1401,6 @@ function extractStrings(
 }
 
 
-/* =========================================================
-   UNIQUE STRINGS
-   ========================================================= */
-
 function uniqueStrings(
   values
 ) {
@@ -1638,14 +1427,16 @@ function uniqueStrings(
       if (
         cleanValue &&
         normalizedValue &&
-        !uniqueValues.has(
-          normalizedValue
-        )
+        !uniqueValues
+          .has(
+            normalizedValue
+          )
       ) {
-        uniqueValues.set(
-          normalizedValue,
-          cleanValue
-        );
+        uniqueValues
+          .set(
+            normalizedValue,
+            cleanValue
+          );
       }
     }
   );
@@ -1658,10 +1449,6 @@ function uniqueStrings(
 }
 
 
-/* =========================================================
-   CLEAN STRING
-   ========================================================= */
-
 function cleanString(
   value
 ) {
@@ -1672,16 +1459,13 @@ function cleanString(
 }
 
 
-/* =========================================================
-   SCORE NORMALIZATION
-   ========================================================= */
-
 function getNumericScore(
   value
 ) {
   if (
     value == null ||
-    value === ""
+    value ===
+      ""
   ) {
     return null;
   }
@@ -1694,9 +1478,10 @@ function getNumericScore(
 
 
   if (
-    !Number.isFinite(
-      number
-    )
+    !Number
+      .isFinite(
+        number
+      )
   ) {
     return null;
   }
@@ -1712,10 +1497,6 @@ function getNumericScore(
   );
 }
 
-
-/* =========================================================
-   INFER MEDIA TYPES
-   ========================================================= */
 
 function inferTypesFromMedia(
   media
@@ -1738,18 +1519,13 @@ function inferTypesFromMedia(
       );
 
 
-  return inferredTypes
-    .length
-      ? inferredTypes
-      : [
-          "Story"
-        ];
+  return inferredTypes.length
+    ? inferredTypes
+    : [
+        "Story"
+      ];
 }
 
-
-/* =========================================================
-   SORT MEDIA ENTRIES
-   ========================================================= */
 
 function sortMediaEntries(
   entries
@@ -1826,10 +1602,6 @@ function sortMediaEntries(
 }
 
 
-/* =========================================================
-   SORT YEAR
-   ========================================================= */
-
 function getSortYear(
   entry
 ) {
@@ -1851,9 +1623,10 @@ function getSortYear(
 
 
     if (
-      Number.isInteger(
-        year
-      ) &&
+      Number
+        .isInteger(
+          year
+        ) &&
       year > 0
     ) {
       return year;
@@ -1870,9 +1643,10 @@ function getSortYear(
 
 
   const match =
-    periodText.match(
-      /\b(19|20)\d{2}\b/
-    );
+    periodText
+      .match(
+        /\b(19|20)\d{2}\b/
+      );
 
 
   return match
@@ -1884,10 +1658,6 @@ function getSortYear(
     : null;
 }
 
-
-/* =========================================================
-   EXTRACT YEARS
-   ========================================================= */
 
 function extractYearsFromEntry(
   entry
@@ -1914,12 +1684,14 @@ function extractYearsFromEntry(
 
 
         if (
-          !normalizedKey.includes(
-            "year"
-          ) &&
-          !normalizedKey.includes(
-            "period"
-          )
+          !normalizedKey
+            .includes(
+              "year"
+            ) &&
+          !normalizedKey
+            .includes(
+              "period"
+            )
         ) {
           return;
         }
@@ -1928,23 +1700,25 @@ function extractYearsFromEntry(
         const matches =
           String(
             value
-          ).match(
-            /\b(19|20)\d{2}\b/g
-          ) ||
+          )
+            .match(
+              /\b(19|20)\d{2}\b/g
+            ) ||
           [];
 
 
-        matches.forEach(
-          (
-            match
-          ) => {
-            years.push(
-              Number(
-                match
-              )
-            );
-          }
-        );
+        matches
+          .forEach(
+            (
+              match
+            ) => {
+              years.push(
+                Number(
+                  match
+                )
+              );
+            }
+          );
       }
     );
 
@@ -1962,10 +1736,6 @@ function extractYearsFromEntry(
     );
 }
 
-
-/* =========================================================
-   ENTRY YEAR LABEL
-   ========================================================= */
 
 function getEntryYearLabel(
   entry
@@ -2020,28 +1790,25 @@ function getEntryYearLabel(
 }
 
 
-/* =========================================================
-   TAKE FIELD
-   ========================================================= */
-
 function takeField(
   entry,
   aliases,
   consumedKeys
 ) {
   const aliasKeys =
-    aliases.map(
-      (
-        alias
-      ) => {
-        return normalizeText(
+    aliases
+      .map(
+        (
           alias
-        ).replace(
-          /\s+/g,
-          ""
-        );
-      }
-    );
+        ) => {
+          return normalizeText(
+            alias
+          ).replace(
+            /\s+/g,
+            ""
+          );
+        }
+      );
 
 
   for (
@@ -2049,9 +1816,10 @@ function takeField(
       key,
       value
     ]
-    of Object.entries(
-      entry
-    )
+    of Object
+      .entries(
+        entry
+      )
   ) {
     const normalizedKey =
       normalizeText(
@@ -2063,16 +1831,18 @@ function takeField(
 
 
     if (
-      aliasKeys.includes(
-        normalizedKey
-      ) &&
+      aliasKeys
+        .includes(
+          normalizedKey
+        ) &&
       isDisplayableValue(
         value
       )
     ) {
-      consumedKeys.add(
-        key
-      );
+      consumedKeys
+        .add(
+          key
+        );
 
 
       return {
@@ -2087,16 +1857,13 @@ function takeField(
 }
 
 
-/* =========================================================
-   DISPLAYABLE VALUE
-   ========================================================= */
-
 function isDisplayableValue(
   value
 ) {
   if (
     value == null ||
-    value === ""
+    value ===
+      ""
   ) {
     return false;
   }
@@ -2132,10 +1899,6 @@ function isDisplayableValue(
 }
 
 
-/* =========================================================
-   FORMAT COUNT
-   ========================================================= */
-
 function formatCount(
   value,
   unit
@@ -2166,17 +1929,14 @@ function formatCount(
 }
 
 
-/* =========================================================
-   SINGULARIZE LABEL
-   ========================================================= */
-
 function singularize(
   noun
 ) {
   if (
-    noun.endsWith(
-      "ies"
-    )
+    noun
+      .endsWith(
+        "ies"
+      )
   ) {
     return `${
       noun.slice(
@@ -2188,14 +1948,16 @@ function singularize(
 
 
   if (
-    noun.endsWith(
-      "s"
-    )
+    noun
+      .endsWith(
+        "s"
+      )
   ) {
-    return noun.slice(
-      0,
-      -1
-    );
+    return noun
+      .slice(
+        0,
+        -1
+      );
   }
 
 

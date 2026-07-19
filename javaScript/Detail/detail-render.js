@@ -1,5 +1,5 @@
 // detail-render.js
-// Renders the normalized title into the premium detail page.
+// Renders the normalized title into the detail page.
 
 import {
   buildMediaEntryView,
@@ -12,10 +12,6 @@ import {
   normalizeSearchParameter
 } from "./detail-data.js";
 
-
-/* =========================================================
-   COMPLETE PAGE
-   ========================================================= */
 
 export function renderDetailPage(
   title,
@@ -73,10 +69,6 @@ export function renderDetailPage(
   );
 }
 
-
-/* =========================================================
-   INTERACTIVE EVENTS
-   ========================================================= */
 
 export function bindMediaTabEvents(
   elements
@@ -291,10 +283,6 @@ export function bindMediaTabEvents(
 }
 
 
-/* =========================================================
-   COVER
-   ========================================================= */
-
 function renderCover(
   title,
   elements
@@ -408,10 +396,6 @@ function escapeCssUrl(
 }
 
 
-/* =========================================================
-   TITLE IDENTITY
-   ========================================================= */
-
 function renderIdentity(
   title,
   elements
@@ -439,31 +423,32 @@ function renderIdentity(
           );
 
 
-  displayTypes.forEach(
-    (
-      type
-    ) => {
-      const badge =
-        document.createElement(
-          "span"
-        );
+  displayTypes
+    .forEach(
+      (
+        type
+      ) => {
+        const badge =
+          document.createElement(
+            "span"
+          );
 
 
-      badge.className =
-        "detail-format-badge";
+        badge.className =
+          "detail-format-badge";
 
 
-      badge.textContent =
-        type;
+        badge.textContent =
+          type;
 
 
-      elements
-        .types
-        .append(
-          badge
-        );
-    }
-  );
+        elements
+          .types
+          .append(
+            badge
+          );
+      }
+    );
 
 
   elements
@@ -533,10 +518,6 @@ function renderIdentity(
 }
 
 
-/* =========================================================
-   GENRES
-   ========================================================= */
-
 function renderGenres(
   genres,
   elements
@@ -565,47 +546,44 @@ function renderGenres(
       false;
 
 
-  genres.forEach(
-    (
-      genre
-    ) => {
-      const link =
-        document.createElement(
-          "a"
-        );
+  genres
+    .forEach(
+      (
+        genre
+      ) => {
+        const link =
+          document.createElement(
+            "a"
+          );
 
 
-      link.className =
-        "detail-chip detail-chip-genre";
+        link.className =
+          "detail-chip detail-chip-genre";
 
 
-      link.href =
-        `search.html?genre=${
-          encodeURIComponent(
-            normalizeSearchParameter(
-              genre
+        link.href =
+          `search.html?genre=${
+            encodeURIComponent(
+              normalizeSearchParameter(
+                genre
+              )
             )
-          )
-        }`;
+          }`;
 
 
-      link.textContent =
-        genre;
+        link.textContent =
+          genre;
 
 
-      elements
-        .genres
-        .append(
-          link
-        );
-    }
-  );
+        elements
+          .genres
+          .append(
+            link
+          );
+      }
+    );
 }
 
-
-/* =========================================================
-   SCORE
-   ========================================================= */
 
 function renderScore(
   score,
@@ -648,10 +626,6 @@ function renderScore(
       "Editorial rating";
 }
 
-
-/* =========================================================
-   MEDIA WORKSPACE
-   ========================================================= */
 
 function renderMediaWorkspace(
   title,
@@ -717,9 +691,10 @@ function renderMediaWorkspace(
               buildMediaPanel(
                 mediaType,
 
-                title.media[
-                  mediaType
-                ]
+                title
+                  .media[
+                    mediaType
+                  ]
               )
           };
         }
@@ -727,175 +702,198 @@ function renderMediaWorkspace(
   ];
 
 
-  tabs.forEach(
-    (
-      tabDefinition,
-      index
-    ) => {
-      const tabButton =
-        document.createElement(
-          "button"
+  tabs
+    .forEach(
+      (
+        tabDefinition,
+        index
+      ) => {
+        const tabButton =
+          document.createElement(
+            "button"
+          );
+
+
+        const tabId =
+          `detail-tab-${
+            tabDefinition.id
+          }`;
+
+
+        const panelId =
+          `detail-panel-${
+            tabDefinition.id
+          }`;
+
+
+        tabButton.className =
+          "detail-media-tab";
+
+
+        tabButton.type =
+          "button";
+
+
+        tabButton.id =
+          tabId;
+
+
+        tabButton
+          .dataset
+          .tabId =
+            tabDefinition.id;
+
+
+        tabButton.setAttribute(
+          "role",
+          "tab"
         );
 
 
-      const tabId =
-        `detail-tab-${
-          tabDefinition.id
-        }`;
-
-
-      const panelId =
-        `detail-panel-${
-          tabDefinition.id
-        }`;
-
-
-      tabButton.className =
-        "detail-media-tab";
-
-
-      tabButton.type =
-        "button";
-
-
-      tabButton.id =
-        tabId;
-
-
-      tabButton
-        .dataset
-        .tabId =
-          tabDefinition.id;
-
-
-      tabButton.setAttribute(
-        "role",
-        "tab"
-      );
-
-
-      tabButton.setAttribute(
-        "aria-controls",
-        panelId
-      );
-
-
-      tabButton.setAttribute(
-        "aria-selected",
-        index === 0
-          ? "true"
-          : "false"
-      );
-
-
-      tabButton.tabIndex =
-        index === 0
-          ? 0
-          : -1;
-
-
-      const label =
-        document.createElement(
-          "span"
+        tabButton.setAttribute(
+          "aria-controls",
+          panelId
         );
 
 
-      label.textContent =
-        tabDefinition.label;
+        tabButton.setAttribute(
+          "aria-selected",
+          index === 0
+            ? "true"
+            : "false"
+        );
 
 
-      tabButton.append(
-        label
-      );
+        tabButton.tabIndex =
+          index === 0
+            ? 0
+            : -1;
 
 
-      if (
-        tabDefinition
-          .count != null
-      ) {
-        const count =
+        const label =
           document.createElement(
             "span"
           );
 
 
-        count.className =
-          "detail-media-tab-count";
-
-
-        count.textContent =
-          String(
-            tabDefinition
-              .count
-          );
+        label.textContent =
+          tabDefinition.label;
 
 
         tabButton.append(
-          count
+          label
         );
+
+
+        if (
+          tabDefinition
+            .count != null
+        ) {
+          const count =
+            document.createElement(
+              "span"
+            );
+
+
+          count.className =
+            "detail-media-tab-count";
+
+
+          count.textContent =
+            String(
+              tabDefinition.count
+            );
+
+
+          tabButton.append(
+            count
+          );
+        }
+
+
+        const panel =
+          tabDefinition.panel;
+
+
+        panel.id =
+          panelId;
+
+
+        panel
+          .dataset
+          .panelId =
+            tabDefinition.id;
+
+
+        panel.setAttribute(
+          "role",
+          "tabpanel"
+        );
+
+
+        panel.setAttribute(
+          "aria-labelledby",
+          tabId
+        );
+
+
+        panel.tabIndex =
+          0;
+
+
+        panel.hidden =
+          index !== 0;
+
+
+        elements
+          .mediaTabs
+          .append(
+            tabButton
+          );
+
+
+        elements
+          .mediaPanels
+          .append(
+            panel
+          );
       }
-
-
-      const panel =
-        tabDefinition.panel;
-
-
-      panel.id =
-        panelId;
-
-
-      panel
-        .dataset
-        .panelId =
-          tabDefinition.id;
-
-
-      panel.setAttribute(
-        "role",
-        "tabpanel"
-      );
-
-
-      panel.setAttribute(
-        "aria-labelledby",
-        tabId
-      );
-
-
-      panel.tabIndex =
-        0;
-
-
-      panel.hidden =
-        index !== 0;
-
-
-      elements
-        .mediaTabs
-        .append(
-          tabButton
-        );
-
-
-      elements
-        .mediaPanels
-        .append(
-          panel
-        );
-    }
-  );
+    );
 
 
   elements
     .mediaSection
     .hidden =
       false;
+
+
+  const requestedFormat =
+    new URLSearchParams(
+      window
+        .location
+        .search
+    )
+      .get(
+        "format"
+      )
+      ?.toLowerCase();
+
+
+  if (
+    requestedFormat &&
+    availableTypes
+      .includes(
+        requestedFormat
+      )
+  ) {
+    activateMediaTab(
+      requestedFormat,
+      elements,
+      false
+    );
+  }
 }
 
-
-/* =========================================================
-   OVERVIEW PANEL
-   ========================================================= */
 
 function buildOverviewPanel(
   title,
@@ -960,8 +958,8 @@ function buildOverviewPanel(
 
   copy.textContent =
     availableTypes.length
-      ? "Use the format tabs to explore each publication, adaptation, novel, or game as its own catalogue record."
-      : "More release information has not been added to this catalogue entry yet.";
+      ? "Use the format tabs to explore each manga publication and anime adaptation as its own catalogue record."
+      : "More manga or anime information has not been added to this catalogue entry yet.";
 
 
   headingBlock.append(
@@ -993,47 +991,48 @@ function buildOverviewPanel(
 
   buildOverviewStats(
     title
-  ).forEach(
-    (
-      stat
-    ) => {
-      const item =
-        document.createElement(
-          "div"
+  )
+    .forEach(
+      (
+        stat
+      ) => {
+        const item =
+          document.createElement(
+            "div"
+          );
+
+
+        const term =
+          document.createElement(
+            "dt"
+          );
+
+
+        const value =
+          document.createElement(
+            "dd"
+          );
+
+
+        term.textContent =
+          stat.label;
+
+
+        value.textContent =
+          stat.value;
+
+
+        item.append(
+          term,
+          value
         );
 
 
-      const term =
-        document.createElement(
-          "dt"
+        stats.append(
+          item
         );
-
-
-      const value =
-        document.createElement(
-          "dd"
-        );
-
-
-      term.textContent =
-        stat.label;
-
-
-      value.textContent =
-        stat.value;
-
-
-      item.append(
-        term,
-        value
-      );
-
-
-      stats.append(
-        item
-      );
-    }
-  );
+      }
+    );
 
 
   panel.append(
@@ -1054,92 +1053,95 @@ function buildOverviewPanel(
       "detail-format-summary-list";
 
 
-    availableTypes.forEach(
-      (
-        mediaType
-      ) => {
-        const row =
-          document.createElement(
-            "button"
-          );
-
-
-        const text =
-          document.createElement(
-            "span"
-          );
-
-
-        const count =
-          document.createElement(
-            "strong"
-          );
-
-
-        const icon =
-          document.createElement(
-            "i"
-          );
-
-
-        row.className =
-          "detail-format-summary";
-
-
-        row.type =
-          "button";
-
-
-        text.textContent =
-          getMediaLabel(
-            mediaType
-          );
-
-
-        count.textContent =
-          getMediaCountLabel(
-            mediaType,
-
-            title.media[
-              mediaType
-            ].length
-          );
-
-
-        icon.className =
-          "ti ti-arrow-right";
-
-
-        icon.setAttribute(
-          "aria-hidden",
-          "true"
-        );
-
-
-        row.append(
-          text,
-          count,
-          icon
-        );
-
-
-        row.addEventListener(
-          "click",
-          () => {
-            activateMediaTab(
-              mediaType,
-              elements,
-              true
+    availableTypes
+      .forEach(
+        (
+          mediaType
+        ) => {
+          const row =
+            document.createElement(
+              "button"
             );
-          }
-        );
 
 
-        formatList.append(
-          row
-        );
-      }
-    );
+          const text =
+            document.createElement(
+              "span"
+            );
+
+
+          const count =
+            document.createElement(
+              "strong"
+            );
+
+
+          const icon =
+            document.createElement(
+              "i"
+            );
+
+
+          row.className =
+            "detail-format-summary";
+
+
+          row.type =
+            "button";
+
+
+          text.textContent =
+            getMediaLabel(
+              mediaType
+            );
+
+
+          count.textContent =
+            getMediaCountLabel(
+              mediaType,
+
+              title
+                .media[
+                  mediaType
+                ]
+                .length
+            );
+
+
+          icon.className =
+            "ti ti-arrow-right";
+
+
+          icon.setAttribute(
+            "aria-hidden",
+            "true"
+          );
+
+
+          row.append(
+            text,
+            count,
+            icon
+          );
+
+
+          row.addEventListener(
+            "click",
+            () => {
+              activateMediaTab(
+                mediaType,
+                elements,
+                true
+              );
+            }
+          );
+
+
+          formatList.append(
+            row
+          );
+        }
+      );
 
 
     panel.append(
@@ -1151,10 +1153,6 @@ function buildOverviewPanel(
   return panel;
 }
 
-
-/* =========================================================
-   FORMAT PANEL
-   ========================================================= */
 
 function buildMediaPanel(
   mediaType,
@@ -1273,20 +1271,21 @@ function buildMediaPanel(
     "detail-release-list";
 
 
-  entries.forEach(
-    (
-      entry,
-      index
-    ) => {
-      list.append(
-        buildMediaEntry(
-          mediaType,
-          entry,
-          index
-        )
-      );
-    }
-  );
+  entries
+    .forEach(
+      (
+        entry,
+        index
+      ) => {
+        list.append(
+          buildMediaEntry(
+            mediaType,
+            entry,
+            index
+          )
+        );
+      }
+    );
 
 
   panel.append(
@@ -1297,10 +1296,6 @@ function buildMediaPanel(
   return panel;
 }
 
-
-/* =========================================================
-   INDIVIDUAL RELEASE
-   ========================================================= */
 
 function buildMediaEntry(
   mediaType,
@@ -1339,10 +1334,11 @@ function buildMediaEntry(
     view.yearLabel ||
     String(
       index + 1
-    ).padStart(
-      2,
-      "0"
-    );
+    )
+      .padStart(
+        2,
+        "0"
+      );
 
 
   const body =
@@ -1513,10 +1509,6 @@ function buildMediaEntry(
 }
 
 
-/* =========================================================
-   DEFINITION LIST
-   ========================================================= */
-
 function buildDefinitionGrid(
   items,
   className
@@ -1531,56 +1523,53 @@ function buildDefinitionGrid(
     className;
 
 
-  items.forEach(
-    (
-      item
-    ) => {
-      const wrapper =
-        document.createElement(
-          "div"
+  items
+    .forEach(
+      (
+        item
+      ) => {
+        const wrapper =
+          document.createElement(
+            "div"
+          );
+
+
+        const term =
+          document.createElement(
+            "dt"
+          );
+
+
+        const definition =
+          document.createElement(
+            "dd"
+          );
+
+
+        term.textContent =
+          item.label;
+
+
+        definition.textContent =
+          item.value;
+
+
+        wrapper.append(
+          term,
+          definition
         );
 
 
-      const term =
-        document.createElement(
-          "dt"
+        list.append(
+          wrapper
         );
-
-
-      const definition =
-        document.createElement(
-          "dd"
-        );
-
-
-      term.textContent =
-        item.label;
-
-
-      definition.textContent =
-        item.value;
-
-
-      wrapper.append(
-        term,
-        definition
-      );
-
-
-      list.append(
-        wrapper
-      );
-    }
-  );
+      }
+    );
 
 
   return list;
 }
 
-
-/* =========================================================
-   COLLAPSIBLE DISCLOSURE
-   ========================================================= */
 
 function buildDisclosure(
   label,
@@ -1668,10 +1657,6 @@ function buildDisclosure(
 }
 
 
-/* =========================================================
-   DESCRIPTION
-   ========================================================= */
-
 function renderDescription(
   description,
   elements
@@ -1682,7 +1667,8 @@ function renderDescription(
 
 
   const shouldCollapse =
-    copy.length > 720;
+    copy.length >
+    720;
 
 
   elements
@@ -1723,10 +1709,6 @@ function renderDescription(
 }
 
 
-/* =========================================================
-   THEMES
-   ========================================================= */
-
 function renderThemes(
   tags,
   elements
@@ -1755,49 +1737,46 @@ function renderThemes(
       false;
 
 
-  tags.forEach(
-    (
-      tag
-    ) => {
-      const link =
-        document.createElement(
-          "a"
-        );
+  tags
+    .forEach(
+      (
+        tag
+      ) => {
+        const link =
+          document.createElement(
+            "a"
+          );
 
 
-      link.className =
-        "detail-chip detail-chip-theme";
+        link.className =
+          "detail-chip detail-chip-theme";
 
 
-      link.href =
-        `search.html?tag=${
-          encodeURIComponent(
-            normalizeSearchParameter(
-              tag
+        link.href =
+          `search.html?tag=${
+            encodeURIComponent(
+              normalizeSearchParameter(
+                tag
+              )
             )
-          )
-        }`;
+          }`;
 
 
-      link.textContent =
-        formatLabel(
-          tag
-        );
+        link.textContent =
+          formatLabel(
+            tag
+          );
 
 
-      elements
-        .themes
-        .append(
-          link
-        );
-    }
-  );
+        elements
+          .themes
+          .append(
+            link
+          );
+      }
+    );
 }
 
-
-/* =========================================================
-   SIMILAR TITLES
-   ========================================================= */
 
 function configureSimilarLink(
   title,
@@ -1814,9 +1793,10 @@ function configureSimilarLink(
         `search.html?genre=${
           encodeURIComponent(
             normalizeSearchParameter(
-              title.genres[
-                0
-              ]
+              title
+                .genres[
+                  0
+                ]
             )
           )
         }`;
@@ -1832,19 +1812,16 @@ function configureSimilarLink(
       `search.html?type=${
         encodeURIComponent(
           normalizeSearchParameter(
-            title.types[
-              0
-            ] ||
+            title
+              .types[
+                0
+              ] ||
             "story"
           )
         )
       }`;
 }
 
-
-/* =========================================================
-   TAB ACTIVATION
-   ========================================================= */
 
 function activateMediaTab(
   tabId,
@@ -1891,42 +1868,44 @@ function activateMediaTab(
   }
 
 
-  tabs.forEach(
-    (
-      tab
-    ) => {
-      const selected =
-        tab ===
-        activeTab;
+  tabs
+    .forEach(
+      (
+        tab
+      ) => {
+        const selected =
+          tab ===
+          activeTab;
 
 
-      tab.setAttribute(
-        "aria-selected",
-        String(
+        tab.setAttribute(
+          "aria-selected",
+          String(
+            selected
+          )
+        );
+
+
+        tab.tabIndex =
           selected
-        )
-      );
+            ? 0
+            : -1;
+      }
+    );
 
 
-      tab.tabIndex =
-        selected
-          ? 0
-          : -1;
-    }
-  );
-
-
-  panels.forEach(
-    (
-      panel
-    ) => {
-      panel.hidden =
+  panels
+    .forEach(
+      (
         panel
-          .dataset
-          .panelId !==
-        tabId;
-    }
-  );
+      ) => {
+        panel.hidden =
+          panel
+            .dataset
+            .panelId !==
+          tabId;
+      }
+    );
 
 
   if (
@@ -1938,46 +1917,35 @@ function activateMediaTab(
     });
 
 
-    activeTab.scrollIntoView({
-      behavior:
-        "smooth",
+    activeTab
+      .scrollIntoView({
+        behavior:
+          "smooth",
 
-      block:
-        "nearest",
+        block:
+          "nearest",
 
-      inline:
-        "nearest"
-    });
+        inline:
+          "nearest"
+      });
   }
 }
 
 
-/* =========================================================
-   LABEL HELPERS
-   ========================================================= */
-
 function getMediaPanelHeading(
   mediaType
 ) {
-  const headings = {
-    anime:
-      "Anime adaptations",
-
-    manga:
-      "Manga publications",
-
-    novel:
-      "Novel publications",
-
-    game:
-      "Game releases"
-  };
-
-
   return (
-    headings[
+    {
+      anime:
+        "Anime adaptations",
+
+      manga:
+        "Manga publications"
+    }[
       mediaType
     ] ||
+
     `${
       getMediaLabel(
         mediaType
@@ -1990,25 +1958,17 @@ function getMediaPanelHeading(
 function getMediaPanelDescription(
   mediaType
 ) {
-  const descriptions = {
-    anime:
-      "Each season, special, OVA, and film remains a separate record so its facts never become mixed with another release.",
-
-    manga:
-      "Each publication is shown independently with its own chapters, volumes, publisher, magazine, and demographic.",
-
-    novel:
-      "Each novel publication remains separate, including its creators, imprint, release period, and volume information.",
-
-    game:
-      "Each game release remains separate, including its platform, developer, publisher, and release information."
-  };
-
-
   return (
-    descriptions[
+    {
+      anime:
+        "Each season, special, OVA, and film remains a separate record so its facts never become mixed with another release.",
+
+      manga:
+        "Each publication is shown independently with its own chapters, volumes, publisher, magazine, and demographic."
+    }[
       mediaType
     ] ||
+
     "Every catalogue entry is preserved and displayed independently."
   );
 }
@@ -2017,25 +1977,10 @@ function getMediaPanelDescription(
 function getNotesLabel(
   mediaType
 ) {
-  if (
-    mediaType ===
+  return mediaType ===
     "anime"
-  ) {
-    return "Adaptation notes";
-  }
-
-
-  if (
-    mediaType ===
-      "manga" ||
-    mediaType ===
-      "novel"
-  ) {
-    return "Publication notes";
-  }
-
-
-  return "Release notes";
+      ? "Adaptation notes"
+      : "Publication notes";
 }
 
 
@@ -2056,10 +2001,6 @@ function slugify(
     );
 }
 
-
-/* =========================================================
-   PAGE STATES
-   ========================================================= */
 
 export function showDetailContent(
   elements
