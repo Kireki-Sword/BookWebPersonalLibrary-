@@ -1,136 +1,83 @@
 // detail-library.js
-// Direct Manga and Anime library-status controls.
+// Manages Manga and Anime library statuses with a stable modal editor.
 //
-// The status menu:
-// - Matches the search-page dropdown style.
-// - Opens above or below depending on available room.
-// - Stays inside the detail hero.
-// - Does not cover the next major content card.
-// - Closes when the page scrolls to prevent shaking.
-// - Supports keyboard navigation.
-// - Stores Manga and Anime independently.
+// This version keeps the current detail-page HTML and localStorage shape.
+// The old in-card picker is hidden, each format becomes one full-width row,
+// and status editing happens inside a native <dialog>.
 
-const STORAGE_KEY =
-  "inkwell-library";
-
-
-const STYLE_ELEMENT_ID =
-  "inkwell-direct-library-styles";
-
-
-const STATUS_MENU_ID =
-  "detail-library-status-menu";
-
+const STORAGE_KEY = "inkwell-library";
+const DIALOG_ID = "detail-library-status-dialog";
 
 const SUPPORTED_FORMATS = [
   "manga",
   "anime"
 ];
 
+const FORMAT_CONFIG = Object.freeze({
+  manga: {
+    label: "Manga",
+    icon: "ti ti-book-2",
 
-const FORMAT_CONFIG =
-  Object.freeze({
-    manga: {
-      label:
-        "Manga",
+    statuses: [
+      {
+        id: "reading",
+        label: "Reading"
+      },
 
-      icon:
-        "ti ti-book-2",
+      {
+        id: "completed",
+        label: "Completed"
+      },
 
-      statuses: [
-        {
-          id:
-            "reading",
+      {
+        id: "plan-to-read",
+        label: "Plan to read"
+      },
 
-          label:
-            "Reading"
-        },
+      {
+        id: "paused",
+        label: "Paused"
+      },
 
-        {
-          id:
-            "completed",
+      {
+        id: "dropped",
+        label: "Dropped"
+      }
+    ]
+  },
 
-          label:
-            "Completed"
-        },
+  anime: {
+    label: "Anime",
+    icon: "ti ti-device-tv",
 
-        {
-          id:
-            "plan-to-read",
+    statuses: [
+      {
+        id: "watching",
+        label: "Watching"
+      },
 
-          label:
-            "Plan to read"
-        },
+      {
+        id: "completed",
+        label: "Completed"
+      },
 
-        {
-          id:
-            "paused",
+      {
+        id: "plan-to-watch",
+        label: "Plan to watch"
+      },
 
-          label:
-            "Paused"
-        },
+      {
+        id: "paused",
+        label: "Paused"
+      },
 
-        {
-          id:
-            "dropped",
-
-          label:
-            "Dropped"
-        }
-      ]
-    },
-
-
-    anime: {
-      label:
-        "Anime",
-
-      icon:
-        "ti ti-device-tv",
-
-      statuses: [
-        {
-          id:
-            "watching",
-
-          label:
-            "Watching"
-        },
-
-        {
-          id:
-            "completed",
-
-          label:
-            "Completed"
-        },
-
-        {
-          id:
-            "plan-to-watch",
-
-          label:
-            "Plan to watch"
-        },
-
-        {
-          id:
-            "paused",
-
-          label:
-            "Paused"
-        },
-
-        {
-          id:
-            "dropped",
-
-          label:
-            "Dropped"
-        }
-      ]
-    }
-  });
+      {
+        id: "dropped",
+        label: "Dropped"
+      }
+    ]
+  }
+});
 
 
 export function createDetailLibraryController(
@@ -143,44 +90,45 @@ export function createDetailLibraryController(
         ".detail-library-block"
       );
 
-
   const libraryTitle =
     document
       .getElementById(
         "detail-library-title"
       );
 
-
   let currentTitle =
     null;
-
 
   let currentEntry =
     null;
 
-
   let availableFormats =
     [];
-
 
   let hasBoundEvents =
     false;
 
-
-  let statusMenu =
+  let dialogElements =
     null;
 
-
-  let activeFormat =
+  let editorFormat =
     "";
 
+  let draftStatus =
+    "";
 
-  let activeTrigger =
+  let returnTrigger =
+    null;
+
+  let restoreFocusOnClose =
+    true;
+
+  let noteTimer =
     null;
 
 
   /* =======================================================
-     EVENT SETUP
+     STARTUP
      ======================================================= */
 
   function bindEvents() {
@@ -190,20 +138,13 @@ export function createDetailLibraryController(
       return;
     }
 
-
     hasBoundEvents =
       true;
 
+    prepareInterface();
 
-    installDirectLibraryStyles();
-
-
-    prepareDirectLibraryInterface();
-
-
-    statusMenu =
-      createStatusMenu();
-
+    dialogElements =
+      createStatusDialog();
 
     elements
       .librarySummary
@@ -212,77 +153,83 @@ export function createDetailLibraryController(
         handleSummaryClick
       );
 
-
-    elements
-      .librarySummary
+    dialogElements
+      .options
       .addEventListener(
-        "keydown",
-        handleSummaryKeydown
+        "change",
+        handleDialogStatusChange
       );
 
-
-    statusMenu
+    dialogElements
+      .closeButton
       .addEventListener(
         "click",
-        handleMenuClick
-      );
+        () => {
+          closeEditor({
+            result:
+              "cancel",
 
-
-    statusMenu
-      .addEventListener(
-        "keydown",
-        handleMenuKeydown
-      );
-
-
-    document
-      .addEventListener(
-        "pointerdown",
-        handleDocumentPointerDown
-      );
-
-
-    window
-      .addEventListener(
-        "resize",
-        handleViewportResize,
-        {
-          passive:
-            true
+            restoreFocus:
+              true
+          });
         }
       );
 
-
-    /*
-     * Close the menu when the page scrolls.
-     *
-     * Repositioning a fixed menu continuously during scrolling
-     * can make it shake or jump between top and bottom.
-     */
-
-    window
+    dialogElements
+      .cancelButton
       .addEventListener(
-        "scroll",
-        handlePageScroll,
-        {
-          passive:
-            true
+        "click",
+        () => {
+          closeEditor({
+            result:
+              "cancel",
+
+            restoreFocus:
+              true
+          });
         }
+      );
+
+    dialogElements
+      .saveButton
+      .addEventListener(
+        "click",
+        handleSaveClick
+      );
+
+    dialogElements
+      .dialog
+      .addEventListener(
+        "cancel",
+        handleDialogCancel
+      );
+
+    dialogElements
+      .dialog
+      .addEventListener(
+        "click",
+        handleDialogBackdropClick
+      );
+
+    dialogElements
+      .dialog
+      .addEventListener(
+        "close",
+        handleDialogClose
       );
   }
 
 
   /* =======================================================
-     PREPARE THE DIRECT INTERFACE
+     PREPARE THE EXISTING CARD
      ======================================================= */
 
-  function prepareDirectLibraryInterface() {
+  function prepareInterface() {
     libraryBlock
       ?.classList
       .add(
-        "is-direct-library"
+        "is-dialog-library"
       );
-
 
     if (
       libraryTitle
@@ -292,19 +239,23 @@ export function createDetailLibraryController(
           "My status";
     }
 
-
     elements
       .librarySummary
       .hidden =
         false;
 
+    elements
+      .librarySummary
+      .setAttribute(
+        "aria-label",
+        "Library status by format"
+      );
 
     /*
-     * Keep the original menu elements in the HTML so the
-     * current detail-dom.js file does not need to change.
+     * Keep these legacy elements in the HTML because
+     * detail-dom.js currently requires them.
      *
-     * The original elements are hidden because the new
-     * interface creates its own direct status controls.
+     * The new interface does not use them.
      */
 
     elements
@@ -312,18 +263,15 @@ export function createDetailLibraryController(
       .hidden =
         true;
 
-
     elements
       .libraryTrigger
       .hidden =
         true;
 
-
     elements
       .libraryMenu
       .hidden =
         true;
-
 
     elements
       .libraryTrigger
@@ -332,13 +280,7 @@ export function createDetailLibraryController(
         "false"
       );
 
-
-    elements
-      .librarySummary
-      .setAttribute(
-        "aria-label",
-        "Library status by format"
-      );
+    clearLibraryNote();
   }
 
 
@@ -349,12 +291,16 @@ export function createDetailLibraryController(
   function setTitle(
     title
   ) {
-    closeStatusMenu();
+    closeEditor({
+      result:
+        "title-change",
 
+      restoreFocus:
+        false
+    });
 
     currentTitle =
       title;
-
 
     availableFormats =
       SUPPORTED_FORMATS
@@ -373,10 +319,8 @@ export function createDetailLibraryController(
           }
         );
 
-
     const library =
       readLibrary();
-
 
     currentEntry =
       normalizeStoredEntry(
@@ -389,44 +333,36 @@ export function createDetailLibraryController(
         availableFormats
       );
 
+    clearLibraryNote();
 
     renderInterface();
   }
 
 
   /* =======================================================
-     FORMAT-ROW EVENTS
+     LIBRARY CARD EVENTS
      ======================================================= */
 
   function handleSummaryClick(
     event
   ) {
-    const trigger =
+    const button =
       event
         .target
         .closest(
-          "[data-library-status-trigger]"
+          "[data-library-format-button]"
         );
 
-
     if (
-      !trigger
+      !button
     ) {
       return;
     }
 
-
-    event.preventDefault();
-
-
-    event.stopPropagation();
-
-
     const format =
-      trigger
+      button
         .dataset
-        .libraryStatusTrigger;
-
+        .libraryFormatButton;
 
     if (
       !availableFormats
@@ -437,357 +373,383 @@ export function createDetailLibraryController(
       return;
     }
 
-
-    if (
-      activeTrigger ===
-        trigger &&
-      isStatusMenuOpen()
-    ) {
-      closeStatusMenu({
-        returnFocus:
-          true
-      });
-
-
-      return;
-    }
-
-
-    openStatusMenu(
+    openEditor(
       format,
-      trigger,
-      "selected"
+      button
     );
   }
 
 
-  function handleSummaryKeydown(
-    event
-  ) {
-    const trigger =
-      event
-        .target
-        .closest(
-          "[data-library-status-trigger]"
-        );
-
-
-    if (
-      !trigger
-    ) {
-      return;
-    }
-
-
-    const format =
-      trigger
-        .dataset
-        .libraryStatusTrigger;
-
-
-    if (
-      !availableFormats
-        .includes(
-          format
-        )
-    ) {
-      return;
-    }
-
-
-    if (
-      event.key ===
-        "ArrowDown" ||
-      event.key ===
-        "ArrowUp"
-    ) {
-      event.preventDefault();
-
-
-      openStatusMenu(
-        format,
-
-        trigger,
-
-        event.key ===
-          "ArrowUp"
-          ? "last"
-          : "selected"
-      );
-
-
-      return;
-    }
-
-
-    if (
-      event.key ===
-        "Enter" ||
-      event.key ===
-        " "
-    ) {
-      event.preventDefault();
-
-
-      openStatusMenu(
-        format,
-        trigger,
-        "selected"
-      );
-    }
-  }
-
-
   /* =======================================================
-     CREATE THE FLOATING STATUS MENU
+     DIALOG CREATION
      ======================================================= */
 
-  function createStatusMenu() {
+  function createStatusDialog() {
     document
       .getElementById(
-        STATUS_MENU_ID
+        DIALOG_ID
       )
       ?.remove();
 
+    const dialog =
+      document
+        .createElement(
+          "dialog"
+        );
 
-    const menu =
+    const surface =
       document
         .createElement(
           "div"
         );
 
+    const header =
+      document
+        .createElement(
+          "header"
+        );
 
-    menu.id =
-      STATUS_MENU_ID;
+    const headingIcon =
+      document
+        .createElement(
+          "span"
+        );
 
+    const headingIconElement =
+      document
+        .createElement(
+          "i"
+        );
 
-    menu.className =
-      "detail-library-status-menu";
+    const headingCopy =
+      document
+        .createElement(
+          "div"
+        );
 
+    const eyebrow =
+      document
+        .createElement(
+          "span"
+        );
 
-    menu.hidden =
-      true;
+    const title =
+      document
+        .createElement(
+          "h2"
+        );
 
+    const closeButton =
+      document
+        .createElement(
+          "button"
+        );
 
-    menu.setAttribute(
-      "role",
-      "listbox"
+    const closeIcon =
+      document
+        .createElement(
+          "i"
+        );
+
+    const description =
+      document
+        .createElement(
+          "p"
+        );
+
+    const options =
+      document
+        .createElement(
+          "fieldset"
+        );
+
+    const legend =
+      document
+        .createElement(
+          "legend"
+        );
+
+    const actions =
+      document
+        .createElement(
+          "footer"
+        );
+
+    const cancelButton =
+      document
+        .createElement(
+          "button"
+        );
+
+    const saveButton =
+      document
+        .createElement(
+          "button"
+        );
+
+    dialog.id =
+      DIALOG_ID;
+
+    dialog.className =
+      "detail-library-dialog";
+
+    dialog.setAttribute(
+      "aria-labelledby",
+      `${DIALOG_ID}-title`
     );
 
+    dialog.setAttribute(
+      "aria-describedby",
+      `${DIALOG_ID}-description`
+    );
 
-    menu.setAttribute(
+    surface.className =
+      "detail-library-dialog-surface";
+
+    header.className =
+      "detail-library-dialog-header";
+
+    headingIcon.className =
+      "detail-library-dialog-icon";
+
+    headingIcon.setAttribute(
+      "aria-hidden",
+      "true"
+    );
+
+    headingIconElement.className =
+      "ti ti-books";
+
+    headingIcon.append(
+      headingIconElement
+    );
+
+    headingCopy.className =
+      "detail-library-dialog-heading";
+
+    eyebrow.className =
+      "detail-eyebrow";
+
+    eyebrow.textContent =
+      "Update your library";
+
+    title.id =
+      `${DIALOG_ID}-title`;
+
+    title.textContent =
+      "Choose a status";
+
+    headingCopy.append(
+      eyebrow,
+      title
+    );
+
+    closeButton.type =
+      "button";
+
+    closeButton.className =
+      "detail-library-dialog-close";
+
+    closeButton.setAttribute(
       "aria-label",
-      "Choose a library status"
+      "Close status editor"
     );
 
+    closeIcon.className =
+      "ti ti-x";
+
+    closeIcon.setAttribute(
+      "aria-hidden",
+      "true"
+    );
+
+    closeButton.append(
+      closeIcon
+    );
+
+    header.append(
+      headingIcon,
+      headingCopy,
+      closeButton
+    );
+
+    description.id =
+      `${DIALOG_ID}-description`;
+
+    description.className =
+      "detail-library-dialog-description";
+
+    description.textContent =
+      "Choose how this format appears in your library.";
+
+    options.className =
+      "detail-library-dialog-options";
+
+    legend.className =
+      "detail-library-visually-hidden";
+
+    legend.textContent =
+      "Library status";
+
+    options.append(
+      legend
+    );
+
+    actions.className =
+      "detail-library-dialog-actions";
+
+    cancelButton.type =
+      "button";
+
+    cancelButton.className =
+      "detail-library-dialog-button detail-library-dialog-button-secondary";
+
+    cancelButton.textContent =
+      "Cancel";
+
+    saveButton.type =
+      "button";
+
+    saveButton.className =
+      "detail-library-dialog-button detail-library-dialog-button-primary";
+
+    saveButton.textContent =
+      "Save status";
+
+    actions.append(
+      cancelButton,
+      saveButton
+    );
+
+    surface.append(
+      header,
+      description,
+      options,
+      actions
+    );
+
+    dialog.append(
+      surface
+    );
 
     document
       .body
       .append(
-        menu
+        dialog
       );
 
-
-    return menu;
+    return {
+      dialog,
+      title,
+      description,
+      options,
+      closeButton,
+      cancelButton,
+      saveButton
+    };
   }
 
 
   /* =======================================================
-     OPEN AND CLOSE THE STATUS MENU
+     OPEN THE EDITOR
      ======================================================= */
 
-  function isStatusMenuOpen() {
-    return Boolean(
-      statusMenu &&
-      !statusMenu.hidden
-    );
-  }
-
-
-  function openStatusMenu(
+  function openEditor(
     format,
-    trigger,
-    focusMode =
-      "selected"
+    trigger
   ) {
     const formatConfig =
       FORMAT_CONFIG[
         format
       ];
 
-
     if (
+      !dialogElements ||
       !formatConfig ||
-      !statusMenu
+      !currentEntry
     ) {
       return;
     }
 
-
-    if (
-      activeTrigger &&
-      activeTrigger !==
-        trigger
-    ) {
-      activeTrigger
-        .setAttribute(
-          "aria-expanded",
-          "false"
-        );
-    }
-
-
-    activeFormat =
+    editorFormat =
       format;
 
-
-    activeTrigger =
-      trigger;
-
-
-    buildStatusMenuOptions(
-      format
-    );
-
-
-    trigger
-      .setAttribute(
-        "aria-expanded",
-        "true"
-      );
-
-
-    statusMenu
-      .setAttribute(
-        "aria-label",
-        `${formatConfig.label} library status`
-      );
-
-
-    statusMenu
-      .style
-      .visibility =
-        "hidden";
-
-
-    statusMenu.hidden =
-      false;
-
-
-    positionStatusMenu();
-
-
-    window
-      .requestAnimationFrame(
-        () => {
-          focusMenuOption(
-            focusMode
-          );
-        }
-      );
-  }
-
-
-  function closeStatusMenu(
-    {
-      returnFocus =
-        false
-    } = {}
-  ) {
-    const triggerToFocus =
-      activeTrigger;
-
-
-    activeTrigger
-      ?.setAttribute(
-        "aria-expanded",
-        "false"
-      );
-
-
-    if (
-      statusMenu
-    ) {
-      statusMenu.hidden =
-        true;
-
-
-      statusMenu
-        .replaceChildren();
-
-
-      statusMenu
-        .style
-        .visibility =
-          "hidden";
-
-
-      statusMenu
-        .style
-        .removeProperty(
-          "left"
-        );
-
-
-      statusMenu
-        .style
-        .removeProperty(
-          "top"
-        );
-
-
-      statusMenu
-        .style
-        .removeProperty(
-          "width"
-        );
-
-
-      statusMenu
-        .style
-        .removeProperty(
-          "max-height"
-        );
-
-
-      delete statusMenu
-        .dataset
-        .placement;
-    }
-
-
-    activeFormat =
-      "";
-
-
-    activeTrigger =
-      null;
-
-
-    if (
-      returnFocus
-    ) {
-      triggerToFocus
-        ?.focus();
-    }
-  }
-
-
-  /* =======================================================
-     BUILD THE STATUS OPTIONS
-     ======================================================= */
-
-  function buildStatusMenuOptions(
-    format
-  ) {
-    const savedStatus =
+    draftStatus =
       currentEntry
-        ?.formats[
+        .formats[
           format
         ]
         ?.status ||
       "";
 
+    returnTrigger =
+      trigger;
+
+    restoreFocusOnClose =
+      true;
+
+    dialogElements
+      .title
+      .textContent =
+        `${formatConfig.label} status`;
+
+    dialogElements
+      .description
+      .textContent =
+        `Choose how ${formatConfig.label} appears in your library.`;
+
+    renderDialogOptions(
+      format,
+      draftStatus
+    );
+
+    if (
+      typeof dialogElements
+        .dialog
+        .showModal !==
+      "function"
+    ) {
+      showLibraryNote(
+        "This browser does not support the status editor.",
+        "error"
+      );
+
+      return;
+    }
+
+    if (
+      !dialogElements
+        .dialog
+        .open
+    ) {
+      dialogElements
+        .dialog
+        .showModal();
+    }
+
+    window
+      .requestAnimationFrame(
+        focusSelectedDialogOption
+      );
+  }
+
+
+  /* =======================================================
+     RENDER DIALOG OPTIONS
+     ======================================================= */
+
+  function renderDialogOptions(
+    format,
+    selectedStatus
+  ) {
+    const formatConfig =
+      FORMAT_CONFIG[
+        format
+      ];
+
+    const fragment =
+      document
+        .createDocumentFragment();
 
     const options = [
       {
@@ -795,20 +757,30 @@ export function createDetailLibraryController(
           "",
 
         label:
-          "Not tracked"
+          "Not tracked",
+
+        description:
+          "Remove this format from your library."
       },
 
-      ...FORMAT_CONFIG[
-        format
-      ]
+      ...formatConfig
         .statuses
+        .map(
+          (
+            status
+          ) => {
+            return {
+              ...status,
+
+              description:
+                getStatusDescription(
+                  format,
+                  status.id
+                )
+            };
+          }
+        )
     ];
-
-
-    const fragment =
-      document
-        .createDocumentFragment();
-
 
     options
       .forEach(
@@ -816,802 +788,348 @@ export function createDetailLibraryController(
           option,
           index
         ) => {
-          const selected =
-            option.id ===
-            savedStatus;
-
-
-          const button =
-            document
-              .createElement(
-                "button"
-              );
-
-
-          const label =
-            document
-              .createElement(
-                "span"
-              );
-
-
-          const checkmark =
-            document
-              .createElement(
-                "i"
-              );
-
-
-          button.type =
-            "button";
-
-
-          button.id =
-            `${STATUS_MENU_ID}-option-${format}-${index}`;
-
-
-          button.className =
-            "detail-library-status-option";
-
-
-          button
-            .dataset
-            .libraryStatusOption =
-              option.id;
-
-
-          button.setAttribute(
-            "role",
-            "option"
-          );
-
-
-          button.setAttribute(
-            "aria-selected",
-            String(
-              selected
-            )
-          );
-
-
-          button.tabIndex =
-            -1;
-
-
-          label.textContent =
-            option.label;
-
-
-          checkmark.className =
-            "ti ti-check detail-library-status-check";
-
-
-          checkmark.setAttribute(
-            "aria-hidden",
-            "true"
-          );
-
-
-          button.append(
-            label,
-            checkmark
-          );
-
-
           fragment.append(
-            button
+            createDialogOption({
+              format,
+              option,
+
+              checked:
+                option.id ===
+                selectedStatus,
+
+              index
+            })
           );
         }
       );
 
+    const legend =
+      dialogElements
+        .options
+        .querySelector(
+          "legend"
+        );
 
-    statusMenu
-      .replaceChildren(
+    dialogElements
+      .options
+      .replaceChildren();
+
+    if (
+      legend
+    ) {
+      dialogElements
+        .options
+        .append(
+          legend
+        );
+    }
+
+    dialogElements
+      .options
+      .append(
         fragment
       );
   }
 
 
+  function createDialogOption({
+    format,
+    option,
+    checked,
+    index
+  }) {
+    const label =
+      document
+        .createElement(
+          "label"
+        );
+
+    const input =
+      document
+        .createElement(
+          "input"
+        );
+
+    const indicator =
+      document
+        .createElement(
+          "span"
+        );
+
+    const copy =
+      document
+        .createElement(
+          "span"
+        );
+
+    const title =
+      document
+        .createElement(
+          "strong"
+        );
+
+    const description =
+      document
+        .createElement(
+          "small"
+        );
+
+    const inputId =
+      `${DIALOG_ID}-${format}-${index}`;
+
+    label.className =
+      "detail-library-dialog-option";
+
+    label.htmlFor =
+      inputId;
+
+    input.id =
+      inputId;
+
+    input.className =
+      "detail-library-dialog-radio";
+
+    input.type =
+      "radio";
+
+    input.name =
+      `${DIALOG_ID}-status`;
+
+    input.value =
+      option.id;
+
+    input.checked =
+      checked;
+
+    indicator.className =
+      "detail-library-dialog-radio-mark";
+
+    indicator.setAttribute(
+      "aria-hidden",
+      "true"
+    );
+
+    copy.className =
+      "detail-library-dialog-option-copy";
+
+    title.textContent =
+      option.label;
+
+    description.textContent =
+      option.description;
+
+    copy.append(
+      title,
+      description
+    );
+
+    label.append(
+      input,
+      indicator,
+      copy
+    );
+
+    return label;
+  }
+
+
+  function handleDialogStatusChange(
+    event
+  ) {
+    const radio =
+      event
+        .target
+        .closest(
+          ".detail-library-dialog-radio"
+        );
+
+    if (
+      !radio
+    ) {
+      return;
+    }
+
+    draftStatus =
+      radio.value;
+  }
+
+
+  function focusSelectedDialogOption() {
+    if (
+      !dialogElements
+    ) {
+      return;
+    }
+
+    const selectedRadio =
+      dialogElements
+        .options
+        .querySelector(
+          ".detail-library-dialog-radio:checked"
+        );
+
+    const firstRadio =
+      dialogElements
+        .options
+        .querySelector(
+          ".detail-library-dialog-radio"
+        );
+
+    (
+      selectedRadio ||
+      firstRadio
+    )
+      ?.focus();
+  }
+
+
   /* =======================================================
-     STATUS-MENU EVENTS
+     SAVE OR CANCEL
      ======================================================= */
 
-  function handleMenuClick(
-    event
-  ) {
-    const option =
-      event
-        .target
-        .closest(
-          "[data-library-status-option]"
-        );
-
-
+  function handleSaveClick() {
     if (
-      !option ||
-      !activeFormat
+      !editorFormat
     ) {
       return;
     }
 
-
-    event.preventDefault();
-
-
-    event.stopPropagation();
-
-
-    selectMenuOption(
-      option
-    );
-  }
-
-
-  function handleMenuKeydown(
-    event
-  ) {
-    const options =
-      getMenuOptions();
-
-
-    if (
-      !options.length
-    ) {
-      return;
-    }
-
-
-    const currentOption =
-      event
-        .target
-        .closest(
-          "[data-library-status-option]"
-        );
-
-
-    const currentIndex =
-      Math.max(
-        0,
-
-        options
-          .indexOf(
-            currentOption
-          )
-      );
-
-
-    let nextIndex =
-      null;
-
-
-    if (
-      event.key ===
-        "ArrowDown"
-    ) {
-      nextIndex =
-        (
-          currentIndex +
-          1
-        ) %
-        options.length;
-    } else if (
-      event.key ===
-        "ArrowUp"
-    ) {
-      nextIndex =
-        (
-          currentIndex -
-          1 +
-          options.length
-        ) %
-        options.length;
-    } else if (
-      event.key ===
-        "Home"
-    ) {
-      nextIndex =
-        0;
-    } else if (
-      event.key ===
-        "End"
-    ) {
-      nextIndex =
-        options.length -
-        1;
-    } else if (
-      event.key ===
-        "Enter" ||
-      event.key ===
-        " "
-    ) {
-      event.preventDefault();
-
-
-      if (
-        currentOption
-      ) {
-        selectMenuOption(
-          currentOption
-        );
-      }
-
-
-      return;
-    } else if (
-      event.key ===
-        "Escape"
-    ) {
-      event.preventDefault();
-
-
-      closeStatusMenu({
-        returnFocus:
-          true
-      });
-
-
-      return;
-    } else if (
-      event.key ===
-        "Tab"
-    ) {
-      closeStatusMenu();
-
-
-      return;
-    }
-
-
-    if (
-      nextIndex ===
-      null
-    ) {
-      return;
-    }
-
-
-    event.preventDefault();
-
-
-    options[
-      nextIndex
-    ]
-      .focus();
-  }
-
-
-  function selectMenuOption(
-    option
-  ) {
     const format =
-      activeFormat;
-
+      editorFormat;
 
     const status =
-      option
-        .dataset
-        .libraryStatusOption ||
-      "";
+      draftStatus;
 
+    closeEditor({
+      result:
+        "saved",
 
-    closeStatusMenu();
+      restoreFocus:
+        false
+    });
 
-
-    updateFormatStatus(
+    saveFormatStatus(
       format,
       status
     );
   }
 
 
-  function getMenuOptions() {
-    if (
-      !statusMenu
-    ) {
-      return [];
-    }
-
-
-    return [
-      ...statusMenu
-        .querySelectorAll(
-          "[data-library-status-option]"
-        )
-    ];
-  }
-
-
-  function focusMenuOption(
-    focusMode
+  function handleDialogCancel(
+    event
   ) {
-    const options =
-      getMenuOptions();
+    event.preventDefault();
 
+    closeEditor({
+      result:
+        "cancel",
 
-    if (
-      !options.length
-    ) {
-      return;
-    }
-
-
-    let optionToFocus =
-      options[
-        0
-      ];
-
-
-    if (
-      focusMode ===
-        "last"
-    ) {
-      optionToFocus =
-        options[
-          options.length -
-          1
-        ];
-    } else {
-      optionToFocus =
-        options
-          .find(
-            (
-              option
-            ) => {
-              return (
-                option
-                  .getAttribute(
-                    "aria-selected"
-                  ) ===
-                "true"
-              );
-            }
-          ) ||
-        options[
-          0
-        ];
-    }
-
-
-    optionToFocus
-      .focus();
+      restoreFocus:
+        true
+    });
   }
 
 
-  /* =======================================================
-     VIEWPORT EVENTS
-     ======================================================= */
-
-  function handleViewportResize() {
-    if (
-      !isStatusMenuOpen()
-    ) {
-      return;
-    }
-
-
-    positionStatusMenu();
-  }
-
-
-  function handlePageScroll() {
-    if (
-      !isStatusMenuOpen()
-    ) {
-      return;
-    }
-
-
-    /*
-     * A fixed overlay can appear to shake when it is
-     * continuously repositioned during scrolling.
-     *
-     * Closing it is more stable and matches common dropdown
-     * behavior on scrolling pages.
-     */
-
-    closeStatusMenu();
-  }
-
-
-  /* =======================================================
-     FLOATING-MENU POSITIONING
-     ======================================================= */
-
-  function positionStatusMenu() {
-    if (
-      !activeTrigger ||
-      !statusMenu ||
-      statusMenu.hidden
-    ) {
-      return;
-    }
-
-
-    const viewportPadding =
-      12;
-
-
-    const heroPadding =
-      12;
-
-
-    const menuGap =
-      7;
-
-
-    const minimumMenuHeight =
-      72;
-
-
-    const triggerRect =
-      activeTrigger
-        .getBoundingClientRect();
-
-
-    const hero =
-      activeTrigger
-        .closest(
-          ".detail-hero"
-        );
-
-
-    const heroRect =
-      hero
-        ?.getBoundingClientRect();
-
-
-    /*
-     * Use the viewport and the hero as boundaries.
-     *
-     * This stops the menu from extending over the separate
-     * Formats and releases card below the hero.
-     */
-
-    const leftBoundary =
-      Math.max(
-        viewportPadding,
-
-        heroRect
-          ? heroRect.left +
-            heroPadding
-          : viewportPadding
-      );
-
-
-    const rightBoundary =
-      Math.min(
-        window.innerWidth -
-          viewportPadding,
-
-        heroRect
-          ? heroRect.right -
-            heroPadding
-          : window.innerWidth -
-            viewportPadding
-      );
-
-
-    const topBoundary =
-      Math.max(
-        viewportPadding,
-
-        heroRect
-          ? heroRect.top +
-            heroPadding
-          : viewportPadding
-      );
-
-
-    const bottomBoundary =
-      Math.min(
-        window.innerHeight -
-          viewportPadding,
-
-        heroRect
-          ? heroRect.bottom -
-            heroPadding
-          : window.innerHeight -
-            viewportPadding
-      );
-
-
-    const triggerIsOutsideBoundary =
-      triggerRect.bottom <
-        topBoundary ||
-      triggerRect.top >
-        bottomBoundary;
-
-
-    if (
-      triggerIsOutsideBoundary
-    ) {
-      closeStatusMenu();
-
-
-      return;
-    }
-
-
-    const availableWidth =
-      Math.max(
-        0,
-
-        rightBoundary -
-          leftBoundary
-      );
-
-
-    if (
-      availableWidth <=
-        0
-    ) {
-      closeStatusMenu();
-
-
-      return;
-    }
-
-
-    const preferredWidth =
-      Math.max(
-        triggerRect.width,
-        180
-      );
-
-
-    const menuWidth =
-      Math.min(
-        preferredWidth,
-        availableWidth
-      );
-
-
-    /*
-     * Temporarily position the invisible menu so its natural
-     * dimensions can be measured.
-     */
-
-    statusMenu
-      .style
-      .visibility =
-        "hidden";
-
-
-    statusMenu
-      .style
-      .width =
-        `${menuWidth}px`;
-
-
-    statusMenu
-      .style
-      .maxHeight =
-        "320px";
-
-
-    statusMenu
-      .style
-      .left =
-        "0px";
-
-
-    statusMenu
-      .style
-      .top =
-        "0px";
-
-
-    const naturalHeight =
-      Math.min(
-        statusMenu.scrollHeight,
-        320
-      );
-
-
-    const spaceBelow =
-      Math.max(
-        0,
-
-        bottomBoundary -
-          triggerRect.bottom -
-          menuGap
-      );
-
-
-    const spaceAbove =
-      Math.max(
-        0,
-
-        triggerRect.top -
-          topBoundary -
-          menuGap
-      );
-
-
-    const comfortableHeight =
-      Math.min(
-        naturalHeight,
-        220
-      );
-
-
-    let placeAbove =
-      false;
-
-
-    if (
-      spaceBelow >=
-        comfortableHeight
-    ) {
-      placeAbove =
-        false;
-    } else if (
-      spaceAbove >=
-        comfortableHeight
-    ) {
-      placeAbove =
-        true;
-    } else {
-      placeAbove =
-        spaceAbove >
-        spaceBelow;
-    }
-
-
-    const availableHeight =
-      placeAbove
-        ? spaceAbove
-        : spaceBelow;
-
-
-    if (
-      availableHeight <
-        minimumMenuHeight
-    ) {
-      closeStatusMenu();
-
-
-      return;
-    }
-
-
-    const finalMaximumHeight =
-      Math.min(
-        naturalHeight,
-        availableHeight,
-        320
-      );
-
-
-    statusMenu
-      .style
-      .maxHeight =
-        `${finalMaximumHeight}px`;
-
-
-    const menuRect =
-      statusMenu
-        .getBoundingClientRect();
-
-
-    /*
-     * Align the right edge of the menu with the trigger.
-     */
-
-    let left =
-      triggerRect.right -
-        menuRect.width;
-
-
-    left =
-      Math.max(
-        leftBoundary,
-
-        Math.min(
-          left,
-
-          rightBoundary -
-            menuRect.width
-        )
-      );
-
-
-    let top =
-      placeAbove
-        ? triggerRect.top -
-          menuRect.height -
-          menuGap
-        : triggerRect.bottom +
-          menuGap;
-
-
-    top =
-      Math.max(
-        topBoundary,
-
-        Math.min(
-          top,
-
-          bottomBoundary -
-            menuRect.height
-        )
-      );
-
-
-    statusMenu
-      .dataset
-      .placement =
-        placeAbove
-          ? "top"
-          : "bottom";
-
-
-    statusMenu
-      .style
-      .left =
-        `${Math.round(
-          left
-        )}px`;
-
-
-    statusMenu
-      .style
-      .top =
-        `${Math.round(
-          top
-        )}px`;
-
-
-    statusMenu
-      .style
-      .visibility =
-        "visible";
-  }
-
-
-  /* =======================================================
-     OUTSIDE CLICK
-     ======================================================= */
-
-  function handleDocumentPointerDown(
+  function handleDialogBackdropClick(
     event
   ) {
     if (
-      !isStatusMenuOpen()
+      event.target !==
+      dialogElements
+        .dialog
     ) {
       return;
     }
 
+    closeEditor({
+      result:
+        "cancel",
+
+      restoreFocus:
+        true
+    });
+  }
+
+
+  function closeEditor({
+    result =
+      "cancel",
+
+    restoreFocus =
+      true
+  } = {}) {
+    if (
+      !dialogElements
+    ) {
+      return;
+    }
+
+    restoreFocusOnClose =
+      restoreFocus;
 
     if (
-      statusMenu
-        .contains(
-          event.target
-        )
+      dialogElements
+        .dialog
+        .open
     ) {
-      return;
-    }
+      dialogElements
+        .dialog
+        .close(
+          result
+        );
+    } else {
+      editorFormat =
+        "";
 
+      draftStatus =
+        "";
+
+      returnTrigger =
+        null;
+    }
+  }
+
+
+  function handleDialogClose() {
+    const triggerToFocus =
+      returnTrigger;
+
+    const shouldRestoreFocus =
+      restoreFocusOnClose;
+
+    editorFormat =
+      "";
+
+    draftStatus =
+      "";
+
+    returnTrigger =
+      null;
+
+    restoreFocusOnClose =
+      true;
 
     if (
-      activeTrigger
-        ?.contains(
-          event.target
-        )
+      shouldRestoreFocus &&
+      triggerToFocus
+        ?.isConnected
     ) {
-      return;
+      window
+        .requestAnimationFrame(
+          () => {
+            triggerToFocus
+              .focus();
+          }
+        );
     }
-
-
-    closeStatusMenu();
   }
 
 
   /* =======================================================
-     SAVE OR REMOVE ONE FORMAT
+     SAVE TO LOCAL STORAGE
      ======================================================= */
 
-  function updateFormatStatus(
+  function saveFormatStatus(
     format,
     status
   ) {
@@ -1621,34 +1139,27 @@ export function createDetailLibraryController(
       return;
     }
 
-
     if (
       status &&
-      !getValidStatus(
+      !isValidStatus(
         format,
         status
       )
     ) {
-      renderInterface();
-
-
-      setLibraryNote(
-        "That library status is not available."
+      showLibraryNote(
+        "That library status is not available.",
+        "error"
       );
 
-
-      focusFormatTrigger(
+      focusFormatButton(
         format
       );
-
 
       return;
     }
 
-
     const library =
       readLibrary();
-
 
     const entry =
       normalizeStoredEntry(
@@ -1661,11 +1172,9 @@ export function createDetailLibraryController(
         availableFormats
       );
 
-
-    const currentTime =
+    const updatedAt =
       new Date()
         .toISOString();
-
 
     if (
       status
@@ -1675,9 +1184,7 @@ export function createDetailLibraryController(
           format
         ] = {
           status,
-
-          updatedAt:
-            currentTime
+          updatedAt
         };
     } else {
       delete entry
@@ -1686,10 +1193,8 @@ export function createDetailLibraryController(
         ];
     }
 
-
     entry.updatedAt =
-      currentTime;
-
+      updatedAt;
 
     if (
       Object
@@ -1708,28 +1213,22 @@ export function createDetailLibraryController(
       ];
     }
 
-
     if (
       !writeLibrary(
         library
       )
     ) {
-      renderInterface();
-
-
-      setLibraryNote(
-        "This browser could not save your library change."
+      showLibraryNote(
+        "This browser could not save your library change.",
+        "error"
       );
 
-
-      focusFormatTrigger(
+      focusFormatButton(
         format
       );
 
-
       return;
     }
-
 
     currentEntry =
       normalizeStoredEntry(
@@ -1742,16 +1241,13 @@ export function createDetailLibraryController(
         availableFormats
       );
 
-
     renderInterface();
-
 
     const formatLabel =
       FORMAT_CONFIG[
         format
       ]
         .label;
-
 
     const statusLabel =
       getStatusConfig(
@@ -1760,78 +1256,58 @@ export function createDetailLibraryController(
       )
         ?.label;
 
-
-    setLibraryNote(
+    showLibraryNote(
       statusLabel
         ? `${formatLabel} set to ${statusLabel}.`
-        : `${formatLabel} removed from your library.`
+        : `${formatLabel} removed from your library.`,
+
+      "success"
     );
 
-
-    focusFormatTrigger(
+    focusFormatButton(
       format
     );
   }
 
 
   /* =======================================================
-     RENDER THE LIBRARY CARD
+     RENDER THE CARD
      ======================================================= */
 
   function renderInterface() {
-    closeStatusMenu();
-
-
     elements
       .librarySummary
       .replaceChildren();
-
 
     elements
       .librarySummary
       .hidden =
         false;
 
-
     if (
       !currentTitle
     ) {
-      renderEmptyState(
+      renderUnavailableState(
         "Open a title to manage its library status."
       );
 
-
-      setLibraryNote(
-        ""
-      );
-
-
       return;
     }
-
 
     if (
       !availableFormats
         .length
     ) {
-      renderEmptyState(
+      renderUnavailableState(
         "This title has no Manga or Anime format available to save."
       );
-
-
-      setLibraryNote(
-        "No trackable format is available for this title."
-      );
-
 
       return;
     }
 
-
     const fragment =
       document
         .createDocumentFragment();
-
 
     availableFormats
       .forEach(
@@ -1839,89 +1315,28 @@ export function createDetailLibraryController(
           format
         ) => {
           fragment.append(
-            createFormatRow(
+            createFormatButton(
               format
             )
           );
         }
       );
 
-
     elements
       .librarySummary
       .append(
         fragment
       );
-
-
-    const trackedCount =
-      availableFormats
-        .filter(
-          (
-            format
-          ) => {
-            return Boolean(
-              currentEntry
-                .formats[
-                  format
-                ]
-                ?.status
-            );
-          }
-        )
-        .length;
-
-
-    if (
-      trackedCount ===
-        0
-    ) {
-      setLibraryNote(
-        availableFormats.length >
-          1
-          ? "Manga and Anime can be saved separately."
-          : "Choose a status to save this format."
-      );
-
-
-      return;
-    }
-
-
-    if (
-      trackedCount <
-        availableFormats.length
-    ) {
-      setLibraryNote(
-        "Each format keeps its own library status."
-      );
-
-
-      return;
-    }
-
-
-    setLibraryNote(
-      availableFormats.length >
-        1
-        ? "Manga and Anime are saved separately."
-        : "Change the status whenever your progress changes."
-    );
   }
 
 
-  /* =======================================================
-     CREATE ONE FORMAT ROW
-     ======================================================= */
-
-  function createFormatRow(
+  function createFormatButton(
     format
   ) {
     const formatConfig =
       FORMAT_CONFIG[
         format
       ];
-
 
     const savedStatus =
       currentEntry
@@ -1931,7 +1346,6 @@ export function createDetailLibraryController(
         ?.status ||
       "";
 
-
     const statusLabel =
       getStatusConfig(
         format,
@@ -1940,25 +1354,60 @@ export function createDetailLibraryController(
         ?.label ||
       "Not tracked";
 
-
-    const row =
+    const button =
       document
         .createElement(
-          "div"
+          "button"
         );
 
+    const icon =
+      document
+        .createElement(
+          "span"
+        );
 
-    row.className =
-      "detail-library-direct-row";
+    const iconElement =
+      document
+        .createElement(
+          "i"
+        );
 
+    const copy =
+      document
+        .createElement(
+          "span"
+        );
 
-    row
+    const label =
+      document
+        .createElement(
+          "strong"
+        );
+
+    const status =
+      document
+        .createElement(
+          "small"
+        );
+
+    const chevron =
+      document
+        .createElement(
+          "i"
+        );
+
+    button.type =
+      "button";
+
+    button.className =
+      "detail-library-format-button";
+
+    button
       .dataset
-      .format =
+      .libraryFormatButton =
         format;
 
-
-    row
+    button
       .dataset
       .tracked =
         String(
@@ -1967,188 +1416,76 @@ export function createDetailLibraryController(
           )
         );
 
+    button.setAttribute(
+      "aria-haspopup",
+      "dialog"
+    );
 
-    const icon =
-      document
-        .createElement(
-          "span"
-        );
+    button.setAttribute(
+      "aria-controls",
+      DIALOG_ID
+    );
 
-
-    const iconElement =
-      document
-        .createElement(
-          "i"
-        );
-
+    button.setAttribute(
+      "aria-label",
+      `Edit ${formatConfig.label} status. Current status: ${statusLabel}.`
+    );
 
     icon.className =
-      "detail-library-direct-icon";
-
+      "detail-library-format-button-icon";
 
     icon.setAttribute(
       "aria-hidden",
       "true"
     );
 
-
     iconElement.className =
       formatConfig.icon;
-
 
     icon.append(
       iconElement
     );
 
-
-    const copy =
-      document
-        .createElement(
-          "div"
-        );
-
-
-    const label =
-      document
-        .createElement(
-          "strong"
-        );
-
-
-    const meta =
-      document
-        .createElement(
-          "small"
-        );
-
-
     copy.className =
-      "detail-library-direct-copy";
-
+      "detail-library-format-button-copy";
 
     label.textContent =
       formatConfig.label;
 
-
-    meta.textContent =
-      savedStatus
-        ? "Saved to library"
-        : "Not tracked";
-
+    status.textContent =
+      statusLabel;
 
     copy.append(
       label,
-      meta
+      status
     );
-
-
-    const trigger =
-      document
-        .createElement(
-          "button"
-        );
-
-
-    const triggerLabel =
-      document
-        .createElement(
-          "span"
-        );
-
-
-    const chevron =
-      document
-        .createElement(
-          "i"
-        );
-
-
-    trigger.type =
-      "button";
-
-
-    trigger.className =
-      "detail-library-status-trigger";
-
-
-    trigger
-      .dataset
-      .libraryStatusTrigger =
-        format;
-
-
-    trigger.setAttribute(
-      "aria-haspopup",
-      "listbox"
-    );
-
-
-    trigger.setAttribute(
-      "aria-expanded",
-      "false"
-    );
-
-
-    trigger.setAttribute(
-      "aria-controls",
-      STATUS_MENU_ID
-    );
-
-
-    trigger.setAttribute(
-      "aria-label",
-      `${formatConfig.label} status: ${statusLabel}`
-    );
-
-
-    triggerLabel.className =
-      "detail-library-status-trigger-label";
-
-
-    triggerLabel.textContent =
-      statusLabel;
-
 
     chevron.className =
-      "ti ti-chevron-down detail-library-status-chevron";
-
+      "ti ti-chevron-right detail-library-format-button-chevron";
 
     chevron.setAttribute(
       "aria-hidden",
       "true"
     );
 
-
-    trigger.append(
-      triggerLabel,
+    button.append(
+      icon,
+      copy,
       chevron
     );
 
-
-    row.append(
-      icon,
-      copy,
-      trigger
-    );
-
-
-    return row;
+    return button;
   }
 
 
-  /* =======================================================
-     EMPTY STATE
-     ======================================================= */
-
-  function renderEmptyState(
+  function renderUnavailableState(
     message
   ) {
-    const emptyState =
+    const unavailable =
       document
         .createElement(
           "div"
         );
-
 
     const icon =
       document
@@ -2156,42 +1493,35 @@ export function createDetailLibraryController(
           "i"
         );
 
-
-    const copy =
+    const text =
       document
         .createElement(
           "span"
         );
 
-
-    emptyState.className =
-      "detail-library-direct-empty";
-
+    unavailable.className =
+      "detail-library-summary-unavailable";
 
     icon.className =
       "ti ti-book-off";
-
 
     icon.setAttribute(
       "aria-hidden",
       "true"
     );
 
-
-    copy.textContent =
+    text.textContent =
       message;
 
-
-    emptyState.append(
+    unavailable.append(
       icon,
-      copy
+      text
     );
-
 
     elements
       .librarySummary
       .append(
-        emptyState
+        unavailable
       );
   }
 
@@ -2200,21 +1530,102 @@ export function createDetailLibraryController(
      STATUS MESSAGE
      ======================================================= */
 
-  function setLibraryNote(
-    message
+  function showLibraryNote(
+    message,
+    tone
   ) {
+    window
+      .clearTimeout(
+        noteTimer
+      );
+
     elements
       .libraryNote
       .textContent =
         message;
+
+    elements
+      .libraryNote
+      .dataset
+      .tone =
+        tone;
+
+    elements
+      .libraryNote
+      .classList
+      .add(
+        "is-visible"
+      );
+
+    noteTimer =
+      window
+        .setTimeout(
+          () => {
+            elements
+              .libraryNote
+              .classList
+              .remove(
+                "is-visible"
+              );
+
+            window
+              .setTimeout(
+                () => {
+                  if (
+                    !elements
+                      .libraryNote
+                      .classList
+                      .contains(
+                        "is-visible"
+                      )
+                  ) {
+                    elements
+                      .libraryNote
+                      .textContent =
+                        "";
+
+                    delete elements
+                      .libraryNote
+                      .dataset
+                      .tone;
+                  }
+                },
+
+                180
+              );
+          },
+
+          2400
+        );
   }
 
 
-  /* =======================================================
-     RESTORE FOCUS AFTER SAVING
-     ======================================================= */
+  function clearLibraryNote() {
+    window
+      .clearTimeout(
+        noteTimer
+      );
 
-  function focusFormatTrigger(
+    elements
+      .libraryNote
+      .textContent =
+        "";
+
+    elements
+      .libraryNote
+      .classList
+      .remove(
+        "is-visible"
+      );
+
+    delete elements
+      .libraryNote
+      .dataset
+      .tone;
+  }
+
+
+  function focusFormatButton(
     format
   ) {
     window
@@ -2223,7 +1634,7 @@ export function createDetailLibraryController(
           elements
             .librarySummary
             .querySelector(
-              `[data-library-status-trigger="${format}"]`
+              `[data-library-format-button="${format}"]`
             )
             ?.focus();
         }
@@ -2239,7 +1650,7 @@ export function createDetailLibraryController(
 
 
 /* =========================================================
-   GET ONE STATUS CONFIGURATION
+   STATUS HELPERS
    ========================================================= */
 
 function getStatusConfig(
@@ -2251,7 +1662,6 @@ function getStatusConfig(
   ) {
     return null;
   }
-
 
   return (
     FORMAT_CONFIG[
@@ -2273,8 +1683,83 @@ function getStatusConfig(
 }
 
 
+function isValidStatus(
+  format,
+  status
+) {
+  return Boolean(
+    FORMAT_CONFIG[
+      format
+    ]
+      ?.statuses
+      .some(
+        (
+          item
+        ) => {
+          return (
+            item.id ===
+            status
+          );
+        }
+      )
+  );
+}
+
+
+function getStatusDescription(
+  format,
+  status
+) {
+  const descriptions = {
+    manga: {
+      reading:
+        "You are currently reading this manga.",
+
+      completed:
+        "You have finished this manga.",
+
+      "plan-to-read":
+        "Save it for later.",
+
+      paused:
+        "You have temporarily stopped reading.",
+
+      dropped:
+        "You do not plan to continue reading."
+    },
+
+    anime: {
+      watching:
+        "You are currently watching this anime.",
+
+      completed:
+        "You have finished this anime.",
+
+      "plan-to-watch":
+        "Save it for later.",
+
+      paused:
+        "You have temporarily stopped watching.",
+
+      dropped:
+        "You do not plan to continue watching."
+    }
+  };
+
+  return (
+    descriptions[
+      format
+    ]
+      ?.[
+        status
+      ] ||
+    ""
+  );
+}
+
+
 /* =========================================================
-   NORMALIZE A STORED LIBRARY ENTRY
+   STORED ENTRY NORMALIZATION
    ========================================================= */
 
 function normalizeStoredEntry(
@@ -2284,7 +1769,6 @@ function normalizeStoredEntry(
 ) {
   const formats =
     {};
-
 
   if (
     storedEntry
@@ -2304,14 +1788,12 @@ function normalizeStoredEntry(
                 format
               ];
 
-
           const status =
             savedFormat
               ?.status;
 
-
           if (
-            getValidStatus(
+            isValidStatus(
               format,
               status
             )
@@ -2343,13 +1825,11 @@ function normalizeStoredEntry(
         0
       ];
 
-
     const migratedStatus =
       migrateLegacyStatus(
         format,
         storedEntry.status
       );
-
 
     if (
       migratedStatus
@@ -2367,7 +1847,6 @@ function normalizeStoredEntry(
       };
     }
   }
-
 
   return {
     id:
@@ -2392,37 +1871,6 @@ function normalizeStoredEntry(
 }
 
 
-/* =========================================================
-   VALIDATE ONE STATUS
-   ========================================================= */
-
-function getValidStatus(
-  format,
-  status
-) {
-  return Boolean(
-    FORMAT_CONFIG[
-      format
-    ]
-      ?.statuses
-      .some(
-        (
-          item
-        ) => {
-          return (
-            item.id ===
-            status
-          );
-        }
-      )
-  );
-}
-
-
-/* =========================================================
-   MIGRATE AN OLDER SINGLE STATUS
-   ========================================================= */
-
 function migrateLegacyStatus(
   format,
   legacyStatus
@@ -2435,29 +1883,16 @@ function migrateLegacyStatus(
       .trim()
       .toLowerCase();
 
-
-  const sharedStatuses = {
-    completed:
-      "completed",
-
-    paused:
-      "paused",
-
-    dropped:
-      "dropped"
-  };
-
-
   if (
-    sharedStatuses[
-      status
-    ]
+    status ===
+      "completed" ||
+    status ===
+      "paused" ||
+    status ===
+      "dropped"
   ) {
-    return sharedStatuses[
-      status
-    ];
+    return status;
   }
-
 
   if (
     status ===
@@ -2469,7 +1904,6 @@ function migrateLegacyStatus(
         : "reading";
   }
 
-
   if (
     status ===
       "planned"
@@ -2480,13 +1914,12 @@ function migrateLegacyStatus(
         : "plan-to-read";
   }
 
-
   return "";
 }
 
 
 /* =========================================================
-   READ LOCAL STORAGE
+   LOCAL STORAGE
    ========================================================= */
 
 function readLibrary() {
@@ -2500,7 +1933,6 @@ function readLibrary() {
         "{}"
       );
 
-
     if (
       !parsedValue ||
       typeof parsedValue !==
@@ -2512,7 +1944,6 @@ function readLibrary() {
       return {};
     }
 
-
     return parsedValue;
   } catch (
     error
@@ -2522,15 +1953,10 @@ function readLibrary() {
       error
     );
 
-
     return {};
   }
 }
 
-
-/* =========================================================
-   WRITE LOCAL STORAGE
-   ========================================================= */
 
 function writeLibrary(
   library
@@ -2545,7 +1971,6 @@ function writeLibrary(
         )
       );
 
-
     return true;
   } catch (
     error
@@ -2555,675 +1980,6 @@ function writeLibrary(
       error
     );
 
-
     return false;
   }
-}
-
-
-/* =========================================================
-   INSTALL THE LIBRARY CARD STYLES
-   ========================================================= */
-
-function installDirectLibraryStyles() {
-  if (
-    document
-      .getElementById(
-        STYLE_ELEMENT_ID
-      )
-  ) {
-    return;
-  }
-
-
-  const style =
-    document
-      .createElement(
-        "style"
-      );
-
-
-  style.id =
-    STYLE_ELEMENT_ID;
-
-
-  style.textContent = `
-    .detail-library-block.is-direct-library {
-      height: auto !important;
-      min-height: 0 !important;
-      max-height: none !important;
-
-      padding: 1.05rem !important;
-
-      display: grid !important;
-
-      grid-template-rows:
-        auto
-        auto
-        auto !important;
-
-      row-gap: 0.82rem !important;
-
-      overflow: visible !important;
-    }
-
-
-    .detail-library-block.is-direct-library
-    .detail-library-heading {
-      grid-row: 1;
-    }
-
-
-    .detail-library-block.is-direct-library
-    .detail-library-heading h2 {
-      font-size: 1.12rem;
-    }
-
-
-    .detail-library-block.is-direct-library
-    .detail-library-summary {
-      position: static !important;
-
-      z-index: auto !important;
-
-      grid-row: 2 !important;
-      grid-column: 1 !important;
-
-      align-self: stretch !important;
-
-      min-width: 0;
-
-      display: grid !important;
-
-      gap: 0.52rem !important;
-
-      padding: 0 !important;
-
-      opacity: 1 !important;
-
-      visibility: visible !important;
-
-      pointer-events: auto !important;
-    }
-
-
-    .detail-library-block.is-direct-library
-    .detail-library-picker {
-      display: none !important;
-    }
-
-
-    .detail-library-block.is-direct-library
-    .detail-library-note {
-      position: static !important;
-
-      grid-row: 3 !important;
-
-      left: auto !important;
-      right: auto !important;
-      bottom: auto !important;
-
-      min-height: 1.35em;
-
-      overflow: visible !important;
-
-      color: #7f8ba7;
-
-      font-size: 0.64rem;
-
-      line-height: 1.45;
-
-      text-overflow: clip !important;
-
-      white-space: normal !important;
-    }
-
-
-    .detail-library-direct-row {
-      min-height: 58px;
-
-      display: grid;
-
-      grid-template-columns:
-        32px
-        minmax(0, 1fr)
-        136px;
-
-      align-items: center;
-
-      gap: 0.62rem;
-
-      padding:
-        0.52rem
-        0.56rem;
-
-      background:
-        linear-gradient(
-          145deg,
-          rgba(255, 255, 255, 0.045),
-          rgba(255, 255, 255, 0.018)
-        );
-
-      border:
-        1px solid
-        rgba(187, 196, 255, 0.12);
-
-      border-radius: 11px;
-
-      transition:
-        background 160ms ease,
-        border-color 160ms ease;
-    }
-
-
-    .detail-library-direct-row:hover,
-    .detail-library-direct-row:focus-within {
-      background:
-        linear-gradient(
-          145deg,
-          rgba(124, 140, 255, 0.11),
-          rgba(116, 215, 255, 0.025)
-        );
-
-      border-color:
-        rgba(187, 196, 255, 0.25);
-    }
-
-
-    .detail-library-direct-row[data-tracked="true"] {
-      border-color:
-        rgba(124, 140, 255, 0.24);
-    }
-
-
-    .detail-library-direct-icon {
-      width: 32px;
-      height: 32px;
-
-      display: inline-flex;
-
-      align-items: center;
-      justify-content: center;
-
-      color: #bfc8ff;
-
-      background:
-        rgba(124, 140, 255, 0.1);
-
-      border:
-        1px solid
-        rgba(187, 196, 255, 0.13);
-
-      border-radius: 9px;
-
-      font-size: 0.9rem;
-    }
-
-
-    .detail-library-direct-copy {
-      min-width: 0;
-
-      display: grid;
-
-      gap: 0.15rem;
-    }
-
-
-    .detail-library-direct-copy strong,
-    .detail-library-direct-copy small {
-      overflow: hidden;
-
-      line-height: 1.2;
-
-      text-overflow: ellipsis;
-
-      white-space: nowrap;
-    }
-
-
-    .detail-library-direct-copy strong {
-      color: #e5e9f7;
-
-      font-size: 0.72rem;
-
-      font-weight: 740;
-    }
-
-
-    .detail-library-direct-copy small {
-      color: #7f8aa4;
-
-      font-size: 0.6rem;
-
-      font-weight: 620;
-    }
-
-
-    .detail-library-direct-row[data-tracked="true"]
-    .detail-library-direct-copy small {
-      color: #aeb8d1;
-    }
-
-
-    .detail-library-status-trigger {
-      width: 136px;
-
-      min-width: 0;
-
-      min-height: 42px;
-
-      display: flex;
-
-      align-items: center;
-
-      justify-content: space-between;
-
-      gap: 0.55rem;
-
-      padding:
-        0.58rem
-        0.68rem
-        0.58rem
-        0.72rem;
-
-      overflow: hidden;
-
-      color: #e9edfb;
-
-      background:
-        linear-gradient(
-          180deg,
-          rgba(124, 140, 255, 0.14),
-          rgba(124, 140, 255, 0.065)
-        );
-
-      border:
-        1px solid
-        rgba(187, 196, 255, 0.2);
-
-      border-radius: 10px;
-
-      outline: none;
-
-      font-family:
-        var(
-          --font-body,
-          system-ui,
-          sans-serif
-        );
-
-      font-size: 0.68rem;
-
-      font-weight: 720;
-
-      line-height: 1.2;
-
-      cursor: pointer;
-
-      box-shadow:
-        inset 0 1px 0
-        rgba(255, 255, 255, 0.035);
-
-      transition:
-        color 150ms ease,
-        background 150ms ease,
-        border-color 150ms ease,
-        box-shadow 150ms ease;
-    }
-
-
-    .detail-library-status-trigger:hover {
-      color: #ffffff;
-
-      background:
-        linear-gradient(
-          180deg,
-          rgba(124, 140, 255, 0.2),
-          rgba(124, 140, 255, 0.09)
-        );
-
-      border-color:
-        rgba(187, 196, 255, 0.33);
-    }
-
-
-    .detail-library-status-trigger:focus-visible,
-    .detail-library-status-trigger[aria-expanded="true"] {
-      color: #ffffff;
-
-      background:
-        linear-gradient(
-          180deg,
-          rgba(124, 140, 255, 0.2),
-          rgba(124, 140, 255, 0.09)
-        );
-
-      border-color:
-        rgba(114, 215, 255, 0.72);
-
-      box-shadow:
-        0 0 0 3px
-        rgba(114, 215, 255, 0.12),
-
-        0 10px 25px
-        rgba(0, 0, 0, 0.25);
-    }
-
-
-    .detail-library-status-trigger-label {
-      min-width: 0;
-
-      overflow: hidden;
-
-      text-align: left;
-
-      text-overflow: ellipsis;
-
-      white-space: nowrap;
-    }
-
-
-    .detail-library-status-chevron {
-      flex: 0 0 auto;
-
-      color: #8e9ab7;
-
-      font-size: 0.72rem;
-
-      transition:
-        color 150ms ease,
-        transform 150ms ease;
-    }
-
-
-    .detail-library-status-trigger:hover
-    .detail-library-status-chevron,
-    .detail-library-status-trigger:focus-visible
-    .detail-library-status-chevron {
-      color: #bdc7e5;
-    }
-
-
-    .detail-library-status-trigger[aria-expanded="true"]
-    .detail-library-status-chevron {
-      color: #72d7ff;
-
-      transform:
-        rotate(180deg);
-    }
-
-
-    .detail-library-status-menu {
-      position: fixed;
-
-      z-index: 10000;
-
-      display: grid;
-
-      gap: 3px;
-
-      padding: 6px;
-
-      overflow-x: hidden;
-      overflow-y: auto;
-
-      overscroll-behavior: contain;
-
-      scrollbar-width: thin;
-
-      color: #dfe5f7;
-
-      background:
-        radial-gradient(
-          circle at 20% 0%,
-          rgba(124, 140, 255, 0.13),
-          transparent 42%
-        ),
-
-        linear-gradient(
-          145deg,
-          #121a34,
-          #0a1023
-        );
-
-      border:
-        1px solid
-        rgba(187, 196, 255, 0.24);
-
-      border-radius: 12px;
-
-      box-shadow:
-        0 22px 52px
-        rgba(0, 0, 0, 0.48),
-
-        inset 0 1px 0
-        rgba(255, 255, 255, 0.045);
-    }
-
-
-    .detail-library-status-menu[hidden] {
-      display: none !important;
-    }
-
-
-    .detail-library-status-menu[data-placement="bottom"] {
-      transform-origin:
-        top right;
-
-      animation:
-        detail-library-menu-in-bottom
-        120ms
-        ease-out;
-    }
-
-
-    .detail-library-status-menu[data-placement="top"] {
-      transform-origin:
-        bottom right;
-
-      animation:
-        detail-library-menu-in-top
-        120ms
-        ease-out;
-    }
-
-
-    @keyframes detail-library-menu-in-bottom {
-      from {
-        opacity: 0;
-
-        transform:
-          translateY(-5px)
-          scale(0.985);
-      }
-
-      to {
-        opacity: 1;
-
-        transform:
-          translateY(0)
-          scale(1);
-      }
-    }
-
-
-    @keyframes detail-library-menu-in-top {
-      from {
-        opacity: 0;
-
-        transform:
-          translateY(5px)
-          scale(0.985);
-      }
-
-      to {
-        opacity: 1;
-
-        transform:
-          translateY(0)
-          scale(1);
-      }
-    }
-
-
-    .detail-library-status-option {
-      width: 100%;
-
-      min-height: 40px;
-
-      display: flex;
-
-      align-items: center;
-
-      justify-content: space-between;
-
-      gap: 0.75rem;
-
-      padding:
-        0.58rem
-        0.68rem;
-
-      color: #c7d0e7;
-
-      background:
-        transparent;
-
-      border: 0;
-
-      border-radius: 8px;
-
-      outline: none;
-
-      font-family:
-        var(
-          --font-body,
-          system-ui,
-          sans-serif
-        );
-
-      font-size: 0.68rem;
-
-      font-weight: 680;
-
-      line-height: 1.2;
-
-      text-align: left;
-
-      cursor: pointer;
-
-      transition:
-        color 100ms ease,
-        background 100ms ease;
-    }
-
-
-    .detail-library-status-option:hover,
-    .detail-library-status-option:focus-visible {
-      color: #ffffff;
-
-      background:
-        rgba(124, 140, 255, 0.12);
-    }
-
-
-    .detail-library-status-option[aria-selected="true"] {
-      color: #ffffff;
-
-      background:
-        linear-gradient(
-          135deg,
-          rgba(124, 140, 255, 0.25),
-          rgba(82, 105, 218, 0.2)
-        );
-
-      font-weight: 760;
-    }
-
-
-    .detail-library-status-check {
-      flex: 0 0 auto;
-
-      color: transparent;
-
-      font-size: 0.9rem;
-
-      font-weight: 850;
-    }
-
-
-    .detail-library-status-option[aria-selected="true"]
-    .detail-library-status-check {
-      color: #72d7ff;
-    }
-
-
-    .detail-library-direct-empty {
-      min-height: 82px;
-
-      display: flex;
-
-      align-items: center;
-
-      justify-content: center;
-
-      gap: 0.6rem;
-
-      padding: 0.9rem;
-
-      color: #7e89a3;
-
-      background:
-        rgba(255, 255, 255, 0.02);
-
-      border:
-        1px dashed
-        rgba(187, 196, 255, 0.14);
-
-      border-radius: 11px;
-
-      font-size: 0.66rem;
-
-      line-height: 1.5;
-
-      text-align: center;
-    }
-
-
-    @media (max-width: 390px) {
-      .detail-library-direct-row {
-        grid-template-columns:
-          32px
-          minmax(0, 1fr);
-      }
-
-
-      .detail-library-status-trigger {
-        grid-column: 2;
-
-        width: 100%;
-      }
-    }
-
-
-    @media (prefers-reduced-motion: reduce) {
-      .detail-library-direct-row,
-      .detail-library-status-trigger,
-      .detail-library-status-chevron,
-      .detail-library-status-menu,
-      .detail-library-status-option {
-        animation:
-          none !important;
-
-        transition:
-          none !important;
-      }
-    }
-  `;
-
-
-  document
-    .head
-    .append(
-      style
-    );
 }

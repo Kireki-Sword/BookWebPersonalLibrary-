@@ -1,0 +1,1275 @@
+/* =========================================================
+   INKWELL DETAIL LIBRARY
+   Stable modal status editor
+   Load this file after css/detail.css
+   ========================================================= */
+
+
+/* =========================================================
+   COVER FALLBACK FIX
+   ========================================================= */
+
+.detail-cover-fallback {
+  display: none !important;
+
+  pointer-events: none;
+}
+
+
+.detail-cover-frame.has-cover-error
+.detail-cover-fallback {
+  display: flex !important;
+}
+
+
+/* =========================================================
+   DESKTOP HERO BALANCE
+   ========================================================= */
+
+@media (min-width: 1180px) {
+  .detail-hero {
+    grid-template-columns:
+      minmax(270px, 310px)
+      minmax(0, 1fr)
+      minmax(300px, 320px);
+  }
+}
+
+
+/* =========================================================
+   LIBRARY CARD RESET
+   ========================================================= */
+
+.detail-library-block.is-dialog-library {
+  height: auto !important;
+
+  min-height: 0 !important;
+
+  max-height: none !important;
+
+  padding: 1rem !important;
+
+  display: grid !important;
+
+  grid-template-rows:
+    auto
+    auto
+    auto !important;
+
+  row-gap: 0.78rem !important;
+
+  overflow: visible !important;
+
+  background:
+    radial-gradient(
+      circle at 18% 0%,
+      rgba(144, 122, 255, 0.12),
+      transparent 44%
+    ),
+
+    linear-gradient(
+      145deg,
+      rgba(19, 27, 52, 0.98),
+      rgba(10, 15, 31, 0.99)
+    )
+    !important;
+}
+
+
+.detail-library-block.is-dialog-library
+.detail-library-heading {
+  grid-row: 1;
+}
+
+
+.detail-library-block.is-dialog-library
+.detail-library-heading h2 {
+  font-size: 1.08rem;
+}
+
+
+.detail-library-block.is-dialog-library
+.detail-library-picker {
+  display: none !important;
+}
+
+
+.detail-library-block.is-dialog-library
+.detail-library-summary {
+  position: static !important;
+
+  z-index: auto !important;
+
+  grid-row: 2 !important;
+
+  grid-column: 1 !important;
+
+  align-self: stretch !important;
+
+  min-width: 0;
+
+  display: grid !important;
+
+  gap: 0.5rem !important;
+
+  padding: 0 !important;
+
+  opacity: 1 !important;
+
+  visibility: visible !important;
+
+  pointer-events: auto !important;
+}
+
+
+/* =========================================================
+   FORMAT ROW BUTTONS
+   ========================================================= */
+
+.detail-library-format-button {
+  width: 100%;
+
+  min-height: 60px;
+
+  display: grid;
+
+  grid-template-columns:
+    36px
+    minmax(0, 1fr)
+    16px;
+
+  align-items: center;
+
+  gap: 0.72rem;
+
+  padding:
+    0.62rem
+    0.72rem;
+
+  color: #dce3f4;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.045),
+      rgba(255, 255, 255, 0.018)
+    );
+
+  border:
+    1px solid
+    rgba(187, 196, 255, 0.13);
+
+  border-radius: 11px;
+
+  outline: none;
+
+  font-family:
+    var(
+      --font-body,
+      system-ui,
+      sans-serif
+    );
+
+  text-align: left;
+
+  cursor: pointer;
+
+  box-shadow:
+    inset 0 1px 0
+    rgba(255, 255, 255, 0.025);
+
+  transition:
+    color 150ms ease,
+    background 150ms ease,
+    border-color 150ms ease,
+    transform 150ms ease,
+    box-shadow 150ms ease;
+}
+
+
+.detail-library-format-button:hover {
+  color: #ffffff;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(124, 140, 255, 0.11),
+      rgba(116, 215, 255, 0.025)
+    );
+
+  border-color:
+    rgba(187, 196, 255, 0.27);
+
+  transform:
+    translateY(-1px);
+}
+
+
+.detail-library-format-button:focus-visible {
+  color: #ffffff;
+
+  border-color:
+    rgba(114, 215, 255, 0.72);
+
+  box-shadow:
+    0 0 0 3px
+    rgba(114, 215, 255, 0.12),
+
+    inset 0 1px 0
+    rgba(255, 255, 255, 0.035);
+}
+
+
+.detail-library-format-button[data-tracked="false"] {
+  color: #aeb8cf;
+
+  background:
+    rgba(255, 255, 255, 0.018);
+
+  border-style: dashed;
+}
+
+
+.detail-library-format-button[data-tracked="false"]:hover,
+.detail-library-format-button[data-tracked="false"]:focus-visible {
+  color: #e8ecf8;
+
+  border-style: solid;
+}
+
+
+.detail-library-format-button-icon {
+  width: 36px;
+
+  height: 36px;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  color: #c4caff;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(124, 140, 255, 0.16),
+      rgba(116, 215, 255, 0.045)
+    );
+
+  border:
+    1px solid
+    rgba(187, 196, 255, 0.14);
+
+  border-radius: 10px;
+
+  font-size: 0.92rem;
+}
+
+
+.detail-library-format-button-copy {
+  min-width: 0;
+
+  display: grid;
+
+  gap: 0.18rem;
+}
+
+
+.detail-library-format-button-copy strong {
+  overflow: hidden;
+
+  color: inherit;
+
+  font-size: 0.73rem;
+
+  font-weight: 750;
+
+  line-height: 1.2;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+}
+
+
+.detail-library-format-button-copy small {
+  overflow: hidden;
+
+  color: #9aa6c0;
+
+  font-size: 0.64rem;
+
+  font-weight: 650;
+
+  line-height: 1.25;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+}
+
+
+.detail-library-format-button[data-tracked="false"]
+.detail-library-format-button-copy small {
+  color: #75819c;
+}
+
+
+.detail-library-format-button-chevron {
+  color: #8793ad;
+
+  font-size: 0.76rem;
+
+  transition:
+    color 150ms ease,
+    transform 150ms ease;
+}
+
+
+.detail-library-format-button:hover
+.detail-library-format-button-chevron,
+.detail-library-format-button:focus-visible
+.detail-library-format-button-chevron {
+  color: #72d7ff;
+
+  transform:
+    translateX(2px);
+}
+
+
+/* =========================================================
+   TEMPORARY STATUS MESSAGE
+   ========================================================= */
+
+.detail-library-block.is-dialog-library
+.detail-library-note {
+  position: static !important;
+
+  grid-row: 3 !important;
+
+  left: auto !important;
+
+  right: auto !important;
+
+  bottom: auto !important;
+
+  min-height: 1.35em;
+
+  margin: 0;
+
+  padding: 0;
+
+  overflow: hidden;
+
+  color: #94a0ba;
+
+  font-size: 0.62rem;
+
+  font-weight: 650;
+
+  line-height: 1.4;
+
+  opacity: 0;
+
+  transform:
+    translateY(-3px);
+
+  text-overflow: clip !important;
+
+  white-space: normal !important;
+
+  transition:
+    opacity 160ms ease,
+    transform 160ms ease;
+}
+
+
+.detail-library-block.is-dialog-library
+.detail-library-note.is-visible {
+  opacity: 1;
+
+  transform:
+    translateY(0);
+}
+
+
+.detail-library-block.is-dialog-library
+.detail-library-note[data-tone="success"] {
+  color: #8ce7bc;
+}
+
+
+.detail-library-block.is-dialog-library
+.detail-library-note[data-tone="error"] {
+  color: #f1aac9;
+}
+
+
+/* =========================================================
+   UNAVAILABLE STATE
+   ========================================================= */
+
+.detail-library-block.is-dialog-library
+.detail-library-summary-unavailable {
+  min-height: 92px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 0.6rem;
+
+  padding: 1rem;
+
+  color: #7e89a3;
+
+  background:
+    rgba(255, 255, 255, 0.02);
+
+  border:
+    1px dashed
+    rgba(187, 196, 255, 0.13);
+
+  border-radius: 11px;
+
+  font-size: 0.68rem;
+
+  line-height: 1.5;
+
+  text-align: center;
+}
+
+
+/* =========================================================
+   MODAL DIALOG
+   ========================================================= */
+
+.detail-library-dialog {
+  width: auto;
+
+  max-width: none;
+
+  max-height: none;
+
+  margin: auto;
+
+  padding: 0;
+
+  overflow: visible;
+
+  color: #f4f6ff;
+
+  background: transparent;
+
+  border: 0;
+
+  outline: none;
+}
+
+
+.detail-library-dialog[open] {
+  display: block;
+}
+
+
+.detail-library-dialog::backdrop {
+  background:
+    rgba(3, 6, 17, 0.74);
+
+  backdrop-filter:
+    blur(8px);
+
+  -webkit-backdrop-filter:
+    blur(8px);
+}
+
+
+.detail-library-dialog-surface {
+  width:
+    min(
+      440px,
+      calc(100vw - 2rem)
+    );
+
+  max-height:
+    calc(100dvh - 2rem);
+
+  display: grid;
+
+  grid-template-rows:
+    auto
+    auto
+    minmax(0, 1fr)
+    auto;
+
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      520px 260px
+      at 15% 0%,
+      rgba(124, 140, 255, 0.18),
+      transparent 68%
+    ),
+
+    linear-gradient(
+      145deg,
+      rgba(22, 31, 59, 0.995),
+      rgba(8, 13, 29, 0.998)
+    );
+
+  border:
+    1px solid
+    rgba(187, 196, 255, 0.27);
+
+  border-radius: 20px;
+
+  box-shadow:
+    0 34px 90px
+    rgba(0, 0, 0, 0.58),
+
+    inset 0 1px 0
+    rgba(255, 255, 255, 0.065);
+
+  animation:
+    detail-library-dialog-in
+    170ms
+    ease-out;
+}
+
+
+@keyframes detail-library-dialog-in {
+  from {
+    opacity: 0;
+
+    transform:
+      translateY(10px)
+      scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      translateY(0)
+      scale(1);
+  }
+}
+
+
+/* =========================================================
+   DIALOG HEADER
+   ========================================================= */
+
+.detail-library-dialog-header {
+  display: grid;
+
+  grid-template-columns:
+    42px
+    minmax(0, 1fr)
+    38px;
+
+  align-items: center;
+
+  gap: 0.75rem;
+
+  padding:
+    1rem
+    1rem
+    0.9rem;
+
+  border-bottom:
+    1px solid
+    rgba(187, 196, 255, 0.1);
+}
+
+
+.detail-library-dialog-icon {
+  width: 42px;
+
+  height: 42px;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  color: #c6ccff;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(124, 140, 255, 0.2),
+      rgba(116, 215, 255, 0.055)
+    );
+
+  border:
+    1px solid
+    rgba(116, 215, 255, 0.2);
+
+  border-radius: 12px;
+
+  font-size: 1.05rem;
+}
+
+
+.detail-library-dialog-heading {
+  min-width: 0;
+}
+
+
+.detail-library-dialog-heading h2 {
+  margin-top: 0.14rem;
+
+  color: #ffffff;
+
+  font-family:
+    var(
+      --font-display,
+      Georgia,
+      serif
+    );
+
+  font-size: 1.24rem;
+
+  font-weight: 620;
+
+  line-height: 1.1;
+
+  letter-spacing: -0.025em;
+}
+
+
+.detail-library-dialog-close {
+  width: 38px;
+
+  height: 38px;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  color: #aeb8ce;
+
+  background:
+    rgba(255, 255, 255, 0.035);
+
+  border:
+    1px solid
+    rgba(187, 196, 255, 0.13);
+
+  border-radius: 10px;
+
+  outline: none;
+
+  cursor: pointer;
+
+  transition:
+    color 150ms ease,
+    background 150ms ease,
+    border-color 150ms ease;
+}
+
+
+.detail-library-dialog-close:hover {
+  color: #ffffff;
+
+  background:
+    rgba(124, 140, 255, 0.11);
+
+  border-color:
+    rgba(187, 196, 255, 0.26);
+}
+
+
+.detail-library-dialog-close:focus-visible {
+  color: #ffffff;
+
+  border-color:
+    rgba(114, 215, 255, 0.72);
+
+  box-shadow:
+    0 0 0 3px
+    rgba(114, 215, 255, 0.12);
+}
+
+
+/* =========================================================
+   DIALOG DESCRIPTION
+   ========================================================= */
+
+.detail-library-dialog-description {
+  margin: 0;
+
+  padding:
+    0.9rem
+    1rem
+    0;
+
+  color: #929db7;
+
+  font-size: 0.74rem;
+
+  line-height: 1.55;
+}
+
+
+/* =========================================================
+   DIALOG OPTIONS
+   ========================================================= */
+
+.detail-library-dialog-options {
+  min-width: 0;
+
+  display: grid;
+
+  gap: 0.35rem;
+
+  margin: 0;
+
+  padding:
+    0.9rem
+    1rem
+    1rem;
+
+  overflow-x: hidden;
+
+  overflow-y: auto;
+
+  border: 0;
+
+  scrollbar-width: thin;
+
+  scrollbar-color:
+    rgba(124, 140, 255, 0.62)
+    rgba(255, 255, 255, 0.035);
+}
+
+
+.detail-library-dialog-option {
+  position: relative;
+
+  min-height: 54px;
+
+  display: grid;
+
+  grid-template-columns:
+    20px
+    minmax(0, 1fr);
+
+  align-items: center;
+
+  gap: 0.72rem;
+
+  padding:
+    0.58rem
+    0.68rem;
+
+  color: #c2cbe0;
+
+  background:
+    rgba(255, 255, 255, 0.018);
+
+  border:
+    1px solid
+    transparent;
+
+  border-radius: 11px;
+
+  cursor: pointer;
+
+  transition:
+    color 130ms ease,
+    background 130ms ease,
+    border-color 130ms ease,
+    transform 130ms ease;
+}
+
+
+.detail-library-dialog-option:hover {
+  color: #ffffff;
+
+  background:
+    rgba(124, 140, 255, 0.09);
+
+  border-color:
+    rgba(187, 196, 255, 0.1);
+}
+
+
+.detail-library-dialog-option:has(
+  .detail-library-dialog-radio:checked
+) {
+  color: #ffffff;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(124, 140, 255, 0.2),
+      rgba(116, 215, 255, 0.045)
+    );
+
+  border-color:
+    rgba(114, 215, 255, 0.18);
+}
+
+
+.detail-library-dialog-radio {
+  position: absolute;
+
+  width: 1px;
+
+  height: 1px;
+
+  margin: -1px;
+
+  overflow: hidden;
+
+  clip:
+    rect(
+      0
+      0
+      0
+      0
+    );
+
+  clip-path:
+    inset(50%);
+
+  white-space: nowrap;
+}
+
+
+.detail-library-dialog-radio-mark {
+  width: 18px;
+
+  height: 18px;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border:
+    1px solid
+    rgba(187, 196, 255, 0.48);
+
+  border-radius: 50%;
+
+  box-shadow:
+    inset 0 0 0 4px
+    rgba(10, 15, 31, 0.98);
+
+  transition:
+    background 130ms ease,
+    border-color 130ms ease,
+    box-shadow 130ms ease;
+}
+
+
+.detail-library-dialog-radio:checked
++
+.detail-library-dialog-radio-mark {
+  background: #72d7ff;
+
+  border-color: #72d7ff;
+
+  box-shadow:
+    inset 0 0 0 4px
+    #111933,
+
+    0 0 0 3px
+    rgba(114, 215, 255, 0.1);
+}
+
+
+.detail-library-dialog-radio:focus-visible
++
+.detail-library-dialog-radio-mark {
+  outline:
+    2px solid
+    rgba(114, 215, 255, 0.82);
+
+  outline-offset: 3px;
+}
+
+
+.detail-library-dialog-option-copy {
+  min-width: 0;
+
+  display: grid;
+
+  gap: 0.16rem;
+}
+
+
+.detail-library-dialog-option-copy strong {
+  color: inherit;
+
+  font-size: 0.76rem;
+
+  font-weight: 740;
+
+  line-height: 1.2;
+}
+
+
+.detail-library-dialog-option-copy small {
+  color: #818da8;
+
+  font-size: 0.63rem;
+
+  font-weight: 610;
+
+  line-height: 1.35;
+}
+
+
+.detail-library-dialog-option:has(
+  .detail-library-dialog-radio:checked
+)
+.detail-library-dialog-option-copy small {
+  color: #aeb9d1;
+}
+
+
+/* =========================================================
+   DIALOG ACTIONS
+   ========================================================= */
+
+.detail-library-dialog-actions {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: flex-end;
+
+  gap: 0.65rem;
+
+  padding:
+    0.85rem
+    1rem
+    1rem;
+
+  border-top:
+    1px solid
+    rgba(187, 196, 255, 0.1);
+}
+
+
+.detail-library-dialog-button {
+  min-height: 43px;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  padding:
+    0.65rem
+    0.92rem;
+
+  border-radius: 10px;
+
+  outline: none;
+
+  font-family:
+    var(
+      --font-body,
+      system-ui,
+      sans-serif
+    );
+
+  font-size: 0.72rem;
+
+  font-weight: 760;
+
+  cursor: pointer;
+
+  transition:
+    color 150ms ease,
+    background 150ms ease,
+    border-color 150ms ease,
+    transform 150ms ease,
+    box-shadow 150ms ease;
+}
+
+
+.detail-library-dialog-button-secondary {
+  color: #c2cbe0;
+
+  background:
+    rgba(255, 255, 255, 0.035);
+
+  border:
+    1px solid
+    rgba(187, 196, 255, 0.15);
+}
+
+
+.detail-library-dialog-button-secondary:hover {
+  color: #ffffff;
+
+  background:
+    rgba(124, 140, 255, 0.1);
+
+  border-color:
+    rgba(187, 196, 255, 0.28);
+}
+
+
+.detail-library-dialog-button-primary {
+  color: #ffffff;
+
+  background:
+    radial-gradient(
+      circle at 20% 5%,
+      rgba(255, 255, 255, 0.2),
+      transparent 33%
+    ),
+
+    linear-gradient(
+      135deg,
+      #9d7dff,
+      #738cff 57%,
+      #5d63e8
+    );
+
+  border:
+    1px solid
+    rgba(204, 210, 255, 0.42);
+
+  box-shadow:
+    0 12px 26px
+    rgba(0, 0, 0, 0.26),
+
+    0 0 20px
+    rgba(113, 140, 255, 0.12);
+}
+
+
+.detail-library-dialog-button-primary:hover {
+  transform:
+    translateY(-1px);
+
+  box-shadow:
+    0 16px 32px
+    rgba(0, 0, 0, 0.34),
+
+    0 0 27px
+    rgba(113, 140, 255, 0.18);
+}
+
+
+.detail-library-dialog-button:focus-visible {
+  box-shadow:
+    0 0 0 3px
+    rgba(114, 215, 255, 0.15);
+}
+
+
+/* =========================================================
+   VISUALLY HIDDEN
+   ========================================================= */
+
+.detail-library-visually-hidden {
+  position:
+    absolute !important;
+
+  width:
+    1px !important;
+
+  height:
+    1px !important;
+
+  margin:
+    -1px !important;
+
+  padding:
+    0 !important;
+
+  overflow:
+    hidden !important;
+
+  clip:
+    rect(
+      0
+      0
+      0
+      0
+    )
+    !important;
+
+  clip-path:
+    inset(50%)
+    !important;
+
+  white-space:
+    nowrap !important;
+
+  border:
+    0 !important;
+}
+
+
+/* =========================================================
+   MOBILE BOTTOM SHEET
+   ========================================================= */
+
+@media (max-width: 640px) {
+  .detail-library-dialog {
+    width: 100%;
+
+    max-width: none;
+
+    margin:
+      auto
+      0
+      0;
+
+    inset:
+      auto
+      0
+      0;
+  }
+
+
+  .detail-library-dialog-surface {
+    width: 100%;
+
+    max-height:
+      min(
+        86dvh,
+        720px
+      );
+
+    border-right: 0;
+
+    border-bottom: 0;
+
+    border-left: 0;
+
+    border-radius:
+      22px
+      22px
+      0
+      0;
+
+    animation:
+      detail-library-sheet-in
+      190ms
+      ease-out;
+  }
+
+
+  @keyframes detail-library-sheet-in {
+    from {
+      opacity: 0;
+
+      transform:
+        translateY(24px);
+    }
+
+    to {
+      opacity: 1;
+
+      transform:
+        translateY(0);
+    }
+  }
+
+
+  .detail-library-dialog-header {
+    padding-top: 0.9rem;
+  }
+
+
+  .detail-library-dialog-actions {
+    padding-bottom:
+      max(
+        1rem,
+        env(safe-area-inset-bottom)
+      );
+  }
+}
+
+
+/* =========================================================
+   VERY SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 390px) {
+  .detail-library-format-button {
+    min-height: 58px;
+
+    grid-template-columns:
+      34px
+      minmax(0, 1fr)
+      16px;
+
+    padding:
+      0.58rem
+      0.62rem;
+  }
+
+
+  .detail-library-format-button-icon {
+    width: 34px;
+
+    height: 34px;
+  }
+
+
+  .detail-library-dialog-header,
+  .detail-library-dialog-description,
+  .detail-library-dialog-options,
+  .detail-library-dialog-actions {
+    padding-right: 0.82rem;
+
+    padding-left: 0.82rem;
+  }
+
+
+  .detail-library-dialog-actions {
+    display: grid;
+
+    grid-template-columns:
+      1fr
+      1fr;
+  }
+
+
+  .detail-library-dialog-button {
+    width: 100%;
+  }
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .detail-library-format-button,
+  .detail-library-format-button-chevron,
+  .detail-library-note,
+  .detail-library-dialog-surface,
+  .detail-library-dialog-option,
+  .detail-library-dialog-radio-mark,
+  .detail-library-dialog-button {
+    animation:
+      none !important;
+
+    transition:
+      none !important;
+  }
+}
