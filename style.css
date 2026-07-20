@@ -821,3 +821,75 @@ body::-webkit-scrollbar-corner {
       auto;
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* =========================================================
+   SEARCH PAGE SCROLL PERFORMANCE
+   ========================================================= */
+
+body.search-site {
+  /*
+   * Do not use a viewport-fixed background.
+   * The search page already creates its own background.
+   */
+  background:
+    linear-gradient(
+      135deg,
+      #060814 0%,
+      #0a1024 48%,
+      #050711 100%
+    )
+    !important;
+
+  background-attachment:
+    scroll
+    !important;
+}
+
+
+/*
+ * Keep the navbar sticky, but remove the live backdrop blur.
+ */
+
+body.search-site nav {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(8, 11, 24, 0.98),
+      rgba(8, 11, 24, 0.94)
+    );
+
+  backdrop-filter:
+    none
+    !important;
+
+  -webkit-backdrop-filter:
+    none
+    !important;
+}
