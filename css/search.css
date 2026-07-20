@@ -3004,3 +3004,243 @@ button[aria-selected="true"]::after {
     transition-duration: 0.01ms !important;
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* =========================================================
+   FLUID SCROLL PERFORMANCE PATCH
+   Add this at the very bottom of css/search.css.
+   ========================================================= */
+
+html {
+  scrollbar-gutter: stable;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+.search-page {
+  touch-action: pan-y;
+}
+
+/*
+  The original texture uses a mask over the entire page.
+  A full-page mask can be expensive to repaint while scrolling.
+*/
+
+.search-page::after {
+  opacity: 0.08;
+
+  mask-image: none;
+  -webkit-mask-image: none;
+}
+
+/*
+  Keep the search glow without using a live blur layer.
+*/
+
+.catalogue-search::before {
+  opacity: 0.72;
+  filter: none;
+}
+
+/*
+  Backdrop blur on a sticky element is the largest
+  source of scrolling lag in this page.
+
+  This keeps the same dark blue visual style while
+  replacing live blur with an opaque layered background.
+*/
+
+.filter-panel {
+  background:
+    radial-gradient(
+      circle at 12% 0%,
+      rgba(255, 255, 255, 0.055),
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at 95% 5%,
+      rgba(124, 140, 255, 0.07),
+      transparent 31%
+    ),
+    linear-gradient(
+      150deg,
+      #11182d,
+      #090f20
+    );
+
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+
+  contain: paint;
+}
+
+/*
+  Give every internal scrolling area native touch momentum.
+*/
+
+.filter-panel-body,
+.search-suggestions,
+.catalogue-select-menu {
+  -webkit-overflow-scrolling: touch;
+
+  overscroll-behavior: contain;
+
+  scroll-behavior: auto;
+
+  scrollbar-gutter: stable;
+}
+
+/*
+  Keep dropdown menus inside the available viewport.
+*/
+
+.catalogue-select-menu {
+  max-height:
+    min(
+      19rem,
+      calc(100dvh - 8rem)
+    );
+
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  background:
+    radial-gradient(
+      circle at 16% 0%,
+      rgba(124, 140, 255, 0.1),
+      transparent 34%
+    ),
+    linear-gradient(
+      155deg,
+      #131c35,
+      #080e20
+    );
+
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+
+  scrollbar-width: thin;
+
+  scrollbar-color:
+    rgba(124, 140, 255, 0.74)
+    rgba(7, 12, 27, 0.45);
+}
+
+.catalogue-select-menu::-webkit-scrollbar {
+  width: 8px;
+}
+
+.catalogue-select-menu::-webkit-scrollbar-track {
+  margin-block: 0.35rem;
+
+  background:
+    rgba(7, 12, 27, 0.45);
+
+  border-radius: 999px;
+}
+
+.catalogue-select-menu::-webkit-scrollbar-thumb {
+  border:
+    2px solid
+    transparent;
+
+  border-radius: 999px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(116, 215, 255, 0.72),
+      rgba(124, 140, 255, 0.82),
+      rgba(155, 124, 255, 0.72)
+    )
+    padding-box;
+}
+
+/*
+  This blur appeared on every result-card format badge.
+  Removing repeated blur layers lowers repaint work.
+*/
+
+.story-card-format {
+  background:
+    rgba(7, 10, 22, 0.96);
+
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/*
+  Contain repainting inside each individual card.
+*/
+
+.story-card,
+.skeleton-card {
+  contain: paint;
+}
+
+/*
+  Keep the mobile overlay dark without a live blur.
+*/
+
+.filter-drawer-overlay {
+  background:
+    rgba(2, 4, 12, 0.82);
+
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/*
+  The mobile drawer itself moves using a transform.
+  Promoting only this one element is safe and useful.
+*/
+
+@media (max-width: 980px) {
+  .filter-panel {
+    will-change: transform;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .filter-panel {
+    will-change: auto;
+  }
+}

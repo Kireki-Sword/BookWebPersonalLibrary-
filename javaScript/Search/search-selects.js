@@ -1,5 +1,6 @@
 // search-selects.js
 // Accessible custom select controls for Sort By and Show.
+// Prevents keyboard focus from making the whole page jump.
 
 export function createCustomSelectController({
   selects,
@@ -10,7 +11,7 @@ export function createCustomSelectController({
      ======================================================= */
 
   function initialize() {
-    selects.forEach((select) => {
+    selects.forEach((select, selectIndex) => {
       const trigger =
         select.querySelector(
           "[data-select-trigger]"
@@ -21,12 +22,45 @@ export function createCustomSelectController({
           "[data-select-menu]"
         );
 
-      const options = [
-        ...menu.querySelectorAll(
-          "[data-option-value]"
-        )
-      ];
+      const options =
+        getOptions(select);
 
+      if (
+        !trigger ||
+        !menu ||
+        !options.length
+      ) {
+        return;
+      }
+
+      options.forEach(
+        (option, optionIndex) => {
+          if (!option.id) {
+            option.id =
+              `custom-select-${selectIndex}-option-${optionIndex}`;
+          }
+
+          option.setAttribute(
+            "aria-selected",
+            "false"
+          );
+
+          option.tabIndex = -1;
+        }
+      );
+
+      const initialOption =
+        findOption(
+          select,
+          select.dataset.value
+        ) ||
+        options[0];
+
+      setDisplayedValue(
+        select,
+        initialOption,
+        initialOption.dataset.optionValue
+      );
 
       trigger.addEventListener(
         "click",
@@ -38,11 +72,13 @@ export function createCustomSelectController({
           ) {
             close(select);
           } else {
-            open(select);
+            open(
+              select,
+              false
+            );
           }
         }
       );
-
 
       trigger.addEventListener(
         "keydown",
@@ -53,7 +89,6 @@ export function createCustomSelectController({
           );
         }
       );
-
 
       menu.addEventListener(
         "click",
@@ -66,13 +101,11 @@ export function createCustomSelectController({
           if (option) {
             choose(
               select,
-              option.dataset
-                .optionValue
+              option.dataset.optionValue
             );
           }
         }
       );
-
 
       menu.addEventListener(
         "keydown",
@@ -83,28 +116,14 @@ export function createCustomSelectController({
           );
         }
       );
-
-
-      options.forEach((option) => {
-        option.setAttribute(
-          "aria-selected",
-          "false"
-        );
-
-        option.tabIndex =
-          -1;
-      });
     });
   }
 
-
   /* =======================================================
-     CONTROL IDENTIFICATION
+     CONTROL HELPERS
      ======================================================= */
 
-  function getKind(
-    select
-  ) {
+  function getKind(select) {
     return select.querySelector(
       "#sort-select-trigger"
     )
@@ -112,35 +131,53 @@ export function createCustomSelectController({
       : "perPage";
   }
 
+  function getOptions(select) {
+    return [
+      ...select.querySelectorAll(
+        "[data-option-value]"
+      )
+    ];
+  }
 
   function findOption(
     select,
     value
   ) {
-    return [
-      ...select.querySelectorAll(
-        "[data-option-value]"
-      )
-    ].find((option) => {
-      return (
-        option.dataset
-          .optionValue ===
-        String(value)
-      );
-    });
+    return getOptions(select).find(
+      (option) => {
+        return (
+          option.dataset.optionValue ===
+          String(value)
+        );
+      }
+    );
   }
 
+  function getSelectedOption(select) {
+    const menu =
+      select.querySelector(
+        "[data-select-menu]"
+      );
+
+    return (
+      menu.querySelector(
+        '[aria-selected="true"]'
+      ) ||
+      menu.querySelector(
+        "[data-option-value]"
+      )
+    );
+  }
 
   /* =======================================================
      OPEN AND CLOSE
      ======================================================= */
 
   function open(
-    select
+    select,
+    focusMenuOption = false
   ) {
-    closeAll(
-      select
-    );
+    closeAll(select);
 
     const trigger =
       select.querySelector(
@@ -152,32 +189,41 @@ export function createCustomSelectController({
         "[data-select-menu]"
       );
 
+    const selected =
+      getSelectedOption(select);
+
     select.classList.add(
       "is-open"
     );
 
-    menu.hidden =
-      false;
+    menu.hidden = false;
 
     trigger.setAttribute(
       "aria-expanded",
       "true"
     );
 
-    const selected =
-      menu.querySelector(
-        '[aria-selected="true"]'
-      ) ||
-      menu.querySelector(
-        "[data-option-value]"
-      );
-
     updateHighlight(
       select,
       selected
     );
-  }
 
+    window.requestAnimationFrame(
+      () => {
+        keepOptionVisible(
+          select,
+          selected
+        );
+
+        if (focusMenuOption) {
+          focusOption(
+            select,
+            selected
+          );
+        }
+      }
+    );
+  }
 
   function close(
     select,
@@ -197,45 +243,39 @@ export function createCustomSelectController({
       "is-open"
     );
 
-    menu.hidden =
-      true;
+    menu.hidden = true;
 
     trigger.setAttribute(
       "aria-expanded",
       "false"
     );
 
-    menu
-      .querySelectorAll(
-        "[data-option-value]"
-      )
-      .forEach((option) => {
+    getOptions(select).forEach(
+      (option) => {
         option.classList.remove(
           "is-active"
         );
 
-        option.tabIndex =
-          -1;
-      });
+        option.tabIndex = -1;
+      }
+    );
 
     if (returnFocus) {
-      trigger.focus();
+      trigger.focus({
+        preventScroll: true
+      });
     }
   }
-
 
   function closeAll(
     except = null
   ) {
     selects.forEach((select) => {
-      if (
-        select !== except
-      ) {
+      if (select !== except) {
         close(select);
       }
     });
   }
-
 
   /* =======================================================
      CHOOSE AND DISPLAY VALUE
@@ -272,7 +312,6 @@ export function createCustomSelectController({
     );
   }
 
-
   function setDisplayedValue(
     select,
     option,
@@ -281,27 +320,27 @@ export function createCustomSelectController({
     select.dataset.value =
       String(value);
 
-    select
-      .querySelector(
+    const displayedValue =
+      select.querySelector(
         "[data-select-value]"
-      )
-      .textContent =
-        option.textContent.trim();
+      );
 
-    select
-      .querySelectorAll(
-        "[data-option-value]"
-      )
-      .forEach((item) => {
+    if (displayedValue) {
+      displayedValue.textContent =
+        option.textContent.trim();
+    }
+
+    getOptions(select).forEach(
+      (item) => {
         item.setAttribute(
           "aria-selected",
           String(
             item === option
           )
         );
-      });
+      }
+    );
   }
-
 
   function sync(
     kind,
@@ -334,7 +373,6 @@ export function createCustomSelectController({
     }
   }
 
-
   /* =======================================================
      KEYBOARD BEHAVIOUR
      ======================================================= */
@@ -360,40 +398,33 @@ export function createCustomSelectController({
 
     event.preventDefault();
 
-    open(select);
-
-    const menu =
-      select.querySelector(
-        "[data-select-menu]"
-      );
-
-    const selected =
-      menu.querySelector(
-        '[aria-selected="true"]'
-      ) ||
-      menu.querySelector(
-        "[data-option-value]"
-      );
-
-    selected?.focus();
+    open(
+      select,
+      true
+    );
   }
-
 
   function handleMenuKeydown(
     event,
     select
   ) {
-    const options = [
-      ...select.querySelectorAll(
-        "[data-option-value]"
-      )
-    ];
+    const options =
+      getOptions(select);
 
-    const currentIndex =
+    let currentIndex =
       options.indexOf(
         document.activeElement
       );
 
+    if (currentIndex < 0) {
+      currentIndex =
+        Math.max(
+          0,
+          options.indexOf(
+            getSelectedOption(select)
+          )
+        );
+    }
 
     if (
       event.key ===
@@ -401,24 +432,18 @@ export function createCustomSelectController({
     ) {
       event.preventDefault();
 
-      const next =
+      focusOption(
+        select,
         options[
           Math.min(
             currentIndex + 1,
             options.length - 1
           )
-        ];
-
-      updateHighlight(
-        select,
-        next
+        ]
       );
-
-      next?.focus();
 
       return;
     }
-
 
     if (
       event.key ===
@@ -426,24 +451,18 @@ export function createCustomSelectController({
     ) {
       event.preventDefault();
 
-      const previous =
+      focusOption(
+        select,
         options[
           Math.max(
             currentIndex - 1,
             0
           )
-        ];
-
-      updateHighlight(
-        select,
-        previous
+        ]
       );
-
-      previous?.focus();
 
       return;
     }
-
 
     if (
       event.key ===
@@ -451,16 +470,13 @@ export function createCustomSelectController({
     ) {
       event.preventDefault();
 
-      updateHighlight(
+      focusOption(
         select,
         options[0]
       );
 
-      options[0]?.focus();
-
       return;
     }
-
 
     if (
       event.key ===
@@ -468,21 +484,15 @@ export function createCustomSelectController({
     ) {
       event.preventDefault();
 
-      const last =
+      focusOption(
+        select,
         options[
           options.length - 1
-        ];
-
-      updateHighlight(
-        select,
-        last
+        ]
       );
-
-      last?.focus();
 
       return;
     }
-
 
     if (
       event.key === "Enter" ||
@@ -491,51 +501,160 @@ export function createCustomSelectController({
       event.preventDefault();
 
       const option =
-        document.activeElement
-          .closest?.(
-            "[data-option-value]"
-          );
+        document.activeElement.closest?.(
+          "[data-option-value]"
+        );
 
       if (option) {
         choose(
           select,
-          option.dataset
-            .optionValue
+          option.dataset.optionValue
         );
       }
 
       return;
     }
 
-
     if (
-      event.key === "Escape" ||
-      event.key === "Tab"
+      event.key ===
+      "Escape"
     ) {
+      event.preventDefault();
+
       close(
         select,
-        event.key === "Escape"
+        true
       );
+
+      return;
+    }
+
+    if (
+      event.key ===
+      "Tab"
+    ) {
+      close(select);
     }
   }
 
+  /* =======================================================
+     INTERNAL MENU SCROLLING
+     ======================================================= */
+
+  function focusOption(
+    select,
+    option
+  ) {
+    if (!option) {
+      return;
+    }
+
+    updateHighlight(
+      select,
+      option
+    );
+
+    /*
+      preventScroll stops the browser from scrolling
+      the entire page when an option receives focus.
+    */
+
+    option.focus({
+      preventScroll: true
+    });
+
+    keepOptionVisible(
+      select,
+      option
+    );
+  }
+
+  function keepOptionVisible(
+    select,
+    option
+  ) {
+    if (!option) {
+      return;
+    }
+
+    const menu =
+      select.querySelector(
+        "[data-select-menu]"
+      );
+
+    if (
+      !menu ||
+      menu.hidden
+    ) {
+      return;
+    }
+
+    const menuRect =
+      menu.getBoundingClientRect();
+
+    const optionRect =
+      option.getBoundingClientRect();
+
+    const edgePadding = 8;
+
+    let nextScrollTop =
+      menu.scrollTop;
+
+    if (
+      optionRect.top <
+      menuRect.top + edgePadding
+    ) {
+      nextScrollTop -=
+        menuRect.top +
+        edgePadding -
+        optionRect.top;
+    } else if (
+      optionRect.bottom >
+      menuRect.bottom - edgePadding
+    ) {
+      nextScrollTop +=
+        optionRect.bottom -
+        (
+          menuRect.bottom -
+          edgePadding
+        );
+    } else {
+      return;
+    }
+
+    /*
+      Scroll only the dropdown menu.
+      "auto" avoids queued animations when an arrow key
+      is pressed repeatedly.
+    */
+
+    menu.scrollTo({
+      top: nextScrollTop,
+      behavior: "auto"
+    });
+  }
 
   function updateHighlight(
     select,
     activeOption
   ) {
-    select
-      .querySelectorAll(
-        "[data-option-value]"
-      )
-      .forEach((option) => {
+    getOptions(select).forEach(
+      (option) => {
+        const isActive =
+          option === activeOption;
+
         option.classList.toggle(
           "is-active",
-          option === activeOption
+          isActive
         );
-      });
-  }
 
+        option.tabIndex =
+          isActive
+            ? 0
+            : -1;
+      }
+    );
+  }
 
   return {
     initialize,
