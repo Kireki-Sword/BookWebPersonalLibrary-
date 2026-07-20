@@ -449,11 +449,21 @@
    ========================================================= */
 
 .detail-library-dialog {
-  width: auto;
+  position: fixed;
 
-  max-width: none;
+  inset: 0;
 
-  max-height: none;
+  width:
+    min(
+      440px,
+      calc(100vw - 2rem)
+    );
+
+  max-width:
+    calc(100vw - 2rem);
+
+  max-height:
+    calc(100dvh - 2rem);
 
   margin: auto;
 
@@ -489,11 +499,9 @@
 
 
 .detail-library-dialog-surface {
-  width:
-    min(
-      440px,
-      calc(100vw - 2rem)
-    );
+  width: 100%;
+
+  box-sizing: border-box;
 
   max-height:
     calc(100dvh - 2rem);
