@@ -3016,3 +3016,1250 @@ button[aria-selected="true"]::after {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* =========================================================
+   FLUID SCROLL PERFORMANCE PATCH
+   Add this at the very bottom of css/search.css.
+   ========================================================= */
+
+html {
+  scrollbar-gutter: stable;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+.search-page {
+  touch-action: pan-y;
+}
+
+/*
+  The original texture uses a mask over the entire page.
+  A full-page mask can be expensive to repaint while scrolling.
+*/
+
+.search-page::after {
+  opacity: 0.08;
+
+  mask-image: none;
+  -webkit-mask-image: none;
+}
+
+/*
+  Keep the search glow without using a live blur layer.
+*/
+
+.catalogue-search::before {
+  opacity: 0.72;
+  filter: none;
+}
+
+/*
+  Backdrop blur on a sticky element is the largest
+  source of scrolling lag in this page.
+
+  This keeps the same dark blue visual style while
+  replacing live blur with an opaque layered background.
+*/
+
+.filter-panel {
+  background:
+    radial-gradient(
+      circle at 12% 0%,
+      rgba(255, 255, 255, 0.055),
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at 95% 5%,
+      rgba(124, 140, 255, 0.07),
+      transparent 31%
+    ),
+    linear-gradient(
+      150deg,
+      #11182d,
+      #090f20
+    );
+
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+
+  contain: paint;
+}
+
+/*
+  Give every internal scrolling area native touch momentum.
+*/
+
+.filter-panel-body,
+.search-suggestions,
+.catalogue-select-menu {
+  -webkit-overflow-scrolling: touch;
+
+  overscroll-behavior: contain;
+
+  scroll-behavior: auto;
+
+  scrollbar-gutter: stable;
+}
+
+/*
+  Keep dropdown menus inside the available viewport.
+*/
+
+.catalogue-select-menu {
+  max-height:
+    min(
+      19rem,
+      calc(100dvh - 8rem)
+    );
+
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  background:
+    radial-gradient(
+      circle at 16% 0%,
+      rgba(124, 140, 255, 0.1),
+      transparent 34%
+    ),
+    linear-gradient(
+      155deg,
+      #131c35,
+      #080e20
+    );
+
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+
+  scrollbar-width: thin;
+
+  scrollbar-color:
+    rgba(124, 140, 255, 0.74)
+    rgba(7, 12, 27, 0.45);
+}
+
+.catalogue-select-menu::-webkit-scrollbar {
+  width: 8px;
+}
+
+.catalogue-select-menu::-webkit-scrollbar-track {
+  margin-block: 0.35rem;
+
+  background:
+    rgba(7, 12, 27, 0.45);
+
+  border-radius: 999px;
+}
+
+.catalogue-select-menu::-webkit-scrollbar-thumb {
+  border:
+    2px solid
+    transparent;
+
+  border-radius: 999px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(116, 215, 255, 0.72),
+      rgba(124, 140, 255, 0.82),
+      rgba(155, 124, 255, 0.72)
+    )
+    padding-box;
+}
+
+/*
+  This blur appeared on every result-card format badge.
+  Removing repeated blur layers lowers repaint work.
+*/
+
+.story-card-format {
+  background:
+    rgba(7, 10, 22, 0.96);
+
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/*
+  Contain repainting inside each individual card.
+*/
+
+.story-card,
+.skeleton-card {
+  contain: paint;
+}
+
+/*
+  Keep the mobile overlay dark without a live blur.
+*/
+
+.filter-drawer-overlay {
+  background:
+    rgba(2, 4, 12, 0.82);
+
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/*
+  The mobile drawer itself moves using a transform.
+  Promoting only this one element is safe and useful.
+*/
+
+@media (max-width: 980px) {
+  .filter-panel {
+    will-change: transform;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .filter-panel {
+    will-change: auto;
+  }
+}
+
+/* =========================================================
+   INKWELL SEARCH — FINAL PREMIUM VISUAL SYSTEM
+   Consolidated override for the search page only.
+
+   Important fixes:
+   - Styles only the PRIMARY navigation, never pagination.
+   - Removes the rectangular hero block below the navbar.
+   - Adds layered lighting without blur or fixed backgrounds.
+   - Gives the search control one clean gradient rim.
+   - Adds detail and hierarchy to the All stories area.
+   - Resets pagination so it cannot inherit global nav styles.
+   ========================================================= */
+
+body.search-site {
+  --search-canvas-0: #03050d;
+  --search-canvas-1: #050817;
+  --search-canvas-2: #080d1d;
+
+  --search-surface-1: #0b1224;
+  --search-surface-2: #10192f;
+  --search-surface-3: #16213c;
+
+  --search-border-soft: rgba(184, 196, 255, 0.12);
+  --search-border: rgba(184, 196, 255, 0.2);
+  --search-border-bright: rgba(145, 172, 255, 0.38);
+
+  --search-text: #f6f7ff;
+  --search-text-mid: #a9b3ca;
+  --search-text-muted: #75819c;
+
+  --search-blue: #748cff;
+  --search-purple: #9a7cff;
+  --search-cyan: #76d9ff;
+
+  background: var(--search-canvas-0) !important;
+  background-attachment: scroll !important;
+}
+
+
+/* =========================================================
+   PRIMARY NAVIGATION ONLY
+
+   The direct-child selector is intentional. The page also
+   contains <nav id="results-pagination">; styling every nav
+   was the reason the pagination became a large rectangle.
+   ========================================================= */
+
+body.search-site > nav[aria-label="Primary navigation"] {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+
+  background:
+    radial-gradient(
+      620px 110px at 50% -65px,
+      rgba(111, 133, 255, 0.09),
+      transparent 74%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(7, 10, 24, 0.995),
+      rgba(5, 8, 20, 0.985)
+    ) !important;
+
+  border-bottom: 1px solid rgba(184, 196, 255, 0.12);
+
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.025);
+
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+body.search-site > nav[aria-label="Primary navigation"]::after {
+  content: "";
+
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+
+  height: 1px;
+  pointer-events: none;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(111, 218, 255, 0.22) 23%,
+      rgba(126, 145, 255, 0.34) 50%,
+      rgba(157, 119, 255, 0.2) 77%,
+      transparent 100%
+    );
+}
+
+
+/* =========================================================
+   PAGE CANVAS
+   ========================================================= */
+
+.search-page {
+  position: relative;
+  isolation: isolate;
+  overflow-x: clip;
+
+  background:
+    radial-gradient(
+      1100px 610px at 50% -7%,
+      rgba(89, 115, 235, 0.2) 0%,
+      rgba(63, 82, 177, 0.085) 41%,
+      transparent 73%
+    ),
+    radial-gradient(
+      760px 650px at -8% 39%,
+      rgba(140, 92, 237, 0.065),
+      transparent 73%
+    ),
+    radial-gradient(
+      980px 760px at 108% 76%,
+      rgba(69, 151, 226, 0.048),
+      transparent 74%
+    ),
+    linear-gradient(
+      180deg,
+      #070b19 0%,
+      #070b18 34%,
+      #050816 67%,
+      #03050d 100%
+    ) !important;
+}
+
+/* Remove the old full-page texture and the rectangular layer. */
+.search-page::before,
+.search-page::after {
+  display: none !important;
+}
+
+
+/* =========================================================
+   HERO — LIGHTING WITHOUT A RECTANGULAR BACKGROUND
+   ========================================================= */
+
+.search-intro {
+  position: relative;
+  isolation: isolate;
+
+  padding:
+    clamp(4.7rem, 7vw, 6.4rem)
+    1.5rem
+    clamp(3.8rem, 5vw, 4.8rem);
+
+  background: transparent !important;
+}
+
+.search-intro-inner {
+  position: relative;
+  width: min(900px, 100%);
+}
+
+.search-intro-inner::before {
+  content: "";
+
+  position: absolute;
+  top: -145px;
+  left: 50%;
+  z-index: -2;
+
+  width: min(1280px, 116vw);
+  height: 620px;
+
+  pointer-events: none;
+  transform: translateX(-50%);
+
+  background:
+    radial-gradient(
+      ellipse 60% 52% at 50% 35%,
+      rgba(111, 137, 255, 0.19) 0%,
+      rgba(88, 108, 219, 0.085) 42%,
+      rgba(64, 76, 160, 0.018) 65%,
+      transparent 80%
+    );
+}
+
+.search-intro-inner::after {
+  content: "";
+
+  position: absolute;
+  left: 50%;
+  bottom: -68px;
+  z-index: -1;
+
+  width: min(1000px, 96vw);
+  height: 190px;
+
+  pointer-events: none;
+  transform: translateX(-50%);
+
+  background:
+    radial-gradient(
+      ellipse at 50% 0%,
+      rgba(89, 110, 226, 0.075),
+      rgba(66, 80, 169, 0.022) 46%,
+      transparent 72%
+    );
+}
+
+.search-eyebrow {
+  margin-bottom: 0.72rem;
+
+  color: #aeb9f8;
+
+  font-size: 0.66rem;
+  font-weight: 780;
+  letter-spacing: 0.155em;
+
+  text-shadow: 0 0 18px rgba(112, 139, 255, 0.18);
+}
+
+.search-eyebrow::before {
+  width: 5px;
+  height: 5px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #89e2ff,
+      #8195ff
+    );
+
+  box-shadow: 0 0 12px rgba(116, 215, 255, 0.48);
+}
+
+.search-intro h1 {
+  color: var(--search-text);
+
+  font-size: clamp(3.1rem, 5.5vw, 4.75rem);
+  line-height: 0.95;
+  letter-spacing: -0.047em;
+
+  text-shadow:
+    0 24px 54px rgba(0, 0, 0, 0.38),
+    0 0 52px rgba(98, 121, 236, 0.075);
+}
+
+.search-intro-copy {
+  margin-top: 1.08rem;
+
+  color: var(--search-text-mid);
+
+  font-size: 0.92rem;
+}
+
+
+/* =========================================================
+   SEARCH CONTROL — ONE CLEAN RIM, NO DOUBLE RECTANGLE
+   ========================================================= */
+
+.catalogue-search {
+  position: relative;
+  isolation: isolate;
+
+  width: min(820px, 100%);
+  margin-top: 1.85rem;
+
+  padding: 1px;
+
+  background:
+    linear-gradient(
+      115deg,
+      rgba(116, 219, 255, 0.38) 0%,
+      rgba(130, 150, 255, 0.26) 35%,
+      rgba(157, 124, 255, 0.3) 68%,
+      rgba(101, 123, 227, 0.16) 100%
+    );
+
+  border: 0;
+  border-radius: 19px;
+
+  box-shadow:
+    0 26px 58px rgba(0, 0, 0, 0.34),
+    0 0 38px rgba(96, 119, 234, 0.075);
+}
+
+.catalogue-search::before {
+  content: "";
+
+  position: absolute;
+  inset: -112px -190px -92px;
+  z-index: -2;
+
+  pointer-events: none;
+  filter: none !important;
+
+  background:
+    radial-gradient(
+      ellipse 58% 46% at 50% 54%,
+      rgba(105, 129, 255, 0.15) 0%,
+      rgba(80, 98, 207, 0.062) 43%,
+      transparent 77%
+    );
+}
+
+.catalogue-search::after {
+  content: "";
+
+  position: absolute;
+  left: 12%;
+  right: 12%;
+  bottom: -42px;
+  z-index: -1;
+
+  height: 82px;
+
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      ellipse at 50% 0%,
+      rgba(90, 109, 220, 0.12),
+      rgba(66, 79, 167, 0.03) 50%,
+      transparent 76%
+    );
+}
+
+.catalogue-search-form {
+  min-height: 64px;
+
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      520px 125px at 16% 0%,
+      rgba(255, 255, 255, 0.048),
+      transparent 72%
+    ),
+    linear-gradient(
+      135deg,
+      #111a31 0%,
+      #0c1328 50%,
+      #090f20 100%
+    ) !important;
+
+  border: 0 !important;
+  border-radius: 18px;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.055),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.32);
+
+  transform: none !important;
+}
+
+.catalogue-search-form::before {
+  top: 0;
+  left: 30px;
+  right: 132px;
+
+  height: 1px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(131, 220, 255, 0.38) 34%,
+      rgba(157, 142, 255, 0.4) 68%,
+      transparent
+    );
+}
+
+.catalogue-search-form:focus-within {
+  transform: none !important;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.075),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.3),
+    0 0 0 3px rgba(112, 151, 255, 0.075),
+    0 0 32px rgba(99, 125, 240, 0.105);
+}
+
+.catalogue-search-icon {
+  width: 36px;
+  height: 36px;
+
+  margin-left: 0.78rem;
+  margin-right: 0.42rem;
+
+  display: inline-grid;
+  place-items: center;
+
+  color: #adbaed;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(124, 145, 255, 0.12),
+      rgba(91, 111, 211, 0.045)
+    );
+
+  border: 1px solid rgba(180, 194, 255, 0.14);
+  border-radius: 10px;
+
+  filter: none !important;
+}
+
+.catalogue-search-form:focus-within .catalogue-search-icon {
+  color: var(--search-cyan);
+
+  border-color: rgba(118, 214, 255, 0.34);
+
+  filter: none !important;
+  transform: none;
+}
+
+.catalogue-search-form input {
+  color: #f4f6ff;
+}
+
+.catalogue-search-form input::placeholder {
+  color: #77839d;
+}
+
+.catalogue-search-submit {
+  background:
+    radial-gradient(
+      circle at 24% 5%,
+      rgba(255, 255, 255, 0.28),
+      transparent 34%
+    ),
+    linear-gradient(
+      135deg,
+      #9d83ff 0%,
+      #798bff 49%,
+      #6475ec 100%
+    ) !important;
+
+  border-left: 1px solid rgba(215, 221, 255, 0.28);
+  border-radius: 0 17px 17px 0;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    -12px 0 28px rgba(91, 106, 222, 0.12);
+}
+
+.catalogue-search-submit:hover {
+  filter: brightness(1.055);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.29),
+    -14px 0 32px rgba(104, 120, 239, 0.16),
+    0 0 25px rgba(119, 140, 255, 0.14);
+}
+
+
+/* =========================================================
+   WORKSPACE LIGHTING
+   ========================================================= */
+
+.search-workspace {
+  position: relative;
+  isolation: isolate;
+
+  padding-top: 0.4rem;
+}
+
+.search-workspace::before {
+  content: "";
+
+  position: absolute;
+  top: -115px;
+  left: 8%;
+  right: -6%;
+  z-index: -2;
+
+  height: 690px;
+
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      760px 480px at 45% 9%,
+      rgba(75, 101, 207, 0.065),
+      transparent 74%
+    ),
+    radial-gradient(
+      560px 480px at 3% 44%,
+      rgba(133, 94, 229, 0.045),
+      transparent 73%
+    );
+}
+
+.search-workspace::after {
+  content: "";
+
+  position: absolute;
+  top: -26px;
+  left: 18%;
+  right: 0;
+  z-index: -1;
+
+  height: 1px;
+
+  pointer-events: none;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(116, 213, 255, 0.16) 28%,
+      rgba(132, 145, 255, 0.18) 58%,
+      transparent
+    );
+}
+
+
+/* =========================================================
+   FILTER PANEL
+   ========================================================= */
+
+.filter-panel {
+  background:
+    radial-gradient(
+      430px 235px at 8% 0%,
+      rgba(134, 116, 238, 0.105),
+      transparent 68%
+    ),
+    linear-gradient(
+      155deg,
+      #151e37 0%,
+      #10182d 48%,
+      #0b1224 100%
+    ) !important;
+
+  border: 1px solid rgba(178, 191, 255, 0.19);
+  border-radius: 20px;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 23px 54px rgba(0, 0, 0, 0.3);
+
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+
+  contain: paint;
+}
+
+.filter-panel::before {
+  left: 20px;
+  right: 20px;
+  height: 1px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(116, 217, 255, 0.64),
+      rgba(138, 137, 255, 0.68),
+      rgba(158, 120, 255, 0.48),
+      transparent
+    );
+}
+
+.filter-panel-body {
+  overscroll-behavior-y: auto;
+}
+
+.filter-panel-footer {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(10, 15, 31, 0.25),
+      rgba(8, 13, 27, 0.96)
+    );
+}
+
+
+/* =========================================================
+   ALL STORIES / RESULTS HEADER
+   ========================================================= */
+
+.results-toolbar {
+  position: relative;
+  isolation: isolate;
+
+  min-height: 86px;
+
+  align-items: center;
+
+  padding: 1rem 1.08rem;
+
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      520px 180px at 82% -12%,
+      rgba(104, 128, 235, 0.085),
+      transparent 72%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(17, 25, 47, 0.95),
+      rgba(9, 15, 31, 0.965)
+    );
+
+  border: 1px solid rgba(175, 188, 247, 0.145);
+  border-radius: 17px;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.035),
+    0 16px 37px rgba(0, 0, 0, 0.21);
+}
+
+.results-toolbar::before {
+  content: "";
+
+  position: absolute;
+  top: 0;
+  left: 22px;
+  right: 22px;
+
+  height: 1px;
+
+  pointer-events: none;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(119, 218, 255, 0.38),
+      rgba(142, 142, 255, 0.36),
+      transparent
+    );
+}
+
+.results-toolbar::after {
+  left: 1.08rem;
+  bottom: -1px;
+
+  width: 210px;
+  height: 1px;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(116, 218, 255, 0.63),
+      rgba(126, 145, 255, 0.48) 51%,
+      transparent
+    );
+}
+
+.results-heading-group {
+  position: relative;
+  padding-left: 0.9rem;
+}
+
+.results-heading-group::before {
+  content: "";
+
+  position: absolute;
+  left: 0;
+  top: 0.25rem;
+  bottom: 0.18rem;
+
+  width: 2px;
+
+  border-radius: 999px;
+
+  background:
+    linear-gradient(
+      180deg,
+      var(--search-cyan),
+      var(--search-blue) 54%,
+      var(--search-purple)
+    );
+
+  box-shadow: 0 0 14px rgba(111, 139, 255, 0.22);
+}
+
+.results-status {
+  margin-bottom: 0.22rem;
+
+  color: #7f8ba7;
+
+  font-size: 0.65rem;
+  font-weight: 740;
+  letter-spacing: 0.055em;
+  text-transform: uppercase;
+}
+
+.results-heading-group h2 {
+  color: #f4f6ff;
+
+  font-size: clamp(1.78rem, 2.7vw, 2.25rem);
+  line-height: 1;
+}
+
+.catalogue-select-trigger {
+  background:
+    radial-gradient(
+      220px 80px at 20% 0%,
+      rgba(255, 255, 255, 0.045),
+      transparent 72%
+    ),
+    linear-gradient(
+      145deg,
+      #121a30,
+      #0b1224
+    );
+
+  border-color: rgba(176, 190, 246, 0.18);
+
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.032);
+}
+
+.catalogue-select-trigger:hover,
+.catalogue-select.is-open .catalogue-select-trigger {
+  border-color: rgba(117, 193, 255, 0.4);
+
+  box-shadow:
+    0 0 0 3px rgba(115, 162, 255, 0.055),
+    0 0 22px rgba(105, 128, 235, 0.065);
+}
+
+
+/* =========================================================
+   RESULTS AND CARDS
+   ========================================================= */
+
+.results-grid,
+.results-loading {
+  padding-top: 1rem;
+  gap: 1rem;
+}
+
+.story-card {
+  background:
+    linear-gradient(
+      155deg,
+      #10172a 0%,
+      #0a1020 100%
+    ) !important;
+
+  border: 1px solid rgba(174, 187, 244, 0.12);
+  border-radius: 17px;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.023),
+    0 13px 30px rgba(0, 0, 0, 0.22);
+
+  contain: paint;
+
+  transition:
+    transform 190ms ease,
+    border-color 190ms ease,
+    box-shadow 190ms ease;
+}
+
+.story-card::before {
+  left: 20px;
+  right: 20px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(122, 215, 255, 0.4),
+      rgba(149, 127, 255, 0.36),
+      transparent
+    );
+}
+
+.story-card:hover {
+  transform: translateY(-3px);
+
+  border-color: rgba(126, 165, 255, 0.29);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 21px 46px rgba(0, 0, 0, 0.33),
+    0 0 23px rgba(98, 122, 236, 0.05);
+}
+
+.story-card-cover::after {
+  background:
+    linear-gradient(
+      180deg,
+      transparent 56%,
+      rgba(5, 8, 18, 0.13) 72%,
+      rgba(5, 8, 18, 0.67) 100%
+    );
+}
+
+.story-card-format {
+  background: rgba(6, 9, 20, 0.94);
+  border-color: rgba(180, 194, 255, 0.22);
+
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.story-card-body {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(15, 22, 41, 0.98),
+      rgba(8, 14, 28, 0.99)
+    );
+}
+
+
+/* =========================================================
+   PAGINATION — COMPLETE RESET OF GLOBAL NAV STYLES
+   ========================================================= */
+
+body.search-site .results-pagination {
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+  right: auto !important;
+
+  z-index: 2 !important;
+
+  width: 100% !important;
+  height: auto !important;
+  min-height: 0 !important;
+
+  margin: 0 !important;
+  padding: 1.8rem 0 0.35rem !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.45rem !important;
+  flex-wrap: wrap !important;
+
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+
+  box-shadow: none !important;
+
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+body.search-site .results-pagination::before,
+body.search-site .results-pagination::after {
+  display: none !important;
+}
+
+.pagination-button {
+  min-width: 40px;
+  height: 40px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.045),
+      rgba(255, 255, 255, 0.022)
+    );
+
+  border-color: rgba(179, 191, 246, 0.16);
+  border-radius: 11px;
+
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.025);
+}
+
+.pagination-button:hover:not(:disabled) {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(116, 216, 255, 0.075),
+      rgba(124, 140, 255, 0.13),
+      rgba(155, 124, 255, 0.065)
+    );
+
+  border-color: rgba(119, 190, 255, 0.3);
+}
+
+.pagination-button[aria-current="page"] {
+  background:
+    radial-gradient(
+      circle at 25% 8%,
+      rgba(255, 255, 255, 0.24),
+      transparent 34%
+    ),
+    linear-gradient(
+      145deg,
+      #86d9ff,
+      #768cff 50%,
+      #9679ff
+    );
+
+  border-color: rgba(210, 220, 255, 0.38);
+
+  box-shadow:
+    0 10px 24px rgba(0, 0, 0, 0.3),
+    0 0 20px rgba(111, 139, 255, 0.16);
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 980px) {
+  .results-toolbar {
+    align-items: flex-start;
+    padding: 1rem;
+  }
+
+  .filter-panel {
+    border-radius: 20px 0 0 20px;
+  }
+}
+
+@media (max-width: 820px) {
+  .search-intro {
+    padding: 4.1rem 1rem 3.55rem;
+  }
+
+  .search-intro-inner::before {
+    top: -105px;
+    width: 122vw;
+    height: 500px;
+  }
+
+  .search-intro-inner::after {
+    bottom: -54px;
+  }
+
+  .catalogue-search::before {
+    inset: -80px -60px -68px;
+  }
+
+  .results-toolbar {
+    align-items: stretch;
+  }
+}
+
+@media (max-width: 650px) {
+  .catalogue-search {
+    border-radius: 17px;
+  }
+
+  .catalogue-search-form {
+    border-radius: 16px;
+  }
+
+  .catalogue-search-icon {
+    width: 32px;
+    height: 32px;
+
+    margin-left: 0.62rem;
+    margin-right: 0.24rem;
+  }
+
+  .catalogue-search-submit {
+    border-radius: 0 15px 15px 0;
+  }
+}
+
+@media (max-width: 520px) {
+  .search-page {
+    background:
+      radial-gradient(
+        650px 390px at 50% -3%,
+        rgba(91, 115, 225, 0.16),
+        transparent 72%
+      ),
+      linear-gradient(
+        180deg,
+        #070b19,
+        #03050d
+      ) !important;
+  }
+
+  .search-intro {
+    padding-top: 3.55rem;
+    padding-bottom: 3.05rem;
+  }
+
+  .search-intro h1 {
+    font-size: clamp(2.75rem, 13vw, 3.6rem);
+  }
+
+  .search-intro-inner::after,
+  .search-workspace::before,
+  .search-workspace::after {
+    display: none;
+  }
+
+  .catalogue-search {
+    margin-top: 1.55rem;
+  }
+
+  .catalogue-search::before {
+    inset: -62px -30px -56px;
+  }
+
+  .results-toolbar {
+    border-radius: 14px;
+  }
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .story-card,
+  .catalogue-search-form,
+  .catalogue-search-submit,
+  .pagination-button {
+    transition: none !important;
+  }
+}
