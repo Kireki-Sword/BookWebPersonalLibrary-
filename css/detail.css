@@ -1203,6 +1203,100 @@ body.detail-site {
 
 
 /* =========================================================
+   SUBFORMAT AND DEMOGRAPHIC
+   ========================================================= */
+
+.detail-classification-groups {
+  margin-top: 1.15rem;
+
+  display: grid;
+
+  gap: 0.8rem;
+}
+
+
+.detail-classification-row {
+  display: grid;
+
+  grid-template-columns:
+    minmax(92px, auto)
+    minmax(0, 1fr);
+
+  align-items: start;
+
+  gap: 0.7rem 0.9rem;
+}
+
+
+.detail-classification-label {
+  min-height: 33px;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  color: #737f9d;
+
+  font-size: 0.6rem;
+
+  font-weight: 830;
+
+  letter-spacing: 0.09em;
+
+  text-transform: uppercase;
+}
+
+
+.detail-classification-list {
+  min-width: 0;
+}
+
+
+.detail-chip-subformat {
+  color: #b9d9ff;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(114, 140, 255, 0.13),
+      rgba(114, 140, 255, 0.045)
+    );
+
+  border-color:
+    rgba(114, 140, 255, 0.22);
+}
+
+
+.detail-chip-demographic {
+  color: #b7ead2;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(140, 231, 188, 0.12),
+      rgba(140, 231, 188, 0.04)
+    );
+
+  border-color:
+    rgba(140, 231, 188, 0.22);
+}
+
+
+@media (max-width: 560px) {
+  .detail-classification-row {
+    grid-template-columns: 1fr;
+
+    gap: 0.3rem;
+  }
+
+
+  .detail-classification-label {
+    min-height: auto;
+  }
+}
+
+
+/* =========================================================
    ACTION PANEL
    ========================================================= */
 

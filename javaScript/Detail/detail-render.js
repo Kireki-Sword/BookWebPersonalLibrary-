@@ -39,6 +39,12 @@ export function renderDetailPage(
   );
 
 
+  renderClassificationDetails(
+    title,
+    elements
+  );
+
+
   renderScore(
     title.score,
     elements
@@ -582,6 +588,348 @@ function renderGenres(
           );
       }
     );
+}
+
+
+function renderClassificationDetails(
+  title,
+  elements
+) {
+  let container =
+    document.getElementById(
+      "detail-classifications"
+    );
+
+
+  if (!container) {
+    container =
+      document.createElement(
+        "div"
+      );
+
+
+    container.id =
+      "detail-classifications";
+
+
+    container.className =
+      "detail-classification-groups";
+
+
+    elements
+      .genres
+      .insertAdjacentElement(
+        "afterend",
+        container
+      );
+  }
+
+
+  container
+    .replaceChildren();
+
+
+  const subformats =
+    collectMediaMetadata(
+      title,
+      [
+        "manga",
+        "anime"
+      ],
+      "format"
+    );
+
+
+  const demographics =
+    collectMediaMetadata(
+      title,
+      [
+        "manga"
+      ],
+      "demographic"
+    );
+
+
+  appendClassificationRow({
+    container,
+    label:
+      "Subformat",
+    values:
+      subformats,
+    parameter:
+      "subformat",
+    chipClass:
+      "detail-chip-subformat"
+  });
+
+
+  appendClassificationRow({
+    container,
+    label:
+      "Demographic",
+    values:
+      demographics,
+    parameter:
+      "demographic",
+    chipClass:
+      "detail-chip-demographic"
+  });
+
+
+  container.hidden =
+    !subformats.length &&
+    !demographics.length;
+}
+
+
+function collectMediaMetadata(
+  title,
+  mediaTypes,
+  property
+) {
+  const uniqueValues =
+    new Map();
+
+
+  mediaTypes
+    .forEach(
+      (
+        mediaType
+      ) => {
+        const entries =
+          title
+            .media?.[
+              mediaType
+            ] ||
+          [];
+
+
+        entries
+          .forEach(
+            (
+              entry
+            ) => {
+              extractClassificationValues(
+                entry?.[
+                  property
+                ]
+              )
+                .forEach(
+                  (
+                    value
+                  ) => {
+                    const key =
+                      normalizeSearchParameter(
+                        value
+                      );
+
+
+                    if (
+                      key &&
+                      !uniqueValues
+                        .has(
+                          key
+                        )
+                    ) {
+                      uniqueValues
+                        .set(
+                          key,
+                          formatLabel(
+                            value
+                          )
+                        );
+                    }
+                  }
+                );
+            }
+          );
+      }
+    );
+
+
+  return [
+    ...uniqueValues
+      .values()
+  ];
+}
+
+
+function extractClassificationValues(
+  value
+) {
+  if (
+    value == null ||
+    value === ""
+  ) {
+    return [];
+  }
+
+
+  if (
+    Array.isArray(
+      value
+    )
+  ) {
+    return value
+      .flatMap(
+        extractClassificationValues
+      );
+  }
+
+
+  if (
+    typeof value ===
+    "object"
+  ) {
+    return Object
+      .values(
+        value
+      )
+      .flatMap(
+        extractClassificationValues
+      );
+  }
+
+
+  const text =
+    String(
+      value
+    ).trim();
+
+
+  if (!text) {
+    return [];
+  }
+
+
+  if (
+    text.startsWith(
+      "["
+    ) ||
+    text.startsWith(
+      "{"
+    )
+  ) {
+    try {
+      return extractClassificationValues(
+        JSON.parse(
+          text
+        )
+      );
+    } catch {
+      // Continue with normal text parsing.
+    }
+  }
+
+
+  return text
+    .split(
+      /\s*(?:\/|\||,|;)\s*/g
+    )
+    .map(
+      (
+        item
+      ) => {
+        return item.trim();
+      }
+    )
+    .filter(
+      Boolean
+    );
+}
+
+
+function appendClassificationRow({
+  container,
+  label,
+  values,
+  parameter,
+  chipClass
+}) {
+  if (!values.length) {
+    return;
+  }
+
+
+  const row =
+    document.createElement(
+      "div"
+    );
+
+
+  row.className =
+    "detail-classification-row";
+
+
+  const heading =
+    document.createElement(
+      "span"
+    );
+
+
+  heading.className =
+    "detail-classification-label";
+
+
+  heading.textContent =
+    label;
+
+
+  const list =
+    document.createElement(
+      "div"
+    );
+
+
+  list.className =
+    "detail-chip-list detail-classification-list";
+
+
+  values
+    .forEach(
+      (
+        value
+      ) => {
+        const link =
+          document.createElement(
+            "a"
+          );
+
+
+        link.className =
+          `detail-chip ${chipClass}`;
+
+
+        link.href =
+          `search.html?${parameter}=${
+            encodeURIComponent(
+              normalizeSearchParameter(
+                value
+              )
+            )
+          }`;
+
+
+        link.textContent =
+          value;
+
+
+        list.append(
+          link
+        );
+      }
+    );
+
+
+  row.append(
+    heading,
+    list
+  );
+
+
+  container.append(
+    row
+  );
 }
 
 
@@ -1831,11 +2179,6 @@ function configureSimilarLink(
       }
     );
 
-
-  /*
-   * If the title has no genres or themes,
-   * use its format as a fallback.
-   */
 
   if (
     !title.genres.length &&
