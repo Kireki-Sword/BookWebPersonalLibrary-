@@ -60,16 +60,32 @@ export const CONFIG =
 
     PREFERRED_TYPE_ORDER: [
       "manga",
-      "anime",
-      "light-novel",
-      "visual-novel",
-      "novel",
-      "book",
-      "film",
+      "anime"
+    ],
+
+    PREFERRED_DEMOGRAPHIC_ORDER: [
+      "shonen",
+      "seinen",
+      "shojo",
+      "josei",
+      "kodomo",
+      "unknown"
+    ],
+
+    PREFERRED_SUBFORMAT_ORDER: [
+      "manga",
+      "one-shot",
+      "doujinshi",
+      "tv-series",
       "movie",
-      "tv",
-      "television",
-      "game"
+      "movie-series",
+      "ova",
+      "ona",
+      "tv-special",
+      "special",
+      "tv-recut",
+      "compilation-movie",
+      "short"
     ]
   });
 
@@ -99,6 +115,12 @@ export function createInitialState() {
       new Set(),
 
     selectedTypes:
+      new Set(),
+
+    selectedDemographics:
+      new Set(),
+
+    selectedSubformats:
       new Set(),
 
     selectedGenres:
@@ -275,6 +297,42 @@ export function normalizeStory(
       "Manga"
     );
 
+  const mangaInfo =
+    normalizeObjectList(
+      row.mangaInfo ??
+      row.manga_info
+    );
+
+  const animeInfo =
+    normalizeObjectList(
+      row.animeInfo ??
+      row.anime_info
+    );
+
+  const demographics =
+    normalizeFacetList(
+      mangaInfo.flatMap((entry) => {
+        return normalizeValueList(
+          entry.demographic
+        );
+      })
+    );
+
+  const subformats =
+    normalizeFacetList([
+      ...mangaInfo.flatMap((entry) => {
+        return normalizeValueList(
+          entry.format
+        );
+      }),
+
+      ...animeInfo.flatMap((entry) => {
+        return normalizeValueList(
+          entry.format
+        );
+      })
+    ]);
+
   const genres =
     normalizeFacetList(
       row.genres
@@ -307,6 +365,14 @@ export function normalizeStory(
         creator,
 
         ...types.map((item) => {
+          return item.label;
+        }),
+
+        ...demographics.map((item) => {
+          return item.label;
+        }),
+
+        ...subformats.map((item) => {
           return item.label;
         }),
 
@@ -348,6 +414,10 @@ export function normalizeStory(
       ),
 
     types,
+
+    demographics,
+
+    subformats,
 
     genres,
 
@@ -409,6 +479,44 @@ export function getCoverUrlFromId(
 /* =========================================================
    JSONB AND VALUE NORMALIZATION
    ========================================================= */
+
+export function normalizeObjectList(value) {
+  if (
+    value == null ||
+    value === ""
+  ) {
+    return [];
+  }
+
+  if (Array.isArray(value)) {
+    return value.flatMap(
+      normalizeObjectList
+    );
+  }
+
+  if (
+    typeof value ===
+    "object"
+  ) {
+    return [value];
+  }
+
+  const text =
+    String(value).trim();
+
+  if (!text) {
+    return [];
+  }
+
+  try {
+    return normalizeObjectList(
+      JSON.parse(text)
+    );
+  } catch {
+    return [];
+  }
+}
+
 
 export function normalizeValueList(value) {
   if (
@@ -871,6 +979,30 @@ export function passesFilters(
   }
 
   if (
+    skipGroup !== "demographic" &&
+    state.selectedDemographics.size &&
+    !item.demographics.some((demographic) => {
+      return state.selectedDemographics.has(
+        demographic.key
+      );
+    })
+  ) {
+    return false;
+  }
+
+  if (
+    skipGroup !== "subformat" &&
+    state.selectedSubformats.size &&
+    !item.subformats.some((subformat) => {
+      return state.selectedSubformats.has(
+        subformat.key
+      );
+    })
+  ) {
+    return false;
+  }
+
+  if (
     skipGroup !== "genre" &&
     state.selectedGenres.size &&
     !item.genres.some((genre) => {
@@ -1192,6 +1324,74 @@ export function compareTypeOptions(
 }
 
 
+export function compareDemographicOptions(
+  a,
+  b
+) {
+  return comparePreferredFacetOptions(
+    a,
+    b,
+    CONFIG.PREFERRED_DEMOGRAPHIC_ORDER
+  );
+}
+
+
+export function compareSubformatOptions(
+  a,
+  b
+) {
+  return comparePreferredFacetOptions(
+    a,
+    b,
+    CONFIG.PREFERRED_SUBFORMAT_ORDER
+  );
+}
+
+
+function comparePreferredFacetOptions(
+  a,
+  b,
+  preferredOrder
+) {
+  const indexA =
+    preferredOrder.indexOf(
+      a.key
+    );
+
+  const indexB =
+    preferredOrder.indexOf(
+      b.key
+    );
+
+  const orderA =
+    indexA === -1
+      ? Number.MAX_SAFE_INTEGER
+      : indexA;
+
+  const orderB =
+    indexB === -1
+      ? Number.MAX_SAFE_INTEGER
+      : indexB;
+
+  return (
+    orderA -
+    orderB ||
+
+    b.count -
+    a.count ||
+
+    a.label.localeCompare(
+      b.label,
+      undefined,
+      {
+        sensitivity:
+          "base"
+      }
+    )
+  );
+}
+
+
 export function findFacetLabel(
   catalogue,
   key
@@ -1199,6 +1399,8 @@ export function findFacetLabel(
   for (const item of catalogue) {
     const facet = [
       ...item.types,
+      ...item.demographics,
+      ...item.subformats,
       ...item.genres,
       ...item.tags
     ].find((entry) => {

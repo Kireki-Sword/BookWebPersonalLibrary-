@@ -158,6 +158,12 @@ function collectElements() {
     formatFilterList:
       "format-filter-list",
 
+    demographicFilterList:
+      "demographic-filter-list",
+
+    subformatFilterList:
+      "subformat-filter-list",
+
     genreFilterList:
       "genre-filter-list",
 
@@ -253,6 +259,8 @@ function hasRequiredElements() {
     "mobileFilterButton",
     "mobileFilterCount",
     "formatFilterList",
+    "demographicFilterList",
+    "subformatFilterList",
     "genreFilterList",
     "genreShowMore",
     "tagFilterList",
@@ -660,6 +668,24 @@ function handleFilterChange(event) {
     );
   } else if (
     target.matches(
+      "[data-demographic-filter]"
+    )
+  ) {
+    updateSetFromCheckbox(
+      state.selectedDemographics,
+      target
+    );
+  } else if (
+    target.matches(
+      "[data-subformat-filter]"
+    )
+  ) {
+    updateSetFromCheckbox(
+      state.selectedSubformats,
+      target
+    );
+  } else if (
+    target.matches(
       "[data-genre-filter]"
     )
   ) {
@@ -777,6 +803,10 @@ function clearSimilarState() {
 function clearFilterState() {
   state.selectedTypes.clear();
 
+  state.selectedDemographics.clear();
+
+  state.selectedSubformats.clear();
+
   state.selectedGenres.clear();
 
   state.selectedTags.clear();
@@ -813,6 +843,20 @@ function handleActiveFilterClick(event) {
     "type"
   ) {
     state.selectedTypes.delete(
+      key
+    );
+  } else if (
+    kind ===
+    "demographic"
+  ) {
+    state.selectedDemographics.delete(
+      key
+    );
+  } else if (
+    kind ===
+    "subformat"
+  ) {
+    state.selectedSubformats.delete(
       key
     );
   } else if (
@@ -1141,6 +1185,26 @@ function readStateFromUrl() {
         .filter(Boolean)
     );
 
+  state.selectedDemographics =
+    new Set(
+      params
+        .getAll("demographic")
+        .map(
+          normalizeFacetKey
+        )
+        .filter(Boolean)
+    );
+
+  state.selectedSubformats =
+    new Set(
+      params
+        .getAll("subformat")
+        .map(
+          normalizeFacetKey
+        )
+        .filter(Boolean)
+    );
+
   state.selectedGenres =
     new Set(
       params
@@ -1274,6 +1338,28 @@ function writeStateToUrl(
     .forEach((key) => {
       params.append(
         "type",
+        key
+      );
+    });
+
+  [
+    ...state.selectedDemographics
+  ]
+    .sort()
+    .forEach((key) => {
+      params.append(
+        "demographic",
+        key
+      );
+    });
+
+  [
+    ...state.selectedSubformats
+  ]
+    .sort()
+    .forEach((key) => {
+      params.append(
+        "subformat",
         key
       );
     });

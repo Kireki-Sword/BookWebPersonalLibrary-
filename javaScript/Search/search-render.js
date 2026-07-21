@@ -5,6 +5,8 @@
 import {
   CONFIG,
   buildFacetOptions,
+  compareDemographicOptions,
+  compareSubformatOptions,
   compareTypeOptions,
   findFacetLabel,
   formatKeyAsLabel,
@@ -33,6 +35,24 @@ export function createSearchRenderer(elements) {
         );
       });
 
+    const demographicEntries =
+      rankedEntries.filter((entry) => {
+        return passesFilters(
+          entry.item,
+          state,
+          "demographic"
+        );
+      });
+
+    const subformatEntries =
+      rankedEntries.filter((entry) => {
+        return passesFilters(
+          entry.item,
+          state,
+          "subformat"
+        );
+      });
+
     const genreEntries =
       rankedEntries.filter((entry) => {
         return passesFilters(
@@ -55,6 +75,24 @@ export function createSearchRenderer(elements) {
       buildFacetOptions(
         typeEntries,
         "types"
+      ),
+      state,
+      catalogue
+    );
+
+    renderDemographicFilters(
+      buildFacetOptions(
+        demographicEntries,
+        "demographics"
+      ),
+      state,
+      catalogue
+    );
+
+    renderSubformatFilters(
+      buildFacetOptions(
+        subformatEntries,
+        "subformats"
       ),
       state,
       catalogue
@@ -111,6 +149,76 @@ export function createSearchRenderer(elements) {
 
       dataAttribute:
         "data-type-filter"
+    });
+  }
+
+
+  function renderDemographicFilters(
+    options,
+    state,
+    catalogue
+  ) {
+    const completeOptions = [
+      ...options,
+
+      ...getMissingSelectedOptions(
+        state.selectedDemographics,
+        options,
+        catalogue
+      )
+    ];
+
+    completeOptions.sort(
+      compareDemographicOptions
+    );
+
+    renderCheckboxOptions({
+      container:
+        elements.demographicFilterList,
+
+      options:
+        completeOptions,
+
+      selectedSet:
+        state.selectedDemographics,
+
+      dataAttribute:
+        "data-demographic-filter"
+    });
+  }
+
+
+  function renderSubformatFilters(
+    options,
+    state,
+    catalogue
+  ) {
+    const completeOptions = [
+      ...options,
+
+      ...getMissingSelectedOptions(
+        state.selectedSubformats,
+        options,
+        catalogue
+      )
+    ];
+
+    completeOptions.sort(
+      compareSubformatOptions
+    );
+
+    renderCheckboxOptions({
+      container:
+        elements.subformatFilterList,
+
+      options:
+        completeOptions,
+
+      selectedSet:
+        state.selectedSubformats,
+
+      dataAttribute:
+        "data-subformat-filter"
     });
   }
 
@@ -858,6 +966,44 @@ export function createSearchRenderer(elements) {
     });
 
 
+    state.selectedDemographics.forEach((key) => {
+      chips.push({
+        kind:
+          "demographic",
+
+        key,
+
+        label:
+          findFacetLabel(
+            catalogue,
+            key
+          ) ||
+          formatKeyAsLabel(
+            key
+          )
+      });
+    });
+
+
+    state.selectedSubformats.forEach((key) => {
+      chips.push({
+        kind:
+          "subformat",
+
+        key,
+
+        label:
+          findFacetLabel(
+            catalogue,
+            key
+          ) ||
+          formatKeyAsLabel(
+            key
+          )
+      });
+    });
+
+
     state.selectedGenres.forEach((key) => {
       chips.push({
         kind:
@@ -984,6 +1130,8 @@ export function createSearchRenderer(elements) {
   function getActiveFilterCount(state) {
     return (
       state.selectedTypes.size +
+      state.selectedDemographics.size +
+      state.selectedSubformats.size +
       state.selectedGenres.size +
       state.selectedTags.size +
 

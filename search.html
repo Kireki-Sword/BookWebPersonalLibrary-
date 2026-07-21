@@ -1,3 +1,7 @@
+==============================================================================
+FILE: search.html
+==============================================================================
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -108,7 +112,7 @@
         </h1>
 
         <p class="search-intro-copy">
-          Find a title, creator, format, genre, or tag.
+          Find a title, creator, format, subformat, demographic, genre, or tag.
         </p>
 
 
@@ -138,7 +142,7 @@
             <input
               id="catalogue-search-input"
               type="search"
-              placeholder="Search a title, creator, genre, format, or tag"
+              placeholder="Search a title, creator, format, subformat, demographic, genre, or tag"
               role="combobox"
               aria-autocomplete="list"
               aria-controls="search-suggestions"
@@ -235,6 +239,38 @@
 
             <div
               id="format-filter-list"
+              class="filter-list"
+            ></div>
+          </fieldset>
+
+
+          <!-- =============================================
+               SUBFORMAT FILTER
+               ============================================= -->
+
+          <fieldset class="filter-group">
+            <legend>
+              Subformat
+            </legend>
+
+            <div
+              id="subformat-filter-list"
+              class="filter-list"
+            ></div>
+          </fieldset>
+
+
+          <!-- =============================================
+               DEMOGRAPHIC FILTER
+               ============================================= -->
+
+          <fieldset class="filter-group">
+            <legend>
+              Demographic
+            </legend>
+
+            <div
+              id="demographic-filter-list"
               class="filter-list"
             ></div>
           </fieldset>
