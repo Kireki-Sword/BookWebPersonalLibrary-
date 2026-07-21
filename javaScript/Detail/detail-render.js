@@ -505,10 +505,39 @@ function renderIdentity(
         false;
 
 
+    const creatorLink =
+      document.createElement(
+        "a"
+      );
+
+
+    creatorLink.className =
+      "detail-creator-link";
+
+
+    creatorLink.href =
+      `search.html?q=${
+        encodeURIComponent(
+          title.creator
+        )
+      }`;
+
+
+    creatorLink.textContent =
+      title.creator;
+
+
+    creatorLink.setAttribute(
+      "aria-label",
+      `View all catalogue works by ${title.creator}`
+    );
+
+
     elements
       .creator
-      .textContent =
-        title.creator;
+      .replaceChildren(
+        creatorLink
+      );
   } else {
     elements
       .creatorRow
@@ -518,8 +547,7 @@ function renderIdentity(
 
     elements
       .creator
-      .textContent =
-        "";
+      .replaceChildren();
   }
 }
 
