@@ -918,12 +918,12 @@ function scrollToResults() {
         top
       ),
 
+    /*
+     * Use an immediate jump here. Smooth programmatic scrolling can feel
+     * delayed when it runs at the same time as a complete results re-render.
+     */
     behavior:
-      window.matchMedia(
-        "(prefers-reduced-motion: reduce)"
-      ).matches
-        ? "auto"
-        : "smooth"
+      "auto"
   });
 }
 

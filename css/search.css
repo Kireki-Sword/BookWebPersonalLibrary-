@@ -3245,72 +3245,824 @@ body {
   }
 }
 
+/* =========================================================
+   INKWELL SEARCH — PREMIUM VISUAL AND SCROLL PATCH
+   Keep this section at the very bottom of css/search.css.
+
+   Goals:
+   1. Remove the nested-scroll "stuck" feeling on desktop.
+   2. Avoid viewport-wide blur and fixed-background repainting.
+   3. Use restrained light, neutral surface layers, and one accent family.
+   4. Reduce repeated shadows and off-screen rendering work.
+   ========================================================= */
 
 
+/* =========================================================
+   PREMIUM SEARCH TOKENS
+   ========================================================= */
 
+.search-page {
+  --search-page-base:
+    #060916;
 
+  --search-page-deep:
+    #040611;
 
+  --search-surface-1:
+    #0b1122;
 
+  --search-surface-2:
+    #10182d;
 
+  --search-surface-3:
+    #151e36;
 
+  --search-line:
+    rgba(176, 190, 255, 0.14);
 
+  --search-line-strong:
+    rgba(176, 190, 255, 0.25);
 
+  --search-highlight:
+    rgba(122, 151, 255, 0.17);
 
+  --search-cyan:
+    #78d9f4;
 
+  --search-blue:
+    #748bff;
 
+  --search-violet:
+    #a181ff;
 
+  --search-shadow-low:
+    0 12px 30px
+    rgba(0, 0, 0, 0.2);
 
+  --search-shadow-medium:
+    0 20px 48px
+    rgba(0, 0, 0, 0.3);
 
+  min-height:
+    calc(100vh - 64px);
 
+  overflow:
+    clip;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* Remove the full-page decorative texture while testing. */
-
-.search-page::after {
-  display: none;
+  background:
+    var(--search-page-base);
 }
 
 
 /*
- * Reduce the number of large background gradients.
+ * Static, filter-free lighting. The gradients are attached to the document,
+ * not the viewport, so they do not need to be repainted as a fixed backdrop.
  */
 
 .search-page::before {
+  inset:
+    0;
+
+  opacity:
+    1;
+
   background:
     radial-gradient(
-      900px 520px
-      at 50% 1%,
-      rgba(109, 139, 255, 0.17),
-      transparent 70%
+      920px 560px
+      at 52% 3%,
+      rgba(102, 130, 246, 0.2),
+      rgba(102, 130, 246, 0.075) 38%,
+      transparent 72%
+    ),
+
+    radial-gradient(
+      760px 620px
+      at -8% 46%,
+      rgba(154, 119, 255, 0.12),
+      transparent 72%
+    ),
+
+    radial-gradient(
+      780px 600px
+      at 106% 74%,
+      rgba(81, 181, 233, 0.075),
+      transparent 73%
     ),
 
     linear-gradient(
-      135deg,
-      #060814 0%,
-      #090e20 36%,
-      #0a1024 60%,
-      #050711 100%
+      145deg,
+      #050712 0%,
+      #081022 42%,
+      #080d1d 68%,
+      #040611 100%
     );
+}
+
+
+/* Remove the page-sized grid texture and mask layer. */
+
+.search-page::after {
+  display:
+    none;
+}
+
+
+/* =========================================================
+   INTRODUCTION LIGHTING
+   ========================================================= */
+
+.search-intro {
+  isolation:
+    isolate;
+
+  padding-top:
+    clamp(3.7rem, 7vw, 6.2rem);
+
+  padding-bottom:
+    2.75rem;
+}
+
+
+.search-intro::before {
+  content:
+    "";
+
+  position:
+    absolute;
+
+  top:
+    1.2rem;
+
+  left:
+    50%;
+
+  z-index:
+    -1;
+
+  width:
+    min(900px, 92vw);
+
+  height:
+    390px;
+
+  pointer-events:
+    none;
+
+  transform:
+    translateX(-50%);
+
+  background:
+    radial-gradient(
+      ellipse at 50% 28%,
+      rgba(126, 145, 255, 0.145),
+      rgba(126, 145, 255, 0.045) 42%,
+      transparent 74%
+    );
+}
+
+
+.search-eyebrow {
+  color:
+    #aeb9e7;
+}
+
+
+.search-eyebrow::before {
+  background:
+    linear-gradient(
+      145deg,
+      var(--search-cyan),
+      var(--search-blue)
+    );
+
+  box-shadow:
+    0 0 10px
+    rgba(116, 139, 255, 0.35);
+}
+
+
+.search-intro h1 {
+  color:
+    #f7f8ff;
+
+  text-shadow:
+    0 18px 48px
+    rgba(0, 0, 0, 0.36);
+}
+
+
+.search-intro-copy {
+  color:
+    #9aa7c4;
+}
+
+
+/* =========================================================
+   PREMIUM SEARCH STAGE
+   Fixes the flat/dark area behind the search field.
+   ========================================================= */
+
+.catalogue-search {
+  width:
+    min(790px, 100%);
+
+  margin-top:
+    1.65rem;
+
+  padding:
+    0.58rem;
+
+  border:
+    1px solid
+    rgba(176, 190, 255, 0.16);
+
+  border-radius:
+    24px;
+
+  background:
+    radial-gradient(
+      circle at 18% 0%,
+      rgba(255, 255, 255, 0.07),
+      transparent 34%
+    ),
+
+    linear-gradient(
+      145deg,
+      rgba(18, 27, 51, 0.9),
+      rgba(8, 13, 29, 0.96)
+    );
+
+  box-shadow:
+    0 25px 64px
+    rgba(0, 0, 0, 0.34),
+
+    0 0 0 1px
+    rgba(255, 255, 255, 0.02)
+    inset;
+}
+
+
+.catalogue-search::before {
+  inset:
+    -72px -110px;
+
+  opacity:
+    1;
+
+  filter:
+    none;
+
+  background:
+    radial-gradient(
+      ellipse at 50% 50%,
+      rgba(104, 132, 255, 0.12),
+      transparent 68%
+    );
+}
+
+
+.catalogue-search::after {
+  content:
+    "";
+
+  position:
+    absolute;
+
+  top:
+    0;
+
+  left:
+    12%;
+
+  right:
+    12%;
+
+  z-index:
+    1;
+
+  height:
+    1px;
+
+  pointer-events:
+    none;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(119, 216, 244, 0.5),
+      rgba(159, 128, 255, 0.46),
+      transparent
+    );
+}
+
+
+.catalogue-search-form {
+  min-height:
+    64px;
+
+  border:
+    1px solid
+    transparent;
+
+  border-radius:
+    17px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #111a31,
+      #0a1022
+    )
+    padding-box,
+
+    linear-gradient(
+      110deg,
+      rgba(119, 216, 244, 0.32),
+      rgba(121, 142, 255, 0.2) 45%,
+      rgba(161, 129, 255, 0.28)
+    )
+    border-box;
+
+  box-shadow:
+    inset 0 1px 0
+    rgba(255, 255, 255, 0.045),
+
+    0 12px 26px
+    rgba(0, 0, 0, 0.22);
+
+  transform:
+    none;
+}
+
+
+.catalogue-search-form::before {
+  display:
+    none;
+}
+
+
+.catalogue-search-form:focus-within {
+  border-color:
+    transparent;
+
+  transform:
+    none;
+
+  background:
+    linear-gradient(
+      145deg,
+      #141e38,
+      #0b1227
+    )
+    padding-box,
+
+    linear-gradient(
+      110deg,
+      rgba(119, 216, 244, 0.62),
+      rgba(121, 142, 255, 0.42) 48%,
+      rgba(161, 129, 255, 0.56)
+    )
+    border-box;
+
+  box-shadow:
+    inset 0 1px 0
+    rgba(255, 255, 255, 0.06),
+
+    0 0 0 3px
+    rgba(116, 139, 255, 0.07),
+
+    0 14px 32px
+    rgba(0, 0, 0, 0.28);
+}
+
+
+.catalogue-search-form input {
+  height:
+    62px;
+
+  color:
+    #f5f7ff;
+}
+
+
+.catalogue-search-form input::placeholder {
+  color:
+    #74809b;
+}
+
+
+.catalogue-search-icon {
+  color:
+    #acb8df;
+
+  filter:
+    none;
+}
+
+
+.catalogue-search-form:focus-within
+.catalogue-search-icon {
+  color:
+    var(--search-cyan);
+
+  filter:
+    none;
+}
+
+
+.catalogue-search-submit {
+  min-height:
+    62px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #9b7cff 0%,
+      #748bff 54%,
+      #6274ec 100%
+    );
+
+  background-size:
+    100% 100%;
+
+  box-shadow:
+    inset 0 1px 0
+    rgba(255, 255, 255, 0.2),
+
+    -10px 0 24px
+    rgba(85, 100, 218, 0.1);
+}
+
+
+.catalogue-search-submit:hover {
+  filter:
+    brightness(1.06);
+
+  box-shadow:
+    inset 0 1px 0
+    rgba(255, 255, 255, 0.25),
+
+    0 0 22px
+    rgba(116, 139, 255, 0.2);
+}
+
+
+/* =========================================================
+   WORKSPACE AND SURFACE HIERARCHY
+   ========================================================= */
+
+.search-workspace {
+  position:
+    relative;
+
+  padding-top:
+    1rem;
+}
+
+
+.search-workspace::before {
+  content:
+    "";
+
+  position:
+    absolute;
+
+  top:
+    -2.5rem;
+
+  left:
+    18%;
+
+  right:
+    -4%;
+
+  z-index:
+    -1;
+
+  height:
+    500px;
+
+  pointer-events:
+    none;
+
+  background:
+    radial-gradient(
+      ellipse at 54% 8%,
+      rgba(86, 112, 221, 0.055),
+      transparent 68%
+    );
+}
+
+
+.filter-panel {
+  top:
+    82px;
+
+  max-height:
+    calc(100dvh - 102px);
+
+  background:
+    radial-gradient(
+      circle at 10% 0%,
+      rgba(255, 255, 255, 0.055),
+      transparent 30%
+    ),
+
+    linear-gradient(
+      155deg,
+      #121a31 0%,
+      #0a1022 72%,
+      #080d1c 100%
+    );
+
+  border-color:
+    rgba(176, 190, 255, 0.16);
+
+  box-shadow:
+    0 18px 42px
+    rgba(0, 0, 0, 0.27),
+
+    inset 0 1px 0
+    rgba(255, 255, 255, 0.035);
+
+  backdrop-filter:
+    none;
+
+  -webkit-backdrop-filter:
+    none;
+
+  contain:
+    layout paint;
+}
+
+
+/*
+ * This is the key nested-scroll fix. On desktop the wheel can chain from the
+ * filter list back to the page when the inner list reaches either boundary.
+ */
+
+.filter-panel-body {
+  overscroll-behavior-y:
+    auto;
+
+  scroll-behavior:
+    auto;
+
+  -webkit-overflow-scrolling:
+    touch;
+}
+
+
+.filter-panel-footer {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(8, 13, 27, 0.18),
+      #0a1022 80%
+    );
+}
+
+
+.results-toolbar {
+  min-height:
+    74px;
+
+  padding:
+    0.25rem
+    0
+    1rem;
+}
+
+
+.catalogue-select-trigger {
+  background:
+    linear-gradient(
+      145deg,
+      #121a31,
+      #0a1022
+    );
+
+  border-color:
+    rgba(176, 190, 255, 0.16);
+
+  box-shadow:
+    inset 0 1px 0
+    rgba(255, 255, 255, 0.03);
+}
+
+
+.catalogue-select-trigger:hover,
+.catalogue-select.is-open
+.catalogue-select-trigger {
+  border-color:
+    rgba(119, 216, 244, 0.34);
+
+  box-shadow:
+    0 0 0 3px
+    rgba(116, 139, 255, 0.05),
+
+    inset 0 1px 0
+    rgba(255, 255, 255, 0.04);
+}
+
+
+/* =========================================================
+   RESULT CARDS
+   ========================================================= */
+
+.results-grid,
+.results-loading {
+  gap:
+    1.05rem;
+
+  padding-top:
+    1.25rem;
+}
+
+
+.story-card {
+  content-visibility:
+    auto;
+
+  contain-intrinsic-size:
+    auto 460px;
+
+  background:
+    radial-gradient(
+      circle at 12% 0%,
+      rgba(255, 255, 255, 0.045),
+      transparent 28%
+    ),
+
+    linear-gradient(
+      155deg,
+      #11182d,
+      #080e1e
+    );
+
+  border-color:
+    rgba(176, 190, 255, 0.13);
+
+  box-shadow:
+    0 13px 30px
+    rgba(0, 0, 0, 0.24),
+
+    inset 0 1px 0
+    rgba(255, 255, 255, 0.025);
+
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+
+.story-card:hover {
+  transform:
+    translateY(-3px);
+
+  border-color:
+    rgba(119, 216, 244, 0.22);
+
+  box-shadow:
+    0 18px 38px
+    rgba(0, 0, 0, 0.31),
+
+    0 0 20px
+    rgba(116, 139, 255, 0.045),
+
+    inset 0 1px 0
+    rgba(255, 255, 255, 0.035);
+}
+
+
+.story-card-cover img {
+  transition:
+    transform 260ms ease;
+}
+
+
+.story-card:hover
+.story-card-cover img {
+  transform:
+    scale(1.02);
+}
+
+
+.story-card-format {
+  background:
+    rgba(7, 11, 24, 0.95);
+
+  backdrop-filter:
+    none;
+
+  -webkit-backdrop-filter:
+    none;
+}
+
+
+.skeleton-card {
+  content-visibility:
+    auto;
+
+  contain-intrinsic-size:
+    auto 460px;
+}
+
+
+/* =========================================================
+   MOBILE DRAWER
+   ========================================================= */
+
+@media (max-width: 980px) {
+  .filter-panel {
+    top:
+      0;
+
+    max-height:
+      none;
+
+    contain:
+      paint;
+  }
+
+
+  .filter-panel-body {
+    overscroll-behavior-y:
+      contain;
+  }
+}
+
+
+@media (max-width: 650px) {
+  .catalogue-search {
+    padding:
+      0.42rem;
+
+    border-radius:
+      20px;
+  }
+
+
+  .catalogue-search-form {
+    min-height:
+      58px;
+
+    border-radius:
+      15px;
+  }
+
+
+  .catalogue-search-form input,
+  .catalogue-search-submit {
+    min-height:
+      56px;
+
+    height:
+      56px;
+  }
+}
+
+
+@media (max-width: 520px) {
+  .search-intro {
+    padding-top:
+      3.4rem;
+  }
+
+
+  .story-card,
+  .skeleton-card {
+    contain-intrinsic-size:
+      auto 190px;
+  }
+}
+
+
+/* =========================================================
+   ACCESSIBILITY AND MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .story-card,
+  .story-card-cover img,
+  .catalogue-search-submit,
+  .catalogue-search-icon {
+    transition:
+      none
+      !important;
+  }
+}
+
+
+@media (forced-colors: active) {
+  .catalogue-search,
+  .catalogue-search-form,
+  .filter-panel,
+  .story-card {
+    border:
+      1px solid
+      CanvasText;
+  }
 }

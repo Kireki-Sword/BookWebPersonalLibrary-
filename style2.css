@@ -822,44 +822,68 @@ body::-webkit-scrollbar-corner {
   }
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /* =========================================================
-   SEARCH PAGE — FINAL PERFORMANCE AND CHROME OVERRIDES
-   Keep this section at the very bottom of style.css.
+   SEARCH PAGE SCROLL PERFORMANCE
    ========================================================= */
 
 body.search-site {
-  color-scheme: dark;
-
+  /*
+   * Do not use a viewport-fixed background.
+   * The search page already creates its own background.
+   */
   background:
-    #060916
+    linear-gradient(
+      135deg,
+      #060814 0%,
+      #0a1024 48%,
+      #050711 100%
+    )
     !important;
 
   background-attachment:
     scroll
     !important;
-
-  overflow-x:
-    clip;
 }
 
 
 /*
- * The navigation stays sticky, but uses an opaque material instead of a
- * live backdrop blur. This prevents the browser from re-blurring changing
- * page content on every scroll frame.
+ * Keep the navbar sticky, but remove the live backdrop blur.
  */
 
 body.search-site nav {
-  isolation:
-    isolate;
-
   background:
     linear-gradient(
       180deg,
-      rgba(8, 12, 28, 0.985),
-      rgba(7, 10, 23, 0.965)
-    )
-    !important;
+      rgba(8, 11, 24, 0.98),
+      rgba(8, 11, 24, 0.94)
+    );
 
   backdrop-filter:
     none
@@ -868,115 +892,4 @@ body.search-site nav {
   -webkit-backdrop-filter:
     none
     !important;
-
-  border-bottom-color:
-    rgba(165, 180, 255, 0.14);
-
-  box-shadow:
-    0 10px 28px
-    rgba(0, 0, 0, 0.22),
-
-    inset 0 -1px 0
-    rgba(255, 255, 255, 0.025);
-}
-
-
-/* =========================================================
-   LIGHTER MAIN SCROLLBAR
-   Decorative, but intentionally cheap to paint.
-   ========================================================= */
-
-html::-webkit-scrollbar {
-  width:
-    12px;
-
-  height:
-    12px;
-}
-
-
-html::-webkit-scrollbar-track {
-  background:
-    #050711;
-
-  border-left:
-    1px solid
-    rgba(184, 192, 255, 0.05);
-
-  box-shadow:
-    none;
-}
-
-
-html::-webkit-scrollbar-thumb {
-  min-height:
-    72px;
-
-  background:
-    linear-gradient(
-      180deg,
-      #79d8f3 0%,
-      #7089f4 52%,
-      #987cf0 100%
-    )
-    padding-box;
-
-  border:
-    3px solid
-    transparent;
-
-  border-radius:
-    999px;
-
-  box-shadow:
-    inset 0 1px 0
-    rgba(255, 255, 255, 0.34),
-
-    inset 0 -1px 0
-    rgba(5, 8, 20, 0.42);
-}
-
-
-html::-webkit-scrollbar-thumb:hover {
-  background:
-    linear-gradient(
-      180deg,
-      #91e4fa 0%,
-      #8198ff 52%,
-      #ad91ff 100%
-    )
-    padding-box;
-
-  border-width:
-    3px;
-
-  box-shadow:
-    inset 0 1px 0
-    rgba(255, 255, 255, 0.42),
-
-    inset 0 -1px 0
-    rgba(5, 8, 20, 0.36);
-}
-
-
-html::-webkit-scrollbar-thumb:active {
-  background:
-    linear-gradient(
-      180deg,
-      #63bed8 0%,
-      #6276d8 52%,
-      #8065d5 100%
-    )
-    padding-box;
-}
-
-
-@media (prefers-reduced-motion: reduce) {
-  body.search-site *,
-  body.search-site *::before,
-  body.search-site *::after {
-    scroll-behavior:
-      auto
-      !important;
-  }
 }
