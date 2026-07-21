@@ -4052,3 +4052,73 @@ summary i {
     transform: none;
   }
 }
+/* =========================================================
+   CREATOR LINK — UNDERLINE ONLY ON HOVER OR KEYBOARD FOCUS
+   ========================================================= */
+
+.detail-creator-link {
+  position: relative;
+  display: inline-block;
+
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 0;
+
+  transition:
+    color 180ms ease,
+    text-shadow 180ms ease;
+}
+
+.detail-creator-link:link,
+.detail-creator-link:visited {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 0;
+}
+
+.detail-creator-link::after {
+  content: "";
+
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+
+  height: 1px;
+  border-radius: 999px;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(116, 215, 255, 0.95),
+      rgba(156, 124, 255, 0.95)
+    );
+
+  box-shadow:
+    0 0 8px rgba(128, 149, 255, 0.36);
+
+  transform: scaleX(0);
+  transform-origin: left center;
+
+  transition: transform 180ms ease;
+}
+
+.detail-creator-link:hover {
+  color: #ffffff;
+  border-bottom: 0;
+
+  text-shadow:
+    0 0 18px rgba(156, 124, 255, 0.3);
+}
+
+.detail-creator-link:hover::after,
+.detail-creator-link:focus-visible::after {
+  transform: scaleX(1);
+}
+
+.detail-creator-link:focus-visible {
+  outline:
+    2px solid rgba(116, 215, 255, 0.72);
+  outline-offset: 5px;
+  border-radius: 3px;
+}
