@@ -5,6 +5,7 @@
 import {
   CONFIG,
   buildRankedEntries,
+  buildSimilarEntries,
   clamp,
   createInitialState,
   getResultComparator,
@@ -524,10 +525,17 @@ function handleSearchSubmit(event) {
     searchTimer
   );
 
-  state.query =
+  const nextQuery =
     elements.searchInput
       .value
       .trim();
+
+  if (nextQuery) {
+    clearSimilarState();
+  }
+
+  state.query =
+    nextQuery;
 
   state.page =
     1;
@@ -555,8 +563,15 @@ function handleSearchInput() {
   searchTimer =
     window.setTimeout(
       () => {
-        state.query =
+        const nextQuery =
           value.trim();
+
+        if (nextQuery) {
+          clearSimilarState();
+        }
+
+        state.query =
+          nextQuery;
 
         state.page =
           1;
@@ -611,6 +626,8 @@ function browseAllStories() {
     true;
 
   clearFilterState();
+
+  clearSimilarState();
 
   state.page =
     1;
@@ -741,6 +758,22 @@ function clearFilters(
 }
 
 
+function clearSimilarState() {
+  state.similarMode =
+    false;
+
+  state.similarTitleId =
+    "";
+
+  state.similarTitle =
+    "";
+
+  state.similarGenres.clear();
+
+  state.similarTags.clear();
+}
+
+
 function clearFilterState() {
   state.selectedTypes.clear();
 
@@ -826,10 +859,15 @@ function applyStateAndRender(
   }
 
   const rankedEntries =
-    buildRankedEntries(
-      catalogue,
-      state.query
-    );
+    state.similarMode
+      ? buildSimilarEntries(
+          catalogue,
+          state
+        )
+      : buildRankedEntries(
+          catalogue,
+          state.query
+        );
 
   renderer.renderFacetFilters(
     rankedEntries,
@@ -1056,6 +1094,43 @@ function readStateFromUrl() {
     params.get("q") ||
     "";
 
+  state.similarTitleId =
+    params.get("similarTo") ||
+    "";
+
+  state.similarTitle =
+    params.get("similarTitle") ||
+    "";
+
+  state.similarGenres =
+    new Set(
+      params
+        .getAll("similarGenre")
+        .map(
+          normalizeFacetKey
+        )
+        .filter(Boolean)
+    );
+
+  state.similarTags =
+    new Set(
+      params
+        .getAll("similarTag")
+        .map(
+          normalizeFacetKey
+        )
+        .filter(Boolean)
+    );
+
+  state.similarMode =
+    Boolean(
+      state.similarTitleId &&
+      (
+        state.similarGenres.size ||
+        state.similarTags.size
+      )
+    );
+
   state.selectedTypes =
     new Set(
       params
@@ -1148,6 +1223,42 @@ function writeStateToUrl(
 ) {
   const params =
     new URLSearchParams();
+
+  if (state.similarMode) {
+    params.set(
+      "similarTo",
+      state.similarTitleId
+    );
+
+    if (state.similarTitle) {
+      params.set(
+        "similarTitle",
+        state.similarTitle
+      );
+    }
+
+    [
+      ...state.similarGenres
+    ]
+      .sort()
+      .forEach((key) => {
+        params.append(
+          "similarGenre",
+          key
+        );
+      });
+
+    [
+      ...state.similarTags
+    ]
+      .sort()
+      .forEach((key) => {
+        params.append(
+          "similarTag",
+          key
+        );
+      });
+  }
 
   if (state.query) {
     params.set(

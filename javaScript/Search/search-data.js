@@ -83,6 +83,21 @@ export function createInitialState() {
     query:
       "",
 
+    similarMode:
+      false,
+
+    similarTitleId:
+      "",
+
+    similarTitle:
+      "",
+
+    similarGenres:
+      new Set(),
+
+    similarTags:
+      new Set(),
+
     selectedTypes:
       new Set(),
 
@@ -649,6 +664,86 @@ export function buildRankedEntries(
 }
 
 
+export function buildSimilarEntries(
+  catalogue,
+  state
+) {
+  const referenceGenres =
+    state.similarGenres ||
+    new Set();
+
+  const referenceTags =
+    state.similarTags ||
+    new Set();
+
+  return catalogue
+    .filter((item) => {
+      return (
+        item.id !==
+        state.similarTitleId
+      );
+    })
+    .map((item) => {
+      const sharedGenreCount =
+        countSharedFacets(
+          item.genres,
+          referenceGenres
+        );
+
+      const sharedTagCount =
+        countSharedFacets(
+          item.tags,
+          referenceTags
+        );
+
+      return {
+        item,
+
+        rank:
+          sharedGenreCount +
+          sharedTagCount,
+
+        sharedGenreCount,
+        sharedTagCount
+      };
+    })
+    .filter((entry) => {
+      return (
+        entry.rank >
+        0
+      );
+    });
+}
+
+
+function countSharedFacets(
+  facets,
+  referenceSet
+) {
+  if (
+    !referenceSet.size
+  ) {
+    return 0;
+  }
+
+  return facets.reduce(
+    (count, facet) => {
+      return (
+        count +
+        (
+          referenceSet.has(
+            facet.key
+          )
+            ? 1
+            : 0
+        )
+      );
+    },
+    0
+  );
+}
+
+
 function getSearchRank(
   item,
   query,
@@ -886,6 +981,25 @@ function compareByRelevance(
   b,
   state
 ) {
+  if (
+    state.similarMode
+  ) {
+    return (
+      b.rank -
+      a.rank ||
+
+      compareScoreDescending(
+        a.item,
+        b.item
+      ) ||
+
+      compareTitleAscending(
+        a.item,
+        b.item
+      )
+    );
+  }
+
   if (
     state.query &&
     b.rank !== a.rank

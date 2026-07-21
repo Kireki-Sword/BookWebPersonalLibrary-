@@ -505,10 +505,12 @@ export function createSearchRenderer(elements) {
         true;
 
       elements.emptyCopy.textContent =
-        state.query ||
-        getActiveFilterCount(state)
-          ? "Try removing a filter or searching with fewer words."
-          : "No public stories were returned from the manga table.";
+        state.similarMode
+          ? "No other titles share these genres or themes yet."
+          : state.query ||
+            getActiveFilterCount(state)
+              ? "Try removing a filter or searching with fewer words."
+              : "No public stories were returned from the manga table.";
 
       return;
     }
@@ -783,7 +785,17 @@ export function createSearchRenderer(elements) {
           : "stories"
       }`;
 
-    if (state.query) {
+    if (state.similarMode) {
+      const sourceTitle =
+        state.similarTitle ||
+        "this title";
+
+      elements.resultsHeading.textContent =
+        `Similar to “${sourceTitle}”`;
+
+      document.title =
+        `Similar to ${sourceTitle} | Inkwell`;
+    } else if (state.query) {
       elements.resultsHeading.textContent =
         `Results for “${state.query}”`;
 

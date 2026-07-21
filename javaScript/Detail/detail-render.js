@@ -1782,22 +1782,78 @@ function configureSimilarLink(
   title,
   elements
 ) {
+  const params =
+    new URLSearchParams();
+
+
+  params.set(
+    "similarTo",
+    title.id
+  );
+
+
+  params.set(
+    "similarTitle",
+    title.title
+  );
+
+
+  title
+    .genres
+    .forEach(
+      (
+        genre
+      ) => {
+        params.append(
+          "similarGenre",
+
+          normalizeSearchParameter(
+            genre
+          )
+        );
+      }
+    );
+
+
+  title
+    .tags
+    .forEach(
+      (
+        tag
+      ) => {
+        params.append(
+          "similarTag",
+
+          normalizeSearchParameter(
+            tag
+          )
+        );
+      }
+    );
+
+
+  /*
+   * If the title has no genres or themes,
+   * use its format as a fallback.
+   */
+
   if (
-    title
-      .genres
-      .length
+    !title.genres.length &&
+    !title.tags.length
   ) {
+    const fallbackType =
+      normalizeSearchParameter(
+        title.types[0] ||
+        "story"
+      );
+
+
     elements
       .similarLink
       .href =
-        `search.html?genre=${
+        `search.html?type=${
           encodeURIComponent(
-            normalizeSearchParameter(
-              title
-                .genres[
-                  0
-                ]
-            )
+            fallbackType
           )
         }`;
 
@@ -1809,16 +1865,8 @@ function configureSimilarLink(
   elements
     .similarLink
     .href =
-      `search.html?type=${
-        encodeURIComponent(
-          normalizeSearchParameter(
-            title
-              .types[
-                0
-              ] ||
-            "story"
-          )
-        )
+      `search.html?${
+        params.toString()
       }`;
 }
 
