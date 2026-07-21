@@ -42,6 +42,15 @@ export function createSearchRenderer(elements) {
         );
       });
 
+    const tagEntries =
+      rankedEntries.filter((entry) => {
+        return passesFilters(
+          entry.item,
+          state,
+          "tag"
+        );
+      });
+
     renderTypeFilters(
       buildFacetOptions(
         typeEntries,
@@ -55,6 +64,15 @@ export function createSearchRenderer(elements) {
       buildFacetOptions(
         genreEntries,
         "genres"
+      ),
+      state,
+      catalogue
+    );
+
+    renderTagFilters(
+      buildFacetOptions(
+        tagEntries,
+        "tags"
       ),
       state,
       catalogue
@@ -201,6 +219,114 @@ export function createSearchRenderer(elements) {
         state.showAllGenres
           ? "Show fewer genres"
           : "Show all genres";
+    }
+  }
+
+
+  function renderTagFilters(
+    options,
+    state,
+    catalogue
+  ) {
+    const completeOptions = [
+      ...options,
+
+      ...getMissingSelectedOptions(
+        state.selectedTags,
+        options,
+        catalogue
+      )
+    ];
+
+    completeOptions.sort((a, b) => {
+      return (
+        b.count -
+        a.count ||
+
+        a.label.localeCompare(
+          b.label,
+          undefined,
+          {
+            sensitivity:
+              "base"
+          }
+        )
+      );
+    });
+
+    const selectedOptions =
+      completeOptions.filter((option) => {
+        return state.selectedTags.has(
+          option.key
+        );
+      });
+
+    const unselectedOptions =
+      completeOptions.filter((option) => {
+        return !state.selectedTags.has(
+          option.key
+        );
+      });
+
+    let visibleOptions =
+      completeOptions;
+
+    if (!state.showAllTags) {
+      const visibleMap =
+        new Map();
+
+      [
+        ...selectedOptions,
+
+        ...unselectedOptions.slice(
+          0,
+          CONFIG.COLLAPSED_TAG_LIMIT
+        )
+      ].forEach((option) => {
+        visibleMap.set(
+          option.key,
+          option
+        );
+      });
+
+      visibleOptions = [
+        ...visibleMap.values()
+      ];
+    }
+
+    renderCheckboxOptions({
+      container:
+        elements.tagFilterList,
+
+      options:
+        visibleOptions,
+
+      selectedSet:
+        state.selectedTags,
+
+      dataAttribute:
+        "data-tag-filter"
+    });
+
+    elements.tagShowMore.hidden =
+      completeOptions.length <=
+      CONFIG.COLLAPSED_TAG_LIMIT;
+
+    elements.tagShowMore.classList.toggle(
+      "is-expanded",
+      state.showAllTags
+    );
+
+    const label =
+      elements.tagShowMore.querySelector(
+        "span"
+      );
+
+    if (label) {
+      label.textContent =
+        state.showAllTags
+          ? "Show fewer tags"
+          : "Show all tags";
     }
   }
 
@@ -739,6 +865,25 @@ export function createSearchRenderer(elements) {
     });
 
 
+    state.selectedTags.forEach((key) => {
+      chips.push({
+        kind:
+          "tag",
+
+        key,
+
+        label:
+          findFacetLabel(
+            catalogue,
+            key
+          ) ||
+          formatKeyAsLabel(
+            key
+          )
+      });
+    });
+
+
     if (
       state.minimumScore >
       0
@@ -828,6 +973,7 @@ export function createSearchRenderer(elements) {
     return (
       state.selectedTypes.size +
       state.selectedGenres.size +
+      state.selectedTags.size +
 
       (
         state.minimumScore >

@@ -37,6 +37,9 @@ export const CONFIG =
     COLLAPSED_GENRE_LIMIT:
       10,
 
+    COLLAPSED_TAG_LIMIT:
+      10,
+
     DEFAULT_PER_PAGE:
       15,
 
@@ -86,6 +89,9 @@ export function createInitialState() {
     selectedGenres:
       new Set(),
 
+    selectedTags:
+      new Set(),
+
     minimumScore:
       0,
 
@@ -99,6 +105,9 @@ export function createInitialState() {
       CONFIG.DEFAULT_PER_PAGE,
 
     showAllGenres:
+      false,
+
+    showAllTags:
       false
   };
 }
@@ -772,6 +781,18 @@ export function passesFilters(
     !item.genres.some((genre) => {
       return state.selectedGenres.has(
         genre.key
+      );
+    })
+  ) {
+    return false;
+  }
+
+  if (
+    skipGroup !== "tag" &&
+    state.selectedTags.size &&
+    !item.tags.some((tag) => {
+      return state.selectedTags.has(
+        tag.key
       );
     })
   ) {

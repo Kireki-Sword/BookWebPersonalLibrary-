@@ -163,6 +163,12 @@ function collectElements() {
     genreShowMore:
       "genre-show-more",
 
+    tagFilterList:
+      "tag-filter-list",
+
+    tagShowMore:
+      "tag-show-more",
+
     clearAllFilters:
       "clear-all-filters",
 
@@ -248,6 +254,8 @@ function hasRequiredElements() {
     "formatFilterList",
     "genreFilterList",
     "genreShowMore",
+    "tagFilterList",
+    "tagShowMore",
     "clearAllFilters",
     "resultsStatus",
     "resultsHeading",
@@ -363,6 +371,11 @@ function bindEvents() {
   elements.genreShowMore.addEventListener(
     "click",
     toggleAllGenres
+  );
+
+  elements.tagShowMore.addEventListener(
+    "click",
+    toggleAllTags
   );
 
   elements.clearAllFilters.addEventListener(
@@ -639,6 +652,15 @@ function handleFilterChange(event) {
     );
   } else if (
     target.matches(
+      "[data-tag-filter]"
+    )
+  ) {
+    updateSetFromCheckbox(
+      state.selectedTags,
+      target
+    );
+  } else if (
+    target.matches(
       "[data-score-filter]"
     )
   ) {
@@ -690,6 +712,20 @@ function toggleAllGenres() {
 }
 
 
+function toggleAllTags() {
+  state.showAllTags =
+    !state.showAllTags;
+
+  applyStateAndRender({
+    historyMode:
+      null,
+
+    announce:
+      false
+  });
+}
+
+
 function clearFilters(
   historyMode =
     "replace"
@@ -710,10 +746,15 @@ function clearFilterState() {
 
   state.selectedGenres.clear();
 
+  state.selectedTags.clear();
+
   state.minimumScore =
     0;
 
   state.showAllGenres =
+    false;
+
+  state.showAllTags =
     false;
 }
 
@@ -746,6 +787,13 @@ function handleActiveFilterClick(event) {
     "genre"
   ) {
     state.selectedGenres.delete(
+      key
+    );
+  } else if (
+    kind ===
+    "tag"
+  ) {
+    state.selectedTags.delete(
       key
     );
   } else if (
@@ -1028,6 +1076,16 @@ function readStateFromUrl() {
         .filter(Boolean)
     );
 
+  state.selectedTags =
+    new Set(
+      params
+        .getAll("tag")
+        .map(
+          normalizeFacetKey
+        )
+        .filter(Boolean)
+    );
+
   const minimumScore =
     Number(
       params.get("score")
@@ -1116,6 +1174,17 @@ function writeStateToUrl(
     .forEach((key) => {
       params.append(
         "genre",
+        key
+      );
+    });
+
+  [
+    ...state.selectedTags
+  ]
+    .sort()
+    .forEach((key) => {
+      params.append(
+        "tag",
         key
       );
     });
