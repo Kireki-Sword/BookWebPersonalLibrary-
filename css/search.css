@@ -5301,16 +5301,18 @@ body.search-site.search-professional-max .results-grid.results-grid-sparse {
   max-width: 820px;
 }
 
-/* Pagination combines result range and controls into one clear footer. */
+/* Pagination keeps the result range on the left while centering page controls. */
 body.search-site.search-professional-max .results-pagination {
   padding-top: 1.35rem;
-  display: flex !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
-  justify-content: space-between !important;
   gap: 1rem;
 }
 
 body.search-site.search-professional-max .results-range {
+  grid-column: 1;
+  justify-self: start;
   margin: 0;
   color: #8492ad;
   font-size: 0.67rem;
@@ -5318,6 +5320,8 @@ body.search-site.search-professional-max .results-range {
 }
 
 body.search-site.search-professional-max .pagination-controls {
+  grid-column: 2;
+  justify-self: center;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -5339,8 +5343,18 @@ body.search-site.search-professional-max .pagination-controls {
   }
 
   body.search-site.search-professional-max .results-pagination {
-    justify-content: center !important;
+    display: flex !important;
     flex-direction: column;
+    align-items: center;
+    justify-content: center !important;
+  }
+
+  body.search-site.search-professional-max .results-range {
+    text-align: center;
+  }
+
+  body.search-site.search-professional-max .pagination-controls {
+    align-self: center;
   }
 }
 
