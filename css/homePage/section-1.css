@@ -2,13 +2,13 @@
 
 .hero {
   /* Hero-only aura controls. These do not replace or rename any existing variables. */
-  --hero-aura-blue: var(--hero-aura-blue);
-  --hero-aura-blue-soft: var(--hero-aura-blue-soft);
-  --hero-aura-violet: var(--hero-aura-violet);
-  --hero-aura-violet-soft: var(--hero-aura-violet-soft);
-  --hero-aura-cyan: var(--hero-aura-cyan);
-  --hero-aura-cyan-soft: var(--hero-aura-cyan-soft);
-  --hero-aura-orchid: var(--hero-aura-orchid);
+  --hero-aura-blue: rgba(105, 132, 255, 0.40);
+  --hero-aura-blue-soft: rgba(105, 132, 255, 0.17);
+  --hero-aura-violet: rgba(159, 105, 255, 0.30);
+  --hero-aura-violet-soft: rgba(159, 105, 255, 0.12);
+  --hero-aura-cyan: rgba(105, 211, 255, 0.14);
+  --hero-aura-cyan-soft: rgba(105, 211, 255, 0.05);
+  --hero-aura-orchid: rgba(184, 146, 255, 0.16);
 
   height: calc(100vh - 64px);
   min-height: 720px;
@@ -34,32 +34,32 @@
   background:
     radial-gradient(
       ellipse 760px 540px at 76% 40%,
-      var(--hero-aura-blue) 0%,
-      var(--hero-aura-blue-soft) 38%,
+      var(--hero-aura-blue, rgba(105, 132, 255, 0.40)) 0%,
+      var(--hero-aura-blue-soft, rgba(105, 132, 255, 0.17)) 38%,
       transparent 72%
     ),
     radial-gradient(
       ellipse 690px 520px at 22% 34%,
-      var(--hero-aura-violet) 0%,
-      var(--hero-aura-violet-soft) 40%,
+      var(--hero-aura-violet, rgba(159, 105, 255, 0.30)) 0%,
+      var(--hero-aura-violet-soft, rgba(159, 105, 255, 0.12)) 40%,
       transparent 74%
     ),
     radial-gradient(
       ellipse 620px 430px at 53% 88%,
-      var(--hero-aura-cyan) 0%,
-      var(--hero-aura-cyan-soft) 44%,
+      var(--hero-aura-cyan, rgba(105, 211, 255, 0.14)) 0%,
+      var(--hero-aura-cyan-soft, rgba(105, 211, 255, 0.05)) 44%,
       transparent 74%
     ),
     radial-gradient(
       ellipse 500px 360px at 96% 8%,
-      var(--hero-aura-orchid) 0%,
+      var(--hero-aura-orchid, rgba(184, 146, 255, 0.16)) 0%,
       transparent 72%
     ),
     linear-gradient(
       135deg,
-      #07091a 0%,
-      #0c1430 44%,
-      #0a1027 72%,
+      #080b20 0%,
+      #101942 44%,
+      #0b1230 72%,
       #050713 100%
     )
     !important;

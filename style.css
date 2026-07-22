@@ -414,16 +414,9 @@ nav {
 }
 
 
-/* SECTION 1 AURORA HERO OVERRIDE */
-
-.hero {
-  background:
-    radial-gradient(ellipse at 72% 38%, rgba(124, 140, 255, 0.24) 0%, rgba(124, 140, 255, 0.10) 34%, transparent 70%),
-    radial-gradient(ellipse at 28% 32%, rgba(155, 124, 255, 0.18) 0%, rgba(155, 124, 255, 0.06) 40%, transparent 72%),
-    radial-gradient(ellipse at 82% 82%, rgba(116, 215, 255, 0.10) 0%, rgba(116, 215, 255, 0.035) 42%, transparent 75%),
-    radial-gradient(ellipse at 38% 96%, rgba(210, 140, 255, 0.11) 0%, rgba(210, 140, 255, 0.035) 42%, transparent 76%),
-    linear-gradient(135deg, #060814 0%, #0A1024 48%, #0D1022 76%, #050611 100%) !important;
-}
+/* SECTION 1 HERO BACKGROUND
+   The complete hero background is controlled by hero.css.
+   Keeping it in one file prevents cascade and load-order conflicts. */
 
 .hero-label {
   color: var(--color-accent-light);
@@ -599,8 +592,8 @@ section {
   background-color: transparent !important;
 }
 
-/* Force homepage sections into the dark palette */
-.hero,
+/* Keep the later homepage sections in the dark palette.
+   The first hero section is controlled by hero.css. */
 #section-2-empty-shelf,
 #section-3-search-demo,
 .section-empty-shelf,
