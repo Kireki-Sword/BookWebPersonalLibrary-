@@ -492,6 +492,79 @@ function escapeCssUrl(
 }
 
 
+function applyAdaptiveTitleClass(
+  titleElement,
+  titleText
+) {
+  const normalizedTitle =
+    String(
+      titleText ||
+      ""
+    )
+      .replace(
+        /\s+/g,
+        " "
+      )
+      .trim();
+
+
+  const characterCount =
+    normalizedTitle.length;
+
+
+  const wordCount =
+    normalizedTitle
+      ? normalizedTitle
+          .split(
+            " "
+          )
+          .length
+      : 0;
+
+
+  titleElement
+    .classList
+    .remove(
+      "detail-title-short",
+      "detail-title-medium",
+      "detail-title-long",
+      "detail-title-extra-long"
+    );
+
+
+  let sizeClass =
+    "detail-title-short";
+
+
+  if (
+    characterCount > 54 ||
+    wordCount > 9
+  ) {
+    sizeClass =
+      "detail-title-extra-long";
+  } else if (
+    characterCount > 34 ||
+    wordCount > 6
+  ) {
+    sizeClass =
+      "detail-title-long";
+  } else if (
+    characterCount > 20 ||
+    wordCount > 3
+  ) {
+    sizeClass =
+      "detail-title-medium";
+  }
+
+
+  titleElement
+    .classList
+    .add(
+      sizeClass
+    );
+}
+
+
 function renderIdentity(
   title,
   elements
@@ -551,6 +624,12 @@ function renderIdentity(
     .title
     .textContent =
       title.title;
+
+
+  applyAdaptiveTitleClass(
+    elements.title,
+    title.title
+  );
 
 
   if (
@@ -1437,6 +1516,112 @@ function renderMediaWorkspace(
 }
 
 
+function buildCondensedOverviewStats(
+  title
+) {
+  const stats =
+    buildOverviewStats(
+      title
+    );
+
+
+  const byLabel =
+    new Map(
+      stats.map(
+        (
+          stat
+        ) => {
+          return [
+            stat.label,
+            stat.value
+          ];
+        }
+      )
+    );
+
+
+  const firstRelease =
+    byLabel.get(
+      "First release"
+    );
+
+
+  const latestRelease =
+    byLabel.get(
+      "Latest release"
+    );
+
+
+  const releaseSpan =
+    firstRelease &&
+    latestRelease
+      ? firstRelease ===
+        latestRelease
+          ? firstRelease
+          : `${firstRelease}–${latestRelease}`
+      : firstRelease ||
+        latestRelease ||
+        "";
+
+
+  return [
+    {
+      label:
+        "Available formats",
+
+      value:
+        byLabel.get(
+          "Available formats"
+        ) ||
+        "Not listed"
+    },
+
+    {
+      label:
+        "Catalogue entries",
+
+      value:
+        byLabel.get(
+          "Catalogue entries"
+        ) ||
+        "0"
+    },
+
+    ...(
+      releaseSpan
+        ? [
+            {
+              label:
+                "Release span",
+
+              value:
+                releaseSpan
+            }
+          ]
+        : []
+    ),
+
+    ...(
+      byLabel.get(
+        "Creator"
+      )
+        ? [
+            {
+              label:
+                "Creator",
+
+              value:
+                byLabel.get(
+                  "Creator"
+                )
+            }
+          ]
+        : []
+    )
+  ];
+}
+
+
 function buildOverviewPanel(
   title,
   availableTypes,
@@ -1531,7 +1716,7 @@ function buildOverviewPanel(
     "detail-overview-stats";
 
 
-  buildOverviewStats(
+  buildCondensedOverviewStats(
     title
   )
     .forEach(
@@ -1809,8 +1994,61 @@ function buildMediaPanel(
     );
 
 
+  const releaseDensity =
+    getReleaseDensity(
+      entries.length
+    );
+
+
   list.className =
-    "detail-release-list";
+    `detail-release-list detail-release-list-${releaseDensity}`;
+
+
+  list.dataset.releaseCount =
+    String(
+      entries.length
+    );
+
+
+  const normalizedStatuses =
+    entries
+      .map(
+        (
+          entry,
+          index
+        ) => {
+          return normalizeComparableText(
+            buildMediaEntryView(
+              mediaType,
+              entry,
+              index
+            )
+              .status
+          );
+        }
+      )
+      .filter(
+        Boolean
+      );
+
+
+  const hasUniformStatus =
+    normalizedStatuses.length ===
+      entries.length &&
+    new Set(
+      normalizedStatuses
+    )
+      .size ===
+      1;
+
+
+  list
+    .classList
+    .toggle(
+      "detail-release-list-uniform-status",
+      hasUniformStatus &&
+      entries.length > 3
+    );
 
 
   entries
@@ -1823,7 +2061,8 @@ function buildMediaPanel(
           buildMediaEntry(
             mediaType,
             entry,
-            index
+            index,
+            releaseDensity
           )
         );
       }
@@ -1839,10 +2078,166 @@ function buildMediaPanel(
 }
 
 
+function getReleaseDensity(
+  releaseCount
+) {
+  if (
+    releaseCount <= 3
+  ) {
+    return "spacious";
+  }
+
+
+  if (
+    releaseCount <= 7
+  ) {
+    return "standard";
+  }
+
+
+  return "compact";
+}
+
+
+function getVisibleReleaseSummaryItems(
+  view
+) {
+  const normalizedYear =
+    normalizeComparableText(
+      view.yearLabel
+    );
+
+
+  const seen =
+    new Set();
+
+
+  return view
+    .summaryItems
+    .filter(
+      (
+        item
+      ) => {
+        const normalizedItem =
+          normalizeComparableText(
+            item
+          );
+
+
+        if (
+          !normalizedItem ||
+          normalizedItem ===
+            normalizedYear ||
+          seen.has(
+            normalizedItem
+          )
+        ) {
+          return false;
+        }
+
+
+        seen.add(
+          normalizedItem
+        );
+
+
+        return true;
+      }
+    );
+}
+
+
+function getVisibleReleaseFacts(
+  view
+) {
+  const hiddenLabels =
+    new Set([
+      "start year",
+      "end year",
+      "release year",
+      "airing year",
+      "publication year"
+    ]);
+
+
+  return view
+    .facts
+    .filter(
+      (
+        fact
+      ) => {
+        const normalizedLabel =
+          normalizeComparableText(
+            fact.label
+          );
+
+
+        return !hiddenLabels
+          .has(
+            normalizedLabel
+          );
+      }
+    );
+}
+
+
+function hasMeaningfulReleaseNotes(
+  notes
+) {
+  const normalizedNotes =
+    normalizeComparableText(
+      notes
+    );
+
+
+  return Boolean(
+    normalizedNotes &&
+    ![
+      "none",
+      "n a",
+      "na",
+      "no notes",
+      "not available",
+      "unknown"
+    ].includes(
+      normalizedNotes
+    )
+  );
+}
+
+
+function normalizeComparableText(
+  value
+) {
+  return String(
+    value ||
+    ""
+  )
+    .normalize(
+      "NFKD"
+    )
+    .replace(
+      /[\u0300-\u036f]/g,
+      ""
+    )
+    .toLowerCase()
+    .replace(
+      /[^a-z0-9]+/g,
+      " "
+    )
+    .replace(
+      /\s+/g,
+      " "
+    )
+    .trim();
+}
+
+
 function buildMediaEntry(
   mediaType,
   entry,
-  index
+  index,
+  releaseDensity
 ) {
   const view =
     buildMediaEntryView(
@@ -1859,7 +2254,7 @@ function buildMediaEntry(
 
 
   article.className =
-    "detail-release-entry";
+    `detail-release-entry detail-release-entry-${releaseDensity}`;
 
 
   const marker =
@@ -1924,9 +2319,14 @@ function buildMediaEntry(
   );
 
 
+  const visibleSummaryItems =
+    getVisibleReleaseSummaryItems(
+      view
+    );
+
+
   if (
-    view
-      .summaryItems
+    visibleSummaryItems
       .length
   ) {
     const summary =
@@ -1940,8 +2340,7 @@ function buildMediaEntry(
 
 
     summary.textContent =
-      view
-        .summaryItems
+      visibleSummaryItems
         .join(
           " · "
         );
@@ -1990,22 +2389,29 @@ function buildMediaEntry(
   );
 
 
+  const visibleFacts =
+    getVisibleReleaseFacts(
+      view
+    );
+
+
   if (
-    view
-      .facts
+    visibleFacts
       .length
   ) {
     body.append(
       buildDefinitionGrid(
-        view.facts,
-        "detail-release-facts"
+        visibleFacts,
+        "detail-release-facts detail-release-facts-compact"
       )
     );
   }
 
 
   if (
-    view.notes
+    hasMeaningfulReleaseNotes(
+      view.notes
+    )
   ) {
     body.append(
       buildDisclosure(
@@ -2527,8 +2933,8 @@ function balanceAboutContent(
 
   const collapsedDescriptionHeight =
     window.innerWidth <= 780
-      ? 500
-      : 610;
+      ? 560
+      : 720;
 
 
   const descriptionNeedsToggle =
@@ -2625,6 +3031,57 @@ function configureSimilarLink(
   title,
   elements
 ) {
+  const endcap =
+    elements
+      .similarLink
+      .closest(
+        ".detail-endcap"
+      );
+
+
+  if (
+    endcap
+  ) {
+    let supportingCopy =
+      endcap
+        .querySelector(
+          ".detail-endcap-supporting-copy"
+        );
+
+
+    if (
+      !supportingCopy
+    ) {
+      supportingCopy =
+        document.createElement(
+          "p"
+        );
+
+
+      supportingCopy.className =
+        "detail-endcap-supporting-copy";
+
+
+      const heading =
+        endcap
+          .querySelector(
+            "h2"
+          );
+
+
+      heading
+        ?.insertAdjacentElement(
+          "afterend",
+          supportingCopy
+        );
+    }
+
+
+    supportingCopy.textContent =
+      "Recommendations based on shared genres and themes.";
+  }
+
+
   const params =
     new URLSearchParams();
 

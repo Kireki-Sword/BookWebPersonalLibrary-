@@ -7,6 +7,7 @@
 
 const STORAGE_KEY = "inkwell-library";
 const DIALOG_ID = "detail-library-status-dialog";
+const TOAST_REGION_ID = "detail-library-toast-region";
 
 const SUPPORTED_FORMATS = [
   "manga",
@@ -92,7 +93,7 @@ export function createDetailLibraryController(
 
   const libraryTitle =
     document
-      .getElementById(
+.getElementById(
         "detail-library-title"
       );
 
@@ -117,6 +118,12 @@ export function createDetailLibraryController(
   let draftStatus =
     "";
 
+  let initialStatus =
+    "";
+
+  let isSaving =
+    false;
+
   let returnTrigger =
     null;
 
@@ -124,6 +131,9 @@ export function createDetailLibraryController(
     true;
 
   let noteTimer =
+    null;
+
+  let toastRegion =
     null;
 
 
@@ -146,23 +156,32 @@ export function createDetailLibraryController(
     dialogElements =
       createStatusDialog();
 
+    toastRegion =
+      createToastRegion();
+
+    toastRegion
+      .addEventListener(
+        "click",
+        handleToastClick
+      );
+
     elements
       .librarySummary
-      .addEventListener(
+.addEventListener(
         "click",
         handleSummaryClick
       );
 
     dialogElements
       .options
-      .addEventListener(
+.addEventListener(
         "change",
         handleDialogStatusChange
       );
 
     dialogElements
       .closeButton
-      .addEventListener(
+.addEventListener(
         "click",
         () => {
           closeEditor({
@@ -177,7 +196,7 @@ export function createDetailLibraryController(
 
     dialogElements
       .cancelButton
-      .addEventListener(
+.addEventListener(
         "click",
         () => {
           closeEditor({
@@ -192,28 +211,28 @@ export function createDetailLibraryController(
 
     dialogElements
       .saveButton
-      .addEventListener(
+.addEventListener(
         "click",
         handleSaveClick
       );
 
     dialogElements
       .dialog
-      .addEventListener(
+.addEventListener(
         "cancel",
         handleDialogCancel
       );
 
     dialogElements
       .dialog
-      .addEventListener(
+.addEventListener(
         "click",
         handleDialogBackdropClick
       );
 
     dialogElements
       .dialog
-      .addEventListener(
+.addEventListener(
         "close",
         handleDialogClose
       );
@@ -304,7 +323,7 @@ export function createDetailLibraryController(
 
     availableFormats =
       SUPPORTED_FORMATS
-        .filter(
+.filter(
           (
             format
           ) => {
@@ -366,7 +385,7 @@ export function createDetailLibraryController(
 
     if (
       !availableFormats
-        .includes(
+.includes(
           format
         )
     ) {
@@ -386,104 +405,110 @@ export function createDetailLibraryController(
 
   function createStatusDialog() {
     document
-      .getElementById(
+.getElementById(
         DIALOG_ID
       )
       ?.remove();
 
     const dialog =
       document
-        .createElement(
+.createElement(
           "dialog"
         );
 
     const surface =
       document
-        .createElement(
+.createElement(
           "div"
         );
 
     const header =
       document
-        .createElement(
+.createElement(
           "header"
         );
 
     const headingIcon =
       document
-        .createElement(
+.createElement(
           "span"
         );
 
     const headingIconElement =
       document
-        .createElement(
+.createElement(
           "i"
         );
 
     const headingCopy =
       document
-        .createElement(
+.createElement(
           "div"
         );
 
     const eyebrow =
       document
-        .createElement(
+.createElement(
           "span"
         );
 
     const title =
       document
-        .createElement(
+.createElement(
           "h2"
+        );
+
+    const context =
+      document
+.createElement(
+          "p"
         );
 
     const closeButton =
       document
-        .createElement(
+.createElement(
           "button"
         );
 
     const closeIcon =
       document
-        .createElement(
+.createElement(
           "i"
         );
 
     const description =
       document
-        .createElement(
+.createElement(
           "p"
         );
 
     const options =
       document
-        .createElement(
+.createElement(
           "fieldset"
         );
 
     const legend =
       document
-        .createElement(
+.createElement(
           "legend"
         );
 
     const actions =
       document
-        .createElement(
+.createElement(
           "footer"
         );
 
     const cancelButton =
       document
-        .createElement(
+.createElement(
           "button"
         );
 
     const saveButton =
       document
-        .createElement(
+.createElement(
           "button"
         );
 
@@ -539,9 +564,16 @@ export function createDetailLibraryController(
     title.textContent =
       "Choose a status";
 
+    context.className =
+      "detail-library-dialog-context";
+
+    context.textContent =
+      "";
+
     headingCopy.append(
       eyebrow,
-      title
+      title,
+      context
     );
 
     closeButton.type =
@@ -614,7 +646,10 @@ export function createDetailLibraryController(
       "detail-library-dialog-button detail-library-dialog-button-primary";
 
     saveButton.textContent =
-      "Save status";
+      "Save changes";
+
+    saveButton.disabled =
+      true;
 
     actions.append(
       cancelButton,
@@ -634,19 +669,77 @@ export function createDetailLibraryController(
 
     document
       .body
-      .append(
+.append(
         dialog
       );
 
     return {
       dialog,
       title,
+      context,
       description,
       options,
       closeButton,
       cancelButton,
       saveButton
     };
+  }
+
+
+  function createToastRegion() {
+    document
+      .getElementById(
+        TOAST_REGION_ID
+      )
+      ?.remove();
+
+    const region =
+      document
+        .createElement(
+          "div"
+        );
+
+    region.id =
+      TOAST_REGION_ID;
+
+    region.className =
+      "detail-library-toast-region";
+
+    region.setAttribute(
+      "aria-live",
+      "polite"
+    );
+
+    region.setAttribute(
+      "aria-atomic",
+      "true"
+    );
+
+    document
+      .body
+      .append(
+        region
+      );
+
+    return region;
+  }
+
+
+  function handleToastClick(
+    event
+  ) {
+    const closeButton =
+      event
+        .target
+        .closest(
+          "[data-library-toast-close]"
+        );
+
+    if (
+      closeButton
+    ) {
+      clearLibraryNote();
+    }
   }
 
 
@@ -682,6 +775,12 @@ export function createDetailLibraryController(
         ?.status ||
       "";
 
+    initialStatus =
+      draftStatus;
+
+    isSaving =
+      false;
+
     returnTrigger =
       trigger;
 
@@ -692,6 +791,13 @@ export function createDetailLibraryController(
       .title
       .textContent =
         `${formatConfig.label} status`;
+
+    dialogElements
+      .context
+      .textContent =
+        currentTitle
+          ?.title ||
+        "";
 
     dialogElements
       .description
@@ -728,7 +834,7 @@ export function createDetailLibraryController(
     }
 
     window
-      .requestAnimationFrame(
+.requestAnimationFrame(
         focusSelectedDialogOption
       );
   }
@@ -765,7 +871,7 @@ export function createDetailLibraryController(
 
       ...formatConfig
         .statuses
-        .map(
+.map(
           (
             status
           ) => {
@@ -783,7 +889,7 @@ export function createDetailLibraryController(
     ];
 
     options
-      .forEach(
+.forEach(
         (
           option,
           index
@@ -806,29 +912,32 @@ export function createDetailLibraryController(
     const legend =
       dialogElements
         .options
-        .querySelector(
+.querySelector(
           "legend"
         );
 
     dialogElements
       .options
-      .replaceChildren();
+.replaceChildren();
 
     if (
       legend
     ) {
       dialogElements
         .options
-        .append(
+.append(
           legend
         );
     }
 
     dialogElements
       .options
-      .append(
+.append(
         fragment
       );
+
+    updateDialogSelection();
+    updateSaveButtonState();
   }
 
 
@@ -840,37 +949,37 @@ export function createDetailLibraryController(
   }) {
     const label =
       document
-        .createElement(
+.createElement(
           "label"
         );
 
     const input =
       document
-        .createElement(
+.createElement(
           "input"
         );
 
     const indicator =
       document
-        .createElement(
+.createElement(
           "span"
         );
 
     const copy =
       document
-        .createElement(
+.createElement(
           "span"
         );
 
     const title =
       document
-        .createElement(
+.createElement(
           "strong"
         );
 
     const description =
       document
-        .createElement(
+.createElement(
           "small"
         );
 
@@ -951,6 +1060,105 @@ export function createDetailLibraryController(
 
     draftStatus =
       radio.value;
+
+    updateDialogSelection();
+    updateSaveButtonState();
+  }
+
+
+  function updateDialogSelection() {
+    if (
+      !dialogElements
+    ) {
+      return;
+    }
+
+    dialogElements
+      .options
+      .querySelectorAll(
+        ".detail-library-dialog-option"
+      )
+      .forEach(
+        (
+          option
+        ) => {
+          const radio =
+            option
+              .querySelector(
+                ".detail-library-dialog-radio"
+              );
+
+          option
+            .classList
+            .toggle(
+              "is-selected",
+              Boolean(
+                radio
+                  ?.checked
+              )
+            );
+        }
+      );
+  }
+
+
+  function updateSaveButtonState() {
+    if (
+      !dialogElements
+    ) {
+      return;
+    }
+
+    const hasChanged =
+      draftStatus !==
+      initialStatus;
+
+    dialogElements
+      .saveButton
+      .disabled =
+        !hasChanged ||
+        isSaving;
+  }
+
+
+  function setDialogSaving(
+    saving
+  ) {
+    isSaving =
+      saving;
+
+    dialogElements
+      .dialog
+      .setAttribute(
+        "aria-busy",
+        String(
+          saving
+        )
+      );
+
+    dialogElements
+      .saveButton
+      .textContent =
+        saving
+          ? "Saving…"
+          : "Save changes";
+
+    dialogElements
+      .options
+      .disabled =
+        saving;
+
+    dialogElements
+      .cancelButton
+      .disabled =
+        saving;
+
+    dialogElements
+      .closeButton
+      .disabled =
+        saving;
+
+    updateSaveButtonState();
   }
 
 
@@ -964,14 +1172,14 @@ export function createDetailLibraryController(
     const selectedRadio =
       dialogElements
         .options
-        .querySelector(
+.querySelector(
           ".detail-library-dialog-radio:checked"
         );
 
     const firstRadio =
       dialogElements
         .options
-        .querySelector(
+.querySelector(
           ".detail-library-dialog-radio"
         );
 
@@ -989,7 +1197,10 @@ export function createDetailLibraryController(
 
   function handleSaveClick() {
     if (
-      !editorFormat
+      !editorFormat ||
+      isSaving ||
+      draftStatus ===
+        initialStatus
     ) {
       return;
     }
@@ -1000,18 +1211,38 @@ export function createDetailLibraryController(
     const status =
       draftStatus;
 
-    closeEditor({
-      result:
-        "saved",
-
-      restoreFocus:
-        false
-    });
-
-    saveFormatStatus(
-      format,
-      status
+    setDialogSaving(
+      true
     );
+
+    window
+      .requestAnimationFrame(
+        () => {
+          const didSave =
+            saveFormatStatus(
+              format,
+              status
+            );
+
+          if (
+            didSave
+          ) {
+            closeEditor({
+              result:
+                "saved",
+
+              restoreFocus:
+                true
+            });
+
+            return;
+          }
+
+          setDialogSaving(
+            false
+          );
+        }
+      );
   }
 
 
@@ -1019,6 +1250,12 @@ export function createDetailLibraryController(
     event
   ) {
     event.preventDefault();
+
+    if (
+      isSaving
+    ) {
+      return;
+    }
 
     closeEditor({
       result:
@@ -1034,6 +1271,7 @@ export function createDetailLibraryController(
     event
   ) {
     if (
+      isSaving ||
       event.target !==
       dialogElements
         .dialog
@@ -1084,6 +1322,12 @@ export function createDetailLibraryController(
       draftStatus =
         "";
 
+      initialStatus =
+        "";
+
+      isSaving =
+        false;
+
       returnTrigger =
         null;
     }
@@ -1103,6 +1347,42 @@ export function createDetailLibraryController(
     draftStatus =
       "";
 
+    initialStatus =
+      "";
+
+    isSaving =
+      false;
+
+    if (
+      dialogElements
+    ) {
+      dialogElements
+        .dialog
+        .removeAttribute(
+          "aria-busy"
+        );
+
+      dialogElements
+        .saveButton
+        .textContent =
+          "Save changes";
+
+      dialogElements
+        .options
+        .disabled =
+          false;
+
+      dialogElements
+        .cancelButton
+        .disabled =
+          false;
+
+      dialogElements
+        .closeButton
+        .disabled =
+          false;
+    }
+
     returnTrigger =
       null;
 
@@ -1115,10 +1395,10 @@ export function createDetailLibraryController(
         ?.isConnected
     ) {
       window
-        .requestAnimationFrame(
+.requestAnimationFrame(
           () => {
             triggerToFocus
-              .focus();
+.focus();
           }
         );
     }
@@ -1136,7 +1416,7 @@ export function createDetailLibraryController(
     if (
       !currentTitle
     ) {
-      return;
+      return false;
     }
 
     if (
@@ -1151,11 +1431,7 @@ export function createDetailLibraryController(
         "error"
       );
 
-      focusFormatButton(
-        format
-      );
-
-      return;
+      return false;
     }
 
     const library =
@@ -1223,11 +1499,7 @@ export function createDetailLibraryController(
         "error"
       );
 
-      focusFormatButton(
-        format
-      );
-
-      return;
+      return false;
     }
 
     currentEntry =
@@ -1258,15 +1530,13 @@ export function createDetailLibraryController(
 
     showLibraryNote(
       statusLabel
-        ? `${formatLabel} set to ${statusLabel}.`
+        ? `${formatLabel} status updated to ${statusLabel}.`
         : `${formatLabel} removed from your library.`,
 
       "success"
     );
 
-    focusFormatButton(
-      format
-    );
+    return true;
   }
 
 
@@ -1277,7 +1547,7 @@ export function createDetailLibraryController(
   function renderInterface() {
     elements
       .librarySummary
-      .replaceChildren();
+.replaceChildren();
 
     elements
       .librarySummary
@@ -1310,7 +1580,7 @@ export function createDetailLibraryController(
         .createDocumentFragment();
 
     availableFormats
-      .forEach(
+.forEach(
         (
           format
         ) => {
@@ -1324,7 +1594,7 @@ export function createDetailLibraryController(
 
     elements
       .librarySummary
-      .append(
+.append(
         fragment
       );
   }
@@ -1356,43 +1626,43 @@ export function createDetailLibraryController(
 
     const button =
       document
-        .createElement(
+.createElement(
           "button"
         );
 
     const icon =
       document
-        .createElement(
+.createElement(
           "span"
         );
 
     const iconElement =
       document
-        .createElement(
+.createElement(
           "i"
         );
 
     const copy =
       document
-        .createElement(
+.createElement(
           "span"
         );
 
     const label =
       document
-        .createElement(
+.createElement(
           "strong"
         );
 
     const status =
       document
-        .createElement(
+.createElement(
           "small"
         );
 
     const chevron =
       document
-        .createElement(
+.createElement(
           "i"
         );
 
@@ -1483,19 +1753,19 @@ export function createDetailLibraryController(
   ) {
     const unavailable =
       document
-        .createElement(
+.createElement(
           "div"
         );
 
     const icon =
       document
-        .createElement(
+.createElement(
           "i"
         );
 
     const text =
       document
-        .createElement(
+.createElement(
           "span"
         );
 
@@ -1520,7 +1790,7 @@ export function createDetailLibraryController(
 
     elements
       .librarySummary
-      .append(
+.append(
         unavailable
       );
   }
@@ -1539,63 +1809,126 @@ export function createDetailLibraryController(
         noteTimer
       );
 
-    elements
-      .libraryNote
-      .textContent =
-        message;
+    if (
+      !toastRegion
+    ) {
+      return;
+    }
 
-    elements
-      .libraryNote
-      .dataset
-      .tone =
-        tone;
+    const toast =
+      document
+        .createElement(
+          "div"
+        );
 
-    elements
-      .libraryNote
-      .classList
-      .add(
-        "is-visible"
+    const icon =
+      document
+        .createElement(
+          "i"
+        );
+
+    const text =
+      document
+        .createElement(
+          "span"
+        );
+
+    const closeButton =
+      document
+        .createElement(
+          "button"
+        );
+
+    const closeIcon =
+      document
+        .createElement(
+          "i"
+        );
+
+    toast.className =
+      "detail-library-toast";
+
+    toast.dataset.tone =
+      tone;
+
+    toast.setAttribute(
+      "role",
+      tone ===
+        "error"
+          ? "alert"
+          : "status"
+    );
+
+    icon.className =
+      tone ===
+        "error"
+          ? "ti ti-alert-circle"
+          : "ti ti-circle-check";
+
+    icon.setAttribute(
+      "aria-hidden",
+      "true"
+    );
+
+    text.textContent =
+      message;
+
+    closeButton.type =
+      "button";
+
+    closeButton.className =
+      "detail-library-toast-close";
+
+    closeButton.dataset.libraryToastClose =
+      "";
+
+    closeButton.setAttribute(
+      "aria-label",
+      "Dismiss notification"
+    );
+
+    closeIcon.className =
+      "ti ti-x";
+
+    closeIcon.setAttribute(
+      "aria-hidden",
+      "true"
+    );
+
+    closeButton.append(
+      closeIcon
+    );
+
+    toast.append(
+      icon,
+      text,
+      closeButton
+    );
+
+    toastRegion
+      .replaceChildren(
+        toast
+      );
+
+    window
+      .requestAnimationFrame(
+        () => {
+          toast
+            .classList
+            .add(
+              "is-visible"
+            );
+        }
       );
 
     noteTimer =
       window
         .setTimeout(
-          () => {
-            elements
-              .libraryNote
-              .classList
-              .remove(
-                "is-visible"
-              );
-
-            window
-              .setTimeout(
-                () => {
-                  if (
-                    !elements
-                      .libraryNote
-                      .classList
-                      .contains(
-                        "is-visible"
-                      )
-                  ) {
-                    elements
-                      .libraryNote
-                      .textContent =
-                        "";
-
-                    delete elements
-                      .libraryNote
-                      .dataset
-                      .tone;
-                  }
-                },
-
-                180
-              );
-          },
-
-          2400
+          clearLibraryNote,
+          tone ===
+            "error"
+              ? 8000
+              : 5000
         );
   }
 
@@ -1606,22 +1939,37 @@ export function createDetailLibraryController(
         noteTimer
       );
 
-    elements
-      .libraryNote
-      .textContent =
-        "";
+    const toast =
+      toastRegion
+        ?.firstElementChild;
 
-    elements
-      .libraryNote
+    if (
+      !toast
+    ) {
+      return;
+    }
+
+    toast
       .classList
       .remove(
         "is-visible"
       );
 
-    delete elements
-      .libraryNote
-      .dataset
-      .tone;
+    window
+      .setTimeout(
+        () => {
+          if (
+            !toast
+              .classList
+              .contains(
+                "is-visible"
+              )
+          ) {
+            toast.remove();
+          }
+        },
+        180
+      );
   }
 
 
@@ -1629,11 +1977,11 @@ export function createDetailLibraryController(
     format
   ) {
     window
-      .requestAnimationFrame(
+.requestAnimationFrame(
         () => {
           elements
             .librarySummary
-            .querySelector(
+.querySelector(
               `[data-library-format-button="${format}"]`
             )
             ?.focus();
@@ -1668,7 +2016,7 @@ function getStatusConfig(
       format
     ]
       ?.statuses
-      .find(
+.find(
         (
           item
         ) => {
@@ -1692,7 +2040,7 @@ function isValidStatus(
       format
     ]
       ?.statuses
-      .some(
+.some(
         (
           item
         ) => {
@@ -1778,7 +2126,7 @@ function normalizeStoredEntry(
       "object"
   ) {
     SUPPORTED_FORMATS
-      .forEach(
+.forEach(
         (
           format
         ) => {
