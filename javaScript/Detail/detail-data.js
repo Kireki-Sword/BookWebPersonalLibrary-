@@ -963,13 +963,9 @@ export function buildMediaEntryView(
         ? formatValue(
             titleField.value
           )
-        : `${
-            getMediaLabel(
-              mediaType
-            )
-          } ${
-            index + 1
-          }`,
+        : getMediaLabel(
+            mediaType
+          ),
 
     status:
       statusField

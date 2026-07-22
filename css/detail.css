@@ -4785,3 +4785,315 @@ body.detail-site .detail-status:not(.detail-status-ongoing):not(.detail-status-a
     border: 1px solid CanvasText !important;
   }
 }
+
+/* =========================================================
+   DETAIL PAGE — VIBRANT BLUE/VIOLET FINAL PASS
+   ========================================================= */
+
+body.detail-site {
+  --detail-format-a: #a57dff;
+  --detail-format-b: #716fff;
+  --detail-genre: #78a7ff;
+  --detail-subformat: #62dcff;
+  --detail-demographic: #d986ff;
+  --detail-status: #8fcaff;
+
+  background:
+    radial-gradient(1120px 760px at 10% 12%, rgba(82, 122, 255, 0.16), transparent 74%),
+    radial-gradient(1080px 760px at 88% 8%, rgba(170, 100, 255, 0.14), transparent 75%),
+    radial-gradient(860px 640px at 78% 78%, rgba(70, 203, 255, 0.065), transparent 78%),
+    linear-gradient(180deg, #060a18 0%, #040713 62%, #02040c 100%)
+    !important;
+}
+
+/* Broad format remains only in the top badge row. */
+body.detail-site .detail-format-badge {
+  color: #f1ebff;
+
+  background:
+    radial-gradient(circle at 22% 12%, rgba(255, 255, 255, 0.18), transparent 34%),
+    linear-gradient(135deg, rgba(164, 124, 255, 0.34), rgba(104, 106, 255, 0.20))
+    !important;
+
+  border-color: rgba(187, 159, 255, 0.42) !important;
+
+  box-shadow:
+    0 0 18px rgba(139, 111, 255, 0.10),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08)
+    !important;
+}
+
+/* Genres: sapphire blue. */
+body.detail-site .detail-chip-genre {
+  color: #dce8ff !important;
+
+  background:
+    linear-gradient(180deg, rgba(64, 119, 231, 0.23), rgba(42, 72, 153, 0.09))
+    !important;
+
+  border-color: rgba(113, 165, 255, 0.40) !important;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 0 16px rgba(77, 126, 255, 0.055)
+    !important;
+}
+
+/* Subformats: vivid cyan-blue; generic Manga/Anime values are removed in JS. */
+body.detail-site .detail-chip-subformat {
+  color: #d7f6ff !important;
+
+  background:
+    linear-gradient(180deg, rgba(39, 167, 218, 0.24), rgba(32, 96, 170, 0.09))
+    !important;
+
+  border-color: rgba(83, 211, 255, 0.42) !important;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.055),
+    0 0 17px rgba(72, 210, 255, 0.06)
+    !important;
+}
+
+/* Demographic: orchid-violet, never green. */
+body.detail-site .detail-chip-demographic {
+  color: #f5dcff !important;
+
+  background:
+    linear-gradient(180deg, rgba(178, 79, 229, 0.24), rgba(103, 53, 172, 0.10))
+    !important;
+
+  border-color: rgba(217, 134, 255, 0.43) !important;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.055),
+    0 0 17px rgba(207, 111, 255, 0.06)
+    !important;
+}
+
+body.detail-site .detail-chip-genre:hover,
+body.detail-site .detail-chip-genre:focus-visible {
+  border-color: rgba(137, 184, 255, 0.70) !important;
+  background: linear-gradient(180deg, rgba(82, 142, 255, 0.34), rgba(54, 91, 189, 0.15)) !important;
+}
+
+body.detail-site .detail-chip-subformat:hover,
+body.detail-site .detail-chip-subformat:focus-visible {
+  border-color: rgba(116, 225, 255, 0.72) !important;
+  background: linear-gradient(180deg, rgba(51, 191, 241, 0.34), rgba(36, 112, 190, 0.15)) !important;
+}
+
+body.detail-site .detail-chip-demographic:hover,
+body.detail-site .detail-chip-demographic:focus-visible {
+  border-color: rgba(231, 163, 255, 0.72) !important;
+  background: linear-gradient(180deg, rgba(195, 94, 239, 0.34), rgba(113, 58, 182, 0.15)) !important;
+}
+
+body.detail-site .detail-classification-label {
+  color: #9ba9cc !important;
+}
+
+/* Make all secondary cards feel related to the strong hero card. */
+body.detail-site .detail-surface,
+body.detail-site .detail-about-section,
+body.detail-site .detail-endcap {
+  background:
+    radial-gradient(820px 330px at 6% -6%, rgba(80, 124, 255, 0.14), transparent 70%),
+    radial-gradient(660px 320px at 96% 0%, rgba(169, 102, 255, 0.095), transparent 73%),
+    radial-gradient(520px 280px at 78% 100%, rgba(61, 193, 255, 0.045), transparent 76%),
+    linear-gradient(150deg, #121c3b 0%, #0a1229 64%, #070d1f 100%)
+    !important;
+
+  border-color: rgba(136, 162, 255, 0.25) !important;
+
+  box-shadow:
+    0 28px 72px rgba(0, 0, 0, 0.39),
+    0 0 42px rgba(87, 108, 255, 0.055),
+    inset 0 1px 0 rgba(255, 255, 255, 0.055)
+    !important;
+}
+
+body.detail-site .detail-themes-panel {
+  background:
+    radial-gradient(440px 260px at 4% -8%, rgba(166, 100, 255, 0.20), transparent 72%),
+    radial-gradient(380px 250px at 100% 0%, rgba(78, 197, 255, 0.095), transparent 74%),
+    linear-gradient(150deg, #18244a 0%, #101936 68%, #0b1229 100%)
+    !important;
+
+  border-color: rgba(154, 174, 255, 0.30) !important;
+}
+
+body.detail-site .detail-chip-theme {
+  color: #dce5ff !important;
+
+  background:
+    linear-gradient(145deg, rgba(46, 67, 135, 0.50), rgba(26, 38, 83, 0.64))
+    !important;
+
+  border-color: rgba(126, 158, 255, 0.28) !important;
+}
+
+body.detail-site .detail-chip-theme::before {
+  background:
+    linear-gradient(180deg, var(--inkwell-cyan, #65ddff), var(--inkwell-blue, #718cff), var(--inkwell-violet, #a27dff))
+    !important;
+
+  box-shadow: 0 0 11px rgba(101, 221, 255, 0.36) !important;
+}
+
+body.detail-site .detail-score-card {
+  background:
+    radial-gradient(390px 210px at 10% -10%, rgba(100, 143, 255, 0.17), transparent 72%),
+    radial-gradient(330px 190px at 100% 0%, rgba(165, 104, 255, 0.10), transparent 72%),
+    linear-gradient(145deg, #17234a 0%, #0e1732 72%, #0a1126 100%)
+    !important;
+
+  border-color: rgba(144, 171, 255, 0.30) !important;
+}
+
+body.detail-site .detail-score-value i {
+  color: #8ecbff !important;
+  filter: drop-shadow(0 0 9px rgba(103, 186, 255, 0.34)) !important;
+}
+
+body.detail-site .detail-library-block {
+  background:
+    radial-gradient(440px 230px at 8% -10%, rgba(161, 100, 255, 0.16), transparent 72%),
+    radial-gradient(370px 220px at 100% 0%, rgba(69, 194, 255, 0.08), transparent 74%),
+    linear-gradient(145deg, #162143 0%, #0d1630 72%, #091025 100%)
+    !important;
+
+  border-color: rgba(145, 170, 255, 0.28) !important;
+}
+
+body.detail-site .detail-library-summary-item {
+  background:
+    linear-gradient(145deg, rgba(28, 43, 88, 0.96), rgba(14, 25, 55, 0.99))
+    !important;
+
+  border-color: rgba(135, 163, 255, 0.22) !important;
+}
+
+body.detail-site .detail-library-summary-item:hover,
+body.detail-site .detail-library-summary-item:focus-visible {
+  background:
+    linear-gradient(145deg, rgba(40, 59, 119, 0.98), rgba(21, 36, 76, 0.99))
+    !important;
+
+  border-color: rgba(105, 211, 255, 0.48) !important;
+}
+
+body.detail-site .detail-overview-stats,
+body.detail-site .detail-format-summary,
+body.detail-site .detail-release-body,
+body.detail-site .detail-release-facts > div,
+body.detail-site .detail-additional-grid > div {
+  background:
+    radial-gradient(420px 170px at 5% -12%, rgba(84, 130, 255, 0.10), transparent 72%),
+    linear-gradient(145deg, rgba(24, 37, 78, 0.90), rgba(11, 21, 47, 0.96))
+    !important;
+
+  border-color: rgba(130, 157, 255, 0.20) !important;
+}
+
+/* Remove the broken hover target from the whole timeline row. */
+body.detail-site .detail-release-entry:hover .detail-release-body {
+  transform: none !important;
+
+  background:
+    radial-gradient(420px 170px at 5% -12%, rgba(84, 130, 255, 0.10), transparent 72%),
+    linear-gradient(145deg, rgba(24, 37, 78, 0.90), rgba(11, 21, 47, 0.96))
+    !important;
+
+  border-color: rgba(130, 157, 255, 0.20) !important;
+
+  box-shadow: none !important;
+}
+
+/* Only the visible card itself activates the hover animation. */
+body.detail-site .detail-release-body:hover {
+  transform: translateY(-2px) !important;
+
+  background:
+    radial-gradient(430px 180px at 5% -10%, rgba(101, 151, 255, 0.17), transparent 72%),
+    radial-gradient(350px 170px at 100% 0%, rgba(170, 104, 255, 0.085), transparent 74%),
+    linear-gradient(145deg, rgba(34, 52, 107, 0.96), rgba(17, 31, 68, 0.99))
+    !important;
+
+  border-color: rgba(101, 211, 255, 0.42) !important;
+
+  box-shadow:
+    0 18px 42px rgba(0, 0, 0, 0.30),
+    0 0 28px rgba(97, 125, 255, 0.09)
+    !important;
+}
+
+body.detail-site .detail-release-marker::after {
+  background: #111b39 !important;
+  border-color: #7f8fff !important;
+
+  box-shadow:
+    0 0 0 4px rgba(113, 140, 255, 0.10),
+    0 0 16px rgba(101, 221, 255, 0.13)
+    !important;
+}
+
+/* Publication status uses the same brand family—no green. */
+body.detail-site .detail-status,
+body.detail-site .detail-status-completed,
+body.detail-site .detail-status-finished {
+  color: #dff4ff !important;
+
+  background:
+    linear-gradient(180deg, rgba(54, 154, 223, 0.22), rgba(49, 91, 181, 0.10))
+    !important;
+
+  border-color: rgba(102, 202, 255, 0.40) !important;
+
+  box-shadow: 0 0 16px rgba(80, 187, 255, 0.07) !important;
+}
+
+body.detail-site .detail-status-ongoing,
+body.detail-site .detail-status-airing,
+body.detail-site .detail-status-publishing {
+  color: #eee4ff !important;
+
+  background:
+    linear-gradient(180deg, rgba(152, 94, 229, 0.24), rgba(91, 64, 180, 0.11))
+    !important;
+
+  border-color: rgba(190, 139, 255, 0.42) !important;
+}
+
+body.detail-site .detail-status-upcoming {
+  color: #e3e8ff !important;
+  background: rgba(104, 122, 255, 0.17) !important;
+  border-color: rgba(139, 154, 255, 0.38) !important;
+}
+
+body.detail-site .detail-status-hiatus,
+body.detail-site .detail-status-unknown,
+body.detail-site .detail-status-cancelled {
+  color: #d6d8ee !important;
+  background: rgba(119, 105, 184, 0.14) !important;
+  border-color: rgba(165, 145, 220, 0.28) !important;
+}
+
+body.detail-site .detail-media-tab[aria-selected="true"]::after {
+  background:
+    linear-gradient(90deg, var(--inkwell-cyan, #65ddff), var(--inkwell-blue, #718cff) 48%, var(--inkwell-violet, #a27dff))
+    !important;
+
+  box-shadow: 0 0 14px rgba(101, 221, 255, 0.22) !important;
+}
+
+body.detail-site .detail-media-tab-count,
+body.detail-site .detail-panel-count {
+  color: #e5e7ff !important;
+
+  background:
+    linear-gradient(180deg, rgba(112, 113, 255, 0.22), rgba(148, 91, 229, 0.09))
+    !important;
+
+  border-color: rgba(161, 145, 255, 0.34) !important;
+}

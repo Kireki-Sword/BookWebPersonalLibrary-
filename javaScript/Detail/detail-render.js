@@ -657,6 +657,21 @@ function renderClassificationDetails(
     .replaceChildren();
 
 
+  const broadFormatKeys =
+    new Set(
+      (
+        title.types ||
+        []
+      )
+        .map(
+          normalizeSearchParameter
+        )
+        .filter(
+          Boolean
+        )
+    );
+
+
   const subformats =
     collectMediaMetadata(
       title,
@@ -665,7 +680,18 @@ function renderClassificationDetails(
         "anime"
       ],
       "format"
-    );
+    )
+      .filter(
+        (
+          value
+        ) => {
+          return !broadFormatKeys.has(
+            normalizeSearchParameter(
+              value
+            )
+          );
+        }
+      );
 
 
   const demographics =
