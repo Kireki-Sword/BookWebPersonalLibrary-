@@ -3128,3 +3128,795 @@ input[aria-invalid="true"] {
     will-change: auto;
   }
 }
+
+/* =========================================================
+   SECTION 3 — RESEARCHED PROFESSIONAL FINAL
+   Final scoped refinements. Keep this block at the end.
+   ========================================================= */
+
+/* ---------------------------------------------------------
+   Section 2 -> Section 3 handoff and atmospheric background
+   --------------------------------------------------------- */
+
+.section-library-flow {
+  --flow-section-2-edge-left: #0a1230;
+  --flow-section-2-edge-center: #0c1532;
+  --flow-section-2-edge-right: #070b18;
+
+  --flow-surface-page: #070b18;
+  --flow-surface-raised: #0d1530;
+  --flow-surface-card: #111a36;
+  --flow-border-soft: rgba(184, 196, 255, 0.22);
+  --flow-border-strong: rgba(190, 205, 255, 0.38);
+
+  min-height:
+    calc(100svh - var(--nav-height));
+
+  margin-top: -3px;
+
+  padding-top:
+    calc(clamp(5rem, 8vh, 7rem) + 3px);
+
+  border-top: 0 !important;
+
+  background:
+    linear-gradient(
+      180deg,
+      var(--flow-section-2-edge-right) 0%,
+      rgba(7, 11, 24, 0.96) 5%,
+      rgba(8, 13, 31, 0.62) 16%,
+      transparent 30%
+    ),
+    radial-gradient(
+      ellipse 1120px 760px at 80% 28%,
+      rgba(114, 140, 255, 0.27) 0%,
+      rgba(114, 140, 255, 0.09) 48%,
+      transparent 74%
+    ),
+    radial-gradient(
+      ellipse 900px 700px at 18% 36%,
+      rgba(159, 131, 255, 0.17) 0%,
+      rgba(159, 131, 255, 0.055) 48%,
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 740px 520px at 72% 84%,
+      rgba(121, 217, 255, 0.075) 0%,
+      transparent 72%
+    ),
+    linear-gradient(
+      135deg,
+      #080d20 0%,
+      #10183a 42%,
+      #0c1430 72%,
+      #060914 100%
+    );
+}
+
+.section-library-flow::before {
+  left: 0;
+  top: 0;
+  right: auto;
+  bottom: auto;
+
+  width: 100%;
+  height: 280px;
+  aspect-ratio: auto;
+
+  border-radius: 0;
+
+  background:
+    radial-gradient(
+      ellipse 960px 320px at 50% 100%,
+      rgba(114, 140, 255, 0.13) 0%,
+      rgba(159, 131, 255, 0.045) 48%,
+      transparent 76%
+    ),
+    linear-gradient(
+      90deg,
+      var(--flow-section-2-edge-left) 0%,
+      var(--flow-section-2-edge-center) 52%,
+      var(--flow-section-2-edge-right) 100%
+    );
+
+  filter: none;
+
+  -webkit-mask-image:
+    linear-gradient(
+      180deg,
+      #000 0%,
+      rgba(0, 0, 0, 0.96) 35%,
+      rgba(0, 0, 0, 0.58) 68%,
+      transparent 100%
+    );
+
+  mask-image:
+    linear-gradient(
+      180deg,
+      #000 0%,
+      rgba(0, 0, 0, 0.96) 35%,
+      rgba(0, 0, 0, 0.58) 68%,
+      transparent 100%
+    );
+}
+
+.section-library-flow::after {
+  width: min(58vw, 760px);
+  aspect-ratio: 1;
+
+  left: auto;
+  right: -15%;
+  top: 5%;
+  bottom: auto;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(159, 131, 255, 0.16) 0%,
+      rgba(114, 140, 255, 0.10) 38%,
+      rgba(121, 217, 255, 0.035) 58%,
+      transparent 74%
+    );
+
+  filter: blur(28px);
+}
+
+/* ---------------------------------------------------------
+   Main layout
+   --------------------------------------------------------- */
+
+.section-library-flow .flow-grid {
+  width: min(100%, 1420px);
+
+  grid-template-columns:
+    minmax(470px, 0.92fr)
+    minmax(520px, 1.08fr);
+
+  grid-template-rows:
+    360px
+    450px;
+
+  column-gap:
+    clamp(3.25rem, 5.8vw, 6.5rem);
+
+  row-gap:
+    clamp(1.9rem, 3vh, 2.5rem);
+}
+
+.section-library-flow .flow-copy-card {
+  max-width: 610px;
+}
+
+.section-library-flow .flow-copy-card h2 {
+  max-width: 610px;
+
+  font-size:
+    clamp(3.15rem, 4.7vw, 4.95rem);
+
+  line-height: 0.91;
+}
+
+.section-library-flow .flow-copy-card p {
+  max-width: 520px;
+
+  color: #aeb9d2;
+}
+
+.section-library-flow .flow-search-card {
+  width: min(100%, 610px);
+  height: 340px;
+  min-height: 340px;
+  max-height: 340px;
+}
+
+/* ---------------------------------------------------------
+   Raised surfaces and spectrum detail
+   --------------------------------------------------------- */
+
+.section-library-flow .flow-card {
+  border-color:
+    var(--flow-border-soft);
+
+  background:
+    radial-gradient(
+      circle at 14% 4%,
+      rgba(255, 255, 255, 0.055),
+      transparent 25%
+    ),
+    radial-gradient(
+      circle at 90% 8%,
+      rgba(114, 140, 255, 0.14),
+      transparent 34%
+    ),
+    radial-gradient(
+      circle at 86% 88%,
+      rgba(159, 131, 255, 0.055),
+      transparent 42%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(17, 24, 47, 0.97),
+      rgba(8, 13, 29, 0.975) 58%,
+      rgba(18, 16, 39, 0.965)
+    );
+
+  box-shadow:
+    0 30px 78px rgba(0, 0, 0, 0.38),
+    0 14px 34px rgba(0, 0, 0, 0.22),
+    0 0 50px rgba(114, 140, 255, 0.085),
+    inset 0 1px 0 rgba(215, 222, 255, 0.09);
+}
+
+.section-library-flow .flow-card::before {
+  background:
+    linear-gradient(
+      120deg,
+      rgba(255, 255, 255, 0.04),
+      transparent 22%,
+      transparent 78%,
+      rgba(159, 131, 255, 0.025)
+    );
+}
+
+.section-library-flow .flow-card::after {
+  content: "";
+
+  position: absolute;
+  top: 0;
+  left: 22px;
+  right: 22px;
+  z-index: 4;
+
+  height: 1px;
+
+  pointer-events: none;
+
+  border-radius: 999px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(121, 217, 255, 0.68) 18%,
+      rgba(114, 140, 255, 0.88) 46%,
+      rgba(159, 131, 255, 0.80) 72%,
+      transparent 100%
+    );
+
+  box-shadow:
+    0 0 12px rgba(114, 140, 255, 0.36),
+    0 0 26px rgba(159, 131, 255, 0.14);
+}
+
+/* ---------------------------------------------------------
+   Saved stories: clearer filter hierarchy and compact toolbar
+   --------------------------------------------------------- */
+
+.section-library-flow .flow-library-card {
+  height: 450px;
+  min-height: 450px;
+  max-height: 450px;
+}
+
+.section-library-flow .flow-library-header {
+  height: 72px;
+  min-height: 72px;
+
+  padding:
+    0.9rem 1.1rem;
+
+  border-bottom-color:
+    rgba(184, 196, 255, 0.16);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.052),
+      rgba(255, 255, 255, 0.014)
+    );
+}
+
+.section-library-flow .flow-library-body {
+  height:
+    calc(100% - 72px);
+
+  padding:
+    0.78rem 1rem 0.9rem;
+
+  grid-template-rows:
+    auto
+    26px
+    minmax(0, 1fr);
+
+  gap: 0.62rem;
+}
+
+.section-library-flow .flow-library-toolbar {
+  grid-row: 1;
+
+  position: relative;
+  z-index: 20;
+
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 1.25rem;
+}
+
+.section-library-flow .flow-library-list-header {
+  grid-row: 2;
+}
+
+.section-library-flow .flow-library-viewport {
+  grid-row: 3;
+}
+
+.section-library-flow .flow-library-filter-stack {
+  min-width: 0;
+
+  display: grid;
+
+  gap: 0.52rem;
+}
+
+.section-library-flow .flow-filter-group {
+  min-width: 0;
+
+  display: flex;
+  align-items: center;
+
+  gap: 0.7rem;
+}
+
+.section-library-flow .flow-filter-label {
+  width: 48px;
+  flex: 0 0 48px;
+
+  color: #8794b2;
+
+  font-size: 0.59rem;
+  font-weight: 850;
+
+  letter-spacing: 0.1em;
+
+  text-transform: uppercase;
+}
+
+.section-library-flow .flow-library-actions {
+  flex: 0 0 auto;
+
+  display: grid;
+  justify-items: end;
+
+  gap: 0.48rem;
+}
+
+.section-library-flow .flow-sort-controls {
+  gap: 0.58rem;
+}
+
+.section-library-flow .flow-sort-menu {
+  width:
+    clamp(228px, 17vw, 264px);
+}
+
+.section-library-flow .flow-sort-trigger {
+  height: 42px;
+
+  border-color:
+    rgba(154, 180, 255, 0.34);
+
+  background:
+    radial-gradient(
+      circle at 16% 10%,
+      rgba(255, 255, 255, 0.10),
+      transparent 30%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(20, 33, 63, 0.98),
+      rgba(12, 21, 44, 0.99) 58%,
+      rgba(19, 19, 46, 0.98)
+    );
+}
+
+.section-library-flow .flow-sort-options {
+  border-color:
+    rgba(159, 183, 255, 0.38);
+
+  background:
+    radial-gradient(
+      circle at 12% 4%,
+      rgba(114, 140, 255, 0.18),
+      transparent 34%
+    ),
+    linear-gradient(
+      155deg,
+      rgba(17, 28, 53, 0.995),
+      rgba(8, 14, 31, 0.998) 62%,
+      rgba(20, 16, 42, 0.995)
+    );
+}
+
+.section-library-flow .flow-library-save-notice {
+  max-width: 290px;
+
+  padding:
+    0.46rem 0.68rem;
+
+  border-color:
+    rgba(184, 196, 255, 0.17);
+
+  color: #929fbb;
+
+  background:
+    rgba(255, 255, 255, 0.028);
+}
+
+/* ---------------------------------------------------------
+   Filter and status controls
+   --------------------------------------------------------- */
+
+.section-library-flow .flow-status-options span,
+.section-library-flow .flow-filter,
+.section-library-flow .flow-status-filter {
+  min-height: 34px;
+
+  padding:
+    0 0.78rem;
+
+  border-color:
+    rgba(184, 196, 255, 0.20);
+
+  color: #aeb9d2;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.048),
+      rgba(255, 255, 255, 0.022)
+    );
+}
+
+.section-library-flow .flow-status-options span:hover,
+.section-library-flow .flow-filter:hover,
+.section-library-flow .flow-status-filter:hover {
+  color: #eef2ff;
+
+  border-color:
+    rgba(166, 188, 255, 0.38);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(93, 118, 218, 0.16),
+      rgba(113, 91, 205, 0.10)
+    );
+}
+
+.section-library-flow .flow-library-filters .flow-filter.active {
+  color: #ffffff;
+
+  border-color:
+    rgba(151, 199, 255, 0.56);
+
+  background:
+    radial-gradient(
+      circle at 24% 15%,
+      rgba(255, 255, 255, 0.14),
+      transparent 31%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(69, 132, 216, 0.34),
+      rgba(91, 106, 218, 0.25)
+    );
+
+  box-shadow:
+    0 0 0 1px rgba(121, 217, 255, 0.055),
+    0 8px 18px rgba(0, 0, 0, 0.18);
+}
+
+.section-library-flow
+.flow-library-status-filters
+.flow-status-filter.active {
+  color: #ffffff;
+
+  border-color:
+    rgba(199, 178, 255, 0.54);
+
+  background:
+    radial-gradient(
+      circle at 24% 15%,
+      rgba(255, 255, 255, 0.13),
+      transparent 31%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(110, 104, 226, 0.30),
+      rgba(151, 111, 230, 0.24)
+    );
+
+  box-shadow:
+    0 0 0 1px rgba(159, 131, 255, 0.055),
+    0 8px 18px rgba(0, 0, 0, 0.18);
+}
+
+.section-library-flow .flow-filter:focus-visible,
+.section-library-flow .flow-status-filter:focus-visible,
+.section-library-flow .flow-status-options input:focus-visible + span {
+  outline:
+    2px solid rgba(121, 217, 255, 0.92);
+
+  outline-offset: 2px;
+}
+
+/* ---------------------------------------------------------
+   Library list and rows
+   --------------------------------------------------------- */
+
+.section-library-flow .flow-library-list-header,
+.section-library-flow .flow-library-row {
+  grid-template-columns:
+    minmax(340px, 1fr)
+    minmax(150px, 205px)
+    minmax(158px, 180px)
+    minmax(116px, 132px);
+}
+
+.section-library-flow .flow-library-empty {
+  border-color:
+    rgba(184, 196, 255, 0.20);
+
+  background:
+    radial-gradient(
+      circle at 50% 42%,
+      rgba(114, 140, 255, 0.065),
+      transparent 36%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.03),
+      rgba(255, 255, 255, 0.012)
+    );
+}
+
+.section-library-flow .flow-library-row {
+  border-color:
+    rgba(184, 196, 255, 0.22);
+
+  background:
+    radial-gradient(
+      circle at 8% 10%,
+      rgba(255, 255, 255, 0.055),
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at 92% 90%,
+      rgba(159, 131, 255, 0.035),
+      transparent 36%
+    ),
+    linear-gradient(
+      135deg,
+      rgba(76, 91, 154, 0.15),
+      rgba(255, 255, 255, 0.025) 48%,
+      rgba(58, 105, 158, 0.045)
+    );
+
+  transition:
+    border-color var(--flow-transition),
+    background var(--flow-transition),
+    transform var(--flow-transition),
+    box-shadow var(--flow-transition);
+}
+
+.section-library-flow .flow-library-row:hover {
+  border-color:
+    rgba(174, 192, 255, 0.36);
+
+  background:
+    radial-gradient(
+      circle at 8% 10%,
+      rgba(255, 255, 255, 0.075),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 92% 90%,
+      rgba(159, 131, 255, 0.06),
+      transparent 38%
+    ),
+    linear-gradient(
+      135deg,
+      rgba(84, 101, 174, 0.19),
+      rgba(255, 255, 255, 0.035) 48%,
+      rgba(64, 116, 175, 0.06)
+    );
+
+  box-shadow:
+    0 13px 26px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(219, 225, 255, 0.075);
+
+  transform:
+    translateY(-1px);
+}
+
+.section-library-flow .flow-format-badge[data-format="manga"] {
+  color: #dce7ff;
+
+  border-color:
+    rgba(154, 186, 255, 0.38);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(93, 126, 227, 0.22),
+      rgba(62, 79, 168, 0.10)
+    );
+}
+
+.section-library-flow .flow-format-badge[data-format="anime"] {
+  color: #ebe3ff;
+
+  border-color:
+    rgba(198, 178, 255, 0.38);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(153, 119, 239, 0.22),
+      rgba(103, 79, 191, 0.10)
+    );
+}
+
+/* Personal ratings keep the familiar gold star, while every surrounding
+   control remains within Inkwell's blue-violet system. */
+
+.section-library-flow
+.flow-library-row-rating
+label.has-rating {
+  border-color:
+    rgba(244, 201, 93, 0.46);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    0 0 0 2px rgba(244, 201, 93, 0.055),
+    0 7px 18px rgba(0, 0, 0, 0.18);
+}
+
+.section-library-flow
+.flow-library-row-rating
+label.has-rating > i {
+  color: #f4c95d;
+
+  filter:
+    drop-shadow(0 0 8px rgba(244, 201, 93, 0.36));
+}
+
+/* ---------------------------------------------------------
+   Responsive refinements
+   --------------------------------------------------------- */
+
+@media (
+  max-width: 1280px
+) and (
+  min-width: 981px
+) {
+  .section-library-flow .flow-grid {
+    grid-template-columns:
+      minmax(405px, 0.92fr)
+      minmax(455px, 1.08fr);
+  }
+
+  .section-library-flow .flow-library-list-header,
+  .section-library-flow .flow-library-row {
+    grid-template-columns:
+      minmax(270px, 1fr)
+      minmax(125px, 165px)
+      minmax(140px, 160px)
+      112px;
+  }
+}
+
+@media (max-width: 980px) {
+  .section-library-flow {
+    margin-top: -2px;
+
+    padding-top:
+      calc(5.25rem + 2px);
+  }
+
+  .section-library-flow::before {
+    height: 220px;
+  }
+
+  .section-library-flow .flow-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+  }
+
+  .section-library-flow .flow-library-toolbar {
+    flex-direction: column;
+  }
+
+  .section-library-flow .flow-library-filter-stack,
+  .section-library-flow .flow-library-actions {
+    width: 100%;
+  }
+
+  .section-library-flow .flow-library-actions {
+    grid-template-columns:
+      minmax(0, 1fr)
+      auto;
+
+    align-items: end;
+    justify-items: stretch;
+  }
+
+  .section-library-flow .flow-sort-controls {
+    justify-content: flex-start;
+  }
+
+  .section-library-flow .flow-library-save-notice {
+    align-self: end;
+  }
+}
+
+@media (max-width: 680px) {
+  .section-library-flow .flow-filter-group {
+    align-items: flex-start;
+    flex-direction: column;
+
+    gap: 0.42rem;
+  }
+
+  .section-library-flow .flow-filter-label {
+    width: auto;
+    flex-basis: auto;
+  }
+
+  .section-library-flow .flow-library-actions {
+    grid-template-columns: 1fr;
+
+    gap: 0.55rem;
+  }
+
+  .section-library-flow .flow-sort-controls {
+    width: 100%;
+
+    align-items: stretch;
+  }
+
+  .section-library-flow .flow-sort-menu {
+    width: 100%;
+  }
+
+  .section-library-flow .flow-library-save-notice {
+    max-width: none;
+    width: 100%;
+  }
+
+  .section-library-flow .flow-status-options span,
+  .section-library-flow .flow-filter,
+  .section-library-flow .flow-status-filter {
+    min-height: 44px;
+  }
+}
+
+@media (prefers-contrast: more) {
+  .section-library-flow .flow-card,
+  .section-library-flow .flow-library-row,
+  .section-library-flow .flow-library-empty {
+    border-color:
+      rgba(218, 225, 255, 0.48);
+  }
+
+  .section-library-flow .flow-filter,
+  .section-library-flow .flow-status-filter,
+  .section-library-flow .flow-sort-trigger {
+    border-color:
+      rgba(218, 225, 255, 0.56);
+  }
+}

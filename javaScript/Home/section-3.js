@@ -1842,7 +1842,7 @@
     }
 
     let selectedLabel =
-      'Default order';
+      'Recently added';
 
     elements.sortOptionButtons.forEach(
       (button) => {
@@ -2316,7 +2316,12 @@
     const formats =
       getCanonicalFormats(
         typeValue
-      );
+      ).filter((format) => {
+        return (
+          format === 'manga' ||
+          format === 'anime'
+        );
+      });
 
     const visibleFormats =
       formats.slice(
@@ -2347,6 +2352,9 @@
 
         badge.className =
           'flow-format-badge';
+
+        badge.dataset.format =
+          format;
 
         badge.textContent =
           getFormatLabel(
