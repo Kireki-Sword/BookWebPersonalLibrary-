@@ -5026,3 +5026,94 @@ body.search-site .active-filter-chip {
 
   border-color: rgba(177, 146, 255, 0.34) !important;
 }
+
+/* =========================================================
+   FINAL INTERACTION + CLASSIFICATION FIXES
+   ========================================================= */
+
+/* Keep broad formats human-readable in the filter list. */
+body.search-site #format-filter-list .filter-option-main {
+  text-transform: none;
+}
+
+/* Centre each floating menu beneath its own trigger. */
+body.search-site .catalogue-select-menu {
+  left: 50% !important;
+  right: auto !important;
+  transform: translateX(-50%) !important;
+
+  width: max(100%, 210px);
+  max-width: min(260px, calc(100vw - 2rem));
+}
+
+/*
+ * The cover badge is a catalogue label, not a primary action.
+ * Use a quiet glassy blue material instead of the Search/Sign-up purple.
+ */
+body.search-site .story-card-format {
+  color: #e5efff !important;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(18, 42, 79, 0.96),
+      rgba(12, 27, 58, 0.97)
+    )
+    !important;
+
+  border-color: rgba(132, 184, 255, 0.56) !important;
+
+  box-shadow:
+    0 8px 22px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.10),
+    0 0 16px rgba(103, 157, 255, 0.10)
+    !important;
+}
+
+/* Similar-title mode behaves like a removable search condition. */
+body.search-site .active-filter-chip-similar {
+  color: #f4f7ff !important;
+
+  background:
+    radial-gradient(
+      circle at 14% 0%,
+      rgba(123, 190, 255, 0.20),
+      transparent 48%
+    ),
+    linear-gradient(
+      135deg,
+      rgba(55, 91, 175, 0.34),
+      rgba(88, 66, 173, 0.25)
+    )
+    !important;
+
+  border-color: rgba(135, 180, 255, 0.46) !important;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 0 18px rgba(105, 135, 255, 0.10);
+}
+
+body.search-site .active-filter-chip-similar:hover,
+body.search-site .active-filter-chip-similar:focus-visible {
+  background:
+    radial-gradient(
+      circle at 14% 0%,
+      rgba(143, 207, 255, 0.28),
+      transparent 50%
+    ),
+    linear-gradient(
+      135deg,
+      rgba(67, 111, 207, 0.46),
+      rgba(105, 76, 201, 0.34)
+    )
+    !important;
+
+  border-color: rgba(157, 205, 255, 0.68) !important;
+}
+
+@media (max-width: 720px) {
+  body.search-site .catalogue-select-menu {
+    max-width: calc(100vw - 1.25rem);
+  }
+}

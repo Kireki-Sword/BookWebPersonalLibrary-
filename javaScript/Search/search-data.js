@@ -292,7 +292,7 @@ export function normalizeStory(
     ).trim();
 
   const types =
-    normalizeFacetList(
+    normalizeBroadTypeList(
       row.type,
       "Manga"
     );
@@ -310,7 +310,7 @@ export function normalizeStory(
     );
 
   const demographics =
-    normalizeFacetList(
+    normalizeDemographicList(
       mangaInfo.flatMap((entry) => {
         return normalizeValueList(
           entry.demographic
@@ -319,7 +319,7 @@ export function normalizeStory(
     );
 
   const subformats =
-    normalizeFacetList([
+    normalizeSubformatList([
       ...mangaInfo.flatMap((entry) => {
         return normalizeValueList(
           entry.format
@@ -580,6 +580,108 @@ export function normalizeValueList(value) {
       return entry.trim();
     })
     .filter(Boolean);
+}
+
+
+export function normalizeBroadTypeList(
+  value,
+  fallback = ""
+) {
+  const canonicalLabels =
+    new Map([
+      ["manga", "Manga"],
+      ["anime", "Anime"]
+    ]);
+
+  return normalizeFacetList(
+    value,
+    fallback
+  )
+    .filter((facet) => {
+      return canonicalLabels.has(
+        facet.key
+      );
+    })
+    .map((facet) => {
+      return {
+        ...facet,
+        label:
+          canonicalLabels.get(
+            facet.key
+          )
+      };
+    });
+}
+
+
+export function normalizeSubformatList(value) {
+  const genericBroadFormats =
+    new Set([
+      "manga",
+      "anime"
+    ]);
+
+  const canonicalLabels =
+    new Map([
+      ["one-shot", "One-Shot"],
+      ["doujinshi", "Doujinshi"],
+      ["tv-series", "TV Series"],
+      ["movie", "Movie"],
+      ["movie-series", "Movie Series"],
+      ["ova", "OVA"],
+      ["ona", "ONA"],
+      ["tv-special", "TV Special"],
+      ["special", "Special"],
+      ["tv-recut", "TV Recut"],
+      ["compilation-movie", "Compilation Movie"],
+      ["short", "Short"]
+    ]);
+
+  return normalizeFacetList(
+    value
+  )
+    .filter((facet) => {
+      return !genericBroadFormats.has(
+        facet.key
+      );
+    })
+    .map((facet) => {
+      return {
+        ...facet,
+        label:
+          canonicalLabels.get(
+            facet.key
+          ) ||
+          facet.label
+      };
+    });
+}
+
+
+export function normalizeDemographicList(value) {
+  const canonicalLabels =
+    new Map([
+      ["shonen", "Shonen"],
+      ["seinen", "Seinen"],
+      ["shojo", "Shojo"],
+      ["josei", "Josei"],
+      ["kodomo", "Kodomo"],
+      ["unknown", "Unknown"]
+    ]);
+
+  return normalizeFacetList(
+    value
+  )
+    .map((facet) => {
+      return {
+        ...facet,
+        label:
+          canonicalLabels.get(
+            facet.key
+          ) ||
+          facet.label
+      };
+    });
 }
 
 

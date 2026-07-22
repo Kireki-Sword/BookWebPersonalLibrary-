@@ -775,6 +775,8 @@ function clearFilters(
 ) {
   clearFilterState();
 
+  clearSimilarState();
+
   state.page =
     1;
 
@@ -839,6 +841,11 @@ function handleActiveFilterClick(event) {
     button.dataset.filterKey;
 
   if (
+    kind ===
+    "similar"
+  ) {
+    clearSimilarState();
+  } else if (
     kind ===
     "type"
   ) {
@@ -1202,7 +1209,13 @@ function readStateFromUrl() {
         .map(
           normalizeFacetKey
         )
-        .filter(Boolean)
+        .filter((key) => {
+          return (
+            key &&
+            key !== "manga" &&
+            key !== "anime"
+          );
+        })
     );
 
   state.selectedGenres =

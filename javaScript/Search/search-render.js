@@ -947,6 +947,24 @@ export function createSearchRenderer(elements) {
       [];
 
 
+    if (state.similarMode) {
+      chips.push({
+        kind:
+          "similar",
+
+        key:
+          state.similarTitleId ||
+          "similar",
+
+        label:
+          `Similar to “${
+            state.similarTitle ||
+            "selected title"
+          }”`
+      });
+    }
+
+
     state.selectedTypes.forEach((key) => {
       chips.push({
         kind:
@@ -1075,7 +1093,15 @@ export function createSearchRenderer(elements) {
         "button";
 
       button.className =
-        "active-filter-chip";
+        [
+          "active-filter-chip",
+
+          chip.kind === "similar"
+            ? "active-filter-chip-similar"
+            : ""
+        ]
+          .filter(Boolean)
+          .join(" ");
 
       button.dataset.removeFilter =
         "";
@@ -1129,6 +1155,11 @@ export function createSearchRenderer(elements) {
 
   function getActiveFilterCount(state) {
     return (
+      (
+        state.similarMode
+          ? 1
+          : 0
+      ) +
       state.selectedTypes.size +
       state.selectedDemographics.size +
       state.selectedSubformats.size +

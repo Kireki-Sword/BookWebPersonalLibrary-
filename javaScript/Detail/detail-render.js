@@ -658,8 +658,11 @@ function renderClassificationDetails(
 
 
   const broadFormatKeys =
-    new Set(
-      (
+    new Set([
+      "manga",
+      "anime",
+
+      ...(
         title.types ||
         []
       )
@@ -669,7 +672,7 @@ function renderClassificationDetails(
         .filter(
           Boolean
         )
-    );
+    ]);
 
 
   const subformats =
@@ -2068,11 +2071,6 @@ function renderDescription(
     "No description has been added to this catalogue entry yet.";
 
 
-  const shouldCollapse =
-    copy.length >
-    720;
-
-
   elements
     .description
     .textContent =
@@ -2082,32 +2080,23 @@ function renderDescription(
   elements
     .description
     .classList
-    .toggle(
-      "is-collapsed",
-      shouldCollapse
+    .remove(
+      "is-collapsed"
     );
 
 
   elements
     .descriptionToggle
     .hidden =
-      !shouldCollapse;
+      true;
 
 
   elements
     .descriptionToggle
     .setAttribute(
       "aria-expanded",
-      String(
-        !shouldCollapse
-      )
+      "true"
     );
-
-
-  elements
-    .descriptionToggle
-    .textContent =
-      "Show full description";
 }
 
 
