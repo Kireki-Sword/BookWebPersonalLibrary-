@@ -980,3 +980,214 @@ html::-webkit-scrollbar-thumb:active {
       !important;
   }
 }
+
+/* =========================================================
+   INKWELL SEMANTIC COLOR SYSTEM — FINAL RESEARCHED PALETTE
+   Keep this block at the very bottom of style.css.
+
+   Color roles:
+   - Indigo / blue / violet: brand, navigation, primary actions
+   - Cyan: interaction, focus, selected edges
+   - Warm gold: rating emphasis only
+   - Green / amber / red: true success, warning, danger states only
+   - Neutral blue-black steps: page depth and card elevation
+   ========================================================= */
+
+:root {
+  --inkwell-canvas: #050713;
+  --inkwell-canvas-raised: #070b18;
+  --inkwell-surface-1: #0b1224;
+  --inkwell-surface-2: #10182e;
+  --inkwell-surface-3: #151f3a;
+  --inkwell-surface-hover: #1a2646;
+
+  --inkwell-text: #f5f7ff;
+  --inkwell-text-soft: #c6cee3;
+  --inkwell-text-muted: #99a6c2;
+  --inkwell-text-subtle: #7e8aa5;
+
+  --inkwell-border-subtle: rgba(167, 183, 245, 0.12);
+  --inkwell-border: rgba(167, 183, 245, 0.20);
+  --inkwell-border-strong: rgba(145, 173, 255, 0.36);
+
+  --inkwell-cyan: #79d9ff;
+  --inkwell-blue: #728cff;
+  --inkwell-violet: #9f83ff;
+  --inkwell-pink: #c995ff;
+  --inkwell-gold: #ffd38a;
+
+  --inkwell-success: #7ad9b0;
+  --inkwell-warning: #ffc86b;
+  --inkwell-danger: #ff8da1;
+
+  --inkwell-focus-ring:
+    0 0 0 3px rgba(121, 217, 255, 0.18),
+    0 0 0 1px rgba(121, 217, 255, 0.82);
+
+  --inkwell-shadow-card:
+    0 22px 58px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+
+  --inkwell-shadow-raised:
+    0 28px 74px rgba(0, 0, 0, 0.48),
+    0 0 42px rgba(114, 140, 255, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.055);
+
+  /* Preserve compatibility with the older variable names. */
+  --cream: var(--inkwell-canvas);
+  --cream-dark: var(--inkwell-canvas-raised);
+  --surface: var(--inkwell-surface-1);
+  --surface-soft: var(--inkwell-surface-2);
+  --surface-warm: var(--inkwell-surface-3);
+
+  --warm-brown: var(--inkwell-blue);
+  --warm-brown-dark: #5664d5;
+  --warm-brown-light: #cdd6ff;
+
+  --accent-purple: var(--inkwell-violet);
+  --accent-blue: var(--inkwell-blue);
+  --accent-cyan: var(--inkwell-cyan);
+  --accent-pink: var(--inkwell-pink);
+
+  --ink: var(--inkwell-text);
+  --ink-mid: var(--inkwell-text-soft);
+  --ink-light: var(--inkwell-text-muted);
+  --ink-faint: var(--inkwell-text-subtle);
+
+  --border: var(--inkwell-border-subtle);
+  --border-strong: var(--inkwell-border-strong);
+}
+
+html,
+body {
+  background-color: var(--inkwell-canvas) !important;
+}
+
+body {
+  color: var(--inkwell-text);
+
+  background:
+    radial-gradient(
+      980px 650px at 78% 8%,
+      rgba(114, 140, 255, 0.15),
+      transparent 72%
+    ),
+    radial-gradient(
+      860px 620px at 9% 31%,
+      rgba(159, 131, 255, 0.095),
+      transparent 74%
+    ),
+    radial-gradient(
+      820px 620px at 86% 83%,
+      rgba(121, 217, 255, 0.055),
+      transparent 76%
+    ),
+    linear-gradient(
+      145deg,
+      #050713 0%,
+      #080d1d 42%,
+      #090e20 69%,
+      #04060f 100%
+    )
+    !important;
+}
+
+nav {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(7, 10, 23, 0.985),
+      rgba(6, 9, 21, 0.965)
+    )
+    !important;
+
+  border-bottom-color: rgba(167, 183, 245, 0.11);
+
+  box-shadow:
+    0 14px 38px rgba(0, 0, 0, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.035);
+}
+
+.nav-links a:hover,
+.nav-links a:focus-visible {
+  color: var(--inkwell-text);
+  background: rgba(130, 149, 240, 0.085);
+}
+
+.nav-links a.active {
+  color: #d8ddff;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(114, 140, 255, 0.17),
+      rgba(159, 131, 255, 0.075)
+    );
+
+  box-shadow:
+    inset 0 0 0 1px rgba(171, 186, 255, 0.16),
+    0 0 20px rgba(114, 140, 255, 0.08);
+}
+
+.btn-primary,
+.hero-btn-primary {
+  color: #ffffff !important;
+
+  background:
+    radial-gradient(
+      circle at 24% 8%,
+      rgba(255, 255, 255, 0.21),
+      transparent 32%
+    ),
+    linear-gradient(
+      135deg,
+      #745ee0 0%,
+      #6f64e8 46%,
+      #5664d5 100%
+    )
+    !important;
+
+  border-color: rgba(202, 210, 255, 0.28) !important;
+
+  box-shadow:
+    0 16px 36px rgba(0, 0, 0, 0.38),
+    0 0 28px rgba(114, 140, 255, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18)
+    !important;
+}
+
+.btn-primary:hover,
+.hero-btn-primary:hover {
+  background:
+    radial-gradient(
+      circle at 24% 8%,
+      rgba(255, 255, 255, 0.26),
+      transparent 32%
+    ),
+    linear-gradient(
+      135deg,
+      #7f67e8 0%,
+      #745ee0 45%,
+      #5d62d8 100%
+    )
+    !important;
+
+  border-color: rgba(214, 220, 255, 0.42) !important;
+
+  box-shadow:
+    0 20px 46px rgba(0, 0, 0, 0.46),
+    0 0 38px rgba(159, 131, 255, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22)
+    !important;
+}
+
+:where(a, button, input, select, summary):focus-visible {
+  outline: 2px solid var(--inkwell-cyan);
+  outline-offset: 3px;
+}
+
+@media (forced-colors: active) {
+  :where(a, button, input, select, summary):focus-visible {
+    outline: 2px solid Highlight;
+  }
+}
