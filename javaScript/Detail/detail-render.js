@@ -2427,9 +2427,18 @@ function composeEditorialAboutSection(
       );
 
 
+  const descriptionWrap =
+    elements
+      .description
+      .closest(
+        ".detail-description-wrap"
+      );
+
+
   if (
     !aboutSection ||
     !aboutCopy ||
+    !descriptionWrap ||
     !elements.themesSection
   ) {
     return;
@@ -2453,21 +2462,29 @@ function composeEditorialAboutSection(
   elements
     .themesSection
     .classList
-    .add(
+    .remove(
       "detail-theme-index"
     );
 
 
-  if (
-    elements
-      .themesSection
-      .parentElement !==
-    aboutCopy
-  ) {
-    aboutCopy.append(
-      elements.themesSection
+  elements
+    .themesSection
+    .classList
+    .add(
+      "detail-theme-sidebar"
     );
-  }
+
+
+  /*
+   * Place Themes immediately before the description. On wide screens it
+   * floats to the right so the story copy uses the space beside and below
+   * it. The mobile CSS changes the visual order so the description remains
+   * first and Themes follows it.
+   */
+  aboutCopy.insertBefore(
+    elements.themesSection,
+    descriptionWrap
+  );
 }
 
 
@@ -2510,8 +2527,8 @@ function balanceAboutContent(
 
   const collapsedDescriptionHeight =
     window.innerWidth <= 780
-      ? 360
-      : 330;
+      ? 500
+      : 610;
 
 
   const descriptionNeedsToggle =
@@ -2559,7 +2576,7 @@ function balanceAboutContent(
   const visibleThemeLimit =
     window.innerWidth <= 640
       ? 6
-      : 10;
+      : 8;
 
 
   elements
