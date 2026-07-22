@@ -6612,3 +6612,16 @@ body.detail-site
     max-width: 100% !important;
   }
 }
+
+
+
+
+
+
+
+body.detail-site .detail-metadata-row {
+  grid-template-columns: max-content minmax(0, 1fr) !important;
+  align-items: center !important;
+  column-gap: 0.62rem !important;
+  row-gap: 0.2rem !important;
+}
