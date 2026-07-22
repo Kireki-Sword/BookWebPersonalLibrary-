@@ -5644,3 +5644,108 @@ body.detail-site .detail-about-section.detail-about-editorial::before {
   width: 130px;
   opacity: 0.28;
 }
+
+/* =========================================================
+   PROFESSIONAL COLOR + RELEASE-DIVIDER PASS
+   Scoped by detail-render.js with body.detail-color-max.
+   ========================================================= */
+
+body.detail-site.detail-color-max .detail-cover-column::before {
+  border-color: rgba(116, 157, 255, 0.18);
+  background:
+    radial-gradient(72% 42% at 42% 9%, rgba(87, 174, 255, 0.17), transparent 68%),
+    radial-gradient(62% 44% at 78% 22%, rgba(151, 111, 255, 0.11), transparent 72%),
+    linear-gradient(160deg, rgba(5, 10, 27, 0.82), rgba(4, 8, 22, 0.97));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.025),
+    0 26px 64px rgba(0, 0, 0, 0.30),
+    0 0 54px rgba(83, 116, 255, 0.10);
+}
+
+body.detail-site.detail-color-max .detail-cover-frame {
+  border-color: rgba(125, 174, 255, 0.54);
+  box-shadow:
+    0 30px 66px rgba(0, 0, 0, 0.56),
+    -14px 8px 44px rgba(73, 157, 255, 0.12),
+    16px -8px 40px rgba(144, 103, 255, 0.09);
+}
+
+body.detail-site.detail-color-max .detail-cover-frame:hover {
+  border-color: rgba(140, 207, 255, 0.78);
+  box-shadow:
+    0 34px 74px rgba(0, 0, 0, 0.60),
+    -16px 10px 48px rgba(73, 173, 255, 0.16),
+    18px -10px 44px rgba(150, 111, 255, 0.12);
+}
+
+body.detail-site.detail-color-max .detail-score-card {
+  border-color: rgba(115, 168, 255, 0.30) !important;
+  background:
+    radial-gradient(330px 180px at 8% -10%, rgba(79, 174, 255, 0.18), transparent 70%),
+    radial-gradient(280px 170px at 100% 0%, rgba(139, 104, 255, 0.08), transparent 74%),
+    linear-gradient(145deg, #142347 0%, #0c1732 78%) !important;
+  box-shadow:
+    0 20px 46px rgba(0, 0, 0, 0.30),
+    0 0 30px rgba(74, 130, 255, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.045) !important;
+}
+
+body.detail-site.detail-color-max .detail-library-block {
+  border-color: rgba(133, 157, 242, 0.27) !important;
+  background:
+    radial-gradient(390px 210px at 8% -10%, rgba(88, 132, 255, 0.14), transparent 72%),
+    radial-gradient(320px 210px at 100% 0%, rgba(148, 102, 255, 0.09), transparent 76%),
+    linear-gradient(145deg, #131f41 0%, #0a142e 78%) !important;
+  box-shadow:
+    0 20px 46px rgba(0, 0, 0, 0.30),
+    0 0 28px rgba(91, 111, 255, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.045) !important;
+}
+
+/* A count is neutral information, not a completion status. */
+body.detail-site.detail-color-max .detail-panel-count {
+  color: #cbd6f2;
+  background: rgba(67, 83, 145, 0.14);
+  border-color: rgba(128, 149, 222, 0.24);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035);
+}
+
+/* A uniform status summary gets a slightly brighter, still brand-safe role. */
+body.detail-site.detail-color-max .detail-panel-count-uniform-status {
+  color: #ddecff;
+  background:
+    linear-gradient(180deg, rgba(68, 124, 205, 0.18), rgba(73, 67, 157, 0.10));
+  border-color: rgba(110, 179, 255, 0.34);
+}
+
+/* Individual statuses stay quieter than buttons and format badges. */
+body.detail-site.detail-color-max .detail-status {
+  color: #dbe8ff !important;
+  background: rgba(58, 82, 157, 0.14) !important;
+  border-color: rgba(112, 146, 231, 0.30) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035);
+}
+
+body.detail-site.detail-color-max .detail-status-ongoing,
+body.detail-site.detail-color-max .detail-status-airing,
+body.detail-site.detail-color-max .detail-status-publishing {
+  color: #cdefff !important;
+  background: rgba(45, 117, 172, 0.14) !important;
+  border-color: rgba(89, 193, 238, 0.32) !important;
+}
+
+/* Studio is metadata; Notes is a disclosure. Separate the roles clearly. */
+body.detail-site.detail-color-max .detail-release-disclosure-notes {
+  margin-top: 0.7rem;
+  padding-top: 0.62rem;
+  border-top: 1px solid rgba(128, 154, 218, 0.13);
+}
+
+body.detail-site.detail-color-max .detail-release-disclosure-notes summary {
+  min-height: 30px;
+  color: #aebbd5;
+}
+
+body.detail-site.detail-color-max .detail-release-disclosure-notes[open] summary {
+  color: #d7e4ff;
+}

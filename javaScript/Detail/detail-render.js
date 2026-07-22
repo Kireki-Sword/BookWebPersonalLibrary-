@@ -17,6 +17,11 @@ export function renderDetailPage(
   title,
   elements
 ) {
+  document.body.classList.add(
+    "detail-color-max"
+  );
+
+
   document.title =
     `${title.title} | Inkwell`;
 

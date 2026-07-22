@@ -70,6 +70,15 @@ if (
 async function startSearchPage() {
   collectElements();
 
+  document.body.classList.add(
+    "search-professional-max"
+  );
+
+  if (elements.searchInput) {
+    elements.searchInput.placeholder =
+      "Search titles, creators, genres, themes, or formats";
+  }
+
   if (!hasRequiredElements()) {
     console.error(
       "Search page is missing one or more required elements.",
@@ -1514,6 +1523,52 @@ function syncAllControls() {
       state.perPage
     )
   );
+
+  syncSortLanguage();
+}
+
+
+function syncSortLanguage() {
+  const sortSelect =
+    elements.customSelects.find((select) => {
+      return Boolean(
+        select.querySelector(
+          "#sort-select-trigger"
+        )
+      );
+    });
+
+  if (!sortSelect) {
+    return;
+  }
+
+  const relevanceOption =
+    sortSelect.querySelector(
+      "[data-option-value=\"relevance\"]"
+    );
+
+  const displayedValue =
+    sortSelect.querySelector(
+      "[data-select-value]"
+    );
+
+  const label =
+    state.similarMode
+      ? "Similarity"
+      : "Relevance";
+
+  if (relevanceOption) {
+    relevanceOption.textContent =
+      label;
+  }
+
+  if (
+    displayedValue &&
+    state.sort === "relevance"
+  ) {
+    displayedValue.textContent =
+      label;
+  }
 }
 
 

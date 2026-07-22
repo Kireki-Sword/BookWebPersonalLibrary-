@@ -646,10 +646,16 @@ export function createSearchRenderer(elements) {
     const fragment =
       document.createDocumentFragment();
 
+    elements.resultsGrid.classList.toggle(
+      "results-grid-sparse",
+      pageEntries.length <= 3
+    );
+
     pageEntries.forEach((entry) => {
       fragment.append(
         createStoryCard(
-          entry.item
+          entry,
+          state
         )
       );
     });
@@ -665,7 +671,13 @@ export function createSearchRenderer(elements) {
   }
 
 
-  function createStoryCard(item) {
+  function createStoryCard(
+    entry,
+    state
+  ) {
+    const item =
+      entry.item;
+
     const fragment =
       elements.cardTemplate
         .content
@@ -811,6 +823,22 @@ export function createSearchRenderer(elements) {
     }
 
 
+    if (
+      state.similarMode &&
+      entry.rank > 0
+    ) {
+      const match =
+        createSimilaritySummary(
+          entry,
+          state
+        );
+
+      genres.before(
+        match
+      );
+    }
+
+
     item.genres
       .slice(0, 2)
       .forEach((genre) => {
@@ -876,6 +904,92 @@ export function createSearchRenderer(elements) {
     );
 
     return fragment;
+  }
+
+
+  function createSimilaritySummary(
+    entry,
+    state
+  ) {
+    const wrapper =
+      document.createElement(
+        "p"
+      );
+
+    wrapper.className =
+      "story-card-match";
+
+    const total =
+      entry.rank;
+
+    const counts = [];
+
+    if (entry.sharedTagCount) {
+      counts.push(
+        `${entry.sharedTagCount} ${
+          entry.sharedTagCount === 1
+            ? "theme"
+            : "themes"
+        }`
+      );
+    }
+
+    if (entry.sharedGenreCount) {
+      counts.push(
+        `${entry.sharedGenreCount} ${
+          entry.sharedGenreCount === 1
+            ? "genre"
+            : "genres"
+        }`
+      );
+    }
+
+    const sharedLabels = [
+      ...entry.item.tags
+        .filter((facet) => {
+          return state.similarTags.has(
+            facet.key
+          );
+        }),
+      ...entry.item.genres
+        .filter((facet) => {
+          return state.similarGenres.has(
+            facet.key
+          );
+        })
+    ]
+      .map((facet) => {
+        return facet.label;
+      })
+      .slice(0, 2);
+
+    const score =
+      document.createElement(
+        "strong"
+      );
+
+    score.textContent =
+      `${total} shared`;
+
+    const details =
+      document.createElement(
+        "span"
+      );
+
+    details.textContent =
+      [
+        counts.join(" · "),
+        sharedLabels.join(" · ")
+      ]
+        .filter(Boolean)
+        .join(" — ");
+
+    wrapper.append(
+      score,
+      details
+    );
+
+    return wrapper;
   }
 
 
@@ -1082,6 +1196,30 @@ export function createSearchRenderer(elements) {
     elements.activeFilters.hidden =
       chips.length === 0;
 
+    elements.clearAllFilters.disabled =
+      chips.length === 0;
+
+    elements.clearAllFilters.setAttribute(
+      "aria-disabled",
+      String(
+        chips.length === 0
+      )
+    );
+
+    elements.clearAllFilters.lastChild.textContent =
+      chips.length
+        ? ` Clear ${chips.length} ${
+            chips.length === 1
+              ? "filter"
+              : "filters"
+          }`
+        : " Clear filters";
+
+    elements.activeFiltersClear.textContent =
+      chips.length
+        ? `Clear all (${chips.length})`
+        : "Clear all";
+
 
     chips.forEach((chip) => {
       const button =
@@ -1209,21 +1347,56 @@ export function createSearchRenderer(elements) {
         state.perPage
       );
 
-    if (
-      totalPages <=
-      1
-    ) {
-      elements.pagination.hidden =
-        true;
+    const start =
+      (
+        state.page -
+        1
+      ) *
+      state.perPage +
+      1;
 
-      return;
-    }
+    const end =
+      Math.min(
+        state.page *
+        state.perPage,
+        currentResults.length
+      );
+
+    const range =
+      document.createElement(
+        "p"
+      );
+
+    range.className =
+      "results-range";
+
+    range.textContent =
+      `Showing ${start.toLocaleString()}–${end.toLocaleString()} of ${currentResults.length.toLocaleString()} stories`;
+
+    const controls =
+      document.createElement(
+        "div"
+      );
+
+    controls.className =
+      "pagination-controls";
 
     elements.pagination.hidden =
       false;
 
-
     elements.pagination.append(
+      range,
+      controls
+    );
+
+    if (
+      totalPages <=
+      1
+    ) {
+      return;
+    }
+
+    controls.append(
       createPaginationButton({
         page:
           state.page - 1,
@@ -1241,7 +1414,6 @@ export function createSearchRenderer(elements) {
           "pagination-previous"
       })
     );
-
 
     getPaginationTokens(
       state.page,
@@ -1267,14 +1439,14 @@ export function createSearchRenderer(elements) {
           "true"
         );
 
-        elements.pagination.append(
+        controls.append(
           ellipsis
         );
 
         return;
       }
 
-      elements.pagination.append(
+      controls.append(
         createPaginationButton({
           page:
             token,
@@ -1289,8 +1461,7 @@ export function createSearchRenderer(elements) {
       );
     });
 
-
-    elements.pagination.append(
+    controls.append(
       createPaginationButton({
         page:
           state.page + 1,
