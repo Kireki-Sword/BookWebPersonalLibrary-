@@ -42,10 +42,17 @@
   width: 100%;
   overflow: hidden;
 
+  margin-top: -3px;
+
   padding:
-    5rem
+    calc(5rem + 3px)
     max(1.5rem, calc((100vw - 1220px) / 2 + 1.5rem))
     6rem;
+
+  border-top: 0 !important;
+
+  box-shadow:
+    0 -3px 0 var(--s2-bridge-center);
 
   color: var(--s2-text-primary);
 
@@ -86,7 +93,7 @@
   content: "";
   position: absolute;
   left: 0;
-  top: -1px;
+  top: 0;
   z-index: 0;
 
   width: 100%;
@@ -1196,19 +1203,30 @@
   justify-content: center;
 
   background:
+    radial-gradient(
+      circle at 18% 0%,
+      rgba(114, 140, 255, 0.075) 0%,
+      transparent 34%
+    ),
+    radial-gradient(
+      circle at 88% 100%,
+      rgba(159, 131, 255, 0.045) 0%,
+      transparent 40%
+    ),
     linear-gradient(
       180deg,
-      rgba(16, 21, 39, 0.985) 0%,
-      rgba(8, 12, 26, 0.985) 100%
+      rgba(16, 21, 39, 0.99) 0%,
+      rgba(8, 12, 26, 0.99) 100%
     );
 
-  border: 1px solid var(--s2-border);
+  border: 1px solid rgba(184, 196, 255, 0.24);
   border-radius: clamp(16px, 1vw, 20px);
 
   box-shadow:
     0 16px 38px rgba(0, 0, 0, 0.34),
-    0 0 24px rgba(124, 140, 255, 0.055),
-    inset 0 1px 0 rgba(255, 255, 255, 0.065);
+    0 0 26px rgba(124, 140, 255, 0.06),
+    inset 0 1px 0 rgba(205, 214, 255, 0.10),
+    inset 0 -1px 0 rgba(159, 131, 255, 0.035);
 
   font-family: var(--font-display, Georgia, serif);
   font-size: var(--s2-quote-font-size);
@@ -1359,6 +1377,16 @@
   border-color: var(--s2-border-strong);
 
   background:
+    radial-gradient(
+      circle at 18% 0%,
+      rgba(114, 140, 255, 0.13) 0%,
+      transparent 36%
+    ),
+    radial-gradient(
+      circle at 88% 100%,
+      rgba(159, 131, 255, 0.075) 0%,
+      transparent 42%
+    ),
     linear-gradient(
       180deg,
       rgba(24, 31, 54, 0.995) 0%,
@@ -1368,7 +1396,8 @@
   box-shadow:
     0 28px 66px rgba(0, 0, 0, 0.54),
     0 0 48px rgba(155, 124, 255, 0.16),
-    inset 0 1px 0 rgba(255, 255, 255, 0.11);
+    inset 0 1px 0 rgba(218, 224, 255, 0.14),
+    inset 0 -1px 0 rgba(159, 131, 255, 0.06);
 
   filter:
     saturate(1.06)
@@ -2193,7 +2222,7 @@
   #section-2-empty-shelf,
   .section-empty-shelf {
     padding:
-      4rem
+      calc(4rem + 3px)
       1.1rem
       4.5rem;
 
@@ -2641,10 +2670,10 @@
 
 .thoughts-cloud {
   width: min(980px, 100%);
-  min-height: clamp(280px, 34vh, 360px);
+  min-height: clamp(248px, 30vh, 318px);
 
   margin-inline: auto;
-  padding: clamp(1.5rem, 2.4vw, 2.35rem);
+  padding: clamp(1.45rem, 2.2vw, 2.1rem);
 
   box-sizing: border-box;
 
@@ -2755,8 +2784,8 @@
 
 @media (max-width: 640px) {
   .thoughts-cloud {
-    min-height: 300px;
-    padding: 1.35rem;
+    min-height: 272px;
+    padding: 1.3rem;
     gap: 1rem;
   }
 }
