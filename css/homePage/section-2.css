@@ -3,21 +3,31 @@
   --section-2-cover-width: 156px;
   --section-2-card-gap: 1.4rem;
   --section-2-evidence-width: min(1560px, calc(100vw - clamp(24px, 3.5vw, 64px)));
-  --s2-bg-top: #0a0d1a;
-  --s2-bg-mid: #141a36;
-  --s2-bg-bottom: #080c18;
-  --s2-panel-bg: rgba(8, 12, 26, 0.96);
-  --s2-panel-bg-strong: rgba(15, 20, 36, 0.98);
-  --s2-border: rgba(170, 183, 255, 0.18);
-  --s2-border-strong: rgba(190, 200, 255, 0.42);
-  --s2-text-primary: #f5f1ff;
-  --s2-text-secondary: #c9cde2;
-  --s2-text-muted: #8f96b3;
+  --s2-bg-top: #111b3e;
+  --s2-bg-mid: #10162f;
+  --s2-bg-bottom: #070b17;
+  --s2-panel-bg: rgba(7, 11, 25, 0.97);
+  --s2-panel-bg-strong: rgba(14, 19, 37, 0.985);
+  --s2-border: rgba(174, 187, 255, 0.22);
+  --s2-border-strong: rgba(205, 214, 255, 0.46);
+  --s2-text-primary: #f7f4ff;
+  --s2-text-secondary: #d2d7e9;
+  --s2-text-muted: #9ba5c1;
+  --s2-accent-blue: var(--palette-blue, #728cff);
+  --s2-accent-violet: var(--palette-violet, #9f83ff);
+  --s2-accent-cyan: var(--palette-cyan, #79d9ff);
+
+  /* A restrained ember accent inspired by the reference UI.
+     It is used only for ratings, selected/new layers, and small emphasis. */
+  --s2-accent-ember: #ef7169;
+  --s2-accent-ember-light: #ffaaa0;
+  --s2-accent-ember-soft: rgba(239, 113, 105, 0.18);
+  --s2-accent-ember-border: rgba(255, 162, 151, 0.44);
   --s2-quote-gap: clamp(0.68rem, 0.78vw, 0.82rem);
-  --s2-quote-font-size: clamp(0.95rem, 0.34vw + 0.72rem, 1rem);
+  --s2-quote-font-size: clamp(0.9rem, 0.24vw + 0.78rem, 0.97rem);
   --s2-quote-line-height: 1.4;
-  --s2-quote-padding-block: 0.72rem;
-  --s2-quote-padding-inline: 0.95rem;
+  --s2-quote-padding-block: 0.68rem;
+  --s2-quote-padding-inline: 0.98rem;
   --s2-quote-number-size: 0.625rem;
 
   position: relative;
@@ -33,33 +43,38 @@
 
   background:
     radial-gradient(
-      circle at 50% 20%,
-      rgba(89, 101, 205, 0.18),
-      transparent 34%
+      ellipse 1080px 540px at 50% -7%,
+      rgba(105, 132, 255, 0.22) 0%,
+      rgba(105, 132, 255, 0.09) 46%,
+      transparent 76%
     ),
     radial-gradient(
-      circle at 52% 62%,
-      rgba(124, 90, 196, 0.13),
-      transparent 44%
+      ellipse 880px 650px at 52% 48%,
+      rgba(159, 105, 255, 0.105) 0%,
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 760px 500px at 50% 88%,
+      rgba(105, 180, 255, 0.05) 0%,
+      transparent 74%
     ),
     linear-gradient(
       180deg,
       var(--s2-bg-top) 0%,
-      var(--s2-bg-mid) 46%,
+      var(--s2-bg-mid) 40%,
       var(--s2-bg-bottom) 100%
-    );
-}
+    );}
 
 #section-2-empty-shelf::before,
 .section-empty-shelf::before {
   content: "";
   position: absolute;
   left: 50%;
-  top: 7rem;
+  top: 3.25rem;
   z-index: 0;
 
-  width: min(1180px, 76vw);
-  height: 560px;
+  width: min(1080px, 72vw);
+  height: 500px;
 
   pointer-events: none;
   border-radius: 999px;
@@ -67,13 +82,13 @@
   background:
     radial-gradient(
       ellipse at center,
-      rgba(124, 140, 255, 0.18),
-      rgba(124, 140, 255, 0.07) 44%,
+      rgba(124, 140, 255, 0.14),
+      rgba(124, 140, 255, 0.045) 46%,
       transparent 76%
     );
 
-  filter: blur(64px);
-  opacity: 0.9;
+  filter: blur(72px);
+  opacity: 0.72;
   transform: translateX(-50%);
 }
 
@@ -92,8 +107,8 @@
       transparent 0.7px
     );
 
-  background-size: 4px 4px;
-  opacity: 0.08;
+  background-size: 6px 6px;
+  opacity: 0.045;
 }
 
 #section-2-empty-shelf > *,
@@ -127,16 +142,16 @@
   align-items: center;
   justify-content: center;
 
-  margin-bottom: 0.8rem;
+  margin-bottom: 0.9rem;
 
   font-family: var(--font-body, system-ui, sans-serif);
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   font-weight: 800;
 
-  color: var(--s2-text-muted);
+  color: var(--s2-accent-ember-light);
 
   text-transform: uppercase;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.16em;
 }
 
 .section-2-header h2 {
@@ -151,17 +166,21 @@
 
   letter-spacing: -0.055em;
   line-height: 0.94;
+
+  text-shadow:
+    0 22px 62px rgba(0, 0, 0, 0.38),
+    0 0 44px rgba(124, 140, 255, 0.10);
 }
 
 .section-2-header p {
-  max-width: 680px;
+  max-width: 650px;
   margin: 1.15rem auto 0;
 
   font-family: var(--font-body, system-ui, sans-serif);
-  font-size: 1.05rem;
+  font-size: clamp(1rem, 0.35vw + 0.92rem, 1.08rem);
 
   color: var(--s2-text-secondary);
-  line-height: 1.7;
+  line-height: 1.62;
 }
 
 .empty-shelf-scroll {
@@ -306,17 +325,18 @@
     ),
     linear-gradient(
       180deg,
-      rgba(13, 19, 36, 0.96),
-      rgba(8, 13, 28, 0.96)
+      rgba(16, 22, 42, 0.985),
+      rgba(8, 13, 28, 0.985)
     );
 
   border: 1px solid var(--s2-border);
-  border-radius: 26px;
+  border-radius: 24px;
 
   box-shadow:
-    0 34px 90px rgba(0, 0, 0, 0.46),
-    0 14px 34px rgba(0, 0, 0, 0.28),
-    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+    0 36px 94px rgba(0, 0, 0, 0.48),
+    0 14px 34px rgba(0, 0, 0, 0.30),
+    0 0 34px rgba(114, 140, 255, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
 
   transform:
     perspective(900px)
@@ -543,7 +563,7 @@
   margin: 0;
 
   font-family: var(--font-display, Georgia, serif);
-  font-size: clamp(1.9rem, 2.35vw, 2.2rem);
+  font-size: clamp(1.95rem, 2.3vw, 2.25rem);
   font-weight: 760;
 
   color: var(--s2-text-primary);
@@ -564,7 +584,7 @@
   margin: 0;
 
   font-family: var(--font-body, system-ui, sans-serif);
-  font-size: 0.96rem;
+  font-size: 0.95rem;
   font-weight: 650;
 
   color: var(--s2-text-secondary);
@@ -1027,7 +1047,7 @@
 
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: center;
 
   background:
     linear-gradient(
@@ -1660,10 +1680,10 @@
   position: relative;
   z-index: 1;
 
-  min-height: 245px;
+  min-height: 210px;
 
   margin: 0;
-  padding: 1.05rem;
+  padding: 1.1rem 1.15rem;
 
   background:
     linear-gradient(
@@ -2302,10 +2322,10 @@
     clamp(0.38rem, 0.46vw, 0.5rem);
 
   --s2-quote-font-size:
-    clamp(0.84rem, 0.2vw + 0.72rem, 0.9rem);
+    clamp(0.89rem, 0.18vw + 0.80rem, 0.95rem);
 
-  --s2-quote-line-height: 1.32;
-  --s2-quote-padding-block: 0.62rem;
+  --s2-quote-line-height: 1.4;
+  --s2-quote-padding-block: 0.68rem;
 }
 
 .section-empty-shelf.is-js-ready
@@ -2440,7 +2460,7 @@
 
 .thoughts-cloud {
   width: min(980px, 100%);
-  min-height: clamp(320px, 40vh, 420px);
+  min-height: clamp(280px, 34vh, 360px);
 
   margin-inline: auto;
   padding: clamp(1.5rem, 2.4vw, 2.35rem);
@@ -2557,5 +2577,285 @@
     min-height: 300px;
     padding: 1.35rem;
     gap: 1rem;
+  }
+}
+
+/* ==========================================================================
+   SECTION 2 — PROFESSIONAL COLOR, HIERARCHY, AND INTERACTION PASS
+
+   The cool blue-violet system remains the section identity.
+   The restrained ember accent is used only where it helps the eye:
+   - rating
+   - newest/selected saved layer
+   - small quote emphasis
+   - the section eyebrow
+   ========================================================================== */
+
+/* Smooth the handoff from the blue hero without adding a hard divider. */
+#section-2-empty-shelf,
+.section-empty-shelf {
+  color-scheme: dark;
+  border-top: 0;
+}
+
+/* Format and status are information labels, not controls. */
+.media-row-format span,
+.media-row-status span {
+  cursor: default;
+  transform: none;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.media-row-format span {
+  color: #dce3ff;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(114, 140, 255, 0.22),
+      rgba(86, 100, 213, 0.11)
+    );
+
+  border-color: rgba(174, 190, 255, 0.34);
+}
+
+.media-row-status span {
+  color: #e6ddff;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(159, 131, 255, 0.20),
+      rgba(116, 92, 214, 0.10)
+    );
+
+  border-color: rgba(198, 181, 255, 0.32);
+}
+
+.media-row-format span:hover,
+.media-row-status span:hover {
+  color: inherit;
+  transform: none;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* Rating: the strongest small accent, inspired by the warm reference UI. */
+.media-row-score {
+  color: #fff4f1;
+
+  background:
+    radial-gradient(
+      circle at 28% 18%,
+      rgba(255, 255, 255, 0.14),
+      transparent 34%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(239, 113, 105, 0.24),
+      rgba(139, 68, 91, 0.16) 52%,
+      rgba(114, 140, 255, 0.10)
+    );
+
+  border-color: var(--s2-accent-ember-border);
+
+  box-shadow:
+    0 12px 28px rgba(0, 0, 0, 0.25),
+    0 0 24px rgba(239, 113, 105, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.10);
+}
+
+.media-row-score span {
+  color: #fff5f2;
+}
+
+.media-row-score::before {
+  background:
+    radial-gradient(
+      circle,
+      rgba(239, 113, 105, 0.28),
+      rgba(159, 131, 255, 0.10) 48%,
+      transparent 72%
+    );
+}
+
+.media-row-score::after {
+  color: #ffe1dc;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(48, 20, 29, 0.99),
+      rgba(23, 13, 25, 0.99)
+    );
+
+  border-color: rgba(255, 162, 151, 0.38);
+}
+
+.media-row-score:hover,
+.media-row-score:focus-visible {
+  background:
+    radial-gradient(
+      circle at 28% 18%,
+      rgba(255, 255, 255, 0.18),
+      transparent 34%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(239, 113, 105, 0.32),
+      rgba(139, 68, 91, 0.22) 52%,
+      rgba(114, 140, 255, 0.13)
+    );
+
+  border-color: rgba(255, 177, 166, 0.62);
+
+  box-shadow:
+    0 18px 44px rgba(0, 0, 0, 0.35),
+    0 0 34px rgba(239, 113, 105, 0.15);
+}
+
+/* Saved-layer controls: cool by default, warm only for the newest layer. */
+.depth-button {
+  min-height: 38px;
+  padding-inline: 0.95rem;
+
+  color: #dbe1f5;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(114, 140, 255, 0.17),
+      rgba(86, 100, 213, 0.08)
+    );
+
+  border-color: rgba(181, 194, 255, 0.30);
+}
+
+.depth-button:hover,
+.depth-button:focus-visible {
+  color: #ffffff;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(114, 140, 255, 0.25),
+      rgba(159, 131, 255, 0.14)
+    );
+
+  border-color: rgba(205, 214, 255, 0.50);
+}
+
+.depth-button-new {
+  color: #fff1ee;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(239, 113, 105, 0.34),
+      rgba(157, 68, 86, 0.20)
+    );
+
+  border-color: rgba(255, 170, 160, 0.58);
+
+  box-shadow:
+    0 10px 26px rgba(0, 0, 0, 0.28),
+    0 0 24px rgba(239, 113, 105, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+/* Dense quote content: improve readability and use warm emphasis sparingly. */
+.falling-quote {
+  color: var(--s2-text-secondary);
+}
+
+.falling-quote::before {
+  color: rgba(255, 170, 160, 0.78);
+}
+
+.quote-emphasis {
+  color: #fff7f5;
+
+  background:
+    linear-gradient(
+      180deg,
+      transparent 56%,
+      rgba(239, 113, 105, 0.26) 56%,
+      rgba(159, 131, 255, 0.16) 100%
+    );
+}
+
+.falling-quote:hover,
+.falling-quote:focus-visible,
+.falling-quote.is-top-layer {
+  box-shadow:
+    0 28px 66px rgba(0, 0, 0, 0.54),
+    0 0 42px rgba(159, 131, 255, 0.13),
+    0 0 22px rgba(239, 113, 105, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.11);
+}
+
+/* Prevent bright manga pages from feeling like white lamps in dark mode. */
+.moment-frame img {
+  filter:
+    brightness(0.95)
+    contrast(0.99);
+}
+
+.moment-frame:hover img,
+.moment-frame:focus-visible img {
+  filter:
+    brightness(0.99)
+    contrast(1.01);
+}
+
+.character-name img {
+  filter:
+    brightness(0.96)
+    saturate(0.99);
+}
+
+.character-name:hover img,
+.character-name:focus-visible img,
+.character-name.is-top-layer img {
+  filter:
+    brightness(1)
+    saturate(1.04)
+    contrast(1.03);
+}
+
+/* The note accent borrows the warm reference color without recoloring the card. */
+.note-card::before {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(239, 113, 105, 0.78),
+      rgba(159, 131, 255, 0.58)
+    );
+}
+
+/* Keep the two short thoughts vertically balanced inside the large card. */
+.thoughts-cloud {
+  justify-content: center;
+}
+
+/* Larger mobile targets while preserving the compact desktop look. */
+@media (max-width: 640px) {
+  .depth-button {
+    min-height: 44px;
+  }
+
+  .media-row-format span,
+  .media-row-status span {
+    min-height: 32px;
+  }
+}
+
+/* Reduce decorative effects when motion is reduced. */
+@media (prefers-reduced-motion: reduce) {
+  .media-library-row::before,
+  .media-row-cover::after {
+    display: none;
   }
 }

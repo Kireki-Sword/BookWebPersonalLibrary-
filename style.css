@@ -592,11 +592,11 @@ section {
   background-color: transparent !important;
 }
 
-/* Keep the later homepage sections in the dark palette.
-   The first hero section is controlled by hero.css. */
-#section-2-empty-shelf,
+/* Keep Section 3 in the shared dark palette.
+   Section 1 is controlled by hero.css.
+   Section 2 is controlled by section-2.css so its transition and story lighting
+   are not overridden by a global !important background. */
 #section-3-search-demo,
-.section-empty-shelf,
 .section-search-demo {
   background:
     radial-gradient(circle at 78% 16%, rgba(124, 140, 255, 0.18), transparent 34%),
