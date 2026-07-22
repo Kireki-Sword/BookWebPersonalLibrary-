@@ -2010,25 +2010,30 @@ function buildMediaPanel(
     );
 
 
-  const normalizedStatuses =
+  const statusLabels =
     entries
       .map(
         (
           entry,
           index
         ) => {
-          return normalizeComparableText(
-            buildMediaEntryView(
-              mediaType,
-              entry,
-              index
-            )
-              .status
-          );
+          return buildMediaEntryView(
+            mediaType,
+            entry,
+            index
+          )
+            .status;
         }
       )
       .filter(
         Boolean
+      );
+
+
+  const normalizedStatuses =
+    statusLabels
+      .map(
+        normalizeComparableText
       );
 
 
@@ -2042,13 +2047,41 @@ function buildMediaPanel(
       1;
 
 
+  const suppressRepeatedStatus =
+    hasUniformStatus &&
+    entries.length > 3;
+
+
   list
     .classList
     .toggle(
       "detail-release-list-uniform-status",
-      hasUniformStatus &&
-      entries.length > 3
+      suppressRepeatedStatus
     );
+
+
+  if (
+    suppressRepeatedStatus
+  ) {
+    count.textContent =
+      `${
+        getMediaCountLabel(
+          mediaType,
+          entries.length
+        )
+      } · ${
+        getUniformStatusSummary(
+          statusLabels[0]
+        )
+      }`;
+
+
+    count
+      .classList
+      .add(
+        "detail-panel-count-uniform-status"
+      );
+  }
 
 
   entries
@@ -2062,7 +2095,8 @@ function buildMediaPanel(
             mediaType,
             entry,
             index,
-            releaseDensity
+            releaseDensity,
+            suppressRepeatedStatus
           )
         );
       }
@@ -2237,7 +2271,8 @@ function buildMediaEntry(
   mediaType,
   entry,
   index,
-  releaseDensity
+  releaseDensity,
+  suppressStatus = false
 ) {
   const view =
     buildMediaEntryView(
@@ -2358,7 +2393,8 @@ function buildMediaEntry(
 
 
   if (
-    view.status
+    view.status &&
+    !suppressStatus
   ) {
     const status =
       document.createElement(
@@ -2413,7 +2449,7 @@ function buildMediaEntry(
       view.notes
     )
   ) {
-    body.append(
+    const notesDisclosure =
       buildDisclosure(
         getNotesLabel(
           mediaType
@@ -2421,8 +2457,12 @@ function buildMediaEntry(
 
         view.notes,
 
-        "detail-release-disclosure"
-      )
+        "detail-release-disclosure detail-release-disclosure-notes"
+      );
+
+
+    body.append(
+      notesDisclosure
     );
   }
 
@@ -3317,13 +3357,57 @@ function getMediaPanelDescription(
 }
 
 
-function getNotesLabel(
-  mediaType
+function getNotesLabel() {
+  return "Notes";
+}
+
+
+function getUniformStatusSummary(
+  status
 ) {
-  return mediaType ===
-    "anime"
-      ? "Adaptation notes"
-      : "Publication notes";
+  const normalizedStatus =
+    normalizeComparableText(
+      status
+    );
+
+
+  const summaries = {
+    completed:
+      "All completed",
+
+    finished:
+      "All completed",
+
+    ongoing:
+      "All ongoing",
+
+    airing:
+      "Currently airing",
+
+    publishing:
+      "Currently publishing",
+
+    upcoming:
+      "All upcoming",
+
+    hiatus:
+      "All on hiatus",
+
+    cancelled:
+      "All cancelled"
+  };
+
+
+  return summaries[
+    normalizedStatus
+  ] ||
+  `All ${
+    String(
+      status ||
+      "listed"
+    )
+      .toLowerCase()
+  }`;
 }
 
 
