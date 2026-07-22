@@ -566,8 +566,8 @@
           end: () => {
             const distance =
               Math.max(
-                window.innerHeight * 8.5,
-                7600
+                window.innerHeight * 7,
+                6200
               );
 
             return `+=${distance}`;
