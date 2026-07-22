@@ -266,29 +266,39 @@
 
   position: absolute;
   left: 50%;
-  top: 50%;
+  top: 48%;
   z-index: -1;
 
   width: min(
-    calc(var(--section-2-row-width) + 120px),
-    calc(100% + 120px)
+    calc(var(--section-2-row-width) + 170px),
+    calc(100% + 170px)
   );
 
-  height: calc(100% + 100px);
+  height: calc(100% + 145px);
 
   pointer-events: none;
-  border-radius: 48px;
+  border-radius: 56px;
 
   background:
     radial-gradient(
-      ellipse at 50% 58%,
-      rgba(124, 140, 255, 0.2),
-      rgba(124, 140, 255, 0.1) 42%,
-      transparent 74%
+      ellipse at 50% 18%,
+      rgba(114, 140, 255, 0.30) 0%,
+      rgba(159, 131, 255, 0.16) 38%,
+      transparent 72%
+    ),
+    radial-gradient(
+      circle at 14% 52%,
+      rgba(121, 217, 255, 0.10) 0%,
+      transparent 44%
+    ),
+    radial-gradient(
+      circle at 86% 50%,
+      rgba(159, 131, 255, 0.12) 0%,
+      transparent 46%
     );
 
-  filter: blur(32px);
-  opacity: 0.84;
+  filter: blur(30px);
+  opacity: 0.88;
 
   transform: translate(-50%, -50%) scale(1);
 
@@ -298,9 +308,45 @@
     background 240ms ease;
 }
 
+/* Thin blue-violet light across the top of the persistent card. */
+.card-wrap::after {
+  content: "";
+
+  position: absolute;
+  top: 0;
+  left: 28px;
+  right: 28px;
+  z-index: 14;
+
+  height: 2px;
+
+  pointer-events: none;
+  border-radius: 999px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(121, 217, 255, 0.72) 20%,
+      rgba(114, 140, 255, 0.96) 50%,
+      rgba(159, 131, 255, 0.82) 80%,
+      transparent 100%
+    );
+
+  box-shadow:
+    0 0 12px rgba(114, 140, 255, 0.52),
+    0 0 28px rgba(159, 131, 255, 0.22);
+
+  opacity: 0.82;
+}
+
 .card-wrap:hover::before {
   opacity: 1;
   transform: translate(-50%, -50%) scale(1.025);
+}
+
+.card-wrap:hover::after {
+  opacity: 1;
 }
 
 .media-library-row {
@@ -353,8 +399,9 @@
   box-shadow:
     0 36px 94px rgba(0, 0, 0, 0.48),
     0 14px 34px rgba(0, 0, 0, 0.30),
-    0 0 34px rgba(114, 140, 255, 0.07),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    0 0 42px rgba(114, 140, 255, 0.11),
+    0 0 72px rgba(159, 131, 255, 0.055),
+    inset 0 1px 0 rgba(214, 220, 255, 0.11);
 
   transform:
     perspective(900px)
@@ -2113,6 +2160,11 @@
 
     width: calc(100vw - 24px);
     height: 620px;
+  }
+
+  .card-wrap::after {
+    left: 18px;
+    right: 18px;
   }
 
   .media-library-row {

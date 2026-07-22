@@ -167,7 +167,7 @@
         '[data-stage="thoughts-appear"]',
 
       itemSelector:
-        ".thought-card",
+        ".thoughts-cloud",
 
       buttonSelector:
         ".depth-button-thoughts",
@@ -258,7 +258,7 @@
   /* ==========================================================================
      PERSISTENT MOMENT LAYERS
 
-     Hovering a card:
+     Hovering a moment card:
      - gives it a newer z-index
      - keeps that z-index after hover
      - does not keep the visual enlargement
