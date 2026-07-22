@@ -6519,3 +6519,96 @@ body.detail-site .detail-description-toggle:focus-visible {
     grid-template-columns: 1fr !important;
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* =========================================================
+   FINAL HERO METADATA + STORY READING RHYTHM PATCH
+   ========================================================= */
+
+/* Align Genres, Release types, and Manga demographic. */
+
+body.detail-site .detail-genre-list {
+  margin-top: 0.78rem !important;
+}
+
+body.detail-site .detail-classification-groups {
+  margin-top: 0.38rem !important;
+  gap: 0.4rem !important;
+}
+
+body.detail-site .detail-metadata-row {
+  grid-template-columns: 116px minmax(0, 1fr) !important;
+  align-items: center !important;
+  column-gap: 0.72rem !important;
+  row-gap: 0.25rem !important;
+}
+
+body.detail-site .detail-metadata-label {
+  white-space: nowrap;
+  line-height: 1.2 !important;
+}
+
+body.detail-site .detail-metadata-values {
+  gap: 0.36rem 0.48rem !important;
+}
+
+body.detail-site
+  .detail-metadata-row-subformat
+  .detail-metadata-values {
+  gap: 0.28rem !important;
+}
+
+/* Improve the Story section’s reading width. */
+
+body.detail-site .detail-description-wrap {
+  max-width: 74ch !important;
+}
+
+body.detail-site .detail-description {
+  max-width: 74ch !important;
+  line-height: 1.75 !important;
+  text-wrap: pretty;
+}
+
+/* Make Themes slightly quieter and give Story more room. */
+
+body.detail-site .detail-theme-sidebar,
+body.detail-site
+  .detail-themes-panel.detail-theme-sidebar {
+  width: clamp(300px, 27%, 360px) !important;
+  margin-left: clamp(1.7rem, 3vw, 2.6rem) !important;
+}
+
+@media (max-width: 900px) {
+  body.detail-site .detail-description-wrap,
+  body.detail-site .detail-description {
+    max-width: 70ch !important;
+  }
+}
+
+@media (max-width: 680px) {
+  body.detail-site .detail-metadata-row {
+    grid-template-columns: 1fr !important;
+    gap: 0.3rem !important;
+  }
+
+  body.detail-site .detail-metadata-label {
+    white-space: normal;
+  }
+
+  body.detail-site .detail-description-wrap,
+  body.detail-site .detail-description {
+    max-width: 100% !important;
+  }
+}

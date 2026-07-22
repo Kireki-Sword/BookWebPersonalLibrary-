@@ -860,7 +860,7 @@ function renderClassificationDetails(
   appendClassificationRow({
     container,
     label:
-      "Manga audience",
+      "Manga demographic",
     values:
       demographics,
     parameter:
