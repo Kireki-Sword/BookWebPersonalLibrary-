@@ -150,7 +150,7 @@ y: 45px → 0
 rotate: -3deg / 3deg
 blur: 6px → 0px
 staggered entrance
-```
+``
 
 Then they gather.
 
