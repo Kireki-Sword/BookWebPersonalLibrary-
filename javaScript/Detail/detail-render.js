@@ -69,6 +69,11 @@ export function renderDetailPage(
   );
 
 
+  composeEditorialAboutSection(
+    elements
+  );
+
+
   scheduleAboutContentBalance(
     elements
   );
@@ -287,7 +292,7 @@ export function bindMediaTabEvents(
           .descriptionToggle
           .textContent =
             isExpanded
-              ? "Show full description"
+              ? "Read full story overview"
               : "Show less";
       }
     );
@@ -665,6 +670,47 @@ function renderGenres(
       false;
 
 
+  elements
+    .genres
+    .classList
+    .add(
+      "detail-metadata-row",
+      "detail-metadata-row-genres"
+    );
+
+
+  elements
+    .genres
+    .setAttribute(
+      "aria-label",
+      "Genres"
+    );
+
+
+  const label =
+    document.createElement(
+      "span"
+    );
+
+
+  label.className =
+    "detail-metadata-label";
+
+
+  label.textContent =
+    "Genres";
+
+
+  const list =
+    document.createElement(
+      "div"
+    );
+
+
+  list.className =
+    "detail-metadata-values detail-genre-values";
+
+
   genres
     .forEach(
       (
@@ -677,7 +723,7 @@ function renderGenres(
 
 
         link.className =
-          "detail-chip detail-chip-genre";
+          "detail-filter-link detail-filter-link-genre";
 
 
         link.href =
@@ -694,12 +740,18 @@ function renderGenres(
           genre;
 
 
-        elements
-          .genres
-          .append(
-            link
-          );
+        list.append(
+          link
+        );
       }
+    );
+
+
+  elements
+    .genres
+    .append(
+      label,
+      list
     );
 }
 
@@ -795,7 +847,7 @@ function renderClassificationDetails(
   appendClassificationRow({
     container,
     label:
-      "Subformat",
+      "Release types",
     values:
       subformats,
     parameter:
@@ -808,7 +860,7 @@ function renderClassificationDetails(
   appendClassificationRow({
     container,
     label:
-      "Demographic",
+      "Manga audience",
     values:
       demographics,
     parameter:
@@ -1000,7 +1052,7 @@ function appendClassificationRow({
 
 
   row.className =
-    "detail-classification-row";
+    `detail-metadata-row detail-metadata-row-${parameter}`;
 
 
   const heading =
@@ -1010,7 +1062,7 @@ function appendClassificationRow({
 
 
   heading.className =
-    "detail-classification-label";
+    "detail-metadata-label";
 
 
   heading.textContent =
@@ -1024,7 +1076,7 @@ function appendClassificationRow({
 
 
   list.className =
-    "detail-chip-list detail-classification-list";
+    "detail-metadata-values";
 
 
   values
@@ -1039,7 +1091,7 @@ function appendClassificationRow({
 
 
         link.className =
-          `detail-chip ${chipClass}`;
+          `detail-metadata-link ${chipClass}`;
 
 
         link.href =
@@ -2179,7 +2231,7 @@ function renderDescription(
   elements
     .descriptionToggle
     .textContent =
-      "Show full description";
+      "Read full story overview";
 
 
   elements
@@ -2227,6 +2279,15 @@ function renderThemes(
     .themesSection
     .hidden =
       false;
+
+
+  elements
+    .themesSection
+    .dataset
+    .themeCount =
+      String(
+        tags.length
+      );
 
 
   tags
@@ -2347,6 +2408,69 @@ function ensureThemesToggle(
 }
 
 
+function composeEditorialAboutSection(
+  elements
+) {
+  const aboutSection =
+    elements
+      .description
+      .closest(
+        ".detail-about-section"
+      );
+
+
+  const aboutCopy =
+    elements
+      .description
+      .closest(
+        ".detail-about-copy"
+      );
+
+
+  if (
+    !aboutSection ||
+    !aboutCopy ||
+    !elements.themesSection
+  ) {
+    return;
+  }
+
+
+  aboutSection
+    .classList
+    .add(
+      "detail-about-editorial"
+    );
+
+
+  aboutCopy
+    .classList
+    .add(
+      "detail-story-article"
+    );
+
+
+  elements
+    .themesSection
+    .classList
+    .add(
+      "detail-theme-index"
+    );
+
+
+  if (
+    elements
+      .themesSection
+      .parentElement !==
+    aboutCopy
+  ) {
+    aboutCopy.append(
+      elements.themesSection
+    );
+  }
+}
+
+
 function scheduleAboutContentBalance(
   elements
 ) {
@@ -2384,9 +2508,15 @@ function balanceAboutContent(
     );
 
 
+  const collapsedDescriptionHeight =
+    window.innerWidth <= 780
+      ? 360
+      : 330;
+
+
   const descriptionNeedsToggle =
     description.scrollHeight >
-    390;
+    collapsedDescriptionHeight;
 
 
   description
@@ -2402,7 +2532,7 @@ function balanceAboutContent(
 
 
   descriptionToggle.textContent =
-    "Show full description";
+    "Read full story overview";
 
 
   descriptionToggle.setAttribute(
@@ -2426,9 +2556,26 @@ function balanceAboutContent(
       .length;
 
 
+  const visibleThemeLimit =
+    window.innerWidth <= 640
+      ? 6
+      : 10;
+
+
+  elements
+    .themes
+    .style
+    .setProperty(
+      "--visible-theme-limit",
+      String(
+        visibleThemeLimit
+      )
+    );
+
+
   const themesNeedToggle =
     themeCount >
-    8;
+    visibleThemeLimit;
 
 
   elements
