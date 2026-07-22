@@ -809,11 +809,11 @@
       autoAlpha: 0.55,
 
       stagger: {
-        each: 0.028,
+        each: 0.038,
         from: "center"
       },
 
-      duration: 0.55,
+      duration: 0.82,
       ease: "power2.inOut"
     };
 
@@ -886,7 +886,7 @@
       layer.proxy,
       {
         scale: 1,
-        duration: 0.16
+        duration: 0.24
       }
     );
 
@@ -920,7 +920,7 @@
         rotationX: 0,
         rotationY: 0,
 
-        duration: 0.52,
+        duration: 0.88,
         ease: "power3.inOut"
       }
     );
@@ -943,7 +943,7 @@
       {
         autoAlpha: 0,
         scale: 0.96,
-        duration: 0.12
+        duration: 0.18
       },
       "<"
     );
@@ -952,7 +952,7 @@
       layer.button,
       {
         scale: 1.055,
-        duration: 0.12,
+        duration: 0.16,
         yoyo: true,
         repeat: 1
       },
@@ -963,14 +963,14 @@
       layer.stage,
       {
         autoAlpha: 0,
-        duration: 0.22
+        duration: 0.30
       }
     );
 
     timeline.to(
       {},
       {
-        duration: 0.18
+        duration: 0.26
       }
     );
 
