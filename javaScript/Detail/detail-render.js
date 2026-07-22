@@ -69,6 +69,11 @@ export function renderDetailPage(
   );
 
 
+  scheduleAboutContentBalance(
+    elements
+  );
+
+
   configureSimilarLink(
     title,
     elements
@@ -284,6 +289,86 @@ export function bindMediaTabEvents(
             isExpanded
               ? "Show full description"
               : "Show less";
+      }
+    );
+
+
+  elements
+    .themesSection
+    .addEventListener(
+      "click",
+      (event) => {
+        const button =
+          event
+            .target
+            .closest(
+              "[data-themes-toggle]"
+            );
+
+
+        if (!button) {
+          return;
+        }
+
+
+        const isExpanded =
+          button
+            .getAttribute(
+              "aria-expanded"
+            ) ===
+          "true";
+
+
+        elements
+          .themes
+          .classList
+          .toggle(
+            "is-collapsed",
+            isExpanded
+          );
+
+
+        button
+          .setAttribute(
+            "aria-expanded",
+            String(
+              !isExpanded
+            )
+          );
+
+
+        button.textContent =
+          isExpanded
+            ? "Show all themes"
+            : "Show fewer themes";
+      }
+    );
+
+
+  let resizeTimer =
+    null;
+
+
+  window
+    .addEventListener(
+      "resize",
+      () => {
+        window
+          .clearTimeout(
+            resizeTimer
+          );
+
+
+        resizeTimer =
+          window
+            .setTimeout(
+              () => {
+                scheduleAboutContentBalance(
+                  elements
+                );
+              },
+              120
+            );
       }
     );
 }
@@ -2093,6 +2178,12 @@ function renderDescription(
 
   elements
     .descriptionToggle
+    .textContent =
+      "Show full description";
+
+
+  elements
+    .descriptionToggle
     .setAttribute(
       "aria-expanded",
       "true"
@@ -2109,6 +2200,12 @@ function renderThemes(
     .replaceChildren();
 
 
+  const toggle =
+    ensureThemesToggle(
+      elements
+    );
+
+
   if (
     !tags.length
   ) {
@@ -2116,6 +2213,10 @@ function renderThemes(
       .themesSection
       .hidden =
         true;
+
+
+    toggle.hidden =
+      true;
 
 
     return;
@@ -2166,6 +2267,193 @@ function renderThemes(
           );
       }
     );
+
+
+  elements
+    .themes
+    .classList
+    .remove(
+      "is-collapsed"
+    );
+
+
+  toggle.hidden =
+    true;
+
+
+  toggle.textContent =
+    "Show all themes";
+
+
+  toggle.setAttribute(
+    "aria-expanded",
+    "true"
+  );
+}
+
+
+function ensureThemesToggle(
+  elements
+) {
+  let toggle =
+    elements
+      .themesSection
+      .querySelector(
+        "[data-themes-toggle]"
+      );
+
+
+  if (toggle) {
+    return toggle;
+  }
+
+
+  toggle =
+    document.createElement(
+      "button"
+    );
+
+
+  toggle.type =
+    "button";
+
+
+  toggle.className =
+    "detail-themes-toggle";
+
+
+  toggle.dataset.themesToggle =
+    "";
+
+
+  toggle.hidden =
+    true;
+
+
+  toggle.setAttribute(
+    "aria-expanded",
+    "true"
+  );
+
+
+  elements
+    .themesSection
+    .append(
+      toggle
+    );
+
+
+  return toggle;
+}
+
+
+function scheduleAboutContentBalance(
+  elements
+) {
+  window
+    .requestAnimationFrame(
+      () => {
+        window
+          .requestAnimationFrame(
+            () => {
+              balanceAboutContent(
+                elements
+              );
+            }
+          );
+      }
+    );
+}
+
+
+function balanceAboutContent(
+  elements
+) {
+  const description =
+    elements.description;
+
+
+  const descriptionToggle =
+    elements.descriptionToggle;
+
+
+  description
+    .classList
+    .remove(
+      "is-collapsed"
+    );
+
+
+  const descriptionNeedsToggle =
+    description.scrollHeight >
+    390;
+
+
+  description
+    .classList
+    .toggle(
+      "is-collapsed",
+      descriptionNeedsToggle
+    );
+
+
+  descriptionToggle.hidden =
+    !descriptionNeedsToggle;
+
+
+  descriptionToggle.textContent =
+    "Show full description";
+
+
+  descriptionToggle.setAttribute(
+    "aria-expanded",
+    String(
+      !descriptionNeedsToggle
+    )
+  );
+
+
+  const themesToggle =
+    ensureThemesToggle(
+      elements
+    );
+
+
+  const themeCount =
+    elements
+      .themes
+      .children
+      .length;
+
+
+  const themesNeedToggle =
+    themeCount >
+    8;
+
+
+  elements
+    .themes
+    .classList
+    .toggle(
+      "is-collapsed",
+      themesNeedToggle
+    );
+
+
+  themesToggle.hidden =
+    !themesNeedToggle;
+
+
+  themesToggle.textContent =
+    "Show all themes";
+
+
+  themesToggle.setAttribute(
+    "aria-expanded",
+    String(
+      !themesNeedToggle
+    )
+  );
 }
 
 

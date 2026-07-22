@@ -5325,3 +5325,182 @@ body.detail-site .detail-description.is-collapsed::after {
 body.detail-site .detail-description-toggle {
   display: none !important;
 }
+
+
+/* =========================================================
+   FINAL GENRE / THEME / STORY BALANCE FIX
+   ========================================================= */
+
+/* Long-form reading is clearer left-aligned than fully justified on the web. */
+body.detail-site .detail-description-wrap {
+  max-width: 68ch;
+}
+
+body.detail-site .detail-description,
+body.detail-site .detail-description.is-collapsed {
+  height: auto !important;
+  overflow-wrap: anywhere;
+  hyphens: auto;
+  text-align: left;
+  text-wrap: pretty;
+  -webkit-mask-image: none !important;
+  mask-image: none !important;
+}
+
+body.detail-site .detail-description.is-collapsed {
+  max-height: 19.5rem !important;
+  overflow: hidden !important;
+}
+
+body.detail-site .detail-description.is-collapsed::after {
+  display: block !important;
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 5.8rem;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      to bottom,
+      transparent,
+      rgba(8, 14, 31, 0.94) 58%,
+      rgba(8, 14, 31, 1)
+    ) !important;
+}
+
+body.detail-site .detail-description-toggle,
+body.detail-site .detail-themes-toggle {
+  display: inline-flex !important;
+  align-items: center;
+  min-height: 38px;
+  margin-top: 0.75rem;
+  padding: 0.42rem 0;
+  color: #bfcaff;
+  background: transparent;
+  border: 0;
+  font: 750 0.72rem var(--font-body, system-ui, sans-serif);
+  cursor: pointer;
+  transition: color 180ms ease, text-shadow 180ms ease;
+}
+
+body.detail-site .detail-description-toggle[hidden],
+body.detail-site .detail-themes-toggle[hidden] {
+  display: none !important;
+}
+
+body.detail-site .detail-description-toggle:hover,
+body.detail-site .detail-description-toggle:focus-visible,
+body.detail-site .detail-themes-toggle:hover,
+body.detail-site .detail-themes-toggle:focus-visible {
+  color: #ffffff;
+  text-shadow: 0 0 16px rgba(130, 157, 255, 0.42);
+}
+
+body.detail-site .detail-description-toggle:focus-visible,
+body.detail-site .detail-themes-toggle:focus-visible {
+  outline: 2px solid rgba(132, 157, 255, 0.72);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+/* Keep large theme collections compact until the reader asks to expand them. */
+body.detail-site .detail-theme-list.is-collapsed > .detail-chip-theme:nth-child(n + 9) {
+  display: none;
+}
+
+/* Theme chips use a coordinated four-colour cycle instead of one repeated tint. */
+body.detail-site .detail-theme-list > .detail-chip-theme {
+  --theme-rgb: 112, 146, 255;
+  color: #e2e9ff !important;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(var(--theme-rgb), 0.19),
+      rgba(20, 30, 67, 0.78)
+    ) !important;
+  border-color: rgba(var(--theme-rgb), 0.38) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.055),
+    0 0 15px rgba(var(--theme-rgb), 0.055) !important;
+}
+
+body.detail-site .detail-theme-list > .detail-chip-theme:nth-child(4n + 1) {
+  --theme-rgb: 93, 202, 255;
+}
+
+body.detail-site .detail-theme-list > .detail-chip-theme:nth-child(4n + 2) {
+  --theme-rgb: 111, 139, 255;
+}
+
+body.detail-site .detail-theme-list > .detail-chip-theme:nth-child(4n + 3) {
+  --theme-rgb: 159, 126, 255;
+}
+
+body.detail-site .detail-theme-list > .detail-chip-theme:nth-child(4n + 4) {
+  --theme-rgb: 204, 126, 255;
+}
+
+body.detail-site .detail-theme-list > .detail-chip-theme::before {
+  background: rgb(var(--theme-rgb)) !important;
+  box-shadow: 0 0 10px rgba(var(--theme-rgb), 0.52) !important;
+}
+
+body.detail-site .detail-theme-list > .detail-chip-theme:hover,
+body.detail-site .detail-theme-list > .detail-chip-theme:focus-visible {
+  color: #ffffff !important;
+  border-color: rgba(var(--theme-rgb), 0.68) !important;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(var(--theme-rgb), 0.29),
+      rgba(25, 37, 80, 0.88)
+    ) !important;
+  transform: translateY(-1px);
+}
+
+/* Genres also receive subtle variation, while remaining one semantic group. */
+body.detail-site .detail-genre-list > .detail-chip-genre {
+  --genre-rgb: 105, 144, 255;
+  color: #e3eaff !important;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(var(--genre-rgb), 0.20),
+      rgba(23, 34, 76, 0.72)
+    ) !important;
+  border-color: rgba(var(--genre-rgb), 0.42) !important;
+}
+
+body.detail-site .detail-genre-list > .detail-chip-genre:nth-child(4n + 2) {
+  --genre-rgb: 104, 190, 255;
+}
+
+body.detail-site .detail-genre-list > .detail-chip-genre:nth-child(4n + 3) {
+  --genre-rgb: 145, 126, 255;
+}
+
+body.detail-site .detail-genre-list > .detail-chip-genre:nth-child(4n + 4) {
+  --genre-rgb: 188, 125, 255;
+}
+
+/* Subformat and demographic remain separate without making one an isolated purple badge. */
+body.detail-site .detail-chip-subformat {
+  color: #e1ebff !important;
+  background:
+    linear-gradient(145deg, rgba(83, 128, 228, 0.28), rgba(42, 61, 136, 0.30)) !important;
+  border-color: rgba(118, 166, 255, 0.48) !important;
+}
+
+body.detail-site .detail-chip-demographic {
+  color: #eee9ff !important;
+  background:
+    linear-gradient(145deg, rgba(124, 103, 218, 0.28), rgba(67, 55, 145, 0.30)) !important;
+  border-color: rgba(164, 145, 255, 0.48) !important;
+}
+
+@media (max-width: 780px) {
+  body.detail-site .detail-description.is-collapsed {
+    max-height: 22rem !important;
+  }
+
+}

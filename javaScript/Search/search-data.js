@@ -90,6 +90,17 @@ export const CONFIG =
   });
 
 
+const DEMOGRAPHIC_FACET_KEYS =
+  new Set([
+    "shonen",
+    "seinen",
+    "shojo",
+    "josei",
+    "kodomo",
+    "unknown"
+  ]);
+
+
 /* =========================================================
    INITIAL STATE
    ========================================================= */
@@ -336,7 +347,12 @@ export function normalizeStory(
   const genres =
     normalizeFacetList(
       row.genres
-    );
+    )
+      .filter((genre) => {
+        return !DEMOGRAPHIC_FACET_KEYS.has(
+          genre.key
+        );
+      });
 
   const tags =
     normalizeFacetList(

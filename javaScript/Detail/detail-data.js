@@ -36,6 +36,17 @@ const SUPPORTED_MEDIA_TYPES =
   );
 
 
+const DEMOGRAPHIC_KEYS =
+  new Set([
+    "shonen",
+    "seinen",
+    "shojo",
+    "josei",
+    "kodomo",
+    "unknown"
+  ]);
+
+
 const MEDIA_LABELS =
   Object.freeze({
     manga:
@@ -378,7 +389,14 @@ export function normalizeTitle(
       extractStrings(
         row.genres
       )
-    );
+    )
+      .filter((genre) => {
+        return !DEMOGRAPHIC_KEYS.has(
+          normalizeText(
+            genre
+          )
+        );
+      });
 
 
   const tags =
