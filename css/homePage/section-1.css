@@ -1,6 +1,15 @@
 /* Section 1 Hero — Midnight Aurora Color Version */
 
 .hero {
+  /* Hero-only aura controls. These do not replace or rename any existing variables. */
+  --hero-aura-blue: var(--hero-aura-blue);
+  --hero-aura-blue-soft: var(--hero-aura-blue-soft);
+  --hero-aura-violet: var(--hero-aura-violet);
+  --hero-aura-violet-soft: var(--hero-aura-violet-soft);
+  --hero-aura-cyan: var(--hero-aura-cyan);
+  --hero-aura-cyan-soft: var(--hero-aura-cyan-soft);
+  --hero-aura-orchid: var(--hero-aura-orchid);
+
   height: calc(100vh - 64px);
   min-height: 720px;
 
@@ -23,10 +32,37 @@
   overflow: hidden;
 
   background:
-    radial-gradient(ellipse at 68% 42%, rgba(124, 140, 255, 0.24) 0%, rgba(124, 140, 255, 0.10) 34%, transparent 70%),
-    radial-gradient(ellipse at 28% 36%, rgba(184, 192, 255, 0.10) 0%, rgba(155, 124, 255, 0.045) 40%, transparent 72%),
-    radial-gradient(ellipse at 50% 96%, rgba(210, 140, 255, 0.12) 0%, rgba(210, 140, 255, 0.035) 42%, transparent 76%),
-    linear-gradient(180deg, #060814 0%, #0A1024 68%, #050611 100%);
+    radial-gradient(
+      ellipse 760px 540px at 76% 40%,
+      var(--hero-aura-blue) 0%,
+      var(--hero-aura-blue-soft) 38%,
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 690px 520px at 22% 34%,
+      var(--hero-aura-violet) 0%,
+      var(--hero-aura-violet-soft) 40%,
+      transparent 74%
+    ),
+    radial-gradient(
+      ellipse 620px 430px at 53% 88%,
+      var(--hero-aura-cyan) 0%,
+      var(--hero-aura-cyan-soft) 44%,
+      transparent 74%
+    ),
+    radial-gradient(
+      ellipse 500px 360px at 96% 8%,
+      var(--hero-aura-orchid) 0%,
+      transparent 72%
+    ),
+    linear-gradient(
+      135deg,
+      #07091a 0%,
+      #0c1430 44%,
+      #0a1027 72%,
+      #050713 100%
+    )
+    !important;
 }
 
 .hero::before {
@@ -39,9 +75,9 @@
   background:
     linear-gradient(
       90deg,
-      rgba(3, 5, 14, 0.30) 0%,
-      transparent 34%,
-      rgba(3, 5, 14, 0.28) 100%
+      rgba(3, 5, 14, 0.13) 0%,
+      transparent 32%,
+      rgba(3, 5, 14, 0.15) 100%
     );
 }
 
