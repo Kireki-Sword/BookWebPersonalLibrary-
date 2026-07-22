@@ -1,11 +1,11 @@
 /*  =========================================================
-   INKWELL DETAIL PAGE — CONSOLIDATED
+   SITE DETAIL PAGE — CONSOLIDATED
    Duplicate override passes removed. Final active values retained.
    =========================================================  */
 
 
 /* =========================================================
-   INKWELL DETAIL PAGE
+   SITE DETAIL PAGE
    Manga and Anime edition
    ========================================================= */
 
@@ -80,9 +80,9 @@ body.detail-site {
   background-attachment:
     scroll !important;
   --detail-page-bg: #050816;
-  --detail-surface-1: #0a1125;
-  --detail-surface-2: #0d1630;
-  --detail-surface-3: #121d3b;
+  --detail-surface-primary: #0a1125;
+  --detail-surface-secondary: #0d1630;
+  --detail-surface-raised: #121d3b;
   --detail-text-strong: #f7f8ff;
   --detail-text: #cbd4ea;
   --detail-text-soft: #aab6d1;
@@ -136,7 +136,7 @@ body.detail-site {
     clamp(5rem, 8vw, 7rem);
 
   color:
-    var(--ink, #f5f7ff);
+    var(--color-text-primary, #f5f7ff);
 
   background:
     radial-gradient(
@@ -310,7 +310,7 @@ body.detail-site {
     0.82rem;
 
   color:
-    var(--ink-light, #9ca8c4);
+    var(--color-text-muted, #9ca8c4);
 
   background:
     linear-gradient(
@@ -474,7 +474,7 @@ body.detail-site {
 
 .detail-button-secondary {
   color:
-    var(--ink-mid, #cbd3ea);
+    var(--color-text-secondary, #cbd3ea);
 
   background:
     rgba(255, 255, 255, 0.035);
@@ -649,7 +649,7 @@ body.detail-site {
     0;
 
   color:
-    var(--ink-light, #9ca8c4);
+    var(--color-text-muted, #9ca8c4);
 
   font-size: 0.88rem;
 
@@ -5182,7 +5182,7 @@ body.detail-site :where( .detail-filter-link, .detail-metadata-link, .detail-chi
   display: none;
 }
 
-/* Native dialog: focused, responsive, and visibly part of the Inkwell system. */
+/* Native dialog: focused, responsive, and visibly part of the SITE system. */
 .detail-library-dialog {
   width: min(510px, calc(100vw - 2rem));
   max-width: none;

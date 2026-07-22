@@ -10,8 +10,8 @@
   --s2-panel-bg-strong: rgba(15, 20, 36, 0.98);
   --s2-border: rgba(170, 183, 255, 0.18);
   --s2-border-strong: rgba(190, 200, 255, 0.42);
-  --s2-text: #f5f1ff;
-  --s2-text-mid: #c9cde2;
+  --s2-text-primary: #f5f1ff;
+  --s2-text-secondary: #c9cde2;
   --s2-text-muted: #8f96b3;
   --s2-quote-gap: clamp(0.68rem, 0.78vw, 0.82rem);
   --s2-quote-font-size: clamp(0.95rem, 0.34vw + 0.72rem, 1rem);
@@ -29,7 +29,7 @@
     max(1.5rem, calc((100vw - 1220px) / 2 + 1.5rem))
     6rem;
 
-  color: var(--s2-text);
+  color: var(--s2-text-primary);
 
   background:
     radial-gradient(
@@ -147,7 +147,7 @@
   font-size: clamp(3rem, 5.8vw, 5.25rem);
   font-weight: 700;
 
-  color: var(--s2-text);
+  color: var(--s2-text-primary);
 
   letter-spacing: -0.055em;
   line-height: 0.94;
@@ -160,7 +160,7 @@
   font-family: var(--font-body, system-ui, sans-serif);
   font-size: 1.05rem;
 
-  color: var(--s2-text-mid);
+  color: var(--s2-text-secondary);
   line-height: 1.7;
 }
 
@@ -546,7 +546,7 @@
   font-size: clamp(1.9rem, 2.35vw, 2.2rem);
   font-weight: 760;
 
-  color: var(--s2-text);
+  color: var(--s2-text-primary);
 
   letter-spacing: -0.045em;
   line-height: 1;
@@ -567,7 +567,7 @@
   font-size: 0.96rem;
   font-weight: 650;
 
-  color: var(--s2-text-mid);
+  color: var(--s2-text-secondary);
   line-height: 1.35;
 
   cursor: default;
@@ -639,7 +639,7 @@
   font-size: 0.78rem;
   font-weight: 800;
 
-  color: var(--s2-text-mid);
+  color: var(--s2-text-secondary);
   white-space: nowrap;
 
   cursor: pointer;
@@ -656,7 +656,7 @@
 .media-row-status span:hover {
   transform: translateY(-1px);
 
-  color: var(--s2-text);
+  color: var(--s2-text-primary);
   border-color: rgba(184, 192, 255, 0.44);
 
   background:
@@ -718,7 +718,7 @@
   font-size: 1.55rem;
   font-weight: 800;
 
-  color: var(--s2-text);
+  color: var(--s2-text-primary);
 
   letter-spacing: -0.02em;
   line-height: 1;
@@ -770,7 +770,7 @@
   font-size: 0.62rem;
   font-weight: 850;
 
-  color: var(--s2-text-mid);
+  color: var(--s2-text-secondary);
 
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -888,7 +888,7 @@
   font-size: 0.8rem;
   font-weight: 820;
 
-  color: var(--s2-text-mid);
+  color: var(--s2-text-secondary);
 
   cursor: pointer;
 
@@ -903,7 +903,7 @@
 .depth-button:hover {
   transform: translateY(-1px);
 
-  color: var(--s2-text);
+  color: var(--s2-text-primary);
   border-color: rgba(184, 192, 255, 0.48);
 
   background:
@@ -929,7 +929,7 @@
 }
 
 .depth-button-new {
-  color: var(--s2-text);
+  color: var(--s2-text-primary);
   border-color: rgba(184, 192, 255, 0.54);
 
   background:
@@ -1049,7 +1049,7 @@
   font-weight: 500;
   line-height: var(--s2-quote-line-height);
 
-  color: var(--s2-text-mid);
+  color: var(--s2-text-secondary);
 
   overflow-wrap: break-word;
   word-break: normal;
@@ -1105,7 +1105,7 @@
 }
 
 .quote-emphasis {
-  color: var(--s2-text);
+  color: var(--s2-text-primary);
   font-weight: 760;
 
   background:
@@ -1189,7 +1189,7 @@
 .falling-quote.is-top-layer {
   z-index: 999;
 
-  color: var(--s2-text);
+  color: var(--s2-text-primary);
   border-color: var(--s2-border-strong);
 
   background:
@@ -1569,7 +1569,7 @@
   font-weight: 820;
 
   line-height: 1.08;
-  color: var(--s2-text-mid);
+  color: var(--s2-text-secondary);
 
   overflow: hidden;
 }
@@ -1684,7 +1684,7 @@
   font-size: 0.9rem;
 
   line-height: 1.55;
-  color: var(--s2-text-mid);
+  color: var(--s2-text-secondary);
 
   cursor: default;
   transform-origin: center center;
@@ -1722,7 +1722,7 @@
 .note-card.is-top-layer {
   z-index: 999;
 
-  color: var(--s2-text);
+  color: var(--s2-text-primary);
   border-color: var(--s2-border-strong);
 
   box-shadow:
@@ -1790,7 +1790,7 @@
   font-size: clamp(1rem, 1vw, 1.12rem);
 
   line-height: 1.56;
-  color: var(--s2-text-mid);
+  color: var(--s2-text-secondary);
 
   cursor: default;
   transform-origin: center center;
@@ -1808,7 +1808,7 @@
 .thought-card.is-top-layer {
   z-index: 999;
 
-  color: var(--s2-text);
+  color: var(--s2-text-primary);
   border-color: var(--s2-border-strong);
 
   box-shadow:
@@ -1862,7 +1862,7 @@
   font-size: 0.8rem;
   font-weight: 830;
 
-  color: var(--s2-text);
+  color: var(--s2-text-primary);
 
   opacity: 0;
   visibility: hidden;
@@ -2281,12 +2281,6 @@
 }
 
 
-
-
-
-
-
-
 /* ==========================================================================
    SECTION 2 — QUOTE OVERFLOW + SINGLE THOUGHT CARD FIXES
    Paste this at the very bottom of the existing Section 2 CSS file.
@@ -2531,7 +2525,7 @@
 
   box-shadow: none;
 
-  color: var(--s2-text-mid);
+  color: var(--s2-text-secondary);
   filter: none;
 
   /*
@@ -2544,7 +2538,7 @@
 
 .thought-card:hover,
 .thought-card.is-top-layer {
-  color: var(--s2-text);
+  color: var(--s2-text-primary);
 }
 
 .thought-card:focus-visible {

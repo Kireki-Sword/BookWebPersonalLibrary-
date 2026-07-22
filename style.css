@@ -7,37 +7,82 @@
   margin: 0;
   padding: 0;
 }
-
-
 :root {
-  /* MIDNIGHT AURORA PALETTE */
+  /* =========================================================
+     RAW COLOR PALETTE
+     Names describe the visible color. Components should
+     normally use the semantic --color-* tokens below.
+     ========================================================= */
 
-  --cream: #060814;
-  --cream-dark: #0A1024;
+  --palette-navy-deepest: #050713;
+  --palette-navy-deep: #070b18;
+  --palette-navy: #0b1224;
+  --palette-navy-light: #10182e;
+  --palette-navy-lighter: #151f3a;
+  --palette-navy-hover: #1a2646;
 
-  --surface: #101624;
-  --surface-soft: #151B2E;
-  --surface-warm: #1B1730;
+  --palette-blue-light: #cdd6ff;
+  --palette-blue: #728cff;
+  --palette-blue-dark: #5664d5;
 
-  /* Keep these old variable names so your existing CSS still works */
-  --warm-brown: #7C8CFF;
-  --warm-brown-dark: #5B5FE8;
-  --warm-brown-light: #B8C0FF;
+  --palette-cyan: #79d9ff;
+  --palette-violet: #9f83ff;
+  --palette-pink: #c995ff;
+  --palette-gold: #ffd38a;
 
-  --accent-purple: #9B7CFF;
-  --accent-blue: #6D8BFF;
-  --accent-cyan: #74D7FF;
-  --accent-pink: #D28CFF;
+  --palette-blue-white: #f5f7ff;
+  --palette-blue-gray-light: #c6cee3;
+  --palette-blue-gray: #99a6c2;
+  --palette-blue-gray-dark: #7e8aa5;
+  --palette-white: #ffffff;
 
-  --ink: #F5F7FF;
-  --ink-mid: #CBD3EA;
-  --ink-light: #9CA8C4;
-  --ink-faint: #66708A;
+  --palette-green: #7ad9b0;
+  --palette-amber: #ffc86b;
+  --palette-red: #ff8da1;
 
-  --white: #FFFFFF;
 
-  --border: rgba(184, 192, 255, 0.16);
-  --border-strong: rgba(184, 192, 255, 0.34);
+  /* =========================================================
+     SEMANTIC COLOR TOKENS
+     Names describe what each color does in the interface.
+     ========================================================= */
+
+  --color-background-page: var(--palette-navy-deepest);
+  --color-background-navbar: var(--palette-navy-deep);
+  --color-background-elevated: var(--palette-navy);
+
+  --color-surface-primary: var(--palette-navy);
+  --color-surface-secondary: var(--palette-navy-light);
+  --color-surface-raised: var(--palette-navy-lighter);
+  --color-surface-hover: var(--palette-navy-hover);
+
+  --color-text-primary: var(--palette-blue-white);
+  --color-text-secondary: var(--palette-blue-gray-light);
+  --color-text-muted: var(--palette-blue-gray);
+  --color-text-subtle: var(--palette-blue-gray-dark);
+  --color-text-on-accent: var(--palette-white);
+
+  --color-accent: var(--palette-blue);
+  --color-accent-light: var(--palette-blue-light);
+  --color-accent-dark: var(--palette-blue-dark);
+  --color-accent-hover: var(--palette-violet);
+  --color-focus: var(--palette-cyan);
+
+  --color-success: var(--palette-green);
+  --color-warning: var(--palette-amber);
+  --color-danger: var(--palette-red);
+
+  --color-border-subtle: rgba(167, 183, 245, 0.12);
+  --color-border-default: rgba(167, 183, 245, 0.20);
+  --color-border-strong: rgba(145, 173, 255, 0.36);
+
+
+  /* =========================================================
+     SHADOWS, SHAPE, TYPE AND MOTION
+     ========================================================= */
+
+  --focus-ring-cyan:
+    0 0 0 3px rgba(121, 217, 255, 0.18),
+    0 0 0 1px rgba(121, 217, 255, 0.82);
 
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.28);
   --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.34);
@@ -49,6 +94,15 @@
     0 0 0 1px rgba(184, 192, 255, 0.12),
     0 0 70px rgba(124, 140, 255, 0.12);
 
+  --shadow-card:
+    0 22px 58px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+
+  --shadow-raised:
+    0 28px 74px rgba(0, 0, 0, 0.48),
+    0 0 42px rgba(114, 140, 255, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.055);
+
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 18px;
@@ -58,11 +112,24 @@
   --font-body: 'Inter', system-ui, sans-serif;
 
   --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+
+  /* =========================================================
+     SCROLLBAR COMPONENT TOKENS
+     ========================================================= */
+
+  --scrollbar-track: var(--palette-navy-deepest);
+  --scrollbar-track-middle: #090d1c;
+  --scrollbar-cyan: var(--palette-cyan);
+  --scrollbar-blue: var(--palette-blue);
+  --scrollbar-purple: var(--palette-violet);
+  --scrollbar-border: rgba(5, 7, 17, 0.88);
+  --scrollbar-glow: rgba(109, 139, 255, 0.34);
 }
 
 
 html {
-  background: #060814;
+  background: var(--color-background-page);
 }
 
 
@@ -78,7 +145,7 @@ body {
 
   background-attachment: fixed;
 
-  color: var(--ink);
+  color: var(--color-text-primary);
   line-height: 1.6;
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
@@ -134,7 +201,7 @@ nav {
 
   background:
     radial-gradient(circle at 30% 22%, rgba(255, 255, 255, 0.34), transparent 26%),
-    linear-gradient(145deg, var(--accent-purple), var(--accent-blue) 58%, var(--warm-brown-dark));
+    linear-gradient(145deg, var(--palette-violet), var(--palette-blue) 58%, var(--color-accent-dark));
 
   border-radius: 12px;
 
@@ -142,7 +209,7 @@ nav {
   align-items: center;
   justify-content: center;
 
-  color: var(--white);
+  color: var(--color-text-on-accent);
   font-size: 18px;
 
   transition:
@@ -159,7 +226,7 @@ nav {
 .nav-logo:hover .nav-logo-icon {
   background:
     radial-gradient(circle at 30% 22%, rgba(255, 255, 255, 0.38), transparent 26%),
-    linear-gradient(145deg, var(--accent-pink), var(--accent-purple) 45%, var(--accent-blue));
+    linear-gradient(145deg, var(--palette-pink), var(--palette-violet) 45%, var(--palette-blue));
 
   transform: translateY(-1px);
 
@@ -173,7 +240,7 @@ nav {
   font-family: var(--font-display);
   font-size: 1.25rem;
   font-weight: 600;
-  color: var(--ink);
+  color: var(--color-text-primary);
   letter-spacing: -0.01em;
 }
 
@@ -192,7 +259,7 @@ nav {
 
   padding: 0.62rem 0.82rem;
 
-  color: var(--ink-light);
+  color: var(--color-text-muted);
   background: transparent;
   border-radius: 0;
   box-shadow: none;
@@ -237,7 +304,7 @@ nav {
 
 .nav-links a:hover,
 .nav-links a:focus-visible {
-  color: var(--inkwell-text, var(--ink));
+  color: var(--color-text-primary, var(--color-text-primary));
   background: transparent;
   box-shadow: none;
 }
@@ -268,7 +335,7 @@ nav {
 .btn-ghost {
   background: rgba(255, 255, 255, 0.045);
   border: 1px solid rgba(184, 192, 255, 0.22);
-  color: var(--ink-mid);
+  color: var(--color-text-secondary);
 
   font-family: var(--font-body);
   font-size: 0.875rem;
@@ -294,7 +361,7 @@ nav {
 .btn-ghost:hover {
   background: rgba(184, 192, 255, 0.10);
   border-color: rgba(184, 192, 255, 0.38);
-  color: var(--ink);
+  color: var(--color-text-primary);
   transform: translateY(-1px);
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.24);
 }
@@ -302,10 +369,10 @@ nav {
 .btn-primary {
   background:
     radial-gradient(circle at 28% 18%, rgba(255, 255, 255, 0.22), transparent 28%),
-    linear-gradient(145deg, var(--accent-purple), var(--accent-blue) 55%, var(--warm-brown-dark));
+    linear-gradient(145deg, var(--palette-violet), var(--palette-blue) 55%, var(--color-accent-dark));
 
   border: 1px solid rgba(184, 192, 255, 0.30);
-  color: var(--white);
+  color: var(--color-text-on-accent);
 
   font-family: var(--font-body);
   font-size: 0.875rem;
@@ -335,7 +402,7 @@ nav {
 .btn-primary:hover {
   background:
     radial-gradient(circle at 28% 18%, rgba(255, 255, 255, 0.28), transparent 28%),
-    linear-gradient(145deg, var(--accent-pink), var(--accent-purple) 45%, var(--accent-blue));
+    linear-gradient(145deg, var(--palette-pink), var(--palette-violet) 45%, var(--palette-blue));
 
   border-color: rgba(184, 192, 255, 0.44);
   transform: translateY(-1px);
@@ -359,26 +426,26 @@ nav {
 }
 
 .hero-label {
-  color: var(--warm-brown-light);
+  color: var(--color-accent-light);
 }
 
 .hero-title {
-  color: var(--ink);
+  color: var(--color-text-primary);
   text-shadow:
     0 18px 55px rgba(0, 0, 0, 0.46),
     0 0 42px rgba(124, 140, 255, 0.10);
 }
 
 .hero-subtitle {
-  color: var(--ink-mid);
+  color: var(--color-text-secondary);
 }
 
 .hero-p {
-  color: var(--ink-light);
+  color: var(--color-text-muted);
 }
 
 .hero-proof {
-  color: var(--ink-faint);
+  color: var(--color-text-subtle);
 }
 
 
@@ -405,16 +472,16 @@ nav {
 
 .card-title,
 #card-score {
-  color: var(--ink) !important;
+  color: var(--color-text-primary) !important;
 }
 
 .card-author,
 .card-max-score {
-  color: var(--ink-light) !important;
+  color: var(--color-text-muted) !important;
 }
 
 .card-type {
-  color: var(--warm-brown-light) !important;
+  color: var(--color-accent-light) !important;
   background:
     linear-gradient(180deg, rgba(124, 140, 255, 0.16), rgba(155, 124, 255, 0.10)) !important;
 
@@ -428,13 +495,13 @@ nav {
 .card-btn {
   background: rgba(255, 255, 255, 0.045) !important;
   border-color: rgba(184, 192, 255, 0.18) !important;
-  color: var(--ink-mid) !important;
+  color: var(--color-text-secondary) !important;
 }
 
 .card-btn:hover {
   background: rgba(124, 140, 255, 0.12) !important;
   border-color: rgba(184, 192, 255, 0.34) !important;
-  color: var(--ink) !important;
+  color: var(--color-text-primary) !important;
   box-shadow:
     0 8px 20px rgba(0, 0, 0, 0.28),
     0 0 18px rgba(124, 140, 255, 0.14) !important;
@@ -446,10 +513,10 @@ nav {
 .hero-btn-primary {
   background:
     radial-gradient(circle at 28% 18%, rgba(255, 255, 255, 0.22), transparent 28%),
-    linear-gradient(145deg, var(--accent-purple), var(--accent-blue) 55%, var(--warm-brown-dark)) !important;
+    linear-gradient(145deg, var(--palette-violet), var(--palette-blue) 55%, var(--color-accent-dark)) !important;
 
   border-color: rgba(184, 192, 255, 0.30) !important;
-  color: var(--white) !important;
+  color: var(--color-text-on-accent) !important;
 
   box-shadow:
     0 16px 34px rgba(0, 0, 0, 0.40),
@@ -460,7 +527,7 @@ nav {
 .hero-btn-primary:hover {
   background:
     radial-gradient(circle at 28% 18%, rgba(255, 255, 255, 0.28), transparent 28%),
-    linear-gradient(145deg, var(--accent-pink), var(--accent-purple) 45%, var(--accent-blue)) !important;
+    linear-gradient(145deg, var(--palette-pink), var(--palette-violet) 45%, var(--palette-blue)) !important;
 
   border-color: rgba(184, 192, 255, 0.44) !important;
 
@@ -473,13 +540,13 @@ nav {
 .hero-btn-ghost {
   background: rgba(255, 255, 255, 0.045) !important;
   border-color: rgba(184, 192, 255, 0.22) !important;
-  color: var(--ink-mid) !important;
+  color: var(--color-text-secondary) !important;
 }
 
 .hero-btn-ghost:hover {
   background: rgba(184, 192, 255, 0.10) !important;
   border-color: rgba(184, 192, 255, 0.38) !important;
-  color: var(--ink) !important;
+  color: var(--color-text-primary) !important;
 }
 
 
@@ -546,11 +613,8 @@ section {
 }
 
 
-
-
-
 /* =========================================================
-   INKWELL GLOBAL SCROLLBARS
+   SITE GLOBAL SCROLLBARS
 
    Use this file on every page of the website.
 
@@ -564,28 +628,6 @@ section {
    SHARED SCROLLBAR COLORS
    ========================================================= */
 
-:root {
-  --scrollbar-track:
-    #050711;
-
-  --scrollbar-track-middle:
-    #090d1c;
-
-  --scrollbar-cyan:
-    #74d7ff;
-
-  --scrollbar-blue:
-    #6d8bff;
-
-  --scrollbar-purple:
-    #9b7cff;
-
-  --scrollbar-border:
-    rgba(5, 7, 17, 0.88);
-
-  --scrollbar-glow:
-    rgba(109, 139, 255, 0.34);
-}
 
 
 /* =========================================================
@@ -1020,7 +1062,7 @@ html::-webkit-scrollbar-thumb:active {
 }
 
 /* =========================================================
-   INKWELL SEMANTIC COLOR SYSTEM — FINAL RESEARCHED PALETTE
+   SITE SEMANTIC COLOR SYSTEM — FINAL RESEARCHED PALETTE
    Keep this block at the very bottom of style.css.
 
    Color roles:
@@ -1031,78 +1073,14 @@ html::-webkit-scrollbar-thumb:active {
    - Neutral blue-black steps: page depth and card elevation
    ========================================================= */
 
-:root {
-  --inkwell-canvas: #050713;
-  --inkwell-canvas-raised: #070b18;
-  --inkwell-surface-1: #0b1224;
-  --inkwell-surface-2: #10182e;
-  --inkwell-surface-3: #151f3a;
-  --inkwell-surface-hover: #1a2646;
-
-  --inkwell-text: #f5f7ff;
-  --inkwell-text-soft: #c6cee3;
-  --inkwell-text-muted: #99a6c2;
-  --inkwell-text-subtle: #7e8aa5;
-
-  --inkwell-border-subtle: rgba(167, 183, 245, 0.12);
-  --inkwell-border: rgba(167, 183, 245, 0.20);
-  --inkwell-border-strong: rgba(145, 173, 255, 0.36);
-
-  --inkwell-cyan: #79d9ff;
-  --inkwell-blue: #728cff;
-  --inkwell-violet: #9f83ff;
-  --inkwell-pink: #c995ff;
-  --inkwell-gold: #ffd38a;
-
-  --inkwell-success: #7ad9b0;
-  --inkwell-warning: #ffc86b;
-  --inkwell-danger: #ff8da1;
-
-  --inkwell-focus-ring:
-    0 0 0 3px rgba(121, 217, 255, 0.18),
-    0 0 0 1px rgba(121, 217, 255, 0.82);
-
-  --inkwell-shadow-card:
-    0 22px 58px rgba(0, 0, 0, 0.34),
-    inset 0 1px 0 rgba(255, 255, 255, 0.04);
-
-  --inkwell-shadow-raised:
-    0 28px 74px rgba(0, 0, 0, 0.48),
-    0 0 42px rgba(114, 140, 255, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.055);
-
-  /* Preserve compatibility with the older variable names. */
-  --cream: var(--inkwell-canvas);
-  --cream-dark: var(--inkwell-canvas-raised);
-  --surface: var(--inkwell-surface-1);
-  --surface-soft: var(--inkwell-surface-2);
-  --surface-warm: var(--inkwell-surface-3);
-
-  --warm-brown: var(--inkwell-blue);
-  --warm-brown-dark: #5664d5;
-  --warm-brown-light: #cdd6ff;
-
-  --accent-purple: var(--inkwell-violet);
-  --accent-blue: var(--inkwell-blue);
-  --accent-cyan: var(--inkwell-cyan);
-  --accent-pink: var(--inkwell-pink);
-
-  --ink: var(--inkwell-text);
-  --ink-mid: var(--inkwell-text-soft);
-  --ink-light: var(--inkwell-text-muted);
-  --ink-faint: var(--inkwell-text-subtle);
-
-  --border: var(--inkwell-border-subtle);
-  --border-strong: var(--inkwell-border-strong);
-}
 
 html,
 body {
-  background-color: var(--inkwell-canvas) !important;
+  background-color: var(--color-background-page) !important;
 }
 
 body {
-  color: var(--inkwell-text);
+  color: var(--color-text-primary);
 
   background:
     radial-gradient(
@@ -1199,7 +1177,7 @@ nav {
 }
 
 :where(a, button, input, select, summary):focus-visible {
-  outline: 2px solid var(--inkwell-cyan);
+  outline: 2px solid var(--palette-cyan);
   outline-offset: 3px;
 }
 

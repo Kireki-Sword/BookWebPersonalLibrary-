@@ -17,33 +17,33 @@
   --flow-font-display:
     var(--font-display, Newsreader, Georgia, serif);
 
-  --flow-bg-0: #050611;
-  --flow-bg-1: #080d1f;
-  --flow-bg-2: #0b1024;
+  --flow-background-deepest: #050611;
+  --flow-background-deep: #080d1f;
+  --flow-background-raised: #0b1024;
 
-  --flow-ink:
-    var(--ink, #f5f7ff);
+  --flow-text-primary:
+    var(--color-text-primary, #f5f7ff);
 
-  --flow-ink-mid:
-    var(--ink-mid, #cbd3ea);
+  --flow-text-secondary:
+    var(--color-text-secondary, #cbd3ea);
 
-  --flow-ink-light:
-    var(--ink-light, #9ca8c4);
+  --flow-text-muted:
+    var(--color-text-muted, #9ca8c4);
 
-  --flow-ink-faint:
-    var(--ink-faint, #66708a);
+  --flow-text-subtle:
+    var(--color-text-subtle, #66708a);
 
   --flow-purple:
-    var(--accent-purple, #9b7cff);
+    var(--palette-violet, #9b7cff);
 
   --flow-blue:
-    var(--accent-blue, #6d8bff);
+    var(--palette-blue, #6d8bff);
 
   --flow-cyan:
-    var(--accent-cyan, #74d7ff);
+    var(--palette-cyan, #74d7ff);
 
   --flow-pink:
-    var(--accent-pink, #d28cff);
+    var(--palette-pink, #d28cff);
 
   --flow-transition:
     0.24s cubic-bezier(0.4, 0, 0.2, 1);
@@ -85,7 +85,7 @@
   overflow: hidden;
 
   color:
-    var(--flow-ink);
+    var(--flow-text-primary);
 
   font-family:
     var(--flow-font-body);
@@ -113,10 +113,10 @@
     ),
     linear-gradient(
       135deg,
-      var(--flow-bg-0),
-      var(--flow-bg-1) 38%,
-      var(--flow-bg-2) 68%,
-      var(--flow-bg-0)
+      var(--flow-background-deepest),
+      var(--flow-background-deep) 38%,
+      var(--flow-background-raised) 68%,
+      var(--flow-background-deepest)
     );
 }
 
@@ -361,7 +361,7 @@
     0 0 1.05rem;
 
   color:
-    var(--flow-ink);
+    var(--flow-text-primary);
 
   font-family:
     var(--flow-font-display);
@@ -392,7 +392,7 @@
 
 .flow-title-line-primary {
   color:
-    var(--flow-ink);
+    var(--flow-text-primary);
 }
 
 
@@ -403,7 +403,7 @@
     0 0 1.25rem;
 
   color:
-    var(--flow-ink-light);
+    var(--flow-text-muted);
 
   font-size:
     clamp(0.9rem, 1vw, 1rem);
@@ -560,7 +560,7 @@
     0 0 0.56rem;
 
   color:
-    var(--flow-ink-mid);
+    var(--flow-text-secondary);
 
   font-size:
     clamp(0.7rem, 0.82vw, 0.8rem);
@@ -624,7 +624,7 @@
     0 0.95rem;
 
   color:
-    var(--flow-ink);
+    var(--flow-text-primary);
 
   font:
     500
@@ -641,7 +641,7 @@
 
 .flow-search-bar input::placeholder {
   color:
-    var(--flow-ink-faint);
+    var(--flow-text-subtle);
 }
 
 
@@ -662,7 +662,7 @@
     1px solid rgba(184, 192, 255, 0.13);
 
   color:
-    var(--flow-ink);
+    var(--flow-text-primary);
 
   font-size: 1.05rem;
 
@@ -802,7 +802,7 @@
 
 .flow-search-empty {
   color:
-    var(--flow-ink-faint);
+    var(--flow-text-subtle);
 
   font-size:
     clamp(0.68rem, 0.78vw, 0.78rem);
@@ -859,7 +859,7 @@
   border-radius: 12px;
 
   color:
-    var(--flow-ink);
+    var(--flow-text-primary);
 
   font: inherit;
 
@@ -958,7 +958,7 @@
 
 .flow-suggestion-info strong {
   color:
-    var(--flow-ink);
+    var(--flow-text-primary);
 
   font-family:
     var(--flow-font-display);
@@ -969,7 +969,7 @@
 
 .flow-suggestion-info small {
   color:
-    var(--flow-ink-light);
+    var(--flow-text-muted);
 
   font-size: 0.62rem;
 }
@@ -1062,7 +1062,7 @@
     0 0 0.2rem;
 
   color:
-    var(--flow-ink);
+    var(--flow-text-primary);
 
   font:
     700 1.08rem/1
@@ -1077,7 +1077,7 @@
     0 0 0.25rem;
 
   color:
-    var(--flow-ink-light);
+    var(--flow-text-muted);
 
   font-size: 0.68rem;
 }
@@ -1247,7 +1247,7 @@
   border-radius: 999px;
 
   color:
-    var(--flow-ink-light);
+    var(--flow-text-muted);
 
   font:
     750 0.66rem
@@ -1356,7 +1356,7 @@
     0 0 0.18rem;
 
   color:
-    var(--flow-ink);
+    var(--flow-text-primary);
 
   font:
     700
@@ -1371,7 +1371,7 @@
   margin: 0;
 
   color:
-    var(--flow-ink-light);
+    var(--flow-text-muted);
 
   font-size: 0.7rem;
 
@@ -1395,7 +1395,7 @@
   border-radius: 999px;
 
   color:
-    var(--flow-ink);
+    var(--flow-text-primary);
 
   font-size: 0.72rem;
 
@@ -1546,7 +1546,7 @@
 .flow-sort-controls > label,
 .flow-sort-label {
   color:
-    var(--flow-ink-faint);
+    var(--flow-text-subtle);
 
   font-size: 0.61rem;
 
@@ -1669,7 +1669,7 @@
   color-scheme: dark;
 
   color:
-    var(--flow-ink);
+    var(--flow-text-primary);
 
   font-family:
     var(--flow-font-body);
@@ -1748,7 +1748,7 @@
   border-radius: 13px;
 
   color:
-    var(--flow-ink);
+    var(--flow-text-primary);
 
   font:
     780 0.69rem
@@ -1836,7 +1836,7 @@
 
 .flow-sort-chevron {
   color:
-    var(--flow-ink-light);
+    var(--flow-text-muted);
 
   font-size: 0.86rem;
 
@@ -1928,7 +1928,7 @@
   border-radius: 10px;
 
   color:
-    var(--flow-ink-mid);
+    var(--flow-text-secondary);
 
   font:
     720 0.68rem
@@ -2063,7 +2063,7 @@
   border-radius: 999px;
 
   color:
-    var(--flow-ink-light);
+    var(--flow-text-muted);
 
   font-size: 0.64rem;
 
@@ -2120,7 +2120,7 @@
     0 0.82rem;
 
   color:
-    var(--flow-ink-faint);
+    var(--flow-text-subtle);
 
   font-size: 0.57rem;
 
@@ -2152,7 +2152,7 @@
   border-radius: 14px;
 
   color:
-    var(--flow-ink-faint);
+    var(--flow-text-subtle);
 
   background:
     linear-gradient(
@@ -2358,7 +2358,7 @@
     0 0 0.18rem;
 
   color:
-    var(--flow-ink);
+    var(--flow-text-primary);
 
   font:
     700 1rem/1.08
@@ -2372,7 +2372,7 @@
   margin: 0;
 
   color:
-    var(--flow-ink-light);
+    var(--flow-text-muted);
 
   font-size: 0.67rem;
 }
@@ -2596,7 +2596,7 @@ input::-webkit-inner-spin-button {
 .flow-library-row-rating
 input::placeholder {
   color:
-    var(--flow-ink-faint);
+    var(--flow-text-subtle);
 
   opacity: 1;
 }
@@ -2610,7 +2610,7 @@ input[aria-invalid="true"] {
 
 .flow-rating-scale {
   color:
-    var(--flow-ink-faint);
+    var(--flow-text-subtle);
 
   font-size: 0.61rem;
 
