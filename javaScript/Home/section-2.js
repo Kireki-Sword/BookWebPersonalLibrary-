@@ -483,28 +483,19 @@
             "center center"
         };
 
-        /*
-         * Filters remain available for quotes,
-         * characters, notes and thoughts.
-         *
-         * Moment cards deliberately receive
-         * no filter property.
-         */
-        if (layer.key !== "moments") {
-          itemState.filter =
-            "blur(0px)";
-        }
-
         gsap.set(
           layer.items,
           itemState
         );
 
-        if (layer.key === "moments") {
-          gsap.set(layer.items, {
-            clearProps: "filter"
-          });
-        }
+        /*
+         * Keep the scroll animation compositor-friendly.
+         * Visual depth comes from scale, position and opacity;
+         * filters remain available for CSS hover states only.
+         */
+        gsap.set(layer.items, {
+          clearProps: "filter"
+        });
       }
 
       if (layer.button) {
@@ -566,15 +557,15 @@
           end: () => {
             const distance =
               Math.max(
-                window.innerHeight * 7,
-                6200
+                window.innerHeight * 7.25,
+                6500
               );
 
             return `+=${distance}`;
           },
 
           pin: true,
-          scrub: 0.8,
+          scrub: 1,
           anticipatePin: 1,
           invalidateOnRefresh: true,
 
@@ -813,22 +804,22 @@
         from: "center"
       },
 
-      duration: 0.82,
+      duration:
+        getGatherDuration(layer),
+
       ease: "power2.inOut"
     };
-
-    /*
-     * Moment cards avoid the blur filter.
-     * Other evidence layers keep it.
-     */
-    if (layer.key !== "moments") {
-      gatherVariables.filter =
-        "blur(1.5px)";
-    }
 
     timeline.to(
       layer.items,
       gatherVariables
+    );
+
+    timeline.to(
+      {},
+      {
+        duration: 0.12
+      }
     );
 
     if (layer.index === 0) {
@@ -875,9 +866,9 @@
           ).height;
         },
 
-        scale: 0.78,
-        rotationX: 12,
-        rotationY: -8
+        scale: 0.82,
+        rotationX: 8,
+        rotationY: -6
       },
       "-=0.08"
     );
@@ -886,7 +877,14 @@
       layer.proxy,
       {
         scale: 1,
-        duration: 0.24
+        duration: 0.28
+      }
+    );
+
+    timeline.to(
+      {},
+      {
+        duration: 0.08
       }
     );
 
@@ -920,8 +918,10 @@
         rotationX: 0,
         rotationY: 0,
 
-        duration: 0.88,
-        ease: "power3.inOut"
+        duration:
+          getTravelDuration(layer),
+
+        ease: "power2.inOut"
       }
     );
 
@@ -942,8 +942,8 @@
       layer.proxy,
       {
         autoAlpha: 0,
-        scale: 0.96,
-        duration: 0.18
+        scale: 0.97,
+        duration: 0.22
       },
       "<"
     );
@@ -951,8 +951,8 @@
     timeline.to(
       layer.button,
       {
-        scale: 1.055,
-        duration: 0.16,
+        scale: 1.04,
+        duration: 0.18,
         yoyo: true,
         repeat: 1
       },
@@ -963,14 +963,14 @@
       layer.stage,
       {
         autoAlpha: 0,
-        duration: 0.30
+        duration: 0.34
       }
     );
 
     timeline.to(
       {},
       {
-        duration: 0.26
+        duration: 0.30
       }
     );
 
@@ -989,14 +989,6 @@
       autoAlpha: 0,
       scale: 0.94
     };
-
-    /*
-     * Do not use a blur filter on moments.
-     */
-    if (layer.key !== "moments") {
-      startingValues.filter =
-        "blur(6px)";
-    }
 
     const positions = {
       quotes: {
@@ -1187,17 +1179,36 @@
       ease: "power3.out"
     };
 
-    if (layer.key !== "moments") {
-      endingValues.filter =
-        "blur(0px)";
-    }
-
     return endingValues;
   }
 
   /* ==========================================================================
      TIMING HELPERS
      ========================================================================== */
+
+  function getGatherDuration(layer) {
+    const values = {
+      quotes: 1.08,
+      moments: 1.0,
+      characters: 0.96,
+      notes: 0.92,
+      thoughts: 1.02
+    };
+
+    return values[layer.key] ?? 0.96;
+  }
+
+  function getTravelDuration(layer) {
+    const values = {
+      quotes: 1.16,
+      moments: 1.08,
+      characters: 1.06,
+      notes: 1.02,
+      thoughts: 1.12
+    };
+
+    return values[layer.key] ?? 1.06;
+  }
 
   function getGatherScale(layer) {
     const values = {
@@ -1237,11 +1248,11 @@
 
   function getReadDuration(layer) {
     const values = {
-      quotes: 1.08,
-      moments: 0.92,
-      characters: 0.78,
-      notes: 0.44,
-      thoughts: 0.6
+      quotes: 1.18,
+      moments: 1.04,
+      characters: 0.9,
+      notes: 0.72,
+      thoughts: 0.82
     };
 
     return values[layer.key] ?? 0.44;
