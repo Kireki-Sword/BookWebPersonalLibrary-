@@ -5380,14 +5380,14 @@ body.search-site.search-professional-max {
 
   background-image:
     radial-gradient(
-      ellipse at 68% 35%,
-      rgba(104, 87, 255, 0.10),
-      transparent 55%
+      ellipse at 70% 38%,
+      rgba(111, 91, 255, 0.17),
+      transparent 58%
     ),
     radial-gradient(
-      circle at 12% 30%,
-      rgba(78, 166, 255, 0.07),
-      transparent 38%
+      circle at 14% 32%,
+      rgba(72, 157, 255, 0.13),
+      transparent 42%
     );
 
   background-attachment: fixed;
