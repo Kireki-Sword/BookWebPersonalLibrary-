@@ -486,3 +486,163 @@ body:is(.journey-preparing, .journey-ready)
     min-height: 126px;
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+/* ==========================================================================
+   FINAL SECTION 2 FIX
+   Lower opening card, enlarge quote cards, stop clipping, and center the grid.
+   ========================================================================== */
+
+@media (min-width: 1101px) {
+  /* Add more breathing room before the opening Vagabond card. */
+  body:is(.journey-preparing, .journey-ready)
+  #section-2-empty-shelf
+  .section-2-header {
+    margin-bottom:
+      clamp(2.7rem, 4.8vh, 3.6rem) !important;
+  }
+
+  /* Keep the quote stage centered relative to the screen. */
+  body:is(.journey-preparing, .journey-ready)
+  #section-2-empty-shelf.is-js-ready
+  .scroll-stage[data-stage="quotes-fall"] {
+    left: 50% !important;
+
+    width:
+      min(1540px, calc(100vw - 72px)) !important;
+
+    max-width: 1540px !important;
+
+    height:
+      clamp(450px, 53vh, 470px) !important;
+
+    transform:
+      translateX(-50%) !important;
+  }
+
+  /* Make the quote grid use the complete centered stage. */
+  body:is(.journey-preparing, .journey-ready)
+  #section-2-empty-shelf.is-js-ready
+  .falling-quotes {
+    width: 100% !important;
+    max-width: none !important;
+    height: 100% !important;
+
+    margin-inline: auto !important;
+
+    column-gap:
+      clamp(0.72rem, 0.86vw, 0.96rem) !important;
+
+    /*
+     * Smaller gaps give the cards more height without making the
+     * complete quote composition overflow the viewport.
+     */
+    row-gap:
+      clamp(0.28rem, 0.34vw, 0.4rem) !important;
+  }
+
+  body:is(.journey-preparing, .journey-ready)
+  #section-2-empty-shelf
+  .falling-quote {
+    width: 100% !important;
+    min-width: 0;
+    min-height: 0;
+
+    padding:
+      clamp(0.62rem, 0.72vw, 0.76rem)
+      clamp(0.95rem, 1.05vw, 1.12rem) !important;
+
+    font-size:
+      clamp(0.91rem, 0.2vw + 0.81rem, 0.98rem) !important;
+
+    line-height: 1.38 !important;
+
+    overflow: hidden;
+    overflow-wrap: anywhere;
+    word-break: normal;
+    hyphens: auto;
+  }
+
+  /*
+   * Give the longest quotes more rows and take rows only from
+   * cards containing much shorter quotes.
+   */
+
+  /* Column one */
+  body:is(.journey-preparing, .journey-ready)
+  #section-2-empty-shelf .quote-1 {
+    grid-column: 1;
+    grid-row: 1 / span 7;
+  }
+
+  body:is(.journey-preparing, .journey-ready)
+  #section-2-empty-shelf .quote-4 {
+    grid-column: 1;
+    grid-row: 8 / span 3;
+  }
+
+  body:is(.journey-preparing, .journey-ready)
+  #section-2-empty-shelf .quote-7 {
+    grid-column: 1;
+    grid-row: 11 / span 7;
+  }
+
+  body:is(.journey-preparing, .journey-ready)
+  #section-2-empty-shelf .quote-11 {
+    grid-column: 1;
+    grid-row: 18 / span 3;
+  }
+
+  /* Column two */
+  body:is(.journey-preparing, .journey-ready)
+  #section-2-empty-shelf .quote-2 {
+    grid-column: 2;
+    grid-row: 1 / span 6;
+  }
+
+  body:is(.journey-preparing, .journey-ready)
+  #section-2-empty-shelf .quote-5 {
+    grid-column: 2;
+    grid-row: 7 / span 8;
+  }
+
+  body:is(.journey-preparing, .journey-ready)
+  #section-2-empty-shelf .quote-8 {
+    grid-column: 2;
+    grid-row: 15 / span 3;
+  }
+
+  body:is(.journey-preparing, .journey-ready)
+  #section-2-empty-shelf .quote-10 {
+    grid-column: 2;
+    grid-row: 18 / span 3;
+  }
+
+  /* Column three */
+  body:is(.journey-preparing, .journey-ready)
+  #section-2-empty-shelf .quote-3 {
+    grid-column: 3;
+    grid-row: 1 / span 10;
+  }
+
+  body:is(.journey-preparing, .journey-ready)
+  #section-2-empty-shelf .quote-6 {
+    grid-column: 3;
+    grid-row: 11 / span 3;
+  }
+
+  body:is(.journey-preparing, .journey-ready)
+  #section-2-empty-shelf .quote-9 {
+    grid-column: 3;
+    grid-row: 14 / span 7;
+  }
+}
