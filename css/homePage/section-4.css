@@ -5728,3 +5728,604 @@ body.s4-modal-open {
     min-height: 370px;
   }
 }
+
+
+/* ========================================================================== 
+   FINAL ATMOSPHERE + CONTENT-FIT PASS — SECTION 4
+
+   The background uses separate violet, blue, cyan, and pink light fields.
+   Reader surfaces stay opaque enough for long-form text, and every layer is
+   measured as content-led so the lower border remains visible.
+   ========================================================================== */
+
+.section-cover-rain {
+  --s4-surface-strong: rgba(11, 17, 39, 0.97);
+  --s4-surface-mid: rgba(18, 27, 59, 0.94);
+  --s4-surface-violet: rgba(39, 28, 78, 0.92);
+
+  background:
+    radial-gradient(
+      ellipse 1080px 680px at 15% 34%,
+      rgba(178, 94, 255, 0.24) 0%,
+      rgba(178, 94, 255, 0.075) 51%,
+      transparent 76%
+    ),
+    radial-gradient(
+      ellipse 1080px 700px at 85% 35%,
+      rgba(69, 175, 255, 0.24) 0%,
+      rgba(69, 175, 255, 0.075) 52%,
+      transparent 77%
+    ),
+    radial-gradient(
+      ellipse 920px 510px at 50% 9%,
+      rgba(108, 142, 255, 0.25) 0%,
+      rgba(108, 142, 255, 0.065) 54%,
+      transparent 78%
+    ),
+    radial-gradient(
+      ellipse 900px 480px at 52% 96%,
+      rgba(239, 104, 193, 0.13) 0%,
+      transparent 73%
+    ),
+    linear-gradient(
+      180deg,
+      #070a19 0%,
+      #0c1430 34%,
+      #161b46 58%,
+      #0b1028 80%,
+      #060916 100%
+    );
+}
+
+.section-cover-rain::before {
+  opacity: 0.28;
+  background-size: 48px 48px;
+}
+
+.section-cover-rain::after {
+  opacity: 0.12;
+  background-size: 5px 5px;
+}
+
+.s4-stage::before {
+  background:
+    radial-gradient(
+      ellipse 860px 360px at 50% 13%,
+      rgba(120, 153, 255, 0.20),
+      transparent 74%
+    ),
+    radial-gradient(
+      ellipse 720px 520px at 19% 67%,
+      rgba(203, 99, 255, 0.115),
+      transparent 73%
+    ),
+    radial-gradient(
+      ellipse 720px 520px at 81% 67%,
+      rgba(70, 195, 255, 0.105),
+      transparent 73%
+    );
+}
+
+.s4-shared-card-wrap::before {
+  width: min(1080px, 94vw);
+  height: 350px;
+  background:
+    radial-gradient(
+      ellipse,
+      rgba(91, 183, 255, 0.27) 0%,
+      rgba(123, 133, 255, 0.18) 34%,
+      rgba(206, 98, 255, 0.10) 55%,
+      transparent 76%
+    );
+  filter: blur(32px);
+}
+
+.s4-shared-card {
+  border-color: rgba(188, 208, 255, 0.48);
+  background:
+    radial-gradient(
+      circle at 10% 7%,
+      rgba(255, 255, 255, 0.14),
+      transparent 27%
+    ),
+    radial-gradient(
+      circle at 88% 13%,
+      rgba(111, 160, 255, 0.22),
+      transparent 39%
+    ),
+    linear-gradient(
+      137deg,
+      rgba(32, 43, 87, 0.97),
+      rgba(12, 21, 49, 0.98) 54%,
+      rgba(43, 29, 81, 0.96)
+    );
+  box-shadow:
+    0 36px 90px rgba(0, 0, 0, 0.38),
+    0 0 0 1px rgba(221, 228, 255, 0.065),
+    0 0 72px rgba(94, 156, 255, 0.19),
+    0 0 96px rgba(195, 95, 255, 0.085),
+    inset 0 1px 0 rgba(255, 255, 255, 0.10);
+}
+
+.s4-shared-card::after,
+.s4-reader-side::after {
+  content: "";
+  position: absolute;
+  left: 22px;
+  right: 22px;
+  top: 0;
+  z-index: 3;
+  height: 2px;
+  pointer-events: none;
+  border-radius: 999px;
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(96, 220, 255, 0.84) 16%,
+      rgba(112, 142, 255, 0.98) 43%,
+      rgba(177, 107, 255, 0.92) 69%,
+      rgba(239, 112, 199, 0.64) 84%,
+      transparent
+    );
+  box-shadow:
+    0 0 14px rgba(100, 166, 255, 0.50),
+    0 0 30px rgba(180, 103, 255, 0.18);
+}
+
+.s4-compare-stage {
+  padding-bottom: 12px;
+  border-color: rgba(178, 202, 255, 0.24);
+  background:
+    linear-gradient(
+      90deg,
+      rgba(106, 73, 190, 0.035),
+      transparent 36%,
+      transparent 64%,
+      rgba(55, 145, 207, 0.035)
+    );
+  box-shadow:
+    0 32px 92px rgba(0, 0, 0, 0.27),
+    0 0 86px rgba(96, 135, 255, 0.105);
+}
+
+.s4-compare-stage::before {
+  inset: -80px -110px;
+  background:
+    radial-gradient(
+      ellipse 620px 560px at 23% 48%,
+      rgba(188, 91, 255, 0.20),
+      transparent 73%
+    ),
+    radial-gradient(
+      ellipse 620px 560px at 77% 48%,
+      rgba(63, 190, 255, 0.18),
+      transparent 73%
+    ),
+    radial-gradient(
+      ellipse 760px 390px at 50% 5%,
+      rgba(113, 146, 255, 0.17),
+      transparent 76%
+    ),
+    radial-gradient(
+      ellipse 760px 300px at 50% 100%,
+      rgba(231, 104, 192, 0.075),
+      transparent 76%
+    );
+}
+
+.s4-reader-side {
+  min-height: 0;
+  padding: 12px 14px 16px;
+  overflow: hidden;
+  border-color: rgba(183, 203, 255, 0.30);
+  box-shadow:
+    0 22px 58px rgba(0, 0, 0, 0.25),
+    0 0 34px rgba(101, 136, 255, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.055),
+    inset 0 -1px 0 rgba(128, 153, 225, 0.10);
+}
+
+.s4-reader-side-left {
+  background:
+    radial-gradient(
+      circle at 14% 7%,
+      rgba(221, 112, 255, 0.16),
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 88% 90%,
+      rgba(113, 137, 255, 0.12),
+      transparent 43%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(30, 27, 69, 0.97),
+      rgba(9, 15, 36, 0.97)
+    );
+}
+
+.s4-reader-side-right {
+  background:
+    radial-gradient(
+      circle at 86% 7%,
+      rgba(74, 205, 255, 0.16),
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 12% 90%,
+      rgba(114, 138, 255, 0.12),
+      transparent 43%
+    ),
+    linear-gradient(
+      215deg,
+      rgba(20, 43, 78, 0.97),
+      rgba(9, 15, 36, 0.97)
+    );
+}
+
+.s4-profile-card,
+.s4-evidence-card {
+  border-color: rgba(187, 205, 255, 0.31);
+  background:
+    radial-gradient(
+      circle at 10% 6%,
+      rgba(255, 255, 255, 0.085),
+      transparent 31%
+    ),
+    radial-gradient(
+      circle at 92% 10%,
+      rgba(112, 150, 255, 0.10),
+      transparent 35%
+    ),
+    linear-gradient(
+      148deg,
+      rgba(29, 39, 79, 0.92),
+      rgba(8, 14, 33, 0.97) 62%,
+      rgba(23, 20, 51, 0.94)
+    );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.055),
+    inset 0 -1px 0 rgba(133, 158, 229, 0.075),
+    0 13px 30px rgba(0, 0, 0, 0.19);
+}
+
+.s4-evidence-header {
+  border-bottom-color: rgba(174, 197, 255, 0.17);
+}
+
+.s4-evidence-header h4 {
+  text-shadow: 0 0 26px rgba(126, 151, 255, 0.10);
+}
+
+.s4-card-theme,
+.s4-evidence-header span,
+.s4-character-rank,
+.s4-detail-eyebrow {
+  color: #aebcf0;
+}
+
+/* Detail language borrowed from Section 2 notes: numbered markers, restrained
+   accent edges, and a soft local glow rather than a flat empty rectangle. */
+.s4-note-card {
+  min-height: 128px;
+  padding: 0.9rem;
+  box-shadow:
+    inset 3px 0 0 rgba(111, 177, 255, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.055),
+    0 13px 30px rgba(0, 0, 0, 0.18);
+}
+
+.s4-note-number {
+  color: #f3f5ff;
+  border-color: rgba(178, 196, 255, 0.38);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(130, 106, 255, 0.28),
+      rgba(72, 155, 232, 0.18)
+    );
+  box-shadow:
+    0 0 20px rgba(112, 145, 255, 0.13),
+    inset 0 1px 0 rgba(255, 255, 255, 0.10);
+}
+
+.s4-note-empty {
+  min-height: 260px;
+  border-color: rgba(178, 198, 255, 0.26);
+  background:
+    radial-gradient(
+      circle at 50% 42%,
+      rgba(95, 181, 255, 0.15),
+      rgba(170, 105, 255, 0.07) 42%,
+      transparent 70%
+    ),
+    linear-gradient(
+      150deg,
+      rgba(21, 31, 65, 0.82),
+      rgba(7, 13, 31, 0.92)
+    );
+}
+
+.s4-note-empty-mark {
+  color: #d9e4ff;
+  border-color: rgba(180, 201, 255, 0.32);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(130, 105, 255, 0.23),
+      rgba(69, 174, 238, 0.16)
+    );
+  box-shadow:
+    0 0 28px rgba(99, 169, 255, 0.18),
+    0 0 42px rgba(183, 103, 255, 0.09);
+}
+
+/* --------------------------------------------------------------------------
+   CONTENT FIT — MOMENTS
+   One card and one control bar remain fully visible inside each reader panel.
+   -------------------------------------------------------------------------- */
+
+.s4-moment-carousel.is-landscape,
+.s4-moment-carousel.is-portrait {
+  width: min(100%, 540px);
+  max-width: 540px;
+  margin-inline: auto;
+  padding-right: 0;
+  display: grid;
+  grid-template-rows: auto auto;
+  gap: 0.68rem;
+}
+
+.s4-moment-carousel.is-landscape .s4-moment-stage,
+.s4-moment-carousel.is-portrait .s4-moment-stage {
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  display: grid;
+  place-items: center;
+}
+
+.s4-moment-carousel.is-landscape .s4-moment-card,
+.s4-moment-carousel.is-portrait .s4-moment-card {
+  height: auto;
+  max-height: none;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.s4-moment-carousel.is-landscape .s4-moment-card {
+  width: min(100%, 520px);
+  max-width: 520px;
+}
+
+.s4-moment-carousel.is-portrait .s4-moment-card {
+  width: min(100%, 250px);
+  max-width: 250px;
+}
+
+.s4-moment-carousel.is-landscape .s4-moment-media,
+.s4-moment-carousel.is-landscape .s4-moment-card.is-featured .s4-moment-media {
+  height: clamp(190px, 25svh, 242px);
+  max-height: 242px;
+  aspect-ratio: auto;
+}
+
+.s4-moment-carousel.is-portrait .s4-moment-media {
+  height: clamp(220px, 29svh, 270px);
+  max-height: 270px;
+  aspect-ratio: auto;
+}
+
+.s4-moment-carousel .s4-moment-copy {
+  min-height: 0;
+  padding: 0.7rem 0.82rem 0.76rem;
+  overflow: visible;
+}
+
+.s4-moment-carousel .s4-moment-copy p {
+  font-size: 0.65rem;
+  line-height: 1.42;
+}
+
+.s4-moment-carousel.is-landscape .s4-moment-controls,
+.s4-moment-carousel.is-portrait .s4-moment-controls {
+  position: static;
+  width: 100%;
+  min-height: 50px;
+  margin: 0;
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) 40px;
+  align-items: center;
+  transform: none;
+}
+
+.s4-moment-carousel.is-portrait .s4-moment-progress,
+.s4-moment-carousel.is-landscape .s4-moment-progress {
+  display: grid;
+  grid-auto-flow: row;
+  justify-items: center;
+}
+
+.s4-moment-carousel.is-portrait .s4-moment-dots,
+.s4-moment-carousel.is-landscape .s4-moment-dots {
+  flex-direction: row;
+}
+
+.s4-moment-carousel.is-portrait .s4-moment-nav svg {
+  transform: none;
+}
+
+.s4-moment-carousel:focus-visible {
+  outline: 2px solid rgba(186, 202, 255, 0.76);
+  outline-offset: 5px;
+  border-radius: 16px;
+}
+
+/* --------------------------------------------------------------------------
+   CONTENT FIT — CHARACTERS AND THOUGHTS
+   -------------------------------------------------------------------------- */
+
+.s4-character-grid {
+  grid-template-columns: 1fr;
+  gap: 8px;
+  padding-bottom: 2px;
+}
+
+.s4-character-card,
+.s4-character-card.is-featured {
+  grid-column: auto;
+  min-height: 108px;
+  padding: 10px 12px;
+  grid-template-columns: 72px minmax(0, 1fr);
+  gap: 0.72rem;
+}
+
+.s4-character-card.is-featured {
+  min-height: 122px;
+  grid-template-columns: 82px minmax(0, 1fr);
+}
+
+.s4-character-copy p {
+  margin-top: 0.3rem;
+  font-size: 0.66rem;
+  line-height: 1.45;
+}
+
+.s4-character-card .s4-card-actions {
+  padding-top: 0.3rem;
+}
+
+.s4-thought-card {
+  min-height: 0;
+  height: clamp(330px, 40vh, 380px);
+  padding: clamp(1rem, 1.25vw, 1.22rem);
+}
+
+.s4-thought-card h4 {
+  max-width: 34ch;
+  font-size: clamp(1.18rem, 1.36vw, 1.46rem);
+}
+
+.s4-thought-copy {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: none;
+  overflow: hidden;
+}
+
+.s4-thought-copy p {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 12;
+  overflow: hidden;
+  font-size: clamp(0.72rem, 0.77vw, 0.8rem);
+  line-height: 1.56;
+}
+
+.s4-thought-copy::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 2.8rem;
+  pointer-events: none;
+  display: block;
+  background:
+    linear-gradient(
+      180deg,
+      transparent,
+      rgba(9, 15, 35, 0.97)
+    );
+}
+
+.s4-thought-card .s4-card-actions {
+  margin-top: auto;
+  padding-top: 0.72rem;
+}
+
+@media (min-width: 1100px) and (min-height: 700px) {
+  .s4-reader-side {
+    min-height: 0;
+  }
+
+  .s4-compare-stage,
+  .s4-compare-stage[data-focus="left"],
+  .s4-compare-stage[data-focus="right"] {
+    grid-template-columns:
+      minmax(0, 1fr)
+      70px
+      minmax(0, 1fr);
+    gap: 20px;
+  }
+
+  .s4-compare-divider {
+    width: 70px;
+  }
+}
+
+@media (min-width: 681px) and (max-height: 820px) {
+  .s4-moment-carousel.is-landscape .s4-moment-media {
+    height: 180px;
+    max-height: 180px;
+  }
+
+  .s4-moment-carousel.is-portrait .s4-moment-media {
+    height: 210px;
+    max-height: 210px;
+  }
+
+  .s4-character-card,
+  .s4-character-card.is-featured {
+    min-height: 96px;
+  }
+
+  .s4-thought-card {
+    height: 320px;
+  }
+}
+
+@media (max-width: 680px) {
+  .s4-moment-carousel.is-landscape,
+  .s4-moment-carousel.is-portrait,
+  .s4-moment-carousel.is-landscape .s4-moment-card,
+  .s4-moment-carousel.is-portrait .s4-moment-card {
+    width: 100%;
+    max-width: none;
+  }
+
+  .s4-moment-carousel.is-landscape .s4-moment-media {
+    height: auto;
+    max-height: none;
+    aspect-ratio: 16 / 10;
+  }
+
+  .s4-moment-carousel.is-portrait .s4-moment-media {
+    height: auto;
+    max-height: none;
+    aspect-ratio: 4 / 5;
+  }
+
+  .s4-thought-card {
+    height: auto;
+  }
+
+  .s4-thought-copy p {
+    display: block;
+    overflow: visible;
+  }
+
+  .s4-thought-copy::after {
+    display: none;
+  }
+}
+
+@media (prefers-contrast: more) {
+  .s4-shared-card,
+  .s4-reader-side,
+  .s4-profile-card,
+  .s4-evidence-card {
+    border-color: rgba(218, 227, 255, 0.62);
+  }
+}

@@ -1433,6 +1433,58 @@
       },
     );
 
+    elements.section.addEventListener(
+      "keydown",
+      (event) => {
+        const carousel = event.target.closest?.(
+          "[data-moment-carousel]",
+        );
+
+        if (
+          !carousel ||
+          !elements.section.contains(carousel) ||
+          activeLayer !== "moments"
+        ) {
+          return;
+        }
+
+        const readerId = carousel.dataset.readerId;
+        const reader = READERS[readerId];
+
+        if (!reader?.moments?.length) {
+          return;
+        }
+
+        const total = reader.moments.length;
+        const current = currentMomentIndexes[readerId] || 0;
+        let nextIndex = current;
+
+        if (event.key === "ArrowLeft") {
+          nextIndex = (current - 1 + total) % total;
+        } else if (event.key === "ArrowRight") {
+          nextIndex = (current + 1) % total;
+        } else if (event.key === "Home") {
+          nextIndex = 0;
+        } else if (event.key === "End") {
+          nextIndex = total - 1;
+        } else {
+          return;
+        }
+
+        event.preventDefault();
+        currentMomentIndexes[readerId] = nextIndex;
+        renderMomentReader(readerId);
+
+        window.requestAnimationFrame(() => {
+          elements.section
+            .querySelector(
+              `[data-moment-carousel][data-reader-id="${readerId}"]`,
+            )
+            ?.focus();
+        });
+      },
+    );
+
     setLayer(activeLayer);
 
     setFocus(focusMode);
@@ -1693,6 +1745,8 @@
         class="s4-moment-carousel is-${escapeHtml(moment.orientation)}"
         data-moment-carousel
         data-reader-id="${escapeHtml(readerId)}"
+        tabindex="0"
+        aria-label="${escapeHtml(reader.name)} saved moments. Use the left and right arrow keys to change the visible moment."
       >
         <div class="s4-moment-stage">
           <article
@@ -1913,6 +1967,8 @@
     if (spoilerCover) {
       spoilerCover.hidden = true;
     }
+
+    notifySection4LayoutChange(card);
   }
 
   function renderCharacters(
@@ -2139,6 +2195,22 @@
     `;
   }
 
+  function notifySection4LayoutChange(node) {
+    const section = node?.closest?.(
+      "[data-section-cover-rain]",
+    );
+
+    if (!section) {
+      return;
+    }
+
+    window.requestAnimationFrame(() => {
+      section.dispatchEvent(
+        new CustomEvent("inkwell:section4-layout-change"),
+      );
+    });
+  }
+
   function setupImageFallbacks(
     container,
     selector,
@@ -2146,6 +2218,18 @@
     container
       .querySelectorAll(selector)
       .forEach((image) => {
+        const refreshAfterImageSettles = () => {
+          notifySection4LayoutChange(image);
+        };
+
+        image.addEventListener(
+          "load",
+          refreshAfterImageSettles,
+          {
+            once: true,
+          },
+        );
+
         image.addEventListener(
           "error",
           () => {
@@ -2157,12 +2241,19 @@
               image.src !== fallbackSrc
             ) {
               image.src = fallbackSrc;
+              return;
             }
+
+            refreshAfterImageSettles();
           },
           {
             once: true,
           },
         );
+
+        if (image.complete) {
+          refreshAfterImageSettles();
+        }
       });
   }
 
@@ -3040,17 +3131,17 @@
         elements.compareStage.scrollHeight,
         elements.compareStage.offsetHeight,
         1,
-      );
+      ) + 12;
 
       const availableCompareHeight = Math.max(
-        elements.stage.clientHeight - compareTop - 3,
+        elements.stage.clientHeight - compareTop - 14,
         1,
       );
 
       const compareScale = MANAGED_BY_HOME_JOURNEY
         ? clampValue(
             availableCompareHeight / naturalCompareHeight,
-            0.8,
+            0.68,
             1,
           )
         : 1;
@@ -3058,6 +3149,11 @@
       elements.stage.style.setProperty(
         "--s4-compare-scale",
         String(compareScale),
+      );
+
+      elements.stage.style.setProperty(
+        "--s4-reader-available-height",
+        `${Math.floor(availableCompareHeight / compareScale)}px`,
       );
     };
 
@@ -3193,6 +3289,7 @@
       layoutRefreshFrame = window.requestAnimationFrame(() => {
         updateFinalLayoutMetrics();
         timeline.invalidate();
+        timeline.scrollTrigger?.refresh();
       });
     };
 

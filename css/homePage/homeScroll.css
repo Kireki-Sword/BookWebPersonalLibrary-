@@ -376,7 +376,7 @@ body:is(.journey-preparing, .journey-ready)
   body:is(.journey-preparing, .journey-ready)
   #section-2-empty-shelf .card-wrap {
     position: relative;
-    top: clamp(34px, 4.4vh, 48px);
+    top: clamp(72px, 8vh, 92px);
   }
 
   /* Section 2 quotes: keep the whole composition centered and let
