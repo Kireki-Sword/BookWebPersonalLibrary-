@@ -4560,3 +4560,232 @@ input[aria-invalid="true"] {
     width: 100%;
   }
 }
+
+/* =========================================================
+   SECTION 3 — FINAL V8 TRANSITION
+   No extra bridge element.
+   Section 3 reveals the actual rendered bottom of Section 2,
+   then gradually fades in its own brighter atmosphere.
+   ========================================================= */
+
+/* The old bridge is no longer used. */
+.section-2-to-3-transition {
+  display: none !important;
+}
+
+/*
+ * Section 3 overlaps the last part of Section 2.
+ * Its own background is transparent; the real Section 2 pixels
+ * remain visible until the masked background fades in.
+ */
+.section-library-flow {
+  --section-2-to-3-depth:
+    clamp(190px, 14vw, 230px);
+
+  position: relative;
+  isolation: isolate;
+  z-index: 1;
+
+  margin-top:
+    calc(-1 * var(--section-2-to-3-depth));
+
+  padding-top:
+    calc(
+      var(--section-2-to-3-depth)
+      + clamp(4.7rem, 7vh, 6rem)
+    );
+
+  border-top: 0 !important;
+  box-shadow: none !important;
+
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+}
+
+/*
+ * One continuous Section 3 background layer.
+ *
+ * The mask is transparent at the top, so the first visible pixels
+ * are the real bottom pixels rendered by Section 2.
+ *
+ * Before the actual section boundary is reached, this layer becomes
+ * fully opaque. That hides any body/background change at the boundary
+ * and prevents a horizontal seam.
+ */
+.section-library-flow::before {
+  content: "" !important;
+
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+
+  pointer-events: none;
+
+  background-color: #070b18;
+
+  background-image:
+    /* Exact Section 2 edge shading. */
+    linear-gradient(
+      90deg,
+      rgba(3, 5, 14, 0.18) 0%,
+      transparent 22%,
+      transparent 78%,
+      rgba(3, 5, 14, 0.24) 100%
+    ),
+
+    /* Exact Section 2 lower blue glow, continued near the top. */
+    radial-gradient(
+      ellipse 760px 520px at 50% 20px,
+      rgba(105, 180, 255, 0.055) 0%,
+      transparent 74%
+    ),
+
+    /* Purple appears lower behind the heading. */
+    radial-gradient(
+      ellipse 860px 620px at 21% 44%,
+      rgba(159, 131, 255, 0.17) 0%,
+      rgba(159, 131, 255, 0.052) 48%,
+      transparent 74%
+    ),
+
+    /* Blue appears lower behind the search card. */
+    radial-gradient(
+      ellipse 980px 660px at 79% 42%,
+      rgba(114, 140, 255, 0.23) 0%,
+      rgba(114, 140, 255, 0.07) 48%,
+      transparent 75%
+    ),
+
+    /* Soft lower lift around Saved Stories. */
+    radial-gradient(
+      ellipse 920px 500px at 52% 78%,
+      rgba(126, 135, 255, 0.07) 0%,
+      rgba(159, 131, 255, 0.022) 52%,
+      transparent 78%
+    ),
+
+    /* Exact Section 2 texture. */
+    radial-gradient(
+      rgba(255, 255, 255, 0.003) 0.7px,
+      transparent 0.7px
+    ),
+
+    /*
+     * Starts with Section 2's exact bottom base, then becomes
+     * gradually brighter and more blue-violet lower down.
+     */
+    linear-gradient(
+      180deg,
+      #070b18 0%,
+      #070b18 18%,
+      #081027 34%,
+      #0c1532 52%,
+      #111b42 72%,
+      #0d1737 88%,
+      #070b18 100%
+    );
+
+  background-size:
+    auto,
+    auto,
+    auto,
+    auto,
+    auto,
+    6px 6px,
+    auto;
+
+  background-position:
+    center,
+    center,
+    center,
+    center,
+    center,
+    0 0,
+    center;
+
+  background-repeat:
+    no-repeat,
+    no-repeat,
+    no-repeat,
+    no-repeat,
+    no-repeat,
+    repeat,
+    no-repeat;
+
+  -webkit-mask-image:
+    linear-gradient(
+      180deg,
+      transparent 0,
+      transparent 48px,
+      rgba(0, 0, 0, 0.10) 78px,
+      rgba(0, 0, 0, 0.28) 112px,
+      rgba(0, 0, 0, 0.56) 148px,
+      rgba(0, 0, 0, 0.82) 180px,
+      #000 210px,
+      #000 100%
+    );
+
+  mask-image:
+    linear-gradient(
+      180deg,
+      transparent 0,
+      transparent 48px,
+      rgba(0, 0, 0, 0.10) 78px,
+      rgba(0, 0, 0, 0.28) 112px,
+      rgba(0, 0, 0, 0.56) 148px,
+      rgba(0, 0, 0, 0.82) 180px,
+      #000 210px,
+      #000 100%
+    );
+}
+
+/* No second overlay is needed. */
+.section-library-flow::after {
+  content: none !important;
+}
+
+/* Keep all real Section 3 content above the masked background. */
+.section-library-flow > * {
+  position: relative;
+  z-index: 2;
+}
+
+@media (max-width: 980px) {
+  .section-library-flow {
+    --section-2-to-3-depth:
+      clamp(150px, 18vw, 190px);
+  }
+
+  .section-library-flow::before {
+    -webkit-mask-image:
+      linear-gradient(
+        180deg,
+        transparent 0,
+        transparent 34px,
+        rgba(0, 0, 0, 0.16) 66px,
+        rgba(0, 0, 0, 0.48) 104px,
+        rgba(0, 0, 0, 0.80) 140px,
+        #000 170px,
+        #000 100%
+      );
+
+    mask-image:
+      linear-gradient(
+        180deg,
+        transparent 0,
+        transparent 34px,
+        rgba(0, 0, 0, 0.16) 66px,
+        rgba(0, 0, 0, 0.48) 104px,
+        rgba(0, 0, 0, 0.80) 140px,
+        #000 170px,
+        #000 100%
+      );
+  }
+}
+
+@media (max-width: 640px) {
+  .section-library-flow {
+    --section-2-to-3-depth: 140px;
+  }
+}
