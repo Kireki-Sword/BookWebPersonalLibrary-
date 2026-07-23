@@ -3130,62 +3130,38 @@ input[aria-invalid="true"] {
 }
 
 /* =========================================================
-   SECTION 3 — FINAL CLEAN V4
-   One consolidated refinement layer.
+   SECTION 3 — CORRECTED FINAL V5
+   Exact Section 2 handoff + stable centered library controls
    ========================================================= */
 
 /* ---------------------------------------------------------
-   Exact Section 2 -> Section 3 color handoff
-
-   Section 2 ends with:
-   - #070b18
-   - rgba(105, 180, 255, 0.055)
-   - dark side shading rgba(3, 5, 14, ...)
-   These exact values are reused here.
+   Exact Section 2 bottom values copied from section-2.css:
+   --s2-bg-bottom: #070b18
+   lower glow: rgba(105, 180, 255, 0.055)
+   side shading: rgba(3, 5, 14, 0.18 / 0.24)
    --------------------------------------------------------- */
 
 .section-library-flow {
-  --flow-section-overlap:
-    clamp(110px, 9vw, 165px);
-
-  --flow-section-2-edge-left: #070b18;
-  --flow-section-2-edge-center: #070b18;
-  --flow-section-2-edge-right: #070b18;
-
-  --flow-surface-page: #070b18;
-  --flow-surface-raised: #0d1530;
-  --flow-surface-card: #111a36;
-
-  --flow-border-soft:
-    rgba(184, 196, 255, 0.22);
-
-  --flow-border-strong:
-    rgba(205, 214, 255, 0.42);
+  --flow-section-2-bottom: #070b18;
+  --flow-section-2-lower-glow: rgba(105, 180, 255, 0.055);
 
   min-height:
     calc(112svh - var(--nav-height));
 
-  margin-top:
-    calc(-1 * var(--flow-section-overlap));
+  margin-top: -1px;
 
   padding:
-    calc(
-      var(--flow-section-overlap)
-      + clamp(4.8rem, 7vh, 6rem)
-    )
+    clamp(5rem, 7vh, 6rem)
     clamp(1.25rem, 4.25vw, 4.75rem)
     clamp(4.5rem, 7vh, 6rem);
 
   border-top: 0 !important;
 
-  box-shadow: none;
+  background-color:
+    var(--flow-section-2-bottom);
 
-  /*
-   * Layer 1 reproduces Section 2's dark side shading.
-   * Layer 2 continues Section 2's exact lower blue glow.
-   * The remaining light is localized around actual content.
-   */
-  background:
+  background-image:
+    /* Exact side shading used on Section 2. */
     linear-gradient(
       90deg,
       rgba(3, 5, 14, 0.18) 0%,
@@ -3193,43 +3169,57 @@ input[aria-invalid="true"] {
       transparent 78%,
       rgba(3, 5, 14, 0.24) 100%
     ),
+
+    /*
+     * Continuation of Section 2's exact lower glow.
+     * The centre sits above Section 3, so the first row continues
+     * the previous ellipse instead of starting a new bright band.
+     */
     radial-gradient(
-      ellipse 760px 520px at 50% 0%,
-      rgba(105, 180, 255, 0.055) 0%,
+      ellipse 760px 520px at 50% -96px,
+      var(--flow-section-2-lower-glow) 0%,
       transparent 74%
     ),
+
+    /* Violet atmosphere begins lower behind the heading. */
     radial-gradient(
-      ellipse 850px 620px at 21% 35%,
+      ellipse 820px 590px at 22% 34%,
       rgba(159, 131, 255, 0.17) 0%,
-      rgba(159, 131, 255, 0.055) 46%,
-      transparent 73%
+      rgba(159, 131, 255, 0.052) 48%,
+      transparent 74%
     ),
+
+    /* Blue atmosphere begins lower behind the search panel. */
     radial-gradient(
-      ellipse 980px 680px at 79% 34%,
+      ellipse 960px 650px at 79% 34%,
       rgba(114, 140, 255, 0.235) 0%,
-      rgba(114, 140, 255, 0.078) 48%,
+      rgba(114, 140, 255, 0.075) 48%,
       transparent 75%
     ),
+
+    /* Very soft lift around Saved Stories, not a horizontal band. */
     radial-gradient(
-      ellipse 900px 430px at 50% 78%,
-      rgba(126, 135, 255, 0.075) 0%,
-      rgba(159, 131, 255, 0.026) 52%,
+      ellipse 860px 430px at 52% 76%,
+      rgba(126, 135, 255, 0.065) 0%,
+      rgba(159, 131, 255, 0.020) 52%,
       transparent 78%
     ),
+
+    /* Start with the exact Section 2 bottom, then brighten gradually. */
     linear-gradient(
       180deg,
       #070b18 0%,
-      #070b18 12%,
+      #070b18 11%,
       #081027 28%,
       #0d1737 52%,
-      #0a1430 78%,
+      #0a1430 77%,
       #070b18 100%
     );
 }
 
 /*
- * Disable the older full-width pseudo-element blooms.
- * They were the source of the visible horizontal brightness shelf.
+ * Remove the original top-right and bottom-left full-section circles.
+ * Their top edge caused a visible change at the section boundary.
  */
 .section-library-flow::before,
 .section-library-flow::after {
@@ -3241,8 +3231,7 @@ input[aria-invalid="true"] {
    --------------------------------------------------------- */
 
 .section-library-flow .flow-grid {
-  width:
-    min(100%, 1420px);
+  width: min(100%, 1420px);
 
   grid-template-columns:
     minmax(470px, 0.92fr)
@@ -3250,13 +3239,13 @@ input[aria-invalid="true"] {
 
   grid-template-rows:
     360px
-    470px;
+    440px;
 
   column-gap:
     clamp(3.25rem, 5.8vw, 6.5rem);
 
   row-gap:
-    clamp(2rem, 3.2vh, 2.7rem);
+    clamp(1.9rem, 3vh, 2.5rem);
 }
 
 .section-library-flow .flow-copy-card {
@@ -3270,32 +3259,28 @@ input[aria-invalid="true"] {
   content: "";
 
   position: absolute;
-  left: -28%;
-  top: 50%;
+  left: -24%;
+  top: 51%;
   z-index: -1;
 
-  width:
-    min(760px, 78vw);
-
-  height: 520px;
+  width: min(720px, 76vw);
+  height: 500px;
 
   pointer-events: none;
 
-  transform:
-    translateY(-50%);
+  transform: translateY(-50%);
 
   border-radius: 50%;
 
   background:
     radial-gradient(
       ellipse,
-      rgba(159, 131, 255, 0.13) 0%,
-      rgba(114, 140, 255, 0.055) 46%,
+      rgba(159, 131, 255, 0.12) 0%,
+      rgba(114, 140, 255, 0.045) 46%,
       transparent 74%
     );
 
-  filter:
-    blur(30px);
+  filter: blur(30px);
 }
 
 .section-library-flow .flow-copy-card h2 {
@@ -3314,8 +3299,7 @@ input[aria-invalid="true"] {
 }
 
 .section-library-flow .flow-search-card {
-  width:
-    min(100%, 610px);
+  width: min(100%, 610px);
 
   height: 340px;
   min-height: 340px;
@@ -3324,110 +3308,24 @@ input[aria-invalid="true"] {
   box-shadow:
     0 30px 78px rgba(0, 0, 0, 0.40),
     0 14px 34px rgba(0, 0, 0, 0.24),
-    0 0 52px rgba(114, 140, 255, 0.13),
-    0 0 88px rgba(159, 131, 255, 0.055),
+    0 0 48px rgba(114, 140, 255, 0.12),
+    0 0 78px rgba(159, 131, 255, 0.05),
     inset 0 1px 0 rgba(215, 222, 255, 0.09);
 }
 
 /* ---------------------------------------------------------
-   Shared raised surfaces
-   --------------------------------------------------------- */
-
-.section-library-flow .flow-card {
-  border-color:
-    var(--flow-border-soft);
-
-  background:
-    radial-gradient(
-      circle at 14% 4%,
-      rgba(255, 255, 255, 0.052),
-      transparent 25%
-    ),
-    radial-gradient(
-      circle at 90% 8%,
-      rgba(114, 140, 255, 0.12),
-      transparent 34%
-    ),
-    radial-gradient(
-      circle at 86% 88%,
-      rgba(159, 131, 255, 0.045),
-      transparent 42%
-    ),
-    linear-gradient(
-      145deg,
-      rgba(17, 24, 47, 0.975),
-      rgba(8, 13, 29, 0.982) 58%,
-      rgba(18, 16, 39, 0.972)
-    );
-
-  box-shadow:
-    0 30px 78px rgba(0, 0, 0, 0.38),
-    0 14px 34px rgba(0, 0, 0, 0.22),
-    0 0 46px rgba(114, 140, 255, 0.075),
-    inset 0 1px 0 rgba(215, 222, 255, 0.085);
-}
-
-.section-library-flow .flow-card::before {
-  background:
-    linear-gradient(
-      120deg,
-      rgba(255, 255, 255, 0.035),
-      transparent 22%,
-      transparent 78%,
-      rgba(159, 131, 255, 0.022)
-    );
-}
-
-.section-library-flow .flow-card::after {
-  content: "";
-
-  position: absolute;
-  top: 0;
-  left: 22px;
-  right: 22px;
-  z-index: 4;
-
-  height: 1px;
-
-  pointer-events: none;
-
-  border-radius: 999px;
-
-  background:
-    linear-gradient(
-      90deg,
-      transparent 0%,
-      rgba(121, 217, 255, 0.58) 18%,
-      rgba(114, 140, 255, 0.78) 46%,
-      rgba(159, 131, 255, 0.70) 72%,
-      transparent 100%
-    );
-
-  box-shadow:
-    0 0 10px rgba(114, 140, 255, 0.30),
-    0 0 22px rgba(159, 131, 255, 0.11);
-}
-
-/* ---------------------------------------------------------
-   Saved Stories header
+   Saved Stories card
    --------------------------------------------------------- */
 
 .section-library-flow .flow-library-card {
-  height: 470px;
-  min-height: 470px;
-  max-height: 470px;
-
-  box-shadow:
-    0 34px 82px rgba(0, 0, 0, 0.40),
-    0 15px 36px rgba(0, 0, 0, 0.23),
-    0 0 46px rgba(114, 140, 255, 0.07),
-    0 0 72px rgba(159, 131, 255, 0.035),
-    inset 0 1px 0 rgba(215, 222, 255, 0.085);
+  height: 440px;
+  min-height: 440px;
+  max-height: 440px;
 }
 
 .section-library-flow .flow-library-header {
-  height: 78px;
-  min-height: 78px;
+  height: 76px;
+  min-height: 76px;
 
   padding:
     0.9rem 1.1rem;
@@ -3451,7 +3349,7 @@ input[aria-invalid="true"] {
   display: grid;
   justify-items: end;
 
-  gap: 0.36rem;
+  gap: 0.34rem;
 }
 
 .section-library-flow .flow-library-save-notice {
@@ -3476,57 +3374,67 @@ input[aria-invalid="true"] {
 
 .section-library-flow .flow-library-body {
   height:
-    calc(100% - 78px);
+    calc(100% - 76px);
 
   padding:
-    0.86rem 1rem 0.95rem;
+    0.76rem 1rem 0.9rem;
 
   grid-template-rows:
     auto
     26px
     minmax(0, 1fr);
 
-  gap: 0.68rem;
+  gap: 0.58rem;
 }
 
 /* ---------------------------------------------------------
-   Professional centered filter deck
+   Stable centered control layout
 
-   Format and Status are centered against the whole card.
-   Sort is positioned independently so it cannot push them left.
+   The center stack is mathematically centered in the card.
+   Sort occupies the right column but cannot shift the stack.
    --------------------------------------------------------- */
 
-.section-library-flow .flow-library-toolbar {
+.section-library-flow .flow-library-controls {
   grid-row: 1;
+  grid-column: 1 / -1;
 
   position: relative;
   z-index: 30;
 
-  min-height: 136px;
+  width: 100%;
+  min-width: 0;
 
   display: grid;
-  place-items: center;
+
+  grid-template-columns:
+    minmax(220px, 1fr)
+    auto
+    minmax(220px, 1fr);
+
+  align-items: start;
+
+  column-gap: 1rem;
 
   padding:
-    0.25rem
-    clamp(15rem, 20vw, 18rem)
-    0.45rem;
+    0.1rem 0 0.42rem;
 }
 
-.section-library-flow .flow-filter-deck {
+.section-library-flow .flow-library-control-stack {
+  grid-column: 2;
+
   min-width: 0;
 
   display: grid;
   justify-items: center;
 
-  gap: 0.82rem;
+  gap: 0.72rem;
 }
 
-.section-library-flow .flow-filter-group {
+.section-library-flow .flow-library-control-group {
   display: grid;
   justify-items: center;
 
-  gap: 0.42rem;
+  gap: 0.38rem;
 }
 
 .section-library-flow .flow-filter-label {
@@ -3545,7 +3453,7 @@ input[aria-invalid="true"] {
   text-transform: uppercase;
 }
 
-/* Connected Format selector. */
+/* Format segmented control. */
 
 .section-library-flow .flow-library-filters {
   display: inline-flex;
@@ -3574,18 +3482,18 @@ input[aria-invalid="true"] {
 .section-library-flow
 .flow-library-filters
 .flow-filter {
-  min-width: 88px;
-  min-height: 40px;
+  min-width: 86px;
+  min-height: 38px;
 
   padding:
-    0 1rem;
+    0 0.95rem;
 
   border: 0;
   border-radius: 999px;
 
   color: #aeb9d2;
 
-  font-size: 0.73rem;
+  font-size: 0.72rem;
 
   background: transparent;
 
@@ -3623,46 +3531,32 @@ input[aria-invalid="true"] {
     0 0 16px rgba(114, 140, 255, 0.10);
 }
 
-/* Separate Status chips. */
+/* Status chips. */
 
 .section-library-flow .flow-library-status-filters {
   justify-content: center;
 
-  gap: 0.56rem;
+  gap: 0.52rem;
 }
 
 .section-library-flow .flow-status-filter {
-  min-height: 40px;
+  min-height: 38px;
 
   padding:
-    0 1rem;
+    0 0.94rem;
 
   border-color:
     rgba(184, 196, 255, 0.22);
 
   color: #aeb9d2;
 
-  font-size: 0.71rem;
+  font-size: 0.70rem;
 
   background:
     linear-gradient(
       180deg,
       rgba(255, 255, 255, 0.046),
       rgba(255, 255, 255, 0.018)
-    );
-}
-
-.section-library-flow .flow-status-filter:hover {
-  color: #eef2ff;
-
-  border-color:
-    rgba(178, 193, 255, 0.38);
-
-  background:
-    linear-gradient(
-      145deg,
-      rgba(93, 118, 218, 0.15),
-      rgba(113, 91, 205, 0.09)
     );
 }
 
@@ -3691,26 +3585,41 @@ input[aria-invalid="true"] {
     0 0 14px rgba(159, 131, 255, 0.08);
 }
 
-/* Independent compact Sort control. */
+/* Sort stays in one line and never wraps. */
 
 .section-library-flow .flow-sort-controls {
-  position: absolute;
-  right: 0;
-  top: 50%;
+  grid-column: 3;
+
+  position: static;
 
   width: auto;
 
-  transform:
-    translateY(-50%);
+  align-self: start;
+  justify-self: end;
+
+  transform: none;
 }
 
 .section-library-flow .flow-sort-menu {
-  width:
-    clamp(220px, 17vw, 250px);
+  width: 238px;
 }
 
 .section-library-flow .flow-sort-trigger {
+  width: 100%;
   height: 42px;
+
+  display: grid;
+
+  grid-template-columns:
+    auto
+    minmax(0, 1fr)
+    auto;
+
+  align-items: center;
+
+  gap: 0.62rem;
+
+  white-space: nowrap;
 
   border-color:
     rgba(154, 180, 255, 0.34);
@@ -3729,13 +3638,24 @@ input[aria-invalid="true"] {
     );
 }
 
-.section-library-flow .flow-sort-prefix {
-  color: #8794b2;
+.section-library-flow
+.flow-sort-trigger
+[data-sort-label] {
+  min-width: 0;
 
-  font-weight: 700;
+  overflow: hidden;
+
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.section-library-flow .flow-sort-chevron {
+  justify-self: end;
 }
 
 .section-library-flow .flow-sort-options {
+  width: 100%;
+
   border-color:
     rgba(159, 183, 255, 0.38);
 
@@ -3753,30 +3673,67 @@ input[aria-invalid="true"] {
     );
 }
 
-/* Focus indicators. */
+/* The next rows follow immediately after the controls. */
 
-.section-library-flow .flow-filter:focus-visible,
-.section-library-flow .flow-status-filter:focus-visible,
-.section-library-flow .flow-sort-trigger:focus-visible,
-.section-library-flow .flow-sort-option:focus-visible {
-  outline:
-    2px solid rgba(121, 217, 255, 0.94);
+.section-library-flow .flow-library-list-header {
+  grid-row: 2;
+}
 
-  outline-offset: 2px;
+.section-library-flow .flow-library-viewport {
+  grid-row: 3;
 }
 
 /* ---------------------------------------------------------
-   Library columns and rows
+   Search result: saved titles can still change status
    --------------------------------------------------------- */
 
-.section-library-flow .flow-library-list-header,
-.section-library-flow .flow-library-row {
-  grid-template-columns:
-    minmax(340px, 1fr)
-    minmax(150px, 205px)
-    minmax(158px, 180px)
-    minmax(116px, 132px);
+.section-library-flow .flow-result-library-state {
+  width: fit-content;
+
+  margin: 0.34rem 0 0;
+
+  padding:
+    0.24rem 0.48rem;
+
+  border:
+    1px solid rgba(121, 217, 255, 0.25);
+
+  border-radius: 999px;
+
+  color: #b9dfff;
+
+  font-size: 0.58rem;
+  font-weight: 760;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(78, 157, 219, 0.13),
+      rgba(64, 88, 179, 0.07)
+    );
 }
+
+.section-library-flow
+.flow-result-library-state[hidden] {
+  display: none !important;
+}
+
+.section-library-flow .flow-add-button.is-update {
+  border-color:
+    rgba(199, 181, 255, 0.48);
+
+  background:
+    linear-gradient(
+      145deg,
+      #9d7cff,
+      #7385ff 58%,
+      #6265e8
+    );
+}
+
+/* ---------------------------------------------------------
+   Story viewport
+   --------------------------------------------------------- */
 
 .section-library-flow .flow-library-empty {
   border-color:
@@ -3795,167 +3752,41 @@ input[aria-invalid="true"] {
     );
 }
 
-.section-library-flow .flow-library-row {
-  border-color:
-    rgba(184, 196, 255, 0.22);
-
-  background:
-    radial-gradient(
-      circle at 8% 10%,
-      rgba(255, 255, 255, 0.052),
-      transparent 28%
-    ),
-    radial-gradient(
-      circle at 92% 90%,
-      rgba(159, 131, 255, 0.032),
-      transparent 36%
-    ),
-    linear-gradient(
-      135deg,
-      rgba(76, 91, 154, 0.14),
-      rgba(255, 255, 255, 0.022) 48%,
-      rgba(58, 105, 158, 0.04)
-    );
-}
-
-.section-library-flow .flow-library-row:hover {
-  border-color:
-    rgba(174, 192, 255, 0.36);
-
-  background:
-    radial-gradient(
-      circle at 8% 10%,
-      rgba(255, 255, 255, 0.073),
-      transparent 30%
-    ),
-    radial-gradient(
-      circle at 92% 90%,
-      rgba(159, 131, 255, 0.055),
-      transparent 38%
-    ),
-    linear-gradient(
-      135deg,
-      rgba(84, 101, 174, 0.18),
-      rgba(255, 255, 255, 0.032) 48%,
-      rgba(64, 116, 175, 0.055)
-    );
-
-  box-shadow:
-    0 13px 26px rgba(0, 0, 0, 0.22),
-    inset 0 1px 0 rgba(219, 225, 255, 0.07);
-
-  transform:
-    translateY(-1px);
-}
-
-.section-library-flow
-.flow-format-badge[data-format="manga"] {
-  color: #dce7ff;
-
-  border-color:
-    rgba(154, 186, 255, 0.38);
-
-  background:
-    linear-gradient(
-      180deg,
-      rgba(93, 126, 227, 0.22),
-      rgba(62, 79, 168, 0.10)
-    );
-}
-
-.section-library-flow
-.flow-format-badge[data-format="anime"] {
-  color: #ebe3ff;
-
-  border-color:
-    rgba(198, 178, 255, 0.38);
-
-  background:
-    linear-gradient(
-      180deg,
-      rgba(153, 119, 239, 0.22),
-      rgba(103, 79, 191, 0.10)
-    );
-}
-
-/* Personal ratings retain the familiar gold star. */
-
-.section-library-flow
-.flow-library-row-rating
-label.has-rating {
-  border-color:
-    rgba(244, 201, 93, 0.46);
-
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.07),
-    0 0 0 2px rgba(244, 201, 93, 0.052),
-    0 7px 18px rgba(0, 0, 0, 0.18);
-}
-
-.section-library-flow
-.flow-library-row-rating
-label.has-rating
-> i {
-  color: #f4c95d;
-
-  filter:
-    drop-shadow(
-      0 0 8px rgba(244, 201, 93, 0.36)
-    );
-}
-
 /* ---------------------------------------------------------
-   Responsive behavior
+   Responsive layout
    --------------------------------------------------------- */
 
 @media (
   max-width: 1280px
 ) and (
-  min-width: 1101px
+  min-width: 981px
 ) {
-  .section-library-flow .flow-grid {
+  .section-library-flow .flow-library-controls {
     grid-template-columns:
-      minmax(410px, 0.92fr)
-      minmax(460px, 1.08fr);
-  }
-
-  .section-library-flow .flow-library-toolbar {
-    padding-inline:
-      13rem;
+      minmax(190px, 1fr)
+      auto
+      minmax(190px, 1fr);
   }
 
   .section-library-flow .flow-sort-menu {
-    width: 220px;
+    width: 218px;
   }
 
   .section-library-flow
   .flow-library-filters
   .flow-filter {
-    min-width: 78px;
-
-    padding:
-      0 0.84rem;
+    min-width: 76px;
   }
 
   .section-library-flow .flow-status-filter {
     padding:
-      0 0.78rem;
-  }
-
-  .section-library-flow .flow-library-list-header,
-  .section-library-flow .flow-library-row {
-    grid-template-columns:
-      minmax(270px, 1fr)
-      minmax(125px, 165px)
-      minmax(140px, 160px)
-      112px;
+      0 0.76rem;
   }
 }
 
-@media (max-width: 1100px) {
+@media (max-width: 980px) {
   .section-library-flow {
-    --flow-section-overlap:
-      clamp(78px, 8vw, 120px);
+    min-height: auto;
   }
 
   .section-library-flow .flow-grid {
@@ -3973,38 +3804,30 @@ label.has-rating
     min-height: 410px;
   }
 
-  .section-library-flow .flow-library-toolbar {
-    min-height: 184px;
+  .section-library-flow .flow-library-controls {
+    grid-template-columns: 1fr;
 
-    padding:
-      0.25rem
-      1rem
-      0.45rem;
+    gap: 0.75rem;
+  }
+
+  .section-library-flow .flow-library-control-stack,
+  .section-library-flow .flow-sort-controls {
+    grid-column: 1;
   }
 
   .section-library-flow .flow-sort-controls {
-    position: static;
-
-    margin-top: 0.2rem;
-
-    transform: none;
-  }
-
-  .section-library-flow .flow-filter-deck {
-    padding-bottom: 3.4rem;
+    justify-self: center;
   }
 }
 
 @media (max-width: 680px) {
   .section-library-flow {
-    --flow-section-overlap: 72px;
-
     padding-inline: 1rem;
   }
 
   .section-library-flow .flow-library-header {
-    min-height: 94px;
     height: auto;
+    min-height: 94px;
 
     align-items: flex-start;
   }
@@ -4023,20 +3846,6 @@ label.has-rating
     text-align: right;
   }
 
-  .section-library-flow .flow-library-toolbar {
-    min-height: 220px;
-  }
-
-  .section-library-flow .flow-filter-deck {
-    width: 100%;
-
-    padding-bottom: 3.8rem;
-  }
-
-  .section-library-flow .flow-library-status-filters {
-    justify-content: center;
-  }
-
   .section-library-flow
   .flow-library-filters
   .flow-filter,
@@ -4048,21 +3857,5 @@ label.has-rating
   .section-library-flow .flow-sort-controls,
   .section-library-flow .flow-sort-menu {
     width: 100%;
-  }
-}
-
-@media (prefers-contrast: more) {
-  .section-library-flow .flow-card,
-  .section-library-flow .flow-library-row,
-  .section-library-flow .flow-library-empty {
-    border-color:
-      rgba(218, 225, 255, 0.48);
-  }
-
-  .section-library-flow .flow-filter,
-  .section-library-flow .flow-status-filter,
-  .section-library-flow .flow-sort-trigger {
-    border-color:
-      rgba(218, 225, 255, 0.56);
   }
 }
