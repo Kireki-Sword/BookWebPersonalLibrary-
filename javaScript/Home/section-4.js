@@ -1136,7 +1136,14 @@
         ?.closest(".s4-reader-side"),
     };
 
-    let focusRefreshTimer = 0;
+    const FOCUS_ANIMATION_MS = 440;
+    const FOCUS_EASING =
+      "cubic-bezier(0.22, 1, 0.36, 1)";
+
+    const focusAnimations =
+      new Set();
+
+    let focusTransitionId = 0;
 
     const updateReaderAvailability = (mode) => {
       ["left", "right"].forEach((side) => {
@@ -1155,6 +1162,65 @@
           "aria-hidden",
           String(isInactive),
         );
+      });
+    };
+
+    const cancelFocusAnimations = () => {
+      focusAnimations.forEach((animation) => {
+        animation.cancel();
+      });
+
+      focusAnimations.clear();
+    };
+
+    const animateFocusElement = (
+      element,
+      keyframes,
+      options = {},
+    ) => {
+      if (
+        !element ||
+        typeof element.animate !== "function" ||
+        window.matchMedia(
+          "(prefers-reduced-motion: reduce)",
+        ).matches
+      ) {
+        return null;
+      }
+
+      const animation = element.animate(
+        keyframes,
+        {
+          duration: FOCUS_ANIMATION_MS,
+          easing: FOCUS_EASING,
+          fill: "both",
+          ...options,
+        },
+      );
+
+      focusAnimations.add(animation);
+
+      const removeAnimation = () => {
+        focusAnimations.delete(animation);
+
+        try {
+          animation.cancel();
+        } catch (_) {
+          // The animation may already have been cancelled by a new focus click.
+        }
+      };
+
+      animation.finished.then(
+        removeAnimation,
+        removeAnimation,
+      );
+
+      return animation;
+    };
+
+    const afterFocusLayout = (callback) => {
+      window.requestAnimationFrame(() => {
+        window.requestAnimationFrame(callback);
       });
     };
 
@@ -1283,27 +1349,66 @@
         return;
       }
 
-      focusMode = mode;
-
-      /*
-       * CSS owns the visual transition. The Section 4 scroll timeline already
-       * controls the comparison stage itself, so adding another GSAP transform
-       * here would create competing transform values and break reversibility.
-       */
-      elements.compareStage.dataset.focus =
+      const previousMode =
         focusMode;
 
+      const previousActiveSide =
+        previousMode === "left" ||
+        previousMode === "right"
+          ? previousMode
+          : null;
+
+      const nextActiveSide =
+        mode === "left" ||
+        mode === "right"
+          ? mode
+          : null;
+
+      const movingPanel =
+        nextActiveSide
+          ? readerSideBySide[nextActiveSide]
+          : previousActiveSide
+            ? readerSideBySide[previousActiveSide]
+            : null;
+
+      const movingPanelStartRect =
+        movingPanel?.getBoundingClientRect() ||
+        null;
+
+      cancelFocusAnimations();
+
+      const transitionId =
+        ++focusTransitionId;
+
+      /*
+       * Preserve the panel's two-reader width in focus mode. Only its position
+       * changes, so Quotes, Moments, Characters, Notes, and Thoughts retain
+       * their familiar internal proportions.
+       */
+      if (
+        nextActiveSide &&
+        movingPanelStartRect?.width
+      ) {
+        elements.compareStage.style.setProperty(
+          "--s4-focus-panel-width",
+          `${Math.round(movingPanelStartRect.width)}px`,
+        );
+      }
+
+      focusMode = mode;
+      elements.compareStage.dataset.focus = mode;
       elements.compareStage.classList.add(
         "is-focus-changing",
       );
 
-      updateReaderAvailability(focusMode);
+      /* Inactive readers disappear immediately; returning to both removes
+         inert immediately so the second side never waits behind a delay. */
+      updateReaderAvailability(mode);
 
       elements.profileButtons.forEach(
         (button) => {
           const selected =
-            button.dataset.focusReader ===
-            focusMode;
+            button.dataset.focusReader === mode;
 
           button.setAttribute(
             "aria-pressed",
@@ -1314,10 +1419,10 @@
 
       elements.compareBoth?.setAttribute(
         "aria-pressed",
-        String(focusMode === "both"),
+        String(mode === "both"),
       );
 
-      if (focusMode === "left") {
+      if (mode === "left") {
         updateScoreDisplay(
           elements,
           READERS.kai.score,
@@ -1329,7 +1434,7 @@
           elements.readerStatus.textContent =
             READERS.kai.status;
         }
-      } else if (focusMode === "right") {
+      } else if (mode === "right") {
         updateScoreDisplay(
           elements,
           READERS.nova.score,
@@ -1362,23 +1467,99 @@
         }
       }
 
-      /*
-       * The focused column changes width over 560ms. Measure at the beginning
-       * and after the transition so the final comparison scale remains correct
-       * for quotes, moments, characters, notes, and thoughts.
-       */
-      requestLayoutRefresh();
+      afterFocusLayout(() => {
+        if (
+          transitionId !== focusTransitionId
+        ) {
+          return;
+        }
 
-      window.clearTimeout(focusRefreshTimer);
+        if (
+          movingPanel &&
+          movingPanelStartRect
+        ) {
+          const movingPanelEndRect =
+            movingPanel.getBoundingClientRect();
 
-      focusRefreshTimer =
+          const deltaX =
+            movingPanelStartRect.left -
+            movingPanelEndRect.left;
+
+          const deltaY =
+            movingPanelStartRect.top -
+            movingPanelEndRect.top;
+
+          /*
+           * CSS has already placed the panel in its destination. Translating
+           * from the old rectangle creates a true left-to-centre or
+           * right-to-centre motion without changing GSAP's transform values.
+           */
+          animateFocusElement(
+            movingPanel,
+            [
+              {
+                translate:
+                  `${deltaX}px ${deltaY}px`,
+              },
+              {
+                translate: "0px 0px",
+              },
+            ],
+          );
+        }
+
+        if (
+          mode === "both" &&
+          previousActiveSide
+        ) {
+          const returningSide =
+            previousActiveSide === "left"
+              ? "right"
+              : "left";
+
+          const returningPanel =
+            readerSideBySide[returningSide];
+
+          const direction =
+            returningSide === "left"
+              ? -1
+              : 1;
+
+          animateFocusElement(
+            returningPanel,
+            [
+              {
+                opacity: 0,
+                translate:
+                  `${direction * 22}px 0px`,
+              },
+              {
+                opacity: 1,
+                translate: "0px 0px",
+              },
+            ],
+            {
+              duration: 260,
+            },
+          );
+        }
+
+        requestLayoutRefresh();
+
         window.setTimeout(() => {
+          if (
+            transitionId !== focusTransitionId
+          ) {
+            return;
+          }
+
           elements.compareStage.classList.remove(
             "is-focus-changing",
           );
 
           requestLayoutRefresh();
-        }, 620);
+        }, FOCUS_ANIMATION_MS + 40);
+      });
     };
 
     elements.layerButtons.forEach((button) => {

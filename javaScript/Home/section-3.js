@@ -1967,13 +1967,23 @@
     const viewport =
       elements.libraryViewport;
 
-    if (!viewport) {
+    const list =
+      elements.libraryList;
+
+    if (!viewport || !list) {
       return;
     }
 
+    /*
+     * The preview is intentionally a two-row window. Basing the state on the
+     * rendered title count avoids a false scrollbar caused by sub-pixel
+     * padding, borders, or font rounding when only two rows are present.
+     */
+    const renderedTitleCount =
+      list.children.length;
+
     const isScrollable =
-      viewport.scrollHeight >
-      viewport.clientHeight + 2;
+      renderedTitleCount > 2;
 
     viewport.classList.toggle(
       'is-scrollable',
@@ -1984,6 +1994,11 @@
       'data-scrollable',
       String(isScrollable)
     );
+
+    viewport.scrollTop =
+      isScrollable
+        ? viewport.scrollTop
+        : 0;
   }
 
   function bindGlobalStatusMenuEvents() {
@@ -4000,4 +4015,3 @@
     startSection3Motion();
   }
 })();
-

@@ -6652,3 +6652,149 @@ body.s4-modal-open {
     transition-duration: 0.001ms !important;
   }
 }
+
+
+/* ========================================================================== 
+   FINAL READER FOCUS — DIRECTIONAL, CENTRED, CONTENT-PRESERVING
+
+   JavaScript performs a FLIP translation from the reader's current side to
+   the centred slot. The focused panel keeps its original width and each layer
+   keeps the same internal composition it uses in the two-reader view.
+   ========================================================================== */
+
+@media (min-width: 1100px) and (min-height: 700px) {
+  .s4-compare-stage {
+    transition: none !important;
+  }
+
+  .s4-compare-stage[data-focus="both"] {
+    width: min(1380px, calc(100vw - 48px)) !important;
+    grid-template-columns:
+      minmax(0, 1fr)
+      70px
+      minmax(0, 1fr) !important;
+    gap: 20px !important;
+    justify-items: stretch !important;
+  }
+
+  .s4-compare-stage[data-focus="both"] .s4-reader-side {
+    position: relative !important;
+    inset: auto !important;
+    grid-row: auto !important;
+    width: 100% !important;
+    max-width: none !important;
+    height: auto !important;
+    max-height: none !important;
+    display: flex !important;
+    flex-direction: column !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    filter: none !important;
+    transform: none !important;
+    translate: 0 0;
+    pointer-events: auto !important;
+    transition: none !important;
+  }
+
+  .s4-compare-stage[data-focus="both"] .s4-compare-divider {
+    display: flex !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    transition: opacity 180ms ease !important;
+  }
+
+  .s4-compare-stage[data-focus="left"],
+  .s4-compare-stage[data-focus="right"] {
+    width: min(1380px, calc(100vw - 48px)) !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 0 !important;
+    justify-items: center !important;
+  }
+
+  .s4-compare-stage[data-focus="left"] .s4-compare-divider,
+  .s4-compare-stage[data-focus="right"] .s4-compare-divider {
+    display: none !important;
+  }
+
+  .s4-compare-stage[data-focus="left"] .s4-reader-side-left,
+  .s4-compare-stage[data-focus="right"] .s4-reader-side-right {
+    position: relative !important;
+    inset: auto !important;
+    z-index: 5 !important;
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    width: min(var(--s4-focus-panel-width, 650px), 100%) !important;
+    max-width: none !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: var(--s4-reader-available-height, 590px) !important;
+    padding: 12px 14px 16px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-self: center !important;
+    overflow: hidden !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    filter: none !important;
+    transform: none !important;
+    translate: 0 0;
+    pointer-events: auto !important;
+    transition: none !important;
+  }
+
+  .s4-compare-stage[data-focus="left"] .s4-reader-side-right,
+  .s4-compare-stage[data-focus="right"] .s4-reader-side-left {
+    display: none !important;
+  }
+
+  .s4-compare-stage[data-focus="left"]
+  .s4-reader-side-left
+  .s4-reader-content,
+  .s4-compare-stage[data-focus="right"]
+  .s4-reader-side-right
+  .s4-reader-content {
+    flex: 0 1 auto !important;
+    min-height: 0 !important;
+    max-height: calc(var(--s4-reader-available-height, 590px) - 82px) !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+  }
+
+  /* Preserve the layer layouts instead of widening or restacking them. */
+  .s4-compare-stage[data-focus="left"] .s4-quote-grid,
+  .s4-compare-stage[data-focus="right"] .s4-quote-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-template-rows:
+      minmax(205px, auto)
+      minmax(218px, auto) !important;
+    align-items: stretch !important;
+  }
+
+  .s4-compare-stage[data-focus="left"] .s4-character-grid,
+  .s4-compare-stage[data-focus="right"] .s4-character-grid {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+
+  .s4-compare-stage[data-focus="left"] .s4-note-grid,
+  .s4-compare-stage[data-focus="right"] .s4-note-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .s4-compare-stage[data-focus="left"] .s4-thought-card,
+  .s4-compare-stage[data-focus="right"] .s4-thought-card {
+    height: clamp(330px, 40vh, 380px) !important;
+    min-height: 0 !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .s4-compare-stage,
+  .s4-reader-side {
+    transition: none !important;
+    animation: none !important;
+  }
+}

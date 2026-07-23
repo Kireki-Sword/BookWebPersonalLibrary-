@@ -420,21 +420,21 @@ body:is(.journey-preparing, .journey-ready)
   #section-3-library-flow .flow-grid {
     grid-template-rows:
       minmax(245px, 1fr)
-      382px !important;
+      400px !important;
   }
 
   body:is(.journey-preparing, .journey-ready)
   #section-3-library-flow .flow-library-card {
-    height: 382px !important;
-    min-height: 382px !important;
-    max-height: 382px !important;
+    height: 400px !important;
+    min-height: 400px !important;
+    max-height: 400px !important;
   }
 
   body:is(.journey-preparing, .journey-ready)
   #section-3-library-flow .flow-library-viewport {
-    height: 174px !important;
-    min-height: 174px !important;
-    max-height: 174px !important;
+    height: 190px !important;
+    min-height: 190px !important;
+    max-height: 190px !important;
     overflow-y: auto !important;
     overflow-x: hidden !important;
   }
@@ -445,13 +445,40 @@ body:is(.journey-preparing, .journey-ready)
   #section-3-library-flow .flow-grid {
     grid-template-rows:
       minmax(245px, 1fr)
-      410px !important;
+      428px !important;
   }
 
   body:is(.journey-preparing, .journey-ready)
   #section-3-library-flow .flow-library-card {
-    height: 410px !important;
-    min-height: 410px !important;
-    max-height: 410px !important;
+    height: 428px !important;
+    min-height: 428px !important;
+    max-height: 428px !important;
+  }
+}
+
+
+/* Keep the slightly taller Saved Stories card higher in the pinned frame. */
+@media (min-width: 1101px) and (min-height: 700px) {
+  body:is(.journey-preparing, .journey-ready)
+  #section-3-library-flow .flow-grid {
+    row-gap: clamp(0.68rem, 1.05vh, 0.95rem) !important;
+  }
+
+  body:is(.journey-preparing, .journey-ready)
+  #section-3-library-flow .flow-library-viewport:not(.is-scrollable) {
+    overflow-y: hidden !important;
+    scrollbar-width: none !important;
+  }
+
+  body:is(.journey-preparing, .journey-ready)
+  #section-3-library-flow
+  .flow-library-viewport:not(.is-scrollable)::-webkit-scrollbar {
+    width: 0 !important;
+  }
+
+  body:is(.journey-preparing, .journey-ready)
+  #section-3-library-flow .flow-library-viewport.is-scrollable {
+    overflow-y: auto !important;
+    scrollbar-width: thin !important;
   }
 }

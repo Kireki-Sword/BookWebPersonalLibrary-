@@ -5419,9 +5419,9 @@ input[aria-invalid="true"] {
 
 @media (min-width: 1200px) and (min-height: 700px) {
   .section-library-flow .flow-library-card {
-    height: 382px !important;
-    min-height: 382px !important;
-    max-height: 382px !important;
+    height: 400px !important;
+    min-height: 400px !important;
+    max-height: 400px !important;
   }
 
   .section-library-flow .flow-library-body {
@@ -5430,9 +5430,9 @@ input[aria-invalid="true"] {
   }
 
   .section-library-flow .flow-library-viewport {
-    height: 174px !important;
-    min-height: 174px !important;
-    max-height: 174px !important;
+    height: 190px !important;
+    min-height: 190px !important;
+    max-height: 190px !important;
     overflow-x: hidden !important;
     overflow-y: auto !important;
     scrollbar-gutter: auto !important;
@@ -5458,17 +5458,46 @@ input[aria-invalid="true"] {
 
 @media (min-width: 1101px) and (max-width: 1199px) and (min-height: 700px) {
   .section-library-flow .flow-library-card {
-    height: 410px !important;
-    min-height: 410px !important;
-    max-height: 410px !important;
+    height: 428px !important;
+    min-height: 428px !important;
+    max-height: 428px !important;
   }
 
   .section-library-flow .flow-library-viewport {
-    height: 174px !important;
-    min-height: 174px !important;
-    max-height: 174px !important;
+    height: 190px !important;
+    min-height: 190px !important;
+    max-height: 190px !important;
     overflow-x: hidden !important;
     overflow-y: auto !important;
     scrollbar-gutter: auto !important;
   }
+}
+
+
+/* ========================================================================== 
+   EXACT TWO-ROW LIBRARY VIEWPORT
+
+   Two saved titles remain fully visible. The third title turns on the internal
+   scrollbar; zero, one, or two titles never reserve a scrollbar channel.
+   ========================================================================== */
+
+.section-library-flow .flow-library-viewport:not(.is-scrollable) {
+  overflow-y: hidden !important;
+  scrollbar-width: none !important;
+}
+
+.section-library-flow
+.flow-library-viewport:not(.is-scrollable)::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.section-library-flow .flow-library-viewport.is-scrollable {
+  overflow-y: auto !important;
+  scrollbar-width: thin !important;
+}
+
+.section-library-flow
+.flow-library-viewport.is-scrollable::-webkit-scrollbar {
+  width: 10px !important;
 }
