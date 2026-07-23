@@ -440,7 +440,20 @@
       );
 
       requestAnimationFrame(() => {
-        setupMotion(section, elements);
+        try {
+          setupMotion(section, elements);
+        } catch (motionError) {
+          console.error("Section 4: setupMotion crashed —", motionError);
+          showStaticLayout(section, elements);
+          publishManagedJourney({
+            section,
+            elements,
+            timeline: null,
+            cleanup: () => {},
+            refresh: () => {},
+            showStatic: () => showStaticLayout(section, elements),
+          });
+        }
       });
     } catch (error) {
       console.error("Section 4 failed:", error);
@@ -2776,7 +2789,11 @@
           elements,
           gsap,
           { managed: true },
-        );
+        ) || { timeline: null, cleanup: () => {}, refresh: () => {} };
+
+      console.info(
+        `Section 4: managed timeline ${managedController.timeline ? "created" : "NOT created — falling back to static"}.`
+      );
 
       publishManagedJourney({
         section,
@@ -2859,6 +2876,15 @@
       !elements.handoff ||
       !elements.compareStage
     ) {
+      console.warn("Section 4: pinned timeline aborted — missing element(s):", {
+        chosenLeft: Boolean(chosenLeft),
+        chosenRight: Boolean(chosenRight),
+        sharedCardWrap: Boolean(elements.sharedCardWrap),
+        cardCover: Boolean(elements.cardCover),
+        handoff: Boolean(elements.handoff),
+        compareStage: Boolean(elements.compareStage),
+      });
+
       showStaticLayout(section, elements);
 
       return undefined;
