@@ -1025,259 +1025,288 @@
                 ================================================= -->
 
             <div
-            class="flow-library-toolbar"
-            data-flow-motion-item=""
+              class="flow-library-toolbar"
+              data-flow-motion-item=""
             >
+              <!-- Centered filter controls -->
 
-            <!-- Format row -->
+              <div class="flow-filter-deck">
 
-            <div class="flow-toolbar-row flow-toolbar-row-format">
-                <span class="flow-filter-label">
-                Format
-                </span>
+                <!-- Format filters -->
 
-                <div class="flow-toolbar-control-center">
                 <div
+                  class="flow-filter-group flow-filter-group-format"
+                  role="group"
+                  aria-labelledby="library-format-label"
+                >
+                  <span
+                    id="library-format-label"
+                    class="flow-filter-label"
+                  >
+                    Format
+                  </span>
+
+                  <div
                     class="flow-library-filters"
                     aria-label="Filter saved stories by format"
+                  >
+                    <button
+                      type="button"
+                      class="flow-filter active"
+                      data-format-filter="all"
+                      aria-pressed="true"
+                    >
+                      All
+                    </button>
+
+                    <button
+                      type="button"
+                      class="flow-filter"
+                      data-format-filter="manga"
+                      aria-pressed="false"
+                    >
+                      Manga
+                    </button>
+
+                    <button
+                      type="button"
+                      class="flow-filter"
+                      data-format-filter="anime"
+                      aria-pressed="false"
+                    >
+                      Anime
+                    </button>
+                  </div>
+                </div>
+
+
+                <!-- Status filters -->
+
+                <div
+                  class="flow-filter-group flow-filter-group-status"
+                  role="group"
+                  aria-labelledby="library-status-label"
                 >
+                  <span
+                    id="library-status-label"
+                    class="flow-filter-label"
+                  >
+                    Status
+                  </span>
+
+                  <div
+                    class="flow-library-status-filters"
+                    aria-label="Filter saved stories by status"
+                  >
                     <button
-                    type="button"
-                    class="flow-filter active"
-                    data-format-filter="all"
-                    aria-pressed="true"
+                      type="button"
+                      class="flow-status-filter active"
+                      data-status-filter="all"
+                      aria-pressed="true"
                     >
-                    All
+                      All
                     </button>
 
                     <button
-                    type="button"
-                    class="flow-filter"
-                    data-format-filter="manga"
-                    aria-pressed="false"
+                      type="button"
+                      class="flow-status-filter"
+                      data-status-filter="in-progress"
+                      aria-pressed="false"
                     >
-                    Manga
+                      Reading
                     </button>
 
                     <button
-                    type="button"
-                    class="flow-filter"
-                    data-format-filter="anime"
-                    aria-pressed="false"
+                      type="button"
+                      class="flow-status-filter"
+                      data-status-filter="completed"
+                      aria-pressed="false"
                     >
-                    Anime
+                      Completed
                     </button>
+
+                    <button
+                      type="button"
+                      class="flow-status-filter"
+                      data-status-filter="planned"
+                      aria-pressed="false"
+                    >
+                      Planned
+                    </button>
+
+                    <button
+                      type="button"
+                      class="flow-status-filter"
+                      data-status-filter="paused"
+                      aria-pressed="false"
+                    >
+                      Paused
+                    </button>
+
+                    <button
+                      type="button"
+                      class="flow-status-filter"
+                      data-status-filter="dropped"
+                      aria-pressed="false"
+                    >
+                      Dropped
+                    </button>
+                  </div>
                 </div>
-                </div>
+
+              </div>
 
 
-                <!-- Sort menu -->
+              <!-- Independent sort control -->
 
-                <div class="flow-sort-controls">
+              <div class="flow-sort-controls">
                 <span
-                    id="library-sort-label"
-                    class="flow-sort-label"
+                  id="library-sort-label"
+                  class="sr-only"
                 >
-                    Sort by
+                  Sort saved stories
                 </span>
 
                 <div
-                    class="flow-sort-menu"
-                    data-sort-menu=""
+                  class="flow-sort-menu"
+                  data-sort-menu=""
                 >
-                    <button
+                  <button
                     type="button"
                     class="flow-sort-trigger"
+                    data-sort-trigger=""
                     aria-haspopup="listbox"
                     aria-expanded="false"
                     aria-labelledby="library-sort-label library-sort-value"
-                    data-sort-trigger=""
-                    >
+                  >
                     <i
-                        class="ti ti-arrows-sort"
-                        aria-hidden="true"
+                      class="ti ti-arrows-sort"
+                      aria-hidden="true"
                     ></i>
 
                     <span
-                        id="library-sort-value"
-                        data-sort-label=""
+                      class="flow-sort-prefix"
+                      aria-hidden="true"
                     >
-                        Recently added
+                      Sort:
+                    </span>
+
+                    <span
+                      id="library-sort-value"
+                      data-sort-label=""
+                    >
+                      Recently added
                     </span>
 
                     <i
-                        class="ti ti-chevron-down flow-sort-chevron"
-                        aria-hidden="true"
+                      class="ti ti-chevron-down flow-sort-chevron"
+                      aria-hidden="true"
                     ></i>
-                    </button>
+                  </button>
 
 
-                    <div
+                  <!-- Sort options -->
+
+                  <div
                     class="flow-sort-options"
+                    data-sort-options=""
                     role="listbox"
                     aria-labelledby="library-sort-label"
-                    data-sort-options=""
                     hidden
-                    >
+                  >
                     <button
-                        type="button"
-                        class="flow-sort-option is-selected"
-                        role="option"
-                        aria-selected="true"
-                        data-sort-option=""
-                        data-sort-value=""
-                        data-sort-option-label="Recently added"
+                      type="button"
+                      class="flow-sort-option is-selected"
+                      data-sort-option=""
+                      data-sort-value=""
+                      data-sort-option-label="Recently added"
+                      role="option"
+                      aria-selected="true"
                     >
-                        Recently added
+                      Recently added
                     </button>
 
                     <button
-                        type="button"
-                        class="flow-sort-option"
-                        role="option"
-                        aria-selected="false"
-                        data-sort-option=""
-                        data-sort-value="title-asc"
-                        data-sort-option-label="Title A–Z"
+                      type="button"
+                      class="flow-sort-option"
+                      data-sort-option=""
+                      data-sort-value="title-asc"
+                      data-sort-option-label="Title A–Z"
+                      role="option"
+                      aria-selected="false"
                     >
-                        Title A–Z
+                      Title A–Z
                     </button>
 
                     <button
-                        type="button"
-                        class="flow-sort-option"
-                        role="option"
-                        aria-selected="false"
-                        data-sort-option=""
-                        data-sort-value="title-desc"
-                        data-sort-option-label="Title Z–A"
+                      type="button"
+                      class="flow-sort-option"
+                      data-sort-option=""
+                      data-sort-value="title-desc"
+                      data-sort-option-label="Title Z–A"
+                      role="option"
+                      aria-selected="false"
                     >
-                        Title Z–A
+                      Title Z–A
                     </button>
 
                     <button
-                        type="button"
-                        class="flow-sort-option"
-                        role="option"
-                        aria-selected="false"
-                        data-sort-option=""
-                        data-sort-value="rating-desc"
-                        data-sort-option-label="Rating: high to low"
+                      type="button"
+                      class="flow-sort-option"
+                      data-sort-option=""
+                      data-sort-value="rating-desc"
+                      data-sort-option-label="Rating: high to low"
+                      role="option"
+                      aria-selected="false"
                     >
-                        Rating: high to low
+                      Rating: high to low
                     </button>
 
                     <button
-                        type="button"
-                        class="flow-sort-option"
-                        role="option"
-                        aria-selected="false"
-                        data-sort-option=""
-                        data-sort-value="rating-asc"
-                        data-sort-option-label="Rating: low to high"
+                      type="button"
+                      class="flow-sort-option"
+                      data-sort-option=""
+                      data-sort-value="rating-asc"
+                      data-sort-option-label="Rating: low to high"
+                      role="option"
+                      aria-selected="false"
                     >
-                        Rating: low to high
+                      Rating: low to high
                     </button>
-                    </div>
+                  </div>
 
 
-                    <!-- Native select kept for JavaScript state -->
+                  <!-- Hidden native select used by JavaScript state -->
 
-                    <select
+                  <select
                     id="library-sort-select"
                     data-library-sort=""
                     aria-hidden="true"
                     tabindex="-1"
                     hidden
-                    >
-                    <option value="">Recently added</option>
-                    <option value="title-asc">Title A–Z</option>
-                    <option value="title-desc">Title Z–A</option>
+                  >
+                    <option value="">
+                      Recently added
+                    </option>
+
+                    <option value="title-asc">
+                      Title A–Z
+                    </option>
+
+                    <option value="title-desc">
+                      Title Z–A
+                    </option>
+
                     <option value="rating-desc">
-                        Rating: high to low
+                      Rating: high to low
                     </option>
+
                     <option value="rating-asc">
-                        Rating: low to high
+                      Rating: low to high
                     </option>
-                    </select>
+                  </select>
                 </div>
-                </div>
-            </div>
-
-
-            <!-- Status row -->
-
-            <div class="flow-toolbar-row flow-toolbar-row-status">
-                <span class="flow-filter-label">
-                Status
-                </span>
-
-                <div class="flow-toolbar-control-center">
-                <div
-                    class="flow-library-status-filters"
-                    aria-label="Filter saved stories by status"
-                >
-                    <button
-                    type="button"
-                    class="flow-status-filter active"
-                    data-status-filter="all"
-                    aria-pressed="true"
-                    >
-                    All
-                    </button>
-
-                    <button
-                    type="button"
-                    class="flow-status-filter"
-                    data-status-filter="in-progress"
-                    aria-pressed="false"
-                    >
-                    Reading
-                    </button>
-
-                    <button
-                    type="button"
-                    class="flow-status-filter"
-                    data-status-filter="completed"
-                    aria-pressed="false"
-                    >
-                    Completed
-                    </button>
-
-                    <button
-                    type="button"
-                    class="flow-status-filter"
-                    data-status-filter="planned"
-                    aria-pressed="false"
-                    >
-                    Planned
-                    </button>
-
-                    <button
-                    type="button"
-                    class="flow-status-filter"
-                    data-status-filter="paused"
-                    aria-pressed="false"
-                    >
-                    Paused
-                    </button>
-
-                    <button
-                    type="button"
-                    class="flow-status-filter"
-                    data-status-filter="dropped"
-                    aria-pressed="false"
-                    >
-                    Dropped
-                    </button>
-                </div>
-                </div>
-
-                <span
-                class="flow-toolbar-balance"
-                aria-hidden="true"
-                ></span>
-            </div>
+              </div>
             </div>
 
 
