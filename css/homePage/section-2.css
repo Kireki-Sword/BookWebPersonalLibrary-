@@ -2819,7 +2819,7 @@
 
 
 /* ==========================================================================
-   JULY 2026 REFINEMENT — SECTION 2 OPENING COMPOSITION
+    SECTION 2 OPENING COMPOSITION
    ========================================================================== */
 
 .section-empty-shelf .section-2-header {
@@ -2858,7 +2858,7 @@
 
 
 /* ==========================================================================
-   AUGUST 2026 LAYOUT FIX — SECTION 2 OPENING SPACING
+   LAYOUT FIX — SECTION 2 OPENING SPACING
    ========================================================================== */
 
 .section-empty-shelf .section-2-header {
@@ -2867,4 +2867,41 @@
 
 .section-empty-shelf .card-wrap {
   margin-inline: auto;
+}
+
+
+/* ==========================================================================
+   The managed timeline supplies the final height through CSS variables. These
+   rules use that space more effectively without changing other saved layers.
+   ========================================================================== */
+
+@media (min-width: 1101px) {
+  .section-empty-shelf.is-js-ready .falling-quotes {
+    width: min(1600px, calc(100vw - 42px));
+    max-width: 1600px;
+    min-height: 382px;
+    column-gap: clamp(0.8rem, 0.95vw, 1.05rem);
+    row-gap: clamp(0.5rem, 0.6vw, 0.68rem);
+  }
+
+  .falling-quote {
+    padding: clamp(0.78rem, 1.05vw, 1rem) clamp(0.95rem, 1.25vw, 1.2rem);
+    font-size: clamp(0.91rem, 0.22vw + 0.81rem, 1rem);
+    line-height: 1.44;
+  }
+}
+
+
+
+
+
+
+
+
+/* Final Section 2 opening-position fix */
+@media (min-width: 1101px) {
+  .section-empty-shelf .section-2-header {
+    margin-bottom:
+      calc(clamp(3.35rem, 6.5vh, 4.6rem) + 24px);
+  }
 }
