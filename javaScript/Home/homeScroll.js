@@ -1,5 +1,5 @@
 /* ============================================================================
-   INKWELL — ONE MASTER PINNED HOME-PAGE JOURNEY (V4)
+   INKWELL — ONE MASTER PINNED HOME-PAGE JOURNEY (V5)
 
    REQUIRED SCRIPT ORDER
    1. Supabase
@@ -33,7 +33,7 @@
    * - The master still has enough scrub distance for smooth reversal.
    */
   const SCROLL_PIXELS_PER_TIMELINE_SECOND = 360;
-  const SECTION_2_TIME_SCALE = 1.15;
+  const SECTION_2_TIME_SCALE = 1.25;
 
   const SELECTORS = {
     nav: "nav",
@@ -413,15 +413,15 @@
 
     /* SECTION 1 ---------------------------------------------------------- */
     master.addLabel("section-1-start", 0);
-    master.to({}, { duration: 0.3 });
+    master.to({}, { duration: 0.12 });
 
     addHeroToSection2Transition(master, elements, heroItems);
 
     master.addLabel("section-2-start");
-    master.to({}, { duration: 0.22 });
+    master.to({}, { duration: 0.12 });
     attachChildTimeline(master, section2Timeline);
     master.addLabel("section-2-end");
-    master.to({}, { duration: 0.24 });
+    master.to({}, { duration: 0.16 });
 
     /* SECTION 2 -> 3 ----------------------------------------------------- */
     addSection2ToSection3Transition(
@@ -438,7 +438,7 @@
     addSection3ToSection4Transition(master, elements);
 
     master.addLabel("section-4-start");
-    master.to({}, { duration: 0.18 });
+    master.to({}, { duration: 0.14 });
 
     if (section4Timeline) {
       attachChildTimeline(master, section4Timeline);
@@ -450,7 +450,7 @@
     master.to({}, { duration: 0.85 });
 
     state.trigger = ScrollTrigger.create({
-      id: "inkwell-one-master-journey-v4",
+      id: "inkwell-one-master-journey-v5",
       trigger: state.shell,
       animation: master,
       start: () => `top top+=${getNavHeight(elements.nav)}`,
@@ -465,7 +465,7 @@
       },
       pin: state.shell,
       pinSpacing: true,
-      scrub: 0.78,
+      scrub: 1.02,
       anticipatePin: 1,
       invalidateOnRefresh: true,
       refreshPriority: 100,
@@ -513,89 +513,89 @@
       visibility: "visible",
       pointerEvents: "none",
       autoAlpha: 0,
-      yPercent: 1.8,
-      scale: 1.012,
+      yPercent: 1.4,
+      scale: 1.01,
     });
 
     timeline.set(incomingItems, {
       autoAlpha: 0,
-      y: 28,
+      y: 30,
     });
 
-    /* Phase 1: finish Section 1 completely before Section 2 copy appears. */
+    /* The hero exits first. The next section's content does not appear yet. */
     timeline.to(heroItems, {
       autoAlpha: 0,
-      x: -30,
-      y: -24,
-      duration: 0.46,
-      stagger: { each: 0.028, from: "end" },
+      x: -34,
+      y: -26,
+      duration: 0.72,
+      stagger: { each: 0.045, from: "end" },
       ease: "power2.inOut",
     }, 0);
 
     if (elements.heroRight) {
       timeline.to(elements.heroRight, {
         autoAlpha: 0,
-        x: 56,
-        y: -20,
-        scale: 0.96,
-        duration: 0.56,
+        x: 68,
+        y: -18,
+        scale: 0.955,
+        duration: 0.82,
         ease: "power2.inOut",
-      }, 0.02);
+      }, 0.08);
     }
 
-    /* Phase 2: blend only the two backgrounds. */
+    /* Only the backgrounds overlap during this interval. */
     timeline.to(elements.hero, {
       autoAlpha: 0,
-      scale: 0.994,
-      duration: 0.46,
+      scale: 0.992,
+      duration: 0.78,
       ease: "power2.inOut",
-    }, 0.48);
+    }, 0.72);
 
     timeline.to(elements.section2, {
       autoAlpha: 1,
       yPercent: 0,
       scale: 1,
-      duration: 0.52,
-      ease: "power2.out",
-    }, 0.48);
+      duration: 0.82,
+      ease: "power2.inOut",
+    }, 0.72);
 
-    /* Phase 3: reveal the real Section 2 content in reading order. */
+    /* Section 2 reads in from label to card rather than appearing at once. */
     timeline.to(elements.section2Label, {
-      autoAlpha: 1,
-      y: 0,
-      duration: 0.28,
-      ease: "power3.out",
-    }, 0.92);
-
-    timeline.to(elements.section2Title, {
-      autoAlpha: 1,
-      y: 0,
-      duration: 0.4,
-      ease: "power3.out",
-    }, 1.0);
-
-    timeline.to(elements.section2Description, {
       autoAlpha: 1,
       y: 0,
       duration: 0.34,
       ease: "power3.out",
-    }, 1.16);
+    }, 1.42);
+
+    timeline.to(elements.section2Title, {
+      autoAlpha: 1,
+      y: 0,
+      duration: 0.48,
+      ease: "power3.out",
+    }, 1.54);
+
+    timeline.to(elements.section2Description, {
+      autoAlpha: 1,
+      y: 0,
+      duration: 0.4,
+      ease: "power3.out",
+    }, 1.8);
 
     timeline.to(elements.section2Card, {
       autoAlpha: 1,
       y: 0,
       scale: 1,
-      duration: 0.44,
+      duration: 0.56,
       ease: "power3.out",
-    }, 1.28);
+    }, 2.02);
 
     timeline.set(elements.hero, {
       visibility: "hidden",
       pointerEvents: "none",
-    }, 1.02);
+    }, 1.52);
 
-    timeline.set(elements.section2, { pointerEvents: "auto" }, 1.7);
-    timeline.to({}, { duration: 1.76 - timeline.duration() });
+    timeline.set(elements.section2, { pointerEvents: "auto" }, 2.58);
+    timeline.to({}, { duration: Math.max(0, 2.7 - timeline.duration()) });
     master.add(timeline);
   }
 
@@ -630,83 +630,101 @@
       visibility: "visible",
       pointerEvents: "none",
       autoAlpha: 0,
-      yPercent: 1.8,
-      scale: 1.008,
+      yPercent: 1.2,
+      scale: 1.006,
     });
 
-    timeline.set(copyLead, { autoAlpha: 0, x: -28, y: 20 });
+    timeline.set(elements.section3Copy, {
+      autoAlpha: 0,
+      x: -44,
+      y: 18,
+    });
+
+    timeline.set(copyLead, { autoAlpha: 0, x: -24, y: 18 });
     timeline.set(elements.section3Search, {
       autoAlpha: 0,
-      x: 52,
-      y: 18,
+      x: 58,
+      y: 20,
       scale: 0.98,
     });
     timeline.set(elements.section3SearchParts, { autoAlpha: 0, y: 14 });
     timeline.set(elements.section3Library, {
       autoAlpha: 0,
-      y: 48,
-      scale: 0.988,
+      y: 56,
+      scale: 0.986,
     });
     timeline.set(elements.section3LibraryParts, { autoAlpha: 0, y: 12 });
 
-    /* Phase 1: clear every temporary Section 2 layer before the hand-off. */
+    /* Finish and remove every temporary Section 2 layer first. */
     if (section2Transient.length) {
       timeline.to(section2Transient, {
         autoAlpha: 0,
-        y: -18,
-        scale: 0.96,
-        duration: 0.34,
-        stagger: 0.012,
+        y: -24,
+        scale: 0.95,
+        duration: 0.52,
+        stagger: 0.014,
         ease: "power2.in",
       }, 0);
     }
 
     timeline.to(section2Core, {
       autoAlpha: 0,
-      y: -24,
-      scale: 0.985,
-      duration: 0.46,
-      stagger: 0.035,
+      y: -28,
+      scale: 0.982,
+      duration: 0.64,
+      stagger: 0.055,
       ease: "power2.inOut",
-    }, 0.18);
+    }, 0.28);
 
     timeline.set(section2Transient, {
       autoAlpha: 0,
       visibility: "hidden",
       pointerEvents: "none",
-    }, 0.58);
+    }, 0.78);
 
-    /* Phase 2: backgrounds blend after all Section 2 content is gone. */
+    /* Blend only the two backgrounds after Section 2 is visually empty. */
     timeline.to(elements.section2, {
       autoAlpha: 0,
-      yPercent: -1.4,
-      scale: 0.995,
-      duration: 0.46,
+      yPercent: -1,
+      scale: 0.994,
+      duration: 0.8,
       ease: "power2.inOut",
-    }, 0.62);
+    }, 0.82);
 
     timeline.to(elements.section3, {
       autoAlpha: 1,
       yPercent: 0,
       scale: 1,
-      duration: 0.5,
-      ease: "power2.out",
-    }, 0.62);
+      duration: 0.84,
+      ease: "power2.inOut",
+    }, 0.82);
 
-    /* Phase 3: reveal Section 3 in a clear left/right/bottom sequence. */
+    /* Section 3 enters in three readable groups. */
+    timeline.to(elements.section3Copy, {
+      autoAlpha: 1,
+      x: 0,
+      y: 0,
+      duration: 0.46,
+      ease: "power3.out",
+    }, 1.62);
+
     timeline.to(elements.section3Label, {
-      autoAlpha: 1, x: 0, y: 0, duration: 0.26, ease: "power3.out",
-    }, 1.08);
+      autoAlpha: 1,
+      x: 0,
+      y: 0,
+      duration: 0.3,
+      ease: "power3.out",
+    }, 1.7);
 
     if (elements.section3TitleLines.length) {
       timeline.to(elements.section3TitleLines, {
         autoAlpha: 1,
         x: 0,
         y: 0,
-        duration: 0.38,
-        stagger: 0.075,
+        duration: 0.46,
+        stagger: 0.1,
         ease: "power3.out",
-      }, 1.15);
+      }, 1.78);
     }
 
     timeline.to(
@@ -715,11 +733,11 @@
         autoAlpha: 1,
         x: 0,
         y: 0,
-        duration: 0.32,
-        stagger: 0.07,
+        duration: 0.38,
+        stagger: 0.09,
         ease: "power3.out",
       },
-      1.34,
+      2.08,
     );
 
     timeline.to(elements.section3Search, {
@@ -727,45 +745,45 @@
       x: 0,
       y: 0,
       scale: 1,
-      duration: 0.46,
+      duration: 0.58,
       ease: "power3.out",
-    }, 1.18);
+    }, 1.9);
 
     if (elements.section3SearchParts.length) {
       timeline.to(elements.section3SearchParts, {
         autoAlpha: 1,
         y: 0,
-        duration: 0.28,
-        stagger: 0.055,
+        duration: 0.34,
+        stagger: 0.07,
         ease: "power2.out",
-      }, 1.42);
+      }, 2.2);
     }
 
     timeline.to(elements.section3Library, {
       autoAlpha: 1,
       y: 0,
       scale: 1,
-      duration: 0.48,
+      duration: 0.62,
       ease: "power3.out",
-    }, 1.56);
+    }, 2.38);
 
     if (elements.section3LibraryParts.length) {
       timeline.to(elements.section3LibraryParts, {
         autoAlpha: 1,
         y: 0,
-        duration: 0.3,
-        stagger: 0.05,
+        duration: 0.36,
+        stagger: 0.065,
         ease: "power2.out",
-      }, 1.76);
+      }, 2.68);
     }
 
     timeline.set(elements.section2, {
       visibility: "hidden",
       pointerEvents: "none",
-    }, 1.16);
+    }, 1.7);
 
-    timeline.set(elements.section3, { pointerEvents: "auto" }, 2.18);
-    timeline.to({}, { duration: 2.24 - timeline.duration() });
+    timeline.set(elements.section3, { pointerEvents: "auto" }, 3.12);
+    timeline.to({}, { duration: Math.max(0, 3.22 - timeline.duration()) });
     master.add(timeline);
   }
 
@@ -790,59 +808,96 @@
       visibility: "visible",
       pointerEvents: "none",
       autoAlpha: 0,
-      scale: 1.018,
-    });
-    timeline.set(incomingItems, {
-      autoAlpha: 0,
-      y: 30,
-      scale: 0.988,
+      scale: 1.012,
     });
 
-    /* Phase 1: let Section 3 finish, then remove its panels cleanly. */
-    timeline.to(outgoingItems, {
+    timeline.set(incomingItems, {
       autoAlpha: 0,
-      y: -24,
+      y: 32,
       scale: 0.985,
-      duration: 0.46,
-      stagger: 0.045,
+    });
+
+    /* Section 3 remains settled before its groups leave in reverse order. */
+    timeline.to(elements.section3Library, {
+      autoAlpha: 0,
+      y: -26,
+      scale: 0.985,
+      duration: 0.56,
       ease: "power2.inOut",
     }, 0);
 
-    /* Phase 2: blend the section backgrounds only. */
+    timeline.to(elements.section3Search, {
+      autoAlpha: 0,
+      x: 42,
+      y: -18,
+      scale: 0.982,
+      duration: 0.6,
+      ease: "power2.inOut",
+    }, 0.18);
+
+    timeline.to(elements.section3Copy, {
+      autoAlpha: 0,
+      x: -42,
+      y: -20,
+      duration: 0.62,
+      ease: "power2.inOut",
+    }, 0.28);
+
+    /* Backgrounds blend only after the Section 3 panels have cleared. */
     timeline.to(elements.section3, {
       autoAlpha: 0,
-      scale: 0.995,
-      duration: 0.46,
+      scale: 0.994,
+      duration: 0.82,
       ease: "power2.inOut",
-    }, 0.58);
+    }, 0.9);
 
     timeline.to(elements.section4, {
       autoAlpha: 1,
       scale: 1,
-      duration: 0.5,
-      ease: "power2.out",
-    }, 0.58);
+      duration: 0.86,
+      ease: "power2.inOut",
+    }, 0.9);
 
-    /* Phase 3: Section 4 appears from its own center-led composition. */
+    /* Section 4's cinematic opening arrives in its own center-led order. */
     timeline.to(elements.section4Label, {
-      autoAlpha: 1, y: 0, scale: 1, duration: 0.25, ease: "power3.out",
-    }, 1.06);
+      autoAlpha: 1,
+      y: 0,
+      scale: 1,
+      duration: 0.32,
+      ease: "power3.out",
+    }, 1.72);
+
     timeline.to(elements.section4Title, {
-      autoAlpha: 1, y: 0, scale: 1, duration: 0.46, ease: "power3.out",
-    }, 1.14);
+      autoAlpha: 1,
+      y: 0,
+      scale: 1,
+      duration: 0.58,
+      ease: "power3.out",
+    }, 1.84);
+
     timeline.to(elements.section4Description, {
-      autoAlpha: 1, y: 0, scale: 1, duration: 0.32, ease: "power3.out",
-    }, 1.36);
+      autoAlpha: 1,
+      y: 0,
+      scale: 1,
+      duration: 0.42,
+      ease: "power3.out",
+    }, 2.16);
+
     timeline.to(elements.section4Cue, {
-      autoAlpha: 1, y: 0, scale: 1, duration: 0.28, ease: "power3.out",
-    }, 1.52);
+      autoAlpha: 1,
+      y: 0,
+      scale: 1,
+      duration: 0.34,
+      ease: "power3.out",
+    }, 2.38);
 
     timeline.set(elements.section3, {
       visibility: "hidden",
       pointerEvents: "none",
-    }, 1.08);
-    timeline.set(elements.section4, { pointerEvents: "auto" }, 1.88);
-    timeline.to({}, { duration: 1.94 - timeline.duration() });
+    }, 1.78);
+
+    timeline.set(elements.section4, { pointerEvents: "auto" }, 2.78);
+    timeline.to({}, { duration: Math.max(0, 2.9 - timeline.duration()) });
     master.add(timeline);
   }
 
@@ -867,7 +922,7 @@
     return gsap.timeline({
       defaults: { ease: "none" },
       paused: true,
-    }).to({}, { duration: 1.55 });
+    }).to({}, { duration: 2.85 });
   }
 
   function waitForSection4Api(timeoutMs) {

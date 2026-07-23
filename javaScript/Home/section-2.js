@@ -245,6 +245,7 @@
 
     createButtonProxies();
     enablePersistentMomentLayers();
+    applyManagedLayoutMetrics();
     setInitialState();
 
     if (prefersReducedMotion) {
@@ -281,6 +282,8 @@
       reset: setInitialState,
       showStatic: buildReducedMotionVersion,
       refresh: () => {
+        applyManagedLayoutMetrics();
+
         if (timeline) {
           timeline.invalidate();
           syncTimelineState(timeline);
@@ -462,10 +465,145 @@
   }
 
   /* ==========================================================================
+     MANAGED VIEWPORT METRICS
+
+     The natural Section 2 layout was designed for its own 100vh pin. Inside
+     the shared home journey the usable stage is shorter because the navbar is
+     outside the pin. These variables reserve a real lower zone for the
+     persistent card and a separate upper zone for evidence.
+     ========================================================================== */
+
+  function applyManagedLayoutMetrics() {
+    if (!MANAGED_BY_HOME_JOURNEY) {
+      return;
+    }
+
+    const clampValue = (value, minimum, maximum) => {
+      return Math.min(maximum, Math.max(minimum, value));
+    };
+
+    const savedViewportY = gsap.getProperty(
+      elements.viewport,
+      "y"
+    );
+
+    const savedCardY = gsap.getProperty(
+      elements.cardWrap,
+      "y"
+    );
+
+    gsap.set(elements.viewport, { y: 0 });
+    gsap.set(elements.cardWrap, { y: 0 });
+
+    const stageHeight = Math.max(
+      section.clientHeight,
+      636
+    );
+
+    const sectionRectangle = section.getBoundingClientRect();
+    const viewportRectangle = elements.viewport.getBoundingClientRect();
+
+    const viewportTopInsideSection =
+      viewportRectangle.top - sectionRectangle.top;
+
+    const cardHeight = Math.max(
+      elements.cardWrap.getBoundingClientRect().height,
+      286
+    );
+
+    const evidenceTop = clampValue(
+      stageHeight * 0.012,
+      6,
+      12
+    );
+
+    const cardBottomGap = clampValue(
+      stageHeight * 0.034,
+      24,
+      32
+    );
+
+    const evidenceCardGap = clampValue(
+      stageHeight * 0.052,
+      36,
+      46
+    );
+
+    const cardTargetTop =
+      stageHeight -
+      cardBottomGap -
+      cardHeight;
+
+    const evidenceVisualTop =
+      viewportTopInsideSection +
+      getViewportLiftY() +
+      evidenceTop;
+
+    const evidenceHeight = clampValue(
+      cardTargetTop -
+        evidenceVisualTop -
+        evidenceCardGap,
+      350,
+      468
+    );
+
+    gsap.set(elements.viewport, { y: savedViewportY });
+    gsap.set(elements.cardWrap, { y: savedCardY });
+
+    const quoteHeight = clampValue(
+      evidenceHeight - 6,
+      354,
+      444
+    );
+
+    const thoughtHeight = clampValue(
+      Math.min(evidenceHeight * 0.72, 318),
+      248,
+      318
+    );
+
+    const thoughtTop = evidenceTop + Math.max(
+      18,
+      (evidenceHeight - thoughtHeight) * 0.34
+    );
+
+    section.style.setProperty(
+      "--s2-managed-evidence-top",
+      `${Math.round(evidenceTop)}px`
+    );
+
+    section.style.setProperty(
+      "--s2-managed-evidence-height",
+      `${Math.round(evidenceHeight)}px`
+    );
+
+    section.style.setProperty(
+      "--s2-managed-quote-top",
+      `${Math.max(2, Math.round(evidenceTop - 3))}px`
+    );
+
+    section.style.setProperty(
+      "--s2-managed-quote-height",
+      `${Math.round(quoteHeight)}px`
+    );
+
+    section.style.setProperty(
+      "--s2-managed-thought-top",
+      `${Math.round(thoughtTop)}px`
+    );
+
+    section.style.setProperty(
+      "--s2-managed-thought-height",
+      `${Math.round(thoughtHeight)}px`
+    );
+  }
+
+  /* ==========================================================================
      INITIAL STATE
      ========================================================================== */
 
   function setInitialState() {
+    applyManagedLayoutMetrics();
     resetMomentLayerOrder();
 
     gsap.set(elements.header, {
@@ -1335,11 +1473,12 @@
       window.innerWidth <= 640
         ? 160
         : MANAGED_BY_HOME_JOURNEY
-          ? 205
+          ? 194
           : 235;
 
     const desiredLift =
-      headerHeight + 34;
+      headerHeight +
+      (MANAGED_BY_HOME_JOURNEY ? 18 : 34);
 
     return -Math.min(
       desiredLift,
@@ -1389,14 +1528,20 @@
       window.innerWidth <= 640
         ? 12
         : MANAGED_BY_HOME_JOURNEY
-          ? 24
+          ? 14
           : 18;
 
     const bottomGap =
       window.innerWidth <= 640
         ? 18
         : MANAGED_BY_HOME_JOURNEY
-          ? 52
+          ? Math.min(
+              32,
+              Math.max(
+                24,
+                section.clientHeight * 0.034
+              )
+            )
           : 24;
 
     /*

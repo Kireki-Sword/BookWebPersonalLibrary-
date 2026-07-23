@@ -2933,11 +2933,11 @@
         return 74;
       }
 
-      /* Raise the final shared card inside the navbar-safe stage. */
+      /* Keep the shared card close to the navbar-safe top edge. */
       return clampValue(
-        elements.stage.clientHeight * 0.03,
-        20,
-        32,
+        elements.stage.clientHeight * 0.014,
+        8,
+        14,
       );
     };
 
@@ -2946,11 +2946,11 @@
         return 0.78;
       }
 
-      /* V2 made the shared card too small. Keep it visibly dominant. */
+      /* The shared story remains a clear visual anchor in the final view. */
       return clampValue(
-        elements.stage.clientHeight / 940,
-        0.79,
-        0.86,
+        elements.stage.clientHeight / 875,
+        0.88,
+        0.95,
       );
     };
 
@@ -2958,16 +2958,16 @@
       const dockTop = getDockTop();
       const dockScale = getDockScale();
 
-      const cardHeight =
-        elements.sharedCard
-          .getBoundingClientRect()
-          .height;
+      /* offsetHeight stays unscaled, unlike getBoundingClientRect() when
+       * the wrapper is already transformed during a refresh. */
+      const cardHeight = Math.max(
+        elements.sharedCard.offsetHeight,
+        170,
+      );
 
       const introHeight = Math.max(
-        elements.contentIntro
-          .getBoundingClientRect()
-          .height,
-        28,
+        elements.contentIntro.offsetHeight,
+        26,
       );
 
       const cardVisualBottom =
@@ -2975,13 +2975,13 @@
         cardHeight * dockScale;
 
       const introTop = Math.ceil(
-        cardVisualBottom + 4,
+        cardVisualBottom + 2,
       );
 
       const compareTop = Math.ceil(
         introTop +
           introHeight +
-          4,
+          2,
       );
 
       elements.stage.style.setProperty(
@@ -3006,15 +3006,15 @@
       );
 
       const availableCompareHeight = Math.max(
-        elements.stage.clientHeight - compareTop - 6,
+        elements.stage.clientHeight - compareTop - 3,
         1,
       );
 
       const compareScale = MANAGED_BY_HOME_JOURNEY
         ? clampValue(
             availableCompareHeight / naturalCompareHeight,
-            0.72,
-            1,
+            0.68,
+            0.97,
           )
         : 1;
 

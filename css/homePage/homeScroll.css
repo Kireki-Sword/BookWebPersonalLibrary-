@@ -1,7 +1,9 @@
 /* ========================================================================== 
-   INKWELL — ONE MASTER PINNED HOME-PAGE JOURNEY (V3)
+   INKWELL — ONE MASTER PINNED HOME-PAGE JOURNEY (V5)
 
    Import this file LAST, after section-1.css through section-4.css.
+   It coordinates the fixed viewport and only overrides layout while the
+   desktop master journey is active.
    ========================================================================== */
 
 :root {
@@ -59,6 +61,8 @@ body:is(.journey-preparing, .journey-ready)
   margin: 0 !important;
   overflow: hidden !important;
   pointer-events: none;
+  backface-visibility: hidden;
+  transform: translateZ(0);
   will-change: opacity, transform;
 }
 
@@ -109,53 +113,105 @@ body:is(.journey-preparing, .journey-ready)
 }
 
 /* --------------------------------------------------------------------------
-   SECTION 2 — compact the managed viewport and keep the card above the bottom
+   SECTION 2
+
+   JavaScript measures the actual stage and persistent card and writes the
+   --s2-managed-* variables. Evidence is kept in a dedicated upper zone and
+   the persistent card is kept in a dedicated lower zone, so the two cannot
+   overlap on common 700–1000px desktop heights.
    -------------------------------------------------------------------------- */
 
 body:is(.journey-preparing, .journey-ready)
 #section-2-empty-shelf {
+  --s2-managed-evidence-top: 8px;
+  --s2-managed-evidence-height: 438px;
+  --s2-managed-quote-top: 4px;
+  --s2-managed-quote-height: 430px;
+  --s2-managed-thought-top: 38px;
+  --s2-managed-thought-height: 310px;
+
   padding:
-    clamp(3rem, 7vh, 4.75rem)
+    clamp(1.7rem, 3.8vh, 3rem)
     max(1.5rem, calc((100vw - 1220px) / 2 + 1.5rem))
-    clamp(0.7rem, 1.4vh, 1.15rem) !important;
+    clamp(0.65rem, 1.2vh, 1rem) !important;
 }
 
 body:is(.journey-preparing, .journey-ready)
 #section-2-empty-shelf .section-2-header {
-  margin-bottom: clamp(1.15rem, 2.2vh, 1.9rem);
+  margin-bottom: clamp(0.8rem, 1.45vh, 1.25rem);
+}
+
+body:is(.journey-preparing, .journey-ready)
+#section-2-empty-shelf .section-2-header .section-label {
+  margin-bottom: 0.58rem;
 }
 
 body:is(.journey-preparing, .journey-ready)
 #section-2-empty-shelf .section-2-header h2 {
-  font-size: clamp(2.75rem, 4.8vw, 4.45rem);
+  font-size: clamp(2.65rem, 4.55vw, 4.3rem);
 }
 
 body:is(.journey-preparing, .journey-ready)
 #section-2-empty-shelf .section-2-header p {
-  margin-top: clamp(0.65rem, 1.25vh, 1rem);
+  margin-top: clamp(0.48rem, 0.9vh, 0.72rem);
 }
 
-/*
- * Keep the initial card below the full heading. During the internal Section 2
- * timeline the viewport is lifted by JavaScript, so the evidence stages then
- * occupy the real top of the pinned scene without hiding beneath the navbar.
- */
+body:is(.journey-preparing, .journey-ready)
+#section-2-empty-shelf .empty-shelf-scroll,
 body:is(.journey-preparing, .journey-ready)
 #section-2-empty-shelf.is-js-ready .stage-viewport {
-  min-height: clamp(430px, 53vh, 555px);
-  top: 0;
+  height: 100%;
+  min-height: 100%;
 }
 
 body:is(.journey-preparing, .journey-ready)
 #section-2-empty-shelf.is-js-ready .scroll-stage {
-  top: clamp(12px, 1.8vh, 22px);
-  height: clamp(440px, 54vh, 590px);
+  top: var(--s2-managed-evidence-top) !important;
+  height: var(--s2-managed-evidence-height) !important;
 }
 
 body:is(.journey-preparing, .journey-ready)
 #section-2-empty-shelf.is-js-ready
-.scroll-stage[data-stage="moments-move"] {
-  top: clamp(18px, 2.2vh, 28px);
+.scroll-stage[data-stage="quotes-fall"] {
+  top: var(--s2-managed-quote-top) !important;
+  height: var(--s2-managed-quote-height) !important;
+}
+
+body:is(.journey-preparing, .journey-ready)
+#section-2-empty-shelf.is-js-ready
+.scroll-stage[data-stage="thoughts-appear"] {
+  top: var(--s2-managed-thought-top) !important;
+  height: var(--s2-managed-thought-height) !important;
+}
+
+body:is(.journey-preparing, .journey-ready)
+#section-2-empty-shelf.is-js-ready .falling-quotes {
+  height: 100% !important;
+  max-height: none !important;
+  font-size: clamp(0.79rem, 0.16vw + 0.72rem, 0.9rem);
+  line-height: 1.34;
+}
+
+body:is(.journey-preparing, .journey-ready)
+#section-2-empty-shelf.is-js-ready .moving-moments,
+body:is(.journey-preparing, .journey-ready)
+#section-2-empty-shelf.is-js-ready .character-cloud,
+body:is(.journey-preparing, .journey-ready)
+#section-2-empty-shelf.is-js-ready .notes-cloud {
+  max-height: 100%;
+}
+
+body:is(.journey-preparing, .journey-ready)
+#section-2-empty-shelf.is-js-ready .thoughts-cloud {
+  width: min(940px, 82vw);
+  min-height: 0;
+  height: 100%;
+  padding: clamp(1.25rem, 1.8vw, 1.75rem);
+}
+
+body:is(.journey-preparing, .journey-ready)
+#section-2-empty-shelf .card-wrap {
+  transform-origin: center bottom;
 }
 
 body.journey-ready .depth-button-proxy {
@@ -164,6 +220,10 @@ body.journey-ready .depth-button-proxy {
 
 /* --------------------------------------------------------------------------
    SECTION 3
+
+   Section 3 already has a natural IntersectionObserver entrance. During the
+   master journey GSAP owns the entrance, so the natural CSS motion state must
+   not keep the copy parent at opacity: 0.
    -------------------------------------------------------------------------- */
 
 body:is(.journey-preparing, .journey-ready)
@@ -171,9 +231,9 @@ body:is(.journey-preparing, .journey-ready)
   height: 100% !important;
   min-height: 0 !important;
   padding:
-    clamp(1.35rem, 3.2vh, 2.8rem)
+    clamp(1.2rem, 2.6vh, 2.25rem)
     clamp(1.25rem, 4.25vw, 4.75rem)
-    clamp(1.1rem, 2.5vh, 2.2rem) !important;
+    clamp(0.9rem, 1.9vh, 1.6rem) !important;
 }
 
 body:is(.journey-preparing, .journey-ready)
@@ -181,9 +241,22 @@ body:is(.journey-preparing, .journey-ready)
   height: 100%;
   min-height: 0;
   grid-template-rows:
-    minmax(235px, 0.8fr)
-    minmax(285px, 1fr);
-  row-gap: clamp(0.9rem, 1.8vh, 1.65rem);
+    minmax(245px, 0.84fr)
+    minmax(300px, 1fr);
+  row-gap: clamp(0.85rem, 1.55vh, 1.35rem);
+}
+
+body:is(.journey-preparing, .journey-ready)
+#section-3-library-flow.flow-motion-ready [data-flow-motion],
+body:is(.journey-preparing, .journey-ready)
+#section-3-library-flow.flow-motion-ready [data-flow-motion-item] {
+  transition: none !important;
+}
+
+body:is(.journey-preparing, .journey-ready)
+#section-3-library-flow.flow-motion-ready [data-flow-motion] {
+  opacity: 1;
+  transform: none;
 }
 
 body:is(.journey-preparing, .journey-ready)
@@ -206,7 +279,11 @@ body:is(.journey-preparing, .journey-ready)
 }
 
 /* --------------------------------------------------------------------------
-   SECTION 4 — use the real stage height below the nav and fit final comparison
+   SECTION 4
+
+   The top shared card is intentionally a little wider and is docked higher.
+   JavaScript calculates --s4-intro-top, --s4-compare-top and
+   --s4-compare-scale from the real content height.
    -------------------------------------------------------------------------- */
 
 body:is(.journey-preparing, .journey-ready) #section-4,
@@ -218,13 +295,41 @@ body:is(.journey-preparing, .journey-ready) #section-4 .s4-stage {
 
 body:is(.journey-preparing, .journey-ready)
 #section-4 .s4-shared-card-wrap {
+  width: min(760px, calc(100vw - 44px));
   transform-origin: top center;
 }
 
 body:is(.journey-preparing, .journey-ready)
+#section-4 .s4-shared-card {
+  min-height: 170px;
+  grid-template-columns: 96px minmax(0, 1fr) auto;
+}
+
+body:is(.journey-preparing, .journey-ready)
+#section-4 .s4-card-cover {
+  width: 96px;
+}
+
+body:is(.journey-preparing, .journey-ready)
+#section-4 .s4-content-intro {
+  width: min(760px, calc(100vw - 44px));
+}
+
+body:is(.journey-preparing, .journey-ready)
+#section-4 .s4-content-intro p {
+  margin-top: 0.18rem;
+}
+
+body:is(.journey-preparing, .journey-ready)
 #section-4 .s4-compare-stage {
+  width: min(1320px, calc(100vw - 34px));
   scale: var(--s4-compare-scale, 1);
   transform-origin: top center;
+}
+
+body:is(.journey-preparing, .journey-ready)
+#section-4 .s4-reader-side {
+  padding: 7px;
 }
 
 /* --------------------------------------------------------------------------
@@ -238,7 +343,6 @@ body:is(.journey-preparing, .journey-ready)
     min-height: 0;
     overflow: visible;
   }
-
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -248,6 +352,4 @@ body:is(.journey-preparing, .journey-ready)
     min-height: 0;
     overflow: visible;
   }
-
-
 }
