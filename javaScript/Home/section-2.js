@@ -1334,7 +1334,9 @@
     const maxLift =
       window.innerWidth <= 640
         ? 160
-        : 235;
+        : MANAGED_BY_HOME_JOURNEY
+          ? 205
+          : 235;
 
     const desiredLift =
       headerHeight + 34;
@@ -1386,12 +1388,16 @@
     const topGap =
       window.innerWidth <= 640
         ? 12
-        : 18;
+        : MANAGED_BY_HOME_JOURNEY
+          ? 24
+          : 18;
 
     const bottomGap =
       window.innerWidth <= 640
         ? 18
-        : 24;
+        : MANAGED_BY_HOME_JOURNEY
+          ? 52
+          : 24;
 
     /*
      * In the shared journey the section is shorter than window.innerHeight

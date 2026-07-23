@@ -1,5 +1,5 @@
 /* ============================================================================
-   INKWELL — ONE MASTER PINNED HOME-PAGE JOURNEY (V2)
+   INKWELL — ONE MASTER PINNED HOME-PAGE JOURNEY (V3)
 
    REQUIRED SCRIPT ORDER
    1. Supabase
@@ -26,8 +26,14 @@
     "(min-width: 1100px) and (min-height: 700px) and " +
     "(prefers-reduced-motion: no-preference)";
 
-  const SCROLL_PIXELS_PER_TIMELINE_SECOND = 540;
-  const TRANSITION_DURATION = 2.25;
+  /*
+   * Scroll density is deliberately lower than V2:
+   * - Section 1 reaches Section 2 sooner.
+   * - Section 2 is slightly faster, without rushing its saved-layer scenes.
+   * - The master still has enough scrub distance for smooth reversal.
+   */
+  const SCROLL_PIXELS_PER_TIMELINE_SECOND = 410;
+  const SECTION_2_TIME_SCALE = 1.15;
 
   const SELECTORS = {
     nav: "nav",
@@ -69,7 +75,6 @@
     trigger: null,
     shell: null,
     stage: null,
-    transitionLayer: null,
     heroIntro: null,
     createdWrapper: false,
     originalParent: null,
@@ -177,12 +182,59 @@
       section3,
       section4: document.querySelector(SELECTORS.section4),
       section2Header: document.querySelector(".section-2-header"),
+      section2Label: document.querySelector(
+        ".section-2-header .section-label",
+      ),
+      section2Title: document.querySelector(".section-2-header h2"),
+      section2Description: document.querySelector(".section-2-header p"),
       section2Card: document.querySelector("#section-2-empty-shelf .card-wrap"),
+
       section3Copy: section3?.querySelector(".flow-copy-card") || null,
+      section3Label:
+        section3?.querySelector(".flow-copy-card .section-label") || null,
+      section3TitleLines: section3
+        ? gsapSafeArray(
+            section3.querySelectorAll(".flow-copy-card .flow-title-line"),
+          )
+        : [],
+      section3Description:
+        section3?.querySelector(".flow-copy-card > p") || null,
+      section3Cta:
+        section3?.querySelector(".flow-copy-card .flow-cta") || null,
       section3Search: section3?.querySelector(".flow-search-card") || null,
+      section3SearchParts: section3
+        ? gsapSafeArray(
+            section3.querySelectorAll(
+              ".flow-search-card .flow-card-header, " +
+                ".flow-search-card .flow-search-form, " +
+                ".flow-search-card .flow-search-empty",
+            ),
+          )
+        : [],
       section3Library: section3?.querySelector(".flow-library-card") || null,
+      section3LibraryParts: section3
+        ? gsapSafeArray(
+            section3.querySelectorAll(
+              ".flow-library-card .flow-library-header, " +
+                ".flow-library-card .flow-library-toolbar, " +
+                ".flow-library-card .flow-library-list-header, " +
+                ".flow-library-card .flow-library-viewport",
+            ),
+          )
+        : [],
+
       section4Copy:
         document.querySelector("#section-4 .s4-cinematic-copy") || null,
+      section4Label:
+        document.querySelector(
+          "#section-4 .s4-cinematic-copy .s4-section-label",
+        ) || null,
+      section4Title:
+        document.querySelector("#section-4 .s4-cinematic-copy h2") || null,
+      section4Description:
+        document.querySelector("#section-4 .s4-cinematic-copy > p") || null,
+      section4Cue:
+        document.querySelector("#section-4 .s4-scroll-cue") || null,
     };
   }
 
@@ -212,7 +264,6 @@
     gsap.set(elements.section3, { zIndex: 2 });
     gsap.set(elements.section4, { zIndex: 1 });
 
-    createTransitionLayer();
   }
 
   function playHeroIntro(elements) {
@@ -305,11 +356,11 @@
 
     const section2Timeline = section2Api.timeline;
     const section4Timeline = section4Api?.timeline || null;
-    const section3Timeline = createSection3Timeline(elements);
+    const section3Timeline = createSection3Timeline();
 
     section2Api.reset?.();
     section2Timeline.pause(0);
-    section2Timeline.timeScale(1);
+    section2Timeline.timeScale(SECTION_2_TIME_SCALE);
 
     if (section4Timeline) {
       elements.section4.classList.remove("is-static");
@@ -322,6 +373,7 @@
     gsap.set(scenes, {
       autoAlpha: 0,
       pointerEvents: "none",
+      xPercent: 0,
       yPercent: 0,
       scale: 1,
     });
@@ -346,60 +398,32 @@
 
     /* SECTION 1 ---------------------------------------------------------- */
     master.addLabel("section-1-start", 0);
-    master.to({}, { duration: 1.45 });
+    master.to({}, { duration: 0.48 });
 
-    addSceneTransition(master, {
-      name: "transition-1-2",
-      outgoing: elements.hero,
-      incoming: elements.section2,
-      outgoingItems: [...heroItems, elements.heroRight].filter(Boolean),
-      incomingItems: [elements.section2Header, elements.section2Card].filter(
-        Boolean,
-      ),
-    });
+    addHeroToSection2Transition(master, elements, heroItems);
 
     master.addLabel("section-2-start");
-    master.to({}, { duration: 0.42 });
+    master.to({}, { duration: 0.22 });
     attachChildTimeline(master, section2Timeline);
     master.addLabel("section-2-end");
-    master.to({}, { duration: 0.5 });
+    master.to({}, { duration: 0.24 });
 
     /* SECTION 2 -> 3 ----------------------------------------------------- */
-    addSceneTransition(master, {
-      name: "transition-2-3",
-      outgoing: elements.section2,
-      incoming: elements.section3,
-      outgoingItems: section2Api.externalElements || [],
-      incomingItems: [
-        elements.section3Copy,
-        elements.section3Search,
-        elements.section3Library,
-      ].filter(Boolean),
-      outgoingLift: -28,
-    });
+    addSection2ToSection3Transition(
+      master,
+      elements,
+      section2Api.externalElements || [],
+    );
 
     master.addLabel("section-3-start");
-    master.to({}, { duration: 0.35 });
     attachChildTimeline(master, section3Timeline);
     master.addLabel("section-3-end");
-    master.to({}, { duration: 0.55 });
 
     /* SECTION 3 -> 4 ----------------------------------------------------- */
-    addSceneTransition(master, {
-      name: "transition-3-4",
-      outgoing: elements.section3,
-      incoming: elements.section4,
-      outgoingItems: [
-        elements.section3Copy,
-        elements.section3Search,
-        elements.section3Library,
-      ].filter(Boolean),
-      incomingItems: [elements.section4Copy].filter(Boolean),
-      outgoingLift: -34,
-    });
+    addSection3ToSection4Transition(master, elements);
 
     master.addLabel("section-4-start");
-    master.to({}, { duration: 0.35 });
+    master.to({}, { duration: 0.18 });
 
     if (section4Timeline) {
       attachChildTimeline(master, section4Timeline);
@@ -408,25 +432,25 @@
     }
 
     master.addLabel("section-4-end");
-    master.to({}, { duration: 1.25 });
+    master.to({}, { duration: 0.85 });
 
     state.trigger = ScrollTrigger.create({
-      id: "inkwell-one-master-journey-v2",
+      id: "inkwell-one-master-journey-v3",
       trigger: state.shell,
       animation: master,
       start: () => `top top+=${getNavHeight(elements.nav)}`,
       end: () => {
         const distance = Math.max(
           master.duration() * SCROLL_PIXELS_PER_TIMELINE_SECOND,
-          window.innerHeight * 18,
-          16500,
+          window.innerHeight * 9.5,
+          9800,
         );
 
         return `+=${Math.round(distance)}`;
       },
       pin: state.shell,
       pinSpacing: true,
-      scrub: 1.15,
+      scrub: 0.78,
       anticipatePin: 1,
       invalidateOnRefresh: true,
       refreshPriority: 100,
@@ -453,144 +477,496 @@
     });
   }
 
-  function addSceneTransition(
-    master,
-    {
-      name,
-      outgoing,
-      incoming,
-      outgoingItems = [],
-      incomingItems = [],
-      outgoingLift = -46,
-    },
-  ) {
+  /*
+   * Each hand-off has its own visual grammar. There is no generic glowing
+   * line or duplicate transition overlay. The real incoming section and its
+   * real elements are revealed in sequence.
+   */
+
+  function addHeroToSection2Transition(master, elements, heroItems) {
     const { gsap } = state;
-    const layer = state.transitionLayer;
-    const transition = gsap.timeline({ defaults: { ease: "none" } });
+    const duration = 1.52;
+    const timeline = gsap.timeline({ defaults: { ease: "none" } });
 
-    transition.addLabel(name, 0);
+    const incomingItems = [
+      elements.section2Label,
+      elements.section2Title,
+      elements.section2Description,
+      elements.section2Card,
+    ].filter(Boolean);
 
-    transition.set(incoming, {
+    timeline.set(elements.section2, {
       visibility: "visible",
       pointerEvents: "none",
+      autoAlpha: 0,
+      yPercent: 3.5,
+      scale: 1.018,
     });
 
-    if (layer) {
-      transition.set(layer, {
-        autoAlpha: 0,
-        yPercent: 16,
-        scale: 1.08,
-      });
+    timeline.set(incomingItems, {
+      autoAlpha: 0,
+      y: 30,
+    });
 
-      transition.to(
-        layer,
-        {
-          autoAlpha: 0.78,
-          yPercent: 0,
-          scale: 1,
-          duration: 0.82,
-          ease: "power2.out",
-        },
-        0.08,
-      );
-
-      transition.to(
-        layer,
-        {
-          autoAlpha: 0,
-          yPercent: -13,
-          scale: 1.045,
-          duration: 1.02,
-          ease: "power2.inOut",
-        },
-        1.08,
-      );
-    }
-
-    if (outgoingItems.length) {
-      transition.to(
-        outgoingItems,
-        {
-          autoAlpha: 0,
-          y: outgoingLift,
-          duration: 1.2,
-          stagger: 0.045,
-          ease: "power2.inOut",
-        },
-        0.06,
-      );
-    }
-
-    transition.to(
-      outgoing,
+    timeline.to(
+      heroItems,
       {
         autoAlpha: 0,
-        yPercent: -2.4,
-        scale: 0.982,
-        duration: 1.62,
+        x: -24,
+        y: -26,
+        duration: 0.68,
+        stagger: {
+          each: 0.035,
+          from: "end",
+        },
         ease: "power2.inOut",
       },
-      0.12,
+      0,
     );
 
-    transition.fromTo(
-      incoming,
+    if (elements.heroRight) {
+      timeline.to(
+        elements.heroRight,
+        {
+          autoAlpha: 0,
+          x: 52,
+          y: -24,
+          scale: 0.965,
+          duration: 0.78,
+          ease: "power2.inOut",
+        },
+        0.02,
+      );
+    }
+
+    timeline.to(
+      elements.hero,
       {
         autoAlpha: 0,
-        yPercent: 7,
-        scale: 1.025,
+        scale: 0.992,
+        duration: 0.88,
+        ease: "power2.inOut",
       },
+      0.08,
+    );
+
+    timeline.to(
+      elements.section2,
       {
         autoAlpha: 1,
         yPercent: 0,
         scale: 1,
-        duration: 1.7,
-        ease: "power2.inOut",
-        immediateRender: true,
+        duration: 1.08,
+        ease: "power2.out",
       },
-      0.28,
+      0.18,
     );
 
-    if (incomingItems.length) {
-      transition.fromTo(
-        incomingItems,
-        {
-          autoAlpha: 0,
-          y: 42,
-          scale: 0.985,
-        },
-        {
-          autoAlpha: 1,
-          y: 0,
-          scale: 1,
-          duration: 1.18,
-          stagger: 0.08,
-          ease: "power3.out",
-          immediateRender: true,
-        },
-        0.54,
-      );
-    }
+    timeline.to(
+      elements.section2Label,
+      {
+        autoAlpha: 1,
+        y: 0,
+        duration: 0.44,
+        ease: "power3.out",
+      },
+      0.38,
+    );
 
-    transition.set(
-      outgoing,
+    timeline.to(
+      elements.section2Title,
+      {
+        autoAlpha: 1,
+        y: 0,
+        duration: 0.56,
+        ease: "power3.out",
+      },
+      0.48,
+    );
+
+    timeline.to(
+      elements.section2Description,
+      {
+        autoAlpha: 1,
+        y: 0,
+        duration: 0.48,
+        ease: "power3.out",
+      },
+      0.67,
+    );
+
+    timeline.to(
+      elements.section2Card,
+      {
+        autoAlpha: 1,
+        y: 0,
+        scale: 1,
+        duration: 0.62,
+        ease: "power3.out",
+      },
+      0.82,
+    );
+
+    timeline.set(
+      elements.hero,
       {
         visibility: "hidden",
         pointerEvents: "none",
       },
-      2.02,
+      duration - 0.08,
     );
 
-    transition.set(
-      incoming,
+    timeline.set(
+      elements.section2,
       {
         pointerEvents: "auto",
       },
-      2.02,
+      duration - 0.04,
     );
 
-    transition.to({}, { duration: TRANSITION_DURATION - 2.02 }, 2.02);
-    master.add(transition);
+    timeline.to({}, { duration: Math.max(0, duration - timeline.duration()) });
+    master.add(timeline);
+  }
+
+  function addSection2ToSection3Transition(
+    master,
+    elements,
+    section2Proxies,
+  ) {
+    const { gsap } = state;
+    const duration = 1.78;
+    const timeline = gsap.timeline({ defaults: { ease: "none" } });
+
+    const copyLead = [
+      elements.section3Label,
+      ...elements.section3TitleLines,
+      elements.section3Description,
+      elements.section3Cta,
+    ].filter(Boolean);
+
+    timeline.set(elements.section3, {
+      visibility: "visible",
+      pointerEvents: "none",
+      autoAlpha: 0,
+      yPercent: 3,
+      scale: 1.012,
+    });
+
+    timeline.set(copyLead, {
+      autoAlpha: 0,
+      x: -26,
+      y: 22,
+    });
+
+    timeline.set(elements.section3Search, {
+      autoAlpha: 0,
+      x: 58,
+      y: 20,
+      scale: 0.975,
+    });
+
+    timeline.set(elements.section3SearchParts, {
+      autoAlpha: 0,
+      y: 16,
+    });
+
+    timeline.set(elements.section3Library, {
+      autoAlpha: 0,
+      y: 58,
+      scale: 0.985,
+    });
+
+    timeline.set(elements.section3LibraryParts, {
+      autoAlpha: 0,
+      y: 14,
+    });
+
+    if (section2Proxies.length) {
+      timeline.to(
+        section2Proxies,
+        {
+          autoAlpha: 0,
+          y: -22,
+          scale: 0.92,
+          duration: 0.42,
+          stagger: 0.025,
+          ease: "power2.in",
+        },
+        0,
+      );
+    }
+
+    timeline.to(
+      elements.section2,
+      {
+        autoAlpha: 0,
+        yPercent: -3.2,
+        scale: 0.988,
+        duration: 0.9,
+        ease: "power2.inOut",
+      },
+      0.02,
+    );
+
+    timeline.to(
+      elements.section3,
+      {
+        autoAlpha: 1,
+        yPercent: 0,
+        scale: 1,
+        duration: 1.12,
+        ease: "power2.out",
+      },
+      0.18,
+    );
+
+    timeline.to(
+      elements.section3Label,
+      {
+        autoAlpha: 1,
+        x: 0,
+        y: 0,
+        duration: 0.38,
+        ease: "power3.out",
+      },
+      0.38,
+    );
+
+    if (elements.section3TitleLines.length) {
+      timeline.to(
+        elements.section3TitleLines,
+        {
+          autoAlpha: 1,
+          x: 0,
+          y: 0,
+          duration: 0.5,
+          stagger: 0.09,
+          ease: "power3.out",
+        },
+        0.46,
+      );
+    }
+
+    timeline.to(
+      [elements.section3Description, elements.section3Cta].filter(Boolean),
+      {
+        autoAlpha: 1,
+        x: 0,
+        y: 0,
+        duration: 0.42,
+        stagger: 0.09,
+        ease: "power3.out",
+      },
+      0.69,
+    );
+
+    timeline.to(
+      elements.section3Search,
+      {
+        autoAlpha: 1,
+        x: 0,
+        y: 0,
+        scale: 1,
+        duration: 0.62,
+        ease: "power3.out",
+      },
+      0.5,
+    );
+
+    if (elements.section3SearchParts.length) {
+      timeline.to(
+        elements.section3SearchParts,
+        {
+          autoAlpha: 1,
+          y: 0,
+          duration: 0.38,
+          stagger: 0.07,
+          ease: "power2.out",
+        },
+        0.72,
+      );
+    }
+
+    timeline.to(
+      elements.section3Library,
+      {
+        autoAlpha: 1,
+        y: 0,
+        scale: 1,
+        duration: 0.64,
+        ease: "power3.out",
+      },
+      0.84,
+    );
+
+    if (elements.section3LibraryParts.length) {
+      timeline.to(
+        elements.section3LibraryParts,
+        {
+          autoAlpha: 1,
+          y: 0,
+          duration: 0.4,
+          stagger: 0.065,
+          ease: "power2.out",
+        },
+        1.02,
+      );
+    }
+
+    timeline.set(
+      elements.section2,
+      {
+        visibility: "hidden",
+        pointerEvents: "none",
+      },
+      duration - 0.12,
+    );
+
+    timeline.set(
+      elements.section3,
+      {
+        pointerEvents: "auto",
+      },
+      duration - 0.05,
+    );
+
+    timeline.to({}, { duration: Math.max(0, duration - timeline.duration()) });
+    master.add(timeline);
+  }
+
+  function addSection3ToSection4Transition(master, elements) {
+    const { gsap } = state;
+    const duration = 1.82;
+    const timeline = gsap.timeline({ defaults: { ease: "none" } });
+
+    const outgoingItems = [
+      elements.section3Copy,
+      elements.section3Search,
+      elements.section3Library,
+    ].filter(Boolean);
+
+    const incomingItems = [
+      elements.section4Label,
+      elements.section4Title,
+      elements.section4Description,
+      elements.section4Cue,
+    ].filter(Boolean);
+
+    timeline.set(elements.section4, {
+      visibility: "visible",
+      pointerEvents: "none",
+      autoAlpha: 0,
+      scale: 1.025,
+    });
+
+    timeline.set(incomingItems, {
+      autoAlpha: 0,
+      y: 34,
+      scale: 0.985,
+    });
+
+    timeline.to(
+      outgoingItems,
+      {
+        autoAlpha: 0,
+        y: -28,
+        scale: 0.985,
+        duration: 0.76,
+        stagger: 0.055,
+        ease: "power2.inOut",
+      },
+      0,
+    );
+
+    timeline.to(
+      elements.section3,
+      {
+        autoAlpha: 0,
+        scale: 0.992,
+        duration: 0.92,
+        ease: "power2.inOut",
+      },
+      0.04,
+    );
+
+    timeline.to(
+      elements.section4,
+      {
+        autoAlpha: 1,
+        scale: 1,
+        duration: 1.16,
+        ease: "power2.out",
+      },
+      0.18,
+    );
+
+    timeline.to(
+      elements.section4Label,
+      {
+        autoAlpha: 1,
+        y: 0,
+        scale: 1,
+        duration: 0.4,
+        ease: "power3.out",
+      },
+      0.42,
+    );
+
+    timeline.to(
+      elements.section4Title,
+      {
+        autoAlpha: 1,
+        y: 0,
+        scale: 1,
+        duration: 0.62,
+        ease: "power3.out",
+      },
+      0.5,
+    );
+
+    timeline.to(
+      elements.section4Description,
+      {
+        autoAlpha: 1,
+        y: 0,
+        scale: 1,
+        duration: 0.46,
+        ease: "power3.out",
+      },
+      0.78,
+    );
+
+    timeline.to(
+      elements.section4Cue,
+      {
+        autoAlpha: 1,
+        y: 0,
+        scale: 1,
+        duration: 0.42,
+        ease: "power3.out",
+      },
+      0.98,
+    );
+
+    timeline.set(
+      elements.section3,
+      {
+        visibility: "hidden",
+        pointerEvents: "none",
+      },
+      duration - 0.12,
+    );
+
+    timeline.set(
+      elements.section4,
+      {
+        pointerEvents: "auto",
+      },
+      duration - 0.05,
+    );
+
+    timeline.to({}, { duration: Math.max(0, duration - timeline.duration()) });
+    master.add(timeline);
   }
 
   function attachChildTimeline(master, timeline) {
@@ -603,78 +979,18 @@
     timeline.paused(false);
   }
 
-  function createSection3Timeline(elements) {
+  function createSection3Timeline() {
     const { gsap } = state;
-    const targets = [
-      elements.section3Copy,
-      elements.section3Search,
-      elements.section3Library,
-    ].filter(Boolean);
 
-    const timeline = gsap.timeline({
+    /*
+     * Section 3 remains still after its entrance. V2 moved the copy, search
+     * card and library again before the Section 4 hand-off, which made the
+     * settled state unclear.
+     */
+    return gsap.timeline({
       defaults: { ease: "none" },
       paused: true,
-    });
-
-    if (!targets.length) {
-      timeline.to({}, { duration: 3.4 });
-      return timeline;
-    }
-
-    timeline
-      .to({}, { duration: 1.9 })
-      .to(
-        elements.section3Copy,
-        {
-          x: -12,
-          y: -6,
-          duration: 0.5,
-          ease: "power2.inOut",
-        },
-      )
-      .to(
-        elements.section3Search,
-        {
-          x: 12,
-          y: -6,
-          duration: 0.5,
-          ease: "power2.inOut",
-        },
-        "<",
-      )
-      .to(
-        elements.section3Library,
-        {
-          y: -9,
-          scale: 1.006,
-          duration: 0.5,
-          ease: "power2.inOut",
-        },
-        "<",
-      )
-      .to({}, { duration: 1.15 });
-
-    return timeline;
-  }
-
-  function createTransitionLayer() {
-    if (!state.stage) {
-      return;
-    }
-
-    const existing = state.stage.querySelector(".journey-transition-layer");
-
-    if (existing) {
-      state.transitionLayer = existing;
-      return;
-    }
-
-    const layer = document.createElement("div");
-    layer.className = "journey-transition-layer";
-    layer.setAttribute("aria-hidden", "true");
-    layer.innerHTML = '<span class="journey-transition-layer__glow"></span>';
-    state.stage.appendChild(layer);
-    state.transitionLayer = layer;
+    }).to({}, { duration: 1.55 });
   }
 
   function waitForSection4Api(timeoutMs) {
@@ -900,6 +1216,10 @@
 
     window.__INKWELL_MASTER_JOURNEY__ = false;
     window.__inkwellMasterJourneyStarted = false;
+  }
+
+  function gsapSafeArray(collection) {
+    return Array.from(collection || []);
   }
 
   function getScenes(elements) {

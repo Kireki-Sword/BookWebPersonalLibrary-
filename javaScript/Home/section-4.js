@@ -2933,10 +2933,11 @@
         return 74;
       }
 
+      /* Raise the final shared card inside the navbar-safe stage. */
       return clampValue(
-        elements.stage.clientHeight * 0.065,
-        44,
-        58,
+        elements.stage.clientHeight * 0.03,
+        20,
+        32,
       );
     };
 
@@ -2945,10 +2946,11 @@
         return 0.78;
       }
 
+      /* V2 made the shared card too small. Keep it visibly dominant. */
       return clampValue(
-        elements.stage.clientHeight / 1080,
-        0.68,
-        0.75,
+        elements.stage.clientHeight / 940,
+        0.79,
+        0.86,
       );
     };
 
@@ -2973,13 +2975,13 @@
         cardHeight * dockScale;
 
       const introTop = Math.ceil(
-        cardVisualBottom + 7,
+        cardVisualBottom + 4,
       );
 
       const compareTop = Math.ceil(
         introTop +
           introHeight +
-          6,
+          4,
       );
 
       elements.stage.style.setProperty(
@@ -3004,14 +3006,14 @@
       );
 
       const availableCompareHeight = Math.max(
-        elements.stage.clientHeight - compareTop - 12,
+        elements.stage.clientHeight - compareTop - 6,
         1,
       );
 
       const compareScale = MANAGED_BY_HOME_JOURNEY
         ? clampValue(
             availableCompareHeight / naturalCompareHeight,
-            0.8,
+            0.72,
             1,
           )
         : 1;

@@ -1,5 +1,5 @@
 /* ========================================================================== 
-   INKWELL — ONE MASTER PINNED HOME-PAGE JOURNEY (V2)
+   INKWELL — ONE MASTER PINNED HOME-PAGE JOURNEY (V3)
 
    Import this file LAST, after section-1.css through section-4.css.
    ========================================================================== */
@@ -91,97 +91,6 @@ body.journey-ready
 }
 
 /* --------------------------------------------------------------------------
-   TRANSITION LIGHT — visual bridge only; no duplicate text
-   -------------------------------------------------------------------------- */
-
-.journey-transition-layer {
-  position: absolute;
-  inset: 0;
-  z-index: 80;
-  overflow: hidden;
-  pointer-events: none;
-  opacity: 0;
-  visibility: hidden;
-  background:
-    linear-gradient(
-      180deg,
-      rgba(6, 9, 25, 0.2),
-      rgba(23, 31, 76, 0.66) 44%,
-      rgba(8, 12, 31, 0.28)
-    ),
-    radial-gradient(
-      ellipse 980px 620px at 50% 52%,
-      rgba(116, 140, 255, 0.34),
-      rgba(155, 124, 255, 0.13) 44%,
-      transparent 76%
-    );
-  will-change: opacity, transform;
-}
-
-.journey-transition-layer::before,
-.journey-transition-layer::after,
-.journey-transition-layer__glow {
-  content: "";
-  position: absolute;
-  pointer-events: none;
-}
-
-.journey-transition-layer::before {
-  inset: -20%;
-  background:
-    radial-gradient(
-      ellipse 56% 34% at 30% 48%,
-      rgba(121, 217, 255, 0.16),
-      transparent 72%
-    ),
-    radial-gradient(
-      ellipse 58% 36% at 74% 52%,
-      rgba(190, 141, 255, 0.16),
-      transparent 72%
-    );
-  animation: journey-transition-breathe 5.5s ease-in-out infinite alternate;
-}
-
-.journey-transition-layer::after {
-  inset: 0;
-  background:
-    linear-gradient(
-      90deg,
-      rgba(2, 4, 14, 0.36),
-      transparent 24%,
-      transparent 76%,
-      rgba(2, 4, 14, 0.36)
-    );
-}
-
-.journey-transition-layer__glow {
-  left: 50%;
-  top: 50%;
-  width: min(780px, 72vw);
-  height: 2px;
-  transform: translate(-50%, -50%);
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(120, 216, 255, 0.74),
-    rgba(155, 124, 255, 0.9),
-    transparent
-  );
-  box-shadow:
-    0 0 24px rgba(120, 216, 255, 0.28),
-    0 0 54px rgba(155, 124, 255, 0.24);
-}
-
-@keyframes journey-transition-breathe {
-  from {
-    transform: translate3d(-1.5%, -1%, 0) scale(1);
-  }
-  to {
-    transform: translate3d(1.5%, 1%, 0) scale(1.035);
-  }
-}
-
-/* --------------------------------------------------------------------------
    SECTION 1
    -------------------------------------------------------------------------- */
 
@@ -206,30 +115,47 @@ body:is(.journey-preparing, .journey-ready)
 body:is(.journey-preparing, .journey-ready)
 #section-2-empty-shelf {
   padding:
-    clamp(1.15rem, 2.5vh, 2.1rem)
+    clamp(3rem, 7vh, 4.75rem)
     max(1.5rem, calc((100vw - 1220px) / 2 + 1.5rem))
-    clamp(0.25rem, 0.8vh, 0.7rem) !important;
+    clamp(0.7rem, 1.4vh, 1.15rem) !important;
 }
 
 body:is(.journey-preparing, .journey-ready)
 #section-2-empty-shelf .section-2-header {
-  margin-bottom: clamp(0.65rem, 1.35vh, 1.15rem);
+  margin-bottom: clamp(1.15rem, 2.2vh, 1.9rem);
 }
 
 body:is(.journey-preparing, .journey-ready)
 #section-2-empty-shelf .section-2-header h2 {
-  font-size: clamp(2.75rem, 5vw, 4.55rem);
+  font-size: clamp(2.75rem, 4.8vw, 4.45rem);
 }
 
 body:is(.journey-preparing, .journey-ready)
+#section-2-empty-shelf .section-2-header p {
+  margin-top: clamp(0.65rem, 1.25vh, 1rem);
+}
+
+/*
+ * Keep the initial card below the full heading. During the internal Section 2
+ * timeline the viewport is lifted by JavaScript, so the evidence stages then
+ * occupy the real top of the pinned scene without hiding beneath the navbar.
+ */
+body:is(.journey-preparing, .journey-ready)
 #section-2-empty-shelf.is-js-ready .stage-viewport {
-  min-height: clamp(430px, 55vh, 570px);
-  top: clamp(-58px, -5.8vh, -36px);
+  min-height: clamp(430px, 53vh, 555px);
+  top: 0;
 }
 
 body:is(.journey-preparing, .journey-ready)
 #section-2-empty-shelf.is-js-ready .scroll-stage {
-  top: clamp(-118px, -9.5vh, -58px);
+  top: clamp(12px, 1.8vh, 22px);
+  height: clamp(440px, 54vh, 590px);
+}
+
+body:is(.journey-preparing, .journey-ready)
+#section-2-empty-shelf.is-js-ready
+.scroll-stage[data-stage="moments-move"] {
+  top: clamp(18px, 2.2vh, 28px);
 }
 
 body.journey-ready .depth-button-proxy {
@@ -291,6 +217,11 @@ body:is(.journey-preparing, .journey-ready) #section-4 .s4-stage {
 }
 
 body:is(.journey-preparing, .journey-ready)
+#section-4 .s4-shared-card-wrap {
+  transform-origin: top center;
+}
+
+body:is(.journey-preparing, .journey-ready)
 #section-4 .s4-compare-stage {
   scale: var(--s4-compare-scale, 1);
   transform-origin: top center;
@@ -308,9 +239,6 @@ body:is(.journey-preparing, .journey-ready)
     overflow: visible;
   }
 
-  .journey-transition-layer {
-    display: none !important;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -321,11 +249,5 @@ body:is(.journey-preparing, .journey-ready)
     overflow: visible;
   }
 
-  .journey-transition-layer {
-    display: none !important;
-  }
 
-  .journey-transition-layer::before {
-    animation: none !important;
-  }
 }
