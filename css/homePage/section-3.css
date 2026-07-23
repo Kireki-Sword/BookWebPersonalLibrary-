@@ -5408,3 +5408,67 @@ input[aria-invalid="true"] {
     border-color: rgba(213, 224, 255, 0.58);
   }
 }
+
+/* ========================================================================== 
+   FINAL LIBRARY HEIGHT FIX
+
+   The Saved Stories card stays the same height after titles are added.
+   Exactly two 76px rows fit in the viewport; a third row creates the internal
+   scrollbar instead of increasing the section height.
+   ========================================================================== */
+
+@media (min-width: 1200px) and (min-height: 700px) {
+  .section-library-flow .flow-library-card {
+    height: 382px !important;
+    min-height: 382px !important;
+    max-height: 382px !important;
+  }
+
+  .section-library-flow .flow-library-body {
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .section-library-flow .flow-library-viewport {
+    height: 174px !important;
+    min-height: 174px !important;
+    max-height: 174px !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    scrollbar-gutter: auto !important;
+  }
+
+  .section-library-flow .flow-library-list {
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+
+  /* Do not reserve a scrollbar channel until a third row creates overflow. */
+  .section-library-flow
+  .flow-library-viewport:not(.is-scrollable)::-webkit-scrollbar {
+    width: 0;
+  }
+
+  .section-library-flow
+  .flow-library-viewport.is-scrollable::-webkit-scrollbar {
+    width: 10px;
+  }
+}
+
+@media (min-width: 1101px) and (max-width: 1199px) and (min-height: 700px) {
+  .section-library-flow .flow-library-card {
+    height: 410px !important;
+    min-height: 410px !important;
+    max-height: 410px !important;
+  }
+
+  .section-library-flow .flow-library-viewport {
+    height: 174px !important;
+    min-height: 174px !important;
+    max-height: 174px !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    scrollbar-gutter: auto !important;
+  }
+}

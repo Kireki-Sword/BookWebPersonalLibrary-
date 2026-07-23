@@ -405,3 +405,53 @@ body:is(.journey-preparing, .journey-ready)
     width: min(1450px, calc(100vw - 64px));
   }
 }
+
+
+/* ========================================================================== 
+   FINAL MANAGED-JOURNEY SECTION 3 SIZE FIX
+
+   homeScroll.css loads after section-3.css, so the fixed library row must also
+   be declared here. This prevents the master grid from stretching the Saved
+   Stories card when a third or fourth title is rendered.
+   ========================================================================== */
+
+@media (min-width: 1200px) and (min-height: 700px) {
+  body:is(.journey-preparing, .journey-ready)
+  #section-3-library-flow .flow-grid {
+    grid-template-rows:
+      minmax(245px, 1fr)
+      382px !important;
+  }
+
+  body:is(.journey-preparing, .journey-ready)
+  #section-3-library-flow .flow-library-card {
+    height: 382px !important;
+    min-height: 382px !important;
+    max-height: 382px !important;
+  }
+
+  body:is(.journey-preparing, .journey-ready)
+  #section-3-library-flow .flow-library-viewport {
+    height: 174px !important;
+    min-height: 174px !important;
+    max-height: 174px !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+  }
+}
+
+@media (min-width: 1101px) and (max-width: 1199px) and (min-height: 700px) {
+  body:is(.journey-preparing, .journey-ready)
+  #section-3-library-flow .flow-grid {
+    grid-template-rows:
+      minmax(245px, 1fr)
+      410px !important;
+  }
+
+  body:is(.journey-preparing, .journey-ready)
+  #section-3-library-flow .flow-library-card {
+    height: 410px !important;
+    min-height: 410px !important;
+    max-height: 410px !important;
+  }
+}

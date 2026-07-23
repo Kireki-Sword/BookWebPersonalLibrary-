@@ -1117,27 +1117,32 @@
     ];
 
     /*
-     * Keep the inactive reader's profile button available so the user can
-     * switch directly between readers. Only the evidence area becomes inert
-     * while it is visually faded.
+     * Focus mode is a true single-reader view. The complete inactive panel is
+     * removed from keyboard navigation and assistive-technology reading order,
+     * matching the CSS that hides it visually. Clicking the selected reader's
+     * Focus button again still returns to the two-reader comparison.
      */
-    const readerContentBySide = {
-      left: elements.readerContents.find((container) => {
-        return READERS[container.dataset.readerContent]?.side === "left";
-      }),
+    const readerSideBySide = {
+      left: elements.readerContents
+        .find((container) => {
+          return READERS[container.dataset.readerContent]?.side === "left";
+        })
+        ?.closest(".s4-reader-side"),
 
-      right: elements.readerContents.find((container) => {
-        return READERS[container.dataset.readerContent]?.side === "right";
-      }),
+      right: elements.readerContents
+        .find((container) => {
+          return READERS[container.dataset.readerContent]?.side === "right";
+        })
+        ?.closest(".s4-reader-side"),
     };
 
     let focusRefreshTimer = 0;
 
     const updateReaderAvailability = (mode) => {
       ["left", "right"].forEach((side) => {
-        const content = readerContentBySide[side];
+        const readerSide = readerSideBySide[side];
 
-        if (!content) {
+        if (!readerSide) {
           return;
         }
 
@@ -1145,8 +1150,8 @@
           mode !== "both" &&
           mode !== side;
 
-        content.inert = isInactive;
-        content.setAttribute(
+        readerSide.inert = isInactive;
+        readerSide.setAttribute(
           "aria-hidden",
           String(isInactive),
         );
