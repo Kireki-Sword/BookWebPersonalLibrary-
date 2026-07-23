@@ -2955,11 +2955,11 @@
         return 74;
       }
 
-      /* Keep the shared card close to the navbar-safe top edge. */
+      /* Keep a visible breathing band below the navbar. */
       return clampValue(
-        elements.stage.clientHeight * 0.014,
-        8,
+        elements.stage.clientHeight * 0.022,
         14,
+        22,
       );
     };
 
@@ -2997,13 +2997,13 @@
         cardHeight * dockScale;
 
       const introTop = Math.ceil(
-        cardVisualBottom + 2,
+        cardVisualBottom + 14,
       );
 
       const compareTop = Math.ceil(
         introTop +
           introHeight +
-          2,
+          10,
       );
 
       elements.stage.style.setProperty(

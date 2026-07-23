@@ -2855,3 +2855,16 @@
     width: 100%;
   }
 }
+
+
+/* ==========================================================================
+   AUGUST 2026 LAYOUT FIX — SECTION 2 OPENING SPACING
+   ========================================================================== */
+
+.section-empty-shelf .section-2-header {
+  margin-bottom: clamp(3.35rem, 6.5vh, 4.6rem);
+}
+
+.section-empty-shelf .card-wrap {
+  margin-inline: auto;
+}

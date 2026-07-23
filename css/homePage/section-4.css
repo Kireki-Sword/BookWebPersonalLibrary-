@@ -6031,3 +6031,215 @@ body.s4-modal-open {
       saturate(1.03);
   }
 }
+
+
+/* ==========================================================================
+   AUGUST 2026 LAYOUT FIX — FINAL COMPARISON SPACING AND UNIFIED MOMENTS
+   ========================================================================== */
+
+/* Give the shared story, the explanatory line, and the reader comparison three
+   separate visual bands instead of allowing their edges to touch. */
+.s4-shared-card {
+  min-height: 174px;
+  padding: 12px 15px;
+  row-gap: 0.32rem;
+}
+
+.s4-card-meta {
+  margin-top: 0.38rem;
+}
+
+.s4-card-layers {
+  margin-top: 0.28rem;
+  padding-top: 0.42rem;
+}
+
+.s4-content-intro {
+  display: grid;
+  justify-items: center;
+  gap: 0.38rem;
+}
+
+.s4-content-intro .s4-section-label,
+.s4-content-intro p {
+  margin: 0;
+}
+
+.s4-content-intro .s4-section-label {
+  line-height: 1.15;
+}
+
+.s4-content-intro p {
+  max-width: 640px;
+  line-height: 1.42;
+}
+
+/* One carousel grammar for both image orientations: image stage above, one
+   identical control bar below. Portrait media remains narrow and centered;
+   landscape media uses the available width. */
+.s4-moment-carousel.is-landscape,
+.s4-moment-carousel.is-portrait {
+  width: min(100%, 540px);
+  max-width: 540px;
+  margin-inline: auto;
+  padding-right: 0;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 0.72rem;
+}
+
+.s4-moment-carousel.is-landscape .s4-moment-stage,
+.s4-moment-carousel.is-portrait .s4-moment-stage {
+  width: 100%;
+  height: clamp(318px, 42svh, 390px);
+  min-height: 318px;
+  display: grid;
+  place-items: center;
+}
+
+.s4-moment-carousel.is-landscape .s4-moment-card {
+  width: 100%;
+  max-width: 520px;
+  max-height: 100%;
+}
+
+.s4-moment-carousel.is-portrait .s4-moment-card {
+  width: min(100%, 252px);
+  max-width: 252px;
+  max-height: 100%;
+}
+
+.s4-moment-carousel.is-landscape .s4-moment-media,
+.s4-moment-carousel.is-landscape .s4-moment-card.is-featured .s4-moment-media {
+  height: clamp(205px, 27svh, 270px);
+  max-height: 270px;
+  aspect-ratio: auto;
+}
+
+.s4-moment-carousel.is-portrait .s4-moment-media {
+  height: clamp(225px, 30svh, 286px);
+  max-height: 286px;
+  aspect-ratio: auto;
+}
+
+.s4-moment-carousel.is-landscape .s4-moment-controls,
+.s4-moment-carousel.is-portrait .s4-moment-controls {
+  position: static;
+  width: 100%;
+  min-height: 52px;
+  margin: 0;
+  padding: 0.42rem 0.55rem;
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) 40px;
+  align-items: center;
+  gap: 0.7rem;
+  transform: none;
+}
+
+.s4-moment-carousel.is-portrait .s4-moment-progress,
+.s4-moment-carousel.is-landscape .s4-moment-progress {
+  display: grid;
+  grid-auto-flow: row;
+  justify-items: center;
+  gap: 0.34rem;
+}
+
+.s4-moment-carousel.is-portrait .s4-moment-dots,
+.s4-moment-carousel.is-landscape .s4-moment-dots {
+  flex-direction: row;
+}
+
+.s4-moment-carousel.is-portrait .s4-moment-nav,
+.s4-moment-carousel.is-landscape .s4-moment-nav {
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  flex: 0 0 38px;
+}
+
+.s4-moment-carousel.is-portrait .s4-moment-nav svg {
+  transform: none;
+}
+
+/* The full reflection remains available through the existing button. The card
+   preview is deliberately bounded so both readers keep matching heights. */
+.s4-thought-card {
+  min-height: 470px;
+}
+
+.s4-thought-copy {
+  position: relative;
+  max-height: 19rem;
+  overflow: hidden;
+}
+
+.s4-thought-copy p {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 13;
+  overflow: hidden;
+  font-size: clamp(0.74rem, 0.8vw, 0.82rem);
+  line-height: 1.58;
+}
+
+.s4-thought-copy::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 2.7rem;
+  pointer-events: none;
+  background: linear-gradient(180deg, transparent, rgba(10, 16, 36, 0.96));
+}
+
+@media (max-width: 680px) {
+  .s4-moment-carousel.is-landscape,
+  .s4-moment-carousel.is-portrait {
+    width: 100%;
+    max-width: none;
+  }
+
+  .s4-moment-carousel.is-landscape .s4-moment-stage,
+  .s4-moment-carousel.is-portrait .s4-moment-stage {
+    height: auto;
+    min-height: 0;
+  }
+
+  .s4-moment-carousel.is-landscape .s4-moment-card,
+  .s4-moment-carousel.is-portrait .s4-moment-card {
+    width: 100%;
+    max-width: none;
+  }
+
+  .s4-thought-copy {
+    max-height: none;
+  }
+
+  .s4-thought-copy p {
+    display: block;
+    overflow: visible;
+  }
+
+  .s4-thought-copy::after {
+    display: none;
+  }
+}
+
+
+@media (min-width: 681px) and (max-height: 820px) {
+  .s4-moment-carousel.is-landscape .s4-moment-stage,
+  .s4-moment-carousel.is-portrait .s4-moment-stage {
+    height: 292px;
+    min-height: 292px;
+  }
+
+  .s4-moment-carousel.is-landscape .s4-moment-media,
+  .s4-moment-carousel.is-landscape .s4-moment-card.is-featured .s4-moment-media {
+    height: 210px;
+    max-height: 210px;
+  }
+
+  .s4-moment-carousel.is-portrait .s4-moment-media {
+    height: 218px;
+    max-height: 218px;
+  }
+}

@@ -424,3 +424,65 @@ body:is(.journey-preparing, .journey-ready)
       calc(100% - 74px);
   }
 }
+
+
+/* ==========================================================================
+   AUGUST 2026 LAYOUT FIX — MANAGED VIEWPORT RHYTHM
+   ========================================================================== */
+
+@media (min-width: 1100px) and (min-height: 700px) {
+  body:is(.journey-preparing, .journey-ready)
+  #section-2-empty-shelf .section-2-header {
+    margin-bottom: clamp(2.85rem, 5.6vh, 4rem);
+  }
+
+  body:is(.journey-preparing, .journey-ready)
+  #section-3-library-flow .flow-grid {
+    grid-template-rows:
+      318px
+      minmax(0, 1fr);
+
+    row-gap: clamp(0.82rem, 1.45vh, 1.18rem);
+  }
+
+  body:is(.journey-preparing, .journey-ready)
+  #section-3-library-flow .flow-search-card {
+    height: 318px;
+    min-height: 318px;
+    max-height: 318px;
+  }
+
+  body:is(.journey-preparing, .journey-ready)
+  #section-3-library-flow .flow-library-card {
+    height: 100%;
+    min-height: 0;
+  }
+
+  body:is(.journey-preparing, .journey-ready)
+  #section-3-library-flow .flow-library-body {
+    height: calc(100% - 74px);
+    min-height: 0;
+  }
+}
+
+
+@media (min-width: 1100px) and (min-height: 700px) and (max-height: 780px) {
+  body:is(.journey-preparing, .journey-ready)
+  #section-3-library-flow .flow-grid {
+    grid-template-rows:
+      286px
+      minmax(0, 1fr);
+  }
+
+  body:is(.journey-preparing, .journey-ready)
+  #section-3-library-flow .flow-search-card {
+    height: 286px;
+    min-height: 286px;
+    max-height: 286px;
+  }
+
+  body:is(.journey-preparing, .journey-ready)
+  #section-3-library-flow .flow-library-viewport {
+    min-height: 126px;
+  }
+}
