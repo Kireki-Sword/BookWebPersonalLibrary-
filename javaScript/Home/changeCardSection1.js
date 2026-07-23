@@ -120,10 +120,6 @@
       const thisChangeId = ++cardChangeId;
       const coverUrl = getCoverUrlFromId(item.id);
 
-      /*
-        First render:
-        Show immediately. No fade from empty content.
-      */
       if (!hasRenderedFirstCard) {
         hasRenderedFirstCard = true;
 
@@ -146,11 +142,6 @@
         return;
       }
 
-      /*
-        Premium swap:
-        Keep old content visible while the next cover preloads.
-        Then softly dim/blur, swap, reveal.
-      */
       const imageReady = preloadImage(coverUrl);
 
       await Promise.race([
