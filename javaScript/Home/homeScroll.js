@@ -467,7 +467,14 @@
       pinSpacing: true,
       scrub: 1.02,
       anticipatePin: 1,
-      invalidateOnRefresh: true,
+      /*
+       * Do not invalidate the complete master timeline during refresh.
+       * Section 4 is a nested reversible timeline. Invalidating the master
+       * after Section 4 has rendered makes GSAP record the currently transformed
+       * rain covers as new starting values, so the next reverse/forward pass
+       * becomes corrupted. Child sections update their own layout metrics.
+       */
+      invalidateOnRefresh: false,
       refreshPriority: 100,
       onRefreshInit: () => {
         syncNavHeight(elements.nav);

@@ -6329,3 +6329,229 @@ body.s4-modal-open {
     border-color: rgba(218, 227, 255, 0.62);
   }
 }
+
+/* ==========================================================================
+   READER FOCUS TRANSITION — FINAL OVERRIDE
+
+   The chosen reader grows and moves toward the centre. The opposite reader
+   remains visible as a soft preview, and its profile header stays clickable so
+   the user can switch readers without first returning to "Compare both".
+   ========================================================================== */
+
+@media (min-width: 1100px) and (min-height: 700px) {
+  .s4-compare-stage {
+    isolation: isolate;
+
+    grid-template-columns:
+      minmax(0, 1fr)
+      72px
+      minmax(0, 1fr) !important;
+
+    gap: 20px !important;
+
+    transition:
+      grid-template-columns
+        560ms
+        cubic-bezier(0.22, 1, 0.36, 1),
+      gap
+        560ms
+        cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .s4-reader-side {
+    transform-origin: center top;
+
+    will-change:
+      transform,
+      opacity,
+      filter;
+
+    transition:
+      transform
+        560ms
+        cubic-bezier(0.22, 1, 0.36, 1),
+      opacity
+        360ms
+        ease,
+      filter
+        420ms
+        ease,
+      border-color
+        420ms
+        ease,
+      box-shadow
+        520ms
+        ease;
+  }
+
+  /* Left reader focused. */
+  .s4-compare-stage[data-focus="left"] {
+    grid-template-columns:
+      minmax(0, 1.68fr)
+      58px
+      minmax(230px, 0.32fr) !important;
+
+    gap: 14px !important;
+  }
+
+  .s4-compare-stage[data-focus="left"]
+  .s4-reader-side-left {
+    z-index: 5;
+
+    width: 100%;
+    max-width: 1080px;
+
+    justify-self: center;
+
+    opacity: 1 !important;
+    filter: none !important;
+
+    transform:
+      translate3d(4.5%, 0, 0)
+      scale(1.025) !important;
+
+    border-color:
+      rgba(196, 177, 255, 0.62);
+
+    box-shadow:
+      0 34px 88px rgba(0, 0, 0, 0.34),
+      0 0 72px rgba(171, 106, 255, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.09);
+  }
+
+  .s4-compare-stage[data-focus="left"]
+  .s4-reader-side-right {
+    z-index: 1;
+
+    min-width: 0;
+    width: 100%;
+
+    opacity: 0.18 !important;
+
+    filter:
+      blur(1.1px)
+      saturate(0.56)
+      brightness(0.74) !important;
+
+    transform:
+      translate3d(34px, 18px, 0)
+      scale(0.91) !important;
+  }
+
+  /* Right reader focused. */
+  .s4-compare-stage[data-focus="right"] {
+    grid-template-columns:
+      minmax(230px, 0.32fr)
+      58px
+      minmax(0, 1.68fr) !important;
+
+    gap: 14px !important;
+  }
+
+  .s4-compare-stage[data-focus="right"]
+  .s4-reader-side-right {
+    z-index: 5;
+
+    width: 100%;
+    max-width: 1080px;
+
+    justify-self: center;
+
+    opacity: 1 !important;
+    filter: none !important;
+
+    transform:
+      translate3d(-4.5%, 0, 0)
+      scale(1.025) !important;
+
+    border-color:
+      rgba(126, 211, 255, 0.62);
+
+    box-shadow:
+      0 34px 88px rgba(0, 0, 0, 0.34),
+      0 0 72px rgba(69, 185, 255, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.09);
+  }
+
+  .s4-compare-stage[data-focus="right"]
+  .s4-reader-side-left {
+    z-index: 1;
+
+    min-width: 0;
+    width: 100%;
+
+    opacity: 0.18 !important;
+
+    filter:
+      blur(1.1px)
+      saturate(0.56)
+      brightness(0.74) !important;
+
+    transform:
+      translate3d(-34px, 18px, 0)
+      scale(0.91) !important;
+  }
+
+  /* Neutral two-reader layout. */
+  .s4-compare-stage[data-focus="both"]
+  .s4-reader-side {
+    z-index: 1;
+
+    width: 100%;
+    max-width: none;
+
+    justify-self: stretch;
+
+    opacity: 1 !important;
+    filter: none !important;
+
+    transform:
+      translate3d(0, 0, 0)
+      scale(1) !important;
+  }
+
+  /* Keep the faded profile header interactive, but disable its evidence area. */
+  .s4-compare-stage[data-focus="left"]
+  .s4-reader-side-right
+  .s4-reader-content,
+  .s4-compare-stage[data-focus="right"]
+  .s4-reader-side-left
+  .s4-reader-content {
+    pointer-events: none;
+  }
+
+  .s4-compare-stage[data-focus="left"]
+  .s4-reader-side-right
+  .s4-profile-card,
+  .s4-compare-stage[data-focus="right"]
+  .s4-reader-side-left
+  .s4-profile-card {
+    opacity: 0.8;
+    pointer-events: auto;
+  }
+}
+
+@media (max-width: 1099px), (max-height: 699px) {
+  .s4-compare-stage[data-focus="left"],
+  .s4-compare-stage[data-focus="right"],
+  .s4-compare-stage[data-focus="both"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  .s4-compare-stage
+  .s4-reader-side {
+    width: 100%;
+    max-width: none;
+
+    opacity: 1 !important;
+    filter: none !important;
+    transform: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .s4-compare-stage,
+  .s4-reader-side {
+    transition-duration: 0.001ms !important;
+  }
+}

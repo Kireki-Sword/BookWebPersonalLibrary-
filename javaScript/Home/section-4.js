@@ -1116,6 +1116,43 @@
       "thoughts",
     ];
 
+    /*
+     * Keep the inactive reader's profile button available so the user can
+     * switch directly between readers. Only the evidence area becomes inert
+     * while it is visually faded.
+     */
+    const readerContentBySide = {
+      left: elements.readerContents.find((container) => {
+        return READERS[container.dataset.readerContent]?.side === "left";
+      }),
+
+      right: elements.readerContents.find((container) => {
+        return READERS[container.dataset.readerContent]?.side === "right";
+      }),
+    };
+
+    let focusRefreshTimer = 0;
+
+    const updateReaderAvailability = (mode) => {
+      ["left", "right"].forEach((side) => {
+        const content = readerContentBySide[side];
+
+        if (!content) {
+          return;
+        }
+
+        const isInactive =
+          mode !== "both" &&
+          mode !== side;
+
+        content.inert = isInactive;
+        content.setAttribute(
+          "aria-hidden",
+          String(isInactive),
+        );
+      });
+    };
+
     /* The final comparison scale depends on the active layer's real height.
        Notify the motion controller after DOM content or focus widths change. */
     const requestLayoutRefresh = () => {
@@ -1243,8 +1280,19 @@
 
       focusMode = mode;
 
+      /*
+       * CSS owns the visual transition. The Section 4 scroll timeline already
+       * controls the comparison stage itself, so adding another GSAP transform
+       * here would create competing transform values and break reversibility.
+       */
       elements.compareStage.dataset.focus =
         focusMode;
+
+      elements.compareStage.classList.add(
+        "is-focus-changing",
+      );
+
+      updateReaderAvailability(focusMode);
 
       elements.profileButtons.forEach(
         (button) => {
@@ -1272,8 +1320,10 @@
           READERS.kai.ratingReason,
         );
 
-        elements.readerStatus.textContent =
-          READERS.kai.status;
+        if (elements.readerStatus) {
+          elements.readerStatus.textContent =
+            READERS.kai.status;
+        }
       } else if (focusMode === "right") {
         updateScoreDisplay(
           elements,
@@ -1282,8 +1332,10 @@
           READERS.nova.ratingReason,
         );
 
-        elements.readerStatus.textContent =
-          READERS.nova.status;
+        if (elements.readerStatus) {
+          elements.readerStatus.textContent =
+            READERS.nova.status;
+        }
       } else {
         const combinedScore =
           getCombinedScore();
@@ -1299,11 +1351,29 @@
           combinedReason,
         );
 
-        elements.readerStatus.textContent =
-          "Both completed";
+        if (elements.readerStatus) {
+          elements.readerStatus.textContent =
+            "Both completed";
+        }
       }
 
+      /*
+       * The focused column changes width over 560ms. Measure at the beginning
+       * and after the transition so the final comparison scale remains correct
+       * for quotes, moments, characters, notes, and thoughts.
+       */
       requestLayoutRefresh();
+
+      window.clearTimeout(focusRefreshTimer);
+
+      focusRefreshTimer =
+        window.setTimeout(() => {
+          elements.compareStage.classList.remove(
+            "is-focus-changing",
+          );
+
+          requestLayoutRefresh();
+        }, 620);
     };
 
     elements.layerButtons.forEach((button) => {
@@ -3288,8 +3358,21 @@
 
       layoutRefreshFrame = window.requestAnimationFrame(() => {
         updateFinalLayoutMetrics();
-        timeline.invalidate();
-        timeline.scrollTrigger?.refresh();
+
+        /*
+         * In the master homepage journey this timeline is nested inside the
+         * master timeline. Never invalidate it after it has rendered: GSAP would
+         * clear the recorded start/end values and then re-read the currently
+         * transformed rain covers as the new starting state. That is what caused
+         * the first downward pass to work but reverse/re-entry to break.
+         *
+         * The active layer only changes the final comparison height, which is
+         * handled through the CSS custom properties above. The standalone mode
+         * may still refresh its own ScrollTrigger positions.
+         */
+        if (!managed) {
+          timeline.scrollTrigger?.refresh();
+        }
       });
     };
 
@@ -3986,8 +4069,12 @@
         timeline,
         cleanup,
         refresh: () => {
+          /*
+           * Refresh only the final layout measurements. The parent master
+           * ScrollTrigger owns scroll progress, and invalidating this nested
+           * timeline mid-journey corrupts its reversible start values.
+           */
           updateFinalLayoutMetrics();
-          timeline.invalidate();
         },
       };
     }
