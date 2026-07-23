@@ -3996,636 +3996,44 @@ input[aria-invalid="true"] {
 }
 
 /* =========================================================
-   SECTION 3 — FINAL V7
-   Seamless Section 2 handoff + compact functional layout
+   SECTION 3 — FINAL V9 BACKGROUND TRANSITION
+
+   The top of Section 3 is the exact Section 2 bottom base:
+   #070b18.
+
+   No extra bridge element, no negative overlap, and no mask.
+   Blue and violet light begin lower in Section 3 so the first
+   visible area stays dark and then brightens gradually.
    ========================================================= */
 
-/* ---------------------------------------------------------
-   Shared Section 2 -> Section 3 bridge
-
-   This element must be placed BETWEEN the two sections:
-   </section>  <!-- Section 2 -->
-   <div class="section-2-to-3-transition"></div>
-   <section id="section-3-library-flow">...</section>
-
-   A single bridge is used because gradients are rendered in the
-   coordinate system of the element they belong to. Recreating the
-   same radial gradient separately on two elements does not preserve
-   the same pixels at their touching edges.
-   --------------------------------------------------------- */
-
 .section-2-to-3-transition {
-  --s2-bottom: #070b18;
-  --s2-lower-glow: rgba(105, 180, 255, 0.055);
-
-  position: relative;
-  z-index: 0;
-
-  width: 100%;
-  height: clamp(180px, 15vw, 260px);
-
-  margin-top: calc(-1 * clamp(90px, 7.5vw, 130px));
-  margin-bottom: calc(-1 * clamp(90px, 7.5vw, 130px));
-
-  overflow: hidden;
-  pointer-events: none;
-
-  background-color: var(--s2-bottom);
-
-  background-image:
-    linear-gradient(
-      90deg,
-      rgba(3, 5, 14, 0.18) 0%,
-      transparent 22%,
-      transparent 78%,
-      rgba(3, 5, 14, 0.24) 100%
-    ),
-    radial-gradient(
-      ellipse 760px 520px at 50% 0%,
-      var(--s2-lower-glow) 0%,
-      transparent 74%
-    ),
-    radial-gradient(
-      rgba(255, 255, 255, 0.003) 0.7px,
-      transparent 0.7px
-    ),
-    linear-gradient(
-      180deg,
-      #070b18 0%,
-      #070b18 32%,
-      #081027 58%,
-      #0a1430 78%,
-      #0d1737 100%
-    );
-
-  background-size:
-    auto,
-    auto,
-    6px 6px,
-    auto;
-
-  background-position:
-    center,
-    center,
-    0 0,
-    center;
-
-  background-repeat:
-    no-repeat,
-    no-repeat,
-    repeat,
-    no-repeat;
+  display: none !important;
 }
-
-/* ---------------------------------------------------------
-   Section 3 begins from the exact same boundary composition.
-   The stronger blue/violet light starts lower in the section.
-   --------------------------------------------------------- */
 
 .section-library-flow {
   --flow-section-2-bottom: #070b18;
-  --flow-section-2-lower-glow: rgba(105, 180, 255, 0.055);
 
-  margin-top: 0;
+  min-height: auto;
 
-  min-height:
-    calc(100svh - var(--nav-height));
+  margin-top: -1px;
 
   padding:
-    clamp(4.7rem, 7vh, 6rem)
+    clamp(4.6rem, 6.5vh, 5.8rem)
     clamp(1.25rem, 4.25vw, 4.75rem)
     clamp(4.5rem, 7vh, 6rem);
 
   border-top: 0 !important;
   box-shadow: none !important;
 
+  /*
+   * The base gradient is deliberately the bottom-most layer.
+   * It stays exactly #070b18 across the first 18% of Section 3.
+   */
   background-color:
     var(--flow-section-2-bottom);
 
   background-image:
-    linear-gradient(
-      90deg,
-      rgba(3, 5, 14, 0.18) 0%,
-      transparent 22%,
-      transparent 78%,
-      rgba(3, 5, 14, 0.24) 100%
-    ),
-    radial-gradient(
-      ellipse 760px 520px at 50% -130px,
-      var(--flow-section-2-lower-glow) 0%,
-      transparent 74%
-    ),
-    radial-gradient(
-      ellipse 860px 580px at 21% 31%,
-      rgba(159, 131, 255, 0.15) 0%,
-      rgba(159, 131, 255, 0.045) 49%,
-      transparent 74%
-    ),
-    radial-gradient(
-      ellipse 960px 620px at 79% 31%,
-      rgba(114, 140, 255, 0.21) 0%,
-      rgba(114, 140, 255, 0.066) 49%,
-      transparent 75%
-    ),
-    radial-gradient(
-      rgba(255, 255, 255, 0.003) 0.7px,
-      transparent 0.7px
-    ),
-    linear-gradient(
-      180deg,
-      #0d1737 0%,
-      #0d1737 5%,
-      #0d1737 18%,
-      #0b1532 50%,
-      #081027 78%,
-      #070b18 100%
-    );
-
-  background-size:
-    auto,
-    auto,
-    auto,
-    auto,
-    6px 6px,
-    auto;
-
-  background-position:
-    center,
-    center,
-    center,
-    center,
-    0 0,
-    center;
-
-  background-repeat:
-    no-repeat,
-    no-repeat,
-    no-repeat,
-    no-repeat,
-    repeat,
-    no-repeat;
-}
-
-.section-library-flow::before,
-.section-library-flow::after {
-  content: none !important;
-}
-
-/* ---------------------------------------------------------
-   Search card: compact, natural height, no nested scrollbar
-   for one result.
-   --------------------------------------------------------- */
-
-.section-library-flow .flow-search-card {
-  height: auto;
-  min-height: 276px;
-  max-height: none;
-
-  align-self: center;
-}
-
-.section-library-flow .flow-search-body {
-  height: auto;
-  min-height: 232px;
-
-  overflow: visible;
-}
-
-.section-library-flow .flow-search-content {
-  flex: 0 1 auto;
-
-  min-height: 62px;
-  max-height: 210px;
-
-  overflow-y: auto;
-  overflow-x: hidden;
-}
-
-.section-library-flow .flow-result-card {
-  grid-template-columns:
-    58px
-    minmax(0, 1fr)
-    minmax(210px, auto);
-
-  align-items: center;
-}
-
-.section-library-flow .flow-result-actions {
-  min-width: 210px;
-
-  display: grid;
-  grid-template-columns:
-    minmax(112px, 1fr)
-    auto;
-
-  align-items: center;
-
-  gap: 0.56rem;
-}
-
-.section-library-flow .flow-result-status-control {
-  position: relative;
-
-  min-width: 0;
-}
-
-.section-library-flow .flow-result-status-control::after {
-  content: "";
-
-  position: absolute;
-  right: 0.82rem;
-  top: 50%;
-
-  width: 7px;
-  height: 7px;
-
-  border-right:
-    2px solid rgba(203, 211, 234, 0.85);
-
-  border-bottom:
-    2px solid rgba(203, 211, 234, 0.85);
-
-  pointer-events: none;
-
-  transform:
-    translateY(-65%)
-    rotate(45deg);
-}
-
-.section-library-flow .flow-result-status-control select {
-  width: 100%;
-  height: 38px;
-
-  padding:
-    0 2rem 0 0.72rem;
-
-  appearance: none;
-  -webkit-appearance: none;
-
-  border:
-    1px solid rgba(116, 215, 255, 0.30);
-
-  border-radius: 10px;
-
-  color:
-    var(--flow-ink);
-
-  font:
-    760 0.68rem
-    var(--flow-font-body);
-
-  background:
-    linear-gradient(
-      145deg,
-      rgba(19, 31, 58, 0.96),
-      rgba(14, 22, 45, 0.98)
-    );
-
-  cursor: pointer;
-}
-
-.section-library-flow .flow-add-button {
-  min-width: 104px;
-}
-
-/* ---------------------------------------------------------
-   Saved Stories: one compact toolbar, then rows immediately.
-   --------------------------------------------------------- */
-
-.section-library-flow .flow-library-card {
-  height: auto;
-  min-height: 330px;
-  max-height: none;
-}
-
-.section-library-flow .flow-library-body {
-  height: auto;
-
-  grid-template-rows:
-    auto
-    26px
-    auto;
-
-  gap: 0.62rem;
-}
-
-.section-library-flow .flow-library-toolbar {
-  position: relative;
-  z-index: 30;
-
-  width: 100%;
-  min-width: 0;
-
-  display: grid;
-
-  grid-template-columns:
-    auto
-    minmax(0, 1fr)
-    minmax(218px, 238px);
-
-  align-items: end;
-
-  gap:
-    0.85rem
-    clamp(1rem, 2.4vw, 2.2rem);
-
-  padding:
-    0.1rem 0 0.24rem;
-}
-
-.section-library-flow .flow-library-filter-group {
-  min-width: 0;
-
-  display: grid;
-
-  gap: 0.38rem;
-}
-
-.section-library-flow .flow-library-filter-group-format {
-  justify-self: start;
-}
-
-.section-library-flow .flow-library-filter-group-status {
-  justify-self: center;
-}
-
-.section-library-flow .flow-filter-label {
-  color: #929ebb;
-
-  font-size: 0.61rem;
-  font-weight: 850;
-
-  letter-spacing: 0.11em;
-
-  line-height: 1;
-
-  text-transform: uppercase;
-}
-
-.section-library-flow .flow-library-filter-group-status
-.flow-filter-label {
-  text-align: center;
-}
-
-.section-library-flow .flow-library-filters {
-  display: inline-flex;
-  flex-wrap: nowrap;
-
-  gap: 0;
-
-  padding: 4px;
-
-  border:
-    1px solid rgba(184, 196, 255, 0.21);
-
-  border-radius: 999px;
-
-  background:
-    linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.045),
-      rgba(255, 255, 255, 0.016)
-    );
-}
-
-.section-library-flow
-.flow-library-filters
-.flow-filter {
-  min-width: 78px;
-  min-height: 36px;
-
-  padding:
-    0 0.86rem;
-
-  border: 0;
-  border-radius: 999px;
-
-  background: transparent;
-  box-shadow: none;
-}
-
-.section-library-flow .flow-library-status-filters {
-  justify-content: center;
-
-  gap: 0.46rem;
-}
-
-.section-library-flow .flow-status-filter {
-  min-height: 36px;
-
-  padding:
-    0 0.72rem;
-}
-
-.section-library-flow .flow-sort-controls {
-  width: 100%;
-
-  align-self: end;
-  justify-self: end;
-}
-
-.section-library-flow .flow-sort-menu,
-.section-library-flow .flow-sort-trigger {
-  width: 100%;
-}
-
-.section-library-flow .flow-sort-trigger {
-  height: 42px;
-
-  grid-template-columns:
-    auto
-    minmax(0, 1fr)
-    auto;
-
-  white-space: nowrap;
-}
-
-.section-library-flow
-.flow-sort-trigger
-[data-sort-label] {
-  min-width: 0;
-
-  overflow: hidden;
-
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
-.section-library-flow .flow-library-list-header {
-  grid-row: 2;
-}
-
-.section-library-flow .flow-library-viewport {
-  grid-row: 3;
-
-  height: auto;
-  min-height: 0;
-
-  overflow: visible;
-}
-
-.section-library-flow .flow-library-empty {
-  position: static;
-
-  min-height: 148px;
-}
-
-.section-library-flow .flow-library-list {
-  height: auto;
-
-  overflow: visible;
-
-  grid-auto-rows: 76px;
-
-  padding: 0;
-}
-
-/* ---------------------------------------------------------
-   Responsive
-   --------------------------------------------------------- */
-
-@media (max-width: 1180px) {
-  .section-library-flow .flow-library-toolbar {
-    grid-template-columns:
-      auto
-      minmax(0, 1fr);
-  }
-
-  .section-library-flow .flow-sort-controls {
-    grid-column:
-      1 / -1;
-
-    width:
-      min(100%, 238px);
-
-    justify-self: end;
-  }
-}
-
-@media (max-width: 980px) {
-  .section-2-to-3-transition {
-    height: 170px;
-
-    margin-top: -85px;
-    margin-bottom: -85px;
-  }
-
-  .section-library-flow .flow-library-toolbar {
-    grid-template-columns: 1fr;
-
-    align-items: start;
-  }
-
-  .section-library-flow .flow-library-filter-group-status {
-    justify-self: start;
-  }
-
-  .section-library-flow
-  .flow-library-filter-group-status
-  .flow-filter-label {
-    text-align: left;
-  }
-
-  .section-library-flow .flow-sort-controls {
-    grid-column: auto;
-
-    width: 100%;
-
-    justify-self: stretch;
-  }
-}
-
-@media (max-width: 680px) {
-  .section-library-flow .flow-result-card {
-    grid-template-columns:
-      54px
-      minmax(0, 1fr);
-  }
-
-  .section-library-flow .flow-result-actions {
-    grid-column:
-      1 / -1;
-
-    width: 100%;
-    min-width: 0;
-  }
-}
-
-@media (max-width: 500px) {
-  .section-library-flow .flow-result-actions {
-    grid-template-columns: 1fr;
-  }
-
-  .section-library-flow .flow-add-button {
-    width: 100%;
-  }
-}
-
-/* =========================================================
-   SECTION 3 — FINAL V8 TRANSITION
-   No extra bridge element.
-   Section 3 reveals the actual rendered bottom of Section 2,
-   then gradually fades in its own brighter atmosphere.
-   ========================================================= */
-
-/* The old bridge is no longer used. */
-.section-2-to-3-transition {
-  display: none !important;
-}
-
-/*
- * Section 3 overlaps the last part of Section 2.
- * Its own background is transparent; the real Section 2 pixels
- * remain visible until the masked background fades in.
- */
-.section-library-flow {
-  --section-2-to-3-depth:
-    clamp(190px, 14vw, 230px);
-
-  position: relative;
-  isolation: isolate;
-  z-index: 1;
-
-  margin-top:
-    calc(-1 * var(--section-2-to-3-depth));
-
-  padding-top:
-    calc(
-      var(--section-2-to-3-depth)
-      + clamp(4.7rem, 7vh, 6rem)
-    );
-
-  border-top: 0 !important;
-  box-shadow: none !important;
-
-  background: transparent !important;
-  background-color: transparent !important;
-  background-image: none !important;
-}
-
-/*
- * One continuous Section 3 background layer.
- *
- * The mask is transparent at the top, so the first visible pixels
- * are the real bottom pixels rendered by Section 2.
- *
- * Before the actual section boundary is reached, this layer becomes
- * fully opaque. That hides any body/background change at the boundary
- * and prevents a horizontal seam.
- */
-.section-library-flow::before {
-  content: "" !important;
-
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-
-  pointer-events: none;
-
-  background-color: #070b18;
-
-  background-image:
-    /* Exact Section 2 edge shading. */
+    /* Exact Section 2 side shading. */
     linear-gradient(
       90deg,
       rgba(3, 5, 14, 0.18) 0%,
@@ -4634,46 +4042,48 @@ input[aria-invalid="true"] {
       rgba(3, 5, 14, 0.24) 100%
     ),
 
-    /* Exact Section 2 lower blue glow, continued near the top. */
+    /*
+     * Purple light begins well below the top.
+     * Its transparent outer region prevents it from changing
+     * the first part of the section.
+     */
     radial-gradient(
-      ellipse 760px 520px at 50% 20px,
-      rgba(105, 180, 255, 0.055) 0%,
-      transparent 74%
+      ellipse 900px 620px at 20% 58%,
+      rgba(159, 105, 255, 0.17) 0%,
+      rgba(159, 105, 255, 0.052) 46%,
+      transparent 72%
     ),
 
-    /* Purple appears lower behind the heading. */
+    /*
+     * Blue light begins lower behind the search card.
+     */
     radial-gradient(
-      ellipse 860px 620px at 21% 44%,
-      rgba(159, 131, 255, 0.17) 0%,
-      rgba(159, 131, 255, 0.052) 48%,
-      transparent 74%
+      ellipse 1040px 680px at 80% 55%,
+      rgba(105, 132, 255, 0.22) 0%,
+      rgba(105, 132, 255, 0.068) 47%,
+      transparent 73%
     ),
 
-    /* Blue appears lower behind the search card. */
+    /*
+     * A softer cyan-blue lift develops around the lower content.
+     */
     radial-gradient(
-      ellipse 980px 660px at 79% 42%,
-      rgba(114, 140, 255, 0.23) 0%,
-      rgba(114, 140, 255, 0.07) 48%,
-      transparent 75%
+      ellipse 880px 520px at 50% 82%,
+      rgba(105, 180, 255, 0.065) 0%,
+      rgba(105, 180, 255, 0.018) 52%,
+      transparent 76%
     ),
 
-    /* Soft lower lift around Saved Stories. */
-    radial-gradient(
-      ellipse 920px 500px at 52% 78%,
-      rgba(126, 135, 255, 0.07) 0%,
-      rgba(159, 131, 255, 0.022) 52%,
-      transparent 78%
-    ),
-
-    /* Exact Section 2 texture. */
+    /* Exact subtle Section 2 texture. */
     radial-gradient(
       rgba(255, 255, 255, 0.003) 0.7px,
       transparent 0.7px
     ),
 
     /*
-     * Starts with Section 2's exact bottom base, then becomes
-     * gradually brighter and more blue-violet lower down.
+     * Exact dark start, followed by a slow blue-violet rise.
+     * Repeating #070b18 at two stops creates a truly flat top
+     * rather than beginning the interpolation immediately.
      */
     linear-gradient(
       180deg,
@@ -4691,12 +4101,10 @@ input[aria-invalid="true"] {
     auto,
     auto,
     auto,
-    auto,
     6px 6px,
     auto;
 
   background-position:
-    center,
     center,
     center,
     center,
@@ -4709,83 +4117,71 @@ input[aria-invalid="true"] {
     no-repeat,
     no-repeat,
     no-repeat,
-    no-repeat,
     repeat,
     no-repeat;
-
-  -webkit-mask-image:
-    linear-gradient(
-      180deg,
-      transparent 0,
-      transparent 48px,
-      rgba(0, 0, 0, 0.10) 78px,
-      rgba(0, 0, 0, 0.28) 112px,
-      rgba(0, 0, 0, 0.56) 148px,
-      rgba(0, 0, 0, 0.82) 180px,
-      #000 210px,
-      #000 100%
-    );
-
-  mask-image:
-    linear-gradient(
-      180deg,
-      transparent 0,
-      transparent 48px,
-      rgba(0, 0, 0, 0.10) 78px,
-      rgba(0, 0, 0, 0.28) 112px,
-      rgba(0, 0, 0, 0.56) 148px,
-      rgba(0, 0, 0, 0.82) 180px,
-      #000 210px,
-      #000 100%
-    );
 }
 
-/* No second overlay is needed. */
+/*
+ * Remove every earlier full-section overlay. The old pseudo-elements
+ * were brightening the top before the base gradient could remain dark.
+ */
+.section-library-flow::before,
 .section-library-flow::after {
   content: none !important;
 }
 
-/* Keep all real Section 3 content above the masked background. */
-.section-library-flow > * {
+/* Keep the compact search and Saved Stories layout from V6. */
+.section-library-flow .flow-grid {
   position: relative;
-  z-index: 2;
+  z-index: 1;
 }
 
 @media (max-width: 980px) {
   .section-library-flow {
-    --section-2-to-3-depth:
-      clamp(150px, 18vw, 190px);
-  }
+    margin-top: -1px;
 
-  .section-library-flow::before {
-    -webkit-mask-image:
+    padding-top:
+      clamp(4.5rem, 7vh, 5.4rem);
+
+    background-image:
+      linear-gradient(
+        90deg,
+        rgba(3, 5, 14, 0.18) 0%,
+        transparent 22%,
+        transparent 78%,
+        rgba(3, 5, 14, 0.24) 100%
+      ),
+      radial-gradient(
+        ellipse 760px 560px at 18% 60%,
+        rgba(159, 105, 255, 0.15) 0%,
+        rgba(159, 105, 255, 0.045) 46%,
+        transparent 72%
+      ),
+      radial-gradient(
+        ellipse 840px 600px at 82% 58%,
+        rgba(105, 132, 255, 0.19) 0%,
+        rgba(105, 132, 255, 0.058) 47%,
+        transparent 73%
+      ),
+      radial-gradient(
+        ellipse 720px 470px at 50% 84%,
+        rgba(105, 180, 255, 0.055) 0%,
+        rgba(105, 180, 255, 0.016) 52%,
+        transparent 76%
+      ),
+      radial-gradient(
+        rgba(255, 255, 255, 0.003) 0.7px,
+        transparent 0.7px
+      ),
       linear-gradient(
         180deg,
-        transparent 0,
-        transparent 34px,
-        rgba(0, 0, 0, 0.16) 66px,
-        rgba(0, 0, 0, 0.48) 104px,
-        rgba(0, 0, 0, 0.80) 140px,
-        #000 170px,
-        #000 100%
+        #070b18 0%,
+        #070b18 20%,
+        #081027 38%,
+        #0c1532 57%,
+        #111b42 76%,
+        #0d1737 90%,
+        #070b18 100%
       );
-
-    mask-image:
-      linear-gradient(
-        180deg,
-        transparent 0,
-        transparent 34px,
-        rgba(0, 0, 0, 0.16) 66px,
-        rgba(0, 0, 0, 0.48) 104px,
-        rgba(0, 0, 0, 0.80) 140px,
-        #000 170px,
-        #000 100%
-      );
-  }
-}
-
-@media (max-width: 640px) {
-  .section-library-flow {
-    --section-2-to-3-depth: 140px;
   }
 }
