@@ -1,318 +1,220 @@
 /* ========================================================================== 
-   INKWELL — CONNECTED HOME PAGE SCROLL JOURNEY
+   INKWELL — ONE MASTER PINNED HOME-PAGE JOURNEY
 
-   Load this file AFTER HomeSections.css.
+   Import this file LAST, after section-1.css through section-4.css.
 
-   This stylesheet does not replace the individual Section 1–4 styles.
-   It only adds the shared viewport, transition veil, and desktop sizing that
-   let the existing sections feel like one continuous scroll-directed story.
+   This file does not create a transition veil. It places the real Sections
+   1–4 in one shared viewport. homeScroll.js then creates exactly one pinned
+   ScrollTrigger and uses one master timeline to move through all four scenes.
    ========================================================================== */
 
 :root {
   --journey-nav-height: 64px;
-  --journey-edge: clamp(1.25rem, 4vw, 4.5rem);
-  --journey-copy-width: min(880px, calc(100vw - 2 * var(--journey-edge)));
+  --journey-stage-height:
+    calc(100svh - var(--journey-nav-height));
 }
 
 html {
   scroll-behavior: auto;
 }
 
+/* The wrapper remains harmless natural-flow HTML until JavaScript enables it. */
+.home-journey-shell,
+.home-journey-stage {
+  position: relative;
+  width: 100%;
+}
+
+body.journey-preparing {
+  overflow: hidden;
+}
+
 body.journey-ready {
   overflow-x: clip;
 }
 
-body.journey-ready nav {
-  z-index: 1000 !important;
+body:is(.journey-preparing, .journey-ready) nav {
+  z-index: 10000 !important;
 }
 
-/* Keep every hand-off flush. The section-specific backgrounds remain intact. */
-body.journey-ready .hero,
-body.journey-ready #section-2-empty-shelf,
-body.journey-ready #section-3-library-flow,
-body.journey-ready #section-4 {
-  margin-block: 0 !important;
+body:is(.journey-preparing, .journey-ready)
+.home-journey-shell {
+  height: var(--journey-stage-height);
+  min-height: 760px;
+  margin: 0;
+  padding: 0;
+  isolation: isolate;
 }
 
-/* --------------------------------------------------------------------------
-   FIXED TRANSITION VEIL
-   -------------------------------------------------------------------------- */
-
-.journey-seam {
-  position: fixed;
-  left: 0;
-  right: 0;
-  top: var(--journey-nav-height);
-  bottom: 0;
-  z-index: 900;
-
-  display: grid;
-  place-items: center;
-
+body:is(.journey-preparing, .journey-ready)
+.home-journey-stage {
+  height: 100%;
+  min-height: inherit;
   overflow: hidden;
   isolation: isolate;
+  background: #070a18;
+}
 
-  opacity: 0;
-  visibility: hidden;
+body:is(.journey-preparing, .journey-ready)
+.home-journey-stage > section {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  margin: 0 !important;
+  overflow: hidden !important;
   pointer-events: none;
-
-  clip-path: inset(100% 0 0 0);
-  transform: translateZ(0);
-
-  will-change: opacity, clip-path;
-}
-
-.journey-seam::before,
-.journey-seam::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-
-.journey-seam::before {
-  z-index: -2;
-  background: var(--journey-seam-background);
-}
-
-.journey-seam::after {
-  z-index: -1;
-  opacity: 0.72;
-
-  background:
-    linear-gradient(
-      90deg,
-      rgba(3, 5, 15, 0.3),
-      transparent 24%,
-      transparent 76%,
-      rgba(3, 5, 15, 0.34)
-    ),
-    radial-gradient(
-      ellipse 900px 540px at 50% 45%,
-      rgba(132, 147, 255, 0.11),
-      transparent 72%
-    ),
-    radial-gradient(
-      rgba(255, 255, 255, 0.004) 0.75px,
-      transparent 0.75px
-    );
-
-  background-size: auto, auto, 6px 6px;
-}
-
-.journey-seam[data-tone="section-2"] {
-  --journey-seam-background:
-    radial-gradient(
-      ellipse 1120px 700px at 50% 33%,
-      rgba(105, 132, 255, 0.28),
-      rgba(105, 132, 255, 0.08) 48%,
-      transparent 75%
-    ),
-    radial-gradient(
-      ellipse 850px 610px at 72% 48%,
-      rgba(159, 105, 255, 0.16),
-      transparent 72%
-    ),
-    linear-gradient(180deg, #0a1230, #111b42 44%, #070b18);
-}
-
-.journey-seam[data-tone="section-3"] {
-  --journey-seam-background:
-    radial-gradient(
-      circle at 80% 16%,
-      rgba(124, 140, 255, 0.28),
-      transparent 36%
-    ),
-    radial-gradient(
-      circle at 17% 34%,
-      rgba(155, 124, 255, 0.17),
-      transparent 40%
-    ),
-    linear-gradient(135deg, #050611, #080d1f 40%, #0b1024 68%, #050611);
-}
-
-.journey-seam[data-tone="section-4"] {
-  --journey-seam-background:
-    radial-gradient(
-      circle at 50% 10%,
-      rgba(89, 101, 205, 0.23),
-      transparent 35%
-    ),
-    radial-gradient(
-      circle at 16% 55%,
-      rgba(124, 90, 196, 0.15),
-      transparent 42%
-    ),
-    radial-gradient(
-      circle at 84% 56%,
-      rgba(80, 132, 210, 0.13),
-      transparent 40%
-    ),
-    linear-gradient(180deg, #080b18, #121934 48%, #070b17);
-}
-
-.journey-seam__copy {
-  width: var(--journey-copy-width);
-  padding-inline: var(--journey-edge);
-  text-align: center;
-
-  opacity: 0;
-  transform: translate3d(0, 46px, 0) scale(0.975);
-  transform-origin: center center;
-
   will-change: opacity, transform;
 }
 
-.journey-seam__label {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.55rem;
-
-  margin: 0 0 0.95rem;
-
-  color: #c7d0ff;
-  font-family: var(--font-body, Inter, system-ui, sans-serif);
-  font-size: clamp(0.65rem, 0.8vw, 0.78rem);
-  font-weight: 850;
-  letter-spacing: 0.16em;
-  line-height: 1;
-  text-transform: uppercase;
+/* While Section 4 data is loading, show only the hero and prevent a flash. */
+body.journey-preparing
+.home-journey-stage > section {
+  opacity: 0;
+  visibility: hidden;
 }
 
-.journey-seam__label::before {
-  content: "";
-  width: 6px;
-  height: 6px;
-  border-radius: 999px;
-  background: #78d8ff;
-  box-shadow:
-    0 0 18px rgba(120, 216, 255, 0.72),
-    0 0 34px rgba(113, 140, 255, 0.3);
+body.journey-preparing
+.home-journey-stage > .hero {
+  z-index: 4;
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
 }
 
-.journey-seam__title {
-  max-width: 880px;
-  margin: 0 auto;
-
-  color: #f7f4ff;
-  font-family: var(--font-display, Newsreader, Georgia, serif);
-  font-size: clamp(3rem, 6.5vw, 7rem);
-  font-weight: 760;
-  letter-spacing: -0.065em;
-  line-height: 0.9;
-  text-wrap: balance;
-
-  text-shadow:
-    0 28px 75px rgba(0, 0, 0, 0.5),
-    0 0 44px rgba(124, 140, 255, 0.14);
-}
-
-.journey-seam__description {
-  width: min(620px, 92%);
-  margin: 1.2rem auto 0;
-
-  color: #aeb7d3;
-  font-family: var(--font-body, Inter, system-ui, sans-serif);
-  font-size: clamp(0.92rem, 1.1vw, 1.05rem);
-  font-weight: 550;
-  line-height: 1.65;
-  text-wrap: balance;
-}
-
-.journey-seam__line {
-  position: absolute;
-  left: 50%;
-  bottom: clamp(1.5rem, 4vh, 3rem);
-
-  width: min(520px, calc(100vw - 4rem));
-  height: 1px;
-
-  overflow: hidden;
-  transform: translateX(-50%);
-
-  background: rgba(190, 201, 255, 0.13);
-}
-
-.journey-seam__line::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-
-  transform: translateX(-100%);
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(120, 216, 255, 0.9),
-    rgba(155, 124, 255, 0.92),
-    transparent
-  );
-
-  animation: journey-line-travel 1.8s linear infinite;
-}
-
-@keyframes journey-line-travel {
-  to {
-    transform: translateX(100%);
-  }
+body.journey-ready
+.home-journey-stage > .journey-scene.is-journey-active {
+  pointer-events: auto;
 }
 
 /* --------------------------------------------------------------------------
-   DESKTOP CINEMATIC LAYOUT
+   SECTION 1
    -------------------------------------------------------------------------- */
 
-@media
-  (min-width: 1100px)
-  and (min-height: 700px)
-  and (prefers-reduced-motion: no-preference) {
+body:is(.journey-preparing, .journey-ready)
+.home-journey-stage > .hero {
+  height: 100% !important;
+  min-height: 0 !important;
+}
 
-  body.journey-ready .hero {
-    height: calc(100svh - var(--journey-nav-height));
-    min-height: calc(700px - var(--journey-nav-height));
-  }
-
-  body.journey-ready #section-3-library-flow {
-    height: calc(100svh - var(--journey-nav-height));
-    min-height: 700px;
-
-    padding:
-      clamp(2.8rem, 5.3vh, 4.5rem)
-      clamp(1.5rem, 4.25vw, 4.75rem)
-      clamp(2.2rem, 4.2vh, 3.5rem);
-  }
-
-  body.journey-ready #section-3-library-flow .flow-grid {
-    height: 100%;
-
-    grid-template-rows:
-      minmax(250px, 0.82fr)
-      minmax(310px, 1fr);
-
-    row-gap: clamp(1.1rem, 2.2vh, 1.9rem);
-  }
-
-  body.journey-ready #section-3-library-flow .flow-copy-card,
-  body.journey-ready #section-3-library-flow .flow-search-card,
-  body.journey-ready #section-3-library-flow .flow-library-card {
-    will-change: transform, opacity;
-  }
-
-  body.journey-ready #section-3-library-flow .flow-library-card {
-    min-height: 0;
-  }
-
-  body.journey-ready #section-3-library-flow .flow-library-viewport {
-    min-height: 0;
-  }
+/* The revised Section 1 file does not run its old observer in managed mode. */
+body:is(.journey-preparing, .journey-ready)
+.hero-left.hero-exiting,
+body:is(.journey-preparing, .journey-ready)
+.hero-right.hero-exiting {
+  opacity: 1 !important;
+  transform: none !important;
 }
 
 /* --------------------------------------------------------------------------
-   FALLBACKS
+   SECTION 2
+
+   The original Section 2 was designed as a separate long pinned section.
+   These overrides fit its existing header and evidence stage inside the one
+   shared viewport. The Section 2 content and internal timeline are preserved.
    -------------------------------------------------------------------------- */
 
-@media (max-width: 1099px), (max-height: 699px) {
-  .journey-seam {
-    display: none !important;
+body:is(.journey-preparing, .journey-ready)
+#section-2-empty-shelf {
+  padding:
+    clamp(2rem, 4.2vh, 3.7rem)
+    max(1.5rem, calc((100vw - 1220px) / 2 + 1.5rem))
+    clamp(0.8rem, 1.8vh, 1.4rem) !important;
+}
+
+body:is(.journey-preparing, .journey-ready)
+#section-2-empty-shelf .section-2-header {
+  margin-bottom: clamp(1.35rem, 2.8vh, 2.35rem);
+}
+
+body:is(.journey-preparing, .journey-ready)
+#section-2-empty-shelf.is-js-ready
+.stage-viewport {
+  min-height: clamp(520px, 62vh, 650px);
+}
+
+body:is(.journey-preparing, .journey-ready)
+#section-2-empty-shelf.is-js-ready
+.scroll-stage {
+  top: clamp(-92px, -6.8vh, -34px);
+}
+
+/* Section 2 creates fixed flying-button copies outside the section element. */
+body.journey-ready .depth-button-proxy {
+  z-index: 9500;
+}
+
+/* --------------------------------------------------------------------------
+   SECTION 3
+   -------------------------------------------------------------------------- */
+
+body:is(.journey-preparing, .journey-ready)
+#section-3-library-flow {
+  height: 100% !important;
+  min-height: 0 !important;
+
+  padding:
+    clamp(1.5rem, 3.5vh, 3rem)
+    clamp(1.25rem, 4.25vw, 4.75rem)
+    clamp(1.25rem, 2.8vh, 2.4rem) !important;
+}
+
+body:is(.journey-preparing, .journey-ready)
+#section-3-library-flow .flow-grid {
+  height: 100%;
+  min-height: 0;
+
+  grid-template-rows:
+    minmax(250px, 0.82fr)
+    minmax(300px, 1fr);
+
+  row-gap: clamp(1rem, 2vh, 1.8rem);
+}
+
+body:is(.journey-preparing, .journey-ready)
+#section-3-library-flow .flow-copy-card,
+body:is(.journey-preparing, .journey-ready)
+#section-3-library-flow .flow-search-card,
+body:is(.journey-preparing, .journey-ready)
+#section-3-library-flow .flow-library-card {
+  min-height: 0;
+  will-change: opacity, transform;
+}
+
+body:is(.journey-preparing, .journey-ready)
+#section-3-library-flow .flow-library-card,
+body:is(.journey-preparing, .journey-ready)
+#section-3-library-flow .flow-library-body,
+body:is(.journey-preparing, .journey-ready)
+#section-3-library-flow .flow-library-viewport {
+  min-height: 0;
+}
+
+/* --------------------------------------------------------------------------
+   SECTION 4
+   -------------------------------------------------------------------------- */
+
+body:is(.journey-preparing, .journey-ready)
+#section-4,
+body:is(.journey-preparing, .journey-ready)
+#section-4 .s4-stage {
+  width: 100%;
+  height: 100% !important;
+  min-height: 0 !important;
+}
+
+/* --------------------------------------------------------------------------
+   NATURAL FALLBACK
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 1099px), (max-height: 819px) {
+  .home-journey-shell,
+  .home-journey-stage {
+    height: auto;
+    min-height: 0;
+    overflow: visible;
   }
 }
 
@@ -321,11 +223,10 @@ body.journey-ready #section-4 {
     scroll-behavior: auto;
   }
 
-  .journey-seam {
-    display: none !important;
-  }
-
-  .journey-seam__line::after {
-    animation: none !important;
+  .home-journey-shell,
+  .home-journey-stage {
+    height: auto;
+    min-height: 0;
+    overflow: visible;
   }
 }
