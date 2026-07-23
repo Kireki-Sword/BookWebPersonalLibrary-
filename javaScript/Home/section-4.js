@@ -1116,6 +1116,16 @@
       "thoughts",
     ];
 
+    /* The final comparison scale depends on the active layer's real height.
+       Notify the motion controller after DOM content or focus widths change. */
+    const requestLayoutRefresh = () => {
+      window.requestAnimationFrame(() => {
+        elements.section.dispatchEvent(
+          new CustomEvent("inkwell:section4-layout-change"),
+        );
+      });
+    };
+
     fillProfileCards(elements.section);
 
     const renderBothSides = () => {
@@ -1166,6 +1176,8 @@
           animateContent(container);
         },
       );
+
+      requestLayoutRefresh();
     };
 
     const renderMomentReader = (readerId) => {
@@ -1194,6 +1206,7 @@
       );
 
       animateContent(container);
+      requestLayoutRefresh();
     };
 
     const setLayer = (layer) => {
@@ -1289,6 +1302,8 @@
         elements.readerStatus.textContent =
           "Both completed";
       }
+
+      requestLayoutRefresh();
     };
 
     elements.layerButtons.forEach((button) => {
@@ -2997,13 +3012,13 @@
         cardHeight * dockScale;
 
       const introTop = Math.ceil(
-        cardVisualBottom + 14,
+        cardVisualBottom + 18,
       );
 
       const compareTop = Math.ceil(
         introTop +
           introHeight +
-          10,
+          14,
       );
 
       elements.stage.style.setProperty(
@@ -3035,8 +3050,8 @@
       const compareScale = MANAGED_BY_HOME_JOURNEY
         ? clampValue(
             availableCompareHeight / naturalCompareHeight,
-            0.68,
-            0.97,
+            0.8,
+            1,
           )
         : 1;
 
@@ -3169,6 +3184,22 @@
 
     const timeline =
       gsap.timeline(timelineOptions);
+
+    let layoutRefreshFrame = 0;
+
+    const handleLayoutChange = () => {
+      window.cancelAnimationFrame(layoutRefreshFrame);
+
+      layoutRefreshFrame = window.requestAnimationFrame(() => {
+        updateFinalLayoutMetrics();
+        timeline.invalidate();
+      });
+    };
+
+    section.addEventListener(
+      "inkwell:section4-layout-change",
+      handleLayoutChange,
+    );
 
     const getStartTime = (item) => {
       const index = Number(
@@ -3819,6 +3850,13 @@
     }
 
     const cleanup = () => {
+      window.cancelAnimationFrame(layoutRefreshFrame);
+
+      section.removeEventListener(
+        "inkwell:section4-layout-change",
+        handleLayoutChange,
+      );
+
       timeline.scrollTrigger?.kill();
 
       timeline.kill();

@@ -518,15 +518,15 @@
     );
 
     const cardBottomGap = clampValue(
-      stageHeight * 0.034,
-      24,
-      32
+      stageHeight * 0.02,
+      14,
+      20
     );
 
     const evidenceCardGap = clampValue(
-      stageHeight * 0.052,
-      36,
-      46
+      stageHeight * 0.036,
+      24,
+      32
     );
 
     const cardTargetTop =
@@ -551,9 +551,9 @@
     gsap.set(elements.cardWrap, { y: savedCardY });
 
     const quoteHeight = clampValue(
-      evidenceHeight - 6,
-      354,
-      444
+      evidenceHeight - 2,
+      372,
+      466
     );
 
     const thoughtHeight = clampValue(
@@ -1536,10 +1536,10 @@
         ? 18
         : MANAGED_BY_HOME_JOURNEY
           ? Math.min(
-              32,
+              20,
               Math.max(
-                24,
-                section.clientHeight * 0.034
+                14,
+                section.clientHeight * 0.02
               )
             )
           : 24;
