@@ -38,6 +38,10 @@
 
     </nav>
 
+    <!-- One pinned viewport for Sections 1–4 -->
+    <div class="home-journey-shell" data-home-journey-shell>
+    <div class="home-journey-stage" data-home-journey-stage>
+
     <!-- Section 1 Hero -->
     <section class="hero">
 
@@ -2137,21 +2141,28 @@
     
     
     
+    </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+
+    <!--
+      IMPORTANT: load homeScroll.js before every section animation file.
+      Its first synchronous line enables managed mode. Its actual setup waits
+      for DOMContentLoaded, so GSAP may still be loaded below.
+    -->
+    <script src="./javaScript/Home/homeScroll.js" defer></script>
 
     <script src="./javaScript/Home/section-1.js" defer></script>
     <script src="./javaScript/Home/changeCardSection1.js" defer></script>
 
-    <!-- GSAP library first -->
+    <!-- GSAP core, then ScrollTrigger -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js" defer></script>
-
-    <!-- ScrollTrigger plugin second -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js" defer></script>
-    
+
     <script src="./javaScript/Home/section-2.js" defer></script>
     <script src="./javaScript/Home/section-3.js" defer></script>
     <script src="./javaScript/Home/section-4.js" defer></script>
-    <script src="./javaScript/Home/homeScroll.js" defer></script>
 
 
     

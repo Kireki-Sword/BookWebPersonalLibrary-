@@ -17,6 +17,20 @@
 
   const PIN_DISTANCE = 4300;
 
+  const MANAGED_BY_HOME_JOURNEY =
+    window.__INKWELL_MASTER_JOURNEY__ === true;
+
+  let managedJourneyPublished = false;
+  let resolveManagedJourneyReady = null;
+
+  const managedJourneyReady = new Promise((resolve) => {
+    resolveManagedJourneyReady = resolve;
+  });
+
+  window.InkwellSection4Journey = {
+    ready: managedJourneyReady
+  };
+
   let supabaseClient = null;
 
   const READERS = {
@@ -330,6 +344,31 @@
     type: ["Manga", "Anime"],
   };
 
+  function publishManagedJourney(result) {
+    if (
+      !MANAGED_BY_HOME_JOURNEY ||
+      managedJourneyPublished
+    ) {
+      return;
+    }
+
+    managedJourneyPublished = true;
+
+    const api = {
+      ready: managedJourneyReady,
+      ...result
+    };
+
+    window.InkwellSection4Journey = api;
+    resolveManagedJourneyReady?.(api);
+
+    window.dispatchEvent(
+      new CustomEvent("inkwell:section4-ready", {
+        detail: api
+      })
+    );
+  }
+
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", startSection4, {
       once: true,
@@ -366,6 +405,15 @@
         elements,
         "Supabase is missing. Showing the static fallback.",
       );
+
+      publishManagedJourney({
+        section,
+        elements,
+        timeline: null,
+        cleanup: () => {},
+        refresh: () => {},
+        showStatic: () => showStaticLayout(section, elements),
+      });
 
       return;
     }
@@ -405,6 +453,15 @@
       );
 
       showStaticLayout(section, elements);
+
+      publishManagedJourney({
+        section,
+        elements,
+        timeline: null,
+        cleanup: () => {},
+        refresh: () => {},
+        showStatic: () => showStaticLayout(section, elements),
+      });
     }
   }
 
@@ -2671,6 +2728,15 @@
 
       showStaticLayout(section, elements);
 
+      publishManagedJourney({
+        section,
+        elements,
+        timeline: null,
+        cleanup: () => {},
+        refresh: () => {},
+        showStatic: () => showStaticLayout(section, elements),
+      });
+
       return;
     }
 
@@ -2680,6 +2746,47 @@
     } = window;
 
     gsap.registerPlugin(ScrollTrigger);
+
+    if (MANAGED_BY_HOME_JOURNEY) {
+      const canAnimate = window.matchMedia(
+        "(min-width: 1100px) and (min-height: 820px) and " +
+        "(prefers-reduced-motion: no-preference)"
+      ).matches;
+
+      if (!canAnimate) {
+        showStaticLayout(section, elements);
+
+        publishManagedJourney({
+          section,
+          elements,
+          timeline: null,
+          cleanup: () => {},
+          refresh: () => {},
+          showStatic: () => showStaticLayout(section, elements),
+        });
+
+        return;
+      }
+
+      section.classList.remove("is-static");
+
+      const managedController =
+        createPinnedTimeline(
+          section,
+          elements,
+          gsap,
+          { managed: true },
+        );
+
+      publishManagedJourney({
+        section,
+        elements,
+        ...managedController,
+        showStatic: () => showStaticLayout(section, elements),
+      });
+
+      return;
+    }
 
     gsap.matchMedia().add(
       {
@@ -2717,7 +2824,11 @@
     section,
     elements,
     gsap,
+    options = {},
   ) {
+    const managed =
+      options.managed === true;
+
     const leftItems =
       gsap.utils.toArray(
         '[data-rain-side="left"]',
@@ -2945,12 +3056,16 @@
       y: 16,
     });
 
-    const timeline = gsap.timeline({
+    const timelineOptions = {
       defaults: {
         ease: "none",
       },
+    };
 
-      scrollTrigger: {
+    if (managed) {
+      timelineOptions.paused = true;
+    } else {
+      timelineOptions.scrollTrigger = {
         trigger: elements.stage,
 
         start: "top top",
@@ -2969,8 +3084,11 @@
 
         onRefreshInit:
           updateFinalLayoutMetrics,
-      },
-    });
+      };
+    }
+
+    const timeline =
+      gsap.timeline(timelineOptions);
 
     const getStartTime = (item) => {
       const index = Number(
@@ -3620,7 +3738,7 @@
       });
     }
 
-    return () => {
+    const cleanup = () => {
       timeline.scrollTrigger?.kill();
 
       timeline.kill();
@@ -3645,6 +3763,21 @@
         },
       );
     };
+
+    if (managed) {
+      timeline.pause(0);
+
+      return {
+        timeline,
+        cleanup,
+        refresh: () => {
+          updateFinalLayoutMetrics();
+          timeline.invalidate();
+        },
+      };
+    }
+
+    return cleanup;
   }
 
   function syncHandoffCover(

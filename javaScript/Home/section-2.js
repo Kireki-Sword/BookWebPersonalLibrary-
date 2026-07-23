@@ -22,6 +22,9 @@
 
   const { gsap, ScrollTrigger } = window;
 
+  const MANAGED_BY_HOME_JOURNEY =
+    window.__INKWELL_MASTER_JOURNEY__ === true;
+
   if (!gsap || !ScrollTrigger) {
     console.warn(
       "Section 2 requires GSAP and ScrollTrigger."
@@ -246,13 +249,52 @@
 
     if (prefersReducedMotion) {
       buildReducedMotionVersion();
+      publishManagedApi(null);
       return;
     }
 
     masterTimeline =
-      buildMasterTimeline();
+      buildMasterTimeline({
+        managed: MANAGED_BY_HOME_JOURNEY
+      });
+
+    if (MANAGED_BY_HOME_JOURNEY) {
+      masterTimeline.pause(0);
+      publishManagedApi(masterTimeline);
+      return;
+    }
 
     setupSafeRefreshes();
+  }
+
+  function publishManagedApi(timeline) {
+    if (!MANAGED_BY_HOME_JOURNEY) {
+      return;
+    }
+
+    const api = {
+      section,
+      timeline,
+      externalElements: layers
+        .map((layer) => layer.proxy)
+        .filter(Boolean),
+      reset: setInitialState,
+      showStatic: buildReducedMotionVersion,
+      refresh: () => {
+        if (timeline) {
+          timeline.invalidate();
+          syncTimelineState(timeline);
+        }
+      }
+    };
+
+    window.InkwellSection2Journey = api;
+
+    window.dispatchEvent(
+      new CustomEvent("inkwell:section2-ready", {
+        detail: api
+      })
+    );
   }
 
   /* ==========================================================================
@@ -543,65 +585,66 @@
      MASTER TIMELINE
      ========================================================================== */
 
-  function buildMasterTimeline() {
-    const timeline =
-      gsap.timeline({
-        defaults: {
-          ease: "power2.out"
+  function buildMasterTimeline(options = {}) {
+    const managed =
+      options.managed === true;
+
+    const timelineOptions = {
+      defaults: {
+        ease: "power2.out"
+      }
+    };
+
+    if (managed) {
+      timelineOptions.paused = true;
+    } else {
+      timelineOptions.scrollTrigger = {
+        trigger: section,
+        start: "top top",
+
+        end: () => {
+          const distance =
+            Math.max(
+              window.innerHeight * 7.25,
+              6500
+            );
+
+          return `+=${distance}`;
         },
 
-        scrollTrigger: {
-          trigger: section,
-          start: "top top",
+        pin: true,
+        scrub: 1,
+        anticipatePin: 1,
+        invalidateOnRefresh: true,
 
-          end: () => {
-            const distance =
-              Math.max(
-                window.innerHeight * 7.25,
-                6500
-              );
+        onRefreshInit: () => {
+          gsap.set(
+            [
+              elements.viewport,
+              elements.cardWrap,
+              elements.card
+            ],
+            {
+              y: 0
+            }
+          );
+        },
 
-            return `+=${distance}`;
-          },
+        onRefresh: ({ animation }) => {
+          syncTimelineState(animation);
+        },
 
-          pin: true,
-          scrub: 1,
-          anticipatePin: 1,
-          invalidateOnRefresh: true,
+        onUpdate: ({ animation }) => {
+          syncTimelineState(animation);
+        },
 
-          onRefreshInit: () => {
-            gsap.set(
-              [
-                elements.viewport,
-                elements.cardWrap,
-                elements.card
-              ],
-              {
-                y: 0
-              }
-            );
-          },
+        onLeaveBack:
+          resetToNaturalStart
+      };
+    }
 
-          onRefresh: ({
-            animation
-          }) => {
-            syncTimelineState(
-              animation
-            );
-          },
-
-          onUpdate: ({
-            animation
-          }) => {
-            syncTimelineState(
-              animation
-            );
-          },
-
-          onLeaveBack:
-            resetToNaturalStart
-        }
-      });
+    const timeline =
+      gsap.timeline(timelineOptions);
 
     timeline.addLabel(
       "natural-card"
@@ -721,6 +764,18 @@
         duration: 0.65
       }
     );
+
+    if (managed) {
+      timeline.eventCallback(
+        "onUpdate",
+        () => syncTimelineState(timeline)
+      );
+
+      timeline.eventCallback(
+        "onReverseComplete",
+        resetToNaturalStart
+      );
+    }
 
     return timeline;
   }
