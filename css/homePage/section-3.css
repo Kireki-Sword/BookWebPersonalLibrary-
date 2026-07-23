@@ -3920,3 +3920,523 @@ label.has-rating > i {
       rgba(218, 225, 255, 0.56);
   }
 }
+
+/* =========================================================
+   SECTION 3 — CENTERED TOOLBAR + EDITABLE SAVED STATUS
+   Keep this final block at the end of section-3.css.
+   ========================================================= */
+
+/* Section 2 -> Section 3 handoff:
+   dark at the boundary, then localized violet/blue atmosphere. */
+
+.section-library-flow {
+  margin-top: -3px;
+
+  padding-top:
+    calc(clamp(4.4rem, 6.8vh, 5.8rem) + 3px);
+
+  border-top: 0 !important;
+
+  background:
+    linear-gradient(
+      180deg,
+      #070b18 0%,
+      rgba(7, 11, 24, 0.92) 5%,
+      rgba(8, 13, 31, 0.45) 15%,
+      transparent 25%
+    ),
+    radial-gradient(
+      ellipse 860px 620px at 22% 24%,
+      rgba(159, 131, 255, 0.19) 0%,
+      rgba(159, 131, 255, 0.06) 48%,
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 980px 680px at 79% 23%,
+      rgba(114, 140, 255, 0.28) 0%,
+      rgba(114, 140, 255, 0.095) 48%,
+      transparent 74%
+    ),
+    radial-gradient(
+      ellipse 720px 520px at 70% 78%,
+      rgba(121, 217, 255, 0.065) 0%,
+      transparent 72%
+    ),
+    linear-gradient(
+      135deg,
+      #080d20 0%,
+      #10183a 42%,
+      #0c1430 72%,
+      #060914 100%
+    );
+}
+
+.section-library-flow::before {
+  height: 220px;
+
+  background:
+    radial-gradient(
+      ellipse 900px 270px at 50% 100%,
+      rgba(114, 140, 255, 0.12) 0%,
+      rgba(159, 131, 255, 0.04) 48%,
+      transparent 76%
+    ),
+    linear-gradient(
+      90deg,
+      #0a1230 0%,
+      #0c1532 52%,
+      #070b18 100%
+    );
+
+  -webkit-mask-image:
+    linear-gradient(
+      180deg,
+      #000 0%,
+      rgba(0, 0, 0, 0.94) 32%,
+      rgba(0, 0, 0, 0.46) 66%,
+      transparent 100%
+    );
+
+  mask-image:
+    linear-gradient(
+      180deg,
+      #000 0%,
+      rgba(0, 0, 0, 0.94) 32%,
+      rgba(0, 0, 0, 0.46) 66%,
+      transparent 100%
+    );
+}
+
+.section-library-flow::after {
+  right: -10%;
+  top: 8%;
+
+  width: min(54vw, 720px);
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(159, 131, 255, 0.18) 0%,
+      rgba(114, 140, 255, 0.10) 40%,
+      rgba(121, 217, 255, 0.028) 60%,
+      transparent 75%
+    );
+
+  filter: blur(32px);
+}
+
+/* Library header metadata. */
+
+.section-library-flow .flow-library-header {
+  height: 82px;
+  min-height: 82px;
+}
+
+.section-library-flow .flow-library-meta {
+  min-width: 250px;
+
+  display: grid;
+  justify-items: end;
+
+  gap: 0.38rem;
+}
+
+.section-library-flow .flow-library-save-notice {
+  max-width: none;
+
+  padding: 0;
+
+  border: 0;
+
+  color: #8f9bb6;
+
+  font-size: 0.61rem;
+
+  background: transparent;
+  box-shadow: none;
+}
+
+.section-library-flow .flow-library-save-notice i {
+  color: #79d9ff;
+}
+
+.section-library-flow .flow-library-body {
+  height:
+    calc(100% - 82px);
+
+  grid-template-rows:
+    auto
+    26px
+    minmax(0, 1fr);
+
+  gap: 0.65rem;
+}
+
+/* Two rows sharing one alignment grid. */
+
+.section-library-flow .flow-library-toolbar {
+  grid-row: 1;
+
+  position: relative;
+  z-index: 30;
+
+  display: grid;
+
+  gap: 0.58rem;
+}
+
+.section-library-flow .flow-toolbar-row {
+  display: grid;
+
+  grid-template-columns:
+    62px
+    minmax(0, 1fr)
+    clamp(232px, 18vw, 270px);
+
+  align-items: center;
+
+  column-gap: 0.8rem;
+}
+
+.section-library-flow .flow-filter-label {
+  width: auto;
+  flex: none;
+
+  color: #929ebb;
+
+  font-size: 0.61rem;
+  font-weight: 850;
+
+  letter-spacing: 0.1em;
+
+  text-transform: uppercase;
+}
+
+.section-library-flow .flow-toolbar-control-center {
+  min-width: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.section-library-flow .flow-toolbar-balance {
+  display: block;
+
+  width: 100%;
+}
+
+/* Connected three-option format selector. */
+
+.section-library-flow .flow-library-filters {
+  display: inline-flex;
+  flex-wrap: nowrap;
+
+  gap: 0;
+
+  padding: 3px;
+
+  border:
+    1px solid rgba(184, 196, 255, 0.20);
+
+  border-radius: 999px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.045),
+      rgba(255, 255, 255, 0.018)
+    );
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.055);
+}
+
+.section-library-flow
+.flow-library-filters
+.flow-filter {
+  min-width: 72px;
+  min-height: 34px;
+
+  border: 0;
+  border-radius: 999px;
+
+  background: transparent;
+  box-shadow: none;
+}
+
+.section-library-flow
+.flow-library-filters
+.flow-filter.active {
+  color: #ffffff;
+
+  background:
+    radial-gradient(
+      circle at 24% 15%,
+      rgba(255, 255, 255, 0.14),
+      transparent 31%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(69, 132, 216, 0.40),
+      rgba(100, 104, 224, 0.29)
+    );
+
+  box-shadow:
+    0 7px 17px rgba(0, 0, 0, 0.20),
+    0 0 16px rgba(114, 140, 255, 0.10);
+}
+
+/* Status choices remain separate chips. */
+
+.section-library-flow .flow-library-status-filters {
+  justify-content: center;
+
+  gap: 0.46rem;
+}
+
+.section-library-flow .flow-status-filter {
+  min-height: 34px;
+}
+
+/* Sort aligns to the right of the Format row. */
+
+.section-library-flow .flow-sort-controls {
+  width: 100%;
+
+  justify-content: flex-end;
+
+  gap: 0.52rem;
+}
+
+.section-library-flow .flow-sort-menu {
+  width: min(100%, 236px);
+}
+
+.section-library-flow .flow-sort-trigger {
+  height: 40px;
+}
+
+/* Saved search results remain editable. */
+
+.section-library-flow .flow-result-info {
+  display: grid;
+
+  align-content: center;
+}
+
+.section-library-flow .flow-result-library-state {
+  width: fit-content;
+
+  margin: 0.34rem 0 0;
+
+  padding: 0.24rem 0.48rem;
+
+  border:
+    1px solid rgba(121, 217, 255, 0.25);
+
+  border-radius: 999px;
+
+  color: #b9dfff;
+
+  font-size: 0.58rem;
+  font-weight: 760;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(78, 157, 219, 0.13),
+      rgba(64, 88, 179, 0.07)
+    );
+}
+
+.section-library-flow
+.flow-result-library-state[hidden] {
+  display: none !important;
+}
+
+.section-library-flow .flow-add-button.is-added {
+  pointer-events: none;
+
+  opacity: 0.82;
+
+  border-color:
+    rgba(121, 217, 255, 0.34);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(71, 133, 204, 0.82),
+      rgba(87, 97, 206, 0.82)
+    );
+}
+
+.section-library-flow .flow-add-button.is-update {
+  border-color:
+    rgba(199, 181, 255, 0.48);
+
+  background:
+    linear-gradient(
+      145deg,
+      #9d7cff,
+      #7385ff 58%,
+      #6265e8
+    );
+
+  box-shadow:
+    0 8px 18px rgba(0, 0, 0, 0.25),
+    0 0 20px rgba(159, 131, 255, 0.18);
+}
+
+.section-library-flow
+.flow-add-button.is-update::before {
+  content: "↻ ";
+}
+
+.section-library-flow.has-result
+.flow-status-picker {
+  padding-bottom: 0.16rem;
+}
+
+/* Responsive layout. */
+
+@media (
+  max-width: 1180px
+) and (
+  min-width: 981px
+) {
+  .section-library-flow .flow-toolbar-row {
+    grid-template-columns:
+      58px
+      minmax(0, 1fr)
+      220px;
+  }
+
+  .section-library-flow
+  .flow-library-filters
+  .flow-filter {
+    min-width: 64px;
+  }
+
+  .section-library-flow .flow-status-filter {
+    padding:
+      0 0.62rem;
+  }
+}
+
+@media (max-width: 980px) {
+  .section-library-flow {
+    padding-top:
+      calc(4.75rem + 2px);
+  }
+
+  .section-library-flow::before {
+    height: 190px;
+  }
+
+  .section-library-flow .flow-library-header {
+    height: auto;
+    min-height: 88px;
+  }
+
+  .section-library-flow .flow-library-body {
+    height:
+      calc(100% - 88px);
+  }
+
+  .section-library-flow .flow-library-meta {
+    min-width: 0;
+  }
+
+  .section-library-flow .flow-toolbar-row {
+    grid-template-columns:
+      58px
+      minmax(0, 1fr);
+  }
+
+  .section-library-flow .flow-sort-controls {
+    grid-column:
+      1 / -1;
+
+    justify-content: flex-end;
+
+    margin-top: 0.12rem;
+  }
+
+  .section-library-flow .flow-toolbar-balance {
+    display: none;
+  }
+}
+
+@media (max-width: 680px) {
+  .section-library-flow .flow-library-header {
+    align-items: flex-start;
+  }
+
+  .section-library-flow .flow-library-meta {
+    justify-items: end;
+  }
+
+  .section-library-flow .flow-library-save-notice {
+    max-width: 190px;
+
+    white-space: normal;
+
+    text-align: right;
+  }
+
+  .section-library-flow .flow-toolbar-row {
+    grid-template-columns: 1fr;
+
+    gap: 0.42rem;
+  }
+
+  .section-library-flow .flow-filter-label {
+    text-align: center;
+  }
+
+  .section-library-flow .flow-toolbar-control-center {
+    width: 100%;
+  }
+
+  .section-library-flow .flow-library-status-filters {
+    justify-content: center;
+  }
+
+  .section-library-flow .flow-sort-controls {
+    grid-column: auto;
+
+    justify-content: stretch;
+  }
+
+  .section-library-flow .flow-sort-label {
+    min-width: 52px;
+  }
+
+  .section-library-flow .flow-sort-menu {
+    width: 100%;
+  }
+
+  .section-library-flow
+  .flow-library-filters
+  .flow-filter,
+  .section-library-flow
+  .flow-status-filter {
+    min-height: 44px;
+  }
+
+  .section-library-flow .flow-result-card {
+    grid-template-columns:
+      52px
+      minmax(0, 1fr);
+
+    align-items: start;
+  }
+
+  .section-library-flow .flow-add-button {
+    grid-column:
+      1 / -1;
+
+    width: 100%;
+  }
+}

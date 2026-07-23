@@ -716,7 +716,7 @@
     </div>
     </section>
 
-    <!-- SECTION 3  SEARCH, SAVE, AND ORGANIZE-->
+    <!--  SECTION 3: SEARCH, SAVE, AND ORGANIZE -->
     <section
     id="section-3-library-flow"
     class="section section-library-flow"
@@ -724,9 +724,9 @@
     >
     <div class="flow-grid">
 
-        <!-- ==================================================
+        <!-- =====================================================
             INTRODUCTION
-            ================================================== -->
+            ===================================================== -->
 
         <article
         class="flow-copy-card"
@@ -734,7 +734,7 @@
         >
         <span
             class="section-label"
-            data-flow-motion-item
+            data-flow-motion-item=""
         >
             Your first step
         </span>
@@ -742,37 +742,37 @@
         <h2 id="section-3-title">
             <span
             class="flow-title-line flow-title-line-primary"
-            data-flow-motion-item
+            data-flow-motion-item=""
             >
             Find it. Save
             </span>
 
             <span
             class="flow-title-line"
-            data-flow-motion-item
+            data-flow-motion-item=""
             >
             it. Keep going.
             </span>
         </h2>
 
-        <p data-flow-motion-item>
+        <p data-flow-motion-item="">
             Search any story you are reading or watching. Add it to your
             library, then choose where it belongs.
         </p>
 
         <a
-            href="signup.html"
             class="btn-primary flow-cta"
-            data-flow-motion-item
+            href="signup.html"
+            data-flow-motion-item=""
         >
             Start your library
         </a>
         </article>
 
 
-        <!-- ==================================================
+        <!-- =====================================================
             SEARCH CARD
-            ================================================== -->
+            ===================================================== -->
 
         <article
         class="flow-card flow-search-card"
@@ -782,7 +782,7 @@
         <div
             class="flow-card-header"
             aria-hidden="true"
-            data-flow-motion-item
+            data-flow-motion-item=""
         >
             <div class="flow-window-controls">
             <span></span>
@@ -795,8 +795,8 @@
 
             <form
             class="flow-search-form"
-            data-flow-search-form
-            data-flow-motion-item
+            data-flow-search-form=""
+            data-flow-motion-item=""
             novalidate
             >
             <label for="home-flow-search">
@@ -810,13 +810,13 @@
                 type="search"
                 placeholder="Search a book, manga, anime, film, or show"
                 autocomplete="off"
-                data-flow-search-input
+                data-flow-search-input=""
                 >
 
                 <button
                 type="button"
                 aria-label="Search"
-                data-flow-search-button
+                data-flow-search-button=""
                 >
                 <i
                     class="ti ti-search"
@@ -827,27 +827,26 @@
             </form>
 
 
-            <!--
-            Dynamic search content scrolls inside the fixed-height
-            search card. It will not push the section up or down.
-            -->
+            <!-- Dynamic content scrolls inside the fixed-height card. -->
 
             <div
             class="flow-search-content"
-            data-flow-search-content
+            data-flow-search-content=""
             >
             <div
                 class="flow-suggestions"
-                data-flow-suggestions
                 aria-label="Search suggestions"
+                data-flow-suggestions=""
                 hidden
             ></div>
 
 
+            <!-- Empty search state -->
+
             <div
                 class="flow-search-empty"
-                data-flow-search-empty
-                data-flow-motion-item
+                data-flow-search-empty=""
+                data-flow-motion-item=""
             >
                 <p>
                 Type a title to find it and add it to your library.
@@ -855,15 +854,17 @@
             </div>
 
 
+            <!-- Selected search result -->
+
             <div
                 class="flow-result-area"
-                data-flow-result-area
                 aria-live="polite"
+                data-flow-result-area=""
             >
                 <template id="flow-result-template">
                 <article
                     class="flow-result-card"
-                    data-flow-result-card
+                    data-flow-result-card=""
                 >
                     <div class="flow-result-cover">
                     <img
@@ -882,12 +883,20 @@
                     <p class="flow-result-type">
                         Manga
                     </p>
+
+                    <p
+                        class="flow-result-library-state"
+                        data-flow-result-library-state=""
+                        hidden
+                    >
+                        In your library
+                    </p>
                     </div>
 
                     <button
-                    class="flow-add-button"
                     type="button"
-                    data-flow-add-button
+                    class="flow-add-button"
+                    data-flow-add-button=""
                     >
                     Add
                     </button>
@@ -896,9 +905,11 @@
             </div>
 
 
+            <!-- Status picker -->
+
             <fieldset
                 class="flow-status-picker"
-                data-flow-status-picker
+                data-flow-status-picker=""
                 hidden
             >
                 <legend>
@@ -906,7 +917,6 @@
                 </legend>
 
                 <div class="flow-status-options">
-
                 <label>
                     <input
                     type="radio"
@@ -952,27 +962,29 @@
                     >
                     <span>Dropped</span>
                 </label>
-
                 </div>
             </fieldset>
-            </div>
 
+            </div>
         </div>
         </article>
 
 
-        <!-- ==================================================
-            LIBRARY CARD
-            ================================================== -->
+        <!-- =====================================================
+            SAVED STORIES LIBRARY
+            ===================================================== -->
 
         <article
         class="flow-card flow-library-card"
         aria-label="Saved stories preview"
         data-flow-motion="library"
         >
+
+        <!-- Library header -->
+
         <header
             class="flow-library-header"
-            data-flow-motion-item
+            data-flow-motion-item=""
         >
             <div class="flow-library-heading">
             <h3>Saved stories</h3>
@@ -983,29 +995,48 @@
             </p>
             </div>
 
+            <div class="flow-library-meta">
             <span class="flow-library-count">
-            <span data-library-count>0</span>
-            saved
+                <span data-library-count="">0</span>
+                saved
             </span>
+
+            <div
+                class="flow-library-save-notice"
+                role="status"
+            >
+                <i
+                class="ti ti-lock"
+                aria-hidden="true"
+                ></i>
+
+                <span>
+                Preview mode · Sign up to keep your changes.
+                </span>
+            </div>
+            </div>
         </header>
 
 
         <div class="flow-library-body">
-            <!-- ==============================================
-                LIBRARY FILTERS, STATUS, AND SORTING
-                ============================================== -->
+
+            <!-- =================================================
+                FILTERS, STATUS, AND SORTING
+                ================================================= -->
 
             <div
             class="flow-library-toolbar"
-            data-flow-motion-item
+            data-flow-motion-item=""
             >
-            <div class="flow-library-filter-stack">
 
-                <div class="flow-filter-group">
+            <!-- Format row -->
+
+            <div class="flow-toolbar-row flow-toolbar-row-format">
                 <span class="flow-filter-label">
-                    Format
+                Format
                 </span>
 
+                <div class="flow-toolbar-control-center">
                 <div
                     class="flow-library-filters"
                     aria-label="Filter saved stories by format"
@@ -1040,11 +1071,148 @@
                 </div>
 
 
-                <div class="flow-filter-group">
-                <span class="flow-filter-label">
-                    Status
+                <!-- Sort menu -->
+
+                <div class="flow-sort-controls">
+                <span
+                    id="library-sort-label"
+                    class="flow-sort-label"
+                >
+                    Sort by
                 </span>
 
+                <div
+                    class="flow-sort-menu"
+                    data-sort-menu=""
+                >
+                    <button
+                    type="button"
+                    class="flow-sort-trigger"
+                    aria-haspopup="listbox"
+                    aria-expanded="false"
+                    aria-labelledby="library-sort-label library-sort-value"
+                    data-sort-trigger=""
+                    >
+                    <i
+                        class="ti ti-arrows-sort"
+                        aria-hidden="true"
+                    ></i>
+
+                    <span
+                        id="library-sort-value"
+                        data-sort-label=""
+                    >
+                        Recently added
+                    </span>
+
+                    <i
+                        class="ti ti-chevron-down flow-sort-chevron"
+                        aria-hidden="true"
+                    ></i>
+                    </button>
+
+
+                    <div
+                    class="flow-sort-options"
+                    role="listbox"
+                    aria-labelledby="library-sort-label"
+                    data-sort-options=""
+                    hidden
+                    >
+                    <button
+                        type="button"
+                        class="flow-sort-option is-selected"
+                        role="option"
+                        aria-selected="true"
+                        data-sort-option=""
+                        data-sort-value=""
+                        data-sort-option-label="Recently added"
+                    >
+                        Recently added
+                    </button>
+
+                    <button
+                        type="button"
+                        class="flow-sort-option"
+                        role="option"
+                        aria-selected="false"
+                        data-sort-option=""
+                        data-sort-value="title-asc"
+                        data-sort-option-label="Title A–Z"
+                    >
+                        Title A–Z
+                    </button>
+
+                    <button
+                        type="button"
+                        class="flow-sort-option"
+                        role="option"
+                        aria-selected="false"
+                        data-sort-option=""
+                        data-sort-value="title-desc"
+                        data-sort-option-label="Title Z–A"
+                    >
+                        Title Z–A
+                    </button>
+
+                    <button
+                        type="button"
+                        class="flow-sort-option"
+                        role="option"
+                        aria-selected="false"
+                        data-sort-option=""
+                        data-sort-value="rating-desc"
+                        data-sort-option-label="Rating: high to low"
+                    >
+                        Rating: high to low
+                    </button>
+
+                    <button
+                        type="button"
+                        class="flow-sort-option"
+                        role="option"
+                        aria-selected="false"
+                        data-sort-option=""
+                        data-sort-value="rating-asc"
+                        data-sort-option-label="Rating: low to high"
+                    >
+                        Rating: low to high
+                    </button>
+                    </div>
+
+
+                    <!-- Native select kept for JavaScript state -->
+
+                    <select
+                    id="library-sort-select"
+                    data-library-sort=""
+                    aria-hidden="true"
+                    tabindex="-1"
+                    hidden
+                    >
+                    <option value="">Recently added</option>
+                    <option value="title-asc">Title A–Z</option>
+                    <option value="title-desc">Title Z–A</option>
+                    <option value="rating-desc">
+                        Rating: high to low
+                    </option>
+                    <option value="rating-asc">
+                        Rating: low to high
+                    </option>
+                    </select>
+                </div>
+                </div>
+            </div>
+
+
+            <!-- Status row -->
+
+            <div class="flow-toolbar-row flow-toolbar-row-status">
+                <span class="flow-filter-label">
+                Status
+                </span>
+
+                <div class="flow-toolbar-control-center">
                 <div
                     class="flow-library-status-filters"
                     aria-label="Filter saved stories by status"
@@ -1105,158 +1273,22 @@
                 </div>
                 </div>
 
-            </div>
-
-
-            <div class="flow-library-actions">
-
-                <div class="flow-sort-controls">
                 <span
-                    class="flow-sort-label"
-                    id="library-sort-label"
-                    >
-                    Sort by
-                    </span>
-
-                <div
-                    class="flow-sort-menu"
-                    data-sort-menu
-                    >
-                    <button
-                    class="flow-sort-trigger"
-                    type="button"
-                    data-sort-trigger
-                    aria-haspopup="listbox"
-                    aria-expanded="false"
-                    aria-labelledby="library-sort-label library-sort-value"
-                    >
-                    <i
-                    class="ti ti-arrows-sort"
-                    aria-hidden="true"
-                    ></i>
-
-                    <span
-                    id="library-sort-value"
-                    data-sort-label
-                    >
-                    Recently added
-                    </span>
-
-                    <i
-                    class="ti ti-chevron-down flow-sort-chevron"
-                    aria-hidden="true"
-                    ></i>
-                    </button>
-
-                    <div
-                    class="flow-sort-options"
-                    data-sort-options
-                    role="listbox"
-                    aria-labelledby="library-sort-label"
-                    hidden
-                    >
-                    <button
-                        type="button"
-                        class="flow-sort-option is-selected"
-                        data-sort-option
-                        data-sort-value=""
-                        data-sort-option-label="Recently added"
-                        role="option"
-                        aria-selected="true"
-                        >
-                        Recently added
-                        </button>
-
-                    <button
-                        type="button"
-                        class="flow-sort-option"
-                        data-sort-option
-                        data-sort-value="title-asc"
-                        data-sort-option-label="Title A–Z"
-                        role="option"
-                        aria-selected="false"
-                        >
-                        Title A–Z
-                        </button>
-
-                    <button
-                        type="button"
-                        class="flow-sort-option"
-                        data-sort-option
-                        data-sort-value="title-desc"
-                        data-sort-option-label="Title Z–A"
-                        role="option"
-                        aria-selected="false"
-                        >
-                        Title Z–A
-                        </button>
-
-                    <button
-                        type="button"
-                        class="flow-sort-option"
-                        data-sort-option
-                        data-sort-value="rating-desc"
-                        data-sort-option-label="Rating: high to low"
-                        role="option"
-                        aria-selected="false"
-                        >
-                        Rating: high to low
-                        </button>
-
-                    <button
-                        type="button"
-                        class="flow-sort-option"
-                        data-sort-option
-                        data-sort-value="rating-asc"
-                        data-sort-option-label="Rating: low to high"
-                        role="option"
-                        aria-selected="false"
-                        >
-                        Rating: low to high
-                        </button>
-                    </div>
-
-                    <select
-                    id="library-sort-select"
-                    data-library-sort
-                    aria-hidden="true"
-                    tabindex="-1"
-                    hidden
-                    >
-                    <option value="">Recently added</option>
-                    <option value="title-asc">Title A–Z</option>
-                    <option value="title-desc">Title Z–A</option>
-                    <option value="rating-desc">Rating: high to low</option>
-                    <option value="rating-asc">Rating: low to high</option>
-                    </select>
-                </div>
-                </div>
-
-
-                <div
-                class="flow-library-save-notice"
-                role="status"
-                >
-                <i
-                    class="ti ti-lock"
-                    aria-hidden="true"
-                    ></i>
-
-                <span>
-                    Sign up to keep changes in your real library.
-                    </span>
-                </div>
-
+                class="flow-toolbar-balance"
+                aria-hidden="true"
+                ></span>
             </div>
             </div>
-<!-- ==============================================
+
+
+            <!-- =================================================
                 COLUMN LABELS
-                ============================================== -->
+                ================================================= -->
 
             <div
             class="flow-library-list-header"
             aria-hidden="true"
-            data-flow-motion-item
+            data-flow-motion-item=""
             >
             <span>Story</span>
             <span>Formats</span>
@@ -1265,16 +1297,18 @@
             </div>
 
 
-            <!-- ==============================================
-                FIXED LIST VIEWPORT
-                ============================================== -->
+            <!-- =================================================
+                FIXED LIBRARY VIEWPORT
+                ================================================= -->
 
             <div class="flow-library-viewport">
 
+            <!-- Empty library state -->
+
             <div
                 class="flow-library-empty"
-                data-library-empty
-                data-flow-motion-item
+                data-library-empty=""
+                data-flow-motion-item=""
             >
                 <div class="flow-empty-content">
                 <i
@@ -1290,52 +1324,59 @@
             </div>
 
 
+            <!-- Rendered story rows -->
+
             <div
                 class="flow-library-list"
-                data-library-list
                 aria-label="Saved stories"
                 aria-live="polite"
+                data-library-list=""
             ></div>
-
             </div>
 
 
-            <!-- ==============================================
+            <!-- =================================================
                 STORY ROW TEMPLATE
-                ============================================== -->
+                ================================================= -->
 
             <template id="flow-library-row-template">
             <article
                 class="flow-library-row"
-                data-library-row
+                data-library-row=""
             >
+
+                <!-- Story information -->
 
                 <div class="flow-library-story-cell">
                 <div class="flow-library-row-cover">
                     <img
-                    data-library-cover
                     src=""
                     alt="Story cover"
+                    data-library-cover=""
                     >
                 </div>
 
                 <div class="flow-library-row-info">
-                    <h4 data-library-title>
+                    <h4 data-library-title="">
                     Story title
                     </h4>
 
-                    <p data-library-creator>
+                    <p data-library-creator="">
                     Creator
                     </p>
                 </div>
                 </div>
 
 
+                <!-- Format badges -->
+
                 <div
                 class="flow-library-row-format"
-                data-library-format
+                data-library-format=""
                 ></div>
 
+
+                <!-- Status selector -->
 
                 <div class="flow-library-row-status">
                 <div class="flow-select-shell flow-status-select-shell">
@@ -1346,32 +1387,20 @@
 
                     <select
                     name="library_status"
-                    data-library-status
                     aria-label="Change status"
+                    data-library-status=""
                     >
-                    <option value="in-progress">
-                        Reading
-                    </option>
-
-                    <option value="completed">
-                        Completed
-                    </option>
-
-                    <option value="planned">
-                        Planned
-                    </option>
-
-                    <option value="paused">
-                        Paused
-                    </option>
-
-                    <option value="dropped">
-                        Dropped
-                    </option>
+                    <option value="in-progress">Reading</option>
+                    <option value="completed">Completed</option>
+                    <option value="planned">Planned</option>
+                    <option value="paused">Paused</option>
+                    <option value="dropped">Dropped</option>
                     </select>
                 </div>
                 </div>
 
+
+                <!-- Personal rating -->
 
                 <div class="flow-library-row-rating">
                 <label>
@@ -1381,8 +1410,8 @@
 
                     <i
                     class="ti ti-star flow-rating-star"
-                    data-library-rating-icon
                     aria-hidden="true"
+                    data-library-rating-icon=""
                     ></i>
 
                     <input
@@ -1392,8 +1421,8 @@
                     step="0.1"
                     inputmode="decimal"
                     placeholder="—"
-                    data-library-rating
                     aria-label="Your personal rating from 0 to 10"
+                    data-library-rating=""
                     >
 
                     <span class="flow-rating-scale">

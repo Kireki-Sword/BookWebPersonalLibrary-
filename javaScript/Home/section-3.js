@@ -981,7 +981,13 @@
     selectedResult =
       item;
 
+    const existingItem =
+      findLibraryItem(
+        item.id
+      );
+
     selectedStatus =
+      existingItem?.status ||
       DEFAULT_STATUS;
 
     elements.searchInput.value =
@@ -992,28 +998,19 @@
 
     renderSuggestions(elements);
     renderSelectedResult(item, elements);
+    showStatusPicker(
+      elements,
+      selectedStatus
+    );
     resetSearchContentScroll(elements);
-
-    if (
-      findLibraryItem(
-        item.id
-      )
-    ) {
-      hideStatusPicker(elements);
-
-      setSearchMessage(
-        elements,
-        'This story is already in your library.'
-      );
-
-      return;
-    }
-
-    showStatusPicker(elements);
 
     setSearchMessage(
       elements,
-      'Choose a status, then add it to your library.'
+      existingItem
+        ? `Already saved in ${getStatusLabel(
+            existingItem.status
+          )}. Choose another status to move it.`
+        : 'Choose a status, then add it to your library.'
     );
   }
 
@@ -1097,35 +1094,14 @@
         getResultTypeLabel(item);
     }
 
-    if (
-      findLibraryItem(
-        item.id
-      )
-    ) {
-      addButton.textContent =
-        'Added';
-
-      addButton.classList.add(
-        'is-added'
-      );
-
-      addButton.disabled =
-        true;
-    } else {
-      addButton.textContent =
-        `Add to ${getStatusLabel(
-          selectedStatus
-        )}`;
-
-      addButton.addEventListener(
-        'click',
-        () => {
-          addSelectedResultToLibrary(
-            elements
-          );
-        }
-      );
-    }
+    addButton.addEventListener(
+      'click',
+      () => {
+        addSelectedResultToLibrary(
+          elements
+        );
+      }
+    );
 
     elements.resultArea.appendChild(
       fragment
@@ -1133,6 +1109,10 @@
 
     elements.resultArea.classList.add(
       'has-result-card'
+    );
+
+    updateAddButtonText(
+      elements
     );
   }
 
@@ -1156,17 +1136,72 @@
         '[data-flow-add-button]'
       );
 
+    const libraryState =
+      elements.resultArea.querySelector(
+        '[data-flow-result-library-state]'
+      );
+
     if (
       !button ||
-      button.disabled
+      !selectedResult
     ) {
       return;
     }
 
-    button.textContent =
-      `Add to ${getStatusLabel(
+    const existingItem =
+      findLibraryItem(
+        selectedResult.id
+      );
+
+    const selectedLabel =
+      getStatusLabel(
         selectedStatus
-      )}`;
+      );
+
+    const isCurrentStatus =
+      Boolean(
+        existingItem &&
+        existingItem.status ===
+          selectedStatus
+      );
+
+    button.classList.toggle(
+      'is-added',
+      isCurrentStatus
+    );
+
+    button.classList.toggle(
+      'is-update',
+      Boolean(
+        existingItem &&
+        !isCurrentStatus
+      )
+    );
+
+    button.disabled =
+      isCurrentStatus;
+
+    if (existingItem) {
+      button.textContent =
+        isCurrentStatus
+          ? `Saved in ${selectedLabel}`
+          : `Move to ${selectedLabel}`;
+    } else {
+      button.textContent =
+        `Add to ${selectedLabel}`;
+    }
+
+    if (libraryState) {
+      libraryState.hidden =
+        !existingItem;
+
+      libraryState.textContent =
+        existingItem
+          ? `In your library · ${getStatusLabel(
+              existingItem.status
+            )}`
+          : '';
+    }
   }
 
   function bindStatusPickerEvents(elements) {
@@ -1192,7 +1227,11 @@
     );
   }
 
-  function showStatusPicker(elements) {
+  function showStatusPicker(
+    elements,
+    initialStatus =
+      DEFAULT_STATUS
+  ) {
     elements.statusPicker.hidden =
       false;
 
@@ -1200,6 +1239,7 @@
       false;
 
     selectedStatus =
+      initialStatus ||
       DEFAULT_STATUS;
 
     elements.statusRadios.forEach(
@@ -1242,21 +1282,48 @@
       return;
     }
 
-    if (
+    const existingItem =
       findLibraryItem(
         selectedResult.id
-      )
-    ) {
+      );
+
+    if (existingItem) {
+      if (
+        existingItem.status ===
+        selectedStatus
+      ) {
+        setSearchMessage(
+          elements,
+          `${selectedResult.title} is already saved in ${getStatusLabel(
+            existingItem.status
+          )}.`
+        );
+
+        updateAddButtonText(
+          elements
+        );
+
+        return;
+      }
+
+      existingItem.status =
+        selectedStatus;
+
+      renderLibrary(elements);
       renderSelectedResult(
         selectedResult,
         elements
       );
-
-      hideStatusPicker(elements);
+      showStatusPicker(
+        elements,
+        selectedStatus
+      );
 
       setSearchMessage(
         elements,
-        'This story is already in your library.'
+        `${selectedResult.title} was moved to ${getStatusLabel(
+          selectedStatus
+        )}. You can change it again here.`
       );
 
       return;
@@ -1294,17 +1361,21 @@
         libraryItems.length
     });
 
+    renderLibrary(elements);
     renderSelectedResult(
       selectedResult,
       elements
     );
-
-    hideStatusPicker(elements);
-    renderLibrary(elements);
+    showStatusPicker(
+      elements,
+      selectedStatus
+    );
 
     setSearchMessage(
       elements,
-      `${selectedResult.title} was added to your library.`
+      `${selectedResult.title} was added to ${getStatusLabel(
+        selectedStatus
+      )}. You can change its status here.`
     );
   }
 
