@@ -28,6 +28,9 @@
   const SEARCH_DEBOUNCE_MS =
     260;
 
+  const LIBRARY_PREVIEW_LIMIT =
+    5;
+
   const DEFAULT_STATUS =
     'in-progress';
 
@@ -104,10 +107,8 @@
       return;
     }
 
-    bindStatusPickerEvents(elements);
     bindLibraryControlEvents(elements);
 
-    hideStatusPicker(elements);
     renderSuggestions(elements);
     renderLibrary(elements);
 
@@ -213,16 +214,15 @@
           '#flow-result-template'
         ),
 
-      statusPicker:
+      libraryMore:
         section.querySelector(
-          '[data-flow-status-picker]'
+          '[data-library-more]'
         ),
 
-      statusRadios: [
-        ...section.querySelectorAll(
-          'input[name="flow_status"]'
-        )
-      ],
+      libraryHiddenCount:
+        section.querySelector(
+          '[data-library-hidden-count]'
+        ),
 
       libraryCard:
         section.querySelector(
@@ -304,7 +304,6 @@
       elements.searchMessage &&
       elements.resultArea &&
       elements.resultTemplate &&
-      elements.statusPicker &&
       elements.libraryCard &&
       elements.libraryEmpty &&
       elements.libraryList &&
@@ -448,7 +447,6 @@
         );
 
         clearSelectedResult(elements);
-        hideStatusPicker(elements);
         resetSearchContentScroll(elements);
 
         selectedResult =
@@ -998,19 +996,13 @@
 
     renderSuggestions(elements);
     renderSelectedResult(item, elements);
-    showStatusPicker(
-      elements,
-      selectedStatus
-    );
     resetSearchContentScroll(elements);
 
     setSearchMessage(
       elements,
       existingItem
-        ? `Already saved in ${getStatusLabel(
-            existingItem.status
-          )}. Choose another status to move it.`
-        : 'Choose a status, then add it to your library.'
+        ? `${item.title} is already in your library.`
+        : 'Choose a status and add this story.'
     );
   }
 
@@ -1050,6 +1042,11 @@
         '.flow-result-type'
       );
 
+    const statusSelect =
+      fragment.querySelector(
+        '[data-flow-result-status]'
+      );
+
     const addButton =
       fragment.querySelector(
         '[data-flow-add-button]'
@@ -1057,6 +1054,7 @@
 
     if (
       !card ||
+      !statusSelect ||
       !addButton
     ) {
       console.error(
@@ -1094,6 +1092,27 @@
         getResultTypeLabel(item);
     }
 
+    statusSelect.value =
+      selectedStatus;
+
+    statusSelect.setAttribute(
+      'aria-label',
+      `Choose a library status for ${item.title}`
+    );
+
+    statusSelect.addEventListener(
+      'change',
+      () => {
+        selectedStatus =
+          statusSelect.value ||
+          DEFAULT_STATUS;
+
+        updateAddButtonText(
+          elements
+        );
+      }
+    );
+
     addButton.addEventListener(
       'click',
       () => {
@@ -1109,6 +1128,10 @@
 
     elements.resultArea.classList.add(
       'has-result-card'
+    );
+
+    elements.section.classList.add(
+      'has-result'
     );
 
     updateAddButtonText(
@@ -1128,17 +1151,16 @@
     elements.resultArea.classList.remove(
       'has-result-card'
     );
+
+    elements.section.classList.remove(
+      'has-result'
+    );
   }
 
   function updateAddButtonText(elements) {
     const button =
       elements.resultArea.querySelector(
         '[data-flow-add-button]'
-      );
-
-    const libraryState =
-      elements.resultArea.querySelector(
-        '[data-flow-result-library-state]'
       );
 
     if (
@@ -1151,11 +1173,6 @@
     const existingItem =
       findLibraryItem(
         selectedResult.id
-      );
-
-    const selectedLabel =
-      getStatusLabel(
-        selectedStatus
       );
 
     const isCurrentStatus =
@@ -1181,100 +1198,17 @@
     button.disabled =
       isCurrentStatus;
 
-    if (existingItem) {
+    if (isCurrentStatus) {
       button.textContent =
-        isCurrentStatus
-          ? `Saved in ${selectedLabel}`
-          : `Move to ${selectedLabel}`;
-    } else {
-      button.textContent =
-        `Add to ${selectedLabel}`;
+        'Saved';
+
+      return;
     }
 
-    if (libraryState) {
-      libraryState.hidden =
-        !existingItem;
-
-      libraryState.textContent =
-        existingItem
-          ? `In your library · ${getStatusLabel(
-              existingItem.status
-            )}`
-          : '';
-    }
-  }
-
-  function bindStatusPickerEvents(elements) {
-    elements.statusRadios.forEach(
-      (radio) => {
-        radio.addEventListener(
-          'change',
-          () => {
-            if (!radio.checked) {
-              return;
-            }
-
-            selectedStatus =
-              radio.value ||
-              DEFAULT_STATUS;
-
-            updateAddButtonText(
-              elements
-            );
-          }
-        );
-      }
-    );
-  }
-
-  function showStatusPicker(
-    elements,
-    initialStatus =
-      DEFAULT_STATUS
-  ) {
-    elements.statusPicker.hidden =
-      false;
-
-    elements.statusPicker.disabled =
-      false;
-
-    selectedStatus =
-      initialStatus ||
-      DEFAULT_STATUS;
-
-    elements.statusRadios.forEach(
-      (radio) => {
-        radio.checked =
-          radio.value ===
-          selectedStatus;
-      }
-    );
-
-    elements.section.classList.add(
-      'has-result'
-    );
-
-    updateAddButtonText(elements);
-  }
-
-  function hideStatusPicker(elements) {
-    elements.statusPicker.hidden =
-      true;
-
-    elements.statusPicker.disabled =
-      true;
-
-    elements.statusRadios.forEach(
-      (radio) => {
-        radio.checked =
-          radio.value ===
-          DEFAULT_STATUS;
-      }
-    );
-
-    elements.section.classList.remove(
-      'has-result'
-    );
+    button.textContent =
+      existingItem
+        ? 'Update status'
+        : 'Add story';
   }
 
   function addSelectedResultToLibrary(elements) {
@@ -1314,16 +1248,12 @@
         selectedResult,
         elements
       );
-      showStatusPicker(
-        elements,
-        selectedStatus
-      );
 
       setSearchMessage(
         elements,
-        `${selectedResult.title} was moved to ${getStatusLabel(
+        `${selectedResult.title} is now ${getStatusLabel(
           selectedStatus
-        )}. You can change it again here.`
+        )}.`
       );
 
       return;
@@ -1366,16 +1296,12 @@
       selectedResult,
       elements
     );
-    showStatusPicker(
-      elements,
-      selectedStatus
-    );
 
     setSearchMessage(
       elements,
-      `${selectedResult.title} was added to ${getStatusLabel(
+      `${selectedResult.title} was added as ${getStatusLabel(
         selectedStatus
-      )}. You can change its status here.`
+      )}.`
     );
   }
 
@@ -2157,6 +2083,19 @@
     const hasItems =
       libraryItems.length > 0;
 
+    const visibleItems =
+      filteredItems.slice(
+        0,
+        LIBRARY_PREVIEW_LIMIT
+      );
+
+    const hiddenCount =
+      Math.max(
+        0,
+        filteredItems.length -
+        visibleItems.length
+      );
+
     elements.libraryCount.textContent =
       String(
         libraryItems.length
@@ -2173,6 +2112,11 @@
     elements.libraryCard.classList.toggle(
       'has-library-item',
       hasItems
+    );
+
+    updateLibraryMoreLink(
+      elements,
+      hiddenCount
     );
 
     if (
@@ -2192,7 +2136,7 @@
     elements.libraryEmpty.hidden =
       true;
 
-    filteredItems.forEach(
+    visibleItems.forEach(
       (item) => {
         const row =
           createLibraryRow(
@@ -2207,6 +2151,23 @@
         }
       }
     );
+  }
+
+  function updateLibraryMoreLink(
+    elements,
+    hiddenCount
+  ) {
+    if (!elements.libraryMore) {
+      return;
+    }
+
+    elements.libraryMore.hidden =
+      hiddenCount <= 0;
+
+    if (elements.libraryHiddenCount) {
+      elements.libraryHiddenCount.textContent =
+        String(hiddenCount);
+    }
   }
 
   function createLibraryRow(
@@ -2688,20 +2649,8 @@
   }
 
   function getSuggestionMeta(item) {
-    const type =
-      formatTypeLabel(
-        item.type
-      );
-
-    const score =
-      hasDisplayValue(
-        item.score
-      )
-        ? ` · ${item.score}`
-        : '';
-
-    return (
-      `${type}${score}`
+    return formatTypeLabel(
+      item.type
     );
   }
 
