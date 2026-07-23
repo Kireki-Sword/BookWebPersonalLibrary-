@@ -1,11 +1,7 @@
 /* ========================================================================== 
-   INKWELL — ONE MASTER PINNED HOME-PAGE JOURNEY
+   INKWELL — ONE MASTER PINNED HOME-PAGE JOURNEY (V2)
 
    Import this file LAST, after section-1.css through section-4.css.
-
-   JavaScript adds .journey-preparing and then .journey-ready only on a
-   supported desktop viewport. Until then, the wrapper behaves like ordinary
-   document flow, so the mobile/reduced-motion fallback remains safe.
    ========================================================================== */
 
 :root {
@@ -23,7 +19,12 @@ html {
   width: 100%;
 }
 
-body:is(.journey-preparing, .journey-ready) {
+body.journey-preparing {
+  overflow-x: clip;
+  overflow-y: hidden;
+}
+
+body.journey-ready {
   overflow-x: clip;
 }
 
@@ -61,7 +62,6 @@ body:is(.journey-preparing, .journey-ready)
   will-change: opacity, transform;
 }
 
-/* Hide every scene except the hero while the child timelines are prepared. */
 body.journey-preparing .home-journey-stage > section {
   opacity: 0;
   visibility: hidden;
@@ -74,9 +74,111 @@ body.journey-preparing .home-journey-stage > .hero {
   pointer-events: auto;
 }
 
+body.journey-preparing:not(.journey-hero-mounted) .hero-left > *,
+body.journey-preparing:not(.journey-hero-mounted) .hero-right {
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
+body:is(.journey-preparing, .journey-ready) .hero-animate-up,
+body:is(.journey-preparing, .journey-ready) .hero-animate-right {
+  animation: none !important;
+}
+
 body.journey-ready
 .home-journey-stage > .journey-scene.is-journey-active {
   pointer-events: auto;
+}
+
+/* --------------------------------------------------------------------------
+   TRANSITION LIGHT — visual bridge only; no duplicate text
+   -------------------------------------------------------------------------- */
+
+.journey-transition-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 80;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(6, 9, 25, 0.2),
+      rgba(23, 31, 76, 0.66) 44%,
+      rgba(8, 12, 31, 0.28)
+    ),
+    radial-gradient(
+      ellipse 980px 620px at 50% 52%,
+      rgba(116, 140, 255, 0.34),
+      rgba(155, 124, 255, 0.13) 44%,
+      transparent 76%
+    );
+  will-change: opacity, transform;
+}
+
+.journey-transition-layer::before,
+.journey-transition-layer::after,
+.journey-transition-layer__glow {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+}
+
+.journey-transition-layer::before {
+  inset: -20%;
+  background:
+    radial-gradient(
+      ellipse 56% 34% at 30% 48%,
+      rgba(121, 217, 255, 0.16),
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 58% 36% at 74% 52%,
+      rgba(190, 141, 255, 0.16),
+      transparent 72%
+    );
+  animation: journey-transition-breathe 5.5s ease-in-out infinite alternate;
+}
+
+.journey-transition-layer::after {
+  inset: 0;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(2, 4, 14, 0.36),
+      transparent 24%,
+      transparent 76%,
+      rgba(2, 4, 14, 0.36)
+    );
+}
+
+.journey-transition-layer__glow {
+  left: 50%;
+  top: 50%;
+  width: min(780px, 72vw);
+  height: 2px;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(120, 216, 255, 0.74),
+    rgba(155, 124, 255, 0.9),
+    transparent
+  );
+  box-shadow:
+    0 0 24px rgba(120, 216, 255, 0.28),
+    0 0 54px rgba(155, 124, 255, 0.24);
+}
+
+@keyframes journey-transition-breathe {
+  from {
+    transform: translate3d(-1.5%, -1%, 0) scale(1);
+  }
+  to {
+    transform: translate3d(1.5%, 1%, 0) scale(1.035);
+  }
 }
 
 /* --------------------------------------------------------------------------
@@ -89,7 +191,6 @@ body:is(.journey-preparing, .journey-ready)
   min-height: 0 !important;
 }
 
-/* The master timeline replaces Section 1's old viewport-exit observer. */
 body:is(.journey-preparing, .journey-ready)
 .hero-left.hero-exiting,
 body:is(.journey-preparing, .journey-ready)
@@ -99,33 +200,38 @@ body:is(.journey-preparing, .journey-ready)
 }
 
 /* --------------------------------------------------------------------------
-   SECTION 2
+   SECTION 2 — compact the managed viewport and keep the card above the bottom
    -------------------------------------------------------------------------- */
 
 body:is(.journey-preparing, .journey-ready)
 #section-2-empty-shelf {
   padding:
-    clamp(1.8rem, 4vh, 3.4rem)
+    clamp(1.15rem, 2.5vh, 2.1rem)
     max(1.5rem, calc((100vw - 1220px) / 2 + 1.5rem))
-    clamp(0.7rem, 1.6vh, 1.25rem) !important;
+    clamp(0.25rem, 0.8vh, 0.7rem) !important;
 }
 
 body:is(.journey-preparing, .journey-ready)
 #section-2-empty-shelf .section-2-header {
-  margin-bottom: clamp(1.15rem, 2.5vh, 2.1rem);
+  margin-bottom: clamp(0.65rem, 1.35vh, 1.15rem);
+}
+
+body:is(.journey-preparing, .journey-ready)
+#section-2-empty-shelf .section-2-header h2 {
+  font-size: clamp(2.75rem, 5vw, 4.55rem);
 }
 
 body:is(.journey-preparing, .journey-ready)
 #section-2-empty-shelf.is-js-ready .stage-viewport {
-  min-height: clamp(480px, 61vh, 650px);
+  min-height: clamp(430px, 55vh, 570px);
+  top: clamp(-58px, -5.8vh, -36px);
 }
 
 body:is(.journey-preparing, .journey-ready)
 #section-2-empty-shelf.is-js-ready .scroll-stage {
-  top: clamp(-92px, -6.8vh, -34px);
+  top: clamp(-118px, -9.5vh, -58px);
 }
 
-/* Section 2 creates fixed flying-button copies outside the section. */
 body.journey-ready .depth-button-proxy {
   z-index: 9500;
 }
@@ -174,7 +280,7 @@ body:is(.journey-preparing, .journey-ready)
 }
 
 /* --------------------------------------------------------------------------
-   SECTION 4
+   SECTION 4 — use the real stage height below the nav and fit final comparison
    -------------------------------------------------------------------------- */
 
 body:is(.journey-preparing, .journey-ready) #section-4,
@@ -182,6 +288,12 @@ body:is(.journey-preparing, .journey-ready) #section-4 .s4-stage {
   width: 100%;
   height: 100% !important;
   min-height: 0 !important;
+}
+
+body:is(.journey-preparing, .journey-ready)
+#section-4 .s4-compare-stage {
+  scale: var(--s4-compare-scale, 1);
+  transform-origin: top center;
 }
 
 /* --------------------------------------------------------------------------
@@ -195,6 +307,10 @@ body:is(.journey-preparing, .journey-ready) #section-4 .s4-stage {
     min-height: 0;
     overflow: visible;
   }
+
+  .journey-transition-layer {
+    display: none !important;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -203,5 +319,13 @@ body:is(.journey-preparing, .journey-ready) #section-4 .s4-stage {
     height: auto;
     min-height: 0;
     overflow: visible;
+  }
+
+  .journey-transition-layer {
+    display: none !important;
+  }
+
+  .journey-transition-layer::before {
+    animation: none !important;
   }
 }

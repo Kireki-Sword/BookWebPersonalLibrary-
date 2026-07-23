@@ -1393,8 +1393,19 @@
         ? 18
         : 24;
 
+    /*
+     * In the shared journey the section is shorter than window.innerHeight
+     * because the navbar remains above the pinned stage. Using the full
+     * window height pushed the card down by roughly the navbar height and
+     * clipped its bottom edge.
+     */
+    const availableHeight =
+      MANAGED_BY_HOME_JOURNEY
+        ? section.clientHeight
+        : window.innerHeight;
+
     const targetBottom =
-      window.innerHeight -
+      availableHeight -
       bottomGap;
 
     const targetTop =

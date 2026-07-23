@@ -123,21 +123,22 @@
       if (!hasRenderedFirstCard) {
         hasRenderedFirstCard = true;
 
+        /*
+         * The whole hero card already receives one entrance from homeScroll.js.
+         * Do not run another internal reveal on the first database result or
+         * the card looks like it is loading several times.
+         */
         applyCardContent(item, coverUrl);
 
         cardEffect.classList.remove('is-swapping');
         cardEffect.classList.remove('is-changing');
-        cardEffect.classList.add('is-revealing');
+        cardEffect.classList.remove('is-revealing');
 
         preloadImage(coverUrl).then((loaded) => {
           if (!loaded) {
             console.warn('Cover failed to load:', coverUrl);
           }
         });
-
-        setTimeout(() => {
-          cardEffect.classList.remove('is-revealing');
-        }, 650);
 
         return;
       }
@@ -173,6 +174,51 @@
       }, 650);
     }
 
+
+    function scheduleFeaturedRotation() {
+      if (featuredTimer) {
+        clearInterval(featuredTimer);
+        featuredTimer = null;
+      }
+
+      if (featuredManga.length <= 1) {
+        return;
+      }
+
+      const startRotation = () => {
+        if (featuredTimer) {
+          return;
+        }
+
+        featuredTimer = setInterval(() => {
+          currentFeaturedIndex =
+            (currentFeaturedIndex + 1) % featuredManga.length;
+
+          updateHeroCard(featuredManga[currentFeaturedIndex]);
+        }, FEATURED_ROTATE_MS);
+      };
+
+      /*
+       * While the master journey is preparing, keep the first cover stable.
+       * Rotation begins only after the pinned timeline is ready, preventing
+       * several card swaps during the initial page setup.
+       */
+      if (
+        window.__INKWELL_MASTER_JOURNEY__ === true &&
+        !window.InkwellHomeJourney
+      ) {
+        window.addEventListener(
+          'inkwell:home-journey-ready',
+          startRotation,
+          { once: true }
+        );
+
+        return;
+      }
+
+      startRotation();
+    }
+
     async function loadFeaturedManga() {
       const { data, error } = await supabaseClient
         .from(TABLE_NAME)
@@ -201,16 +247,7 @@
       currentFeaturedIndex = 0;
       updateHeroCard(featuredManga[currentFeaturedIndex]);
 
-      if (featuredTimer) {
-        clearInterval(featuredTimer);
-      }
-
-      if (featuredManga.length > 1) {
-        featuredTimer = setInterval(() => {
-          currentFeaturedIndex = (currentFeaturedIndex + 1) % featuredManga.length;
-          updateHeroCard(featuredManga[currentFeaturedIndex]);
-        }, FEATURED_ROTATE_MS);
-      }
+      scheduleFeaturedRotation();
     }
 
     loadFeaturedManga();

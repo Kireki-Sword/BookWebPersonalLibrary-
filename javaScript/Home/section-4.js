@@ -2924,11 +2924,38 @@
 
     const comparisonTime = 5.02;
 
-    const DOCK_TOP = 74;
+    const clampValue = (value, minimum, maximum) => {
+      return Math.min(maximum, Math.max(minimum, value));
+    };
 
-    const DOCK_SCALE = 0.78;
+    const getDockTop = () => {
+      if (!MANAGED_BY_HOME_JOURNEY) {
+        return 74;
+      }
+
+      return clampValue(
+        elements.stage.clientHeight * 0.065,
+        44,
+        58,
+      );
+    };
+
+    const getDockScale = () => {
+      if (!MANAGED_BY_HOME_JOURNEY) {
+        return 0.78;
+      }
+
+      return clampValue(
+        elements.stage.clientHeight / 1080,
+        0.68,
+        0.75,
+      );
+    };
 
     const updateFinalLayoutMetrics = () => {
+      const dockTop = getDockTop();
+      const dockScale = getDockScale();
+
       const cardHeight =
         elements.sharedCard
           .getBoundingClientRect()
@@ -2942,17 +2969,17 @@
       );
 
       const cardVisualBottom =
-        DOCK_TOP +
-        cardHeight * DOCK_SCALE;
+        dockTop +
+        cardHeight * dockScale;
 
       const introTop = Math.ceil(
-        cardVisualBottom + 9,
+        cardVisualBottom + 7,
       );
 
       const compareTop = Math.ceil(
         introTop +
           introHeight +
-          7,
+          6,
       );
 
       elements.stage.style.setProperty(
@@ -2963,6 +2990,35 @@
       elements.stage.style.setProperty(
         "--s4-compare-top",
         `${compareTop}px`,
+      );
+
+      /*
+       * The managed stage excludes the fixed navbar, so its usable height is
+       * smaller than the original 100svh Section 4 stage. Scale only the final
+       * comparison grid enough to keep its bottom inside that real height.
+       */
+      const naturalCompareHeight = Math.max(
+        elements.compareStage.scrollHeight,
+        elements.compareStage.offsetHeight,
+        1,
+      );
+
+      const availableCompareHeight = Math.max(
+        elements.stage.clientHeight - compareTop - 12,
+        1,
+      );
+
+      const compareScale = MANAGED_BY_HOME_JOURNEY
+        ? clampValue(
+            availableCompareHeight / naturalCompareHeight,
+            0.8,
+            1,
+          )
+        : 1;
+
+      elements.stage.style.setProperty(
+        "--s4-compare-scale",
+        String(compareScale),
       );
     };
 
@@ -3610,11 +3666,11 @@
       elements.sharedCardWrap,
 
       {
-        top: `${DOCK_TOP}px`,
+        top: () => `${getDockTop()}px`,
 
         yPercent: 0,
 
-        scale: DOCK_SCALE,
+        scale: getDockScale,
 
         duration: 0.58,
 
