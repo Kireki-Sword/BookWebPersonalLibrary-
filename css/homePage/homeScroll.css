@@ -353,3 +353,74 @@ body:is(.journey-preparing, .journey-ready)
     overflow: visible;
   }
 }
+
+/* ==========================================================================
+   JULY 2026 REFINEMENT — SPACING AND FIXED-VIEWPORT BALANCE
+   ========================================================================== */
+
+@media (min-width: 1100px) and (min-height: 700px) {
+  body:is(.journey-preparing, .journey-ready)
+  #section-2-empty-shelf {
+    padding-top:
+      clamp(2.05rem, 4.7vh, 3.45rem) !important;
+  }
+
+  body:is(.journey-preparing, .journey-ready)
+  #section-2-empty-shelf .section-2-header {
+    max-width: 920px;
+    margin-bottom:
+      clamp(1.35rem, 2.45vh, 2rem);
+  }
+
+  body:is(.journey-preparing, .journey-ready)
+  #section-2-empty-shelf .section-2-header h2 {
+    max-width: 900px;
+    font-size:
+      clamp(2.55rem, 4.2vw, 4.05rem);
+    line-height: 0.98;
+    text-wrap: balance;
+  }
+
+  body:is(.journey-preparing, .journey-ready)
+  #section-2-empty-shelf .section-2-header p {
+    max-width: 650px;
+    margin-top:
+      clamp(0.62rem, 1.05vh, 0.82rem);
+    text-wrap: balance;
+  }
+
+  body:is(.journey-preparing, .journey-ready)
+  #section-2-empty-shelf .card-wrap {
+    margin-inline: auto;
+  }
+
+  body:is(.journey-preparing, .journey-ready)
+  #section-3-library-flow {
+    padding:
+      clamp(1.55rem, 3.1vh, 2.45rem)
+      clamp(1.35rem, 4.25vw, 4.75rem)
+      clamp(1.05rem, 2.2vh, 1.75rem) !important;
+  }
+
+  body:is(.journey-preparing, .journey-ready)
+  #section-3-library-flow .flow-grid {
+    grid-template-rows:
+      minmax(252px, 0.82fr)
+      minmax(332px, 1.12fr);
+    row-gap:
+      clamp(0.78rem, 1.35vh, 1.12rem);
+  }
+
+  body:is(.journey-preparing, .journey-ready)
+  #section-3-library-flow .flow-library-card {
+    height: 100%;
+    min-height: 0;
+    max-height: none;
+  }
+
+  body:is(.journey-preparing, .journey-ready)
+  #section-3-library-flow .flow-library-body {
+    height:
+      calc(100% - 74px);
+  }
+}

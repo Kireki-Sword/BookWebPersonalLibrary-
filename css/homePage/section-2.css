@@ -2816,3 +2816,42 @@
     border-color: rgba(218, 224, 255, 0.64);
   }
 }
+
+
+/* ==========================================================================
+   JULY 2026 REFINEMENT — SECTION 2 OPENING COMPOSITION
+   ========================================================================== */
+
+.section-empty-shelf .section-2-header {
+  max-width: 920px;
+  margin-bottom:
+    clamp(3.1rem, 6.2vh, 4.8rem);
+}
+
+.section-empty-shelf .section-2-header h2 {
+  max-width: 900px;
+  line-height: 0.98;
+  text-wrap: balance;
+}
+
+.section-empty-shelf .section-2-header p {
+  max-width: 650px;
+  text-wrap: balance;
+}
+
+.section-empty-shelf .empty-shelf-scroll,
+.section-empty-shelf .stage-viewport,
+.section-empty-shelf .card-wrap {
+  margin-inline: auto;
+}
+
+@media (min-width: 1101px) {
+  .section-empty-shelf .card-wrap {
+    width:
+      min(900px, calc(100vw - 64px));
+  }
+
+  .section-empty-shelf .media-library-row {
+    width: 100%;
+  }
+}

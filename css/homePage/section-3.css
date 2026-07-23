@@ -4185,3 +4185,686 @@ input[aria-invalid="true"] {
       );
   }
 }
+
+
+/* ==========================================================================
+   JULY 2026 REFINEMENT — BRIGHTER ATMOSPHERE, BOUNDED LIBRARY, CUSTOM MENUS
+   ========================================================================== */
+
+.section-library-flow {
+  --flow-bg-0: #07091a;
+  --flow-bg-1: #0c1430;
+  --flow-bg-2: #11183a;
+  --flow-panel-deep: rgba(8, 13, 31, 0.88);
+  --flow-panel-light: rgba(24, 29, 61, 0.78);
+  --flow-library-border: rgba(145, 205, 255, 0.36);
+  --flow-library-border-bottom: rgba(187, 162, 255, 0.62);
+
+  background:
+    radial-gradient(
+      ellipse 940px 600px at 15% 21%,
+      rgba(91, 154, 255, 0.27) 0%,
+      rgba(91, 154, 255, 0.095) 48%,
+      transparent 74%
+    ),
+    radial-gradient(
+      ellipse 860px 560px at 82% 17%,
+      rgba(196, 111, 255, 0.25) 0%,
+      rgba(196, 111, 255, 0.085) 50%,
+      transparent 75%
+    ),
+    radial-gradient(
+      ellipse 920px 520px at 50% 66%,
+      rgba(122, 112, 255, 0.24) 0%,
+      rgba(122, 112, 255, 0.08) 52%,
+      transparent 78%
+    ),
+    radial-gradient(
+      ellipse 680px 420px at 72% 92%,
+      rgba(255, 113, 191, 0.12) 0%,
+      transparent 72%
+    ),
+    linear-gradient(
+      135deg,
+      #07091a 0%,
+      #0b1230 32%,
+      #12183b 62%,
+      #090b1d 100%
+    );
+}
+
+.section-library-flow::before {
+  width:
+    min(64vw, 900px);
+  right: -18%;
+  top: -28%;
+
+  opacity: 0.92;
+
+  filter:
+    blur(34px);
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(126, 166, 255, 0.34) 0%,
+      rgba(159, 113, 255, 0.21) 34%,
+      rgba(225, 119, 255, 0.08) 56%,
+      transparent 74%
+    );
+}
+
+.section-library-flow::after {
+  width:
+    min(58vw, 760px);
+  left: -19%;
+  bottom: -32%;
+
+  opacity: 0.82;
+
+  filter:
+    blur(38px);
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(93, 190, 255, 0.2) 0%,
+      rgba(179, 113, 255, 0.14) 42%,
+      rgba(255, 120, 190, 0.055) 62%,
+      transparent 76%
+    );
+}
+
+.section-library-flow .flow-card {
+  border-color:
+    rgba(177, 196, 255, 0.28);
+
+  background:
+    radial-gradient(
+      circle at 13% 7%,
+      rgba(255, 255, 255, 0.105),
+      transparent 27%
+    ),
+    radial-gradient(
+      circle at 91% 10%,
+      rgba(130, 161, 255, 0.2),
+      transparent 35%
+    ),
+    linear-gradient(
+      135deg,
+      rgba(25, 31, 61, 0.86),
+      rgba(10, 16, 37, 0.9) 54%,
+      rgba(27, 20, 51, 0.86)
+    );
+
+  box-shadow:
+    0 30px 82px rgba(0, 0, 0, 0.3),
+    0 12px 32px rgba(0, 0, 0, 0.18),
+    0 0 0 1px rgba(194, 205, 255, 0.06),
+    0 0 72px rgba(119, 146, 255, 0.14);
+}
+
+.section-library-flow .flow-library-card {
+  overflow: hidden;
+
+  border:
+    1px solid rgba(177, 197, 255, 0.32);
+
+  border-bottom-color:
+    rgba(190, 162, 255, 0.66);
+
+  box-shadow:
+    0 30px 86px rgba(0, 0, 0, 0.31),
+    0 0 0 1px rgba(125, 208, 255, 0.05),
+    0 0 62px rgba(123, 138, 255, 0.15),
+    inset 0 -1px 0 rgba(210, 180, 255, 0.19);
+}
+
+.section-library-flow .flow-library-body {
+  min-height: 0;
+
+  grid-template-rows:
+    auto
+    auto
+    26px
+    minmax(0, 1fr);
+
+  overflow: hidden;
+}
+
+.section-library-flow .flow-library-list-header {
+  position: relative;
+  z-index: 2;
+}
+
+.section-library-flow .flow-library-viewport {
+  position: relative;
+
+  width: 100%;
+  height: 100% !important;
+  min-height: 0;
+
+  padding:
+    0.28rem 0.34rem 0.48rem;
+
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+
+  overscroll-behavior:
+    contain;
+
+  scrollbar-gutter:
+    stable;
+
+  border:
+    1px solid var(--flow-library-border);
+
+  border-bottom:
+    2px solid var(--flow-library-border-bottom);
+
+  border-radius:
+    14px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(7, 13, 31, 0.48),
+      rgba(7, 11, 28, 0.74)
+    );
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.035),
+    inset 0 -16px 30px rgba(55, 44, 106, 0.14),
+    0 8px 28px rgba(0, 0, 0, 0.12);
+
+  scrollbar-width:
+    thin;
+
+  scrollbar-color:
+    rgba(126, 199, 255, 0.8)
+    rgba(255, 255, 255, 0.06);
+}
+
+.section-library-flow .flow-library-viewport:focus-visible {
+  outline:
+    2px solid rgba(124, 215, 255, 0.74);
+
+  outline-offset:
+    3px;
+}
+
+.section-library-flow .flow-library-viewport::after {
+  content: "";
+
+  position: sticky;
+  left: 0;
+  bottom: -0.48rem;
+  z-index: 6;
+
+  display: block;
+
+  width: 100%;
+  height: 15px;
+
+  margin-top: -15px;
+
+  pointer-events: none;
+
+  background:
+    linear-gradient(
+      180deg,
+      transparent,
+      rgba(13, 14, 40, 0.76)
+    );
+
+  opacity: 0;
+  transition:
+    opacity 180ms ease;
+}
+
+.section-library-flow
+.flow-library-viewport.is-scrollable::after {
+  opacity: 1;
+}
+
+.section-library-flow
+.flow-library-viewport::-webkit-scrollbar {
+  width: 10px;
+}
+
+.section-library-flow
+.flow-library-viewport::-webkit-scrollbar-track {
+  margin-block:
+    5px;
+
+  border-radius:
+    999px;
+
+  background:
+    rgba(255, 255, 255, 0.055);
+}
+
+.section-library-flow
+.flow-library-viewport::-webkit-scrollbar-thumb {
+  min-height: 44px;
+
+  border:
+    2px solid rgba(10, 14, 35, 0.76);
+
+  border-radius:
+    999px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(111, 210, 255, 0.9),
+      rgba(123, 142, 255, 0.86) 54%,
+      rgba(197, 123, 255, 0.78)
+    );
+
+  box-shadow:
+    0 0 14px rgba(117, 190, 255, 0.22);
+}
+
+.section-library-flow .flow-library-list {
+  width: 100%;
+  height: auto !important;
+  min-height: 0;
+
+  padding:
+    0 0.15rem 0.34rem 0;
+
+  overflow: visible !important;
+
+  align-content: start;
+}
+
+.section-library-flow
+.flow-library-list::-webkit-scrollbar {
+  display: none;
+}
+
+.section-library-flow .flow-library-row {
+  border-color:
+    rgba(178, 198, 255, 0.27);
+
+  background:
+    radial-gradient(
+      circle at 8% 8%,
+      rgba(255, 255, 255, 0.09),
+      transparent 29%
+    ),
+    linear-gradient(
+      135deg,
+      rgba(120, 147, 255, 0.145),
+      rgba(255, 255, 255, 0.045) 48%,
+      rgba(158, 111, 255, 0.08)
+    );
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 8px 20px rgba(0, 0, 0, 0.11);
+}
+
+.section-library-flow .flow-library-more {
+  display: none !important;
+}
+
+/* Custom sort panel can reverse direction when the lower edge is crowded. */
+.section-library-flow
+.flow-sort-menu.opens-up
+.flow-sort-options {
+  top: auto;
+  bottom:
+    calc(100% + 8px);
+
+  transform-origin:
+    bottom right;
+}
+
+/* Accessible custom status menu. The native select stays as the data source. */
+.flow-native-status-select {
+  position: absolute !important;
+
+  width: 1px !important;
+  height: 1px !important;
+
+  margin: -1px !important;
+  padding: 0 !important;
+
+  overflow: hidden !important;
+
+  clip: rect(0 0 0 0) !important;
+  clip-path: inset(50%) !important;
+
+  white-space: nowrap !important;
+
+  border: 0 !important;
+}
+
+.section-library-flow
+.flow-result-status-control.flow-custom-select::after,
+.section-library-flow
+.flow-select-shell.flow-custom-select::after {
+  display: none;
+}
+
+.section-library-flow .flow-custom-select {
+  position: relative;
+  min-width: 0;
+}
+
+.section-library-flow
+.flow-custom-select
+> .flow-native-select-icon {
+  display: none !important;
+}
+
+.section-library-flow .flow-status-trigger {
+  width: 100%;
+  height: 40px;
+  min-width: 0;
+
+  padding:
+    0 0.7rem;
+
+  display: grid;
+  grid-template-columns:
+    auto minmax(0, 1fr) auto;
+  align-items: center;
+
+  gap:
+    0.48rem;
+
+  border:
+    1px solid rgba(116, 215, 255, 0.38);
+
+  border-radius:
+    11px;
+
+  color:
+    #f2f5ff;
+
+  font:
+    760 0.68rem/1
+    var(--flow-font-body);
+
+  text-align:
+    left;
+
+  cursor:
+    pointer;
+
+  background:
+    radial-gradient(
+      circle at 16% 10%,
+      rgba(255, 255, 255, 0.13),
+      transparent 30%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(25, 42, 78, 0.98),
+      rgba(12, 22, 47, 0.99) 58%,
+      rgba(27, 23, 60, 0.98)
+    );
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.075),
+    0 8px 20px rgba(0, 0, 0, 0.18);
+
+  transition:
+    border-color 180ms ease,
+    background 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+
+.section-library-flow
+.flow-status-trigger:hover,
+.section-library-flow
+.flow-status-trigger:focus-visible,
+.section-library-flow
+.flow-custom-select.is-open
+.flow-status-trigger {
+  outline:
+    none;
+
+  border-color:
+    rgba(116, 215, 255, 0.78);
+
+  background:
+    radial-gradient(
+      circle at 16% 10%,
+      rgba(255, 255, 255, 0.17),
+      transparent 31%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(31, 53, 94, 0.99),
+      rgba(17, 30, 61, 0.99) 58%,
+      rgba(39, 28, 78, 0.99)
+    );
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.09),
+    0 0 0 3px rgba(116, 215, 255, 0.12),
+    0 12px 26px rgba(0, 0, 0, 0.23);
+
+  transform:
+    translateY(-1px);
+}
+
+.section-library-flow
+.flow-status-trigger > .ti-progress-check {
+  color:
+    var(--flow-cyan);
+
+  font-size:
+    0.9rem;
+}
+
+.section-library-flow
+.flow-status-trigger-label {
+  min-width: 0;
+
+  overflow: hidden;
+
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.section-library-flow
+.flow-status-chevron {
+  color:
+    #c7d0e8;
+
+  transition:
+    transform 180ms ease,
+    color 180ms ease;
+}
+
+.section-library-flow
+.flow-custom-select.is-open
+.flow-status-chevron {
+  color:
+    var(--flow-cyan);
+
+  transform:
+    rotate(180deg);
+}
+
+.flow-status-options {
+  position: fixed;
+  z-index: 20000;
+
+  max-height:
+    min(280px, calc(100vh - 24px));
+
+  padding:
+    0.42rem;
+
+  overflow-y:
+    auto;
+
+  border:
+    1px solid rgba(130, 210, 255, 0.48);
+
+  border-radius:
+    14px;
+
+  color:
+    #f5f7ff;
+
+  background:
+    radial-gradient(
+      circle at 12% 4%,
+      rgba(132, 151, 255, 0.23),
+      transparent 36%
+    ),
+    linear-gradient(
+      155deg,
+      rgba(23, 39, 72, 0.995),
+      rgba(8, 15, 34, 0.998) 62%,
+      rgba(33, 22, 63, 0.995)
+    );
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.09),
+    0 24px 52px rgba(0, 0, 0, 0.5),
+    0 0 38px rgba(111, 193, 255, 0.16);
+
+  backdrop-filter:
+    blur(18px) saturate(1.18);
+
+  -webkit-backdrop-filter:
+    blur(18px) saturate(1.18);
+
+  animation:
+    flowStatusMenuIn
+    170ms
+    ease-out
+    both;
+}
+
+.flow-status-options[hidden] {
+  display: none !important;
+}
+
+.flow-status-option {
+  position: relative;
+
+  width: 100%;
+  min-height: 39px;
+
+  padding:
+    0 0.72rem;
+
+  display: flex;
+  align-items: center;
+
+  border:
+    0;
+
+  border-radius:
+    10px;
+
+  color:
+    #dce5f8;
+
+  font:
+    740 0.68rem/1.2
+    var(--flow-font-body, Inter, system-ui, sans-serif);
+
+  text-align:
+    left;
+
+  cursor:
+    pointer;
+
+  background:
+    transparent;
+
+  transition:
+    color 150ms ease,
+    background 150ms ease,
+    transform 150ms ease;
+}
+
+.flow-status-option:hover,
+.flow-status-option:focus-visible {
+  outline:
+    none;
+
+  color:
+    #ffffff;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(79, 145, 230, 0.35),
+      rgba(111, 99, 225, 0.25)
+    );
+
+  transform:
+    translateX(2px);
+}
+
+.flow-status-option.is-selected {
+  padding-right:
+    2rem;
+
+  color:
+    #ffffff;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(82, 151, 239, 0.42),
+      rgba(112, 105, 231, 0.34)
+    );
+}
+
+.flow-status-option.is-selected::after {
+  content:
+    "✓";
+
+  position:
+    absolute;
+
+  right:
+    0.72rem;
+
+  color:
+    #83ddff;
+
+  font-size:
+    0.78rem;
+}
+
+@keyframes flowStatusMenuIn {
+  from {
+    opacity: 0;
+    transform:
+      translateY(-5px)
+      scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform:
+      translateY(0)
+      scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flow-status-options {
+    animation: none;
+  }
+
+  .section-library-flow
+  .flow-status-trigger,
+  .flow-status-option {
+    transition: none;
+  }
+}

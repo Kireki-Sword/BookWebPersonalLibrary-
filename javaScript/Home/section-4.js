@@ -48,10 +48,14 @@
 
       quotes: [
         {
-          theme: "Goodness and perspective",
+          theme: "Desire",
           author: "Kenny",
           paragraphs: [
-            "A good person? Well… I don’t really like that term. Because to me, it just seems to mean someone who’s good for you. And I don’t think there’s any one person who’s good for everyone. If someone’s good for you, then they’re a good person, but if you’re not helping them, then to them, you’re a bad person. If you won't help me, then to me, you're a bad person. You just have to be able to accept that.",
+            "Everybody I met was all the same. Drinking, women, worshiping God, even family... The king, dreams, children, power...",
+
+            "Everyone had to be drunk on somethin' to keep pushing on.",
+
+            "Everyone was a slave to somethin'. Even him...",
           ],
         },
 
@@ -198,15 +202,11 @@
 
       quotes: [
         {
-          theme: "Desire",
-          author: "Armin",
+          theme: "Goodness and perspective",
+          author: "Kenny",
 
           paragraphs: [
-            "Everybody I met was all the same. Drinking, women, worshiping God, even family... The king, dreams, children, power...",
-
-            "Everyone had to be drunk on somethin' to keep pushing on.",
-
-            "Everyone was a slave to somethin'. Even him...",
+            "A good person? Well… I don’t really like that term. Because to me, it just seems to mean someone who’s good for you. And I don’t think there’s any one person who’s good for everyone. If someone’s good for you, then they’re a good person, but if you’re not helping them, then to them, you’re a bad person. If you won't help me, then to me, you're a bad person. You just have to be able to accept that.",
           ],
         },
 
@@ -1607,10 +1607,6 @@
                   ${index === 0 ? "is-featured" : ""}
                 "
               >
-                <span class="s4-card-theme">
-                  ${escapeHtml(quote.theme)}
-                </span>
-
                 <blockquote>
                   ${quoteParagraphs}
                 </blockquote>

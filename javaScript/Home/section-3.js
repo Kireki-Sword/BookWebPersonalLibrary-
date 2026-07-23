@@ -28,8 +28,13 @@
   const SEARCH_DEBOUNCE_MS =
     260;
 
+  /*
+   * The home preview is a fixed-height, internally scrollable library.
+   * Render every filtered title so people can reach the complete saved list
+   * without the card growing beyond the section.
+   */
   const LIBRARY_PREVIEW_LIMIT =
-    5;
+    Number.POSITIVE_INFINITY;
 
   const DEFAULT_STATUS =
     'in-progress';
@@ -85,6 +90,12 @@
   let activeSortOption =
     '';
 
+  let customStatusSelectId =
+    0;
+
+  let hasBoundGlobalStatusMenuEvents =
+    false;
+
   function startSection3LibraryFlow() {
     if (window.__inkwellSection3Started) {
       return;
@@ -115,6 +126,7 @@
     }
 
     bindLibraryControlEvents(elements);
+    bindGlobalStatusMenuEvents();
 
     renderSuggestions(elements);
     renderLibrary(elements);
@@ -243,6 +255,11 @@
           '[data-library-empty]'
         ),
 
+      libraryViewport:
+        section.querySelector(
+          '[data-library-viewport]'
+        ),
+
       libraryList:
         section.querySelector(
           '[data-library-list]'
@@ -315,6 +332,7 @@
       elements.resultTemplate &&
       elements.libraryCard &&
       elements.libraryEmpty &&
+      elements.libraryViewport &&
       elements.libraryList &&
       elements.libraryRowTemplate &&
       elements.libraryCount
@@ -1122,6 +1140,10 @@
       }
     );
 
+    enhanceStatusSelect(
+      statusSelect
+    );
+
     addButton.addEventListener(
       'click',
       () => {
@@ -1154,6 +1176,10 @@
         '[data-flow-result-card]'
       )
       .forEach((card) => {
+        destroyCustomStatusSelects(
+          card
+        );
+
         card.remove();
       });
 
@@ -1560,6 +1586,10 @@
               button
             );
 
+            resetLibraryViewport(
+              elements
+            );
+
             renderLibrary(elements);
           }
         );
@@ -1579,6 +1609,10 @@
             updatePressedButtons(
               elements.statusFilterButtons,
               button
+            );
+
+            resetLibraryViewport(
+              elements
             );
 
             renderLibrary(elements);
@@ -1810,6 +1844,10 @@
       );
     }
 
+    resetLibraryViewport(
+      elements
+    );
+
     renderLibrary(elements);
   }
 
@@ -1823,6 +1861,34 @@
       !elements.sortOptions
     ) {
       return;
+    }
+
+    if (isOpen) {
+      const triggerRect =
+        elements.sortTrigger.getBoundingClientRect();
+
+      const estimatedMenuHeight =
+        Math.min(
+          286,
+          elements.sortOptionButtons.length * 44 + 18
+        );
+
+      const spaceBelow =
+        window.innerHeight -
+        triggerRect.bottom;
+
+      const spaceAbove =
+        triggerRect.top;
+
+      elements.sortMenu.classList.toggle(
+        'opens-up',
+        spaceBelow < estimatedMenuHeight &&
+        spaceAbove > spaceBelow
+      );
+    } else {
+      elements.sortMenu.classList.remove(
+        'opens-up'
+      );
     }
 
     elements.sortMenu.classList.toggle(
@@ -1881,6 +1947,810 @@
 
     elements.sortLabel.textContent =
       selectedLabel;
+  }
+
+
+  function resetLibraryViewport(
+    elements
+  ) {
+    if (!elements.libraryViewport) {
+      return;
+    }
+
+    elements.libraryViewport.scrollTop =
+      0;
+  }
+
+  function syncLibraryViewportState(
+    elements
+  ) {
+    const viewport =
+      elements.libraryViewport;
+
+    if (!viewport) {
+      return;
+    }
+
+    const isScrollable =
+      viewport.scrollHeight >
+      viewport.clientHeight + 2;
+
+    viewport.classList.toggle(
+      'is-scrollable',
+      isScrollable
+    );
+
+    viewport.setAttribute(
+      'data-scrollable',
+      String(isScrollable)
+    );
+  }
+
+  function bindGlobalStatusMenuEvents() {
+    if (
+      hasBoundGlobalStatusMenuEvents
+    ) {
+      return;
+    }
+
+    hasBoundGlobalStatusMenuEvents =
+      true;
+
+    document.addEventListener(
+      'pointerdown',
+      (event) => {
+        const root =
+          event.target.closest(
+            '.flow-custom-select'
+          );
+
+        const portal =
+          event.target.closest(
+            '.flow-status-options'
+          );
+
+        if (root || portal) {
+          closeAllStatusMenus(
+            root ||
+            getStatusRootForPortal(
+              portal
+            )
+          );
+
+          return;
+        }
+
+        closeAllStatusMenus();
+      }
+    );
+
+    document.addEventListener(
+      'keydown',
+      (event) => {
+        if (event.key !== 'Escape') {
+          return;
+        }
+
+        const openRoot =
+          document.querySelector(
+            '.flow-custom-select.is-open'
+          );
+
+        if (!openRoot) {
+          return;
+        }
+
+        event.preventDefault();
+
+        setStatusMenuOpen(
+          openRoot,
+          false
+        );
+
+        openRoot
+          .querySelector(
+            '.flow-status-trigger'
+          )
+          ?.focus();
+      }
+    );
+
+    window.addEventListener(
+      'resize',
+      () => {
+        closeAllStatusMenus();
+      },
+      {
+        passive: true
+      }
+    );
+
+    window.addEventListener(
+      'scroll',
+      (event) => {
+        /*
+         * A very small viewport may make the option portal itself scroll.
+         * Keep that interaction usable, while still closing a menu whenever
+         * the page or the saved-library viewport moves underneath it.
+         */
+        if (
+          event.target instanceof Element &&
+          event.target.closest(
+            '.flow-status-options'
+          )
+        ) {
+          return;
+        }
+
+        closeAllStatusMenus();
+      },
+      {
+        passive: true,
+        capture: true
+      }
+    );
+  }
+
+  function enhanceStatusSelect(
+    select
+  ) {
+    if (
+      !select ||
+      select.dataset
+        .customStatusReady ===
+        'true'
+    ) {
+      return;
+    }
+
+    const root =
+      select.parentElement;
+
+    if (!root) {
+      return;
+    }
+
+    customStatusSelectId +=
+      1;
+
+    const instanceId =
+      `flow-status-${customStatusSelectId}`;
+
+    select.dataset.customStatusReady =
+      'true';
+
+    select.classList.add(
+      'flow-native-status-select'
+    );
+
+    select.tabIndex =
+      -1;
+
+    select.setAttribute(
+      'aria-hidden',
+      'true'
+    );
+
+    root.classList.add(
+      'flow-custom-select'
+    );
+
+    /*
+     * Library-row select shells already contain a decorative status icon.
+     * The custom trigger owns its own icon, so hide that legacy sibling to
+     * avoid a doubled glyph while keeping the original HTML reusable.
+     */
+    const legacyIcon =
+      root.querySelector(
+        ':scope > i'
+      );
+
+    if (legacyIcon) {
+      legacyIcon.classList.add(
+        'flow-native-select-icon'
+      );
+    }
+
+    root.dataset.statusSelectId =
+      instanceId;
+
+    const trigger =
+      document.createElement(
+        'button'
+      );
+
+    trigger.type =
+      'button';
+
+    trigger.className =
+      'flow-status-trigger';
+
+    trigger.setAttribute(
+      'aria-haspopup',
+      'listbox'
+    );
+
+    trigger.setAttribute(
+      'aria-expanded',
+      'false'
+    );
+
+    trigger.setAttribute(
+      'aria-controls',
+      `${instanceId}-options`
+    );
+
+    trigger.setAttribute(
+      'aria-label',
+      select.getAttribute(
+        'aria-label'
+      ) ||
+      'Choose library status'
+    );
+
+    trigger.innerHTML = `
+      <i
+        class="ti ti-progress-check"
+        aria-hidden="true"
+      ></i>
+
+      <span
+        class="flow-status-trigger-label"
+      ></span>
+
+      <i
+        class="ti ti-chevron-down flow-status-chevron"
+        aria-hidden="true"
+      ></i>
+    `;
+
+    const optionsPanel =
+      document.createElement(
+        'div'
+      );
+
+    optionsPanel.id =
+      `${instanceId}-options`;
+
+    optionsPanel.className =
+      'flow-status-options';
+
+    optionsPanel.dataset
+      .statusOptionsFor =
+      instanceId;
+
+    optionsPanel.setAttribute(
+      'role',
+      'listbox'
+    );
+
+    optionsPanel.setAttribute(
+      'aria-label',
+      trigger.getAttribute(
+        'aria-label'
+      )
+    );
+
+    optionsPanel.hidden =
+      true;
+
+    Array.from(
+      select.options
+    ).forEach((option) => {
+      const button =
+        document.createElement(
+          'button'
+        );
+
+      button.type =
+        'button';
+
+      button.className =
+        'flow-status-option';
+
+      button.dataset.statusValue =
+        option.value;
+
+      button.setAttribute(
+        'role',
+        'option'
+      );
+
+      button.textContent =
+        option.textContent.trim();
+
+      button.addEventListener(
+        'click',
+        () => {
+          select.value =
+            option.value;
+
+          select.dispatchEvent(
+            new Event(
+              'change',
+              {
+                bubbles: true
+              }
+            )
+          );
+
+          syncStatusSelect(
+            root
+          );
+
+          setStatusMenuOpen(
+            root,
+            false
+          );
+
+          trigger.focus();
+        }
+      );
+
+      optionsPanel.appendChild(
+        button
+      );
+    });
+
+    root.insertBefore(
+      trigger,
+      select
+    );
+
+    document.body.appendChild(
+      optionsPanel
+    );
+
+    trigger.addEventListener(
+      'click',
+      () => {
+        const shouldOpen =
+          !root.classList.contains(
+            'is-open'
+          );
+
+        closeAllStatusMenus(
+          root
+        );
+
+        setStatusMenuOpen(
+          root,
+          shouldOpen
+        );
+      }
+    );
+
+    trigger.addEventListener(
+      'keydown',
+      (event) => {
+        const openKeys = [
+          'ArrowDown',
+          'ArrowUp',
+          'Enter',
+          ' '
+        ];
+
+        if (
+          !openKeys.includes(
+            event.key
+          )
+        ) {
+          return;
+        }
+
+        event.preventDefault();
+
+        closeAllStatusMenus(
+          root
+        );
+
+        setStatusMenuOpen(
+          root,
+          true
+        );
+
+        const optionButtons =
+          getStatusOptionButtons(
+            root
+          );
+
+        const selectedIndex =
+          Math.max(
+            0,
+            optionButtons.findIndex(
+              (button) => {
+                return (
+                  button.dataset
+                    .statusValue ===
+                  select.value
+                );
+              }
+            )
+          );
+
+        optionButtons[
+          selectedIndex
+        ]?.focus();
+      }
+    );
+
+    optionsPanel.addEventListener(
+      'keydown',
+      (event) => {
+        const buttons =
+          getStatusOptionButtons(
+            root
+          );
+
+        const currentIndex =
+          buttons.indexOf(
+            document.activeElement
+          );
+
+        if (
+          event.key ===
+          'Escape'
+        ) {
+          event.preventDefault();
+
+          setStatusMenuOpen(
+            root,
+            false
+          );
+
+          trigger.focus();
+
+          return;
+        }
+
+        let nextIndex =
+          currentIndex;
+
+        if (
+          event.key ===
+          'ArrowDown'
+        ) {
+          nextIndex =
+            Math.min(
+              buttons.length - 1,
+              currentIndex + 1
+            );
+        } else if (
+          event.key ===
+          'ArrowUp'
+        ) {
+          nextIndex =
+            Math.max(
+              0,
+              currentIndex - 1
+            );
+        } else if (
+          event.key ===
+          'Home'
+        ) {
+          nextIndex =
+            0;
+        } else if (
+          event.key ===
+          'End'
+        ) {
+          nextIndex =
+            buttons.length - 1;
+        } else {
+          return;
+        }
+
+        event.preventDefault();
+
+        buttons[
+          nextIndex
+        ]?.focus();
+      }
+    );
+
+    syncStatusSelect(
+      root
+    );
+  }
+
+  function getStatusRootForPortal(
+    portal
+  ) {
+    const instanceId =
+      portal?.dataset
+        .statusOptionsFor;
+
+    if (!instanceId) {
+      return null;
+    }
+
+    return document.querySelector(
+      `.flow-custom-select[data-status-select-id="${instanceId}"]`
+    );
+  }
+
+  function getStatusPortal(
+    root
+  ) {
+    const instanceId =
+      root?.dataset
+        .statusSelectId;
+
+    if (!instanceId) {
+      return null;
+    }
+
+    return document.querySelector(
+      `.flow-status-options[data-status-options-for="${instanceId}"]`
+    );
+  }
+
+  function getStatusOptionButtons(
+    root
+  ) {
+    const portal =
+      getStatusPortal(
+        root
+      );
+
+    return portal
+      ? Array.from(
+          portal.querySelectorAll(
+            '.flow-status-option'
+          )
+        )
+      : [];
+  }
+
+  function syncStatusSelect(
+    root
+  ) {
+    const select =
+      root.querySelector(
+        'select'
+      );
+
+    const label =
+      root.querySelector(
+        '.flow-status-trigger-label'
+      );
+
+    if (
+      !select ||
+      !label
+    ) {
+      return;
+    }
+
+    const selectedOption =
+      select.options[
+        select.selectedIndex
+      ];
+
+    label.textContent =
+      selectedOption
+        ?.textContent
+        .trim() ||
+      getStatusLabel(
+        select.value
+      );
+
+    getStatusOptionButtons(
+      root
+    ).forEach((button) => {
+      const selected =
+        button.dataset
+          .statusValue ===
+        select.value;
+
+      button.classList.toggle(
+        'is-selected',
+        selected
+      );
+
+      button.setAttribute(
+        'aria-selected',
+        String(selected)
+      );
+    });
+  }
+
+  function positionStatusPortal(
+    root
+  ) {
+    const trigger =
+      root.querySelector(
+        '.flow-status-trigger'
+      );
+
+    const portal =
+      getStatusPortal(
+        root
+      );
+
+    if (
+      !trigger ||
+      !portal
+    ) {
+      return;
+    }
+
+    const triggerRect =
+      trigger.getBoundingClientRect();
+
+    const width =
+      Math.max(
+        164,
+        triggerRect.width
+      );
+
+    portal.style.width =
+      `${Math.round(width)}px`;
+
+    portal.style.left =
+      '0px';
+
+    portal.style.top =
+      '0px';
+
+    portal.hidden =
+      false;
+
+    const portalHeight =
+      portal.offsetHeight;
+
+    const gap =
+      8;
+
+    const safeInset =
+      12;
+
+    const spaceBelow =
+      window.innerHeight -
+      triggerRect.bottom -
+      safeInset;
+
+    const spaceAbove =
+      triggerRect.top -
+      safeInset;
+
+    const openUp =
+      spaceBelow <
+        portalHeight + gap &&
+      spaceAbove >
+        spaceBelow;
+
+    const left =
+      Math.min(
+        window.innerWidth -
+          width -
+          safeInset,
+        Math.max(
+          safeInset,
+          triggerRect.right -
+            width
+        )
+      );
+
+    const top =
+      openUp
+        ? Math.max(
+            safeInset,
+            triggerRect.top -
+              portalHeight -
+              gap
+          )
+        : Math.min(
+            window.innerHeight -
+              portalHeight -
+              safeInset,
+            triggerRect.bottom +
+              gap
+          );
+
+    portal.classList.toggle(
+      'opens-up',
+      openUp
+    );
+
+    portal.style.left =
+      `${Math.round(left)}px`;
+
+    portal.style.top =
+      `${Math.round(top)}px`;
+  }
+
+  function setStatusMenuOpen(
+    root,
+    isOpen
+  ) {
+    if (!root) {
+      return;
+    }
+
+    const trigger =
+      root.querySelector(
+        '.flow-status-trigger'
+      );
+
+    const portal =
+      getStatusPortal(
+        root
+      );
+
+    if (
+      !trigger ||
+      !portal
+    ) {
+      return;
+    }
+
+    root.classList.toggle(
+      'is-open',
+      isOpen
+    );
+
+    trigger.setAttribute(
+      'aria-expanded',
+      String(isOpen)
+    );
+
+    if (isOpen) {
+      syncStatusSelect(
+        root
+      );
+
+      positionStatusPortal(
+        root
+      );
+    } else {
+      portal.hidden =
+        true;
+
+      portal.classList.remove(
+        'opens-up'
+      );
+    }
+  }
+
+  function closeAllStatusMenus(
+    exceptRoot = null
+  ) {
+    document
+      .querySelectorAll(
+        '.flow-custom-select.is-open'
+      )
+      .forEach((root) => {
+        if (
+          root ===
+          exceptRoot
+        ) {
+          return;
+        }
+
+        setStatusMenuOpen(
+          root,
+          false
+        );
+      });
+  }
+
+  function destroyCustomStatusSelects(
+    container
+  ) {
+    if (!container) {
+      return;
+    }
+
+    container
+      .querySelectorAll(
+        '.flow-custom-select'
+      )
+      .forEach((root) => {
+        getStatusPortal(
+          root
+        )?.remove();
+      });
   }
 
   function updatePressedButtons(
@@ -2093,10 +2963,14 @@
       libraryItems.length > 0;
 
     const visibleItems =
-      filteredItems.slice(
-        0,
+      Number.isFinite(
         LIBRARY_PREVIEW_LIMIT
-      );
+      )
+        ? filteredItems.slice(
+            0,
+            LIBRARY_PREVIEW_LIMIT
+          )
+        : filteredItems;
 
     const hiddenCount =
       Math.max(
@@ -2109,6 +2983,10 @@
       String(
         libraryItems.length
       );
+
+    destroyCustomStatusSelects(
+      elements.libraryList
+    );
 
     elements.libraryList.innerHTML =
       '';
@@ -2139,6 +3017,14 @@
         getLibraryEmptyText()
       );
 
+      window.requestAnimationFrame(
+        () => {
+          syncLibraryViewportState(
+            elements
+          );
+        }
+      );
+
       return;
     }
 
@@ -2158,6 +3044,14 @@
             row
           );
         }
+      }
+    );
+
+    window.requestAnimationFrame(
+      () => {
+        syncLibraryViewportState(
+          elements
+        );
       }
     );
   }
@@ -2287,6 +3181,10 @@
             elements
           );
         }
+      );
+
+      enhanceStatusSelect(
+        statusSelect
       );
     }
 
@@ -3102,5 +4000,4 @@
     startSection3Motion();
   }
 })();
-
 
