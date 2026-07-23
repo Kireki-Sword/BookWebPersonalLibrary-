@@ -1,40 +1,32 @@
 /* ============================================================================
    INKWELL — ONE MASTER PINNED HOME-PAGE JOURNEY
 
-   IMPORTANT LOAD ORDER
-   1. this file (sets managed mode immediately)
-   2. section-1.js / changeCardSection1.js
-   3. GSAP
-   4. ScrollTrigger
-   5. section-2.js / section-3.js / section-4.js
+   REQUIRED SCRIPT ORDER
+   1. Supabase
+   2. GSAP
+   3. ScrollTrigger
+   4. homeScroll.js                 <-- this file
+   5. section-1.js
+   6. changeCardSection1.js
+   7. section-2.js
+   8. section-3.js
+   9. section-4.js
 
-   This file sets the managed-mode flag immediately. Section 2 and Section 4
-   then build ordinary paused GSAP timelines instead of making their own pins.
-   After the DOM and Section 4 data are ready, this file nests every scene into
-   one scrubbed master timeline and creates exactly one ScrollTrigger pin.
+   Why this order matters:
+   - GSAP must exist before this file runs.
+   - This file must set __INKWELL_MASTER_JOURNEY__ before Section 2 and
+     Section 4 execute, so those files export ordinary paused timelines instead
+     of creating their own pinned ScrollTriggers.
+   - The exported timelines are then placed inside one parent timeline.
+   - Only the parent timeline owns a ScrollTrigger and pin.
    ============================================================================ */
 
 (() => {
   "use strict";
 
   const DESKTOP_QUERY =
-    "(min-width: 1100px) and (min-height: 820px) and " +
+    "(min-width: 1100px) and (min-height: 700px) and " +
     "(prefers-reduced-motion: no-preference)";
-
-  /*
-   * This line must execute before section-2.js and section-4.js.
-   * It prevents those files from creating independent pinned ScrollTriggers.
-   */
-  window.__INKWELL_MASTER_JOURNEY__ = true;
-
-  /*
-   * The script is deferred, so the body already exists when this runs.
-   * Preparing mode gives Section 2 and Section 4 their final viewport geometry
-   * before either file builds its managed timeline.
-   */
-  if (window.matchMedia(DESKTOP_QUERY).matches) {
-    document.body?.classList.add("journey-preparing");
-  }
 
   const SELECTORS = {
     nav: "nav",
@@ -44,22 +36,40 @@
     section2: "#section-2-empty-shelf",
     section3: "#section-3-library-flow",
     section4: "#section-4",
+    shell: "[data-home-journey-shell]",
+    stage: "[data-home-journey-stage]",
   };
 
+  const hasLibraries = Boolean(window.gsap && window.ScrollTrigger);
+  const isDesktopJourney =
+    hasLibraries && window.matchMedia(DESKTOP_QUERY).matches;
+
+  /*
+   * This flag is read synchronously by section-1.js, section-2.js and
+   * section-4.js. On smaller screens it stays false, so their original
+   * standalone behavior remains available.
+   */
+  window.__INKWELL_MASTER_JOURNEY__ = isDesktopJourney;
+
+  if (!isDesktopJourney) {
+    return;
+  }
+
+  document.body?.classList.add("journey-preparing");
+
   const state = {
-    gsap: null,
-    ScrollTrigger: null,
-    media: null,
+    gsap: window.gsap,
+    ScrollTrigger: window.ScrollTrigger,
     master: null,
-    masterTrigger: null,
+    trigger: null,
     shell: null,
     stage: null,
+    createdWrapper: false,
     originalParent: null,
-    originalNextSibling: null,
-    createdStageDynamically: false,
+    originalReference: null,
     refreshTimers: [],
     resizeObserver: null,
-    activeScene: null,
+    activeScene: "",
   };
 
   if (document.readyState === "loading") {
@@ -73,13 +83,10 @@
       return;
     }
 
-    const { gsap, ScrollTrigger } = window;
+    const { gsap, ScrollTrigger } = state;
 
     if (!gsap || !ScrollTrigger) {
-      console.warn(
-        "Inkwell master journey: GSAP or ScrollTrigger is missing.",
-      );
-      document.body?.classList.remove("journey-preparing");
+      failToNaturalLayout("GSAP or ScrollTrigger is missing.");
       return;
     }
 
@@ -91,64 +98,60 @@
       !elements.section3 ||
       !elements.section4
     ) {
-      console.warn(
-        "Inkwell master journey: one or more home sections are missing.",
-        elements,
-      );
-      document.body?.classList.remove("journey-preparing");
+      failToNaturalLayout("One or more homepage sections are missing.");
       return;
     }
 
     window.__inkwellMasterJourneyStarted = true;
-
-    state.gsap = gsap;
-    state.ScrollTrigger = ScrollTrigger;
-
     gsap.registerPlugin(ScrollTrigger);
     syncNavHeight(elements.nav);
 
+    /*
+     * Section 2 publishes immediately. Section 4 publishes after its Supabase
+     * covers are ready. Waiting here is intentional: the master must receive
+     * the real Section 4 timeline, not a second independent pin.
+     */
     const [section2Api, section4Api] = await Promise.all([
-      waitForSection2Api(5000),
-      waitForSection4Api(20000),
+      waitForSectionApi({
+        current: () => window.InkwellSection2Journey,
+        eventName: "inkwell:section2-ready",
+        timeoutMs: 8000,
+      }),
+      waitForSection4Api(30000),
     ]);
 
     if (!section2Api?.timeline) {
-      console.warn(
-        "Inkwell master journey: Section 2 did not provide a managed timeline.",
+      section2Api?.showStatic?.();
+      section4Api?.showStatic?.();
+      failToNaturalLayout(
+        "Section 2 did not publish its managed animation timeline.",
       );
-      document.body?.classList.remove("journey-preparing");
       return;
     }
 
-    state.media = gsap.matchMedia();
-
-    state.media.add(
-      {
-        cinematic: DESKTOP_QUERY,
-        fallback:
-          "(max-width: 1099px), (max-height: 819px), " +
-          "(prefers-reduced-motion: reduce)",
-      },
-      (context) => {
-        if (context.conditions.fallback) {
-          showNaturalFallback(elements, section2Api, section4Api);
-          return undefined;
-        }
-
-        return buildCinematicJourney(
-          elements,
-          section2Api,
-          section4Api,
-        );
-      },
-    );
-
+    buildMasterJourney(elements, section2Api, section4Api);
     setupRefreshes(elements, section2Api, section4Api);
 
     window.InkwellHomeJourney = {
       refresh: () => ScrollTrigger.refresh(true),
-      destroy,
+      destroy: () => destroy(elements, section2Api, section4Api),
+      debug: () => ({
+        managedMode: window.__INKWELL_MASTER_JOURNEY__ === true,
+        masterReady: Boolean(state.master),
+        masterDuration: state.master?.duration() || 0,
+        pinReady: Boolean(state.trigger),
+        pinCount: ScrollTrigger.getAll().filter((item) => item.pin).length,
+        section2Timeline: Boolean(section2Api?.timeline),
+        section4Timeline: Boolean(section4Api?.timeline),
+        activeScene: state.activeScene,
+      }),
     };
+
+    window.dispatchEvent(
+      new CustomEvent("inkwell:home-journey-ready", {
+        detail: window.InkwellHomeJourney,
+      }),
+    );
   }
 
   function collectElements() {
@@ -168,18 +171,6 @@
     };
   }
 
-  function waitForSection2Api(timeoutMs) {
-    if (window.InkwellSection2Journey) {
-      return Promise.resolve(window.InkwellSection2Journey);
-    }
-
-    return waitForWindowEvent(
-      "inkwell:section2-ready",
-      timeoutMs,
-      () => window.InkwellSection2Journey,
-    );
-  }
-
   function waitForSection4Api(timeoutMs) {
     const existing = window.InkwellSection4Journey;
 
@@ -188,54 +179,49 @@
     }
 
     if (existing?.ready) {
-      return withTimeout(existing.ready, timeoutMs, null);
+      return Promise.race([
+        existing.ready,
+        delay(timeoutMs).then(() => window.InkwellSection4Journey || null),
+      ]);
     }
 
-    return waitForWindowEvent(
-      "inkwell:section4-ready",
+    return waitForSectionApi({
+      current: () => window.InkwellSection4Journey,
+      eventName: "inkwell:section4-ready",
       timeoutMs,
-      () => window.InkwellSection4Journey,
-    );
-  }
-
-  function waitForWindowEvent(name, timeoutMs, fallbackGetter) {
-    return new Promise((resolve) => {
-      let settled = false;
-
-      const finish = (value) => {
-        if (settled) return;
-        settled = true;
-        window.removeEventListener(name, onReady);
-        window.clearTimeout(timer);
-        resolve(value);
-      };
-
-      const onReady = (event) => {
-        finish(event.detail || fallbackGetter?.() || null);
-      };
-
-      const timer = window.setTimeout(() => {
-        finish(fallbackGetter?.() || null);
-      }, timeoutMs);
-
-      window.addEventListener(name, onReady, { once: true });
     });
   }
 
-  function withTimeout(promise, timeoutMs, fallbackValue) {
-    return Promise.race([
-      promise,
-      new Promise((resolve) => {
-        window.setTimeout(() => resolve(fallbackValue), timeoutMs);
-      }),
-    ]);
+  function waitForSectionApi({ current, eventName, timeoutMs }) {
+    const existing = current();
+
+    if (existing?.timeline || existing?.showStatic) {
+      return Promise.resolve(existing);
+    }
+
+    return new Promise((resolve) => {
+      let finished = false;
+
+      const finish = (value) => {
+        if (finished) return;
+        finished = true;
+        window.removeEventListener(eventName, onReady);
+        window.clearTimeout(timer);
+        resolve(value || current() || null);
+      };
+
+      const onReady = (event) => finish(event.detail);
+      const timer = window.setTimeout(() => finish(current()), timeoutMs);
+
+      window.addEventListener(eventName, onReady, { once: true });
+    });
   }
 
-  function buildCinematicJourney(elements, section2Api, section4Api) {
+  function buildMasterJourney(elements, section2Api, section4Api) {
     const { gsap, ScrollTrigger } = state;
 
     teardownMaster(false);
-    createStage(elements);
+    ensureSharedStage(elements);
     syncNavHeight(elements.nav);
 
     const scenes = [
@@ -250,8 +236,23 @@
       scene.dataset.journeyScene = String(index + 1);
     });
 
-    document.body.classList.remove("journey-preparing");
-    document.body.classList.add("journey-ready");
+    const section2Timeline = section2Api.timeline;
+    const section4Timeline = section4Api?.timeline || null;
+    const section3Timeline = createSection3Timeline(elements);
+
+    section2Api.reset?.();
+    section2Timeline.pause(0);
+    section2Timeline.timeScale(1);
+    section2Timeline.paused(false);
+
+    if (section4Timeline) {
+      elements.section4.classList.remove("is-static");
+      section4Timeline.pause(0);
+      section4Timeline.timeScale(1);
+      section4Timeline.paused(false);
+    } else {
+      section4Api?.showStatic?.();
+    }
 
     gsap.set(scenes, {
       autoAlpha: 0,
@@ -268,99 +269,67 @@
     gsap.set(elements.section3, { zIndex: 2 });
     gsap.set(elements.section4, { zIndex: 1 });
 
-    const section2Timeline = section2Api.timeline;
-    section2Api.reset?.();
-    section2Timeline.pause(0);
-    section2Timeline.duration(7.25);
-    section2Timeline.paused(false);
-
-    let section4Timeline = section4Api?.timeline || null;
-
-    if (section4Timeline) {
-      elements.section4.classList.remove("is-static");
-      section4Timeline.pause(0);
-      section4Timeline.duration(4.3);
-      section4Timeline.paused(false);
-    }
-
     const master = gsap.timeline({
-      defaults: {
-        ease: "none",
-      },
+      defaults: { ease: "none" },
+      paused: true,
       onUpdate: syncActiveScene,
     });
 
     state.master = master;
 
-    /* ----------------------------------------------------------------------
-       SECTION 1
-       ---------------------------------------------------------------------- */
-
+    /* SECTION 1 ---------------------------------------------------------- */
     master.addLabel("section-1-start", 0);
-    master.to({}, { duration: 0.72 });
+    master.to({}, { duration: 1.05 });
 
     const heroChildren = elements.heroLeft
       ? gsap.utils.toArray(elements.heroLeft.children)
       : [];
 
-    master.to(
-      heroChildren,
-      {
-        autoAlpha: 0,
-        y: -68,
-        stagger: 0.026,
-        duration: 0.48,
-        ease: "power2.inOut",
-      },
-    );
+    master.to(heroChildren, {
+      autoAlpha: 0,
+      y: -68,
+      stagger: 0.035,
+      duration: 0.72,
+      ease: "power2.inOut",
+    });
 
     if (elements.heroRight) {
       master.to(
         elements.heroRight,
         {
           autoAlpha: 0,
-          xPercent: 9,
-          yPercent: -3,
-          scale: 0.95,
-          duration: 0.5,
+          xPercent: 10,
+          yPercent: -4,
+          scale: 0.94,
+          duration: 0.78,
           ease: "power2.inOut",
         },
-        "<-0.42",
+        "<-0.62",
       );
     }
 
-    master.set(elements.section2, {
-      pointerEvents: "auto",
-    });
-
-    master.fromTo(
+    master.set(elements.section2, { pointerEvents: "auto" });
+    master.to(
       elements.section2,
       {
-        autoAlpha: 0,
-      },
-      {
         autoAlpha: 1,
-        duration: 0.36,
+        duration: 0.55,
         ease: "power2.inOut",
-        immediateRender: false,
       },
-      "<0.18",
+      "<-0.28",
     );
-
     master.to(
       elements.hero,
       {
         autoAlpha: 0,
-        duration: 0.36,
+        duration: 0.55,
         ease: "power2.inOut",
       },
       "<",
     );
+    master.set(elements.hero, { pointerEvents: "none" });
 
-    /* ----------------------------------------------------------------------
-       SECTION 2
-       ---------------------------------------------------------------------- */
-
+    /* SECTION 2 ---------------------------------------------------------- */
     master.addLabel("section-2-start");
     master.add(section2Timeline);
     master.addLabel("section-2-end");
@@ -370,49 +339,30 @@
       ...(section2Api.externalElements || []),
     ];
 
+    master.set(elements.section3, { pointerEvents: "auto" });
     master.to(section2ExitTargets, {
       autoAlpha: 0,
-      y: -34,
-      duration: 0.48,
+      y: -36,
+      duration: 0.62,
       ease: "power2.inOut",
     });
-
-    master.set(
+    master.to(
       elements.section3,
-      {
-        pointerEvents: "auto",
-      },
-      "<-0.30",
-    );
-
-    master.fromTo(
-      elements.section3,
-      {
-        autoAlpha: 0,
-      },
       {
         autoAlpha: 1,
-        duration: 0.38,
+        duration: 0.58,
         ease: "power2.inOut",
-        immediateRender: false,
       },
-      "<-0.30",
+      "<-0.48",
     );
+    master.set(elements.section2, { pointerEvents: "none" });
 
-    master.set(elements.section2, {
-      pointerEvents: "none",
-    });
-
-    /* ----------------------------------------------------------------------
-       SECTION 3
-       ---------------------------------------------------------------------- */
-
+    /* SECTION 3 ---------------------------------------------------------- */
     master.addLabel("section-3-start");
-
-    const section3Timeline = createSection3Timeline(elements);
     master.add(section3Timeline);
     master.addLabel("section-3-end");
 
+    master.set(elements.section4, { pointerEvents: "auto" });
     master.to(
       [
         elements.section3Copy,
@@ -421,82 +371,59 @@
       ].filter(Boolean),
       {
         autoAlpha: 0,
-        y: -62,
+        y: -42,
         scale: 0.97,
-        duration: 0.5,
+        duration: 0.68,
+        stagger: 0.035,
         ease: "power2.inOut",
       },
     );
-
-    master.set(
+    master.to(
       elements.section4,
-      {
-        pointerEvents: "auto",
-      },
-      "<-0.32",
-    );
-
-    master.fromTo(
-      elements.section4,
-      {
-        autoAlpha: 0,
-      },
       {
         autoAlpha: 1,
-        duration: 0.40,
+        duration: 0.62,
         ease: "power2.inOut",
-        immediateRender: false,
       },
-      "<-0.32",
+      "<-0.52",
     );
-
     master.to(
       elements.section3,
       {
         autoAlpha: 0,
-        duration: 0.36,
+        duration: 0.5,
         ease: "power2.inOut",
       },
       "<",
     );
+    master.set(elements.section3, { pointerEvents: "none" });
 
-    master.set(elements.section3, {
-      pointerEvents: "none",
-    });
-
-    /* ----------------------------------------------------------------------
-       SECTION 4
-       ---------------------------------------------------------------------- */
-
+    /* SECTION 4 ---------------------------------------------------------- */
     master.addLabel("section-4-start");
 
     if (section4Timeline) {
       master.add(section4Timeline);
     } else {
-      section4Api?.showStatic?.();
-      master.to({}, { duration: 4.3 });
+      master.to({}, { duration: 6.5 });
     }
 
     master.addLabel("section-4-end");
-    master.to({}, { duration: 0.8 });
+    master.to({}, { duration: 1.1 });
 
-    state.masterTrigger = ScrollTrigger.create({
+    state.trigger = ScrollTrigger.create({
       id: "inkwell-one-master-journey",
       trigger: state.shell,
-      start: () => {
-        const navHeight = getNavHeight(elements.nav);
-        return `top top+=${navHeight}`;
-      },
+      animation: master,
+      start: () => `top top+=${getNavHeight(elements.nav)}`,
       end: () => {
         const distance = Math.max(
-          master.duration() * 900,
-          window.innerHeight * 13.5,
-          11800,
+          master.duration() * 500,
+          window.innerHeight * 17,
+          15000,
         );
 
         return `+=${Math.round(distance)}`;
       },
-      animation: master,
       pin: state.shell,
       pinSpacing: true,
       scrub: 0.9,
@@ -511,108 +438,92 @@
       onUpdate: syncActiveScene,
     });
 
+    document.body.classList.remove("journey-preparing");
+    document.body.classList.add("journey-ready");
+
+    master.pause(0);
     syncActiveScene();
 
     ScrollTrigger.sort();
     queueRefresh(80);
     queueRefresh(500);
     queueRefresh(1600);
-
-    return () => {
-      teardownMaster(true);
-      section2Api.timeline?.pause(0);
-      section4Api?.timeline?.pause(0);
-      showNaturalFallback(elements, section2Api, section4Api);
-    };
   }
 
   function createSection3Timeline(elements) {
     const { gsap } = state;
-
     const copy = elements.section3Copy;
     const search = elements.section3Search;
     const library = elements.section3Library;
 
     const timeline = gsap.timeline({
-      defaults: {
-        ease: "none",
-      },
+      defaults: { ease: "none" },
+      paused: true,
     });
 
     if (!copy || !search || !library) {
-      return timeline.to({}, { duration: 2.8 });
+      timeline.to({}, { duration: 3.2 });
+      timeline.paused(false);
+      return timeline;
     }
 
+    gsap.set(copy, { autoAlpha: 0, x: -84, y: 24 });
+    gsap.set(search, {
+      autoAlpha: 0,
+      x: 88,
+      y: 22,
+      scale: 0.97,
+    });
+    gsap.set(library, {
+      autoAlpha: 0,
+      y: 90,
+      scale: 0.975,
+    });
+
     timeline
-      .fromTo(
-        copy,
-        {
-          autoAlpha: 0,
-          x: -82,
-          y: 24,
-        },
-        {
-          autoAlpha: 1,
-          x: 0,
-          y: 0,
-          duration: 0.5,
-          ease: "power3.out",
-          immediateRender: false,
-        },
-        0,
-      )
-      .fromTo(
+      .to(copy, {
+        autoAlpha: 1,
+        x: 0,
+        y: 0,
+        duration: 0.7,
+        ease: "power3.out",
+      })
+      .to(
         search,
         {
-          autoAlpha: 0,
-          x: 86,
-          y: 22,
-          scale: 0.97,
-        },
-        {
           autoAlpha: 1,
           x: 0,
           y: 0,
           scale: 1,
-          duration: 0.54,
+          duration: 0.74,
           ease: "power3.out",
-          immediateRender: false,
         },
-        0.04,
+        0.05,
       )
-      .fromTo(
+      .to(
         library,
-        {
-          autoAlpha: 0,
-          y: 88,
-          scale: 0.975,
-        },
         {
           autoAlpha: 1,
           y: 0,
           scale: 1,
-          duration: 0.62,
+          duration: 0.82,
           ease: "power3.out",
-          immediateRender: false,
         },
-        0.2,
+        0.28,
       )
-      .to({}, { duration: 1.45 })
-      .to(
-        copy,
-        {
-          x: -22,
-          y: -8,
-          duration: 0.34,
-          ease: "power2.inOut",
-        },
-      )
+      .to({}, { duration: 1.7 })
+      .to(copy, {
+        x: -18,
+        y: -8,
+        duration: 0.42,
+        ease: "power2.inOut",
+      })
       .to(
         search,
         {
           x: 18,
           y: -8,
-          duration: 0.34,
+          duration: 0.42,
           ease: "power2.inOut",
         },
         "<",
@@ -622,52 +533,42 @@
         {
           y: -12,
           scale: 1.008,
-          duration: 0.34,
+          duration: 0.42,
           ease: "power2.inOut",
         },
         "<",
       )
-      .to({}, { duration: 0.55 });
+      .to({}, { duration: 0.7 });
 
-    timeline.duration(2.8);
+    timeline.paused(false);
     return timeline;
   }
 
-  function createStage(elements) {
-    if (state.shell?.isConnected && state.stage?.isConnected) {
-      return;
-    }
-
-    const existingShell = document.querySelector(
-      "[data-home-journey-shell]",
-    );
-    const existingStage = document.querySelector(
-      "[data-home-journey-stage]",
-    );
+  function ensureSharedStage(elements) {
+    const existingShell = document.querySelector(SELECTORS.shell);
+    const existingStage = document.querySelector(SELECTORS.stage);
 
     if (existingShell && existingStage) {
       state.shell = existingShell;
       state.stage = existingStage;
-      state.createdStageDynamically = false;
       return;
     }
 
-    const firstScene = elements.hero;
-    const parent = firstScene.parentNode;
-
-    state.originalParent = parent;
-    state.originalNextSibling = elements.section4.nextSibling;
-    state.createdStageDynamically = true;
-
+    const parent = elements.hero.parentNode;
     const shell = document.createElement("div");
+    const stage = document.createElement("div");
+
+    state.createdWrapper = true;
+    state.originalParent = parent;
+    state.originalReference = elements.section4.nextSibling;
+
     shell.className = "home-journey-shell";
     shell.dataset.homeJourneyShell = "";
 
-    const stage = document.createElement("div");
     stage.className = "home-journey-stage";
     stage.dataset.homeJourneyStage = "";
 
-    parent.insertBefore(shell, firstScene);
+    parent.insertBefore(shell, elements.hero);
     shell.appendChild(stage);
 
     [
@@ -675,44 +576,10 @@
       elements.section2,
       elements.section3,
       elements.section4,
-    ].forEach((scene) => stage.appendChild(scene));
+    ].forEach((section) => stage.appendChild(section));
 
     state.shell = shell;
     state.stage = stage;
-  }
-
-  function restoreOriginalStructure() {
-    if (!state.shell?.isConnected || !state.stage?.isConnected) {
-      return;
-    }
-
-    const scenes = Array.from(
-      state.stage.querySelectorAll(":scope > section"),
-    );
-
-    scenes.forEach((scene) => {
-      scene.classList.remove("journey-scene", "is-journey-active");
-      delete scene.dataset.journeyScene;
-      scene.removeAttribute("aria-hidden");
-    });
-
-    if (!state.createdStageDynamically || !state.originalParent) {
-      return;
-    }
-
-    const reference =
-      state.originalNextSibling?.parentNode === state.originalParent
-        ? state.originalNextSibling
-        : null;
-
-    scenes.forEach((scene) => {
-      state.originalParent.insertBefore(scene, reference);
-    });
-
-    state.shell.remove();
-    state.shell = null;
-    state.stage = null;
-    state.createdStageDynamically = false;
   }
 
   function syncActiveScene() {
@@ -722,7 +589,6 @@
 
     const time = master.time();
     const labels = master.labels;
-
     let active = "section-1";
 
     if (time >= (labels["section-4-start"] ?? Infinity)) {
@@ -751,44 +617,6 @@
     });
   }
 
-  function showNaturalFallback(elements, section2Api, section4Api) {
-    teardownMaster(true);
-    restoreOriginalStructure();
-
-    document.body.classList.remove(
-      "journey-ready",
-      "journey-preparing",
-    );
-
-    const scenes = [
-      elements.hero,
-      elements.section2,
-      elements.section3,
-      elements.section4,
-    ];
-
-    state.gsap?.set(scenes, {
-      clearProps:
-        "opacity,visibility,transform,pointerEvents,zIndex,x,y,scale",
-    });
-
-    section2Api?.showStatic?.();
-    section4Api?.showStatic?.();
-  }
-
-  function teardownMaster(restoreStructure) {
-    state.masterTrigger?.kill(true);
-    state.masterTrigger = null;
-
-    state.master?.kill();
-    state.master = null;
-    state.activeScene = null;
-
-    if (restoreStructure) {
-      restoreOriginalStructure();
-    }
-  }
-
   function setupRefreshes(elements, section2Api, section4Api) {
     const refresh = () => {
       syncNavHeight(elements.nav);
@@ -811,27 +639,100 @@
     );
 
     if (document.fonts?.ready) {
-      document.fonts.ready
-        .then(() => queueRefresh(120))
-        .catch(() => {});
+      document.fonts.ready.then(() => queueRefresh(120)).catch(() => {});
     }
 
     if ("ResizeObserver" in window && elements.nav) {
       state.resizeObserver = new ResizeObserver(() => {
         syncNavHeight(elements.nav);
       });
-
       state.resizeObserver.observe(elements.nav);
     }
   }
 
-  function queueRefresh(delay) {
+  function queueRefresh(delayMs) {
     const timer = window.setTimeout(() => {
       state.ScrollTrigger?.sort();
       state.ScrollTrigger?.refresh(true);
-    }, delay);
+    }, delayMs);
 
     state.refreshTimers.push(timer);
+  }
+
+  function failToNaturalLayout(message) {
+    console.warn(`Inkwell master journey: ${message}`);
+    window.__INKWELL_MASTER_JOURNEY__ = false;
+    window.__inkwellMasterJourneyStarted = false;
+    document.body?.classList.remove("journey-preparing", "journey-ready");
+  }
+
+  function teardownMaster(restoreWrapper) {
+    state.trigger?.kill(true);
+    state.trigger = null;
+
+    state.master?.kill();
+    state.master = null;
+    state.activeScene = "";
+
+    if (restoreWrapper) {
+      restoreOriginalStructure();
+    }
+  }
+
+  function restoreOriginalStructure() {
+    if (!state.createdWrapper || !state.stage || !state.originalParent) {
+      return;
+    }
+
+    const sections = Array.from(state.stage.children);
+    const reference =
+      state.originalReference?.parentNode === state.originalParent
+        ? state.originalReference
+        : null;
+
+    sections.forEach((section) => {
+      state.originalParent.insertBefore(section, reference);
+    });
+
+    state.shell?.remove();
+    state.shell = null;
+    state.stage = null;
+    state.createdWrapper = false;
+  }
+
+  function destroy(elements, section2Api, section4Api) {
+    teardownMaster(true);
+
+    state.refreshTimers.forEach((timer) => window.clearTimeout(timer));
+    state.refreshTimers = [];
+
+    state.resizeObserver?.disconnect();
+    state.resizeObserver = null;
+
+    const scenes = [
+      elements.hero,
+      elements.section2,
+      elements.section3,
+      elements.section4,
+    ];
+
+    state.gsap.set(scenes, {
+      clearProps:
+        "opacity,visibility,transform,pointerEvents,zIndex,x,y,scale",
+    });
+
+    scenes.forEach((scene) => {
+      scene.classList.remove("journey-scene", "is-journey-active");
+      scene.removeAttribute("aria-hidden");
+      delete scene.dataset.journeyScene;
+    });
+
+    section2Api?.showStatic?.();
+    section4Api?.showStatic?.();
+
+    document.body.classList.remove("journey-preparing", "journey-ready");
+    window.__INKWELL_MASTER_JOURNEY__ = false;
+    window.__inkwellMasterJourneyStarted = false;
   }
 
   function getNavHeight(nav) {
@@ -847,22 +748,7 @@
     );
   }
 
-  function destroy() {
-    state.media?.revert();
-    state.media = null;
-
-    teardownMaster(true);
-
-    state.refreshTimers.forEach((timer) => window.clearTimeout(timer));
-    state.refreshTimers = [];
-
-    state.resizeObserver?.disconnect();
-    state.resizeObserver = null;
-
-    document.body.classList.remove(
-      "journey-ready",
-      "journey-preparing",
-    );
-    window.__inkwellMasterJourneyStarted = false;
+  function delay(ms) {
+    return new Promise((resolve) => window.setTimeout(resolve, ms));
   }
 })();

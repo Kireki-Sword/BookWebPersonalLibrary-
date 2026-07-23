@@ -6,7 +6,6 @@
     <title>InkWell-Home</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="css/homePage/HomeSections.css">
-    <link rel="stylesheet" href="css/homePage/home-scroll-journey.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
 </head>
 <!-- Home Page-->
@@ -2144,26 +2143,25 @@
     </div>
     </div>
 
+    <!-- Data library -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
 
+    <!-- GSAP must execute before the journey coordinator. -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js" defer></script>
+
     <!--
-      IMPORTANT: load homeScroll.js before every section animation file.
-      Its first synchronous line enables managed mode. Its actual setup waits
-      for DOMContentLoaded, so GSAP may still be loaded below.
+      The coordinator must execute after GSAP, but before Section 2 and
+      Section 4. It synchronously enables managed mode; its actual setup waits
+      until the section timelines publish their APIs.
     -->
     <script src="./javaScript/Home/homeScroll.js" defer></script>
 
     <script src="./javaScript/Home/section-1.js" defer></script>
     <script src="./javaScript/Home/changeCardSection1.js" defer></script>
-
-    <!-- GSAP core, then ScrollTrigger -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js" defer></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js" defer></script>
-
     <script src="./javaScript/Home/section-2.js" defer></script>
     <script src="./javaScript/Home/section-3.js" defer></script>
     <script src="./javaScript/Home/section-4.js" defer></script>
-
 
     
 </body>

@@ -3,33 +3,27 @@
 
    Import this file LAST, after section-1.css through section-4.css.
 
-   This file does not create a transition veil. It places the real Sections
-   1–4 in one shared viewport. homeScroll.js then creates exactly one pinned
-   ScrollTrigger and uses one master timeline to move through all four scenes.
+   JavaScript adds .journey-preparing and then .journey-ready only on a
+   supported desktop viewport. Until then, the wrapper behaves like ordinary
+   document flow, so the mobile/reduced-motion fallback remains safe.
    ========================================================================== */
 
 :root {
   --journey-nav-height: 64px;
-  --journey-stage-height:
-    calc(100svh - var(--journey-nav-height));
+  --journey-stage-height: calc(100svh - var(--journey-nav-height));
 }
 
 html {
   scroll-behavior: auto;
 }
 
-/* The wrapper remains harmless natural-flow HTML until JavaScript enables it. */
 .home-journey-shell,
 .home-journey-stage {
   position: relative;
   width: 100%;
 }
 
-body.journey-preparing {
-  overflow: hidden;
-}
-
-body.journey-ready {
+body:is(.journey-preparing, .journey-ready) {
   overflow-x: clip;
 }
 
@@ -37,17 +31,15 @@ body:is(.journey-preparing, .journey-ready) nav {
   z-index: 10000 !important;
 }
 
-body:is(.journey-preparing, .journey-ready)
-.home-journey-shell {
+body:is(.journey-preparing, .journey-ready) .home-journey-shell {
   height: var(--journey-stage-height);
-  min-height: 760px;
+  min-height: 636px;
   margin: 0;
   padding: 0;
   isolation: isolate;
 }
 
-body:is(.journey-preparing, .journey-ready)
-.home-journey-stage {
+body:is(.journey-preparing, .journey-ready) .home-journey-stage {
   height: 100%;
   min-height: inherit;
   overflow: hidden;
@@ -69,15 +61,13 @@ body:is(.journey-preparing, .journey-ready)
   will-change: opacity, transform;
 }
 
-/* While Section 4 data is loading, show only the hero and prevent a flash. */
-body.journey-preparing
-.home-journey-stage > section {
+/* Hide every scene except the hero while the child timelines are prepared. */
+body.journey-preparing .home-journey-stage > section {
   opacity: 0;
   visibility: hidden;
 }
 
-body.journey-preparing
-.home-journey-stage > .hero {
+body.journey-preparing .home-journey-stage > .hero {
   z-index: 4;
   opacity: 1;
   visibility: visible;
@@ -99,7 +89,7 @@ body:is(.journey-preparing, .journey-ready)
   min-height: 0 !important;
 }
 
-/* The revised Section 1 file does not run its old observer in managed mode. */
+/* The master timeline replaces Section 1's old viewport-exit observer. */
 body:is(.journey-preparing, .journey-ready)
 .hero-left.hero-exiting,
 body:is(.journey-preparing, .journey-ready)
@@ -110,38 +100,32 @@ body:is(.journey-preparing, .journey-ready)
 
 /* --------------------------------------------------------------------------
    SECTION 2
-
-   The original Section 2 was designed as a separate long pinned section.
-   These overrides fit its existing header and evidence stage inside the one
-   shared viewport. The Section 2 content and internal timeline are preserved.
    -------------------------------------------------------------------------- */
 
 body:is(.journey-preparing, .journey-ready)
 #section-2-empty-shelf {
   padding:
-    clamp(2rem, 4.2vh, 3.7rem)
+    clamp(1.8rem, 4vh, 3.4rem)
     max(1.5rem, calc((100vw - 1220px) / 2 + 1.5rem))
-    clamp(0.8rem, 1.8vh, 1.4rem) !important;
+    clamp(0.7rem, 1.6vh, 1.25rem) !important;
 }
 
 body:is(.journey-preparing, .journey-ready)
 #section-2-empty-shelf .section-2-header {
-  margin-bottom: clamp(1.35rem, 2.8vh, 2.35rem);
+  margin-bottom: clamp(1.15rem, 2.5vh, 2.1rem);
 }
 
 body:is(.journey-preparing, .journey-ready)
-#section-2-empty-shelf.is-js-ready
-.stage-viewport {
-  min-height: clamp(520px, 62vh, 650px);
+#section-2-empty-shelf.is-js-ready .stage-viewport {
+  min-height: clamp(480px, 61vh, 650px);
 }
 
 body:is(.journey-preparing, .journey-ready)
-#section-2-empty-shelf.is-js-ready
-.scroll-stage {
+#section-2-empty-shelf.is-js-ready .scroll-stage {
   top: clamp(-92px, -6.8vh, -34px);
 }
 
-/* Section 2 creates fixed flying-button copies outside the section element. */
+/* Section 2 creates fixed flying-button copies outside the section. */
 body.journey-ready .depth-button-proxy {
   z-index: 9500;
 }
@@ -154,23 +138,20 @@ body:is(.journey-preparing, .journey-ready)
 #section-3-library-flow {
   height: 100% !important;
   min-height: 0 !important;
-
   padding:
-    clamp(1.5rem, 3.5vh, 3rem)
+    clamp(1.35rem, 3.2vh, 2.8rem)
     clamp(1.25rem, 4.25vw, 4.75rem)
-    clamp(1.25rem, 2.8vh, 2.4rem) !important;
+    clamp(1.1rem, 2.5vh, 2.2rem) !important;
 }
 
 body:is(.journey-preparing, .journey-ready)
 #section-3-library-flow .flow-grid {
   height: 100%;
   min-height: 0;
-
   grid-template-rows:
-    minmax(250px, 0.82fr)
-    minmax(300px, 1fr);
-
-  row-gap: clamp(1rem, 2vh, 1.8rem);
+    minmax(235px, 0.8fr)
+    minmax(285px, 1fr);
+  row-gap: clamp(0.9rem, 1.8vh, 1.65rem);
 }
 
 body:is(.journey-preparing, .journey-ready)
@@ -196,10 +177,8 @@ body:is(.journey-preparing, .journey-ready)
    SECTION 4
    -------------------------------------------------------------------------- */
 
-body:is(.journey-preparing, .journey-ready)
-#section-4,
-body:is(.journey-preparing, .journey-ready)
-#section-4 .s4-stage {
+body:is(.journey-preparing, .journey-ready) #section-4,
+body:is(.journey-preparing, .journey-ready) #section-4 .s4-stage {
   width: 100%;
   height: 100% !important;
   min-height: 0 !important;
@@ -209,7 +188,7 @@ body:is(.journey-preparing, .journey-ready)
    NATURAL FALLBACK
    -------------------------------------------------------------------------- */
 
-@media (max-width: 1099px), (max-height: 819px) {
+@media (max-width: 1099px), (max-height: 699px) {
   .home-journey-shell,
   .home-journey-stage {
     height: auto;
@@ -219,10 +198,6 @@ body:is(.journey-preparing, .journey-ready)
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-
   .home-journey-shell,
   .home-journey-stage {
     height: auto;

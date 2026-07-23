@@ -2749,7 +2749,7 @@
 
     if (MANAGED_BY_HOME_JOURNEY) {
       const canAnimate = window.matchMedia(
-        "(min-width: 1100px) and (min-height: 820px) and " +
+        "(min-width: 1100px) and (min-height: 700px) and " +
         "(prefers-reduced-motion: no-preference)"
       ).matches;
 
