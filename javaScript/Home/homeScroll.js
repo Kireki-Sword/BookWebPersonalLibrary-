@@ -24,7 +24,7 @@
   "use strict";
 
   window.__INKWELL_HOME_SCROLL_BUILD__ =
-    "2026-07-24-interaction-v8-section-rail";
+    "2026-07-24-interaction-v10-transparent-rail";
 
   const DESKTOP_QUERY =
     "(min-width: 1100px) and (min-height: 700px) and " +
@@ -205,6 +205,8 @@
     window.InkwellHomeJourney = {
       refresh: () => refreshJourney(section2Api, section4Api),
       destroy: () => destroy(elements, section2Api, section4Api),
+      openSection2Layer: (key) =>
+        scrollToSection2Layer(section2Api, key),
       debug: () => ({
         managedMode: window.__INKWELL_MASTER_JOURNEY__ === true,
         masterReady: Boolean(state.master),
@@ -1162,8 +1164,14 @@
       hero.dataset.journeyGeneratedId = "true";
     }
 
-    const nav = document.createElement("nav");
+    /*
+     * Use a neutral div with a navigation role instead of a second <nav>.
+     * The project styles the site header with broad `nav` selectors; using a
+     * div prevents those rules from forcing this rail into the top-right header.
+     */
+    const nav = document.createElement("div");
     nav.className = "journey-section-rail";
+    nav.setAttribute("role", "navigation");
     nav.setAttribute("aria-label", "Homepage story sections");
     nav.dataset.journeySectionRail = "true";
 
@@ -1260,21 +1268,22 @@
   }
 
   function layoutJourneyNavigator() {
-    const master = state.master;
-
-    if (!master || !state.journeyButtons.length) {
+    if (!state.master || !state.journeyButtons.length) {
       return;
     }
 
-    const duration = Math.max(master.duration(), 0.0001);
+    const lastIndex = Math.max(state.journeyButtons.length - 1, 1);
 
-    state.journeyButtons.forEach(({ item, stop }) => {
-      const labelTime = master.labels[stop.timelineLabel];
-      const progress = Number.isFinite(labelTime)
-        ? state.gsap.utils.clamp(0, 1, labelTime / duration)
-        : 0;
-
-      item.style.setProperty("--journey-stop-progress", String(progress));
+    /*
+     * Section dots are evenly spaced. Timeline sections have very different
+     * durations, so plotting raw timeline percentages made the first dots
+     * bunch together and looked like a broken scrollbar.
+     */
+    state.journeyButtons.forEach(({ item }, index) => {
+      item.style.setProperty(
+        "--journey-stop-progress",
+        String(index / lastIndex),
+      );
     });
   }
 
@@ -1283,7 +1292,7 @@
       return;
     }
 
-    const clampedProgress = state.gsap.utils.clamp(0, 1, progress || 0);
+    const clampedProgress = getJourneyVisualProgress(currentTime);
     state.journeyNav.style.setProperty(
       "--journey-progress",
       String(clampedProgress),
@@ -1304,6 +1313,41 @@
         button.removeAttribute("aria-current");
       }
     });
+  }
+
+  function getJourneyVisualProgress(currentTime) {
+    const master = state.master;
+    const buttons = state.journeyButtons;
+
+    if (!master || buttons.length < 2) {
+      return state.gsap.utils.clamp(0, 1, master?.progress?.() || 0);
+    }
+
+    const times = buttons.map(({ stop }) => {
+      return master.labels[stop.timelineLabel] ?? 0;
+    });
+    const lastIndex = buttons.length - 1;
+
+    if (currentTime <= times[0]) {
+      return 0;
+    }
+
+    for (let index = 0; index < lastIndex; index += 1) {
+      const start = times[index];
+      const end = times[index + 1];
+
+      if (currentTime <= end) {
+        const segmentProgress = state.gsap.utils.clamp(
+          0,
+          1,
+          (currentTime - start) / Math.max(end - start, 0.0001),
+        );
+
+        return (index + segmentProgress) / lastIndex;
+      }
+    }
+
+    return 1;
   }
 
   function getJourneyStopScrollPosition(timelineLabel) {
@@ -1388,6 +1432,65 @@
     });
 
     window.setTimeout(finish, reduceMotion ? 0 : 900);
+  }
+
+  function scrollToSection2Layer(section2Api, key) {
+    const childTimeline = section2Api?.timeline;
+    const localTime = Number(section2Api?.getLayerTargetTime?.(key));
+
+    if (!childTimeline || !Number.isFinite(localTime)) {
+      return false;
+    }
+
+    const childScale = Math.max(Math.abs(childTimeline.timeScale()), 0.0001);
+    const masterTime =
+      childTimeline.startTime() + localTime / childScale;
+    const master = state.master;
+    const trigger = state.trigger;
+
+    if (!master || !trigger) {
+      return false;
+    }
+
+    const progress = state.gsap.utils.clamp(
+      0,
+      1,
+      masterTime / Math.max(master.duration(), 0.0001),
+    );
+    const target =
+      trigger.start + (trigger.end - trigger.start) * progress;
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    state.scrollTween?.kill();
+    state.scrollTween = null;
+    document.body.classList.add("journey-section-jumping");
+
+    const finish = () => {
+      state.scrollTween = null;
+      document.body.classList.remove("journey-section-jumping");
+      trigger.update();
+    };
+
+    if (state.ScrollToPlugin) {
+      state.scrollTween = state.gsap.to(window, {
+        duration: reduceMotion ? 0 : 0.78,
+        ease: reduceMotion ? "none" : "power3.inOut",
+        overwrite: "auto",
+        scrollTo: { y: target, autoKill: true },
+        onComplete: finish,
+        onInterrupt: finish,
+      });
+    } else {
+      window.scrollTo({
+        top: target,
+        behavior: reduceMotion ? "auto" : "smooth",
+      });
+      window.setTimeout(finish, reduceMotion ? 0 : 800);
+    }
+
+    return true;
   }
 
   function teardownJourneyNavigator() {

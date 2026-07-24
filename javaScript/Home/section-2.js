@@ -21,7 +21,7 @@
   }
 
   window.__INKWELL_SECTION2_BUILD__ =
-    "2026-07-24-interaction-v7";
+    "2026-07-24-interaction-v10-layer-reopen";
 
   const { gsap, ScrollTrigger } = window;
 
@@ -212,6 +212,7 @@
 
         proxy: null,
         startTime: null,
+        openTime: null,
         landTime: null,
         endTime: null
       };
@@ -241,6 +242,7 @@
 
     createButtonProxies();
     enableEvidenceInteractions();
+    bindLayerButtons();
     setupReflectionDialog();
     applyManagedLayoutMetrics();
     setInitialState();
@@ -285,6 +287,12 @@
           timeline.invalidate();
           syncTimelineState(timeline);
         }
+      },
+      getLayerTargetTime: (key) => {
+        const layer = layers.find((item) => item.key === key);
+        return Number.isFinite(layer?.openTime)
+          ? layer.openTime
+          : null;
       }
     };
 
@@ -589,6 +597,80 @@
   }
 
   /* ==========================================================================
+     SAVED-LAYER BUTTONS
+
+     Once a layer has landed in the persistent card, selecting its button
+     returns the scroll journey to the moment where that evidence is fully
+     open. The master homepage owns scrolling in managed mode; the standalone
+     Section 2 ScrollTrigger handles the same behavior outside the homepage.
+     ========================================================================== */
+
+  function bindLayerButtons() {
+    layers.forEach((layer) => {
+      if (!layer.button || layer.button.dataset.s2LayerBound === "true") {
+        return;
+      }
+
+      layer.button.dataset.s2LayerBound = "true";
+      layer.button.setAttribute(
+        "aria-label",
+        `Open saved ${layer.label.toLowerCase()}`,
+      );
+
+      layer.button.addEventListener("click", () => {
+        openSavedLayer(layer);
+      });
+    });
+  }
+
+  function openSavedLayer(layer) {
+    if (!layer || !Number.isFinite(layer.openTime)) {
+      return;
+    }
+
+    resetEvidenceInteractions();
+    updateStatus(`${layer.label} reopened.`);
+
+    if (MANAGED_BY_HOME_JOURNEY) {
+      window.InkwellHomeJourney?.openSection2Layer?.(layer.key);
+      return;
+    }
+
+    const trigger = masterTimeline?.scrollTrigger;
+
+    if (!trigger || !masterTimeline) {
+      masterTimeline?.pause(layer.openTime);
+      syncTimelineState(masterTimeline);
+      return;
+    }
+
+    const progress = gsap.utils.clamp(
+      0,
+      1,
+      layer.openTime / Math.max(masterTimeline.duration(), 0.0001),
+    );
+    const target = trigger.start + (trigger.end - trigger.start) * progress;
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    if (window.ScrollToPlugin) {
+      gsap.to(window, {
+        duration: reduceMotion ? 0 : 0.72,
+        ease: reduceMotion ? "none" : "power3.inOut",
+        overwrite: "auto",
+        scrollTo: { y: target, autoKill: true },
+      });
+      return;
+    }
+
+    window.scrollTo({
+      top: target,
+      behavior: reduceMotion ? "auto" : "smooth",
+    });
+  }
+
+  /* ==========================================================================
      BUTTON PROXIES
      ========================================================================== */
 
@@ -796,14 +878,14 @@
     );
 
     const thoughtHeight = clampValue(
-      Math.min(evidenceHeight * 0.72, 318),
-      248,
-      318
+      Math.min(evidenceHeight * 0.94, 432),
+      352,
+      432
     );
 
     const thoughtTop = evidenceTop + Math.max(
-      18,
-      (evidenceHeight - thoughtHeight) * 0.34
+      6,
+      (evidenceHeight - thoughtHeight) * 0.5
     );
 
     section.style.setProperty(
@@ -1198,6 +1280,13 @@
       getEvidenceEnterTo(layer),
       "<"
     );
+
+    timeline.addLabel(
+      `${layer.key}-open`
+    );
+
+    layer.openTime =
+      timeline.duration();
 
     timeline.to(
       {},

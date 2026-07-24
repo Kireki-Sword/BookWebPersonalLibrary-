@@ -2,7 +2,7 @@
   "use strict";
 
   window.__INKWELL_SECTION4_BUILD__ =
-    "2026-07-24-interaction-v7";
+    "2026-07-24-interaction-v10-handoff";
 
   const SUPABASE_URL = "https://hsruxfpslxguhwnccwuj.supabase.co";
 
@@ -556,6 +556,12 @@
       sharedCard: section.querySelector("[data-shared-card]"),
 
       cardCover: section.querySelector("[data-card-cover]"),
+
+      cardBaseContent: [
+        ...section.querySelectorAll(
+          ".s4-card-info, .s4-card-score, .s4-card-meta",
+        ),
+      ],
 
       cardLayers: section.querySelector("[data-card-layers]"),
 
@@ -3370,22 +3376,29 @@
      * the shared card is revealed. This is separate from the later card-dock
      * slowdown, so the exact merge the user sees is no longer compressed.
      */
-    const MERGE_SEQUENCE_SLOWDOWN = 2.15;
+    /*
+     * The previous build felt too slow. This keeps the chosen covers readable
+     * while making the meeting and card handoff noticeably quicker.
+     */
+    const MERGE_SEQUENCE_SLOWDOWN = 1.72;
     const centreTravelDuration = 0.68 * MERGE_SEQUENCE_SLOWDOWN;
-    const mergeBreathingRoom = 0.42;
-    const cardRevealTime =
-      centreTime + centreTravelDuration + mergeBreathingRoom;
 
     /*
-     * Slow only the second half of Section 4. The rain and two-cover meeting
-     * keep their current pace; once the two chosen covers resolve into the one
-     * shared story card, every following offset and tween is stretched.
-     *
-     * 1.8 means the handoff/dock/reader reveal uses 80% more timeline time.
-     * Because homeScroll.js maps master-timeline duration to scroll distance,
-     * this also gives that phase more wheel/trackpad travel in managed mode.
+     * The centre caption gets its own beat, then fades completely before the
+     * cover begins moving into the shared card. This prevents text from
+     * sitting underneath the moving cover.
      */
-    const POST_MERGE_SLOWDOWN = 2.35;
+    const selectionCopyFadeDuration = 0.24;
+    const selectionCopyFadeTime =
+      centreTime + centreTravelDuration + 0.16;
+    const cardRevealTime =
+      selectionCopyFadeTime + selectionCopyFadeDuration + 0.1;
+
+    /*
+     * A moderate slowdown remains after the merge, but it is faster than V4.
+     * This affects the cover handoff, card docking and comparison reveal.
+     */
+    const POST_MERGE_SLOWDOWN = 1.92;
 
     const postMergeDuration = (duration) => {
       return duration * POST_MERGE_SLOWDOWN;
@@ -3542,6 +3555,11 @@
 
     gsap.set(elements.cardCover, {
       autoAlpha: 0,
+    });
+
+    gsap.set(elements.cardBaseContent, {
+      autoAlpha: 0,
+      y: 8,
     });
 
     gsap.set(elements.handoff, {
@@ -3993,19 +4011,20 @@
         duration: 0.22,
       },
 
-      centreTime + centreTravelDuration * 0.58,
+      centreTime + centreTravelDuration * 0.52,
     );
 
-    timeline.set(
-      elements.sharedCardWrap,
+    timeline.to(
+      elements.selectionCopy,
 
       {
-        autoAlpha: 1,
-
-        scale: 1.03,
+        autoAlpha: 0,
+        y: -8,
+        duration: selectionCopyFadeDuration,
+        ease: "power2.inOut",
       },
 
-      cardRevealTime,
+      selectionCopyFadeTime,
     );
 
     timeline.set(
@@ -4079,20 +4098,6 @@
     );
 
     timeline.to(
-      elements.selectionCopy,
-
-      {
-        autoAlpha: 0,
-
-        y: -8,
-
-        duration: postMergeDuration(0.16),
-      },
-
-      cardRevealTime - postMergeDuration(0.05),
-    );
-
-    timeline.to(
       elements.handoff,
 
       {
@@ -4152,6 +4157,20 @@
       handoffEndTime - postMergeDuration(0.14),
     );
 
+    /*
+     * Keep the shared card completely hidden while the cover is travelling.
+     * It appears only when the cover has reached its destination, so there is
+     * no translucent duplicate card or text visible behind the handoff.
+     */
+    timeline.set(
+      elements.sharedCardWrap,
+      {
+        autoAlpha: 1,
+        scale: 1.03,
+      },
+      handoffEndTime - postMergeDuration(0.025),
+    );
+
     timeline.to(
       elements.cardCover,
 
@@ -4161,7 +4180,7 @@
         duration: postMergeDuration(0.08),
       },
 
-      handoffEndTime - postMergeDuration(0.07),
+      handoffEndTime - postMergeDuration(0.035),
     );
 
     timeline.to(
@@ -4173,7 +4192,19 @@
         duration: postMergeDuration(0.08),
       },
 
-      handoffEndTime - postMergeDuration(0.04),
+      handoffEndTime - postMergeDuration(0.02),
+    );
+
+    timeline.to(
+      elements.cardBaseContent,
+      {
+        autoAlpha: 1,
+        y: 0,
+        duration: postMergeDuration(0.16),
+        stagger: postMergeDuration(0.025),
+        ease: "power2.out",
+      },
+      handoffEndTime + postMergeDuration(0.035),
     );
 
     timeline.to(
@@ -4327,6 +4358,7 @@
           elements.selectionCopy,
           elements.sharedCardWrap,
           elements.cardCover,
+          ...elements.cardBaseContent,
           elements.handoff,
           elements.cardLayers,
           elements.contentIntro,
@@ -4469,6 +4501,12 @@
       elements.cardCover.style.visibility =
         "visible";
     }
+
+    elements?.cardBaseContent?.forEach((item) => {
+      item.style.opacity = "1";
+      item.style.visibility = "visible";
+      item.style.transform = "none";
+    });
 
     if (elements?.sharedCardWrap) {
       elements.sharedCardWrap.style.pointerEvents =
