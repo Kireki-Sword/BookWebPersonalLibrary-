@@ -4236,3 +4236,161 @@ img {
   filter: none !important;
   outline: none !important;
 }
+
+
+/* ========================================================================== 
+   SECTION 2 — FINAL QUOTE, REFLECTION, AND LAYER-JUMP POLISH (V11)
+   ========================================================================== */
+
+/* Quotes keep their exact GSAP position. Hover only illuminates the selected
+   quote's own frame; it never scales or moves the masonry layout. */
+#section-2-empty-shelf .falling-quote {
+  cursor: pointer !important;
+  transition:
+    border-color 170ms ease,
+    box-shadow 220ms ease,
+    background 220ms ease,
+    color 170ms ease !important;
+}
+
+#section-2-empty-shelf .falling-quote::after {
+  content: "" !important;
+  display: block !important;
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 30 !important;
+  box-sizing: border-box !important;
+  border: 2px solid transparent !important;
+  border-radius: inherit !important;
+  pointer-events: none !important;
+  opacity: 0 !important;
+  box-shadow: none !important;
+  transition:
+    opacity 150ms ease,
+    border-color 150ms ease,
+    box-shadow 210ms ease !important;
+}
+
+#section-2-empty-shelf .falling-quote:is(
+  :hover,
+  :focus-visible,
+  .is-interacting
+) {
+  z-index: 20000 !important;
+  color: var(--s2-text-primary) !important;
+  border-color: rgba(183, 229, 255, 0.96) !important;
+  outline: none !important;
+  background:
+    radial-gradient(
+      circle at 14% 0%,
+      rgba(121, 217, 255, 0.16),
+      transparent 36%
+    ),
+    radial-gradient(
+      circle at 90% 100%,
+      rgba(159, 131, 255, 0.13),
+      transparent 44%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(22, 29, 52, 0.995),
+      rgba(8, 13, 29, 0.995)
+    ) !important;
+  box-shadow:
+    0 24px 58px rgba(0, 0, 0, 0.48),
+    0 0 0 1px rgba(121, 217, 255, 0.28),
+    0 0 18px rgba(121, 217, 255, 0.44),
+    0 0 44px rgba(114, 140, 255, 0.26),
+    inset 0 0 24px rgba(114, 140, 255, 0.09),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16) !important;
+}
+
+#section-2-empty-shelf .falling-quote:is(
+  :hover,
+  :focus-visible,
+  .is-interacting
+)::after {
+  opacity: 1 !important;
+  border-color: rgba(132, 223, 255, 0.98) !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.14),
+    0 0 15px rgba(121, 217, 255, 0.5),
+    0 0 34px rgba(114, 140, 255, 0.28) !important;
+}
+
+#section-2-empty-shelf .falling-quote:is(
+  :hover,
+  :focus-visible,
+  .is-interacting
+) .quote-emphasis {
+  color: #ffffff !important;
+}
+
+/* The previous .thoughts-cloud layout retained a two-column template. Force
+   the essay into one vertical reading column and use the full stage height. */
+#section-2-empty-shelf .s2-reflection-card {
+  grid-template-columns: minmax(0, 1fr) !important;
+  grid-template-rows: auto auto minmax(0, 1fr) auto !important;
+  width: min(980px, 84vw) !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  padding:
+    clamp(1.45rem, 2.2vw, 2rem)
+    clamp(1.5rem, 2.4vw, 2.2rem)
+    clamp(1.25rem, 1.9vw, 1.7rem) !important;
+}
+
+#section-2-empty-shelf .s2-reflection-card > * {
+  grid-column: 1 !important;
+  min-width: 0;
+}
+
+#section-2-empty-shelf .s2-reflection-eyebrow {
+  grid-row: 1;
+}
+
+#section-2-empty-shelf .s2-reflection-card h3 {
+  grid-row: 2;
+  width: min(820px, 100%);
+  max-width: none;
+  margin-top: 0.1rem;
+  font-size: clamp(1.65rem, 2.45vw, 2.3rem);
+}
+
+#section-2-empty-shelf .s2-reflection-preview {
+  grid-row: 3;
+  width: 100%;
+  max-width: none;
+  min-height: 0;
+  max-height: none !important;
+  margin-top: 1rem;
+  padding: 0 0.35rem 1.7rem 0;
+  overflow: hidden;
+  font-size: clamp(0.88rem, 0.31vw + 0.8rem, 0.99rem);
+  line-height: 1.64;
+}
+
+#section-2-empty-shelf .s2-reflection-preview::after {
+  height: 54px;
+}
+
+#section-2-empty-shelf .s2-read-reflection {
+  grid-row: 4;
+  align-self: end;
+  justify-self: end;
+  margin: 0.9rem 0 0 auto;
+}
+
+/* During programmatic layer changes the evidence viewport fades as one unit,
+   hiding intermediate timeline states while the playhead is repositioned. */
+body.journey-scene-transitioning #section-2-empty-shelf .stage-viewport {
+  pointer-events: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #section-2-empty-shelf .falling-quote,
+  #section-2-empty-shelf .falling-quote::after {
+    transition: none !important;
+  }
+}

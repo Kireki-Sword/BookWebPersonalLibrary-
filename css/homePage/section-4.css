@@ -6798,3 +6798,19 @@ body.s4-modal-open {
     animation: none !important;
   }
 }
+
+/* ========================================================================== 
+   SECTION 4 — SINGLE-COVER HANDOFF POLISH (V11)
+   ========================================================================== */
+
+/* Keep the empty destination card legible while the one handoff cover moves
+   into place, but do not reveal its cover image or metadata early. */
+#section-4 .s4-shared-card-wrap {
+  will-change: top, transform, opacity;
+}
+
+#section-4 .s4-cover-handoff {
+  z-index: 46;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}

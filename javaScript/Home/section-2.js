@@ -21,7 +21,7 @@
   }
 
   window.__INKWELL_SECTION2_BUILD__ =
-    "2026-07-24-interaction-v10-layer-reopen";
+    "2026-07-24-interaction-v11-layer-jumps";
 
   const { gsap, ScrollTrigger } = window;
 
@@ -654,20 +654,35 @@
       "(prefers-reduced-motion: reduce)",
     ).matches;
 
-    if (window.ScrollToPlugin) {
-      gsap.to(window, {
-        duration: reduceMotion ? 0 : 0.72,
-        ease: reduceMotion ? "none" : "power3.inOut",
-        overwrite: "auto",
-        scrollTo: { y: target, autoKill: true },
+    const viewport = elements.viewport;
+    const finishJump = () => {
+      window.scrollTo({
+        top: target,
+        behavior: "auto",
       });
+      ScrollTrigger.update();
+      trigger.getTween?.()?.progress(1);
+      trigger.update?.();
+      syncTimelineState(masterTimeline);
+    };
+
+    if (reduceMotion || !viewport) {
+      finishJump();
       return;
     }
 
-    window.scrollTo({
-      top: target,
-      behavior: reduceMotion ? "auto" : "smooth",
-    });
+    gsap.timeline({ defaults: { overwrite: "auto" } })
+      .to(viewport, {
+        autoAlpha: 0,
+        duration: 0.16,
+        ease: "power2.in",
+      })
+      .add(finishJump)
+      .to(viewport, {
+        autoAlpha: 1,
+        duration: 0.32,
+        ease: "power3.out",
+      });
   }
 
   /* ==========================================================================
@@ -877,14 +892,14 @@
       466
     );
 
-    const thoughtHeight = clampValue(
-      Math.min(evidenceHeight * 0.94, 432),
-      352,
-      432
+    /* Give the reflection the complete available evidence zone. */
+    const thoughtHeight = Math.min(
+      evidenceHeight,
+      456
     );
 
     const thoughtTop = evidenceTop + Math.max(
-      6,
+      0,
       (evidenceHeight - thoughtHeight) * 0.5
     );
 

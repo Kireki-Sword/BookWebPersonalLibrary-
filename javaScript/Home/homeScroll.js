@@ -24,7 +24,7 @@
   "use strict";
 
   window.__INKWELL_HOME_SCROLL_BUILD__ =
-    "2026-07-24-interaction-v10-transparent-rail";
+    "2026-07-24-interaction-v11-scene-jumps";
 
   const DESKTOP_QUERY =
     "(min-width: 1100px) and (min-height: 700px) and " +
@@ -76,7 +76,8 @@
     },
   ]);
 
-  const JOURNEY_JUMP_DURATION = 0.9;
+  const JOURNEY_TRANSITION_OUT = 0.18;
+  const JOURNEY_TRANSITION_IN = 0.38;
 
   const SELECTORS = {
     nav: "nav",
@@ -1383,55 +1384,135 @@
     return Math.round(state.gsap.utils.clamp(0, maxScroll, target + 1));
   }
 
-  function scrollToJourneyStop(stop, index) {
-    const target = getJourneyStopScrollPosition(stop.timelineLabel);
+  function forceJourneyScrollPosition(target) {
+    const trigger = state.trigger;
+    const maximumScroll = Math.max(
+      0,
+      document.documentElement.scrollHeight - window.innerHeight,
+    );
+    const clampedTarget = Math.round(
+      state.gsap.utils.clamp(0, maximumScroll, target),
+    );
+
+    window.scrollTo({
+      top: clampedTarget,
+      left: 0,
+      behavior: "auto",
+    });
+
+    /*
+     * A numeric scrub creates a catch-up tween. Force that tween to its end so
+     * a direct chapter jump does not visibly race through every intermediate
+     * scene after the page position changes.
+     */
+    trigger?.update();
+    trigger?.getTween?.()?.progress(1);
+    trigger?.update();
+    syncActiveScene();
+
+    return clampedTarget;
+  }
+
+  function transitionToJourneyPosition({
+    target,
+    startMessage = "Moving to the selected section.",
+    endMessage = "Selected section opened.",
+  }) {
+    const stage = state.stage || document.querySelector(SELECTORS.stage);
     const reduceMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
+    const token = state.transitionToken + 1;
 
+    state.transitionToken = token;
     state.scrollTween?.kill();
     state.scrollTween = null;
+    state.transitionTimeline?.kill();
+    state.transitionTimeline = null;
 
-    document.body.classList.add("journey-section-jumping");
+    document.body.classList.add(
+      "journey-section-jumping",
+      "journey-scene-transitioning",
+    );
 
     if (state.journeyStatus) {
-      state.journeyStatus.textContent =
-        `Moving to section ${index + 1}: ${stop.title}.`;
+      state.journeyStatus.textContent = startMessage;
     }
 
     const finish = () => {
-      state.scrollTween = null;
-      document.body.classList.remove("journey-section-jumping");
+      if (token !== state.transitionToken) {
+        return;
+      }
+
+      state.transitionTimeline = null;
+      document.body.classList.remove(
+        "journey-section-jumping",
+        "journey-scene-transitioning",
+      );
+
+      if (stage) {
+        state.gsap.set(stage, {
+          autoAlpha: 1,
+          scale: 1,
+          clearProps: "filter",
+        });
+      }
+
       state.trigger?.update();
+      state.trigger?.getTween?.()?.progress(1);
+      syncActiveScene();
 
       if (state.journeyStatus) {
-        state.journeyStatus.textContent =
-          `Section ${index + 1}: ${stop.title}.`;
+        state.journeyStatus.textContent = endMessage;
       }
     };
 
-    if (state.ScrollToPlugin) {
-      state.scrollTween = state.gsap.to(window, {
-        duration: reduceMotion ? 0 : JOURNEY_JUMP_DURATION,
-        ease: reduceMotion ? "none" : "power3.inOut",
-        overwrite: "auto",
-        scrollTo: {
-          y: target,
-          autoKill: true,
-        },
-        onComplete: finish,
-        onInterrupt: finish,
-      });
+    if (reduceMotion || !stage) {
+      forceJourneyScrollPosition(target);
+      finish();
       return;
     }
 
-    window.scrollTo({
-      top: target,
-      left: 0,
-      behavior: reduceMotion ? "auto" : "smooth",
+    state.transitionTimeline = state.gsap.timeline({
+      defaults: { overwrite: "auto" },
+      onComplete: finish,
+      onInterrupt: finish,
     });
 
-    window.setTimeout(finish, reduceMotion ? 0 : 900);
+    state.transitionTimeline
+      .to(stage, {
+        autoAlpha: 0,
+        scale: 0.994,
+        filter: "blur(2px)",
+        duration: JOURNEY_TRANSITION_OUT,
+        ease: "power2.in",
+      })
+      .add(() => {
+        forceJourneyScrollPosition(target);
+        state.gsap.set(stage, {
+          scale: 1.006,
+          filter: "blur(2px)",
+        });
+      })
+      .to(stage, {
+        autoAlpha: 1,
+        scale: 1,
+        filter: "blur(0px)",
+        duration: JOURNEY_TRANSITION_IN,
+        ease: "power3.out",
+      });
+  }
+
+  function scrollToJourneyStop(stop, index) {
+    const target = getJourneyStopScrollPosition(stop.timelineLabel);
+
+    transitionToJourneyPosition({
+      target,
+      startMessage:
+        `Moving to section ${index + 1}: ${stop.title}.`,
+      endMessage:
+        `Section ${index + 1}: ${stop.title}.`,
+    });
   }
 
   function scrollToSection2Layer(section2Api, key) {
@@ -1443,8 +1524,7 @@
     }
 
     const childScale = Math.max(Math.abs(childTimeline.timeScale()), 0.0001);
-    const masterTime =
-      childTimeline.startTime() + localTime / childScale;
+    const masterTime = childTimeline.startTime() + localTime / childScale;
     const master = state.master;
     const trigger = state.trigger;
 
@@ -1457,38 +1537,14 @@
       1,
       masterTime / Math.max(master.duration(), 0.0001),
     );
-    const target =
-      trigger.start + (trigger.end - trigger.start) * progress;
-    const reduceMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
+    const target = trigger.start + (trigger.end - trigger.start) * progress;
+    const layerName = String(key || "saved layer").replace(/-/g, " ");
 
-    state.scrollTween?.kill();
-    state.scrollTween = null;
-    document.body.classList.add("journey-section-jumping");
-
-    const finish = () => {
-      state.scrollTween = null;
-      document.body.classList.remove("journey-section-jumping");
-      trigger.update();
-    };
-
-    if (state.ScrollToPlugin) {
-      state.scrollTween = state.gsap.to(window, {
-        duration: reduceMotion ? 0 : 0.78,
-        ease: reduceMotion ? "none" : "power3.inOut",
-        overwrite: "auto",
-        scrollTo: { y: target, autoKill: true },
-        onComplete: finish,
-        onInterrupt: finish,
-      });
-    } else {
-      window.scrollTo({
-        top: target,
-        behavior: reduceMotion ? "auto" : "smooth",
-      });
-      window.setTimeout(finish, reduceMotion ? 0 : 800);
-    }
+    transitionToJourneyPosition({
+      target,
+      startMessage: `Opening ${layerName}.`,
+      endMessage: `${layerName} opened.`,
+    });
 
     return true;
   }
@@ -1496,6 +1552,17 @@
   function teardownJourneyNavigator() {
     state.scrollTween?.kill();
     state.scrollTween = null;
+    state.transitionTimeline?.kill();
+    state.transitionTimeline = null;
+    state.transitionToken += 1;
+
+    if (state.stage) {
+      state.gsap.set(state.stage, {
+        autoAlpha: 1,
+        scale: 1,
+        clearProps: "filter",
+      });
+    }
 
     state.journeyNav?.remove();
     state.journeyNav = null;
@@ -1506,6 +1573,7 @@
     document.body?.classList.remove(
       "journey-section-rail-ready",
       "journey-section-jumping",
+      "journey-scene-transitioning",
     );
   }
 

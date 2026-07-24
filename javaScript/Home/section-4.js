@@ -2,7 +2,7 @@
   "use strict";
 
   window.__INKWELL_SECTION4_BUILD__ =
-    "2026-07-24-interaction-v10-handoff";
+    "2026-07-24-interaction-v11-single-cover-handoff";
 
   const SUPABASE_URL = "https://hsruxfpslxguhwnccwuj.supabase.co";
 
@@ -3380,7 +3380,7 @@
      * The previous build felt too slow. This keeps the chosen covers readable
      * while making the meeting and card handoff noticeably quicker.
      */
-    const MERGE_SEQUENCE_SLOWDOWN = 1.72;
+    const MERGE_SEQUENCE_SLOWDOWN = 1.58;
     const centreTravelDuration = 0.68 * MERGE_SEQUENCE_SLOWDOWN;
 
     /*
@@ -3398,7 +3398,7 @@
      * A moderate slowdown remains after the merge, but it is faster than V4.
      * This affects the cover handoff, card docking and comparison reveal.
      */
-    const POST_MERGE_SLOWDOWN = 1.92;
+    const POST_MERGE_SLOWDOWN = 1.78;
 
     const postMergeDuration = (duration) => {
       return duration * POST_MERGE_SLOWDOWN;
@@ -4027,172 +4027,101 @@
       selectionCopyFadeTime,
     );
 
+    /*
+     * The caption must be fully gone before the image handoff begins. A final
+     * set avoids a half-visible caption when the numeric scrub is catching up.
+     */
     timeline.set(
-      elements.handoff,
-
-      {
-        autoAlpha: 1,
-
-        x: () => {
-          return getRelativeRect(
-            chosenLeft,
-            elements.stage,
-          ).left;
-        },
-
-        y: () => {
-          return getRelativeRect(
-            chosenLeft,
-            elements.stage,
-          ).top;
-        },
-
-        width: () => {
-          return getRelativeRect(
-            chosenLeft,
-            elements.stage,
-          ).width;
-        },
-
-        height: () => {
-          return getRelativeRect(
-            chosenLeft,
-            elements.stage,
-          ).height;
-        },
-
-        borderRadius: "14px",
-
-        rotation: 0,
-      },
-
-      cardRevealTime,
-    );
-
-    timeline.to(
-      chosenRight,
-
+      elements.selectionCopy,
       {
         autoAlpha: 0,
-
-        scale: 0.72,
-
-        duration: postMergeDuration(0.24),
-
-        ease: "power2.in",
+        visibility: "hidden",
       },
-
-      cardRevealTime - 0.12,
-    );
-
-    timeline.to(
-      chosenLeft,
-
-      {
-        autoAlpha: 0,
-
-        duration: postMergeDuration(0.08),
-      },
-
-      cardRevealTime + postMergeDuration(0.03),
-    );
-
-    timeline.to(
-      elements.handoff,
-
-      {
-        x: () => {
-          return getRelativeRect(
-            elements.cardCover,
-            elements.stage,
-          ).left;
-        },
-
-        y: () => {
-          return getRelativeRect(
-            elements.cardCover,
-            elements.stage,
-          ).top;
-        },
-
-        width: () => {
-          return getRelativeRect(
-            elements.cardCover,
-            elements.stage,
-          ).width;
-        },
-
-        height: () => {
-          return getRelativeRect(
-            elements.cardCover,
-            elements.stage,
-          ).height;
-        },
-
-        borderRadius: "13px",
-
-        rotation: -1.2,
-
-        duration:
-          handoffEndTime -
-          cardRevealTime,
-
-        ease: "back.out(1.75)",
-      },
-
-      cardRevealTime,
-    );
-
-    timeline.to(
-      elements.handoff,
-
-      {
-        rotation: 0,
-
-        duration: postMergeDuration(0.14),
-
-        ease: "power2.out",
-      },
-
-      handoffEndTime - postMergeDuration(0.14),
+      cardRevealTime - 0.02,
     );
 
     /*
-     * Keep the shared card completely hidden while the cover is travelling.
-     * It appears only when the cover has reached its destination, so there is
-     * no translucent duplicate card or text visible behind the handoff.
+     * Swap both rain cards for one handoff element on the same frame. The
+     * handoff inherits the left card's exact rectangle, so the viewer sees one
+     * cover continuing its journey instead of three overlapping copies.
      */
     timeline.set(
+      elements.handoff,
+      {
+        autoAlpha: 1,
+        x: () => getRelativeRect(chosenLeft, elements.stage).left,
+        y: () => getRelativeRect(chosenLeft, elements.stage).top,
+        width: () => getRelativeRect(chosenLeft, elements.stage).width,
+        height: () => getRelativeRect(chosenLeft, elements.stage).height,
+        borderRadius: "14px",
+        rotation: 0,
+      },
+      cardRevealTime,
+    );
+
+    timeline.set(
+      [chosenLeft, chosenRight],
+      {
+        autoAlpha: 0,
+        visibility: "hidden",
+      },
+      cardRevealTime,
+    );
+
+    /* Reveal the empty shared-card shell while the single cover travels. */
+    timeline.to(
       elements.sharedCardWrap,
       {
         autoAlpha: 1,
         scale: 1.03,
+        duration: postMergeDuration(0.14),
+        ease: "power2.out",
       },
-      handoffEndTime - postMergeDuration(0.025),
-    );
-
-    timeline.to(
-      elements.cardCover,
-
-      {
-        autoAlpha: 1,
-
-        duration: postMergeDuration(0.08),
-      },
-
-      handoffEndTime - postMergeDuration(0.035),
+      cardRevealTime,
     );
 
     timeline.to(
       elements.handoff,
+      {
+        x: () => getRelativeRect(elements.cardCover, elements.stage).left,
+        y: () => getRelativeRect(elements.cardCover, elements.stage).top,
+        width: () => getRelativeRect(elements.cardCover, elements.stage).width,
+        height: () => getRelativeRect(elements.cardCover, elements.stage).height,
+        borderRadius: "13px",
+        rotation: -1.2,
+        duration: handoffEndTime - cardRevealTime,
+        ease: "power3.inOut",
+      },
+      cardRevealTime,
+    );
 
+    timeline.to(
+      elements.handoff,
+      {
+        rotation: 0,
+        duration: postMergeDuration(0.12),
+        ease: "power2.out",
+      },
+      handoffEndTime - postMergeDuration(0.12),
+    );
+
+    /* The two identical covers crossfade only after occupying the same slot. */
+    timeline.to(
+      elements.cardCover,
+      {
+        autoAlpha: 1,
+        duration: postMergeDuration(0.06),
+      },
+      handoffEndTime - postMergeDuration(0.04),
+    );
+
+    timeline.to(
+      elements.handoff,
       {
         autoAlpha: 0,
-
-        duration: postMergeDuration(0.08),
+        duration: postMergeDuration(0.06),
       },
-
-      handoffEndTime - postMergeDuration(0.02),
+      handoffEndTime - postMergeDuration(0.04),
     );
 
     timeline.to(
@@ -4204,7 +4133,7 @@
         stagger: postMergeDuration(0.025),
         ease: "power2.out",
       },
-      handoffEndTime + postMergeDuration(0.035),
+      handoffEndTime + postMergeDuration(0.04),
     );
 
     timeline.to(
