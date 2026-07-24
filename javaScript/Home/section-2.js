@@ -20,6 +20,9 @@
     return;
   }
 
+  window.__INKWELL_SECTION2_BUILD__ =
+    "2026-07-24-real-fix-v4";
+
   const { gsap, ScrollTrigger } = window;
 
   const MANAGED_BY_HOME_JOURNEY =
@@ -232,24 +235,6 @@
    */
   let topLayerZ = 1000;
 
-  /*
-   * These selectors must be initialized before init() runs.
-   * setInitialState() calls resetEvidenceInteractions(), which uses
-   * evidenceSelector immediately. Keeping them above init() avoids the
-   * temporal-dead-zone ReferenceError that previously stopped Section 2.
-   */
-  const evidenceSelector =
-    ".falling-quote, " +
-    ".moment-frame, " +
-    ".character-name, " +
-    ".note-card, " +
-    ".thoughts-cloud";
-
-  const persistentEvidenceSelector =
-    ".moment-frame, .character-name";
-
-  init();
-
   /* ==========================================================================
      INITIALIZATION
      ========================================================================== */
@@ -326,6 +311,16 @@
      Moments and characters keep their newest z-index after the pointer leaves.
      Every evidence card removes only the temporary .is-interacting state.
      ========================================================================== */
+
+  const evidenceSelector =
+    ".falling-quote, " +
+    ".moment-frame, " +
+    ".character-name, " +
+    ".note-card, " +
+    ".thoughts-cloud";
+
+  const persistentEvidenceSelector =
+    ".moment-frame, .character-name";
 
   function enableEvidenceInteractions() {
     const enterItem = (item) => {
@@ -2077,4 +2072,6 @@
       "moments, characters, notes, and thoughts."
     );
   }
+  /* All top-level const bindings are initialized before startup. */
+  init();
 })();
