@@ -24,7 +24,7 @@
   "use strict";
 
   window.__INKWELL_HOME_SCROLL_BUILD__ =
-    "2026-07-24-interaction-v11-scene-jumps";
+    "2026-07-24-interaction-v12-masked-navigation";
 
   const DESKTOP_QUERY =
     "(min-width: 1100px) and (min-height: 700px) and " +
@@ -76,8 +76,8 @@
     },
   ]);
 
-  const JOURNEY_TRANSITION_OUT = 0.18;
-  const JOURNEY_TRANSITION_IN = 0.38;
+  const JOURNEY_TRANSITION_OUT = 0.24;
+  const JOURNEY_TRANSITION_IN = 0.44;
 
   const SELECTORS = {
     nav: "nav",
@@ -132,6 +132,10 @@
     journeyStatus: null,
     journeyButtons: [],
     scrollTween: null,
+    transitionTimeline: null,
+    transitionToken: 0,
+    jumpCurtain: null,
+    section2Api: null,
   };
 
   if (document.readyState === "loading") {
@@ -174,6 +178,7 @@
 
     syncNavHeight(elements.nav);
     ensureSharedStage(elements);
+    ensureJourneyJumpCurtain();
     prepareSceneStack(elements);
     playHeroIntro(elements);
 
@@ -185,6 +190,8 @@
       }),
       waitForSection4Api(30000),
     ]);
+
+    state.section2Api = section2Api || null;
 
     if (!section2Api?.timeline) {
       section2Api?.showStatic?.();
@@ -207,7 +214,13 @@
       refresh: () => refreshJourney(section2Api, section4Api),
       destroy: () => destroy(elements, section2Api, section4Api),
       openSection2Layer: (key) =>
-        scrollToSection2Layer(section2Api, key),
+        section2Api?.previewLayer?.(key) || false,
+      closeSection2Preview: (options) =>
+        section2Api?.closeLayerPreview?.(options),
+      settleScroll: () => {
+        state.trigger?.getTween?.()?.progress(1);
+        state.trigger?.update();
+      },
       debug: () => ({
         managedMode: window.__INKWELL_MASTER_JOURNEY__ === true,
         masterReady: Boolean(state.master),
@@ -1149,6 +1162,29 @@
      and assistive-technology behavior stays predictable.
      ======================================================================== */
 
+  function ensureJourneyJumpCurtain() {
+    const stage = state.stage || document.querySelector(SELECTORS.stage);
+
+    if (!stage) {
+      return null;
+    }
+
+    let curtain = stage.querySelector("[data-journey-jump-curtain]");
+
+    if (!curtain) {
+      curtain = document.createElement("div");
+      curtain.className = "journey-jump-curtain";
+      curtain.dataset.journeyJumpCurtain = "true";
+      curtain.setAttribute("aria-hidden", "true");
+      stage.appendChild(curtain);
+    }
+
+    state.jumpCurtain = curtain;
+    state.gsap.set(curtain, { autoAlpha: 0 });
+
+    return curtain;
+  }
+
   function setupJourneyNavigator(elements) {
     teardownJourneyNavigator();
 
@@ -1386,6 +1422,7 @@
 
   function forceJourneyScrollPosition(target) {
     const trigger = state.trigger;
+    const master = state.master;
     const maximumScroll = Math.max(
       0,
       document.documentElement.scrollHeight - window.innerHeight,
@@ -1394,19 +1431,32 @@
       state.gsap.utils.clamp(0, maximumScroll, target),
     );
 
+    const scrollProgress = trigger
+      ? state.gsap.utils.clamp(
+          0,
+          1,
+          (clampedTarget - trigger.start) /
+            Math.max(trigger.end - trigger.start, 0.0001),
+        )
+      : 0;
+
+    /*
+     * Render the destination while the jump curtain is fully opaque. Setting
+     * the master playhead directly prevents the numeric scrub tween from
+     * racing through Sections 2 and 3 after a Section 1 -> 4 jump.
+     */
+    trigger?.getTween?.()?.progress(1);
+    master?.progress(scrollProgress, false);
+
     window.scrollTo({
       top: clampedTarget,
       left: 0,
       behavior: "auto",
     });
 
-    /*
-     * A numeric scrub creates a catch-up tween. Force that tween to its end so
-     * a direct chapter jump does not visibly race through every intermediate
-     * scene after the page position changes.
-     */
     trigger?.update();
     trigger?.getTween?.()?.progress(1);
+    master?.progress(scrollProgress, false);
     trigger?.update();
     syncActiveScene();
 
@@ -1418,7 +1468,7 @@
     startMessage = "Moving to the selected section.",
     endMessage = "Selected section opened.",
   }) {
-    const stage = state.stage || document.querySelector(SELECTORS.stage);
+    const curtain = state.jumpCurtain || ensureJourneyJumpCurtain();
     const reduceMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
@@ -1429,6 +1479,8 @@
     state.scrollTween = null;
     state.transitionTimeline?.kill();
     state.transitionTimeline = null;
+
+    state.section2Api?.closeLayerPreview?.({ animate: false });
 
     document.body.classList.add(
       "journey-section-jumping",
@@ -1450,12 +1502,8 @@
         "journey-scene-transitioning",
       );
 
-      if (stage) {
-        state.gsap.set(stage, {
-          autoAlpha: 1,
-          scale: 1,
-          clearProps: "filter",
-        });
+      if (curtain) {
+        state.gsap.set(curtain, { autoAlpha: 0 });
       }
 
       state.trigger?.update();
@@ -1467,11 +1515,13 @@
       }
     };
 
-    if (reduceMotion || !stage) {
+    if (reduceMotion || !curtain) {
       forceJourneyScrollPosition(target);
       finish();
       return;
     }
+
+    state.gsap.set(curtain, { autoAlpha: 0 });
 
     state.transitionTimeline = state.gsap.timeline({
       defaults: { overwrite: "auto" },
@@ -1480,24 +1530,17 @@
     });
 
     state.transitionTimeline
-      .to(stage, {
-        autoAlpha: 0,
-        scale: 0.994,
-        filter: "blur(2px)",
+      .to(curtain, {
+        autoAlpha: 1,
         duration: JOURNEY_TRANSITION_OUT,
-        ease: "power2.in",
+        ease: "power2.inOut",
       })
       .add(() => {
         forceJourneyScrollPosition(target);
-        state.gsap.set(stage, {
-          scale: 1.006,
-          filter: "blur(2px)",
-        });
       })
-      .to(stage, {
-        autoAlpha: 1,
-        scale: 1,
-        filter: "blur(0px)",
+      .to({}, { duration: 0.06 })
+      .to(curtain, {
+        autoAlpha: 0,
         duration: JOURNEY_TRANSITION_IN,
         ease: "power3.out",
       });
@@ -1556,12 +1599,8 @@
     state.transitionTimeline = null;
     state.transitionToken += 1;
 
-    if (state.stage) {
-      state.gsap.set(state.stage, {
-        autoAlpha: 1,
-        scale: 1,
-        clearProps: "filter",
-      });
+    if (state.jumpCurtain) {
+      state.gsap.set(state.jumpCurtain, { autoAlpha: 0 });
     }
 
     state.journeyNav?.remove();

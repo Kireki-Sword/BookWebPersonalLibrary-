@@ -483,7 +483,7 @@ body:is(.journey-preparing, .journey-ready)
   }
 }
 /* ========================================================================== 
-   INKWELL CHAPTER INDEX — COMPACT SECTION NAVIGATION (V11)
+   INKWELL CHAPTER INDEX — COMPACT SECTION NAVIGATION (V12)
 
    A transparent chapter index with four evenly-spaced stops. The 44px button
    hit areas remain generous, while the visible dots and line stay subtle.
@@ -763,7 +763,37 @@ body.journey-ready.journey-section-rail-ready .journey-section-rail {
 
 body.journey-scene-transitioning .home-journey-stage {
   pointer-events: none !important;
-  will-change: opacity, transform, filter;
+}
+
+/*
+ * A dedicated curtain hides the instantaneous playhead jump used by the
+ * chapter buttons. Because it sits above every scene, Sections 2 and 3 never
+ * flash during a direct Section 1 -> 4 navigation.
+ */
+.journey-jump-curtain {
+  position: absolute;
+  inset: 0;
+  z-index: 20000;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      ellipse 72% 58% at 50% 46%,
+      rgba(87, 108, 205, 0.22),
+      transparent 72%
+    ),
+    linear-gradient(
+      115deg,
+      #090d21 0%,
+      #11183a 48%,
+      #07101f 100%
+    );
+  will-change: opacity;
+}
+
+body.journey-scene-transitioning .journey-jump-curtain {
+  visibility: visible;
 }
 
 @media (max-width: 1250px) {

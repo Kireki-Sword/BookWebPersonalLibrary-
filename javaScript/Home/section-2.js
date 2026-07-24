@@ -21,7 +21,7 @@
   }
 
   window.__INKWELL_SECTION2_BUILD__ =
-    "2026-07-24-interaction-v11-layer-jumps";
+    "2026-07-24-interaction-v12-layer-previews";
 
   const { gsap, ScrollTrigger } = window;
 
@@ -230,6 +230,14 @@
   let resizeTimer = null;
   let refreshTimer = null;
 
+  const layerPreview = {
+    active: false,
+    key: "",
+    naturalTime: null,
+    transition: null,
+    token: 0
+  };
+
 
   /* ==========================================================================
      INITIALIZATION
@@ -243,6 +251,7 @@
     createButtonProxies();
     enableEvidenceInteractions();
     bindLayerButtons();
+    setupLayerPreviewExitListeners();
     setupReflectionDialog();
     applyManagedLayoutMetrics();
     setInitialState();
@@ -293,7 +302,14 @@
         return Number.isFinite(layer?.openTime)
           ? layer.openTime
           : null;
-      }
+      },
+      previewLayer: (key) => {
+        const layer = layers.find((item) => item.key === key);
+        return previewSavedLayer(layer);
+      },
+      closeLayerPreview: (options = {}) =>
+        closeSavedLayerPreview(options),
+      isLayerPreviewActive: () => layerPreview.active
     };
 
     window.InkwellSection2Journey = api;
@@ -597,12 +613,11 @@
   }
 
   /* ==========================================================================
-     SAVED-LAYER BUTTONS
+     SAVED-LAYER BUTTONS — NON-DESTRUCTIVE PREVIEW MODE
 
-     Once a layer has landed in the persistent card, selecting its button
-     returns the scroll journey to the moment where that evidence is fully
-     open. The master homepage owns scrolling in managed mode; the standalone
-     Section 2 ScrollTrigger handles the same behavior outside the homepage.
+     Selecting a landed button previews that evidence without moving the real
+     scroll position. If the reader is naturally at Notes and opens Quotes, the
+     next wheel/trackpad movement still continues from Notes toward Thoughts.
      ========================================================================== */
 
   function bindLayerButtons() {
@@ -618,71 +633,217 @@
       );
 
       layer.button.addEventListener("click", () => {
-        openSavedLayer(layer);
+        previewSavedLayer(layer);
       });
     });
   }
 
-  function openSavedLayer(layer) {
-    if (!layer || !Number.isFinite(layer.openTime)) {
-      return;
+  function previewSavedLayer(layer) {
+    if (!layer || !masterTimeline || !Number.isFinite(layer.openTime)) {
+      return false;
     }
 
+    window.InkwellHomeJourney?.settleScroll?.();
     resetEvidenceInteractions();
-    updateStatus(`${layer.label} reopened.`);
 
-    if (MANAGED_BY_HOME_JOURNEY) {
-      window.InkwellHomeJourney?.openSection2Layer?.(layer.key);
-      return;
+    const naturalTime = layerPreview.active
+      ? layerPreview.naturalTime
+      : masterTimeline.time();
+
+    if (!Number.isFinite(naturalTime)) {
+      return false;
     }
 
-    const trigger = masterTimeline?.scrollTrigger;
+    const token = layerPreview.token + 1;
+    layerPreview.token = token;
+    layerPreview.transition?.kill();
+    layerPreview.transition = null;
 
-    if (!trigger || !masterTimeline) {
-      masterTimeline?.pause(layer.openTime);
+    const applyPreview = () => {
+      if (token !== layerPreview.token) {
+        return;
+      }
+
+      layerPreview.active = true;
+      layerPreview.key = layer.key;
+      layerPreview.naturalTime = naturalTime;
+      section.classList.add("is-layer-previewing");
+      section.dataset.s2PreviewLayer = layer.key;
+
+      masterTimeline.time(layer.openTime, false);
       syncTimelineState(masterTimeline);
-      return;
-    }
-
-    const progress = gsap.utils.clamp(
-      0,
-      1,
-      layer.openTime / Math.max(masterTimeline.duration(), 0.0001),
-    );
-    const target = trigger.start + (trigger.end - trigger.start) * progress;
-    const reduceMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-
-    const viewport = elements.viewport;
-    const finishJump = () => {
-      window.scrollTo({
-        top: target,
-        behavior: "auto",
-      });
-      ScrollTrigger.update();
-      trigger.getTween?.()?.progress(1);
-      trigger.update?.();
-      syncTimelineState(masterTimeline);
+      updateStatus(`${layer.label} preview opened.`);
     };
 
-    if (reduceMotion || !viewport) {
-      finishJump();
+    const finish = () => {
+      if (token !== layerPreview.token) {
+        return;
+      }
+
+      layerPreview.transition = null;
+      gsap.set(elements.viewport, { autoAlpha: 1 });
+    };
+
+    if (prefersReducedMotion || !elements.viewport) {
+      applyPreview();
+      finish();
+      return true;
+    }
+
+    layerPreview.transition = gsap.timeline({
+      defaults: { overwrite: "auto" },
+      onComplete: finish,
+      onInterrupt: finish
+    });
+
+    layerPreview.transition
+      .to(elements.viewport, {
+        autoAlpha: 0,
+        duration: 0.18,
+        ease: "power2.in"
+      })
+      .add(applyPreview)
+      .to(elements.viewport, {
+        autoAlpha: 1,
+        duration: 0.34,
+        ease: "power3.out"
+      });
+
+    return true;
+  }
+
+  function closeSavedLayerPreview(options = {}) {
+    if (!layerPreview.active && !layerPreview.transition) {
+      return false;
+    }
+
+    const animate = options.animate === true;
+    const restoreTime = Number(layerPreview.naturalTime);
+    const token = layerPreview.token + 1;
+
+    layerPreview.token = token;
+    layerPreview.transition?.kill();
+    layerPreview.transition = null;
+
+    const restoreNaturalState = () => {
+      layerPreview.active = false;
+      layerPreview.key = "";
+      layerPreview.naturalTime = null;
+      section.classList.remove("is-layer-previewing");
+      delete section.dataset.s2PreviewLayer;
+
+      if (masterTimeline && Number.isFinite(restoreTime)) {
+        masterTimeline.time(restoreTime, false);
+        syncTimelineState(masterTimeline);
+      }
+    };
+
+    const finish = () => {
+      if (token !== layerPreview.token) {
+        return;
+      }
+
+      layerPreview.transition = null;
+      gsap.set(elements.viewport, { autoAlpha: 1 });
+    };
+
+    if (!animate || prefersReducedMotion || !elements.viewport) {
+      restoreNaturalState();
+      finish();
+      return true;
+    }
+
+    layerPreview.transition = gsap.timeline({
+      defaults: { overwrite: "auto" },
+      onComplete: finish,
+      onInterrupt: finish
+    });
+
+    layerPreview.transition
+      .to(elements.viewport, {
+        autoAlpha: 0,
+        duration: 0.14,
+        ease: "power2.in"
+      })
+      .add(restoreNaturalState)
+      .to(elements.viewport, {
+        autoAlpha: 1,
+        duration: 0.26,
+        ease: "power3.out"
+      });
+
+    return true;
+  }
+
+  function setupLayerPreviewExitListeners() {
+    if (section.dataset.s2PreviewExitBound === "true") {
       return;
     }
 
-    gsap.timeline({ defaults: { overwrite: "auto" } })
-      .to(viewport, {
-        autoAlpha: 0,
-        duration: 0.16,
-        ease: "power2.in",
-      })
-      .add(finishJump)
-      .to(viewport, {
-        autoAlpha: 1,
-        duration: 0.32,
-        ease: "power3.out",
-      });
+    section.dataset.s2PreviewExitBound = "true";
+
+    const exitBeforeNativeScroll = (event) => {
+      if (!layerPreview.active) {
+        return;
+      }
+
+      const openDialog = section.querySelector(
+        "[data-s2-reflection-dialog][open]"
+      );
+
+      if (openDialog && event?.target && openDialog.contains(event.target)) {
+        return;
+      }
+
+      closeSavedLayerPreview({ animate: false });
+    };
+
+    window.addEventListener("wheel", exitBeforeNativeScroll, {
+      capture: true,
+      passive: true
+    });
+
+    window.addEventListener("touchstart", exitBeforeNativeScroll, {
+      capture: true,
+      passive: true
+    });
+
+    window.addEventListener("scroll", () => {
+      if (layerPreview.active) {
+        closeSavedLayerPreview({ animate: false });
+      }
+    }, { passive: true });
+
+    window.addEventListener("keydown", (event) => {
+      if (!layerPreview.active) {
+        return;
+      }
+
+      const target = event.target;
+      const isEditable =
+        target instanceof HTMLInputElement ||
+        target instanceof HTMLTextAreaElement ||
+        target instanceof HTMLSelectElement ||
+        target?.isContentEditable;
+
+      if (isEditable) {
+        return;
+      }
+
+      const scrollKeys = new Set([
+        "ArrowDown",
+        "ArrowUp",
+        "PageDown",
+        "PageUp",
+        "Home",
+        "End",
+        " "
+      ]);
+
+      if (scrollKeys.has(event.key)) {
+        closeSavedLayerPreview({ animate: false });
+      }
+    }, { capture: true });
   }
 
   /* ==========================================================================
@@ -939,6 +1100,15 @@
      ========================================================================== */
 
   function setInitialState() {
+    layerPreview.token += 1;
+    layerPreview.transition?.kill();
+    layerPreview.transition = null;
+    layerPreview.active = false;
+    layerPreview.key = "";
+    layerPreview.naturalTime = null;
+    section.classList.remove("is-layer-previewing");
+    delete section.dataset.s2PreviewLayer;
+
     applyManagedLayoutMetrics();
     resetEvidenceInteractions();
 
@@ -2048,15 +2218,28 @@
       return;
     }
 
-    const time =
-      timeline.time();
+    const renderedTime = timeline.time();
+    const navigationTime =
+      layerPreview.active && Number.isFinite(layerPreview.naturalTime)
+        ? layerPreview.naturalTime
+        : renderedTime;
+
+    const trayIsVisible = navigationTime >= trayRevealTime;
 
     elements.detailsTray
       .classList
       .toggle(
         "is-visible",
-        time >= trayRevealTime
+        trayIsVisible
       );
+
+    if (layerPreview.active) {
+      gsap.set(elements.detailsTray, {
+        autoAlpha: trayIsVisible ? 1 : 0,
+        y: 0,
+        pointerEvents: trayIsVisible ? "auto" : "none"
+      });
+    }
 
     let highestLandedIndex = -1;
 
@@ -2065,7 +2248,7 @@
         const isLanded =
           typeof layer.landTime ===
             "number" &&
-          time >=
+          navigationTime >=
             layer.landTime - 0.02;
 
         if (isLanded) {
@@ -2082,8 +2265,8 @@
             "number" &&
           typeof layer.endTime ===
             "number" &&
-          time >= layer.startTime &&
-          time < layer.endTime;
+          renderedTime >= layer.startTime &&
+          renderedTime < layer.endTime;
 
         if (layer.stage) {
           layer.stage
@@ -2100,11 +2283,6 @@
             )
           );
 
-          /*
-           * The CSS class remains the source of truth, but the inline value
-           * prevents a later stylesheet or stale cached rule from leaving an
-           * active evidence stage unable to receive hover/pointer events.
-           */
           layer.stage.style.pointerEvents =
             isStageActive
               ? "auto"
@@ -2124,7 +2302,7 @@
         const isLanded =
           typeof layer.landTime ===
             "number" &&
-          time >=
+          navigationTime >=
             layer.landTime - 0.02;
 
         layer.button
@@ -2159,10 +2337,25 @@
 
           layer.button.tabIndex = -1;
         }
+
+        /*
+         * The preview playhead may point back to Quotes while Notes is the
+         * reader's real scroll position. Keep every already-saved button
+         * visible so the card remains a stable navigation hub.
+         */
+        if (layerPreview.active) {
+          gsap.set(layer.button, {
+            autoAlpha: isLanded ? 1 : 0,
+            y: 0,
+            scale: 1,
+            pointerEvents: isLanded ? "auto" : "none"
+          });
+        }
       }
     );
 
     if (
+      !layerPreview.active &&
       highestLandedIndex !==
       lastAnnouncedIndex
     ) {
@@ -2180,6 +2373,7 @@
     }
 
     if (
+      !layerPreview.active &&
       highestLandedIndex ===
       layers.length - 1
     ) {
