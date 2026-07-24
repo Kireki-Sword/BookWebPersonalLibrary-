@@ -1022,3 +1022,93 @@
     display: none;
   }
 }
+
+/* =========================================================
+   LARGE DESKTOP HERO REFINEMENT
+   Widens the composition and slightly enlarges the product card
+   without making the headline overpower the page.
+   ========================================================= */
+
+@media (min-width: 1400px) {
+  .hero {
+    /*
+     * The original 1220px content target created very wide side margins.
+     * A 1360px target keeps generous whitespace while using large screens
+     * more effectively.
+     */
+    padding-inline:
+      max(2rem, calc((100vw - 1360px) / 2 + 2rem));
+
+    grid-template-columns:
+      minmax(0, 1fr)
+      minmax(560px, 0.92fr);
+  }
+
+  .hero-p {
+    max-width: 550px;
+    font-size: 1.05rem;
+  }
+
+  .hero-buttons {
+    margin-top: 0.45rem;
+  }
+
+  .hero-btn-primary,
+  .hero-btn-ghost {
+    min-height: 50px;
+    padding-inline: 1.75rem;
+    font-size: 1rem;
+  }
+
+  .card-effect {
+    width: 560px;
+    min-width: 560px;
+    max-width: 560px;
+
+    height: 360px;
+    min-height: 360px;
+    max-height: 360px;
+  }
+
+  .card-cover-side {
+    flex: 0 0 201px;
+
+    width: 201px;
+    min-width: 201px;
+    max-width: 201px;
+
+    height: 360px;
+    min-height: 360px;
+    max-height: 360px;
+  }
+
+  .card-info-side {
+    flex: 0 0 359px;
+
+    width: 359px;
+    min-width: 359px;
+    max-width: 359px;
+
+    height: 360px;
+    min-height: 360px;
+    max-height: 360px;
+
+    padding: 1.65rem;
+  }
+
+  .card-btn {
+    height: 36px;
+    min-height: 36px;
+    padding-inline: 0.9rem;
+    font-size: 0.8rem;
+  }
+}
+
+/* Larger touch targets for the card controls on touch devices. */
+@media (hover: none), (pointer: coarse) {
+  .card-btn {
+    height: 44px;
+    min-height: 44px;
+    padding-inline: 1rem;
+  }
+}
