@@ -8,7 +8,7 @@
   const BUCKET_NAME = 'img';
   const COVER_FOLDER = 'covers';
 
-  const FEATURED_ROTATE_MS = 6000;
+  const FEATURED_ROTATE_MS = 4000; // use to be 6000
 
   let supabaseClient = null;
   let featuredManga = [];
