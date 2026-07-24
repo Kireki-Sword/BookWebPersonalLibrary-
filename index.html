@@ -694,33 +694,113 @@
             </div>
         </div>
 
-        <!-- Evidence scene 5: Thoughts -->
+        <!-- Evidence scene 5: one long reflection -->
         <div
             class="scroll-stage"
             data-stage="thoughts-appear"
             aria-hidden="true"
         >
-            <div class="thoughts-cloud">
-            <p
-                class="thought-card thought-1"
-                data-rotate="0"
-                tabindex="0"
-            >
-                Vagabond made me realise I had been confusing movement with
-                progress.
-            </p>
+            <article class="thoughts-cloud s2-reflection-card">
+                <span class="s2-reflection-eyebrow">Full reflection</span>
+                <h3>Movement, strength, and what it means to make progress</h3>
 
-            <p
-                class="thought-card thought-2"
-                data-rotate="2"
-                data-scale="0.9"
-                tabindex="0"
-            >
-                The contrast between Musashi and Kojiro makes the idea of strength
-                feel much less simple.
-            </p>
-            </div>
+                <div class="s2-reflection-preview" aria-hidden="false">
+                    <p>
+                        Vagabond made me realise that I had been confusing movement
+                        with progress. Musashi is almost always moving: toward the
+                        next opponent, the next victory, and the next version of
+                        strength he believes will finally make him complete. Yet the
+                        story repeatedly shows that motion by itself can become
+                        another way of standing still.
+                    </p>
+                    <p>
+                        The contrast between Musashi and Kojiro makes strength feel
+                        less like domination and more like a way of meeting the world.
+                        One character tries to force meaning through conquest, while
+                        the other often seems fully present without needing to prove
+                        that he belongs there. Their paths suggest that real growth is
+                        not measured only by distance travelled or enemies defeated,
+                        but by the ability to see, listen, change, and remain gentle.
+                    </p>
+                </div>
+
+                <button
+                    type="button"
+                    class="s2-read-reflection"
+                    data-s2-open-reflection
+                    aria-haspopup="dialog"
+                >
+                    Read full reflection
+                    <span aria-hidden="true">↗</span>
+                </button>
+            </article>
         </div>
+
+        <dialog class="s2-reflection-dialog" data-s2-reflection-dialog>
+            <div class="s2-reflection-window">
+                <header class="s2-reflection-toolbar">
+                    <span>Inkwell reflection</span>
+                    <button type="button" data-s2-close-reflection aria-label="Close reflection">×</button>
+                </header>
+                <div class="s2-reflection-scroll">
+                    <span class="s2-reflection-eyebrow">Vagabond · Full reflection</span>
+                    <h2>Movement, strength, and what it means to make progress</h2>
+                    <p>
+                        Vagabond made me realise that I had been confusing movement
+                        with progress. Musashi is almost always moving: toward the
+                        next opponent, the next victory, and the next version of
+                        strength he believes will finally make him complete. Yet the
+                        story repeatedly shows that motion by itself can become
+                        another way of standing still. A person can cross enormous
+                        distances while carrying the same fear, pride, and loneliness
+                        into every new place.
+                    </p>
+                    <p>
+                        Early in the story, strength appears measurable. It can be
+                        counted through victories, reputation, survival, and the fear
+                        a name creates in other people. That definition gives Musashi
+                        a direction, but it also traps him. Every victory creates the
+                        need for another because none of them can answer the deeper
+                        question beneath his ambition: what would make his life feel
+                        meaningful when there is nobody left to defeat?
+                    </p>
+                    <h3>Strength without an audience</h3>
+                    <p>
+                        The contrast between Musashi and Kojiro makes the idea of
+                        strength feel much less simple. Kojiro's presence suggests a
+                        kind of ability that does not constantly need to announce or
+                        justify itself. He can be intensely competitive while still
+                        appearing connected to the immediate world around him. That
+                        difference exposes how much of Musashi's idea of strength is
+                        built for an imagined audience.
+                    </p>
+                    <p>
+                        The story becomes most powerful when it asks whether becoming
+                        stronger is worth anything if the process destroys the ability
+                        to be gentle. Gentleness is not presented as weakness. It is a
+                        form of control, attention, and confidence that does not need
+                        to reduce another person in order to exist.
+                    </p>
+                    <h3>Progress as attention</h3>
+                    <p>
+                        Real progress begins when Musashi becomes capable of noticing
+                        more than the obstacle directly in front of him. Farming,
+                        friendship, grief, responsibility, and ordinary work all force
+                        him to encounter forms of difficulty that cannot be solved by
+                        cutting through them. These experiences do not erase his past;
+                        they change the way he understands what his strength is for.
+                    </p>
+                    <p>
+                        That is what stayed with me most. Progress is not simply moving
+                        faster or becoming harder to stop. Sometimes it is the slower
+                        work of becoming less controlled by the fear that made movement
+                        feel necessary in the first place. Vagabond turns the pursuit
+                        of invincibility into a question about presence: can a person
+                        become strong enough to stop proving that they are strong?
+                    </p>
+                </div>
+            </div>
+        </dialog>
 
         </div>
     </div>
@@ -2170,9 +2250,9 @@
 
     <script src="./javaScript/Home/section-1.js" defer></script>
     <script src="./javaScript/Home/changeCardSection1.js" defer></script>
-    <script src="./javaScript/Home/section-2.js?v=20260724-7" defer></script>
+    <script src="./javaScript/Home/section-2.js?v=20260724-8" defer></script>
     <script src="./javaScript/Home/section-3.js" defer></script>
-    <script src="./javaScript/Home/section-4.js?v=20260724-7" defer></script>
+    <script src="./javaScript/Home/section-4.js?v=20260724-8" defer></script>
 
     
 </body>

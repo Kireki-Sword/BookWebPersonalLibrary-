@@ -241,6 +241,7 @@
 
     createButtonProxies();
     enableEvidenceInteractions();
+    setupReflectionDialog();
     applyManagedLayoutMetrics();
     setInitialState();
 
@@ -308,16 +309,12 @@
      Exactly one Moment or Character remains showcased in each active stage.
      ========================================================================== */
 
-  const outlineEvidenceSelector =
-    ".falling-quote, " +
-    ".note-card, " +
-    ".thought-card";
-
+  /* Only saved Moments are interactive on hover/focus. */
   const showcaseEvidenceSelector =
-    ".moment-frame, .character-name";
+    ".moment-frame";
 
   const evidenceSelector =
-    `${outlineEvidenceSelector}, ${showcaseEvidenceSelector}`;
+    showcaseEvidenceSelector;
 
   const popSurfaceClass =
     "s2-pop-surface";
@@ -552,6 +549,43 @@
           "is-interacting"
         );
       });
+  }
+
+  function setupReflectionDialog() {
+    const dialog = section.querySelector(
+      "[data-s2-reflection-dialog]"
+    );
+    const openButton = section.querySelector(
+      "[data-s2-open-reflection]"
+    );
+    const closeButton = section.querySelector(
+      "[data-s2-close-reflection]"
+    );
+
+    if (!dialog || !openButton || !closeButton) {
+      return;
+    }
+
+    openButton.addEventListener("click", () => {
+      if (typeof dialog.showModal === "function") {
+        dialog.showModal();
+      } else {
+        dialog.setAttribute("open", "");
+      }
+    });
+
+    closeButton.addEventListener("click", () => {
+      dialog.close?.();
+      if (!dialog.close) {
+        dialog.removeAttribute("open");
+      }
+    });
+
+    dialog.addEventListener("click", (event) => {
+      if (event.target === dialog) {
+        dialog.close?.();
+      }
+    });
   }
 
   /* ==========================================================================

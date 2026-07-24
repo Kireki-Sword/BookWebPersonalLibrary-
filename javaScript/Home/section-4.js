@@ -3365,7 +3365,16 @@
 
     const centreTime = 3.02;
 
-    const cardRevealTime = 3.72;
+    /*
+     * The two selected covers now take their time meeting in the centre before
+     * the shared card is revealed. This is separate from the later card-dock
+     * slowdown, so the exact merge the user sees is no longer compressed.
+     */
+    const MERGE_SEQUENCE_SLOWDOWN = 2.15;
+    const centreTravelDuration = 0.68 * MERGE_SEQUENCE_SLOWDOWN;
+    const mergeBreathingRoom = 0.42;
+    const cardRevealTime =
+      centreTime + centreTravelDuration + mergeBreathingRoom;
 
     /*
      * Slow only the second half of Section 4. The rain and two-cover meeting
@@ -3376,7 +3385,7 @@
      * Because homeScroll.js maps master-timeline duration to scroll distance,
      * this also gives that phase more wheel/trackpad travel in managed mode.
      */
-    const POST_MERGE_SLOWDOWN = 1.8;
+    const POST_MERGE_SLOWDOWN = 2.35;
 
     const postMergeDuration = (duration) => {
       return duration * POST_MERGE_SLOWDOWN;
@@ -3965,7 +3974,7 @@
 
         scale: 1.25,
 
-        duration: 0.68,
+        duration: centreTravelDuration,
 
         ease: "power2.inOut",
       },
@@ -3984,7 +3993,7 @@
         duration: 0.22,
       },
 
-      centreTime + 0.3,
+      centreTime + centreTravelDuration * 0.58,
     );
 
     timeline.set(

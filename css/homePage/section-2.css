@@ -3769,3 +3769,205 @@ img {
     transition: none !important;
   }
 }
+
+
+/* ========================================================================== 
+   V8 — FINAL INTERACTION DIRECTION
+   Only Moment cards have hover motion. Quotes, Characters, Notes, and the
+   long-form Thought/Reflection remain visually stable.
+   ========================================================================== */
+
+#section-2-empty-shelf :is(
+  .falling-quote,
+  .character-name,
+  .note-card,
+  .thoughts-cloud,
+  .thought-card
+) {
+  cursor: default !important;
+}
+
+#section-2-empty-shelf :is(
+  .falling-quote,
+  .character-name,
+  .note-card,
+  .thoughts-cloud,
+  .thought-card
+):is(:hover, :focus, :focus-visible, .is-interacting, .is-top-layer) {
+  transform: none !important;
+  filter: none !important;
+  outline: none !important;
+  border-color: var(--s2-border, rgba(174, 187, 255, 0.22)) !important;
+  box-shadow: none !important;
+}
+
+#section-2-empty-shelf :is(
+  .falling-quote,
+  .note-card,
+  .thoughts-cloud,
+  .thought-card
+)::after {
+  opacity: 0 !important;
+  box-shadow: none !important;
+}
+
+#section-2-empty-shelf .character-name:is(
+  :hover,
+  :focus,
+  :focus-visible,
+  .is-interacting,
+  .is-top-layer
+) .s2-pop-surface,
+#section-2-empty-shelf .character-name:is(
+  :hover,
+  :focus,
+  :focus-visible,
+  .is-interacting,
+  .is-top-layer
+) img {
+  transform: none !important;
+  filter: none !important;
+}
+
+/* One continuous essay-style reflection card. */
+#section-2-empty-shelf .s2-reflection-card {
+  display: flex !important;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  width: min(940px, 82vw) !important;
+  height: min(350px, 100%) !important;
+  padding: clamp(1.25rem, 2vw, 1.8rem) !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(174, 187, 255, 0.22) !important;
+  border-radius: 22px !important;
+  background: linear-gradient(145deg, rgba(14, 20, 43, 0.98), rgba(6, 10, 25, 0.99)) !important;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.32) !important;
+  text-align: left;
+  pointer-events: auto !important;
+}
+
+#section-2-empty-shelf .s2-reflection-eyebrow {
+  display: block;
+  margin-bottom: 0.55rem;
+  color: #aebaff;
+  font-family: var(--font-body, system-ui, sans-serif);
+  font-size: 0.66rem;
+  font-weight: 850;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+#section-2-empty-shelf .s2-reflection-card h3 {
+  max-width: 760px;
+  margin: 0;
+  color: #f7f4ff;
+  font-family: var(--font-display, Georgia, serif);
+  font-size: clamp(1.45rem, 2.3vw, 2.15rem);
+  line-height: 1.04;
+  letter-spacing: -0.035em;
+}
+
+#section-2-empty-shelf .s2-reflection-preview {
+  position: relative;
+  max-height: 150px;
+  margin-top: 0.9rem;
+  overflow: hidden;
+  color: #c9cee2;
+  font-family: var(--font-body, system-ui, sans-serif);
+  font-size: clamp(0.82rem, 0.3vw + 0.75rem, 0.95rem);
+  line-height: 1.58;
+}
+
+#section-2-empty-shelf .s2-reflection-preview::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 58px;
+  pointer-events: none;
+  background: linear-gradient(transparent, rgba(7, 11, 26, 0.98));
+}
+
+#section-2-empty-shelf .s2-reflection-preview p {
+  margin: 0 0 0.75rem;
+}
+
+#section-2-empty-shelf .s2-read-reflection {
+  align-self: flex-end;
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: auto;
+  padding: 0.62rem 0.9rem;
+  border: 1px solid rgba(183, 193, 255, 0.36);
+  border-radius: 999px;
+  color: #eef0ff;
+  background: rgba(91, 104, 196, 0.24);
+  font: 800 0.72rem/1 var(--font-body, system-ui, sans-serif);
+  cursor: pointer;
+}
+
+#section-2-empty-shelf .s2-read-reflection:hover,
+#section-2-empty-shelf .s2-read-reflection:focus-visible {
+  border-color: rgba(121, 217, 255, 0.72);
+  background: rgba(105, 126, 230, 0.34);
+  outline: 2px solid rgba(121, 217, 255, 0.28);
+  outline-offset: 3px;
+}
+
+.s2-reflection-dialog {
+  width: min(780px, calc(100vw - 32px));
+  max-height: min(780px, calc(100svh - 42px));
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid rgba(177, 188, 255, 0.32);
+  border-radius: 22px;
+  color: #eef0ff;
+  background: #0a0f22;
+  box-shadow: 0 34px 100px rgba(0, 0, 0, 0.62);
+}
+
+.s2-reflection-dialog::backdrop {
+  background: rgba(3, 5, 13, 0.76);
+  backdrop-filter: blur(8px);
+}
+
+.s2-reflection-window { display: flex; flex-direction: column; max-height: inherit; }
+.s2-reflection-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid rgba(177, 188, 255, 0.18);
+  color: #aeb6d4;
+  background: #151b34;
+  font: 800 0.7rem/1 var(--font-body, system-ui, sans-serif);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.s2-reflection-toolbar button {
+  width: 34px; height: 34px; border: 1px solid rgba(180,190,255,.25);
+  border-radius: 50%; color: #eef0ff; background: rgba(255,255,255,.04);
+  font-size: 1.25rem; cursor: pointer;
+}
+.s2-reflection-scroll {
+  overflow: auto;
+  padding: clamp(1.4rem, 4vw, 2.7rem);
+  color: #d0d5e7;
+  font-family: var(--font-body, system-ui, sans-serif);
+  font-size: clamp(0.95rem, 0.35vw + 0.86rem, 1.06rem);
+  line-height: 1.7;
+}
+.s2-reflection-scroll h2,
+.s2-reflection-scroll h3 {
+  color: #f7f4ff;
+  font-family: var(--font-display, Georgia, serif);
+  letter-spacing: -0.035em;
+}
+.s2-reflection-scroll h2 { margin: 0.45rem 0 1.35rem; font-size: clamp(2rem, 5vw, 3.4rem); line-height: 0.98; }
+.s2-reflection-scroll h3 { margin: 2rem 0 0.65rem; font-size: clamp(1.35rem, 3vw, 1.9rem); }
+.s2-reflection-scroll p { margin: 0 0 1rem; }
