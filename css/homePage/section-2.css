@@ -3009,14 +3009,12 @@
 
 
 /* ==========================================================================
-   SECTION 2 — VERIFIED INTERACTION LAYER
+   SECTION 2 — INTERACTION SYSTEM V5
 
-   This block is intentionally last. It solves three integration problems:
-   1. Active evidence stages are guaranteed to accept pointer events.
-   2. GSAP keeps control of `transform`; hover uses the independent
-      `scale` and `translate` properties instead of replacing GSAP's matrix.
-   3. JavaScript adds `.is-interacting`, so the effect is not dependent on
-      the browser maintaining `:hover` while the pinned timeline is updating.
+   The outer Moment/Character elements remain the GSAP-controlled hitboxes.
+   JavaScript wraps their visual contents in .s2-pop-surface. The inner surface
+   can use the standard transform property without replacing GSAP's transform
+   on the outer element.
    ========================================================================== */
 
 #section-2-empty-shelf.is-js-ready .scroll-stage {
@@ -3025,6 +3023,7 @@
 
 #section-2-empty-shelf.is-js-ready .scroll-stage.is-active {
   z-index: 40 !important;
+  visibility: visible !important;
   pointer-events: auto !important;
 }
 
@@ -3040,35 +3039,27 @@
   .moment-frame,
   .character-name,
   .note-card,
-  .thought-card
+  .thought-card,
+  .s2-pop-surface
 ) {
   pointer-events: auto;
 }
 
+/* --------------------------------------------------------------------------
+   Quotes, Notes, and Thoughts: illuminated outline only
+   -------------------------------------------------------------------------- */
+
 #section-2-empty-shelf
 :is(
   .falling-quote,
-  .moment-frame,
-  .character-name,
   .note-card,
   .thoughts-cloud
 ) {
-  scale: 1;
-  translate: 0 0;
+  outline: 1px solid transparent;
+  outline-offset: 3px;
 
-  will-change:
-    scale,
-    translate,
-    box-shadow,
-    border-color;
-}
-
-#section-2-empty-shelf .falling-quote,
-#section-2-empty-shelf .note-card,
-#section-2-empty-shelf .thoughts-cloud {
   transition:
-    scale 220ms cubic-bezier(0.22, 1, 0.36, 1),
-    translate 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    outline-color 200ms ease,
     box-shadow 220ms ease,
     border-color 220ms ease,
     color 220ms ease,
@@ -3076,18 +3067,6 @@
     filter 220ms ease;
 }
 
-#section-2-empty-shelf .moment-frame,
-#section-2-empty-shelf .character-name {
-  transition:
-    scale 240ms cubic-bezier(0.22, 1, 0.36, 1),
-    translate 240ms cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 240ms ease,
-    border-color 220ms ease,
-    background 220ms ease,
-    filter 220ms ease;
-}
-
-/* Quotes, notes, and the single thoughts card. */
 #section-2-empty-shelf
 :is(
   .falling-quote,
@@ -3101,11 +3080,14 @@
 ) {
   z-index: 20000 !important;
 
-  scale: 1.022 !important;
-  translate: 0 -7px !important;
+  outline-color:
+    rgba(132, 223, 255, 0.9);
 
-  color: var(--s2-text-primary) !important;
-  border-color: rgba(220, 227, 255, 0.76) !important;
+  color:
+    var(--s2-text-primary) !important;
+
+  border-color:
+    rgba(220, 227, 255, 0.78) !important;
 
   background:
     radial-gradient(
@@ -3125,11 +3107,15 @@
     ) !important;
 
   box-shadow:
-    0 36px 88px rgba(0, 0, 0, 0.62),
-    0 0 0 1px rgba(205, 214, 255, 0.18),
-    0 0 38px rgba(114, 140, 255, 0.28),
-    0 0 76px rgba(159, 131, 255, 0.18),
+    0 30px 74px rgba(0, 0, 0, 0.58),
+    0 0 0 1px rgba(205, 214, 255, 0.2),
+    0 0 34px rgba(114, 140, 255, 0.3),
+    0 0 68px rgba(159, 131, 255, 0.18),
     inset 0 1px 0 rgba(255, 255, 255, 0.16) !important;
+
+  filter:
+    saturate(1.05)
+    contrast(1.025);
 }
 
 #section-2-empty-shelf
@@ -3170,83 +3156,277 @@
   .is-interacting
 )
 .thought-card {
-  color: var(--s2-text-primary) !important;
+  color:
+    var(--s2-text-primary) !important;
 }
 
-/* Moments and characters temporarily rise and enlarge. */
+/* --------------------------------------------------------------------------
+   Moments and Characters: stable outer hitbox + animated inner surface
+   -------------------------------------------------------------------------- */
+
 #section-2-empty-shelf
 :is(
   .moment-frame,
   .character-name
-):is(
-  :hover,
-  :focus-visible,
-  .is-interacting
 ) {
-  z-index: 2147483000 !important;
+  overflow: visible !important;
+  padding: 0 !important;
 
-  scale: 1.07 !important;
-  translate: 0 -12px !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
 
-  border-color: rgba(225, 231, 255, 0.8) !important;
-
-  box-shadow:
-    0 46px 102px rgba(0, 0, 0, 0.7),
-    0 0 0 1px rgba(205, 214, 255, 0.18),
-    0 0 46px rgba(114, 140, 255, 0.3),
-    0 0 86px rgba(159, 131, 255, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
+  isolation: isolate;
 }
 
 #section-2-empty-shelf
-.moment-frame:is(
-  :hover,
-  :focus-visible,
-  .is-interacting
-)
-img,
-#section-2-empty-shelf
-.character-name:is(
-  :hover,
-  :focus-visible,
-  .is-interacting
-)
-img {
-  transform: scale(1.025);
+.moment-frame::after {
+  display: none !important;
+}
 
+#section-2-empty-shelf
+:is(
+  .moment-frame,
+  .character-name
+)
+> .s2-pop-surface {
+  position: relative;
+  z-index: 1;
+
+  width: 100%;
+  height: 100%;
+
+  box-sizing: border-box;
+  display: block;
+  overflow: hidden;
+
+  transform:
+    translateY(0)
+    scale(1);
+
+  transform-origin:
+    var(--s2-pop-origin, center center);
+
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+
+  will-change:
+    transform,
+    box-shadow,
+    border-color;
+
+  transition:
+    transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 240ms ease,
+    border-color 220ms ease,
+    background 220ms ease,
+    filter 220ms ease;
+}
+
+#section-2-empty-shelf
+.moment-frame
+> .s2-pop-surface {
+  padding:
+    clamp(4px, 0.32vw, 7px);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(30, 37, 61, 0.99),
+      rgba(8, 12, 26, 0.99)
+    );
+
+  border:
+    1px solid
+    rgba(184, 192, 255, 0.24);
+
+  border-radius:
+    clamp(14px, 0.9vw, 20px);
+
+  box-shadow:
+    0 24px 54px rgba(0, 0, 0, 0.44),
+    0 0 34px rgba(124, 140, 255, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+#section-2-empty-shelf
+.moment-frame
+> .s2-pop-surface::after {
+  content: "";
+
+  position: absolute;
+  inset:
+    clamp(4px, 0.32vw, 7px);
+  z-index: 2;
+
+  border:
+    1px solid
+    rgba(224, 228, 255, 0.12);
+
+  border-radius:
+    clamp(10px, 0.68vw, 15px);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 0 20px rgba(6, 10, 23, 0.12);
+
+  pointer-events: none;
+}
+
+#section-2-empty-shelf
+.character-name
+> .s2-pop-surface {
+  padding:
+    clamp(0.42rem, 0.6vw, 0.65rem);
+
+  background:
+    linear-gradient(
+      180deg,
+      var(--s2-panel-bg-strong) 0%,
+      var(--s2-panel-bg) 100%
+    );
+
+  border:
+    1px solid
+    var(--s2-border);
+
+  border-radius:
+    clamp(16px, 1vw, 22px);
+
+  box-shadow:
+    0 26px 62px rgba(0, 0, 0, 0.46),
+    0 0 42px rgba(124, 140, 255, 0.09),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* Keep edge cards expanding inward instead of clipping against the viewport. */
+#section-2-empty-shelf
+:is(
+  .moment-frame-1,
+  .moment-frame-5,
+  .character-1
+) {
+  --s2-pop-origin: left center;
+}
+
+#section-2-empty-shelf
+:is(
+  .moment-frame-4,
+  .moment-frame-8,
+  .character-6
+) {
+  --s2-pop-origin: right center;
+}
+
+/* One selected card stays slightly raised after the pointer leaves. */
+#section-2-empty-shelf
+:is(
+  .moment-frame,
+  .character-name
+).is-top-layer {
+  z-index: 500 !important;
+}
+
+#section-2-empty-shelf
+:is(
+  .moment-frame,
+  .character-name
+).is-top-layer
+> .s2-pop-surface {
+  transform:
+    translateY(-7px)
+    scale(1.035);
+
+  border-color:
+    rgba(205, 214, 255, 0.58);
+
+  box-shadow:
+    0 34px 82px rgba(0, 0, 0, 0.58),
+    0 0 0 1px rgba(205, 214, 255, 0.16),
+    0 0 38px rgba(114, 140, 255, 0.2),
+    0 0 66px rgba(159, 131, 255, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+#section-2-empty-shelf
+:is(
+  .moment-frame,
+  .character-name
+).is-top-layer.is-interacting {
+  z-index: 600 !important;
+}
+
+#section-2-empty-shelf
+:is(
+  .moment-frame,
+  .character-name
+).is-top-layer.is-interacting
+> .s2-pop-surface {
+  transform:
+    translateY(-10px)
+    scale(1.055);
+
+  border-color:
+    rgba(225, 231, 255, 0.84);
+
+  box-shadow:
+    0 46px 102px rgba(0, 0, 0, 0.7),
+    0 0 0 1px rgba(205, 214, 255, 0.2),
+    0 0 46px rgba(114, 140, 255, 0.32),
+    0 0 86px rgba(159, 131, 255, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+#section-2-empty-shelf
+:is(
+  .moment-frame,
+  .character-name
+).is-promoting
+> .s2-pop-surface {
+  animation:
+    s2-promote-card
+    480ms
+    cubic-bezier(0.22, 1, 0.36, 1)
+    both;
+}
+
+@keyframes s2-promote-card {
+  0% {
+    transform:
+      translateY(0)
+      scale(1);
+  }
+
+  44% {
+    transform:
+      translateY(-15px)
+      scale(1.09);
+  }
+
+  72% {
+    transform:
+      translateY(-6px)
+      scale(1.028);
+  }
+
+  100% {
+    transform:
+      translateY(-10px)
+      scale(1.055);
+  }
+}
+
+#section-2-empty-shelf
+:is(
+  .moment-frame,
+  .character-name
+).is-top-layer
+img {
   filter:
     brightness(1.01)
     saturate(1.07)
     contrast(1.04);
-}
-
-/* After hover, the newest moment/character remains above its siblings. */
-#section-2-empty-shelf
-:is(
-  .moment-frame,
-  .character-name
-).is-top-layer:not(.is-interacting):not(:hover):not(:focus-visible) {
-  scale: 1 !important;
-  translate: 0 0 !important;
-
-  border-color: rgba(199, 209, 255, 0.48) !important;
-
-  box-shadow:
-    0 30px 72px rgba(0, 0, 0, 0.54),
-    0 0 36px rgba(114, 140, 255, 0.17),
-    0 0 58px rgba(159, 131, 255, 0.11),
-    inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
-}
-
-#section-2-empty-shelf
-.character-name.is-top-layer:not(.is-interacting):not(:hover):not(:focus-visible)
-img {
-  transform: none;
-
-  filter:
-    brightness(0.98)
-    saturate(1.02)
-    contrast(1.01);
 }
 
 #section-2-empty-shelf
@@ -3258,26 +3438,37 @@ img {
   .thought-card,
   .thoughts-cloud
 ):focus-visible {
-  outline: 2px solid rgba(132, 223, 255, 0.94) !important;
-  outline-offset: 5px !important;
+  outline:
+    2px solid
+    rgba(132, 223, 255, 0.94) !important;
+
+  outline-offset:
+    5px !important;
 }
 
-/* Keep the glow and border for reduced-motion users, but remove movement. */
 @media (prefers-reduced-motion: reduce) {
   #section-2-empty-shelf
   :is(
-    .falling-quote,
     .moment-frame,
-    .character-name,
-    .note-card,
-    .thoughts-cloud
-  ):is(
-    :hover,
-    :focus-visible,
-    :focus-within,
-    .is-interacting
-  ) {
-    scale: 1 !important;
-    translate: 0 0 !important;
+    .character-name
+)
+  > .s2-pop-surface {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  #section-2-empty-shelf
+  :is(
+    .moment-frame,
+    .character-name
+  ).is-top-layer
+  > .s2-pop-surface,
+  #section-2-empty-shelf
+  :is(
+    .moment-frame,
+    .character-name
+  ).is-top-layer.is-interacting
+  > .s2-pop-surface {
+    transform: none !important;
   }
 }

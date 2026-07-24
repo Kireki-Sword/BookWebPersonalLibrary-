@@ -21,7 +21,7 @@
   }
 
   window.__INKWELL_SECTION2_BUILD__ =
-    "2026-07-24-real-fix-v4";
+    "2026-07-24-interaction-v5";
 
   const { gsap, ScrollTrigger } = window;
 
@@ -229,11 +229,6 @@
   let resizeTimer = null;
   let refreshTimer = null;
 
-  /*
-   * Every hovered moment receives the next
-   * available permanent layer number.
-   */
-  let topLayerZ = 1000;
 
   /* ==========================================================================
      INITIALIZATION
@@ -302,175 +297,249 @@
   }
 
   /* ==========================================================================
-     EVIDENCE INTERACTIONS
+     EVIDENCE INTERACTIONS — STABLE HITBOX VERSION
 
-     This uses delegated pointer/focus events instead of relying only on
-     :hover. That makes the interaction survive GSAP-managed visibility,
-     stage changes, and future dynamically-rendered evidence cards.
+     The GSAP timeline owns transforms on the outer evidence elements. To keep
+     hover/focus animation independent, Moments and Characters receive a
+     generated inner visual surface. The outer element stays in the same place
+     as a stable pointer hitbox while the inner surface pulses and settles.
 
-     Moments and characters keep their newest z-index after the pointer leaves.
-     Every evidence card removes only the temporary .is-interacting state.
+     Quotes, Notes, and Thoughts only receive outline/glow treatment.
+     Exactly one Moment or Character remains showcased in each active stage.
      ========================================================================== */
 
-  const evidenceSelector =
+  const outlineEvidenceSelector =
     ".falling-quote, " +
-    ".moment-frame, " +
-    ".character-name, " +
     ".note-card, " +
     ".thoughts-cloud";
 
-  const persistentEvidenceSelector =
+  const showcaseEvidenceSelector =
     ".moment-frame, .character-name";
 
-  function enableEvidenceInteractions() {
-    const enterItem = (item) => {
-      if (!item) {
-        return;
-      }
+  const evidenceSelector =
+    `${outlineEvidenceSelector}, ${showcaseEvidenceSelector}`;
 
-      item.classList.add(
-        "is-interacting"
+  const popSurfaceClass =
+    "s2-pop-surface";
+
+  function ensurePopSurface(item) {
+    if (!item) {
+      return null;
+    }
+
+    const existing = Array.from(
+      item.children
+    ).find((child) => {
+      return child.classList?.contains(
+        popSurfaceClass
       );
+    });
 
-      if (
-        !item.matches(
-          persistentEvidenceSelector
-        )
-      ) {
-        return;
-      }
+    if (existing) {
+      return existing;
+    }
 
-      const parentStage = item.closest(
-        ".scroll-stage"
+    const surface =
+      document.createElement("div");
+
+    surface.className =
+      popSurfaceClass;
+
+    while (item.firstChild) {
+      surface.appendChild(
+        item.firstChild
       );
+    }
 
-      parentStage
-        ?.querySelectorAll(
-          ".moment-frame.is-top-layer, " +
-          ".character-name.is-top-layer"
-        )
-        .forEach((sibling) => {
-          if (sibling !== item) {
-            sibling.classList.remove(
-              "is-top-layer"
-            );
-          }
-        });
+    item.appendChild(surface);
 
-      topLayerZ += 1;
+    return surface;
+  }
 
-      item.style.zIndex =
-        String(topLayerZ);
+  function demoteShowcase(item) {
+    if (!item) {
+      return;
+    }
 
-      item.classList.add(
+    item.classList.remove(
+      "is-interacting",
+      "is-promoting",
+      "is-top-layer"
+    );
+
+    item.style.removeProperty(
+      "z-index"
+    );
+  }
+
+  function promoteShowcase(item) {
+    if (!item) {
+      return;
+    }
+
+    const stage = item.closest(
+      ".scroll-stage"
+    );
+
+    stage
+      ?.querySelectorAll(
+        `${showcaseEvidenceSelector}.is-top-layer`
+      )
+      .forEach((otherItem) => {
+        if (otherItem !== item) {
+          demoteShowcase(
+            otherItem
+          );
+        }
+      });
+
+    const isNewPromotion =
+      !item.classList.contains(
         "is-top-layer"
       );
-    };
 
-    const leaveItem = (item) => {
-      item?.classList.remove(
-        "is-interacting"
-      );
-    };
-
-    section.addEventListener(
-      "pointerover",
-      (event) => {
-        const item = event.target.closest?.(
-          evidenceSelector
-        );
-
-        if (
-          !item ||
-          !section.contains(item) ||
-          item.contains(event.relatedTarget)
-        ) {
-          return;
-        }
-
-        enterItem(item);
-      }
+    item.classList.add(
+      "is-top-layer",
+      "is-interacting"
     );
 
-    section.addEventListener(
-      "pointerout",
-      (event) => {
-        const item = event.target.closest?.(
-          evidenceSelector
-        );
+    if (!isNewPromotion) {
+      return;
+    }
 
-        if (
-          !item ||
-          item.contains(event.relatedTarget)
-        ) {
-          return;
-        }
-
-        leaveItem(item);
-      }
+    /* Restart the short promotion pulse for the newly selected card. */
+    item.classList.remove(
+      "is-promoting"
     );
 
-    section.addEventListener(
+    void item.offsetWidth;
+
+    item.classList.add(
+      "is-promoting"
+    );
+  }
+
+  function enterEvidence(item) {
+    if (!item) {
+      return;
+    }
+
+    if (
+      item.matches(
+        showcaseEvidenceSelector
+      )
+    ) {
+      promoteShowcase(item);
+      return;
+    }
+
+    item.classList.add(
+      "is-interacting"
+    );
+  }
+
+  function leaveEvidence(item) {
+    item?.classList.remove(
+      "is-interacting"
+    );
+  }
+
+  function bindEvidenceItem(item) {
+    if (
+      !item ||
+      item.dataset.s2InteractionBound ===
+        "true"
+    ) {
+      return;
+    }
+
+    item.dataset.s2InteractionBound =
+      "true";
+
+    item.addEventListener(
+      "pointerenter",
+      () => enterEvidence(item)
+    );
+
+    item.addEventListener(
+      "pointerleave",
+      () => leaveEvidence(item)
+    );
+
+    item.addEventListener(
       "pointercancel",
-      () => {
-        section
-          .querySelectorAll(
-            ".is-interacting"
-          )
-          .forEach(leaveItem);
-      }
+      () => leaveEvidence(item)
     );
 
-    section.addEventListener(
+    item.addEventListener(
       "focusin",
-      (event) => {
-        const item = event.target.closest?.(
-          evidenceSelector
-        );
-
-        enterItem(item);
-      }
+      () => enterEvidence(item)
     );
 
-    section.addEventListener(
+    item.addEventListener(
       "focusout",
       (event) => {
-        const item = event.target.closest?.(
-          evidenceSelector
-        );
-
         if (
-          !item ||
-          item.contains(event.relatedTarget)
+          item.contains(
+            event.relatedTarget
+          )
         ) {
           return;
         }
 
-        leaveItem(item);
+        leaveEvidence(item);
       }
     );
+
+    item.addEventListener(
+      "animationend",
+      (event) => {
+        if (
+          event.animationName !==
+          "s2-promote-card"
+        ) {
+          return;
+        }
+
+        item.classList.remove(
+          "is-promoting"
+        );
+      }
+    );
+  }
+
+  function enableEvidenceInteractions() {
+    section
+      .querySelectorAll(
+        showcaseEvidenceSelector
+      )
+      .forEach((item) => {
+        ensurePopSurface(item);
+      });
+
+    section
+      .querySelectorAll(
+        evidenceSelector
+      )
+      .forEach(bindEvidenceItem);
 
     section.dataset.s2InteractionsReady =
       "true";
   }
 
-  function resetEvidenceInteractions() {
-    section
+  function resetEvidenceInteractions(
+    root = section
+  ) {
+    root
       .querySelectorAll(
         evidenceSelector
       )
       .forEach((item) => {
+        demoteShowcase(item);
         item.classList.remove(
-          "is-interacting",
-          "is-top-layer"
-        );
-
-        item.style.removeProperty(
-          "z-index"
+          "is-interacting"
         );
       });
-
-    topLayerZ = 1000;
   }
 
   /* ==========================================================================
@@ -1892,15 +1961,9 @@
               : "none";
 
           if (!isStageActive) {
-            layer.stage
-              .querySelectorAll(
-                ".is-interacting"
-              )
-              .forEach((item) => {
-                item.classList.remove(
-                  "is-interacting"
-                );
-              });
+            resetEvidenceInteractions(
+              layer.stage
+            );
           }
         }
 
