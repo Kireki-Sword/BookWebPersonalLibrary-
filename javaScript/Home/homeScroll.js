@@ -24,7 +24,7 @@
   "use strict";
 
   window.__INKWELL_HOME_SCROLL_BUILD__ =
-    "2026-07-24-interaction-v14-faster-button-navigation";
+    "2026-07-24-interaction-v15-direct-target-transitions";
 
   const DESKTOP_QUERY =
     "(min-width: 1100px) and (min-height: 700px) and " +
@@ -1196,8 +1196,69 @@
       stage.appendChild(curtain);
     }
 
+    if (!curtain.querySelector("[data-journey-direct-transition]")) {
+      curtain.innerHTML = `
+        <div
+          class="journey-direct-transition"
+          data-journey-direct-transition
+        >
+          <span
+            class="journey-direct-transition__ambient"
+            aria-hidden="true"
+          ></span>
+
+          <div
+            class="journey-direct-transition__motif"
+            data-journey-direct-motif
+          >
+            <span
+              class="journey-direct-transition__beam"
+              data-journey-direct-beam
+              aria-hidden="true"
+            ></span>
+
+            <div
+              class="journey-direct-transition__cards"
+              aria-hidden="true"
+            >
+              <span
+                class="journey-direct-transition__card journey-direct-transition__card--left"
+                data-journey-direct-card="left"
+              ></span>
+              <span
+                class="journey-direct-transition__card journey-direct-transition__card--center"
+                data-journey-direct-card="center"
+              ></span>
+              <span
+                class="journey-direct-transition__card journey-direct-transition__card--right"
+                data-journey-direct-card="right"
+              ></span>
+            </div>
+
+            <div
+              class="journey-direct-transition__rows"
+              aria-hidden="true"
+            >
+              <span data-journey-direct-row></span>
+              <span data-journey-direct-row></span>
+              <span data-journey-direct-row></span>
+              <span data-journey-direct-row></span>
+            </div>
+
+            <div class="journey-direct-transition__copy">
+              <small data-journey-direct-eyebrow></small>
+              <strong data-journey-direct-title></strong>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
     state.jumpCurtain = curtain;
-    state.gsap.set(curtain, { autoAlpha: 0 });
+    state.gsap.set(curtain, {
+      autoAlpha: 0,
+      clipPath: "inset(0% 0% 0% 0%)",
+    });
 
     return curtain;
   }
@@ -1613,16 +1674,315 @@
     });
   }
 
+  function getDirectTransitionParts(curtain) {
+    if (!curtain) {
+      return null;
+    }
+
+    return {
+      root: curtain.querySelector("[data-journey-direct-transition]"),
+      motif: curtain.querySelector("[data-journey-direct-motif]"),
+      beam: curtain.querySelector("[data-journey-direct-beam]"),
+      cards: {
+        left: curtain.querySelector('[data-journey-direct-card="left"]'),
+        center: curtain.querySelector('[data-journey-direct-card="center"]'),
+        right: curtain.querySelector('[data-journey-direct-card="right"]'),
+      },
+      rows: state.gsap.utils.toArray(
+        curtain.querySelectorAll("[data-journey-direct-row]"),
+      ),
+      eyebrow: curtain.querySelector("[data-journey-direct-eyebrow]"),
+      title: curtain.querySelector("[data-journey-direct-title]"),
+      copy: curtain.querySelector(".journey-direct-transition__copy"),
+    };
+  }
+
+  function prepareDirectJourneyTransition(curtain, stop) {
+    const parts = getDirectTransitionParts(curtain);
+
+    if (!parts) {
+      return null;
+    }
+
+    curtain.dataset.targetSection = stop.key;
+    parts.eyebrow.textContent = stop.eyebrow;
+    parts.title.textContent = stop.title;
+
+    state.gsap.set(curtain, {
+      autoAlpha: 0,
+      clipPath: "inset(0% 0% 0% 0%)",
+    });
+    state.gsap.set(parts.root, { autoAlpha: 1 });
+    state.gsap.set(parts.motif, {
+      autoAlpha: 1,
+      x: 0,
+      y: 0,
+      scale: 1,
+    });
+    state.gsap.set(parts.copy, {
+      autoAlpha: 0,
+      y: 16,
+    });
+    state.gsap.set(parts.beam, {
+      autoAlpha: 0,
+      scaleX: 0,
+      transformOrigin: "50% 50%",
+    });
+    state.gsap.set(Object.values(parts.cards).filter(Boolean), {
+      autoAlpha: 0,
+      x: 0,
+      y: 0,
+      rotation: 0,
+      rotationY: 0,
+      scale: 1,
+    });
+    state.gsap.set(parts.rows, {
+      autoAlpha: 0,
+      x: 0,
+      y: 0,
+      scaleX: 1,
+    });
+
+    return parts;
+  }
+
+  function addDirectSection1Transition(timeline, parts, jumpToTarget) {
+    const { left, center, right } = parts.cards;
+
+    timeline
+      .set([left, right], {
+        autoAlpha: 1,
+        x: (index) => (index === 0 ? -34 : 34),
+        rotationY: (index) => (index === 0 ? 58 : -58),
+        transformOrigin: (index) =>
+          index === 0 ? "100% 50%" : "0% 50%",
+        scale: 0.92,
+      }, 0)
+      .to(parts.copy, {
+        autoAlpha: 1,
+        y: 0,
+        duration: 0.18,
+        ease: "power2.out",
+      }, 0.04)
+      .to([left, right], {
+        x: 0,
+        rotationY: 0,
+        scale: 1,
+        duration: 0.30,
+        ease: "power3.inOut",
+      }, 0.05)
+      .set(center, {
+        autoAlpha: 1,
+        scale: 0.72,
+      }, 0.23)
+      .to(center, {
+        scale: 1,
+        duration: 0.18,
+        ease: "back.out(1.4)",
+      }, 0.23)
+      .add(jumpToTarget, 0.28)
+      .to([left, right], {
+        autoAlpha: 0,
+        x: (index) => (index === 0 ? -28 : 28),
+        duration: 0.15,
+        ease: "power2.in",
+      }, 0.36)
+      .to([parts.copy, center], {
+        autoAlpha: 0,
+        y: -8,
+        duration: 0.14,
+        ease: "power2.in",
+      }, 0.45);
+  }
+
+  function addDirectSection2Transition(timeline, parts, jumpToTarget) {
+    const cards = [parts.cards.left, parts.cards.center, parts.cards.right];
+
+    timeline
+      .set(cards, {
+        autoAlpha: 1,
+        x: (index) => [-70, 0, 70][index],
+        y: (index) => [-52, -78, -44][index],
+        rotation: (index) => [-7, 2, 7][index],
+        scale: 0.84,
+      }, 0)
+      .to(parts.copy, {
+        autoAlpha: 1,
+        y: 0,
+        duration: 0.18,
+        ease: "power2.out",
+      }, 0.03)
+      .to(cards, {
+        x: (index) => [-34, 0, 34][index],
+        y: (index) => [2, -4, 4][index],
+        rotation: (index) => [-3, 0, 3][index],
+        scale: 0.96,
+        duration: 0.30,
+        stagger: 0.025,
+        ease: "power3.out",
+      }, 0.06)
+      .to(parts.beam, {
+        autoAlpha: 1,
+        scaleX: 1,
+        duration: 0.22,
+        ease: "power3.inOut",
+      }, 0.16)
+      .add(jumpToTarget, 0.30)
+      .to(cards, {
+        y: 18,
+        autoAlpha: 0,
+        duration: 0.16,
+        stagger: 0.018,
+        ease: "power2.in",
+      }, 0.42)
+      .to([parts.copy, parts.beam], {
+        autoAlpha: 0,
+        y: -8,
+        duration: 0.14,
+        ease: "power2.in",
+      }, 0.47);
+  }
+
+  function addDirectSection3Transition(timeline, parts, jumpToTarget) {
+    timeline
+      .set(parts.rows, {
+        autoAlpha: 1,
+        x: (index) => (index % 2 === 0 ? -88 : 88),
+        y: (index) => (index - 1.5) * 12,
+        scaleX: 0.78,
+      }, 0)
+      .to(parts.copy, {
+        autoAlpha: 1,
+        y: 0,
+        duration: 0.18,
+        ease: "power2.out",
+      }, 0.03)
+      .to(parts.beam, {
+        autoAlpha: 1,
+        scaleX: 1,
+        duration: 0.24,
+        ease: "power3.inOut",
+      }, 0.06)
+      .to(parts.rows, {
+        x: 0,
+        y: 0,
+        scaleX: 1,
+        duration: 0.30,
+        stagger: 0.035,
+        ease: "power3.out",
+      }, 0.10)
+      .add(jumpToTarget, 0.31)
+      .to(parts.rows, {
+        x: 18,
+        autoAlpha: 0,
+        duration: 0.15,
+        stagger: 0.02,
+        ease: "power2.in",
+      }, 0.43)
+      .to([parts.copy, parts.beam], {
+        autoAlpha: 0,
+        y: -8,
+        duration: 0.14,
+        ease: "power2.in",
+      }, 0.47);
+  }
+
+  function addDirectSection4Transition(timeline, parts, jumpToTarget) {
+    const { left, center, right } = parts.cards;
+
+    timeline
+      .set([left, right], {
+        autoAlpha: 1,
+        x: (index) => (index === 0 ? -116 : 116),
+        y: (index) => (index === 0 ? 8 : -8),
+        rotation: (index) => (index === 0 ? -8 : 8),
+        scale: 0.82,
+      }, 0)
+      .to(parts.copy, {
+        autoAlpha: 1,
+        y: 0,
+        duration: 0.18,
+        ease: "power2.out",
+      }, 0.02)
+      .to([left, right], {
+        x: 0,
+        y: 0,
+        rotation: 0,
+        scale: 0.94,
+        duration: 0.30,
+        ease: "power3.inOut",
+      }, 0.06)
+      .to(parts.beam, {
+        autoAlpha: 1,
+        scaleX: 1,
+        duration: 0.22,
+        ease: "power3.inOut",
+      }, 0.15)
+      .set(center, {
+        autoAlpha: 1,
+        scale: 0.70,
+      }, 0.28)
+      .to([left, right], {
+        autoAlpha: 0,
+        scale: 0.80,
+        duration: 0.10,
+        ease: "power2.in",
+      }, 0.28)
+      .to(center, {
+        scale: 1,
+        duration: 0.18,
+        ease: "back.out(1.35)",
+      }, 0.28)
+      .add(jumpToTarget, 0.34)
+      .to(center, {
+        y: -10,
+        scale: 1.06,
+        autoAlpha: 0,
+        duration: 0.18,
+        ease: "power2.in",
+      }, 0.46)
+      .to([parts.copy, parts.beam], {
+        autoAlpha: 0,
+        y: -8,
+        duration: 0.14,
+        ease: "power2.in",
+      }, 0.49);
+  }
+
+  function addDirectTargetTransition(
+    timeline,
+    parts,
+    stop,
+    jumpToTarget,
+  ) {
+    switch (stop.key) {
+      case "section-1":
+        addDirectSection1Transition(timeline, parts, jumpToTarget);
+        break;
+      case "section-2":
+        addDirectSection2Transition(timeline, parts, jumpToTarget);
+        break;
+      case "section-3":
+        addDirectSection3Transition(timeline, parts, jumpToTarget);
+        break;
+      case "section-4":
+      default:
+        addDirectSection4Transition(timeline, parts, jumpToTarget);
+        break;
+    }
+  }
+
   function playJourneySectionEntrance(stop, index) {
     const curtain = state.jumpCurtain || ensureJourneyJumpCurtain();
     const reduceMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
-    const startLabel = stop.entranceStartLabel || stop.timelineLabel;
-    const endLabel = stop.entranceEndLabel || stop.timelineLabel;
-    const start = getJourneyStopScrollPosition(startLabel);
-    const end = getJourneyStopScrollPosition(endLabel);
+    const target = getJourneyStopScrollPosition(stop.timelineLabel);
     const token = state.transitionToken + 1;
+
+    if (state.activeScene === stop.key && !state.transitionTimeline) {
+      return;
+    }
 
     state.transitionToken = token;
     state.scrollTween?.kill();
@@ -1639,7 +1999,7 @@
 
     if (state.journeyStatus) {
       state.journeyStatus.textContent =
-        `Playing the entrance for section ${index + 1}: ${stop.title}.`;
+        `Opening section ${index + 1}: ${stop.title}.`;
     }
 
     const finish = () => {
@@ -1656,7 +2016,10 @@
       );
 
       if (curtain) {
-        state.gsap.set(curtain, { autoAlpha: 0 });
+        state.gsap.set(curtain, {
+          autoAlpha: 0,
+          clipPath: "inset(0% 0% 0% 0%)",
+        });
       }
 
       state.trigger?.update();
@@ -1670,49 +2033,55 @@
     };
 
     if (reduceMotion || !curtain) {
-      forceJourneyScrollPosition(end);
+      forceJourneyScrollPosition(target);
       finish();
       return;
     }
 
-    const entranceDuration = getJourneyEntranceDuration(
-      startLabel,
-      endLabel,
-    );
+    const parts = prepareDirectJourneyTransition(curtain, stop);
 
-    state.gsap.set(curtain, { autoAlpha: 0 });
+    if (!parts) {
+      forceJourneyScrollPosition(target);
+      finish();
+      return;
+    }
+
+    let targetWasApplied = false;
+    const jumpToTarget = () => {
+      if (targetWasApplied || token !== state.transitionToken) {
+        return;
+      }
+
+      targetWasApplied = true;
+      forceJourneyScrollPosition(target);
+    };
 
     state.transitionTimeline = state.gsap.timeline({
       defaults: { overwrite: "auto" },
+      onComplete: finish,
       onInterrupt: finish,
     });
 
-    state.transitionTimeline
-      .to(curtain, {
-        autoAlpha: 1,
-        duration: JOURNEY_TRANSITION_OUT,
-        ease: "power2.inOut",
-      })
-      .add(() => {
-        forceJourneyScrollPosition(start);
-      })
-      .to(curtain, {
-        autoAlpha: 0,
-        duration: JOURNEY_TRANSITION_IN,
-        ease: "power2.out",
-      })
-      .add(() => {
-        if (token !== state.transitionToken) {
-          return;
-        }
+    state.transitionTimeline.to(curtain, {
+      autoAlpha: 1,
+      duration: 0.10,
+      ease: "power2.inOut",
+    });
 
-        animateJourneyScroll({
-          from: start,
-          to: end,
-          duration: entranceDuration,
-          onComplete: finish,
-        });
-      });
+    addDirectTargetTransition(
+      state.transitionTimeline,
+      parts,
+      stop,
+      jumpToTarget,
+    );
+
+    state.transitionTimeline
+      .add(jumpToTarget, 0.35)
+      .to(curtain, {
+        clipPath: "inset(0% 0% 100% 0%)",
+        duration: 0.24,
+        ease: "power3.inOut",
+      }, 0.58);
   }
 
   function scrollToJourneyStop(stop, index) {
