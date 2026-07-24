@@ -86,11 +86,15 @@
 
 .hero-left {
   flex: 1;
+  width: 100%;
+  max-width: 600px;
+
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 0.95rem;
-  max-width: 660px;
+
+  /* Individual margins below now control the vertical rhythm. */
+  gap: 0;
 }
 
 .hero-left > * {
@@ -99,52 +103,74 @@
 }
 
 .hero-label {
+  margin: 0;
+
   font-family: var(--font-body);
-  font-size: 0.76rem;
+  font-size: 0.78rem;
   font-weight: 700;
+  line-height: 1.2;
+
   color: var(--color-accent-light);
   text-transform: uppercase;
   letter-spacing: 0.13em;
+
   opacity: 0;
   transform: translateY(16px);
 }
 
 .hero-title {
+  max-width: 600px;
+  margin: 0.8rem 0 0;
+
   font-family: var(--font-display);
-  font-size: clamp(3.35rem, 5.8vw, 5rem);
+  font-size: clamp(3.35rem, 4.55vw, 4.9rem);
   font-weight: 650;
+  line-height: 0.95;
+  letter-spacing: -0.045em;
+
   color: var(--color-text-primary);
-  letter-spacing: -0.055em;
-  line-height: 0.98;
-  max-width: 660px;
-  margin-top: 0.2rem;
+  text-wrap: balance;
+  text-shadow: 0 18px 55px rgba(0, 0, 0, 0.32);
+
   opacity: 0;
   transform: translateY(20px);
-  text-shadow: 0 18px 55px rgba(0, 0, 0, 0.32);
+}
+
+.hero-title-line {
+  display: block;
 }
 
 .hero-subtitle {
+  max-width: 35rem;
+  margin: 1.55rem 0 0;
+
   font-family: var(--font-display);
-  font-size: clamp(1.15rem, 1.8vw, 1.38rem);
+  font-size: clamp(1.15rem, 1.35vw, 1.32rem);
   font-weight: 400;
   font-style: italic;
-  color: var(--color-text-secondary);
-  line-height: 1.45;
+  line-height: 1.46;
   letter-spacing: -0.01em;
-  max-width: 560px;
-  margin-top: 0.25rem;
+
+  color: var(--color-text-secondary);
+  text-wrap: balance;
+
   opacity: 0;
   transform: translateY(18px);
 }
 
 .hero-p {
+  width: 100%;
+  max-width: 36rem;
+  margin: 1.35rem 0 0;
+
   font-family: var(--font-body);
   font-size: 1rem;
   font-weight: 400;
-  color: var(--color-text-muted);
   line-height: 1.65;
-  max-width: 520px;
-  margin-top: 0.2rem;
+
+  color: var(--color-text-muted);
+  text-wrap: pretty;
+
   opacity: 0;
   transform: translateY(16px);
 }
@@ -152,8 +178,10 @@
 .hero-buttons {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  margin-top: 1rem;
+  gap: 0.875rem;
+
+  margin: 1.5rem 0 0;
+
   opacity: 0;
   transform: translateY(14px);
 }
@@ -279,10 +307,14 @@
 }
 
 .hero-proof {
-  margin-top: 0.15rem;
+  width: 100%;
+  max-width: 36rem;
+  margin: 0.9rem 0 0;
+
   font-size: 0.875rem;
-  line-height: 1.55;
+  line-height: 1.5;
   color: var(--color-text-muted);
+
   opacity: 1;
   transform: none;
 }
@@ -1024,33 +1056,25 @@
 }
 
 /* =========================================================
-   LARGE DESKTOP HERO REFINEMENT
-   Widens the composition and slightly enlarges the product card
-   without making the headline overpower the page.
+   FINAL HERO TYPOGRAPHY AND SPACING
    ========================================================= */
 
 @media (min-width: 1400px) {
   .hero {
-    /*
-     * The original 1220px content target created very wide side margins.
-     * A 1360px target keeps generous whitespace while using large screens
-     * more effectively.
-     */
     padding-inline:
       max(2rem, calc((100vw - 1360px) / 2 + 2rem));
 
     grid-template-columns:
-      minmax(0, 1fr)
-      minmax(560px, 0.92fr);
+      minmax(0, 600px)
+      560px;
+
+    justify-content: center;
+    column-gap: clamp(4.5rem, 5vw, 6rem);
   }
 
-  .hero-p {
-    max-width: 550px;
-    font-size: 1.05rem;
-  }
-
-  .hero-buttons {
-    margin-top: 0.45rem;
+  .hero-right {
+    width: 560px;
+    justify-self: end;
   }
 
   .hero-btn-primary,
@@ -1104,7 +1128,48 @@
   }
 }
 
-/* Larger touch targets for the card controls on touch devices. */
+@media (max-width: 1399px) and (min-width: 981px) {
+  .hero-title {
+    font-size: clamp(3.3rem, 5vw, 4.55rem);
+  }
+
+  .hero-p,
+  .hero-proof {
+    max-width: 34.5rem;
+  }
+}
+
+@media (max-width: 560px) {
+  .hero-left {
+    max-width: none;
+  }
+
+  .hero-title {
+    max-width: 100%;
+    margin-top: 0.75rem;
+    font-size: clamp(2.65rem, 12vw, 3.25rem);
+    line-height: 0.98;
+  }
+
+  .hero-subtitle {
+    margin-top: 1.35rem;
+  }
+
+  .hero-p {
+    max-width: none;
+    margin-top: 1.15rem;
+  }
+
+  .hero-buttons {
+    margin-top: 1.35rem;
+  }
+
+  .hero-proof {
+    max-width: none;
+    margin-top: 0.85rem;
+  }
+}
+
 @media (hover: none), (pointer: coarse) {
   .card-btn {
     height: 44px;
