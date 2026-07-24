@@ -4394,3 +4394,25 @@ body.journey-scene-transitioning #section-2-empty-shelf .stage-viewport {
     transition: none !important;
   }
 }
+
+/* ========================================================================== 
+   SECTION 2 — BUTTON-LAUNCHED SAVED-LAYER PREVIEWS (V13)
+
+   Clicking a landed saved-layer button now collapses the currently visible
+   evidence into its own button, then launches the selected evidence outward
+   from the selected button. The real scroll playhead stays untouched so the
+   next wheel or trackpad movement continues the natural story.
+   ========================================================================== */
+
+#section-2-empty-shelf.is-layer-switching .scroll-stage,
+#section-2-empty-shelf.is-layer-switching .depth-button {
+  pointer-events: none !important;
+}
+
+#section-2-empty-shelf.is-layer-switching .scroll-stage.is-active {
+  z-index: 40 !important;
+}
+
+#section-2-empty-shelf.is-layer-switching .media-row-details {
+  z-index: 60 !important;
+}

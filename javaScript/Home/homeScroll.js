@@ -24,7 +24,7 @@
   "use strict";
 
   window.__INKWELL_HOME_SCROLL_BUILD__ =
-    "2026-07-24-interaction-v12-masked-navigation";
+    "2026-07-24-interaction-v13-section-entrance-navigation";
 
   const DESKTOP_QUERY =
     "(min-width: 1100px) and (min-height: 700px) and " +
@@ -49,6 +49,9 @@
     {
       key: "section-1",
       timelineLabel: "section-1-start",
+      entranceStartLabel: "section-2-start",
+      entranceEndLabel: "section-1-start",
+      entranceDirection: -1,
       targetSelector: ".hero",
       eyebrow: "Introduction",
       title: "Stories leave a mark",
@@ -56,6 +59,9 @@
     {
       key: "section-2",
       timelineLabel: "section-2-start",
+      entranceStartLabel: "section-1-to-2-start",
+      entranceEndLabel: "section-2-start",
+      entranceDirection: 1,
       targetSelector: "#section-2-empty-shelf",
       eyebrow: "Beyond the score",
       title: "Remember why",
@@ -63,6 +69,9 @@
     {
       key: "section-3",
       timelineLabel: "section-3-start",
+      entranceStartLabel: "section-2-to-3-start",
+      entranceEndLabel: "section-3-start",
+      entranceDirection: 1,
       targetSelector: "#section-3-library-flow",
       eyebrow: "Your first step",
       title: "Build your library",
@@ -70,14 +79,19 @@
     {
       key: "section-4",
       timelineLabel: "section-4-start",
+      entranceStartLabel: "section-3-to-4-start",
+      entranceEndLabel: "section-4-start",
+      entranceDirection: 1,
       targetSelector: "#section-4",
       eyebrow: "Shared stories",
       title: "Different souls",
     },
   ]);
 
-  const JOURNEY_TRANSITION_OUT = 0.24;
-  const JOURNEY_TRANSITION_IN = 0.44;
+  const JOURNEY_TRANSITION_OUT = 0.18;
+  const JOURNEY_TRANSITION_IN = 0.22;
+  const JOURNEY_ENTRANCE_MIN_DURATION = 1.12;
+  const JOURNEY_ENTRANCE_MAX_DURATION = 1.72;
 
   const SELECTORS = {
     nav: "nav",
@@ -487,6 +501,7 @@
     master.addLabel("section-1-start", 0);
     master.to({}, { duration: 0.12 });
 
+    master.addLabel("section-1-to-2-start");
     addHeroToSection2Transition(master, elements, heroItems);
 
     master.addLabel("section-2-start");
@@ -496,6 +511,7 @@
     master.to({}, { duration: 0.16 });
 
     /* SECTION 2 -> 3 ----------------------------------------------------- */
+    master.addLabel("section-2-to-3-start");
     addSection2ToSection3Transition(
       master,
       elements,
@@ -507,6 +523,7 @@
     master.addLabel("section-3-end");
 
     /* SECTION 3 -> 4 ----------------------------------------------------- */
+    master.addLabel("section-3-to-4-start");
     addSection3ToSection4Transition(master, elements);
 
     master.addLabel("section-4-start");
@@ -1546,16 +1563,160 @@
       });
   }
 
-  function scrollToJourneyStop(stop, index) {
-    const target = getJourneyStopScrollPosition(stop.timelineLabel);
+  function getJourneyEntranceDuration(startLabel, endLabel) {
+    const master = state.master;
 
-    transitionToJourneyPosition({
-      target,
-      startMessage:
-        `Moving to section ${index + 1}: ${stop.title}.`,
-      endMessage:
-        `Section ${index + 1}: ${stop.title}.`,
+    if (!master) {
+      return JOURNEY_ENTRANCE_MIN_DURATION;
+    }
+
+    const startTime = Number(master.labels[startLabel]);
+    const endTime = Number(master.labels[endLabel]);
+    const timelineDistance = Math.abs(endTime - startTime);
+
+    return state.gsap.utils.clamp(
+      JOURNEY_ENTRANCE_MIN_DURATION,
+      JOURNEY_ENTRANCE_MAX_DURATION,
+      0.52 + timelineDistance * 0.34,
+    );
+  }
+
+  function animateJourneyScroll({
+    from,
+    to,
+    duration,
+    onComplete,
+  }) {
+    const proxy = { value: from };
+
+    state.scrollTween?.kill();
+    state.scrollTween = state.gsap.to(proxy, {
+      value: to,
+      duration,
+      ease: "power2.inOut",
+      overwrite: "auto",
+      onUpdate: () => {
+        window.scrollTo(0, proxy.value);
+        state.trigger?.update();
+        state.trigger?.getTween?.()?.progress(1);
+      },
+      onComplete: () => {
+        window.scrollTo(0, to);
+        state.trigger?.update();
+        state.trigger?.getTween?.()?.progress(1);
+        state.scrollTween = null;
+        onComplete?.();
+      },
+      onInterrupt: () => {
+        state.scrollTween = null;
+      },
     });
+  }
+
+  function playJourneySectionEntrance(stop, index) {
+    const curtain = state.jumpCurtain || ensureJourneyJumpCurtain();
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    const startLabel = stop.entranceStartLabel || stop.timelineLabel;
+    const endLabel = stop.entranceEndLabel || stop.timelineLabel;
+    const start = getJourneyStopScrollPosition(startLabel);
+    const end = getJourneyStopScrollPosition(endLabel);
+    const token = state.transitionToken + 1;
+
+    state.transitionToken = token;
+    state.scrollTween?.kill();
+    state.scrollTween = null;
+    state.transitionTimeline?.kill();
+    state.transitionTimeline = null;
+    state.section2Api?.closeLayerPreview?.({ animate: false });
+
+    document.body.classList.add(
+      "journey-section-jumping",
+      "journey-scene-transitioning",
+      "journey-section-entrance-playing",
+    );
+
+    if (state.journeyStatus) {
+      state.journeyStatus.textContent =
+        `Playing the entrance for section ${index + 1}: ${stop.title}.`;
+    }
+
+    const finish = () => {
+      if (token !== state.transitionToken) {
+        return;
+      }
+
+      state.transitionTimeline = null;
+      state.scrollTween = null;
+      document.body.classList.remove(
+        "journey-section-jumping",
+        "journey-scene-transitioning",
+        "journey-section-entrance-playing",
+      );
+
+      if (curtain) {
+        state.gsap.set(curtain, { autoAlpha: 0 });
+      }
+
+      state.trigger?.update();
+      state.trigger?.getTween?.()?.progress(1);
+      syncActiveScene();
+
+      if (state.journeyStatus) {
+        state.journeyStatus.textContent =
+          `Section ${index + 1}: ${stop.title}.`;
+      }
+    };
+
+    if (reduceMotion || !curtain) {
+      forceJourneyScrollPosition(end);
+      finish();
+      return;
+    }
+
+    const entranceDuration = getJourneyEntranceDuration(
+      startLabel,
+      endLabel,
+    );
+
+    state.gsap.set(curtain, { autoAlpha: 0 });
+
+    state.transitionTimeline = state.gsap.timeline({
+      defaults: { overwrite: "auto" },
+      onInterrupt: finish,
+    });
+
+    state.transitionTimeline
+      .to(curtain, {
+        autoAlpha: 1,
+        duration: JOURNEY_TRANSITION_OUT,
+        ease: "power2.inOut",
+      })
+      .add(() => {
+        forceJourneyScrollPosition(start);
+      })
+      .to(curtain, {
+        autoAlpha: 0,
+        duration: JOURNEY_TRANSITION_IN,
+        ease: "power2.out",
+      })
+      .add(() => {
+        if (token !== state.transitionToken) {
+          return;
+        }
+
+        animateJourneyScroll({
+          from: start,
+          to: end,
+          duration: entranceDuration,
+          onComplete: finish,
+        });
+      });
+  }
+
+  function scrollToJourneyStop(stop, index) {
+    playJourneySectionEntrance(stop, index);
   }
 
   function scrollToSection2Layer(section2Api, key) {
@@ -1613,6 +1774,7 @@
       "journey-section-rail-ready",
       "journey-section-jumping",
       "journey-scene-transitioning",
+      "journey-section-entrance-playing",
     );
   }
 

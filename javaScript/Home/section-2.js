@@ -21,7 +21,7 @@
   }
 
   window.__INKWELL_SECTION2_BUILD__ =
-    "2026-07-24-interaction-v12-layer-previews";
+    "2026-07-24-interaction-v13-button-launched-previews";
 
   const { gsap, ScrollTrigger } = window;
 
@@ -638,6 +638,215 @@
     });
   }
 
+  function getLayerByKey(key) {
+    return layers.find((layer) => layer.key === key) || null;
+  }
+
+  function isLayerStageVisible(layer) {
+    if (!layer?.stage) {
+      return false;
+    }
+
+    const opacity = Number(gsap.getProperty(layer.stage, "opacity"));
+    const visibility = window.getComputedStyle(layer.stage).visibility;
+
+    return opacity > 0.04 && visibility !== "hidden";
+  }
+
+  function getRenderedLayer() {
+    if (layerPreview.active) {
+      const previewLayer = getLayerByKey(layerPreview.key);
+
+      if (previewLayer && isLayerStageVisible(previewLayer)) {
+        return previewLayer;
+      }
+    }
+
+    const renderedTime = masterTimeline?.time?.() || 0;
+
+    return layers.find((layer) => {
+      return (
+        Number.isFinite(layer.startTime) &&
+        Number.isFinite(layer.endTime) &&
+        renderedTime >= layer.startTime &&
+        renderedTime < layer.endTime &&
+        isLayerStageVisible(layer)
+      );
+    }) || null;
+  }
+
+  function getButtonLaunchDelta(element, layer, index, total) {
+    const elementRect = element.getBoundingClientRect();
+    const buttonRect = getButtonRect(layer);
+    const fanOffset = total > 1
+      ? (index - (total - 1) / 2) * 2.4
+      : 0;
+
+    return {
+      x:
+        buttonRect.left +
+        buttonRect.width / 2 -
+        (elementRect.left + elementRect.width / 2) +
+        fanOffset,
+      y:
+        buttonRect.top +
+        buttonRect.height / 2 -
+        (elementRect.top + elementRect.height / 2)
+    };
+  }
+
+  function addLayerCollapseToButton(timeline, layer, position = 0) {
+    if (!layer?.stage || !layer.items.length || !isLayerStageVisible(layer)) {
+      return position;
+    }
+
+    timeline.to(
+      layer.items,
+      {
+        x: (index, element) => {
+          return getButtonLaunchDelta(
+            element,
+            layer,
+            index,
+            layer.items.length
+          ).x;
+        },
+        y: (index, element) => {
+          return getButtonLaunchDelta(
+            element,
+            layer,
+            index,
+            layer.items.length
+          ).y;
+        },
+        scale: 0.1,
+        rotation: 0,
+        autoAlpha: 0,
+        duration: 0.42,
+        stagger: {
+          each: 0.026,
+          from: "end"
+        },
+        ease: "power2.in"
+      },
+      position
+    );
+
+    timeline.to(
+      layer.stage,
+      {
+        autoAlpha: 0,
+        duration: 0.16,
+        ease: "power1.in"
+      },
+      position + 0.30
+    );
+
+    timeline.to(
+      layer.button,
+      {
+        scale: 1.055,
+        duration: 0.13,
+        yoyo: true,
+        repeat: 1,
+        ease: "power2.out"
+      },
+      position + 0.24
+    );
+
+    return position + 0.48;
+  }
+
+  function prepareButtonLaunchedLayer(layer, naturalTime, token) {
+    if (token !== layerPreview.token) {
+      return;
+    }
+
+    layerPreview.active = true;
+    layerPreview.key = layer.key;
+    layerPreview.naturalTime = naturalTime;
+
+    section.classList.add(
+      "is-layer-previewing",
+      "is-layer-switching"
+    );
+    section.dataset.s2PreviewLayer = layer.key;
+
+    masterTimeline.time(layer.openTime, false);
+    syncTimelineState(masterTimeline);
+
+    gsap.set(layer.stage, {
+      autoAlpha: 1,
+      visibility: "visible",
+      pointerEvents: "none"
+    });
+
+    gsap.set(layer.items, {
+      x: (index, element) => {
+        return getButtonLaunchDelta(
+          element,
+          layer,
+          index,
+          layer.items.length
+        ).x;
+      },
+      y: (index, element) => {
+        return getButtonLaunchDelta(
+          element,
+          layer,
+          index,
+          layer.items.length
+        ).y;
+      },
+      scale: 0.1,
+      rotation: 0,
+      autoAlpha: 0,
+      transformOrigin: "center center"
+    });
+  }
+
+  function addLayerLaunchFromButton(timeline, layer, position = 0) {
+    timeline.to(
+      layer.button,
+      {
+        scale: 1.08,
+        duration: 0.14,
+        yoyo: true,
+        repeat: 1,
+        ease: "power2.out"
+      },
+      position
+    );
+
+    timeline.to(
+      layer.items,
+      {
+        x: 0,
+        y: 0,
+        scale: (_index, element) => {
+          return Number(element.dataset.scale || 1);
+        },
+        rotation: (_index, element) => {
+          return getElementRotate(element);
+        },
+        autoAlpha: 1,
+        duration: layer.key === "thoughts" ? 0.62 : 0.56,
+        stagger: {
+          each: layer.key === "quotes" ? 0.036 : 0.052,
+          from: "start"
+        },
+        ease: "power3.out"
+      },
+      position + 0.05
+    );
+
+    return position + (
+      layer.key === "quotes"
+        ? 0.88
+        : 0.72
+    );
+  }
+
   function previewSavedLayer(layer) {
     if (!layer || !masterTimeline || !Number.isFinite(layer.openTime)) {
       return false;
@@ -654,26 +863,19 @@
       return false;
     }
 
+    const outgoingLayer = getRenderedLayer();
     const token = layerPreview.token + 1;
+
     layerPreview.token = token;
     layerPreview.transition?.kill();
     layerPreview.transition = null;
+    layerPreview.active = true;
+    layerPreview.naturalTime = naturalTime;
 
-    const applyPreview = () => {
-      if (token !== layerPreview.token) {
-        return;
-      }
-
-      layerPreview.active = true;
-      layerPreview.key = layer.key;
-      layerPreview.naturalTime = naturalTime;
-      section.classList.add("is-layer-previewing");
-      section.dataset.s2PreviewLayer = layer.key;
-
-      masterTimeline.time(layer.openTime, false);
-      syncTimelineState(masterTimeline);
-      updateStatus(`${layer.label} preview opened.`);
-    };
+    section.classList.add(
+      "is-layer-previewing",
+      "is-layer-switching"
+    );
 
     const finish = () => {
       if (token !== layerPreview.token) {
@@ -681,11 +883,33 @@
       }
 
       layerPreview.transition = null;
-      gsap.set(elements.viewport, { autoAlpha: 1 });
+      section.classList.remove("is-layer-switching");
+
+      if (layer.stage) {
+        gsap.set(layer.stage, {
+          autoAlpha: 1,
+          visibility: "visible",
+          pointerEvents: "auto"
+        });
+      }
+
+      syncTimelineState(masterTimeline);
+      updateStatus(`${layer.label} preview opened.`);
     };
 
-    if (prefersReducedMotion || !elements.viewport) {
-      applyPreview();
+    if (prefersReducedMotion) {
+      prepareButtonLaunchedLayer(layer, naturalTime, token);
+      gsap.set(layer.items, {
+        x: 0,
+        y: 0,
+        scale: (_index, element) => {
+          return Number(element.dataset.scale || 1);
+        },
+        rotation: (_index, element) => {
+          return getElementRotate(element);
+        },
+        autoAlpha: 1
+      });
       finish();
       return true;
     }
@@ -693,21 +917,42 @@
     layerPreview.transition = gsap.timeline({
       defaults: { overwrite: "auto" },
       onComplete: finish,
-      onInterrupt: finish
+      onInterrupt: () => {
+        if (token === layerPreview.token) {
+          section.classList.remove("is-layer-switching");
+        }
+      }
     });
 
+    let cursor = 0;
+
+    if (outgoingLayer) {
+      cursor = addLayerCollapseToButton(
+        layerPreview.transition,
+        outgoingLayer,
+        cursor
+      );
+    }
+
     layerPreview.transition
-      .to(elements.viewport, {
-        autoAlpha: 0,
-        duration: 0.18,
-        ease: "power2.in"
-      })
-      .add(applyPreview)
-      .to(elements.viewport, {
-        autoAlpha: 1,
-        duration: 0.34,
-        ease: "power3.out"
-      });
+      .add(() => {
+        prepareButtonLaunchedLayer(
+          layer,
+          naturalTime,
+          token
+        );
+      }, cursor)
+      .add(() => {
+        updateStatus(
+          `${layer.label} is opening from its saved-layer button.`
+        );
+      }, cursor);
+
+    addLayerLaunchFromButton(
+      layerPreview.transition,
+      layer,
+      cursor + 0.02
+    );
 
     return true;
   }
@@ -729,7 +974,10 @@
       layerPreview.active = false;
       layerPreview.key = "";
       layerPreview.naturalTime = null;
-      section.classList.remove("is-layer-previewing");
+      section.classList.remove(
+        "is-layer-previewing",
+        "is-layer-switching"
+      );
       delete section.dataset.s2PreviewLayer;
 
       if (masterTimeline && Number.isFinite(restoreTime)) {

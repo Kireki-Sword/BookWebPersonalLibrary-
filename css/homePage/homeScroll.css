@@ -839,3 +839,20 @@ body.journey-scene-transitioning .journey-jump-curtain {
     outline-color: Highlight;
   }
 }
+
+/* ========================================================================== 
+   CHAPTER BUTTONS — PLAY THE REAL SECTION ENTRANCE (V13)
+
+   The short curtain is only used while the playhead is repositioned to the
+   start of the selected hand-off. It then clears before the real adjacent
+   section transition plays, so intermediate sections never flash and the
+   destination never appears as a static frame.
+   ========================================================================== */
+
+body.journey-section-entrance-playing .journey-section-rail__button {
+  pointer-events: none;
+}
+
+body.journey-section-entrance-playing .journey-section-rail__button.is-current {
+  pointer-events: auto;
+}
