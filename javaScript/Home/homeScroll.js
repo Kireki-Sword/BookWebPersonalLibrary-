@@ -24,7 +24,7 @@
   "use strict";
 
   window.__INKWELL_HOME_SCROLL_BUILD__ =
-    "2026-07-24-interaction-v13-section-entrance-navigation";
+    "2026-07-24-interaction-v14-faster-button-navigation";
 
   const DESKTOP_QUERY =
     "(min-width: 1100px) and (min-height: 700px) and " +
@@ -88,10 +88,10 @@
     },
   ]);
 
-  const JOURNEY_TRANSITION_OUT = 0.18;
-  const JOURNEY_TRANSITION_IN = 0.22;
-  const JOURNEY_ENTRANCE_MIN_DURATION = 1.12;
-  const JOURNEY_ENTRANCE_MAX_DURATION = 1.72;
+  const JOURNEY_TRANSITION_OUT = 0.12;
+  const JOURNEY_TRANSITION_IN = 0.14;
+  const JOURNEY_ENTRANCE_MIN_DURATION = 0.68;
+  const JOURNEY_ENTRANCE_MAX_DURATION = 1.02;
 
   const SELECTORS = {
     nav: "nav",
@@ -1577,7 +1577,7 @@
     return state.gsap.utils.clamp(
       JOURNEY_ENTRANCE_MIN_DURATION,
       JOURNEY_ENTRANCE_MAX_DURATION,
-      0.52 + timelineDistance * 0.34,
+      0.34 + timelineDistance * 0.20,
     );
   }
 

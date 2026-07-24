@@ -21,7 +21,7 @@
   }
 
   window.__INKWELL_SECTION2_BUILD__ =
-    "2026-07-24-interaction-v13-button-launched-previews";
+    "2026-07-24-interaction-v14-faster-button-previews";
 
   const { gsap, ScrollTrigger } = window;
 
@@ -722,9 +722,9 @@
         scale: 0.1,
         rotation: 0,
         autoAlpha: 0,
-        duration: 0.42,
+        duration: 0.24,
         stagger: {
-          each: 0.026,
+          each: 0.014,
           from: "end"
         },
         ease: "power2.in"
@@ -736,25 +736,25 @@
       layer.stage,
       {
         autoAlpha: 0,
-        duration: 0.16,
+        duration: 0.09,
         ease: "power1.in"
       },
-      position + 0.30
+      position + 0.17
     );
 
     timeline.to(
       layer.button,
       {
         scale: 1.055,
-        duration: 0.13,
+        duration: 0.085,
         yoyo: true,
         repeat: 1,
         ease: "power2.out"
       },
-      position + 0.24
+      position + 0.13
     );
 
-    return position + 0.48;
+    return position + 0.29;
   }
 
   function prepareButtonLaunchedLayer(layer, naturalTime, token) {
@@ -810,7 +810,7 @@
       layer.button,
       {
         scale: 1.08,
-        duration: 0.14,
+        duration: 0.09,
         yoyo: true,
         repeat: 1,
         ease: "power2.out"
@@ -830,20 +830,20 @@
           return getElementRotate(element);
         },
         autoAlpha: 1,
-        duration: layer.key === "thoughts" ? 0.62 : 0.56,
+        duration: layer.key === "thoughts" ? 0.38 : 0.33,
         stagger: {
-          each: layer.key === "quotes" ? 0.036 : 0.052,
+          each: layer.key === "quotes" ? 0.018 : 0.026,
           from: "start"
         },
         ease: "power3.out"
       },
-      position + 0.05
+      position + 0.025
     );
 
     return position + (
       layer.key === "quotes"
-        ? 0.88
-        : 0.72
+        ? 0.50
+        : 0.43
     );
   }
 
@@ -951,7 +951,7 @@
     addLayerLaunchFromButton(
       layerPreview.transition,
       layer,
-      cursor + 0.02
+      cursor + 0.01
     );
 
     return true;
@@ -1010,13 +1010,13 @@
     layerPreview.transition
       .to(elements.viewport, {
         autoAlpha: 0,
-        duration: 0.14,
+        duration: 0.08,
         ease: "power2.in"
       })
       .add(restoreNaturalState)
       .to(elements.viewport, {
         autoAlpha: 1,
-        duration: 0.26,
+        duration: 0.15,
         ease: "power3.out"
       });
 
