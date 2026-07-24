@@ -3009,7 +3009,7 @@
 
 
 /* ==========================================================================
-   SECTION 2 — INTERACTION SYSTEM V5
+   SECTION 2 — INTERACTION SYSTEM V6
 
    The outer Moment/Character elements remain the GSAP-controlled hitboxes.
    JavaScript wraps their visual contents in .s2-pop-surface. The inner surface
@@ -3046,7 +3046,11 @@
 }
 
 /* --------------------------------------------------------------------------
-   Quotes, Notes, and Thoughts: illuminated outline only
+   Quotes, Notes, and Thoughts: full-card hover illumination
+
+   The text inside each card does not own pointer hit-testing. The complete
+   card surface does, so moving over padding or empty card space activates the
+   same border, inner light, and background response.
    -------------------------------------------------------------------------- */
 
 #section-2-empty-shelf
@@ -3055,16 +3059,36 @@
   .note-card,
   .thoughts-cloud
 ) {
-  outline: 1px solid transparent;
+  position: relative;
+  isolation: isolate;
+
+  cursor: pointer;
+
+  outline:
+    1px solid
+    transparent;
+
   outline-offset: 3px;
 
   transition:
-    outline-color 200ms ease,
-    box-shadow 220ms ease,
-    border-color 220ms ease,
-    color 220ms ease,
-    background 220ms ease,
-    filter 220ms ease;
+    outline-color 190ms ease,
+    box-shadow 230ms ease,
+    border-color 190ms ease,
+    color 190ms ease,
+    background 230ms ease,
+    filter 190ms ease;
+}
+
+/*
+ * Make the outer cards the pointer targets. Keyboard focus still works on the
+ * existing tabindex elements, and :focus-within keeps the outer Thoughts card
+ * illuminated while either paragraph has focus.
+ */
+#section-2-empty-shelf
+.falling-quote > *,
+#section-2-empty-shelf
+.thoughts-cloud > * {
+  pointer-events: none !important;
 }
 
 #section-2-empty-shelf
@@ -3081,41 +3105,43 @@
   z-index: 20000 !important;
 
   outline-color:
-    rgba(132, 223, 255, 0.9);
+    rgba(135, 224, 255, 0.98);
 
   color:
     var(--s2-text-primary) !important;
 
   border-color:
-    rgba(220, 227, 255, 0.78) !important;
+    rgba(188, 228, 255, 0.92) !important;
 
   background:
     radial-gradient(
-      circle at 18% 0%,
-      rgba(114, 140, 255, 0.17) 0%,
-      transparent 38%
+      circle at 16% 4%,
+      rgba(121, 217, 255, 0.2) 0%,
+      transparent 36%
     ),
     radial-gradient(
-      circle at 88% 100%,
-      rgba(159, 131, 255, 0.11) 0%,
-      transparent 44%
+      circle at 88% 94%,
+      rgba(159, 131, 255, 0.16) 0%,
+      transparent 43%
     ),
     linear-gradient(
       180deg,
-      rgba(25, 32, 56, 0.995) 0%,
-      rgba(10, 15, 31, 0.995) 100%
+      rgba(27, 35, 62, 0.998) 0%,
+      rgba(10, 16, 33, 0.998) 100%
     ) !important;
 
   box-shadow:
     0 30px 74px rgba(0, 0, 0, 0.58),
-    0 0 0 1px rgba(205, 214, 255, 0.2),
-    0 0 34px rgba(114, 140, 255, 0.3),
-    0 0 68px rgba(159, 131, 255, 0.18),
-    inset 0 1px 0 rgba(255, 255, 255, 0.16) !important;
+    0 0 0 2px rgba(121, 217, 255, 0.38),
+    0 0 22px rgba(121, 217, 255, 0.38),
+    0 0 54px rgba(114, 140, 255, 0.28),
+    0 0 82px rgba(159, 131, 255, 0.18),
+    inset 0 0 30px rgba(114, 140, 255, 0.11),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
 
   filter:
-    saturate(1.05)
-    contrast(1.025);
+    saturate(1.07)
+    contrast(1.035);
 }
 
 #section-2-empty-shelf
@@ -3131,8 +3157,8 @@
     linear-gradient(
       180deg,
       transparent 50%,
-      rgba(114, 140, 255, 0.31) 50%,
-      rgba(159, 131, 255, 0.46) 100%
+      rgba(114, 140, 255, 0.34) 50%,
+      rgba(159, 131, 255, 0.5) 100%
     );
 }
 
@@ -3144,9 +3170,17 @@
 )::before {
   height: 8px;
 
+  background:
+    linear-gradient(
+      90deg,
+      rgba(146, 230, 255, 1),
+      rgba(126, 151, 255, 1) 46%,
+      rgba(196, 157, 255, 1)
+    );
+
   box-shadow:
-    0 0 18px rgba(121, 217, 255, 0.56),
-    0 0 36px rgba(159, 131, 255, 0.34);
+    0 0 18px rgba(121, 217, 255, 0.72),
+    0 0 38px rgba(159, 131, 255, 0.42);
 }
 
 #section-2-empty-shelf
@@ -3319,7 +3353,7 @@
   --s2-pop-origin: right center;
 }
 
-/* One selected card stays slightly raised after the pointer leaves. */
+/* One selected card stays gently raised after the pointer leaves. */
 #section-2-empty-shelf
 :is(
   .moment-frame,
@@ -3335,8 +3369,8 @@
 ).is-top-layer
 > .s2-pop-surface {
   transform:
-    translateY(-7px)
-    scale(1.035);
+    translateY(-5px)
+    scale(1.025);
 
   border-color:
     rgba(205, 214, 255, 0.58);
@@ -3364,8 +3398,8 @@
 ).is-top-layer.is-interacting
 > .s2-pop-surface {
   transform:
-    translateY(-10px)
-    scale(1.055);
+    translateY(-8px)
+    scale(1.045);
 
   border-color:
     rgba(225, 231, 255, 0.84);
@@ -3386,7 +3420,7 @@
 > .s2-pop-surface {
   animation:
     s2-promote-card
-    480ms
+    340ms
     cubic-bezier(0.22, 1, 0.36, 1)
     both;
 }
@@ -3398,22 +3432,16 @@
       scale(1);
   }
 
-  44% {
-    transform:
-      translateY(-15px)
-      scale(1.09);
-  }
-
   72% {
     transform:
-      translateY(-6px)
-      scale(1.028);
+      translateY(-9px)
+      scale(1.05);
   }
 
   100% {
     transform:
-      translateY(-10px)
-      scale(1.055);
+      translateY(-8px)
+      scale(1.045);
   }
 }
 

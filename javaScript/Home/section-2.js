@@ -21,7 +21,7 @@
   }
 
   window.__INKWELL_SECTION2_BUILD__ =
-    "2026-07-24-interaction-v5";
+    "2026-07-24-interaction-v6";
 
   const { gsap, ScrollTrigger } = window;
 
@@ -302,7 +302,7 @@
      The GSAP timeline owns transforms on the outer evidence elements. To keep
      hover/focus animation independent, Moments and Characters receive a
      generated inner visual surface. The outer element stays in the same place
-     as a stable pointer hitbox while the inner surface pulses and settles.
+     as a stable pointer hitbox while the inner surface rises once and settles.
 
      Quotes, Notes, and Thoughts only receive outline/glow treatment.
      Exactly one Moment or Character remains showcased in each active stage.
@@ -407,7 +407,7 @@
       return;
     }
 
-    /* Restart the short promotion pulse for the newly selected card. */
+    /* Restart the short one-way lift for the newly selected card. */
     item.classList.remove(
       "is-promoting"
     );
