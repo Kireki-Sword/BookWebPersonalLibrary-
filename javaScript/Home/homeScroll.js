@@ -200,7 +200,7 @@
             "#section-2-empty-shelf .moment-frame, " +
             "#section-2-empty-shelf .character-name, " +
             "#section-2-empty-shelf .note-card, " +
-            "#section-2-empty-shelf .thought-card",
+            "#section-2-empty-shelf .thoughts-cloud",
         ),
       ),
 
