@@ -5,12 +5,13 @@
    1. Supabase
    2. GSAP
    3. ScrollTrigger
-   4. homeScroll.js
-   5. section-1.js
-   6. changeCardSection1.js
-   7. section-2.js
-   8. section-3.js
-   9. section-4.js
+   4. ScrollToPlugin
+   5. homeScroll.js
+   6. section-1.js
+   7. changeCardSection1.js
+   8. section-2.js
+   9. section-3.js
+   10. section-4.js
 
    Desktop behavior:
    - one pinned shell beneath the navbar
@@ -23,7 +24,7 @@
   "use strict";
 
   window.__INKWELL_HOME_SCROLL_BUILD__ =
-    "2026-07-24-interaction-v7";
+    "2026-07-24-interaction-v8-section-rail";
 
   const DESKTOP_QUERY =
     "(min-width: 1100px) and (min-height: 700px) and " +
@@ -37,6 +38,45 @@
    */
   const SCROLL_PIXELS_PER_TIMELINE_SECOND = 360;
   const SECTION_2_TIME_SCALE = 1.25;
+
+  /*
+   * This is a page-section navigator, not a replacement for the browser's
+   * native scrollbar. The native scrollbar remains available as a familiar
+   * fallback, while these four stops jump to exact labels in the GSAP master
+   * timeline.
+   */
+  const JOURNEY_STOPS = Object.freeze([
+    {
+      key: "section-1",
+      timelineLabel: "section-1-start",
+      targetSelector: ".hero",
+      eyebrow: "Introduction",
+      title: "Stories leave a mark",
+    },
+    {
+      key: "section-2",
+      timelineLabel: "section-2-start",
+      targetSelector: "#section-2-empty-shelf",
+      eyebrow: "Beyond the score",
+      title: "Remember why",
+    },
+    {
+      key: "section-3",
+      timelineLabel: "section-3-start",
+      targetSelector: "#section-3-library-flow",
+      eyebrow: "Your first step",
+      title: "Build your library",
+    },
+    {
+      key: "section-4",
+      timelineLabel: "section-4-start",
+      targetSelector: "#section-4",
+      eyebrow: "Shared stories",
+      title: "Different souls",
+    },
+  ]);
+
+  const JOURNEY_JUMP_DURATION = 0.9;
 
   const SELECTORS = {
     nav: "nav",
@@ -74,6 +114,7 @@
   const state = {
     gsap: window.gsap,
     ScrollTrigger: window.ScrollTrigger,
+    ScrollToPlugin: window.ScrollToPlugin || null,
     master: null,
     trigger: null,
     shell: null,
@@ -85,6 +126,11 @@
     resizeTimer: null,
     resizeObserver: null,
     activeScene: "",
+    journeyNav: null,
+    journeyProgress: null,
+    journeyStatus: null,
+    journeyButtons: [],
+    scrollTween: null,
   };
 
   if (document.readyState === "loading") {
@@ -118,7 +164,12 @@
     }
 
     window.__inkwellMasterJourneyStarted = true;
-    gsap.registerPlugin(ScrollTrigger);
+
+    if (state.ScrollToPlugin) {
+      gsap.registerPlugin(ScrollTrigger, state.ScrollToPlugin);
+    } else {
+      gsap.registerPlugin(ScrollTrigger);
+    }
 
     syncNavHeight(elements.nav);
     ensureSharedStage(elements);
@@ -148,6 +199,7 @@
     await nextFrame();
 
     buildMasterJourney(elements, section2Api, section4Api);
+    setupJourneyNavigator(elements);
     setupRefreshes(elements, section2Api, section4Api);
 
     window.InkwellHomeJourney = {
@@ -162,6 +214,7 @@
         section2Timeline: Boolean(section2Api?.timeline),
         section4Timeline: Boolean(section4Api?.timeline),
         activeScene: state.activeScene,
+        navigatorReady: Boolean(state.journeyNav),
         scrollY: window.scrollY,
       }),
     };
@@ -483,6 +536,10 @@
         syncNavHeight(elements.nav);
         section2Api.refresh?.();
         section4Api?.refresh?.();
+      },
+      onRefresh: () => {
+        layoutJourneyNavigator();
+        syncActiveScene();
       },
       onUpdate: syncActiveScene,
     });
@@ -1061,6 +1118,8 @@
       active = "section-2";
     }
 
+    syncJourneyNavigator(active, master.progress(), time);
+
     if (active === state.activeScene) {
       return;
     }
@@ -1077,6 +1136,274 @@
       scene.classList.toggle("is-journey-active", isActive);
       scene.setAttribute("aria-hidden", isActive ? "false" : "true");
     });
+  }
+
+  /* ========================================================================
+     ACCESSIBLE SECTION RAIL
+
+     The rail mirrors the four labels in the master GSAP timeline. Its visual
+     progress is continuous, but the controls are normal buttons so keyboard
+     and assistive-technology behavior stays predictable.
+     ======================================================================== */
+
+  function setupJourneyNavigator(elements) {
+    teardownJourneyNavigator();
+
+    const master = state.master;
+
+    if (!master || !state.trigger) {
+      return;
+    }
+
+    const hero = elements.hero;
+
+    if (hero && !hero.id) {
+      hero.id = "section-1-hero";
+      hero.dataset.journeyGeneratedId = "true";
+    }
+
+    const nav = document.createElement("nav");
+    nav.className = "journey-section-rail";
+    nav.setAttribute("aria-label", "Homepage story sections");
+    nav.dataset.journeySectionRail = "true";
+
+    const surface = document.createElement("div");
+    surface.className = "journey-section-rail__surface";
+
+    const track = document.createElement("span");
+    track.className = "journey-section-rail__track";
+    track.setAttribute("aria-hidden", "true");
+
+    const progress = document.createElement("span");
+    progress.className = "journey-section-rail__progress";
+    progress.setAttribute("aria-hidden", "true");
+
+    const list = document.createElement("ol");
+    list.className = "journey-section-rail__stops";
+
+    const status = document.createElement("p");
+    status.className = "journey-section-rail__status";
+    status.setAttribute("aria-live", "polite");
+    status.setAttribute("aria-atomic", "true");
+
+    const buttons = JOURNEY_STOPS.map((stop, index) => {
+      const item = document.createElement("li");
+      item.className = "journey-section-rail__stop";
+      item.dataset.journeyStop = stop.key;
+
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "journey-section-rail__button";
+      button.dataset.journeyTarget = stop.key;
+      button.setAttribute(
+        "aria-label",
+        `Go to section ${index + 1} of ${JOURNEY_STOPS.length}: ${stop.title}`,
+      );
+
+      const target = document.querySelector(stop.targetSelector);
+
+      if (target?.id) {
+        button.setAttribute("aria-controls", target.id);
+      }
+
+      const dot = document.createElement("span");
+      dot.className = "journey-section-rail__dot";
+      dot.setAttribute("aria-hidden", "true");
+
+      const dotCore = document.createElement("span");
+      dotCore.className = "journey-section-rail__dot-core";
+      dot.appendChild(dotCore);
+
+      const label = document.createElement("span");
+      label.className = "journey-section-rail__label";
+      label.setAttribute("aria-hidden", "true");
+
+      const number = document.createElement("span");
+      number.className = "journey-section-rail__number";
+      number.textContent = String(index + 1).padStart(2, "0");
+
+      const copy = document.createElement("span");
+      copy.className = "journey-section-rail__copy";
+
+      const eyebrow = document.createElement("small");
+      eyebrow.textContent = stop.eyebrow;
+
+      const title = document.createElement("strong");
+      title.textContent = stop.title;
+
+      copy.append(eyebrow, title);
+      label.append(number, copy);
+      button.append(dot, label);
+      item.appendChild(button);
+      list.appendChild(item);
+
+      button.addEventListener("click", () => {
+        scrollToJourneyStop(stop, index);
+      });
+
+      return { button, item, stop };
+    });
+
+    surface.append(track, progress, list);
+    nav.append(surface, status);
+    document.body.appendChild(nav);
+
+    state.journeyNav = nav;
+    state.journeyProgress = progress;
+    state.journeyStatus = status;
+    state.journeyButtons = buttons;
+
+    document.body.classList.add("journey-section-rail-ready");
+
+    layoutJourneyNavigator();
+    syncActiveScene();
+  }
+
+  function layoutJourneyNavigator() {
+    const master = state.master;
+
+    if (!master || !state.journeyButtons.length) {
+      return;
+    }
+
+    const duration = Math.max(master.duration(), 0.0001);
+
+    state.journeyButtons.forEach(({ item, stop }) => {
+      const labelTime = master.labels[stop.timelineLabel];
+      const progress = Number.isFinite(labelTime)
+        ? state.gsap.utils.clamp(0, 1, labelTime / duration)
+        : 0;
+
+      item.style.setProperty("--journey-stop-progress", String(progress));
+    });
+  }
+
+  function syncJourneyNavigator(active, progress, currentTime) {
+    if (!state.journeyNav) {
+      return;
+    }
+
+    const clampedProgress = state.gsap.utils.clamp(0, 1, progress || 0);
+    state.journeyNav.style.setProperty(
+      "--journey-progress",
+      String(clampedProgress),
+    );
+    state.journeyNav.dataset.currentSection = active;
+
+    state.journeyButtons.forEach(({ button, stop }) => {
+      const labelTime = state.master?.labels?.[stop.timelineLabel] ?? Infinity;
+      const isCurrent = stop.key === active;
+      const isReached = currentTime >= labelTime - 0.001;
+
+      button.classList.toggle("is-current", isCurrent);
+      button.classList.toggle("is-reached", isReached);
+
+      if (isCurrent) {
+        button.setAttribute("aria-current", "step");
+      } else {
+        button.removeAttribute("aria-current");
+      }
+    });
+  }
+
+  function getJourneyStopScrollPosition(timelineLabel) {
+    const trigger = state.trigger;
+    const master = state.master;
+
+    if (!trigger || !master) {
+      return window.scrollY;
+    }
+
+    let target = Number.NaN;
+
+    if (typeof trigger.labelToScroll === "function") {
+      target = Number(trigger.labelToScroll(timelineLabel));
+    }
+
+    if (!Number.isFinite(target)) {
+      const labelTime = master.labels[timelineLabel] ?? 0;
+      const labelProgress = state.gsap.utils.clamp(
+        0,
+        1,
+        labelTime / Math.max(master.duration(), 0.0001),
+      );
+
+      target = trigger.start + (trigger.end - trigger.start) * labelProgress;
+    }
+
+    const maxScroll = Math.max(
+      0,
+      document.documentElement.scrollHeight - window.innerHeight,
+    );
+
+    return Math.round(state.gsap.utils.clamp(0, maxScroll, target + 1));
+  }
+
+  function scrollToJourneyStop(stop, index) {
+    const target = getJourneyStopScrollPosition(stop.timelineLabel);
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    state.scrollTween?.kill();
+    state.scrollTween = null;
+
+    document.body.classList.add("journey-section-jumping");
+
+    if (state.journeyStatus) {
+      state.journeyStatus.textContent =
+        `Moving to section ${index + 1}: ${stop.title}.`;
+    }
+
+    const finish = () => {
+      state.scrollTween = null;
+      document.body.classList.remove("journey-section-jumping");
+      state.trigger?.update();
+
+      if (state.journeyStatus) {
+        state.journeyStatus.textContent =
+          `Section ${index + 1}: ${stop.title}.`;
+      }
+    };
+
+    if (state.ScrollToPlugin) {
+      state.scrollTween = state.gsap.to(window, {
+        duration: reduceMotion ? 0 : JOURNEY_JUMP_DURATION,
+        ease: reduceMotion ? "none" : "power3.inOut",
+        overwrite: "auto",
+        scrollTo: {
+          y: target,
+          autoKill: true,
+        },
+        onComplete: finish,
+        onInterrupt: finish,
+      });
+      return;
+    }
+
+    window.scrollTo({
+      top: target,
+      left: 0,
+      behavior: reduceMotion ? "auto" : "smooth",
+    });
+
+    window.setTimeout(finish, reduceMotion ? 0 : 900);
+  }
+
+  function teardownJourneyNavigator() {
+    state.scrollTween?.kill();
+    state.scrollTween = null;
+
+    state.journeyNav?.remove();
+    state.journeyNav = null;
+    state.journeyProgress = null;
+    state.journeyStatus = null;
+    state.journeyButtons = [];
+
+    document.body?.classList.remove(
+      "journey-section-rail-ready",
+      "journey-section-jumping",
+    );
   }
 
   function setupRefreshes(elements, section2Api, section4Api) {
@@ -1105,10 +1432,13 @@
     section4Api?.refresh?.();
     state.ScrollTrigger?.sort();
     state.ScrollTrigger?.refresh();
+    layoutJourneyNavigator();
+    syncActiveScene();
   }
 
   function failToNaturalLayout(message) {
     console.warn(`Inkwell master journey: ${message}`);
+    teardownJourneyNavigator();
     window.__INKWELL_MASTER_JOURNEY__ = false;
     window.__inkwellMasterJourneyStarted = false;
     document.body?.classList.remove(
@@ -1119,6 +1449,8 @@
   }
 
   function teardownMaster(restoreWrapper) {
+    teardownJourneyNavigator();
+
     state.trigger?.kill(true);
     state.trigger = null;
 
