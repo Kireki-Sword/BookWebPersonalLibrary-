@@ -311,7 +311,7 @@
   const outlineEvidenceSelector =
     ".falling-quote, " +
     ".note-card, " +
-    ".thoughts-cloud";
+    ".thought-card";
 
   const showcaseEvidenceSelector =
     ".moment-frame, .character-name";
@@ -458,7 +458,19 @@
 
     item.addEventListener(
       "pointerenter",
-      () => enterEvidence(item)
+      (event) => {
+        /*
+         * A touch contact can synthesize a hover-like pointer entry and leave
+         * the card glowing after the finger moves away. Keep this interaction
+         * for mouse/pen hover; keyboard users still receive the same treatment
+         * through focusin/focusout below.
+         */
+        if (event.pointerType === "touch") {
+          return;
+        }
+
+        enterEvidence(item);
+      }
     );
 
     item.addEventListener(

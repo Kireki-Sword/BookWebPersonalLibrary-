@@ -3557,3 +3557,215 @@ img {
     transition: none;
   }
 }
+
+
+/* ========================================================================== 
+   SECTION 2 — PER-ITEM HOVER TARGETS (V8)
+
+   Root causes fixed here:
+   1. Thoughts were bound/styled as one .thoughts-cloud target instead of two
+      individual .thought-card targets.
+   2. A previous rule set pointer-events:none on every thought child, making an
+      individual thought impossible to target with a pointer.
+   3. The visible glow depended on the card's normal border/shadow cascade.
+      A dedicated ::after ring now belongs to each singular evidence card.
+   ========================================================================== */
+
+/* Children stay targetable. Ancestor :hover still works for quotes, while
+   users can select text and each thought paragraph can receive its own hover. */
+#section-2-empty-shelf .falling-quote > *,
+#section-2-empty-shelf .thoughts-cloud > * {
+  pointer-events: auto !important;
+}
+
+/* The Thoughts shell remains a layout container. It no longer impersonates a
+   single interactive card when one of its two child thoughts is hovered. */
+#section-2-empty-shelf .thoughts-cloud::after {
+  display: none !important;
+}
+
+#section-2-empty-shelf .thoughts-cloud:is(
+  :hover,
+  :focus-within,
+  .is-interacting
+) {
+  z-index: 1 !important;
+  outline-color: transparent !important;
+  border-color: var(--s2-border) !important;
+  background:
+    radial-gradient(
+      circle at 78% 24%,
+      rgba(124, 140, 255, 0.1),
+      transparent 38%
+    ),
+    linear-gradient(
+      180deg,
+      var(--s2-panel-bg-strong) 0%,
+      var(--s2-panel-bg) 100%
+    ) !important;
+  box-shadow:
+    0 28px 68px rgba(0, 0, 0, 0.48),
+    0 0 42px rgba(124, 140, 255, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+  filter: none !important;
+}
+
+/* Every quote, note, and individual thought is its own hit target. */
+#section-2-empty-shelf :is(
+  .falling-quote,
+  .note-card,
+  .thought-card
+) {
+  position: relative;
+  isolation: isolate;
+  cursor: pointer;
+  outline: 1px solid transparent;
+  outline-offset: 3px;
+}
+
+/* Restore a real card surface for each thought. Earlier CSS intentionally
+   flattened these paragraphs into one card, which prevented singular borders. */
+#section-2-empty-shelf .thought-card,
+#section-2-empty-shelf .thought-card:hover,
+#section-2-empty-shelf .thought-card:focus-visible,
+#section-2-empty-shelf .thought-card.is-interacting {
+  width: 100%;
+  min-height: 0;
+  margin: 0;
+  padding: clamp(0.9rem, 1.25vw, 1.15rem) clamp(1rem, 1.4vw, 1.3rem);
+  box-sizing: border-box;
+  background:
+    radial-gradient(
+      circle at 12% 0%,
+      rgba(114, 140, 255, 0.08),
+      transparent 36%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(18, 24, 43, 0.98),
+      rgba(8, 13, 28, 0.98)
+    ) !important;
+  border: 1px solid rgba(184, 196, 255, 0.26) !important;
+  border-radius: 16px !important;
+  box-shadow:
+    0 16px 34px rgba(0, 0, 0, 0.3),
+    0 0 22px rgba(124, 140, 255, 0.055),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07) !important;
+  color: var(--s2-text-secondary) !important;
+  filter: none !important;
+  transform: none !important;
+  transition:
+    color 190ms ease,
+    background 220ms ease,
+    border-color 190ms ease,
+    box-shadow 220ms ease,
+    outline-color 190ms ease;
+}
+
+/* Dedicated ring: independent of GSAP's transform ownership and older card
+   background declarations. It sits inside each card, so overflow clipping in
+   the pinned journey cannot erase the visible border. */
+#section-2-empty-shelf :is(
+  .falling-quote,
+  .note-card,
+  .thought-card
+)::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  box-sizing: border-box;
+  border: 2px solid transparent;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition:
+    opacity 160ms ease,
+    border-color 160ms ease,
+    box-shadow 220ms ease;
+}
+
+#section-2-empty-shelf :is(
+  .falling-quote,
+  .note-card,
+  .thought-card
+):is(
+  :hover,
+  :focus-visible,
+  .is-interacting
+) {
+  z-index: 20000 !important;
+  outline-color: rgba(135, 224, 255, 0.92) !important;
+  border-color: rgba(188, 228, 255, 0.98) !important;
+  color: var(--s2-text-primary) !important;
+  background:
+    radial-gradient(
+      circle at 16% 4%,
+      rgba(121, 217, 255, 0.2) 0%,
+      transparent 36%
+    ),
+    radial-gradient(
+      circle at 88% 94%,
+      rgba(159, 131, 255, 0.16) 0%,
+      transparent 43%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(27, 35, 62, 0.998) 0%,
+      rgba(10, 16, 33, 0.998) 100%
+    ) !important;
+  box-shadow:
+    0 30px 74px rgba(0, 0, 0, 0.58),
+    0 0 0 2px rgba(121, 217, 255, 0.38),
+    0 0 22px rgba(121, 217, 255, 0.4),
+    0 0 54px rgba(114, 140, 255, 0.3),
+    0 0 82px rgba(159, 131, 255, 0.18),
+    inset 0 0 30px rgba(114, 140, 255, 0.11),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
+}
+
+#section-2-empty-shelf :is(
+  .falling-quote,
+  .note-card,
+  .thought-card
+):is(
+  :hover,
+  :focus-visible,
+  .is-interacting
+)::after {
+  opacity: 1;
+  border-color: rgba(132, 223, 255, 0.99);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.18),
+    inset 0 0 24px rgba(114, 140, 255, 0.13),
+    0 0 18px rgba(121, 217, 255, 0.62),
+    0 0 42px rgba(114, 140, 255, 0.36),
+    0 0 68px rgba(159, 131, 255, 0.22);
+}
+
+/* Hover-only styling is limited to devices that actually support convenient
+   hover. Keyboard focus and the JS .is-interacting class remain available. */
+@media (hover: none) {
+  #section-2-empty-shelf :is(
+    .falling-quote,
+    .note-card,
+    .thought-card
+  ):hover:not(:focus-visible):not(.is-interacting) {
+    outline-color: transparent !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #section-2-empty-shelf :is(
+    .falling-quote,
+    .note-card,
+    .thought-card
+  ),
+  #section-2-empty-shelf :is(
+    .falling-quote,
+    .note-card,
+    .thought-card
+  )::after {
+    transition: none !important;
+  }
+}

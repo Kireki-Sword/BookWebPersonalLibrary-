@@ -3367,11 +3367,30 @@
 
     const cardRevealTime = 3.72;
 
-    const handoffEndTime = 4.48;
+    /*
+     * Slow only the second half of Section 4. The rain and two-cover meeting
+     * keep their current pace; once the two chosen covers resolve into the one
+     * shared story card, every following offset and tween is stretched.
+     *
+     * 1.8 means the handoff/dock/reader reveal uses 80% more timeline time.
+     * Because homeScroll.js maps master-timeline duration to scroll distance,
+     * this also gives that phase more wheel/trackpad travel in managed mode.
+     */
+    const POST_MERGE_SLOWDOWN = 1.8;
 
-    const cardDockTime = 4.62;
+    const postMergeDuration = (duration) => {
+      return duration * POST_MERGE_SLOWDOWN;
+    };
 
-    const comparisonTime = 5.02;
+    const postMergeTime = (offsetFromReveal) => {
+      return cardRevealTime + postMergeDuration(offsetFromReveal);
+    };
+
+    const handoffEndTime = postMergeTime(0.76);
+
+    const cardDockTime = postMergeTime(0.9);
+
+    const comparisonTime = postMergeTime(1.3);
 
     const clampValue = (value, minimum, maximum) => {
       return Math.min(maximum, Math.max(minimum, value));
@@ -4030,7 +4049,7 @@
 
         scale: 0.72,
 
-        duration: 0.24,
+        duration: postMergeDuration(0.24),
 
         ease: "power2.in",
       },
@@ -4044,10 +4063,10 @@
       {
         autoAlpha: 0,
 
-        duration: 0.08,
+        duration: postMergeDuration(0.08),
       },
 
-      cardRevealTime + 0.03,
+      cardRevealTime + postMergeDuration(0.03),
     );
 
     timeline.to(
@@ -4058,10 +4077,10 @@
 
         y: -8,
 
-        duration: 0.16,
+        duration: postMergeDuration(0.16),
       },
 
-      cardRevealTime - 0.05,
+      cardRevealTime - postMergeDuration(0.05),
     );
 
     timeline.to(
@@ -4116,12 +4135,12 @@
       {
         rotation: 0,
 
-        duration: 0.14,
+        duration: postMergeDuration(0.14),
 
         ease: "power2.out",
       },
 
-      handoffEndTime - 0.14,
+      handoffEndTime - postMergeDuration(0.14),
     );
 
     timeline.to(
@@ -4130,10 +4149,10 @@
       {
         autoAlpha: 1,
 
-        duration: 0.08,
+        duration: postMergeDuration(0.08),
       },
 
-      handoffEndTime - 0.07,
+      handoffEndTime - postMergeDuration(0.07),
     );
 
     timeline.to(
@@ -4142,10 +4161,10 @@
       {
         autoAlpha: 0,
 
-        duration: 0.08,
+        duration: postMergeDuration(0.08),
       },
 
-      handoffEndTime - 0.04,
+      handoffEndTime - postMergeDuration(0.04),
     );
 
     timeline.to(
@@ -4158,7 +4177,7 @@
 
         scale: getDockScale,
 
-        duration: 0.58,
+        duration: postMergeDuration(0.58),
 
         ease: "power2.inOut",
       },
@@ -4178,12 +4197,12 @@
 
         paddingTop: "0.32rem",
 
-        duration: 0.3,
+        duration: postMergeDuration(0.3),
 
         ease: "power2.out",
       },
 
-      cardDockTime + 0.34,
+      cardDockTime + postMergeDuration(0.34),
     );
 
     timeline.to(
@@ -4194,7 +4213,7 @@
 
         y: 0,
 
-        duration: 0.24,
+        duration: postMergeDuration(0.24),
       },
 
       comparisonTime,
@@ -4210,12 +4229,12 @@
 
         pointerEvents: "auto",
 
-        duration: 0.4,
+        duration: postMergeDuration(0.4),
 
         ease: "power2.out",
       },
 
-      comparisonTime + 0.08,
+      comparisonTime + postMergeDuration(0.08),
     );
 
     timeline.to(
@@ -4226,14 +4245,14 @@
 
         y: 0,
 
-        duration: 0.3,
+        duration: postMergeDuration(0.3),
 
-        stagger: 0.07,
+        stagger: postMergeDuration(0.07),
 
         ease: "power2.out",
       },
 
-      comparisonTime + 0.13,
+      comparisonTime + postMergeDuration(0.13),
     );
 
     timeline.to(
@@ -4244,14 +4263,14 @@
 
         y: 0,
 
-        duration: 0.38,
+        duration: postMergeDuration(0.38),
 
-        stagger: 0.07,
+        stagger: postMergeDuration(0.07),
 
         ease: "power2.out",
       },
 
-      comparisonTime + 0.22,
+      comparisonTime + postMergeDuration(0.22),
     );
 
     timeline.set(
@@ -4261,14 +4280,14 @@
         pointerEvents: "auto",
       },
 
-      comparisonTime + 0.18,
+      comparisonTime + postMergeDuration(0.18),
     );
 
     timeline.to(
       {},
 
       {
-        duration: 1.1,
+        duration: postMergeDuration(1.1),
       },
     );
 
