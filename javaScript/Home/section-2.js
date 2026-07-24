@@ -227,8 +227,9 @@
   let refreshTimer = null;
 
   /*
-   * Every hovered moment receives the next
-   * available permanent layer number.
+   * Moments and characters share one rising layer counter.
+   * The most recently hovered or keyboard-focused card stays
+   * above its siblings after the pointer leaves.
    */
   let topLayerZ = 1000;
 
@@ -244,7 +245,7 @@
     );
 
     createButtonProxies();
-    enablePersistentMomentLayers();
+    enablePersistentEvidenceLayers();
     applyManagedLayoutMetrics();
     setInitialState();
 
@@ -301,48 +302,76 @@
   }
 
   /* ==========================================================================
-     PERSISTENT MOMENT LAYERS
+     PERSISTENT MOMENT + CHARACTER LAYERS
 
-     Hovering a moment card:
-     - gives it a newer z-index
-     - keeps that z-index after hover
-     - does not keep the visual enlargement
+     Hovering or focusing a moment/character card:
+     - temporarily lifts and enlarges it through CSS
+     - gives it the newest z-index
+     - keeps that z-index after hover ends
+     - leaves only the latest card with the subtle persistent highlight
 
-     CSS handles the temporary size animation.
+     Quotes, notes and thoughts use normal temporary hover/focus effects.
      ========================================================================== */
 
-  function enablePersistentMomentLayers() {
-    const momentItems =
+  function enablePersistentEvidenceLayers() {
+    const persistentItems =
       section.querySelectorAll(
-        ".moment-frame"
+        ".moment-frame, .character-name"
       );
 
-    momentItems.forEach((moment) => {
+    persistentItems.forEach((item) => {
       const moveToTop = () => {
+        const parentStage = item.closest(
+          ".scroll-stage"
+        );
+
+        parentStage
+          ?.querySelectorAll(
+            ".moment-frame.is-top-layer, " +
+            ".character-name.is-top-layer"
+          )
+          .forEach((sibling) => {
+            if (sibling !== item) {
+              sibling.classList.remove(
+                "is-top-layer"
+              );
+            }
+          });
+
         topLayerZ += 1;
 
-        moment.style.zIndex =
+        item.style.zIndex =
           String(topLayerZ);
+
+        item.classList.add(
+          "is-top-layer"
+        );
       };
 
-      moment.addEventListener(
+      item.addEventListener(
         "pointerenter",
         moveToTop
       );
 
-      moment.addEventListener(
+      item.addEventListener(
         "focusin",
         moveToTop
       );
     });
   }
 
-  function resetMomentLayerOrder() {
+  function resetPersistentLayerOrder() {
     section
-      .querySelectorAll(".moment-frame")
-      .forEach((moment) => {
-        moment.style.removeProperty(
+      .querySelectorAll(
+        ".moment-frame, .character-name"
+      )
+      .forEach((item) => {
+        item.style.removeProperty(
           "z-index"
+        );
+
+        item.classList.remove(
+          "is-top-layer"
         );
       });
 
@@ -604,7 +633,7 @@
 
   function setInitialState() {
     applyManagedLayoutMetrics();
-    resetMomentLayerOrder();
+    resetPersistentLayerOrder();
 
     gsap.set(elements.header, {
       autoAlpha: 1,
@@ -1848,7 +1877,7 @@
      ========================================================================== */
 
   function buildReducedMotionVersion() {
-    resetMomentLayerOrder();
+    resetPersistentLayerOrder();
 
     gsap.set(elements.header, {
       autoAlpha: 1,

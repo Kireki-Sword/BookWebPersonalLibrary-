@@ -3006,3 +3006,190 @@
     grid-row: 13 / span 8;
   }
 }
+
+
+/* ==========================================================================
+   FINAL SECTION 2 INTERACTIVITY
+
+   - Quotes, notes and the single thoughts card lift and light up temporarily.
+   - Moments and characters lift temporarily but keep the newest z-index after
+     hover/focus, so the last interacted card remains above overlapping cards.
+   - Uses the individual scale/translate properties so GSAP can continue to
+     own each element's normal transform during the scroll timeline.
+   ========================================================================== */
+
+/* Shared temporary lift for quote-like content. */
+.falling-quote,
+.note-card,
+.thoughts-cloud {
+  scale: 1;
+  translate: 0 0;
+  will-change: scale, translate, box-shadow, border-color;
+}
+
+.falling-quote:hover,
+.falling-quote:focus-visible,
+.note-card:hover,
+.note-card:focus-visible,
+.thoughts-cloud:hover,
+.thoughts-cloud:focus-within {
+  scale: 1.018;
+  translate: 0 -5px;
+
+  border-color: rgba(214, 222, 255, 0.7);
+
+  box-shadow:
+    0 34px 82px rgba(0, 0, 0, 0.58),
+    0 0 0 1px rgba(205, 214, 255, 0.14),
+    0 0 34px rgba(114, 140, 255, 0.24),
+    0 0 68px rgba(159, 131, 255, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+/* Make the quote emphasis react with the parent card. */
+.falling-quote:hover .quote-emphasis,
+.falling-quote:focus-visible .quote-emphasis {
+  color: #ffffff;
+
+  background:
+    linear-gradient(
+      180deg,
+      transparent 52%,
+      rgba(114, 140, 255, 0.28) 52%,
+      rgba(159, 131, 255, 0.42) 100%
+    );
+}
+
+/* Moments: temporary lift on hover/focus. */
+.moment-frame:hover,
+.moment-frame:focus-visible {
+  z-index: 10000;
+  scale: 1.065;
+  translate: 0 -11px;
+
+  border-color: rgba(220, 226, 255, 0.72);
+
+  box-shadow:
+    0 44px 96px rgba(0, 0, 0, 0.68),
+    0 0 0 1px rgba(205, 214, 255, 0.14),
+    0 0 42px rgba(114, 140, 255, 0.26),
+    0 0 78px rgba(159, 131, 255, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16);
+}
+
+/*
+ * The JavaScript leaves this class on the most recently interacted moment.
+ * It stays above its siblings, but returns to normal size after hover ends.
+ */
+.moment-frame.is-top-layer:not(:hover):not(:focus-visible) {
+  scale: 1;
+  translate: 0 0;
+
+  border-color: rgba(199, 209, 255, 0.46);
+
+  box-shadow:
+    0 30px 70px rgba(0, 0, 0, 0.52),
+    0 0 34px rgba(114, 140, 255, 0.16),
+    0 0 54px rgba(159, 131, 255, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+/* Characters: match the moment-card interaction. */
+.character-name {
+  scale: 1;
+  translate: 0 0;
+  will-change: scale, translate, box-shadow, border-color;
+
+  transition:
+    scale 240ms cubic-bezier(0.22, 1, 0.36, 1),
+    translate 240ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 240ms ease,
+    border-color 220ms ease,
+    filter 220ms ease;
+}
+
+.character-name:hover,
+.character-name:focus-visible {
+  z-index: 10000;
+  scale: 1.06;
+  translate: 0 -11px;
+
+  border-color: rgba(220, 226, 255, 0.72);
+
+  box-shadow:
+    0 44px 98px rgba(0, 0, 0, 0.68),
+    0 0 0 1px rgba(205, 214, 255, 0.14),
+    0 0 44px rgba(114, 140, 255, 0.25),
+    0 0 80px rgba(159, 131, 255, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16);
+}
+
+.character-name.is-top-layer:not(:hover):not(:focus-visible) {
+  scale: 1;
+  translate: 0 0;
+
+  border-color: rgba(199, 209, 255, 0.46);
+
+  box-shadow:
+    0 30px 72px rgba(0, 0, 0, 0.54),
+    0 0 34px rgba(114, 140, 255, 0.16),
+    0 0 56px rgba(159, 131, 255, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+
+  filter: none;
+}
+
+/* Do not leave the character image enlarged after the pointer leaves. */
+.character-name.is-top-layer:not(:hover):not(:focus-visible) img {
+  transform: none;
+
+  filter:
+    brightness(0.98)
+    saturate(1.02)
+    contrast(1.01);
+}
+
+/* Notes use the same bright border language as quotes. */
+.note-card:hover::before,
+.note-card:focus-visible::before {
+  box-shadow:
+    0 0 18px rgba(121, 217, 255, 0.5),
+    0 0 32px rgba(159, 131, 255, 0.3);
+}
+
+/* The thoughts scene is one large card; its inner paragraphs stay readable. */
+.thoughts-cloud:hover .thought-card,
+.thoughts-cloud:focus-within .thought-card {
+  color: var(--s2-text-primary);
+}
+
+/* Keyboard focus remains obvious on every interactive evidence item. */
+.falling-quote:focus-visible,
+.moment-frame:focus-visible,
+.character-name:focus-visible,
+.note-card:focus-visible,
+.thought-card:focus-visible {
+  outline: 2px solid rgba(132, 223, 255, 0.9);
+  outline-offset: 5px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .falling-quote,
+  .moment-frame,
+  .character-name,
+  .note-card,
+  .thoughts-cloud,
+  .falling-quote:hover,
+  .falling-quote:focus-visible,
+  .moment-frame:hover,
+  .moment-frame:focus-visible,
+  .character-name:hover,
+  .character-name:focus-visible,
+  .note-card:hover,
+  .note-card:focus-visible,
+  .thoughts-cloud:hover,
+  .thoughts-cloud:focus-within {
+    scale: 1 !important;
+    translate: 0 0 !important;
+  }
+}
