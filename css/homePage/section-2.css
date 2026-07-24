@@ -3009,138 +3009,238 @@
 
 
 /* ==========================================================================
-   FINAL SECTION 2 INTERACTIVITY
+   SECTION 2 — VERIFIED INTERACTION LAYER
 
-   - Quotes, notes and the single thoughts card lift and light up temporarily.
-   - Moments and characters lift temporarily but keep the newest z-index after
-     hover/focus, so the last interacted card remains above overlapping cards.
-   - Uses the individual scale/translate properties so GSAP can continue to
-     own each element's normal transform during the scroll timeline.
+   This block is intentionally last. It solves three integration problems:
+   1. Active evidence stages are guaranteed to accept pointer events.
+   2. GSAP keeps control of `transform`; hover uses the independent
+      `scale` and `translate` properties instead of replacing GSAP's matrix.
+   3. JavaScript adds `.is-interacting`, so the effect is not dependent on
+      the browser maintaining `:hover` while the pinned timeline is updating.
    ========================================================================== */
 
-/* Shared temporary lift for quote-like content. */
-.falling-quote,
-.note-card,
-.thoughts-cloud {
-  scale: 1;
-  translate: 0 0;
-  will-change: scale, translate, box-shadow, border-color;
+#section-2-empty-shelf.is-js-ready .scroll-stage {
+  pointer-events: none !important;
 }
 
-.falling-quote:hover,
-.falling-quote:focus-visible,
-.note-card:hover,
-.note-card:focus-visible,
-.thoughts-cloud:hover,
-.thoughts-cloud:focus-within {
-  scale: 1.018;
-  translate: 0 -5px;
-
-  border-color: rgba(214, 222, 255, 0.7);
-
-  box-shadow:
-    0 34px 82px rgba(0, 0, 0, 0.58),
-    0 0 0 1px rgba(205, 214, 255, 0.14),
-    0 0 34px rgba(114, 140, 255, 0.24),
-    0 0 68px rgba(159, 131, 255, 0.16),
-    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+#section-2-empty-shelf.is-js-ready .scroll-stage.is-active {
+  z-index: 40 !important;
+  pointer-events: auto !important;
 }
 
-/* Make the quote emphasis react with the parent card. */
-.falling-quote:hover .quote-emphasis,
-.falling-quote:focus-visible .quote-emphasis {
-  color: #ffffff;
-
-  background:
-    linear-gradient(
-      180deg,
-      transparent 52%,
-      rgba(114, 140, 255, 0.28) 52%,
-      rgba(159, 131, 255, 0.42) 100%
-    );
+#section-2-empty-shelf.is-js-ready
+.scroll-stage.is-active
+:is(
+  .falling-quotes,
+  .moving-moments,
+  .character-cloud,
+  .notes-cloud,
+  .thoughts-cloud,
+  .falling-quote,
+  .moment-frame,
+  .character-name,
+  .note-card,
+  .thought-card
+) {
+  pointer-events: auto;
 }
 
-/* Moments: temporary lift on hover/focus. */
-.moment-frame:hover,
-.moment-frame:focus-visible {
-  z-index: 10000;
-  scale: 1.065;
-  translate: 0 -11px;
-
-  border-color: rgba(220, 226, 255, 0.72);
-
-  box-shadow:
-    0 44px 96px rgba(0, 0, 0, 0.68),
-    0 0 0 1px rgba(205, 214, 255, 0.14),
-    0 0 42px rgba(114, 140, 255, 0.26),
-    0 0 78px rgba(159, 131, 255, 0.18),
-    inset 0 1px 0 rgba(255, 255, 255, 0.16);
-}
-
-/*
- * The JavaScript leaves this class on the most recently interacted moment.
- * It stays above its siblings, but returns to normal size after hover ends.
- */
-.moment-frame.is-top-layer:not(:hover):not(:focus-visible) {
+#section-2-empty-shelf
+:is(
+  .falling-quote,
+  .moment-frame,
+  .character-name,
+  .note-card,
+  .thoughts-cloud
+) {
   scale: 1;
   translate: 0 0;
 
-  border-color: rgba(199, 209, 255, 0.46);
-
-  box-shadow:
-    0 30px 70px rgba(0, 0, 0, 0.52),
-    0 0 34px rgba(114, 140, 255, 0.16),
-    0 0 54px rgba(159, 131, 255, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  will-change:
+    scale,
+    translate,
+    box-shadow,
+    border-color;
 }
 
-/* Characters: match the moment-card interaction. */
-.character-name {
-  scale: 1;
-  translate: 0 0;
-  will-change: scale, translate, box-shadow, border-color;
+#section-2-empty-shelf .falling-quote,
+#section-2-empty-shelf .note-card,
+#section-2-empty-shelf .thoughts-cloud {
+  transition:
+    scale 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    translate 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 220ms ease,
+    border-color 220ms ease,
+    color 220ms ease,
+    background 220ms ease,
+    filter 220ms ease;
+}
 
+#section-2-empty-shelf .moment-frame,
+#section-2-empty-shelf .character-name {
   transition:
     scale 240ms cubic-bezier(0.22, 1, 0.36, 1),
     translate 240ms cubic-bezier(0.22, 1, 0.36, 1),
     box-shadow 240ms ease,
     border-color 220ms ease,
+    background 220ms ease,
     filter 220ms ease;
 }
 
-.character-name:hover,
-.character-name:focus-visible {
-  z-index: 10000;
-  scale: 1.06;
-  translate: 0 -11px;
+/* Quotes, notes, and the single thoughts card. */
+#section-2-empty-shelf
+:is(
+  .falling-quote,
+  .note-card,
+  .thoughts-cloud
+):is(
+  :hover,
+  :focus-visible,
+  :focus-within,
+  .is-interacting
+) {
+  z-index: 20000 !important;
 
-  border-color: rgba(220, 226, 255, 0.72);
+  scale: 1.022 !important;
+  translate: 0 -7px !important;
+
+  color: var(--s2-text-primary) !important;
+  border-color: rgba(220, 227, 255, 0.76) !important;
+
+  background:
+    radial-gradient(
+      circle at 18% 0%,
+      rgba(114, 140, 255, 0.17) 0%,
+      transparent 38%
+    ),
+    radial-gradient(
+      circle at 88% 100%,
+      rgba(159, 131, 255, 0.11) 0%,
+      transparent 44%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(25, 32, 56, 0.995) 0%,
+      rgba(10, 15, 31, 0.995) 100%
+    ) !important;
 
   box-shadow:
-    0 44px 98px rgba(0, 0, 0, 0.68),
-    0 0 0 1px rgba(205, 214, 255, 0.14),
-    0 0 44px rgba(114, 140, 255, 0.25),
-    0 0 80px rgba(159, 131, 255, 0.18),
-    inset 0 1px 0 rgba(255, 255, 255, 0.16);
+    0 36px 88px rgba(0, 0, 0, 0.62),
+    0 0 0 1px rgba(205, 214, 255, 0.18),
+    0 0 38px rgba(114, 140, 255, 0.28),
+    0 0 76px rgba(159, 131, 255, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16) !important;
 }
 
-.character-name.is-top-layer:not(:hover):not(:focus-visible) {
-  scale: 1;
-  translate: 0 0;
+#section-2-empty-shelf
+.falling-quote:is(
+  :hover,
+  :focus-visible,
+  .is-interacting
+)
+.quote-emphasis {
+  color: #ffffff;
 
-  border-color: rgba(199, 209, 255, 0.46);
+  background:
+    linear-gradient(
+      180deg,
+      transparent 50%,
+      rgba(114, 140, 255, 0.31) 50%,
+      rgba(159, 131, 255, 0.46) 100%
+    );
+}
+
+#section-2-empty-shelf
+.note-card:is(
+  :hover,
+  :focus-visible,
+  .is-interacting
+)::before {
+  height: 8px;
+
+  box-shadow:
+    0 0 18px rgba(121, 217, 255, 0.56),
+    0 0 36px rgba(159, 131, 255, 0.34);
+}
+
+#section-2-empty-shelf
+.thoughts-cloud:is(
+  :hover,
+  :focus-within,
+  .is-interacting
+)
+.thought-card {
+  color: var(--s2-text-primary) !important;
+}
+
+/* Moments and characters temporarily rise and enlarge. */
+#section-2-empty-shelf
+:is(
+  .moment-frame,
+  .character-name
+):is(
+  :hover,
+  :focus-visible,
+  .is-interacting
+) {
+  z-index: 2147483000 !important;
+
+  scale: 1.07 !important;
+  translate: 0 -12px !important;
+
+  border-color: rgba(225, 231, 255, 0.8) !important;
+
+  box-shadow:
+    0 46px 102px rgba(0, 0, 0, 0.7),
+    0 0 0 1px rgba(205, 214, 255, 0.18),
+    0 0 46px rgba(114, 140, 255, 0.3),
+    0 0 86px rgba(159, 131, 255, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
+}
+
+#section-2-empty-shelf
+.moment-frame:is(
+  :hover,
+  :focus-visible,
+  .is-interacting
+)
+img,
+#section-2-empty-shelf
+.character-name:is(
+  :hover,
+  :focus-visible,
+  .is-interacting
+)
+img {
+  transform: scale(1.025);
+
+  filter:
+    brightness(1.01)
+    saturate(1.07)
+    contrast(1.04);
+}
+
+/* After hover, the newest moment/character remains above its siblings. */
+#section-2-empty-shelf
+:is(
+  .moment-frame,
+  .character-name
+).is-top-layer:not(.is-interacting):not(:hover):not(:focus-visible) {
+  scale: 1 !important;
+  translate: 0 0 !important;
+
+  border-color: rgba(199, 209, 255, 0.48) !important;
 
   box-shadow:
     0 30px 72px rgba(0, 0, 0, 0.54),
-    0 0 34px rgba(114, 140, 255, 0.16),
-    0 0 56px rgba(159, 131, 255, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.12);
-
-  filter: none;
+    0 0 36px rgba(114, 140, 255, 0.17),
+    0 0 58px rgba(159, 131, 255, 0.11),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
 }
 
-/* Do not leave the character image enlarged after the pointer leaves. */
-.character-name.is-top-layer:not(:hover):not(:focus-visible) img {
+#section-2-empty-shelf
+.character-name.is-top-layer:not(.is-interacting):not(:hover):not(:focus-visible)
+img {
   transform: none;
 
   filter:
@@ -3149,46 +3249,34 @@
     contrast(1.01);
 }
 
-/* Notes use the same bright border language as quotes. */
-.note-card:hover::before,
-.note-card:focus-visible::before {
-  box-shadow:
-    0 0 18px rgba(121, 217, 255, 0.5),
-    0 0 32px rgba(159, 131, 255, 0.3);
-}
-
-/* The thoughts scene is one large card; its inner paragraphs stay readable. */
-.thoughts-cloud:hover .thought-card,
-.thoughts-cloud:focus-within .thought-card {
-  color: var(--s2-text-primary);
-}
-
-/* Keyboard focus remains obvious on every interactive evidence item. */
-.falling-quote:focus-visible,
-.moment-frame:focus-visible,
-.character-name:focus-visible,
-.note-card:focus-visible,
-.thought-card:focus-visible {
-  outline: 2px solid rgba(132, 223, 255, 0.9);
-  outline-offset: 5px;
-}
-
-@media (prefers-reduced-motion: reduce) {
+#section-2-empty-shelf
+:is(
   .falling-quote,
   .moment-frame,
   .character-name,
   .note-card,
-  .thoughts-cloud,
-  .falling-quote:hover,
-  .falling-quote:focus-visible,
-  .moment-frame:hover,
-  .moment-frame:focus-visible,
-  .character-name:hover,
-  .character-name:focus-visible,
-  .note-card:hover,
-  .note-card:focus-visible,
-  .thoughts-cloud:hover,
-  .thoughts-cloud:focus-within {
+  .thought-card,
+  .thoughts-cloud
+):focus-visible {
+  outline: 2px solid rgba(132, 223, 255, 0.94) !important;
+  outline-offset: 5px !important;
+}
+
+/* Keep the glow and border for reduced-motion users, but remove movement. */
+@media (prefers-reduced-motion: reduce) {
+  #section-2-empty-shelf
+  :is(
+    .falling-quote,
+    .moment-frame,
+    .character-name,
+    .note-card,
+    .thoughts-cloud
+  ):is(
+    :hover,
+    :focus-visible,
+    :focus-within,
+    .is-interacting
+  ) {
     scale: 1 !important;
     translate: 0 0 !important;
   }

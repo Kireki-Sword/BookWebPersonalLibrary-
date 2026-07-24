@@ -227,9 +227,8 @@
   let refreshTimer = null;
 
   /*
-   * Moments and characters share one rising layer counter.
-   * The most recently hovered or keyboard-focused card stays
-   * above its siblings after the pointer leaves.
+   * Every hovered moment receives the next
+   * available permanent layer number.
    */
   let topLayerZ = 1000;
 
@@ -245,7 +244,7 @@
     );
 
     createButtonProxies();
-    enablePersistentEvidenceLayers();
+    enableEvidenceInteractions();
     applyManagedLayoutMetrics();
     setInitialState();
 
@@ -302,76 +301,171 @@
   }
 
   /* ==========================================================================
-     PERSISTENT MOMENT + CHARACTER LAYERS
+     EVIDENCE INTERACTIONS
 
-     Hovering or focusing a moment/character card:
-     - temporarily lifts and enlarges it through CSS
-     - gives it the newest z-index
-     - keeps that z-index after hover ends
-     - leaves only the latest card with the subtle persistent highlight
+     This uses delegated pointer/focus events instead of relying only on
+     :hover. That makes the interaction survive GSAP-managed visibility,
+     stage changes, and future dynamically-rendered evidence cards.
 
-     Quotes, notes and thoughts use normal temporary hover/focus effects.
+     Moments and characters keep their newest z-index after the pointer leaves.
+     Every evidence card removes only the temporary .is-interacting state.
      ========================================================================== */
 
-  function enablePersistentEvidenceLayers() {
-    const persistentItems =
-      section.querySelectorAll(
-        ".moment-frame, .character-name"
+  const evidenceSelector =
+    ".falling-quote, " +
+    ".moment-frame, " +
+    ".character-name, " +
+    ".note-card, " +
+    ".thoughts-cloud";
+
+  const persistentEvidenceSelector =
+    ".moment-frame, .character-name";
+
+  function enableEvidenceInteractions() {
+    const enterItem = (item) => {
+      if (!item) {
+        return;
+      }
+
+      item.classList.add(
+        "is-interacting"
       );
 
-    persistentItems.forEach((item) => {
-      const moveToTop = () => {
-        const parentStage = item.closest(
-          ".scroll-stage"
+      if (
+        !item.matches(
+          persistentEvidenceSelector
+        )
+      ) {
+        return;
+      }
+
+      const parentStage = item.closest(
+        ".scroll-stage"
+      );
+
+      parentStage
+        ?.querySelectorAll(
+          ".moment-frame.is-top-layer, " +
+          ".character-name.is-top-layer"
+        )
+        .forEach((sibling) => {
+          if (sibling !== item) {
+            sibling.classList.remove(
+              "is-top-layer"
+            );
+          }
+        });
+
+      topLayerZ += 1;
+
+      item.style.zIndex =
+        String(topLayerZ);
+
+      item.classList.add(
+        "is-top-layer"
+      );
+    };
+
+    const leaveItem = (item) => {
+      item?.classList.remove(
+        "is-interacting"
+      );
+    };
+
+    section.addEventListener(
+      "pointerover",
+      (event) => {
+        const item = event.target.closest?.(
+          evidenceSelector
         );
 
-        parentStage
-          ?.querySelectorAll(
-            ".moment-frame.is-top-layer, " +
-            ".character-name.is-top-layer"
+        if (
+          !item ||
+          !section.contains(item) ||
+          item.contains(event.relatedTarget)
+        ) {
+          return;
+        }
+
+        enterItem(item);
+      }
+    );
+
+    section.addEventListener(
+      "pointerout",
+      (event) => {
+        const item = event.target.closest?.(
+          evidenceSelector
+        );
+
+        if (
+          !item ||
+          item.contains(event.relatedTarget)
+        ) {
+          return;
+        }
+
+        leaveItem(item);
+      }
+    );
+
+    section.addEventListener(
+      "pointercancel",
+      () => {
+        section
+          .querySelectorAll(
+            ".is-interacting"
           )
-          .forEach((sibling) => {
-            if (sibling !== item) {
-              sibling.classList.remove(
-                "is-top-layer"
-              );
-            }
-          });
+          .forEach(leaveItem);
+      }
+    );
 
-        topLayerZ += 1;
-
-        item.style.zIndex =
-          String(topLayerZ);
-
-        item.classList.add(
-          "is-top-layer"
+    section.addEventListener(
+      "focusin",
+      (event) => {
+        const item = event.target.closest?.(
+          evidenceSelector
         );
-      };
 
-      item.addEventListener(
-        "pointerenter",
-        moveToTop
-      );
+        enterItem(item);
+      }
+    );
 
-      item.addEventListener(
-        "focusin",
-        moveToTop
-      );
-    });
+    section.addEventListener(
+      "focusout",
+      (event) => {
+        const item = event.target.closest?.(
+          evidenceSelector
+        );
+
+        if (
+          !item ||
+          item.contains(event.relatedTarget)
+        ) {
+          return;
+        }
+
+        leaveItem(item);
+      }
+    );
+
+    section.dataset.s2InteractionsReady =
+      "true";
   }
 
-  function resetPersistentLayerOrder() {
+  function resetEvidenceInteractions() {
     section
       .querySelectorAll(
-        ".moment-frame, .character-name"
+        evidenceSelector
       )
       .forEach((item) => {
-        item.style.removeProperty(
-          "z-index"
+        item.classList.remove(
+          "is-interacting",
+          "is-top-layer"
         );
 
-        item.classList.remove(
-          "is-top-layer"
+        item.style.removeProperty(
+          "z-index"
         );
       });
 
@@ -633,7 +727,7 @@
 
   function setInitialState() {
     applyManagedLayoutMetrics();
-    resetPersistentLayerOrder();
+    resetEvidenceInteractions();
 
     gsap.set(elements.header, {
       autoAlpha: 1,
@@ -679,6 +773,9 @@
         gsap.set(layer.stage, {
           autoAlpha: 0
         });
+
+        layer.stage.style.pointerEvents =
+          "none";
       }
 
       if (layer.items.length) {
@@ -1782,6 +1879,28 @@
               !isStageActive
             )
           );
+
+          /*
+           * The CSS class remains the source of truth, but the inline value
+           * prevents a later stylesheet or stale cached rule from leaving an
+           * active evidence stage unable to receive hover/pointer events.
+           */
+          layer.stage.style.pointerEvents =
+            isStageActive
+              ? "auto"
+              : "none";
+
+          if (!isStageActive) {
+            layer.stage
+              .querySelectorAll(
+                ".is-interacting"
+              )
+              .forEach((item) => {
+                item.classList.remove(
+                  "is-interacting"
+                );
+              });
+          }
         }
 
         if (!layer.button) {
@@ -1877,7 +1996,7 @@
      ========================================================================== */
 
   function buildReducedMotionVersion() {
-    resetPersistentLayerOrder();
+    resetEvidenceInteractions();
 
     gsap.set(elements.header, {
       autoAlpha: 1,
@@ -1917,6 +2036,9 @@
         gsap.set(layer.stage, {
           autoAlpha: 0
         });
+
+        layer.stage.style.pointerEvents =
+          "none";
       }
 
       if (layer.button) {
