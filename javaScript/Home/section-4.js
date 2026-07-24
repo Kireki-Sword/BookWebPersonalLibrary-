@@ -1,6 +1,9 @@
 (() => {
   "use strict";
 
+  window.__INKWELL_SECTION4_BUILD__ =
+    "2026-07-24-interaction-v7";
+
   const SUPABASE_URL = "https://hsruxfpslxguhwnccwuj.supabase.co";
 
   const SUPABASE_KEY = "sb_publishable_Z2upBCdemNtdB4j5jry65A_XD_u8BsD";
@@ -344,6 +347,29 @@
     type: ["Manga", "Anime"],
   };
 
+  /*
+   * Section 4 must publish its managed timeline before homeScroll.js gives up
+   * waiting for it. Database data improves the rain, but it must never be a
+   * requirement for the animation itself.
+   */
+  const SECTION_4_DATA_TIMEOUT_MS = 5000;
+  const MAX_RAIN_ITEMS_PER_SIDE = 12;
+
+  const FALLBACK_RAIN_STORIES = [
+    FALLBACK_STORY,
+    { id: "", title: "Vagabond", creator: "Takehiko Inoue", type: ["Manga"] },
+    { id: "", title: "Vinland Saga", creator: "Makoto Yukimura", type: ["Manga", "Anime"] },
+    { id: "", title: "Berserk", creator: "Kentaro Miura", type: ["Manga"] },
+    { id: "", title: "Monster", creator: "Naoki Urasawa", type: ["Manga", "Anime"] },
+    { id: "", title: "Fullmetal Alchemist", creator: "Hiromu Arakawa", type: ["Manga", "Anime"] },
+    { id: "", title: "Death Note", creator: "Tsugumi Ohba", type: ["Manga", "Anime"] },
+    { id: "", title: "Pluto", creator: "Naoki Urasawa", type: ["Manga", "Anime"] },
+    { id: "", title: "20th Century Boys", creator: "Naoki Urasawa", type: ["Manga"] },
+    { id: "", title: "The Climber", creator: "Shin-ichi Sakamoto", type: ["Manga"] },
+    { id: "", title: "Kingdom", creator: "Yasuhisa Hara", type: ["Manga", "Anime"] },
+    { id: "", title: "Dorohedoro", creator: "Q Hayashida", type: ["Manga", "Anime"] },
+  ];
+
   function publishManagedJourney(result) {
     if (
       !MANAGED_BY_HOME_JOURNEY ||
@@ -389,32 +415,27 @@
     const elements = collectElements(section);
 
     setupReaderExperience(elements);
-
     setupDetailDialog(elements);
+
+    /*
+     * Always prepare a complete local scene first. This guarantees that the
+     * chosen left/right covers exist and that the GSAP timeline can be built
+     * even when Supabase is blocked, offline, or simply slow.
+     */
+    renderStory(section, FALLBACK_STORY);
+    renderRain(elements, FALLBACK_RAIN_STORIES, FALLBACK_STORY);
 
     if (!window.supabase?.createClient) {
       console.warn(
-        "Section 4: Supabase is not loaded. Showing the static fallback.",
+        "Section 4: Supabase is not loaded. Animating the local fallback.",
       );
-
-      renderStory(section, FALLBACK_STORY);
-
-      showStaticLayout(section, elements);
 
       setStatus(
         elements,
-        "Supabase is missing. Showing the static fallback.",
+        "Live cover data is unavailable. Showing the animated fallback.",
       );
 
-      publishManagedJourney({
-        section,
-        elements,
-        timeline: null,
-        cleanup: () => {},
-        refresh: () => {},
-        showStatic: () => showStaticLayout(section, elements),
-      });
-
+      startSection4Motion(section, elements);
       return;
     }
 
@@ -426,56 +447,91 @@
     try {
       setStatus(elements, "Loading anime and manga covers.");
 
-      const storyPool = await loadAnimeMangaPool();
+      const result = await withTimeout(
+        (async () => {
+          const storyPool = await loadAnimeMangaPool();
+          const chosenStory = await findChosenStory(storyPool);
 
-      const chosenStory = await findChosenStory(storyPool);
+          return {
+            storyPool,
+            chosenStory,
+          };
+        })(),
+        SECTION_4_DATA_TIMEOUT_MS,
+        "Section 4 cover data timed out.",
+      );
+
+      const storyPool = result.storyPool?.length
+        ? result.storyPool
+        : FALLBACK_RAIN_STORIES;
+
+      const chosenStory = result.chosenStory || FALLBACK_STORY;
 
       renderStory(section, chosenStory);
-
       renderRain(elements, storyPool, chosenStory);
 
       setStatus(
         elements,
         `${chosenStory.title} loaded as the shared story.`,
       );
-
-      requestAnimationFrame(() => {
-        try {
-          setupMotion(section, elements);
-        } catch (motionError) {
-          console.error("Section 4: setupMotion crashed —", motionError);
-          showStaticLayout(section, elements);
-          publishManagedJourney({
-            section,
-            elements,
-            timeline: null,
-            cleanup: () => {},
-            refresh: () => {},
-            showStatic: () => showStaticLayout(section, elements),
-          });
-        }
-      });
     } catch (error) {
-      console.error("Section 4 failed:", error);
-
-      renderStory(section, FALLBACK_STORY);
-
-      showDatabaseError(
-        elements,
-        "Story covers could not be loaded.",
+      console.warn(
+        "Section 4: live cover data was unavailable; using the animated fallback.",
+        error,
       );
 
-      showStaticLayout(section, elements);
-
-      publishManagedJourney({
-        section,
+      /* The local scene was already rendered above, so do not switch to a
+       * non-animated static layout here. */
+      setStatus(
         elements,
-        timeline: null,
-        cleanup: () => {},
-        refresh: () => {},
-        showStatic: () => showStaticLayout(section, elements),
-      });
+        "Live cover data could not be loaded. Showing the animated fallback.",
+      );
     }
+
+    startSection4Motion(section, elements);
+  }
+
+  function startSection4Motion(section, elements) {
+    requestAnimationFrame(() => {
+      try {
+        setupMotion(section, elements);
+      } catch (motionError) {
+        console.error(
+          "Section 4: setupMotion crashed —",
+          motionError,
+        );
+
+        showStaticLayout(section, elements);
+
+        publishManagedJourney({
+          section,
+          elements,
+          timeline: null,
+          cleanup: () => {},
+          refresh: () => {},
+          showStatic: () => showStaticLayout(section, elements),
+        });
+      }
+    });
+  }
+
+  function withTimeout(promise, timeoutMs, message) {
+    return new Promise((resolve, reject) => {
+      const timer = window.setTimeout(() => {
+        reject(new Error(message));
+      }, timeoutMs);
+
+      Promise.resolve(promise).then(
+        (value) => {
+          window.clearTimeout(timer);
+          resolve(value);
+        },
+        (error) => {
+          window.clearTimeout(timer);
+          reject(error);
+        },
+      );
+    });
   }
 
   function collectElements(section) {
@@ -563,7 +619,7 @@
     const result = await supabaseClient
       .from(TABLE_NAME)
       .select("*")
-      .limit(500);
+      .limit(120);
 
     if (result.error) {
       throw result.error;
@@ -774,12 +830,21 @@
       }),
     );
 
+    /*
+     * The lane position presets contain twelve slots per side. Rendering the
+     * complete database pool created hundreds of images and GSAP tweens, which
+     * could stall the section before its first visible frame. Keep one chosen
+     * cover plus at most eleven ordinary covers in each lane.
+     */
+    const maximumOrdinaryCount =
+      MAX_RAIN_ITEMS_PER_SIDE * 2 - 2;
+
     const shuffled = seededShuffle(
       ordinaryPool,
       hashString(
         `${chosenStory.title}-section-four-rain`,
       ),
-    );
+    ).slice(0, maximumOrdinaryCount);
 
     const leftCount = Math.ceil(
       shuffled.length / 2,

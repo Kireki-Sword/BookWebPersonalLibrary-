@@ -23,7 +23,7 @@
   "use strict";
 
   window.__INKWELL_HOME_SCROLL_BUILD__ =
-    "2026-07-24-interaction-v5";
+    "2026-07-24-interaction-v7";
 
   const DESKTOP_QUERY =
     "(min-width: 1100px) and (min-height: 700px) and " +
@@ -935,25 +935,55 @@
     }).to({}, { duration: 2.85 });
   }
 
-  function waitForSection4Api(timeoutMs) {
+  async function waitForSection4Api(timeoutMs) {
     const existing = window.InkwellSection4Journey;
 
-    if (existing?.timeline || existing?.showStatic) {
-      return Promise.resolve(existing);
+    if (isUsableSection4Api(existing)) {
+      return existing;
     }
+
+    let result = null;
 
     if (existing?.ready) {
-      return Promise.race([
+      result = await Promise.race([
         existing.ready,
-        delay(timeoutMs).then(() => window.InkwellSection4Journey || null),
+        delay(timeoutMs).then(() => null),
       ]);
+    } else {
+      result = await waitForSectionApi({
+        current: () => window.InkwellSection4Journey,
+        eventName: "inkwell:section4-ready",
+        timeoutMs,
+      });
     }
 
-    return waitForSectionApi({
-      current: () => window.InkwellSection4Journey,
-      eventName: "inkwell:section4-ready",
-      timeoutMs,
-    });
+    if (isUsableSection4Api(result)) {
+      return result;
+    }
+
+    /*
+     * Never leave Section 4 in its animation-only hidden state. If its script
+     * fails to publish an API, the master journey receives a real static
+     * fallback instead of the unresolved { ready: Promise } placeholder.
+     */
+    const section = document.querySelector(SELECTORS.section4);
+
+    return {
+      section,
+      timeline: null,
+      cleanup: () => {},
+      refresh: () => {},
+      showStatic: () => {
+        section?.classList.add("is-static");
+      },
+    };
+  }
+
+  function isUsableSection4Api(api) {
+    return Boolean(
+      api &&
+      (api.timeline || typeof api.showStatic === "function")
+    );
   }
 
   function waitForSectionApi({ current, eventName, timeoutMs }) {

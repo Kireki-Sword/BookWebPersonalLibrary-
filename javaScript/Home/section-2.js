@@ -21,7 +21,7 @@
   }
 
   window.__INKWELL_SECTION2_BUILD__ =
-    "2026-07-24-interaction-v6";
+    "2026-07-24-interaction-v7";
 
   const { gsap, ScrollTrigger } = window;
 
