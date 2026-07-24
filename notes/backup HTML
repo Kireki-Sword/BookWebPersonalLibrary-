@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inkwell — Remember Every Story</title>
+    <title>InkWell-Home</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="css/homePage/HomeSections.css">
-    <link rel="stylesheet" href="css/homePage/home-polish.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
 </head>
 <!-- Home Page-->
@@ -47,15 +46,15 @@
 
         <!-- DIV 1 - LEFT SIDE - Text -->
         <div class="hero-left">
-            <span class="hero-label">Your stories, remembered</span>
+            <span class="hero-label">Beyond a simple rating</span>
             <h1 class="hero-title">Some stories leave a mark.</h1>
-            <h2 class="hero-subtitle">Keep the moments, ideas, and feelings a rating cannot hold.</h2>
-            <p class="hero-p">Search what you read or watch, save the parts that stayed with you, and build a personal library that remembers why each story mattered.</p>
+            <h2 class="hero-subtitle">Every story you read becomes part of you.<br> Remember it and share it.</h2>
+            <p class="hero-p">Log what you read, save what hit you, write what it meant to you. Because the same story speaks differently to every person who lives it.</p>
             <div class="hero-buttons">
-                <a class="hero-btn-primary" href="signup.html">Create your library</a>
-                <a class="hero-btn-ghost" href="search.html">Explore stories</a>
+                <button class="hero-btn-primary">Join Inkwell</button>
+                <button class="hero-btn-ghost">Start Exploring</button>
             </div>
-            <p class="hero-proof">For readers and watchers who remember stories by more than a score.</p>
+            <p class="hero-proof">For readers, watchers, and anyone who remembers stories by how they felt.</p>
         </div>
 
         <!-- DIV 2 - RIGHT SIDE - Rotating Card -->
@@ -83,8 +82,7 @@
                         <span class="card-max-score">/10</span>
                     </div>
 
-                    <!-- DIV 3 inside card - Saved layers -->
-                    <span class="card-layers-label">Explore story layers</span>
+                    <!-- DIV 3 inside card - Buttons -->
                     <div class="card-buttons">
                         <button class="card-btn">Quotes</button>
                         <button class="card-btn">Moments</button>
@@ -114,8 +112,8 @@
         </h2>
 
         <p>
-        A score shows how much you liked it. Your saved quotes, moments,
-        characters, notes, and thoughts remember why.
+        A number can show how much you liked something.
+        Inkwell helps you remember why.
         </p>
     </header>
 
@@ -143,30 +141,24 @@
             </div>
 
             <div class="media-row-info">
-                <span class="media-row-eyebrow">Featured reading</span>
                 <h3>Vagabond</h3>
-                <p class="media-row-creator">Takehiko Inoue</p>
-                <p class="media-row-summary">
-                    A sweeping meditation on freedom, discipline, and what strength costs.
-                </p>
+                <p>Takehiko Inoue</p>
             </div>
 
-            <div class="media-row-format" aria-label="Story details">
+            <div class="media-row-format">
                 <span>Manga</span>
-                <span>Historical</span>
-                <span>Drama</span>
-                <span>Seinen</span>
             </div>
 
-            <div class="media-row-status" aria-hidden="true"></div>
+            <div class="media-row-status">
+                <span>Completed</span>
+            </div>
 
             <div
                 class="media-row-score"
                 tabindex="0"
-                aria-label="Inkwell score: 9 out of 10. The saved layers explain why."
+                aria-label="Rating 9 out of 10. A rating alone does not explain why."
             >
-                <small>Inkwell score</small>
-                <strong>9/10</strong>
+                <span>9/10</span>
             </div>
 
             <div
@@ -997,10 +989,9 @@
     <div class="flow-library-empty" data-flow-motion-item="" data-library-empty="">
     <div class="flow-empty-content">
     <i aria-hidden="true" class="ti ti-books"></i>
-    <strong>Your library starts here.</strong>
     <p>
-                    Search for a story above, choose its place in your library,
-                    and keep the details that made it matter.
+                    Search and add something above. Your saved stories
+                    will appear here.
                 </p>
     </div>
     </div>
