@@ -6,6 +6,10 @@
     <title>InkWell-Home</title>
     <link href="style.css" rel="stylesheet">
     <link href="css/homePage/HomeSections.css" rel="stylesheet">
+    <link href="css/homePage/section-2.css?v=20260724-14" rel="stylesheet">
+    <link href="css/homePage/section-4.css?v=20260724-14" rel="stylesheet">
+    <link href="css/homePage/section-5-social.css?v=20260724-5" rel="stylesheet">
+    <link href="css/homePage/homeScroll.css?v=20260724-18" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css" rel="stylesheet">
   </head>
   <!-- Home Page-->
@@ -36,8 +40,7 @@
     <!-- One pinned viewport for Sections 1–5 -->
     <div class="home-journey-shell" data-home-journey-shell="">
       <div class="home-journey-stage" data-home-journey-stage="">
-
-
+        
         <!-- Section 1 Hero -->
         <section class="hero">
           <!-- DIV 1 - LEFT SIDE - Text -->
@@ -522,7 +525,7 @@
             </article>
           </div>
         </section>
-        
+
         <!-- SECTION 4 — SAME STORY, DIFFERENT SOULS -->
         <section aria-labelledby="section-4-title" class="section section-cover-rain" data-section-cover-rain="" id="section-4">
           <div class="s4-stage" data-s4-stage="">
@@ -1209,45 +1212,99 @@
             <div class="social-cinema__layout">
               <header class="social-cinema__copy">
                 <span class="social-cinema__eyebrow">Social, on your terms</span>
-                <h2 id="social-cinema-title">
-                  A thought can stay yours.
-                  <span>Or find the right person.</span>
-                </h2>
-                <p class="social-cinema__intro">
-                  Choose who can see what you save, protect spoilers, shape a
-                  profile around your taste, and discover readers through the
-                  stories and ideas you share.
-                </p>
+
+                <div class="social-cinema__copy-stage">
+                  <div
+                    class="social-copy-state is-active"
+                    data-social-copy="control"
+                    aria-hidden="false"
+                  >
+                    <span class="social-copy-state__index">01 · Share with intent</span>
+                    <h2 id="social-cinema-title">Share without losing control.</h2>
+                    <p>
+                      Every Quote, Moment, Note, and Reflection can have its own
+                      audience. Keep it private, share it with followers, or open it
+                      to the community when you are ready.
+                    </p>
+                    <div class="social-copy-proof" aria-label="Control features">
+                      <span>Per-post audience</span>
+                      <span>Spoiler protection</span>
+                      <span>Preview before sharing</span>
+                    </div>
+                  </div>
+
+                  <div
+                    class="social-copy-state"
+                    data-social-copy="identity"
+                    aria-hidden="true"
+                  >
+                    <span class="social-copy-state__index">02 · Express your taste</span>
+                    <h2>Let your shelf introduce you.</h2>
+                    <p>
+                      A profile should communicate more than a username. Favourite
+                      stories, public reflections, and recurring themes show how you
+                      experience fiction.
+                    </p>
+                    <div class="social-copy-proof" aria-label="Profile features">
+                      <span>Favourite stories</span>
+                      <span>Public reflections</span>
+                      <span>Personal themes</span>
+                    </div>
+                  </div>
+
+                  <div
+                    class="social-copy-state"
+                    data-social-copy="discovery"
+                    aria-hidden="true"
+                  >
+                    <span class="social-copy-state__index">03 · Discover through people</span>
+                    <h2>Find readers worth following.</h2>
+                    <p>
+                      Search by story, format, or theme. Inkwell explains why a
+                      reader appears, so discovery feels grounded in shared taste
+                      instead of an unexplained score.
+                    </p>
+                    <div class="social-copy-proof" aria-label="Discovery features">
+                      <span>Shared stories</span>
+                      <span>Shared themes</span>
+                      <span>Public activity</span>
+                    </div>
+                  </div>
+                </div>
 
                 <ol class="social-cinema__steps" aria-label="Social feature story">
                   <li class="social-cinema__step is-active" data-social-step="control">
                     <span class="social-cinema__step-number">01</span>
                     <span class="social-cinema__step-copy">
                       <strong>Control</strong>
-                      <small>Private, followers, public, and spoiler-aware.</small>
+                      <small>Choose the audience and protect spoilers.</small>
                     </span>
                   </li>
                   <li class="social-cinema__step" data-social-step="identity">
                     <span class="social-cinema__step-number">02</span>
                     <span class="social-cinema__step-copy">
                       <strong>Identity</strong>
-                      <small>Your shelf and public thoughts introduce you.</small>
+                      <small>Turn public activity into a meaningful profile.</small>
                     </span>
                   </li>
                   <li class="social-cinema__step" data-social-step="discovery">
                     <span class="social-cinema__step-number">03</span>
                     <span class="social-cinema__step-copy">
                       <strong>Discovery</strong>
-                      <small>Find readers through stories, formats, and themes.</small>
+                      <small>Find people through stories and ideas.</small>
                     </span>
                   </li>
                 </ol>
+
+                <p class="social-cinema__principle">
+                  Built around stories—not an endless generic feed.
+                </p>
               </header>
 
               <div class="social-cinema__viewport">
                 <div class="social-cinema__screen" data-social-screen>
-                  <div class="social-cinema__toolbar" aria-hidden="true">
-                    <span class="social-cinema__window-dots">
+                  <div class="social-cinema__toolbar">
+                    <span class="social-cinema__window-dots" aria-hidden="true">
                       <span></span><span></span><span></span>
                     </span>
                     <span class="social-cinema__toolbar-title">Inkwell social</span>
@@ -1256,103 +1313,155 @@
                     </span>
                   </div>
 
+                  <div class="social-cinema__scene-label" aria-hidden="true">
+                    <span data-social-scene-number>01</span>
+                    <strong data-social-scene-label>Audience and spoilers</strong>
+                  </div>
+
                   <!-- Act 1: audience and spoiler control -->
                   <div
                     class="social-scene social-scene--control"
                     data-social-scene="control"
+                    aria-hidden="false"
                   >
-                    <section class="social-panel social-share-panel" aria-label="Share settings">
-                      <header class="social-panel__header">
-                        <strong>Share reflection</strong>
-                        <small>Every saved layer has its own audience.</small>
-                      </header>
-                      <div class="social-share-panel__body">
-                        <fieldset class="social-fieldset">
-                          <legend>Who can see this?</legend>
-                          <div class="social-audience-options">
-                            <button
-                              type="button"
-                              class="social-audience-button"
-                              data-social-audience="private"
-                              aria-pressed="true"
+                    <section class="social-composer" aria-label="Share a reflection">
+                      <header class="social-composer__header">
+                        <div class="social-story-mini">
+                          <span class="social-story-mini__cover">
+                            <img
+                              src=""
+                              alt=""
+                              data-social-story-cover
+                              hidden
                             >
-                              Private
-                            </button>
-                            <button
-                              type="button"
-                              class="social-audience-button"
-                              data-social-audience="followers"
-                              aria-pressed="false"
-                            >
-                              Followers
-                            </button>
-                            <button
-                              type="button"
-                              class="social-audience-button"
-                              data-social-audience="public"
-                              aria-pressed="false"
-                            >
-                              Public
-                            </button>
-                          </div>
-                        </fieldset>
-
-                        <div class="social-spoiler-row">
-                          <span>
-                            <strong>Contains spoilers</strong>
-                            <small>Readers choose when to reveal it.</small>
+                            <span aria-hidden="true">AOT</span>
                           </span>
-                          <button
-                            type="button"
-                            class="social-spoiler-toggle"
-                            data-social-spoiler-toggle
-                            aria-label="Mark reflection as containing spoilers"
-                            aria-pressed="false"
-                          ></button>
+                          <span>
+                            <small>Attack on Titan</small>
+                            <strong>Share reflection</strong>
+                          </span>
                         </div>
+                        <span class="social-draft-badge">Draft saved</span>
+                      </header>
 
-                        <div class="social-share-actions">
-                          <button type="button" class="social-secondary-button">
-                            Save privately
+                      <div class="social-composer__reflection">
+                        <span class="social-composer__label">Reflection preview</span>
+                        <p>
+                          Freedom changes meaning when fear, duty, or love begins
+                          making the choice for someone.
+                        </p>
+                        <span class="social-composer__count">112 words · 1 minute read</span>
+                      </div>
+
+                      <fieldset class="social-fieldset">
+                        <legend>Who can see this?</legend>
+                        <div class="social-audience-options">
+                          <button
+                            type="button"
+                            class="social-audience-button"
+                            data-social-audience="private"
+                            aria-pressed="true"
+                          >
+                            <span aria-hidden="true">●</span>
+                            Private
                           </button>
                           <button
                             type="button"
-                            class="social-primary-button"
-                            data-social-share-button
+                            class="social-audience-button"
+                            data-social-audience="followers"
+                            aria-pressed="false"
                           >
-                            Share reflection
+                            <span aria-hidden="true">●●</span>
+                            Followers
+                          </button>
+                          <button
+                            type="button"
+                            class="social-audience-button"
+                            data-social-audience="public"
+                            aria-pressed="false"
+                          >
+                            <span aria-hidden="true">◎</span>
+                            Public
                           </button>
                         </div>
+                      </fieldset>
+
+                      <div class="social-spoiler-row">
+                        <span>
+                          <strong>Contains spoilers</strong>
+                          <small>Readers choose when to reveal the text.</small>
+                        </span>
+                        <button
+                          type="button"
+                          class="social-spoiler-toggle"
+                          data-social-spoiler-toggle
+                          aria-label="Mark reflection as containing spoilers"
+                          aria-pressed="false"
+                        ></button>
                       </div>
+
+                      <footer class="social-composer__footer">
+                        <span class="social-composer__summary" data-social-audience-summary>
+                          Only you can see this reflection.
+                        </span>
+                        <button
+                          type="button"
+                          class="social-primary-button"
+                          data-social-share-button
+                        >
+                          Share reflection
+                        </button>
+                      </footer>
                     </section>
 
-                    <div class="social-post-stage" aria-label="Reflection preview">
-                      <div class="social-audience-orbit" aria-hidden="true">
-                        <span class="social-orbit-avatar">K</span>
-                        <span class="social-orbit-avatar">M</span>
-                        <span class="social-orbit-avatar">J</span>
-                        <span class="social-orbit-avatar">R</span>
+                    <aside class="social-live-preview" aria-label="Live sharing preview">
+                      <header class="social-live-preview__header">
+                        <span>
+                          <small>Live preview</small>
+                          <strong data-social-preview-title>Private reflection</strong>
+                        </span>
+                        <span class="social-live-preview__state" data-social-preview-state>
+                          Only you
+                        </span>
+                      </header>
+
+                      <div class="social-post-stage">
+                        <div class="social-audience-orbit" aria-hidden="true">
+                          <span class="social-orbit-avatar">K</span>
+                          <span class="social-orbit-avatar">M</span>
+                          <span class="social-orbit-avatar">J</span>
+                          <span class="social-orbit-avatar">R</span>
+                        </div>
+                        <p class="social-live-preview__hint" data-social-preview-hint>
+                          This stays attached to your private library until you choose
+                          another audience.
+                        </p>
                       </div>
-                    </div>
+
+                      <footer class="social-live-preview__footer">
+                        <span>Audience preview</span>
+                        <span data-social-preview-footer>1 reader</span>
+                      </footer>
+                    </aside>
                   </div>
 
                   <!-- Act 2: profile identity -->
                   <div
                     class="social-scene social-scene--identity"
                     data-social-scene="identity"
+                    aria-hidden="true"
                   >
-                    <article class="social-panel social-profile-shell" data-social-profile-shell>
-                      <div class="social-profile-hero">
-                        <button
-                          type="button"
-                          class="social-profile-edit"
-                          data-social-profile-edit
-                        >
-                          Edit profile
-                        </button>
+                    <article class="social-profile-shell" data-social-profile-shell>
+                      <div class="social-profile-banner" aria-hidden="true">
+                        <span class="social-profile-banner__word">perspective</span>
+                        <span class="social-profile-banner__line"></span>
+                      </div>
+
+                      <header class="social-profile-header">
                         <div class="social-profile-persona">
                           <div class="social-profile-avatar" data-social-profile-avatar>N</div>
                           <div class="social-profile-heading">
+                            <span class="social-demo-label">Demo profile</span>
                             <h3>nova.pages</h3>
                             <p data-social-profile-bio>
                               Tracks themes, systems, and the truths that change when
@@ -1366,7 +1475,15 @@
                             </div>
                           </div>
                         </div>
-                      </div>
+                        <button
+                          type="button"
+                          class="social-profile-edit"
+                          data-social-profile-edit
+                          aria-pressed="false"
+                        >
+                          Edit profile
+                        </button>
+                      </header>
 
                       <div class="social-profile-stats" data-social-profile-stats>
                         <div class="social-profile-stat">
@@ -1382,25 +1499,72 @@
 
                       <div class="social-profile-content">
                         <section class="social-profile-shelf" aria-label="Favourite stories">
-                          <h4 class="social-subheading">Favourite stories</h4>
+                          <div class="social-section-heading">
+                            <span>
+                              <small>Taste at a glance</small>
+                              <strong>Favourite stories</strong>
+                            </span>
+                            <button type="button" class="social-text-button">View shelf</button>
+                          </div>
                           <div class="social-cover-row">
-                            <span class="social-cover-tile" style="--cover-a:#52668f;--cover-b:#1e263d"></span>
-                            <span class="social-cover-tile" style="--cover-a:#78556f;--cover-b:#2a1d2f"></span>
-                            <span class="social-cover-tile" style="--cover-a:#4d726d;--cover-b:#172b2c"></span>
-                            <span class="social-cover-tile" style="--cover-a:#786a4e;--cover-b:#2f2819"></span>
+                            <article class="social-cover-tile social-cover-tile--aot">
+                              <span class="social-cover-art">
+                                <img src="" alt="" data-social-favourite-cover hidden>
+                                <span>AOT</span>
+                              </span>
+                              <small>Attack on Titan</small>
+                            </article>
+                            <article class="social-cover-tile social-cover-tile--vagabond">
+                              <span class="social-cover-art">
+                                <img src="img/section2/vagabond-cover.jpg" alt="Vagabond cover">
+                              </span>
+                              <small>Vagabond</small>
+                            </article>
+                            <article class="social-cover-tile social-cover-tile--arrival">
+                              <span class="social-cover-art"><span>ARR</span></span>
+                              <small>Arrival</small>
+                            </article>
+                            <article class="social-cover-tile social-cover-tile--monster">
+                              <span class="social-cover-art"><span>MON</span></span>
+                              <small>Monster</small>
+                            </article>
                           </div>
                         </section>
 
-                        <section class="social-profile-reflections" aria-label="Recent public reflections">
-                          <h4 class="social-subheading">Recent public reflections</h4>
-                          <div class="social-reflection-list">
-                            <article class="social-reflection-preview">
-                              <strong>Attack on Titan · Reflection</strong>
+                        <section class="social-profile-activity" aria-label="Public profile activity">
+                          <div class="social-section-heading">
+                            <span>
+                              <small>What people can discover</small>
+                              <strong>Public activity</strong>
+                            </span>
+                            <span class="social-profile-visibility">3 public</span>
+                          </div>
+
+                          <div class="social-profile-pin-slot" data-social-profile-slot>
+                            <article class="social-profile-pin" data-social-profile-pin>
+                              <span class="social-profile-pin__label">Pinned reflection</span>
+                              <strong>Attack on Titan</strong>
                               <p>Freedom changes meaning when fear begins choosing for you.</p>
+                              <span>Public · Spoiler protected</span>
                             </article>
-                            <article class="social-reflection-preview">
-                              <strong>Arrival · Note</strong>
-                              <p>Knowing an ending can make a beginning more valuable.</p>
+                          </div>
+
+                          <div class="social-profile-activity-list">
+                            <article class="social-activity-row">
+                              <span class="social-activity-row__type">Note</span>
+                              <span>
+                                <strong>Arrival</strong>
+                                <small>Knowing an ending can make a beginning more valuable.</small>
+                              </span>
+                              <time>2d</time>
+                            </article>
+                            <article class="social-activity-row">
+                              <span class="social-activity-row__type">Quote</span>
+                              <span>
+                                <strong>Vagabond</strong>
+                                <small>Words are like the sea.</small>
+                              </span>
+                              <time>5d</time>
                             </article>
                           </div>
                         </section>
@@ -1412,25 +1576,37 @@
                   <div
                     class="social-scene social-scene--discovery"
                     data-social-scene="discovery"
+                    aria-hidden="true"
                   >
-                    <section class="social-panel social-search-panel" aria-label="Search readers">
+                    <section class="social-search-panel" aria-label="Search readers">
+                      <header class="social-search-panel__header">
+                        <span>
+                          <small>Discover readers</small>
+                          <strong>Search by what matters to you</strong>
+                        </span>
+                        <span class="social-search-count">3 matches</span>
+                      </header>
+
                       <div class="social-search-box">
                         <label class="social-search-label" for="social-reader-search">
                           Search readers, stories, or themes
                         </label>
-                        <input
-                          class="social-search-input"
-                          id="social-reader-search"
-                          data-social-search-input
-                          type="search"
-                          value=""
-                          placeholder="Try “freedom”"
-                          autocomplete="off"
-                        >
-                        <div class="social-search-tabs" aria-hidden="true">
-                          <span class="social-search-tab is-active">Readers</span>
-                          <span class="social-search-tab">Stories</span>
-                          <span class="social-search-tab">Themes</span>
+                        <div class="social-search-input-shell">
+                          <span aria-hidden="true">⌕</span>
+                          <input
+                            class="social-search-input"
+                            id="social-reader-search"
+                            data-social-search-input
+                            type="search"
+                            value=""
+                            placeholder="Try “freedom”"
+                            autocomplete="off"
+                          >
+                        </div>
+                        <div class="social-search-tabs" role="tablist" aria-label="Search scope">
+                          <button type="button" class="social-search-tab is-active" role="tab" aria-selected="true">Readers</button>
+                          <button type="button" class="social-search-tab" role="tab" aria-selected="false">Stories</button>
+                          <button type="button" class="social-search-tab" role="tab" aria-selected="false">Themes</button>
                         </div>
                       </div>
 
@@ -1443,9 +1619,11 @@
                           <span class="social-result-avatar" style="--avatar-a:#5270b8;--avatar-b:#745a90">K</span>
                           <span class="social-result-copy">
                             <strong>kai.reads</strong>
-                            <small>Feeling before theory · freedom, sacrifice, choices</small>
+                            <small>Feeling before theory · freedom · sacrifice</small>
                           </span>
-                          <span class="social-result-match">3 shared stories</span>
+                          <span class="social-result-match">
+                            <strong>3</strong><small>shared stories</small>
+                          </span>
                         </button>
 
                         <button
@@ -1456,9 +1634,11 @@
                           <span class="social-result-avatar" style="--avatar-a:#6a5b99;--avatar-b:#914f7b">M</span>
                           <span class="social-result-copy">
                             <strong>mira.frames</strong>
-                            <small>Visual moments · memory, grief, cinematography</small>
+                            <small>Visual moments · memory · cinematography</small>
                           </span>
-                          <span class="social-result-match">2 shared stories</span>
+                          <span class="social-result-match">
+                            <strong>2</strong><small>shared stories</small>
+                          </span>
                         </button>
 
                         <button
@@ -1469,17 +1649,20 @@
                           <span class="social-result-avatar" style="--avatar-a:#4f817b;--avatar-b:#4f638d">R</span>
                           <span class="social-result-copy">
                             <strong>ren.afterwords</strong>
-                            <small>Long reflections · history, identity, responsibility</small>
+                            <small>Long reflections · history · responsibility</small>
                           </span>
-                          <span class="social-result-match">4 shared themes</span>
+                          <span class="social-result-match">
+                            <strong>4</strong><small>shared themes</small>
+                          </span>
                         </button>
                       </div>
                     </section>
 
-                    <article class="social-panel social-visited-profile" data-social-visited-profile>
-                      <div class="social-visited-profile__top">
+                    <article class="social-visited-profile" data-social-visited-profile>
+                      <header class="social-visited-profile__top">
                         <div class="social-visited-profile__avatar">K</div>
                         <div class="social-visited-profile__copy">
+                          <span class="social-demo-label">Recommended reader</span>
                           <h3>kai.reads</h3>
                           <p>Remembers the feeling before the theory.</p>
                         </div>
@@ -1491,14 +1674,35 @@
                         >
                           Follow
                         </button>
+                      </header>
+
+                      <div class="social-match-reason">
+                        <span class="social-match-reason__icon" aria-hidden="true">↔</span>
+                        <p class="social-shared-context">
+                          You both saved Attack on Titan and write about freedom,
+                          sacrifice, and difficult choices.
+                        </p>
                       </div>
 
-                      <p class="social-shared-context">
-                        You both saved Attack on Titan and write about freedom,
-                        sacrifice, and difficult choices.
-                      </p>
+                      <section class="social-mutual-stories" aria-label="Shared stories">
+                        <div class="social-section-heading">
+                          <span>
+                            <small>Why this reader appeared</small>
+                            <strong>Stories you share</strong>
+                          </span>
+                        </div>
+                        <div class="social-mutual-row">
+                          <span class="social-mutual-cover social-mutual-cover--aot">AOT</span>
+                          <span class="social-mutual-cover social-mutual-cover--vagabond">V</span>
+                          <span class="social-mutual-cover social-mutual-cover--arrival">A</span>
+                          <span class="social-mutual-copy">
+                            <strong>3 shared stories</strong>
+                            <small>Freedom · identity · difficult choices</small>
+                          </span>
+                        </div>
+                      </section>
 
-                      <div class="social-visited-feed">
+                      <section class="social-visited-feed" aria-label="Recent public activity">
                         <article class="social-feed-item">
                           <div class="social-feed-item__meta">
                             <span>Vagabond · Note</span><span>Public</span>
@@ -1511,13 +1715,19 @@
                           </div>
                           <p>A choice can be understandable without becoming harmless.</p>
                         </article>
-                      </div>
+                      </section>
 
-                      <span class="social-connection-line" aria-hidden="true"></span>
+                      <div class="social-follow-payoff" data-social-follow-payoff>
+                        <span class="social-follow-payoff__icon" aria-hidden="true">✓</span>
+                        <span>
+                          <strong>kai.reads is now in your social feed.</strong>
+                          <small>New public reflections can lead you to another story.</small>
+                        </span>
+                      </div>
                     </article>
                   </div>
 
-                  <!-- One shared post travels through all three acts. -->
+                  <!-- The same reflection card travels from Control into Identity. -->
                   <article class="social-shared-post" data-social-shared-post>
                     <header class="social-shared-post__header">
                       <span class="social-avatar">N</span>
@@ -1531,7 +1741,10 @@
                     </header>
                     <div class="social-shared-post__body">
                       <div class="social-story-reference">
-                        <span class="social-story-cover" aria-hidden="true"></span>
+                        <span class="social-story-cover">
+                          <img src="" alt="" data-social-post-cover hidden>
+                          <span aria-hidden="true">AOT</span>
+                        </span>
                         <span>
                           <strong>Attack on Titan</strong>
                           <small>Reflection · completed</small>
@@ -1559,25 +1772,27 @@
                       </div>
                     </div>
                   </article>
-
-                  <p class="social-cinema__final-message" data-social-final-message>
-                    A private thought becomes a profile, a profile becomes a
-                    connection, and a connection leads to another story worth
-                    remembering.
-                  </p>
                 </div>
               </div>
             </div>
 
-            <p class="social-cinema__status" role="status" aria-live="polite" data-social-status></p>
+            <p
+              class="social-cinema__status"
+              role="status"
+              aria-live="polite"
+              data-social-status
+            ></p>
           </div>
         </section>
 
       </div>
+
       <!-- /.home-journey-stage -->
     </div>
+
     <!-- /.home-journey-shell -->
     <!-- Data library -->
+     
     <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- GSAP must execute before the journey coordinator. -->
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
@@ -1594,6 +1809,6 @@
     <script defer src="./javaScript/Home/section-2.js?v=20260724-14"></script>
     <script defer src="./javaScript/Home/section-3.js"></script>
     <script defer src="./javaScript/Home/section-4.js?v=20260724-14"></script>
-    <script defer src="./javaScript/Home/section-5.js?v=20260724-3"></script>
+    <script defer src="./javaScript/Home/section-5-social.js?v=20260724-5"></script>
   </body>
 </html>
