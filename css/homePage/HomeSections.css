@@ -2,6 +2,7 @@
 @import url("./section-2.css");
 @import url("./section-3.css");
 @import url("./section-4.css");
+@import url("./section-5.css");
 
 /* Must remain last: it only coordinates the four existing section styles. */
 @import url("./homeScroll.css");

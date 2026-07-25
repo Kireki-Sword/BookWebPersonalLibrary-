@@ -1,5 +1,5 @@
 /* ========================================================================== 
-   INKWELL — ONE MASTER PINNED HOME-PAGE JOURNEY (V5)
+   INKWELL — ONE MASTER PINNED HOME-PAGE JOURNEY (V6)
 
    Import this file LAST, after section-1.css through section-4.css.
    It coordinates the fixed viewport and only overrides layout while the
@@ -72,7 +72,7 @@ body.journey-preparing .home-journey-stage > section {
 }
 
 body.journey-preparing .home-journey-stage > .hero {
-  z-index: 4;
+  z-index: 5;
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
@@ -333,6 +333,37 @@ body:is(.journey-preparing, .journey-ready)
 }
 
 /* --------------------------------------------------------------------------
+   SECTION 5
+
+   Section 5 is the fifth scene in the same pinned stage. Its own script
+   publishes a paused child timeline; it must not create a second pin while
+   the desktop master journey is active.
+   -------------------------------------------------------------------------- */
+
+body:is(.journey-preparing, .journey-ready) #section-5-social,
+body:is(.journey-preparing, .journey-ready)
+#section-5-social .social-cinema__pin {
+  width: 100%;
+  height: 100% !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+body:is(.journey-preparing, .journey-ready)
+#section-5-social .social-cinema__layout {
+  width: min(1420px, calc(100vw - 72px));
+  height: 100%;
+  min-height: 0;
+  padding: clamp(1.25rem, 2.8vh, 2.4rem) 0;
+}
+
+body:is(.journey-preparing, .journey-ready)
+#section-5-social .social-cinema__viewport {
+  height: min(700px, calc(100% - 20px));
+  min-height: 0;
+}
+
+/* --------------------------------------------------------------------------
    NATURAL FALLBACK
    -------------------------------------------------------------------------- */
 
@@ -485,7 +516,7 @@ body:is(.journey-preparing, .journey-ready)
 /* ========================================================================== 
    INKWELL CHAPTER INDEX — COMPACT SECTION NAVIGATION (V12)
 
-   A transparent chapter index with four evenly-spaced stops. The 44px button
+   A transparent chapter index with five evenly-spaced stops. The 44px button
    hit areas remain generous, while the visible dots and line stay subtle.
    ========================================================================== */
 
@@ -501,7 +532,7 @@ body:is(.journey-preparing, .journey-ready)
 
   display: block !important;
   width: 48px !important;
-  height: clamp(208px, 30vh, 244px) !important;
+  height: clamp(244px, 35vh, 292px) !important;
   margin: 0 !important;
   padding: 0 !important;
 
@@ -519,7 +550,7 @@ body:is(.journey-preparing, .journey-ready)
     transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-body.journey-ready.journey-section-rail-ready .journey-section-rail {
+body.journey-ready.journey-section-rail-ready.journey-section-rail-in-range .journey-section-rail {
   opacity: 1;
   visibility: visible;
   transform: translate(0, -50%);
@@ -858,303 +889,27 @@ body.journey-section-entrance-playing .journey-section-rail__button.is-current {
 }
 
 /* ========================================================================== 
-   DIRECT CHAPTER TRANSITIONS — TARGET-ONLY VARIANTS (V15)
+   CHAPTER BUTTON TRANSITION — EMPTY STAGE, REAL DESTINATION ENTRANCE (V16)
 
-   The chapter rail no longer replays the full previous-section hand-off.
-   Instead, a compact transition above the stage borrows the visual language
-   of the destination section. The real master playhead moves while this layer
-   is opaque, so no intermediate or predecessor section is exposed.
+   The overlay contains no replacement cards or decorative section symbols.
+   It briefly creates an empty stage while the master timeline is repositioned,
+   then fades away as the selected section's real opening elements animate in.
    ========================================================================== */
 
 .journey-jump-curtain {
   overflow: hidden;
-  clip-path: inset(0% 0% 0% 0%);
-  will-change: opacity, clip-path;
-}
-
-.journey-direct-transition,
-.journey-direct-transition__ambient {
-  position: absolute;
-  inset: 0;
-}
-
-.journey-direct-transition {
-  display: grid;
-  place-items: center;
-  overflow: hidden;
-  perspective: 1100px;
-}
-
-.journey-direct-transition__ambient {
-  pointer-events: none;
-  opacity: 0.78;
   background:
     radial-gradient(
-      circle at 50% 46%,
-      rgba(124, 140, 255, 0.20),
-      transparent 34%
+      ellipse 78% 62% at 50% 44%,
+      rgba(85, 103, 183, 0.11),
+      transparent 70%
     ),
-    radial-gradient(
-      circle at 50% 60%,
-      rgba(120, 216, 255, 0.08),
-      transparent 38%
-    );
-}
-
-.journey-direct-transition__motif {
-  position: relative;
-  width: min(540px, 62vw);
-  min-height: 330px;
-  display: grid;
-  place-items: center;
-  isolation: isolate;
-}
-
-.journey-direct-transition__beam {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  z-index: 1;
-  width: min(430px, 52vw);
-  height: 1px;
-  transform: translate(-50%, -50%);
-  background:
-    linear-gradient(
-      90deg,
-      transparent,
-      rgba(120, 216, 255, 0.82) 18%,
-      rgba(178, 188, 255, 0.96) 50%,
-      rgba(120, 216, 255, 0.82) 82%,
-      transparent
-    );
-  box-shadow:
-    0 0 16px rgba(120, 216, 255, 0.44),
-    0 0 34px rgba(124, 140, 255, 0.24);
-}
-
-.journey-direct-transition__cards {
-  position: absolute;
-  left: 50%;
-  top: 49%;
-  z-index: 2;
-  width: 310px;
-  height: 188px;
-  transform: translate(-50%, -50%);
-}
-
-.journey-direct-transition__card {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 94px;
-  aspect-ratio: 2 / 3;
-  border: 1px solid rgba(207, 215, 255, 0.34);
-  border-radius: 12px;
-  transform: translate(-50%, -50%);
-  background:
-    radial-gradient(
-      circle at 28% 16%,
-      rgba(255, 255, 255, 0.20),
-      transparent 27%
-    ),
-    linear-gradient(
-      145deg,
-      rgba(113, 140, 255, 0.62),
-      rgba(155, 124, 255, 0.24) 52%,
-      rgba(8, 11, 27, 0.96)
-    );
-  box-shadow:
-    0 22px 54px rgba(0, 0, 0, 0.42),
-    0 0 30px rgba(124, 140, 255, 0.14);
-  backface-visibility: hidden;
-  will-change: transform, opacity;
-}
-
-.journey-direct-transition__card::before,
-.journey-direct-transition__card::after {
-  content: "";
-  position: absolute;
-  left: 12px;
-  right: 12px;
-  border-radius: 999px;
-  background: rgba(238, 241, 255, 0.72);
-}
-
-.journey-direct-transition__card::before {
-  bottom: 28px;
-  height: 4px;
-}
-
-.journey-direct-transition__card::after {
-  bottom: 18px;
-  right: 30px;
-  height: 3px;
-  opacity: 0.5;
-}
-
-.journey-direct-transition__card--left {
-  margin-left: -54px;
-}
-
-.journey-direct-transition__card--center {
-  z-index: 3;
-  width: 112px;
-  margin-left: 0;
-}
-
-.journey-direct-transition__card--right {
-  margin-left: 54px;
-}
-
-.journey-direct-transition__rows {
-  position: absolute;
-  left: 50%;
-  top: 49%;
-  z-index: 3;
-  width: min(360px, 44vw);
-  transform: translate(-50%, -50%);
-  display: grid;
-  gap: 10px;
-}
-
-.journey-direct-transition__rows > span {
-  display: block;
-  height: 38px;
-  border: 1px solid rgba(190, 201, 255, 0.26);
-  border-radius: 10px;
-  background:
-    linear-gradient(
-      90deg,
-      rgba(124, 140, 255, 0.18),
-      rgba(13, 19, 43, 0.90) 36%,
-      rgba(13, 19, 43, 0.76)
-    );
-  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.25);
-}
-
-.journey-direct-transition__rows > span::before {
-  content: "";
-  display: block;
-  width: 42%;
-  height: 4px;
-  margin: 11px 0 0 16px;
-  border-radius: 999px;
-  background: rgba(225, 230, 255, 0.62);
-  box-shadow: 0 9px 0 rgba(163, 174, 220, 0.25);
-}
-
-.journey-direct-transition__copy {
-  position: absolute;
-  left: 50%;
-  bottom: 8px;
-  z-index: 6;
-  width: min(520px, 72vw);
-  transform: translateX(-50%);
-  text-align: center;
-  pointer-events: none;
-}
-
-.journey-direct-transition__copy small,
-.journey-direct-transition__copy strong {
-  display: block;
-}
-
-.journey-direct-transition__copy small {
-  margin-bottom: 0.58rem;
-  color: rgba(185, 196, 255, 0.86);
-  font-family: var(--font-body, system-ui, sans-serif);
-  font-size: 0.68rem;
-  font-weight: 850;
-  line-height: 1;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-}
-
-.journey-direct-transition__copy strong {
-  color: #f5f2ff;
-  font-family: var(--font-display, Georgia, serif);
-  font-size: clamp(1.65rem, 3.3vw, 2.65rem);
-  font-weight: 800;
-  line-height: 0.96;
-  letter-spacing: -0.045em;
-  text-shadow:
-    0 18px 42px rgba(0, 0, 0, 0.38),
-    0 0 28px rgba(124, 140, 255, 0.16);
-}
-
-/* Section 1: opening pages. */
-.journey-jump-curtain[data-target-section="section-1"]
-.journey-direct-transition__card {
-  width: 116px;
-  aspect-ratio: 0.78;
-  border-radius: 8px;
-  background:
-    linear-gradient(
-      90deg,
-      rgba(239, 241, 255, 0.12),
-      rgba(124, 140, 255, 0.36)
-    ),
-    #111735;
-}
-
-.journey-jump-curtain[data-target-section="section-1"]
-.journey-direct-transition__card--center {
-  width: 42px;
-  aspect-ratio: 1;
-  border-radius: 999px;
-}
-
-/* Section 2: saved quote sheets. */
-.journey-jump-curtain[data-target-section="section-2"]
-.journey-direct-transition__card {
-  width: 138px;
-  aspect-ratio: 1.72;
-  border-radius: 11px;
-}
-
-.journey-jump-curtain[data-target-section="section-2"]
-.journey-direct-transition__card--left {
-  margin-left: -92px;
-}
-
-.journey-jump-curtain[data-target-section="section-2"]
-.journey-direct-transition__card--right {
-  margin-left: 92px;
-}
-
-/* Section 3: library rows, not cover cards. */
-.journey-jump-curtain[data-target-section="section-3"]
-.journey-direct-transition__cards {
-  display: none;
-}
-
-/* Section 4: two covers become one shared card. */
-.journey-jump-curtain[data-target-section="section-4"]
-.journey-direct-transition__card--left {
-  background:
-    radial-gradient(circle at 32% 16%, rgba(255, 255, 255, 0.18), transparent 28%),
-    linear-gradient(155deg, #40547d, #1a223a 54%, #070a14);
-}
-
-.journey-jump-curtain[data-target-section="section-4"]
-.journey-direct-transition__card--right {
-  background:
-    radial-gradient(circle at 30% 18%, rgba(255, 255, 255, 0.16), transparent 28%),
-    linear-gradient(155deg, #744d65, #2a1d31 54%, #090812);
-}
-
-.journey-jump-curtain[data-target-section="section-4"]
-.journey-direct-transition__card--center {
-  width: 126px;
-  background:
-    radial-gradient(circle at 30% 16%, rgba(255, 255, 255, 0.18), transparent 28%),
-    linear-gradient(150deg, #4e5e86, #2e294d 54%, #080a16);
+    #070a18;
+  will-change: opacity;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .journey-direct-transition,
-  .journey-direct-transition * {
-    animation: none !important;
-    transition: none !important;
+  .journey-jump-curtain {
+    background: #070a18;
   }
 }

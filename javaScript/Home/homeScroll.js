@@ -1,5 +1,5 @@
 /* ============================================================================
-   INKWELL — ONE MASTER PINNED HOME-PAGE JOURNEY (V5)
+   INKWELL — ONE MASTER PINNED HOME-PAGE JOURNEY (V6)
 
    REQUIRED SCRIPT ORDER
    1. Supabase
@@ -12,19 +12,20 @@
    8. section-2.js
    9. section-3.js
    10. section-4.js
+   11. section-5-social.js
 
    Desktop behavior:
    - one pinned shell beneath the navbar
    - wheel/trackpad movement advances one reversible master timeline
-   - Sections 2 and 4 keep their original internal timelines
-   - long crossfades connect all four scenes without normal page movement
+   - Sections 2, 4, and 5 keep their own internal timelines
+   - cinematic hand-offs connect all five scenes without normal page movement
    ============================================================================ */
 
 (() => {
   "use strict";
 
   window.__INKWELL_HOME_SCROLL_BUILD__ =
-    "2026-07-24-interaction-v15-direct-target-transitions";
+    "2026-07-24-interaction-v17-five-section-journey";
 
   const DESKTOP_QUERY =
     "(min-width: 1100px) and (min-height: 700px) and " +
@@ -42,7 +43,7 @@
   /*
    * This is a page-section navigator, not a replacement for the browser's
    * native scrollbar. The native scrollbar remains available as a familiar
-   * fallback, while these four stops jump to exact labels in the GSAP master
+   * fallback, while these five stops jump to exact labels in the GSAP master
    * timeline.
    */
   const JOURNEY_STOPS = Object.freeze([
@@ -86,6 +87,16 @@
       eyebrow: "Shared stories",
       title: "Different souls",
     },
+    {
+      key: "section-5",
+      timelineLabel: "section-5-start",
+      entranceStartLabel: "section-4-to-5-start",
+      entranceEndLabel: "section-5-start",
+      entranceDirection: 1,
+      targetSelector: "#section-5-social",
+      eyebrow: "Social, on your terms",
+      title: "Find the right people",
+    },
   ]);
 
   const JOURNEY_TRANSITION_OUT = 0.12;
@@ -101,6 +112,7 @@
     section2: "#section-2-empty-shelf",
     section3: "#section-3-library-flow",
     section4: "#section-4",
+    section5: "#section-5-social",
     shell: "[data-home-journey-shell]",
     stage: "[data-home-journey-stage]",
   };
@@ -150,6 +162,7 @@
     transitionToken: 0,
     jumpCurtain: null,
     section2Api: null,
+    section5Api: null,
   };
 
   if (document.readyState === "loading") {
@@ -176,7 +189,8 @@
       !elements.hero ||
       !elements.section2 ||
       !elements.section3 ||
-      !elements.section4
+      !elements.section4 ||
+      !elements.section5
     ) {
       failToNaturalLayout("One or more homepage sections are missing.");
       return;
@@ -196,22 +210,29 @@
     prepareSceneStack(elements);
     playHeroIntro(elements);
 
-    const [section2Api, section4Api] = await Promise.all([
+    const [section2Api, section4Api, section5Api] = await Promise.all([
       waitForSectionApi({
         current: () => window.InkwellSection2Journey,
         eventName: "inkwell:section2-ready",
         timeoutMs: 10000,
       }),
       waitForSection4Api(30000),
+      waitForSectionApi({
+        current: () => window.InkwellSection5Journey,
+        eventName: "inkwell:section5-ready",
+        timeoutMs: 10000,
+      }),
     ]);
 
     state.section2Api = section2Api || null;
+    state.section5Api = section5Api || null;
 
-    if (!section2Api?.timeline) {
+    if (!section2Api?.timeline || !section5Api?.timeline) {
       section2Api?.showStatic?.();
       section4Api?.showStatic?.();
+      section5Api?.showStatic?.();
       failToNaturalLayout(
-        "Section 2 did not publish its managed animation timeline.",
+        "Section 2 or Section 5 did not publish its managed animation timeline.",
       );
       return;
     }
@@ -220,13 +241,13 @@
     await nextFrame();
     await nextFrame();
 
-    buildMasterJourney(elements, section2Api, section4Api);
+    buildMasterJourney(elements, section2Api, section4Api, section5Api);
     setupJourneyNavigator(elements);
-    setupRefreshes(elements, section2Api, section4Api);
+    setupRefreshes(elements, section2Api, section4Api, section5Api);
 
     window.InkwellHomeJourney = {
-      refresh: () => refreshJourney(section2Api, section4Api),
-      destroy: () => destroy(elements, section2Api, section4Api),
+      refresh: () => refreshJourney(section2Api, section4Api, section5Api),
+      destroy: () => destroy(elements, section2Api, section4Api, section5Api),
       openSection2Layer: (key) =>
         section2Api?.previewLayer?.(key) || false,
       closeSection2Preview: (options) =>
@@ -243,6 +264,7 @@
         pinCount: ScrollTrigger.getAll().filter((item) => item.pin).length,
         section2Timeline: Boolean(section2Api?.timeline),
         section4Timeline: Boolean(section4Api?.timeline),
+        section5Timeline: Boolean(section5Api?.timeline),
         activeScene: state.activeScene,
         navigatorReady: Boolean(state.journeyNav),
         scrollY: window.scrollY,
@@ -258,6 +280,7 @@
 
   function collectElements() {
     const section3 = document.querySelector(SELECTORS.section3);
+    const section5 = document.querySelector(SELECTORS.section5);
 
     return {
       nav: document.querySelector(SELECTORS.nav),
@@ -267,6 +290,7 @@
       section2: document.querySelector(SELECTORS.section2),
       section3,
       section4: document.querySelector(SELECTORS.section4),
+      section5,
       section2Header: document.querySelector(".section-2-header"),
       section2Label: document.querySelector(
         ".section-2-header .section-label",
@@ -336,6 +360,19 @@
         document.querySelector("#section-4 .s4-cinematic-copy > p") || null,
       section4Cue:
         document.querySelector("#section-4 .s4-scroll-cue") || null,
+
+      section5Copy: section5?.querySelector(".social-cinema__copy") || null,
+      section5Eyebrow:
+        section5?.querySelector(".social-cinema__eyebrow") || null,
+      section5Title:
+        section5?.querySelector(".social-cinema__copy h2") || null,
+      section5Description:
+        section5?.querySelector(".social-cinema__intro") || null,
+      section5Steps: section5
+        ? gsapSafeArray(section5.querySelectorAll("[data-social-step]"))
+        : [],
+      section5Viewport:
+        section5?.querySelector(".social-cinema__viewport") || null,
     };
   }
 
@@ -358,12 +395,13 @@
     gsap.set(elements.hero, {
       autoAlpha: 1,
       pointerEvents: "auto",
-      zIndex: 4,
+      zIndex: 5,
     });
 
-    gsap.set(elements.section2, { zIndex: 3 });
-    gsap.set(elements.section3, { zIndex: 2 });
-    gsap.set(elements.section4, { zIndex: 1 });
+    gsap.set(elements.section2, { zIndex: 4 });
+    gsap.set(elements.section3, { zIndex: 3 });
+    gsap.set(elements.section4, { zIndex: 2 });
+    gsap.set(elements.section5, { zIndex: 1 });
 
   }
 
@@ -422,7 +460,7 @@
     }
   }
 
-  function buildMasterJourney(elements, section2Api, section4Api) {
+  function buildMasterJourney(elements, section2Api, section4Api, section5Api) {
     const { gsap, ScrollTrigger } = state;
 
     teardownMaster(false);
@@ -457,6 +495,7 @@
 
     const section2Timeline = section2Api.timeline;
     const section4Timeline = section4Api?.timeline || null;
+    const section5Timeline = section5Api?.timeline || null;
     const section3Timeline = createSection3Timeline();
 
     section2Api.reset?.();
@@ -471,6 +510,10 @@
       section4Api?.showStatic?.();
     }
 
+    section5Api.reset?.();
+    section5Timeline?.pause(0);
+    section5Timeline?.timeScale(1);
+
     gsap.set(scenes, {
       autoAlpha: 0,
       pointerEvents: "none",
@@ -482,12 +525,13 @@
     gsap.set(elements.hero, {
       autoAlpha: 1,
       pointerEvents: "auto",
-      zIndex: 4,
+      zIndex: 5,
     });
 
-    gsap.set(elements.section2, { zIndex: 3 });
-    gsap.set(elements.section3, { zIndex: 2 });
-    gsap.set(elements.section4, { zIndex: 1 });
+    gsap.set(elements.section2, { zIndex: 4 });
+    gsap.set(elements.section3, { zIndex: 3 });
+    gsap.set(elements.section4, { zIndex: 2 });
+    gsap.set(elements.section5, { zIndex: 1 });
 
     const master = gsap.timeline({
       defaults: { ease: "none" },
@@ -536,18 +580,34 @@
     }
 
     master.addLabel("section-4-end");
+    master.to({}, { duration: 0.32 });
+
+    /* SECTION 4 -> 5 ----------------------------------------------------- */
+    master.addLabel("section-4-to-5-start");
+    addSection4ToSection5Transition(master, elements);
+
+    master.addLabel("section-5-start");
+    master.to({}, { duration: 0.12 });
+
+    if (section5Timeline) {
+      attachChildTimeline(master, section5Timeline);
+    } else {
+      master.to({}, { duration: 7.5 });
+    }
+
+    master.addLabel("section-5-end");
     master.to({}, { duration: 0.85 });
 
     state.trigger = ScrollTrigger.create({
-      id: "inkwell-one-master-journey-v5",
+      id: "inkwell-one-master-journey-v6",
       trigger: state.shell,
       animation: master,
       start: () => `top top+=${getNavHeight(elements.nav)}`,
       end: () => {
         const distance = Math.max(
           master.duration() * SCROLL_PIXELS_PER_TIMELINE_SECOND,
-          window.innerHeight * 8.8,
-          9000,
+          window.innerHeight * 10.6,
+          10800,
         );
 
         return `+=${Math.round(distance)}`;
@@ -569,16 +629,29 @@
         syncNavHeight(elements.nav);
         section2Api.refresh?.();
         section4Api?.refresh?.();
+        section5Api?.refresh?.();
       },
       onRefresh: () => {
         layoutJourneyNavigator();
         syncActiveScene();
       },
+      onEnter: () => {
+        document.body.classList.add("journey-section-rail-in-range");
+      },
+      onEnterBack: () => {
+        document.body.classList.add("journey-section-rail-in-range");
+      },
+      onLeave: () => {
+        document.body.classList.remove("journey-section-rail-in-range");
+      },
+      onLeaveBack: () => {
+        document.body.classList.remove("journey-section-rail-in-range");
+      },
       onUpdate: syncActiveScene,
     });
 
     document.body.classList.remove("journey-preparing");
-    document.body.classList.add("journey-ready");
+    document.body.classList.add("journey-ready", "journey-section-rail-in-range");
 
     master.pause(0);
     window.scrollTo(0, 0);
@@ -1001,6 +1074,77 @@
     master.add(timeline);
   }
 
+  function addSection4ToSection5Transition(master, elements) {
+    const { gsap } = state;
+    const timeline = gsap.timeline({ defaults: { ease: "none" } });
+
+    const outgoingItems = gsap.utils.toArray(
+      elements.section4?.querySelectorAll(
+        ".s4-content-intro, .s4-compare-stage, .s4-shared-card-wrap",
+      ) || [],
+    );
+
+    timeline.set(elements.section5, {
+      visibility: "visible",
+      pointerEvents: "none",
+      autoAlpha: 0,
+      scale: 1.012,
+    });
+
+    if (elements.section5Viewport) {
+      timeline.set(elements.section5Viewport, {
+        autoAlpha: 0,
+        y: 24,
+        scale: 0.99,
+      });
+    }
+
+    timeline.to(outgoingItems, {
+      autoAlpha: 0,
+      y: -22,
+      scale: 0.985,
+      duration: 0.54,
+      stagger: 0.045,
+      ease: "power2.inOut",
+    }, 0);
+
+    timeline.to(elements.section4, {
+      autoAlpha: 0,
+      scale: 0.994,
+      duration: 0.82,
+      ease: "power2.inOut",
+    }, 0.34);
+
+    timeline.to(elements.section5, {
+      autoAlpha: 1,
+      scale: 1,
+      duration: 0.88,
+      ease: "power2.inOut",
+    }, 0.38);
+
+    if (elements.section5Viewport) {
+      timeline.to(elements.section5Viewport, {
+        autoAlpha: 1,
+        y: 0,
+        scale: 1,
+        duration: 0.58,
+        ease: "power3.out",
+      }, 1.02);
+    }
+
+    timeline.set(elements.section4, {
+      visibility: "hidden",
+      pointerEvents: "none",
+    }, 1.22);
+
+    timeline.set(elements.section5, {
+      pointerEvents: "auto",
+    }, 1.58);
+
+    timeline.to({}, { duration: Math.max(0, 1.72 - timeline.duration()) });
+    master.add(timeline);
+  }
+
   function attachChildTimeline(master, timeline) {
     if (!timeline) {
       return;
@@ -1117,7 +1261,7 @@
 
     state.createdWrapper = true;
     state.originalParent = parent;
-    state.originalReference = elements.section4.nextSibling;
+    state.originalReference = elements.section5.nextSibling;
 
     shell.className = "home-journey-shell";
     shell.dataset.homeJourneyShell = "";
@@ -1143,7 +1287,9 @@
     const labels = master.labels;
     let active = "section-1";
 
-    if (time >= (labels["section-4-start"] ?? Infinity)) {
+    if (time >= (labels["section-5-start"] ?? Infinity)) {
+      active = "section-5";
+    } else if (time >= (labels["section-4-start"] ?? Infinity)) {
       active = "section-4";
     } else if (time >= (labels["section-3-start"] ?? Infinity)) {
       active = "section-3";
@@ -1164,7 +1310,8 @@
         (active === "section-1" && scene.matches(SELECTORS.hero)) ||
         (active === "section-2" && scene.matches(SELECTORS.section2)) ||
         (active === "section-3" && scene.matches(SELECTORS.section3)) ||
-        (active === "section-4" && scene.matches(SELECTORS.section4));
+        (active === "section-4" && scene.matches(SELECTORS.section4)) ||
+        (active === "section-5" && scene.matches(SELECTORS.section5));
 
       scene.classList.toggle("is-journey-active", isActive);
       scene.setAttribute("aria-hidden", isActive ? "false" : "true");
@@ -1174,7 +1321,7 @@
   /* ========================================================================
      ACCESSIBLE SECTION RAIL
 
-     The rail mirrors the four labels in the master GSAP timeline. Its visual
+     The rail mirrors the five labels in the master GSAP timeline. Its visual
      progress is continuous, but the controls are normal buttons so keyboard
      and assistive-technology behavior stays predictable.
      ======================================================================== */
@@ -1196,69 +1343,14 @@
       stage.appendChild(curtain);
     }
 
-    if (!curtain.querySelector("[data-journey-direct-transition]")) {
-      curtain.innerHTML = `
-        <div
-          class="journey-direct-transition"
-          data-journey-direct-transition
-        >
-          <span
-            class="journey-direct-transition__ambient"
-            aria-hidden="true"
-          ></span>
-
-          <div
-            class="journey-direct-transition__motif"
-            data-journey-direct-motif
-          >
-            <span
-              class="journey-direct-transition__beam"
-              data-journey-direct-beam
-              aria-hidden="true"
-            ></span>
-
-            <div
-              class="journey-direct-transition__cards"
-              aria-hidden="true"
-            >
-              <span
-                class="journey-direct-transition__card journey-direct-transition__card--left"
-                data-journey-direct-card="left"
-              ></span>
-              <span
-                class="journey-direct-transition__card journey-direct-transition__card--center"
-                data-journey-direct-card="center"
-              ></span>
-              <span
-                class="journey-direct-transition__card journey-direct-transition__card--right"
-                data-journey-direct-card="right"
-              ></span>
-            </div>
-
-            <div
-              class="journey-direct-transition__rows"
-              aria-hidden="true"
-            >
-              <span data-journey-direct-row></span>
-              <span data-journey-direct-row></span>
-              <span data-journey-direct-row></span>
-              <span data-journey-direct-row></span>
-            </div>
-
-            <div class="journey-direct-transition__copy">
-              <small data-journey-direct-eyebrow></small>
-              <strong data-journey-direct-title></strong>
-            </div>
-          </div>
-        </div>
-      `;
-    }
-
+    /*
+     * The rail transition intentionally contains no decorative substitute UI.
+     * It becomes a clean empty stage, the master playhead moves while hidden,
+     * and then the real opening elements of the selected section enter.
+     */
+    curtain.replaceChildren();
     state.jumpCurtain = curtain;
-    state.gsap.set(curtain, {
-      autoAlpha: 0,
-      clipPath: "inset(0% 0% 0% 0%)",
-    });
+    state.gsap.set(curtain, { autoAlpha: 0 });
 
     return curtain;
   }
@@ -1674,302 +1766,236 @@
     });
   }
 
-  function getDirectTransitionParts(curtain) {
-    if (!curtain) {
-      return null;
+  function getSectionEntrancePlan(stop) {
+    const root = document.querySelector(stop.targetSelector);
+
+    if (!root) {
+      return { root: null, groups: [] };
     }
 
-    return {
-      root: curtain.querySelector("[data-journey-direct-transition]"),
-      motif: curtain.querySelector("[data-journey-direct-motif]"),
-      beam: curtain.querySelector("[data-journey-direct-beam]"),
-      cards: {
-        left: curtain.querySelector('[data-journey-direct-card="left"]'),
-        center: curtain.querySelector('[data-journey-direct-card="center"]'),
-        right: curtain.querySelector('[data-journey-direct-card="right"]'),
-      },
-      rows: state.gsap.utils.toArray(
-        curtain.querySelectorAll("[data-journey-direct-row]"),
-      ),
-      eyebrow: curtain.querySelector("[data-journey-direct-eyebrow]"),
-      title: curtain.querySelector("[data-journey-direct-title]"),
-      copy: curtain.querySelector(".journey-direct-transition__copy"),
+    const groups = [];
+    const add = (targets, from, to, position = "reveal") => {
+      const list = state.gsap.utils.toArray(targets).filter(Boolean);
+
+      if (list.length) {
+        groups.push({ targets: list, from, to, position });
+      }
     };
-  }
 
-  function prepareDirectJourneyTransition(curtain, stop) {
-    const parts = getDirectTransitionParts(curtain);
-
-    if (!parts) {
-      return null;
-    }
-
-    curtain.dataset.targetSection = stop.key;
-    parts.eyebrow.textContent = stop.eyebrow;
-    parts.title.textContent = stop.title;
-
-    state.gsap.set(curtain, {
-      autoAlpha: 0,
-      clipPath: "inset(0% 0% 0% 0%)",
-    });
-    state.gsap.set(parts.root, { autoAlpha: 1 });
-    state.gsap.set(parts.motif, {
-      autoAlpha: 1,
-      x: 0,
-      y: 0,
-      scale: 1,
-    });
-    state.gsap.set(parts.copy, {
-      autoAlpha: 0,
-      y: 16,
-    });
-    state.gsap.set(parts.beam, {
-      autoAlpha: 0,
-      scaleX: 0,
-      transformOrigin: "50% 50%",
-    });
-    state.gsap.set(Object.values(parts.cards).filter(Boolean), {
-      autoAlpha: 0,
-      x: 0,
-      y: 0,
-      rotation: 0,
-      rotationY: 0,
-      scale: 1,
-    });
-    state.gsap.set(parts.rows, {
-      autoAlpha: 0,
-      x: 0,
-      y: 0,
-      scaleX: 1,
-    });
-
-    return parts;
-  }
-
-  function addDirectSection1Transition(timeline, parts, jumpToTarget) {
-    const { left, center, right } = parts.cards;
-
-    timeline
-      .set([left, right], {
-        autoAlpha: 1,
-        x: (index) => (index === 0 ? -34 : 34),
-        rotationY: (index) => (index === 0 ? 58 : -58),
-        transformOrigin: (index) =>
-          index === 0 ? "100% 50%" : "0% 50%",
-        scale: 0.92,
-      }, 0)
-      .to(parts.copy, {
-        autoAlpha: 1,
-        y: 0,
-        duration: 0.18,
-        ease: "power2.out",
-      }, 0.04)
-      .to([left, right], {
-        x: 0,
-        rotationY: 0,
-        scale: 1,
-        duration: 0.30,
-        ease: "power3.inOut",
-      }, 0.05)
-      .set(center, {
-        autoAlpha: 1,
-        scale: 0.72,
-      }, 0.23)
-      .to(center, {
-        scale: 1,
-        duration: 0.18,
-        ease: "back.out(1.4)",
-      }, 0.23)
-      .add(jumpToTarget, 0.28)
-      .to([left, right], {
-        autoAlpha: 0,
-        x: (index) => (index === 0 ? -28 : 28),
-        duration: 0.15,
-        ease: "power2.in",
-      }, 0.36)
-      .to([parts.copy, center], {
-        autoAlpha: 0,
-        y: -8,
-        duration: 0.14,
-        ease: "power2.in",
-      }, 0.45);
-  }
-
-  function addDirectSection2Transition(timeline, parts, jumpToTarget) {
-    const cards = [parts.cards.left, parts.cards.center, parts.cards.right];
-
-    timeline
-      .set(cards, {
-        autoAlpha: 1,
-        x: (index) => [-70, 0, 70][index],
-        y: (index) => [-52, -78, -44][index],
-        rotation: (index) => [-7, 2, 7][index],
-        scale: 0.84,
-      }, 0)
-      .to(parts.copy, {
-        autoAlpha: 1,
-        y: 0,
-        duration: 0.18,
-        ease: "power2.out",
-      }, 0.03)
-      .to(cards, {
-        x: (index) => [-34, 0, 34][index],
-        y: (index) => [2, -4, 4][index],
-        rotation: (index) => [-3, 0, 3][index],
-        scale: 0.96,
-        duration: 0.30,
-        stagger: 0.025,
-        ease: "power3.out",
-      }, 0.06)
-      .to(parts.beam, {
-        autoAlpha: 1,
-        scaleX: 1,
-        duration: 0.22,
-        ease: "power3.inOut",
-      }, 0.16)
-      .add(jumpToTarget, 0.30)
-      .to(cards, {
-        y: 18,
-        autoAlpha: 0,
-        duration: 0.16,
-        stagger: 0.018,
-        ease: "power2.in",
-      }, 0.42)
-      .to([parts.copy, parts.beam], {
-        autoAlpha: 0,
-        y: -8,
-        duration: 0.14,
-        ease: "power2.in",
-      }, 0.47);
-  }
-
-  function addDirectSection3Transition(timeline, parts, jumpToTarget) {
-    timeline
-      .set(parts.rows, {
-        autoAlpha: 1,
-        x: (index) => (index % 2 === 0 ? -88 : 88),
-        y: (index) => (index - 1.5) * 12,
-        scaleX: 0.78,
-      }, 0)
-      .to(parts.copy, {
-        autoAlpha: 1,
-        y: 0,
-        duration: 0.18,
-        ease: "power2.out",
-      }, 0.03)
-      .to(parts.beam, {
-        autoAlpha: 1,
-        scaleX: 1,
-        duration: 0.24,
-        ease: "power3.inOut",
-      }, 0.06)
-      .to(parts.rows, {
-        x: 0,
-        y: 0,
-        scaleX: 1,
-        duration: 0.30,
-        stagger: 0.035,
-        ease: "power3.out",
-      }, 0.10)
-      .add(jumpToTarget, 0.31)
-      .to(parts.rows, {
-        x: 18,
-        autoAlpha: 0,
-        duration: 0.15,
-        stagger: 0.02,
-        ease: "power2.in",
-      }, 0.43)
-      .to([parts.copy, parts.beam], {
-        autoAlpha: 0,
-        y: -8,
-        duration: 0.14,
-        ease: "power2.in",
-      }, 0.47);
-  }
-
-  function addDirectSection4Transition(timeline, parts, jumpToTarget) {
-    const { left, center, right } = parts.cards;
-
-    timeline
-      .set([left, right], {
-        autoAlpha: 1,
-        x: (index) => (index === 0 ? -116 : 116),
-        y: (index) => (index === 0 ? 8 : -8),
-        rotation: (index) => (index === 0 ? -8 : 8),
-        scale: 0.82,
-      }, 0)
-      .to(parts.copy, {
-        autoAlpha: 1,
-        y: 0,
-        duration: 0.18,
-        ease: "power2.out",
-      }, 0.02)
-      .to([left, right], {
-        x: 0,
-        y: 0,
-        rotation: 0,
-        scale: 0.94,
-        duration: 0.30,
-        ease: "power3.inOut",
-      }, 0.06)
-      .to(parts.beam, {
-        autoAlpha: 1,
-        scaleX: 1,
-        duration: 0.22,
-        ease: "power3.inOut",
-      }, 0.15)
-      .set(center, {
-        autoAlpha: 1,
-        scale: 0.70,
-      }, 0.28)
-      .to([left, right], {
-        autoAlpha: 0,
-        scale: 0.80,
-        duration: 0.10,
-        ease: "power2.in",
-      }, 0.28)
-      .to(center, {
-        scale: 1,
-        duration: 0.18,
-        ease: "back.out(1.35)",
-      }, 0.28)
-      .add(jumpToTarget, 0.34)
-      .to(center, {
-        y: -10,
-        scale: 1.06,
-        autoAlpha: 0,
-        duration: 0.18,
-        ease: "power2.in",
-      }, 0.46)
-      .to([parts.copy, parts.beam], {
-        autoAlpha: 0,
-        y: -8,
-        duration: 0.14,
-        ease: "power2.in",
-      }, 0.49);
-  }
-
-  function addDirectTargetTransition(
-    timeline,
-    parts,
-    stop,
-    jumpToTarget,
-  ) {
     switch (stop.key) {
-      case "section-1":
-        addDirectSection1Transition(timeline, parts, jumpToTarget);
+      case "section-1": {
+        add(
+          root.querySelectorAll(".hero-left > *"),
+          { autoAlpha: 0, y: 24 },
+          {
+            autoAlpha: 1,
+            y: 0,
+            duration: 0.42,
+            stagger: 0.045,
+            ease: "power3.out",
+          },
+        );
+        add(
+          root.querySelector(".hero-right"),
+          { autoAlpha: 0, x: 30, y: -8, scale: 0.985 },
+          {
+            autoAlpha: 1,
+            x: 0,
+            y: 0,
+            scale: 1,
+            duration: 0.52,
+            ease: "power3.out",
+          },
+          "reveal+=0.06",
+        );
         break;
-      case "section-2":
-        addDirectSection2Transition(timeline, parts, jumpToTarget);
+      }
+
+      case "section-2": {
+        add(
+          root.querySelector(".section-2-header .section-label"),
+          { autoAlpha: 0, y: 16 },
+          { autoAlpha: 1, y: 0, duration: 0.28, ease: "power3.out" },
+        );
+        add(
+          root.querySelector(".section-2-header h2"),
+          { autoAlpha: 0, y: 24 },
+          { autoAlpha: 1, y: 0, duration: 0.38, ease: "power3.out" },
+          "reveal+=0.07",
+        );
+        add(
+          root.querySelector(".section-2-header p"),
+          { autoAlpha: 0, y: 20 },
+          { autoAlpha: 1, y: 0, duration: 0.34, ease: "power3.out" },
+          "reveal+=0.15",
+        );
+        add(
+          root.querySelector(".card-wrap"),
+          { autoAlpha: 0, y: 30, scale: 0.985 },
+          {
+            autoAlpha: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.44,
+            ease: "power3.out",
+          },
+          "reveal+=0.20",
+        );
         break;
-      case "section-3":
-        addDirectSection3Transition(timeline, parts, jumpToTarget);
+      }
+
+      case "section-3": {
+        add(
+          root.querySelector(".flow-copy-card"),
+          { autoAlpha: 0, x: -34, y: 14 },
+          {
+            autoAlpha: 1,
+            x: 0,
+            y: 0,
+            duration: 0.46,
+            ease: "power3.out",
+          },
+        );
+        add(
+          root.querySelector(".flow-search-card"),
+          { autoAlpha: 0, x: 38, y: 18, scale: 0.985 },
+          {
+            autoAlpha: 1,
+            x: 0,
+            y: 0,
+            scale: 1,
+            duration: 0.48,
+            ease: "power3.out",
+          },
+          "reveal+=0.08",
+        );
+        add(
+          root.querySelector(".flow-library-card"),
+          { autoAlpha: 0, y: 34, scale: 0.986 },
+          {
+            autoAlpha: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.50,
+            ease: "power3.out",
+          },
+          "reveal+=0.16",
+        );
         break;
-      case "section-4":
-      default:
-        addDirectSection4Transition(timeline, parts, jumpToTarget);
+      }
+
+      case "section-4": {
+        state.gsap.set(root.querySelector(".s4-cinematic-copy"), {
+          autoAlpha: 1,
+        });
+        add(
+          root.querySelector(".s4-cinematic-copy .s4-section-label"),
+          { autoAlpha: 0, y: 14 },
+          { autoAlpha: 1, y: 0, duration: 0.28, ease: "power3.out" },
+        );
+        add(
+          root.querySelector(".s4-cinematic-copy h2"),
+          { autoAlpha: 0, y: 28, scale: 0.985 },
+          {
+            autoAlpha: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.44,
+            ease: "power3.out",
+          },
+          "reveal+=0.06",
+        );
+        add(
+          root.querySelector(".s4-cinematic-copy > p"),
+          { autoAlpha: 0, y: 20 },
+          { autoAlpha: 1, y: 0, duration: 0.36, ease: "power3.out" },
+          "reveal+=0.15",
+        );
+        add(
+          root.querySelector(".s4-scroll-cue"),
+          { autoAlpha: 0, y: 14 },
+          { autoAlpha: 1, y: 0, duration: 0.30, ease: "power3.out" },
+          "reveal+=0.23",
+        );
         break;
+      }
+
+      case "section-5":
+      default: {
+        add(
+          root.querySelector(".social-cinema__eyebrow"),
+          { autoAlpha: 0, y: 14 },
+          { autoAlpha: 1, y: 0, duration: 0.26, ease: "power3.out" },
+        );
+        add(
+          root.querySelector(".social-cinema__copy h2"),
+          { autoAlpha: 0, y: 28, scale: 0.985 },
+          {
+            autoAlpha: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.42,
+            ease: "power3.out",
+          },
+          "reveal+=0.05",
+        );
+        add(
+          root.querySelector(".social-cinema__intro"),
+          { autoAlpha: 0, y: 18 },
+          { autoAlpha: 1, y: 0, duration: 0.34, ease: "power3.out" },
+          "reveal+=0.13",
+        );
+        add(
+          root.querySelectorAll("[data-social-step]"),
+          { autoAlpha: 0, x: -14 },
+          {
+            autoAlpha: 1,
+            x: 0,
+            duration: 0.30,
+            stagger: 0.045,
+            ease: "power3.out",
+          },
+          "reveal+=0.18",
+        );
+        add(
+          root.querySelector(".social-cinema__viewport"),
+          { autoAlpha: 0, x: 26, y: 16, scale: 0.99 },
+          {
+            autoAlpha: 1,
+            x: 0,
+            y: 0,
+            scale: 1,
+            duration: 0.46,
+            ease: "power3.out",
+          },
+          "reveal+=0.08",
+        );
+        break;
+      }
     }
+
+    return { root, groups };
+  }
+
+  function addSelectedSectionEntrance(timeline, plan) {
+    if (!plan?.root) {
+      return;
+    }
+
+    timeline.set(
+      plan.root,
+      {
+        autoAlpha: 1,
+        visibility: "visible",
+        pointerEvents: "none",
+      },
+      "reveal",
+    );
+
+    plan.groups.forEach(({ targets, from, to, position }) => {
+      timeline.set(targets, from, "reveal");
+      timeline.to(targets, to, position);
+    });
   }
 
   function playJourneySectionEntrance(stop, index) {
@@ -1995,6 +2021,7 @@
       "journey-section-jumping",
       "journey-scene-transitioning",
       "journey-section-entrance-playing",
+      "journey-section-rail-in-range",
     );
 
     if (state.journeyStatus) {
@@ -2016,12 +2043,11 @@
       );
 
       if (curtain) {
-        state.gsap.set(curtain, {
-          autoAlpha: 0,
-          clipPath: "inset(0% 0% 0% 0%)",
-        });
+        state.gsap.set(curtain, { autoAlpha: 0 });
       }
 
+      const targetRoot = document.querySelector(stop.targetSelector);
+      state.gsap.set(targetRoot, { pointerEvents: "auto" });
       state.trigger?.update();
       state.trigger?.getTween?.()?.progress(1);
       syncActiveScene();
@@ -2038,14 +2064,7 @@
       return;
     }
 
-    const parts = prepareDirectJourneyTransition(curtain, stop);
-
-    if (!parts) {
-      forceJourneyScrollPosition(target);
-      finish();
-      return;
-    }
-
+    const plan = getSectionEntrancePlan(stop);
     let targetWasApplied = false;
     const jumpToTarget = () => {
       if (targetWasApplied || token !== state.transitionToken) {
@@ -2056,32 +2075,30 @@
       forceJourneyScrollPosition(target);
     };
 
+    state.gsap.set(curtain, { autoAlpha: 0 });
+
     state.transitionTimeline = state.gsap.timeline({
       defaults: { overwrite: "auto" },
       onComplete: finish,
       onInterrupt: finish,
     });
 
-    state.transitionTimeline.to(curtain, {
-      autoAlpha: 1,
-      duration: 0.10,
-      ease: "power2.inOut",
-    });
-
-    addDirectTargetTransition(
-      state.transitionTimeline,
-      parts,
-      stop,
-      jumpToTarget,
-    );
-
     state.transitionTimeline
-      .add(jumpToTarget, 0.35)
       .to(curtain, {
-        clipPath: "inset(0% 0% 100% 0%)",
-        duration: 0.24,
-        ease: "power3.inOut",
-      }, 0.58);
+        autoAlpha: 1,
+        duration: 0.17,
+        ease: "power2.inOut",
+      })
+      .add(jumpToTarget)
+      .to({}, { duration: 0.045 })
+      .addLabel("reveal")
+      .to(curtain, {
+        autoAlpha: 0,
+        duration: 0.30,
+        ease: "power2.out",
+      }, "reveal");
+
+    addSelectedSectionEntrance(state.transitionTimeline, plan);
   }
 
   function scrollToJourneyStop(stop, index) {
@@ -2144,16 +2161,17 @@
       "journey-section-jumping",
       "journey-scene-transitioning",
       "journey-section-entrance-playing",
+      "journey-section-rail-in-range",
     );
   }
 
-  function setupRefreshes(elements, section2Api, section4Api) {
+  function setupRefreshes(elements, section2Api, section4Api, section5Api) {
     const refresh = () => {
       window.clearTimeout(state.resizeTimer);
 
       state.resizeTimer = window.setTimeout(() => {
         syncNavHeight(elements.nav);
-        refreshJourney(section2Api, section4Api);
+        refreshJourney(section2Api, section4Api, section5Api);
       }, 220);
     };
 
@@ -2168,9 +2186,10 @@
     }
   }
 
-  function refreshJourney(section2Api, section4Api) {
+  function refreshJourney(section2Api, section4Api, section5Api) {
     section2Api?.refresh?.();
     section4Api?.refresh?.();
+    section5Api?.refresh?.();
     state.ScrollTrigger?.sort();
     state.ScrollTrigger?.refresh();
     layoutJourneyNavigator();
@@ -2228,7 +2247,7 @@
     state.createdWrapper = false;
   }
 
-  function destroy(elements, section2Api, section4Api) {
+  function destroy(elements, section2Api, section4Api, section5Api) {
     teardownMaster(true);
 
     window.clearTimeout(state.resizeTimer);
@@ -2252,6 +2271,7 @@
 
     section2Api?.showStatic?.();
     section4Api?.showStatic?.();
+    section5Api?.showStatic?.();
 
     document.body.classList.remove(
       "journey-preparing",
@@ -2273,6 +2293,7 @@
       elements.section2,
       elements.section3,
       elements.section4,
+      elements.section5,
     ].filter(Boolean);
   }
 
