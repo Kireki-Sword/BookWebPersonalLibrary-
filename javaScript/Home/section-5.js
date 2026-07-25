@@ -1,5 +1,5 @@
 /* ============================================================================
-   INKWELL — SECTION 5: SOCIAL, ON YOUR TERMS (V6 REFINED)
+   INKWELL — SECTION 5: SOCIAL, ON YOUR TERMS (V7 INTERACTION-SAFE)
 
    Desktop managed journey:
    - published as one paused child timeline in the shared Sections 1–5 journey
@@ -23,7 +23,7 @@
   }
 
   window.__INKWELL_SOCIAL_CINEMA_BUILD__ =
-    "2026-07-24-social-cinema-v6-refined";
+    "2026-07-25-social-cinema-v7-interaction-safe";
 
   const { gsap, ScrollTrigger } = window;
   const MANAGED_BY_HOME_JOURNEY =
@@ -43,6 +43,9 @@
   const COVER_FOLDER = "covers";
 
   const OPENING_READY_TIME = 0.92;
+  const ACTIVATE_IDENTITY_OFFSET = 0.18;
+  const ACTIVATE_DISCOVERY_OFFSET = 0.18;
+  const STANDALONE_SCRUB_SECONDS = 0.48;
   const EXCLUDED_STORY_ALIASES = [
     "attack on titan",
     "shingeki no kyojin",
@@ -287,6 +290,17 @@
   let selectedTheme = "freedom";
   let selectedStoryIndex = -1;
   let supabaseClient = null;
+  let resizeObserver = null;
+  const cleanupCallbacks = [];
+  const interactionState = {
+    audience: "private",
+    spoiler: false,
+    following: false,
+    searchScope: "themes",
+    searchQuery: "freedom",
+    userChanged: false,
+    lastInteractionAt: 0,
+  };
 
   setupInteractions();
   syncSectionFourCover();
@@ -316,7 +330,7 @@
       paused: true,
       defaults: { ease: "none" },
       onUpdate: () => {
-        syncActiveStep(timeline?.progress?.() || 0);
+        syncActiveStep();
       },
     });
 
@@ -373,58 +387,44 @@
 
     timeline.addLabel("control-ready", OPENING_READY_TIME);
 
-    setTimelineAudience("private", 0.96);
-    timeline.to({}, { duration: 0.34 });
-
-    setTimelineAudience("followers", 1.38);
-    timeline.to(
-      elements.orbitAvatars,
+    /*
+     * Scroll introduces the controls but never changes their values.
+     * User-owned state must remain stable while the scrubber moves forward
+     * or backward, so the timeline only applies non-geometric emphasis.
+     */
+    timeline.to({}, { duration: 0.34 }, 0.96);
+    timeline.fromTo(
+      elements.audienceButtons,
+      { filter: "brightness(0.94)" },
       {
-        autoAlpha: 1,
-        scale: 1,
-        duration: 0.26,
+        filter: "brightness(1)",
+        duration: 0.24,
         stagger: 0.035,
-        ease: "back.out(1.45)",
+        ease: "power1.out",
       },
-      1.4,
+      1.38,
     );
     timeline.to({}, { duration: 0.38 });
-
-    setTimelineAudience("public", 1.96);
-    timeline.to(
-      elements.orbitAvatars,
+    timeline.fromTo(
+      elements.spoilerToggle,
+      { boxShadow: "0 0 0 0 rgba(255, 159, 183, 0)" },
       {
-        scale: 1.055,
-        duration: 0.13,
+        boxShadow: "0 0 0 5px rgba(255, 159, 183, 0.12)",
+        duration: 0.16,
         repeat: 1,
         yoyo: true,
-        stagger: 0.02,
-        ease: "power2.inOut",
+        ease: "power1.inOut",
       },
-      1.98,
-    );
-    timeline.set(
-      elements.spoilerToggle,
-      { attr: { "aria-pressed": "true" } },
       2.1,
-    );
-    timeline.to(
-      elements.spoilerShield,
-      {
-        autoAlpha: 1,
-        duration: 0.28,
-        ease: "power2.out",
-      },
-      2.12,
     );
     timeline.to(
       elements.shareButton,
       {
-        scale: 1.04,
+        filter: "brightness(1.1)",
         duration: 0.12,
         repeat: 1,
         yoyo: true,
-        ease: "power2.inOut",
+        ease: "power1.inOut",
       },
       2.42,
     );
@@ -733,7 +733,7 @@
 
     timeline.addLabel("discovery", 5.56);
 
-    timeline.set(elements.searchInput, { value: "freedom" }, "discovery+=0.1");
+    timeline.call(reconcileInteractionState, [], "discovery+=0.1");
     timeline.fromTo(
       elements.resultCards,
       { autoAlpha: 0, x: -14, y: 5 },
@@ -774,33 +774,16 @@
     timeline.to(
       elements.followButton,
       {
-        scale: 1.045,
+        filter: "brightness(1.1)",
         duration: 0.13,
         repeat: 1,
         yoyo: true,
-        ease: "power2.inOut",
+        ease: "power1.inOut",
       },
       "discovery+=0.84",
     );
-    timeline.set(
-      elements.followButton,
-      {
-        attr: { "aria-pressed": "true" },
-        textContent: "Following",
-      },
-      "discovery+=0.98",
-    );
-    timeline.to(
-      elements.followPayoff,
-      {
-        autoAlpha: 1,
-        y: 0,
-        duration: 0.36,
-        ease: "power3.out",
-      },
-      "discovery+=1.02",
-    );
-    timeline.to({}, { duration: 0.72 });
+    timeline.call(reconcileInteractionState, [], "discovery+=0.98");
+    timeline.to({}, { duration: 1.10 });
 
     if (MANAGED_BY_HOME_JOURNEY) {
       timeline.pause(0);
@@ -808,18 +791,19 @@
     }
 
     trigger = ScrollTrigger.create({
-      id: "inkwell-social-cinema-v6",
+      id: "inkwell-social-cinema-v7",
       trigger: section,
       animation: timeline,
       pin: elements.pin,
       pinSpacing: true,
       start: () => `top top+=${getNavHeight()}`,
       end: () => `+=${Math.max(4200, window.innerHeight * 4.9)}`,
-      scrub: 0.92,
+      scrub: STANDALONE_SCRUB_SECONDS,
+      fastScrollEnd: true,
       anticipatePin: 1,
       invalidateOnRefresh: true,
-      onUpdate: ({ progress }) => {
-        syncActiveStep(progress);
+      onUpdate: () => {
+        syncActiveStep();
       },
     });
 
@@ -897,11 +881,10 @@
     gsap.set(elements.visitedFeed, { autoAlpha: 0, y: 10 });
     gsap.set(elements.followPayoff, { autoAlpha: 0, y: 8 });
 
-    setAudience("private", false, false);
-    setSpoiler(false, false, false);
-    setFollowing(false, false, false);
-    selectProfile("kai", false);
-    selectTheme("freedom", false);
+    reconcileInteractionState({ animate: false });
+    selectProfile(selectedProfileKey, false);
+    selectTheme(selectedTheme, false);
+    reconcileInteractionState({ animate: false });
     setActiveStep("control");
   }
 
@@ -932,27 +915,6 @@
     };
   }
 
-  function setTimelineAudience(value, position) {
-    const meta = audienceMeta[value] || audienceMeta.private;
-    const selected = elements.audienceButtons.find(
-      (button) => button.dataset.socialAudience === value,
-    );
-
-    timeline.set(
-      elements.audienceButtons,
-      { attr: { "aria-pressed": "false" } },
-      position,
-    );
-    if (selected) {
-      timeline.set(selected, { attr: { "aria-pressed": "true" } }, position);
-    }
-    timeline.set(elements.visibilityBadge, { textContent: meta.label }, position);
-    timeline.set(elements.audienceSummary, { textContent: meta.summary }, position);
-    timeline.set(elements.previewTitle, { textContent: meta.previewTitle }, position);
-    timeline.set(elements.previewState, { textContent: meta.previewState }, position);
-    timeline.set(elements.previewHint, { textContent: meta.hint }, position);
-    timeline.set(elements.previewFooter, { textContent: meta.footer }, position);
-  }
 
   function showStatic() {
     section.classList.add("is-social-static");
@@ -985,10 +947,18 @@
     setActiveStep("control");
   }
 
-  function syncActiveStep(progress) {
-    const next = progress < 0.38
+  function syncActiveStep() {
+    const currentTime = Number(timeline?.time?.() || 0);
+    const identityTransition = Number(
+      timeline?.labels?.["identity-transition"] ?? Number.POSITIVE_INFINITY,
+    );
+    const discoveryTransition = Number(
+      timeline?.labels?.["discovery-transition"] ?? Number.POSITIVE_INFINITY,
+    );
+
+    const next = currentTime < identityTransition + ACTIVATE_IDENTITY_OFFSET
       ? "control"
-      : progress < 0.69
+      : currentTime < discoveryTransition + ACTIVATE_DISCOVERY_OFFSET
         ? "identity"
         : "discovery";
 
@@ -1011,19 +981,30 @@
       copy.setAttribute("aria-hidden", active ? "false" : "true");
     });
 
+    section.dataset.socialActiveAct = key;
+
     Object.entries(elements.scenes).forEach(([sceneKey, scene]) => {
-      scene.classList.toggle("is-interactive", sceneKey === key);
-      scene.setAttribute("aria-hidden", sceneKey === key ? "false" : "true");
+      const isActive = sceneKey === key;
+      scene.classList.toggle("is-interactive", isActive);
+      scene.setAttribute("aria-hidden", isActive ? "false" : "true");
+      scene.toggleAttribute("inert", !isActive);
+
+      if (!isActive && scene.contains(document.activeElement)) {
+        document.activeElement?.blur?.();
+      }
     });
 
-    elements.sharedPost.classList.toggle(
-      "is-interactive",
-      key === "control" && Number(gsap?.getProperty(elements.sharedPost, "opacity") || 0) > 0.2,
-    );
+    const sharedPostActive =
+      key === "control" &&
+      Number(gsap?.getProperty(elements.sharedPost, "opacity") || 0) > 0.2;
+    elements.sharedPost.classList.toggle("is-interactive", sharedPostActive);
     elements.sharedPost.setAttribute(
       "aria-hidden",
-      key === "control" ? "false" : "true",
+      sharedPostActive ? "false" : "true",
     );
+    elements.sharedPost.toggleAttribute("inert", !sharedPostActive);
+
+    reconcileInteractionState({ animate: false });
 
     if (elements.toolbarStatus) {
       elements.toolbarStatus.textContent = meta.status;
@@ -1040,31 +1021,78 @@
   }
 
   function setupInteractions() {
-    elements.audienceButtons.forEach((button) => {
-      button.addEventListener("click", () => {
+    const listen = (target, type, handler, options) => {
+      if (!target) {
+        return;
+      }
+      target.addEventListener(type, handler, options);
+      cleanupCallbacks.push(() => target.removeEventListener(type, handler, options));
+    };
+
+    const markUserInteraction = () => {
+      interactionState.userChanged = true;
+      interactionState.lastInteractionAt = performance.now();
+      section.classList.add("has-social-user-state");
+    };
+
+    const settleScrollInterpolation = () => {
+      window.InkwellHomeJourney?.settleScroll?.();
+      trigger?.getTween?.()?.progress?.(1);
+    };
+
+    listen(section, "pointerdown", settleScrollInterpolation, {
+      capture: true,
+      passive: true,
+    });
+    listen(section, "focusin", settleScrollInterpolation, true);
+
+    const audienceGroup = elements.audienceButtons[0]?.parentElement || null;
+    audienceGroup?.setAttribute("role", "radiogroup");
+    audienceGroup?.setAttribute("aria-label", "Reflection audience");
+
+    elements.audienceButtons.forEach((button, index) => {
+      button.setAttribute("role", "radio");
+      listen(button, "click", () => {
+        markUserInteraction();
         setAudience(button.dataset.socialAudience || "private", true, true);
+      });
+      listen(button, "keydown", (event) => {
+        if (!["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(event.key)) {
+          return;
+        }
+        event.preventDefault();
+        const direction = ["ArrowRight", "ArrowDown"].includes(event.key) ? 1 : -1;
+        const nextIndex = (index + direction + elements.audienceButtons.length) %
+          elements.audienceButtons.length;
+        const nextButton = elements.audienceButtons[nextIndex];
+        nextButton?.focus();
+        markUserInteraction();
+        setAudience(nextButton?.dataset.socialAudience || "private", true, true);
       });
     });
 
-    elements.spoilerToggle?.addEventListener("click", () => {
+    listen(elements.spoilerToggle, "click", () => {
+      markUserInteraction();
       const next = elements.spoilerToggle.getAttribute("aria-pressed") !== "true";
       setSpoiler(next, true, true);
     });
 
-    elements.spoilerReveal?.addEventListener("click", () => {
+    listen(elements.spoilerReveal, "click", () => {
+      markUserInteraction();
       setSpoiler(false, true, true);
       announce("Spoiler reflection revealed.");
     });
 
-    elements.shareButton?.addEventListener("click", () => {
+    listen(elements.shareButton, "click", () => {
+      markUserInteraction();
       if (gsap) {
         gsap.fromTo(
-          elements.sharedPost,
-          { scale: Number(gsap.getProperty(elements.sharedPost, "scale")) * 0.97 },
+          elements.shareButton,
+          { filter: "brightness(1.12)" },
           {
-            scale: Number(gsap.getProperty(elements.sharedPost, "scale")),
-            duration: 0.24,
-            ease: "back.out(1.7)",
+            filter: "brightness(1)",
+            duration: 0.18,
+            ease: "power1.out",
             overwrite: "auto",
           },
         );
@@ -1072,7 +1100,8 @@
       announce("Reflection sharing preview updated.");
     });
 
-    elements.profileEdit?.addEventListener("click", () => {
+    listen(elements.profileEdit, "click", () => {
+      markUserInteraction();
       const editing = !elements.profileShell.classList.contains("is-editing");
       elements.profileShell.classList.toggle("is-editing", editing);
       elements.profileEdit.setAttribute("aria-pressed", editing ? "true" : "false");
@@ -1081,11 +1110,11 @@
       if (gsap) {
         gsap.fromTo(
           [elements.profileAvatar, elements.profileEdit],
-          { scale: 0.96 },
+          { filter: "brightness(1.12)" },
           {
-            scale: 1,
-            duration: 0.26,
-            ease: "back.out(1.7)",
+            filter: "brightness(1)",
+            duration: 0.2,
+            ease: "power1.out",
             overwrite: "auto",
           },
         );
@@ -1093,55 +1122,87 @@
       announce(editing ? "Profile editing preview opened." : "Profile preview saved.");
     });
 
+    const searchTabList = elements.searchTabs[0]?.parentElement || null;
+    searchTabList?.setAttribute("role", "tablist");
+    searchTabList?.setAttribute("aria-label", "Discovery search type");
+
     elements.searchTabs.forEach((tab) => {
-      tab.addEventListener("click", () => {
+      tab.setAttribute("role", "tab");
+      listen(tab, "click", () => {
+        markUserInteraction();
         setSearchScope(tab.dataset.socialSearchScope || "readers", true);
       });
     });
 
+    listen(elements.searchInput, "input", () => {
+      markUserInteraction();
+      interactionState.searchQuery = elements.searchInput.value;
+    });
+
     elements.resultCards.forEach((card) => {
-      card.addEventListener("click", () => {
+      listen(card, "click", () => {
+        markUserInteraction();
         selectProfile(card.dataset.socialResult || "kai", true);
       });
     });
 
     elements.mutualStoryButtons.forEach((button) => {
-      button.addEventListener("click", () => {
+      listen(button, "click", () => {
+        markUserInteraction();
         const index = Number(button.dataset.socialMutualStoryIndex || 0);
         selectSharedStory(index, true);
       });
     });
 
     elements.themeButtons.forEach((button) => {
-      button.addEventListener("click", () => {
+      listen(button, "click", () => {
+        markUserInteraction();
         selectTheme(button.dataset.socialTheme || "freedom", true);
       });
     });
 
-    elements.followButton?.addEventListener("click", () => {
+    listen(elements.followButton, "click", () => {
+      markUserInteraction();
       const isFollowing =
         elements.followButton.getAttribute("aria-pressed") === "true";
       setFollowing(!isFollowing, true, true);
     });
 
-    window.addEventListener("inkwell:section4-ready", syncSectionFourCover);
-    window.addEventListener("inkwell:home-journey-ready", syncSectionFourCover);
-    window.addEventListener("resize", debounce(() => {
-      if (timeline && timeline.progress() <= 0.01) {
-        const anchor = getAnchorTransform(elements.controlAnchor);
-        gsap.set(elements.sharedPost, anchor);
+    listen(window, "inkwell:section4-ready", syncSectionFourCover);
+    listen(window, "inkwell:home-journey-ready", syncSectionFourCover);
+
+    const onResize = debounce(() => {
+      if (!timeline || !gsap) {
+        return;
       }
-    }, 120));
+      const currentTime = timeline.time();
+      timeline.invalidate();
+      timeline.time(currentTime, true);
+      reconcileInteractionState({ animate: false });
+    }, 120);
+    listen(window, "resize", onResize, { passive: true });
+
+    if ("ResizeObserver" in window) {
+      resizeObserver = new ResizeObserver(onResize);
+      [elements.screen, elements.controlAnchor, elements.identityAnchor]
+        .filter(Boolean)
+        .forEach((item) => resizeObserver.observe(item));
+    }
   }
 
   function setAudience(value, animate, shouldAnnounce) {
-    const meta = audienceMeta[value] || audienceMeta.private;
+    const normalized = value in audienceMeta ? value : "private";
+    const meta = audienceMeta[normalized];
+    interactionState.audience = normalized;
 
     elements.audienceButtons.forEach((button) => {
       button.setAttribute(
         "aria-pressed",
-        button.dataset.socialAudience === value ? "true" : "false",
+        button.dataset.socialAudience === normalized ? "true" : "false",
       );
+      const selected = button.dataset.socialAudience === normalized;
+      button.setAttribute("aria-checked", selected ? "true" : "false");
+      button.setAttribute("tabindex", selected ? "0" : "-1");
     });
 
     setText(elements.visibilityBadge, meta.label);
@@ -1178,11 +1239,13 @@
   }
 
   function setSpoiler(enabled, animate, shouldAnnounce) {
+    interactionState.spoiler = Boolean(enabled);
     elements.spoilerToggle?.setAttribute(
       "aria-pressed",
       enabled ? "true" : "false",
     );
     elements.spoilerShield?.classList.toggle("is-visible", enabled);
+    section.classList.toggle("is-social-spoiler-enabled", enabled);
 
     if (gsap && animate) {
       gsap.to(elements.spoilerShield, {
@@ -1206,6 +1269,7 @@
     const normalized = ["readers", "stories", "themes"].includes(scope)
       ? scope
       : "readers";
+    interactionState.searchScope = normalized;
 
     elements.searchTabs.forEach((tab) => {
       const selected = tab.dataset.socialSearchScope === normalized;
@@ -1224,6 +1288,8 @@
       elements.searchInput.placeholder = "Search a theme";
       elements.searchInput.value = selectedTheme;
     }
+
+    interactionState.searchQuery = elements.searchInput?.value || "";
 
     if (gsap) {
       gsap.fromTo(
@@ -1282,7 +1348,9 @@
       );
     }
 
-    announce(`${profile.name} profile selected.`);
+    if (animate) {
+      announce(`${profile.name} profile selected.`);
+    }
   }
 
   function selectSharedStory(index, animate) {
@@ -1311,17 +1379,19 @@
     if (gsap && animate) {
       gsap.fromTo(
         elements.mutualStoryButtons[safeIndex],
-        { scale: 0.96 },
+        { filter: "brightness(1.12)" },
         {
-          scale: 1,
-          duration: 0.23,
-          ease: "back.out(1.6)",
+          filter: "brightness(1)",
+          duration: 0.18,
+          ease: "power1.out",
           overwrite: "auto",
         },
       );
     }
 
-    announce(`${story.title} selected as a discovery reason.`);
+    if (animate) {
+      announce(`${story.title} selected as a discovery reason.`);
+    }
   }
 
   function selectTheme(theme, animate) {
@@ -1360,17 +1430,19 @@
       );
       gsap.fromTo(
         active,
-        { scale: 0.95 },
+        { filter: "brightness(1.12)" },
         {
-          scale: 1,
-          duration: 0.22,
-          ease: "back.out(1.6)",
+          filter: "brightness(1)",
+          duration: 0.18,
+          ease: "power1.out",
           overwrite: "auto",
         },
       );
     }
 
-    announce(`${capitalize(normalized)} theme selected.`);
+    if (animate) {
+      announce(`${capitalize(normalized)} theme selected.`);
+    }
   }
 
   function updateEvidenceSummary(title, detail) {
@@ -1384,6 +1456,7 @@
   }
 
   function setFollowing(enabled, animate, shouldAnnounce) {
+    interactionState.following = Boolean(enabled);
     elements.followButton?.setAttribute(
       "aria-pressed",
       enabled ? "true" : "false",
@@ -1396,11 +1469,11 @@
     if (gsap && animate) {
       gsap.fromTo(
         elements.followButton,
-        { scale: 0.94 },
+        { filter: "brightness(1.12)" },
         {
-          scale: 1,
-          duration: 0.25,
-          ease: "back.out(1.7)",
+          filter: "brightness(1)",
+          duration: 0.18,
+          ease: "power1.out",
           overwrite: "auto",
         },
       );
@@ -1418,6 +1491,42 @@
     if (shouldAnnounce) {
       announce(enabled ? "Reader followed." : "Reader unfollowed.");
     }
+  }
+
+  function reconcileInteractionState(options = {}) {
+    const animate = Boolean(options.animate);
+
+    setAudience(interactionState.audience, animate, false);
+    setSpoiler(interactionState.spoiler, animate, false);
+    setFollowing(interactionState.following, animate, false);
+
+    if (elements.searchInput && document.activeElement !== elements.searchInput) {
+      elements.searchInput.value = interactionState.searchQuery || selectedTheme;
+    }
+
+    elements.searchTabs.forEach((tab) => {
+      const selected = tab.dataset.socialSearchScope === interactionState.searchScope;
+      tab.classList.toggle("is-active", selected);
+      tab.setAttribute("aria-selected", selected ? "true" : "false");
+      tab.setAttribute("tabindex", selected ? "0" : "-1");
+    });
+  }
+
+  function resetInteractionState() {
+    interactionState.audience = "private";
+    interactionState.spoiler = false;
+    interactionState.following = false;
+    interactionState.searchScope = "themes";
+    interactionState.searchQuery = "freedom";
+    interactionState.userChanged = false;
+    interactionState.lastInteractionAt = 0;
+    section.classList.remove("has-social-user-state");
+    selectedProfileKey = "kai";
+    selectedTheme = "freedom";
+    selectedStoryIndex = -1;
+    selectProfile("kai", false);
+    selectTheme("freedom", false);
+    reconcileInteractionState({ animate: false });
   }
 
   function syncSectionFourCover() {
@@ -1698,6 +1807,8 @@
     }
 
     timeline.paused(!nested);
+    syncActiveStep();
+    reconcileInteractionState({ animate: false });
     syncSectionFourCover();
     renderDatabaseStories();
   }
@@ -1722,14 +1833,19 @@
         selectedProfileKey,
         selectedTheme,
         selectedStoryIndex,
+        interactionState: { ...interactionState },
         databaseStories: socialStories.map((story) => story.title),
       }),
+      resetInteractions: resetInteractionState,
       destroy: () => {
         trigger?.kill?.(true);
         timeline?.kill?.();
+        resizeObserver?.disconnect?.();
+        cleanupCallbacks.splice(0).forEach((cleanup) => cleanup());
       },
       cleanup: () => {
         trigger?.kill?.(true);
+        resizeObserver?.disconnect?.();
       },
       showStatic,
     };

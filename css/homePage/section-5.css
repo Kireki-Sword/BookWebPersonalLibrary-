@@ -2250,3 +2250,717 @@
     border-color: rgba(226, 232, 255, 0.5);
   }
 }
+/* ========================================================================== 
+   INKWELL SECTION 5 — V7 RESEARCH-DRIVEN REFINEMENT
+
+   Principles implemented here:
+   - keep the editorial story visually distinct from the product demo
+   - use an 8px rhythm and fewer competing surface levels
+   - make every frequent control a stable 48px+ target
+   - never move a clickable target on hover
+   - show selection with shape, border, contrast, and text — not color alone
+   - keep the traveling reflection decorative except for its explicit reveal action
+   - provide strong focus visibility and reduced-motion fallbacks
+   ========================================================================== */
+
+#section-5-social,
+.social-cinema {
+  --s5-bg: #070a14;
+  --s5-bg-deep: #050711;
+  --s5-surface: #0d1424;
+  --s5-surface-2: #111a2e;
+  --s5-surface-3: #17223a;
+  --s5-surface-selected: #192d55;
+  --s5-border: rgba(184, 199, 235, 0.22);
+  --s5-border-strong: rgba(205, 217, 247, 0.52);
+  --s5-text: #f7f8ff;
+  --s5-text-2: #ccd5e8;
+  --s5-muted: #98a6c2;
+  --s5-muted-strong: #aebbd2;
+  --s5-blue: #8ca4ff;
+  --s5-violet: #aa8cff;
+  --s5-cyan: #73dcff;
+  --s5-green: #7fe0b7;
+  --s5-rose: #ff9db8;
+  --s5-focus: #9ce8ff;
+  --s5-radius-panel: 20px;
+  --s5-radius-control: 12px;
+  --s5-shadow-panel: 0 28px 80px rgba(0, 0, 0, 0.32);
+  --s5-duration-fast: 120ms;
+  --s5-duration-control: 180ms;
+  --s5-duration-scene: 420ms;
+  --s5-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+
+  background:
+    radial-gradient(circle at 12% 32%, rgba(79, 103, 190, 0.16), transparent 36%),
+    radial-gradient(circle at 91% 18%, rgba(112, 78, 190, 0.1), transparent 34%),
+    linear-gradient(180deg, #090d1b 0%, #0b1120 52%, var(--s5-bg-deep) 100%);
+}
+
+.social-cinema::before {
+  opacity: 0.055;
+  background-size: 64px 64px;
+}
+
+.social-cinema::after {
+  background: linear-gradient(
+    90deg,
+    rgba(2, 4, 12, 0.26),
+    transparent 24%,
+    transparent 82%,
+    rgba(2, 4, 12, 0.22)
+  );
+}
+
+.social-cinema__layout {
+  width: min(1480px, calc(100vw - 80px));
+  grid-template-columns: minmax(320px, 380px) minmax(720px, 1fr);
+  gap: clamp(3rem, 4.5vw, 4.75rem);
+  padding: clamp(1.5rem, 3vh, 2.4rem) 0;
+}
+
+.social-cinema__copy {
+  padding: clamp(2.75rem, 6vh, 4.75rem) 0 clamp(2rem, 4vh, 3.25rem);
+}
+
+.social-cinema__eyebrow {
+  margin-bottom: 1rem;
+  color: #d7def5;
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+}
+
+.social-cinema__eyebrow::before {
+  box-shadow: 0 0 12px rgba(115, 220, 255, 0.42);
+}
+
+.social-cinema__copy-stage {
+  min-height: clamp(360px, 43vh, 438px);
+}
+
+.social-copy-state h2 {
+  max-width: 370px;
+  font-size: clamp(2.75rem, 3.35vw, 3.9rem);
+  line-height: 0.98;
+  letter-spacing: -0.052em;
+  text-shadow: 0 20px 52px rgba(0, 0, 0, 0.32);
+}
+
+.social-copy-state p {
+  max-width: 39ch;
+  margin-top: 1.2rem;
+  color: var(--s5-text-2);
+  font-size: clamp(0.96rem, 0.92vw, 1.02rem);
+  line-height: 1.62;
+}
+
+.social-copy-state__index {
+  margin-bottom: 0.7rem;
+  color: var(--s5-muted-strong);
+  font-size: 0.73rem;
+}
+
+.social-copy-proof {
+  gap: 0.5rem;
+  margin-top: 1.15rem;
+}
+
+.social-copy-proof span {
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.42rem 0.68rem;
+  border-color: rgba(196, 207, 239, 0.21);
+  color: #d3dbee;
+  background: rgba(12, 19, 35, 0.7);
+  font-size: 0.71rem;
+}
+
+.social-cinema__steps {
+  gap: 0.9rem;
+  margin-top: 0.65rem;
+  padding-top: 1rem;
+}
+
+.social-cinema__step {
+  grid-template-columns: 32px minmax(0, 1fr);
+  gap: 0.58rem;
+}
+
+.social-cinema__step-number {
+  width: 30px;
+  height: 30px;
+  font-size: 0.62rem;
+}
+
+.social-cinema__step-copy strong {
+  font-size: 0.76rem;
+}
+
+.social-cinema__step-copy small,
+.social-cinema__principle {
+  color: rgba(170, 181, 207, 0.74);
+  font-size: 0.64rem;
+}
+
+.social-cinema__viewport {
+  height: min(720px, calc(var(--s5-stage-height) - 46px));
+}
+
+.social-cinema__screen {
+  border-color: rgba(194, 207, 242, 0.25);
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at 55% 2%, rgba(88, 113, 205, 0.095), transparent 36%),
+    linear-gradient(180deg, rgba(8, 13, 25, 0.995), rgba(6, 10, 20, 0.99));
+  box-shadow: var(--s5-shadow-panel), inset 0 1px rgba(255, 255, 255, 0.04);
+}
+
+.social-cinema__screen::before {
+  opacity: 0.075;
+}
+
+.social-cinema__toolbar {
+  height: 54px;
+  padding-inline: 1.1rem;
+  background: rgba(5, 9, 19, 0.94);
+}
+
+.social-cinema__toolbar-title {
+  color: #d7deef;
+  font-size: 0.77rem;
+}
+
+.social-cinema__toolbar-status,
+.social-cinema__scene-label {
+  color: #a8b4cf;
+}
+
+.social-cinema__scene-label {
+  top: 69px;
+}
+
+.social-scene {
+  inset: 54px 0 0;
+  padding: 3.75rem clamp(1.25rem, 2vw, 1.85rem) clamp(1.15rem, 2vw, 1.7rem);
+}
+
+.social-scene--control,
+.social-scene--discovery {
+  gap: 1.1rem;
+}
+
+.social-scene--control {
+  grid-template-columns: minmax(330px, 0.94fr) minmax(410px, 1.06fr);
+}
+
+.social-scene--discovery {
+  grid-template-columns: minmax(345px, 0.92fr) minmax(430px, 1.08fr);
+}
+
+.social-composer,
+.social-live-preview,
+.social-profile-shell,
+.social-search-panel,
+.social-visited-profile {
+  border-color: var(--s5-border);
+  border-radius: var(--s5-radius-panel);
+  background: linear-gradient(150deg, rgba(17, 25, 45, 0.98), rgba(8, 13, 25, 0.985));
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.23), inset 0 1px rgba(255, 255, 255, 0.036);
+}
+
+/* Stable hit areas: no transform-based hover on controls. */
+.social-primary-button,
+.social-audience-button,
+.social-spoiler-toggle,
+.social-profile-edit,
+.social-search-tab,
+.social-result-card,
+.social-follow-button,
+.social-spoiler-reveal,
+.social-mutual-story,
+.social-theme-button {
+  min-height: 48px;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition:
+    border-color var(--s5-duration-control) ease,
+    background-color var(--s5-duration-control) ease,
+    color var(--s5-duration-control) ease,
+    box-shadow var(--s5-duration-control) ease,
+    filter var(--s5-duration-fast) ease;
+}
+
+.social-primary-button,
+.social-follow-button {
+  min-height: 48px;
+  padding: 0.72rem 1.05rem;
+  border-color: rgba(210, 218, 255, 0.52);
+  border-radius: var(--s5-radius-control);
+  background: linear-gradient(135deg, #708cff, #9375f2);
+  box-shadow: 0 10px 24px rgba(70, 83, 172, 0.22);
+  font-size: 0.78rem;
+}
+
+.social-primary-button:hover,
+.social-follow-button:hover,
+.social-audience-button:hover,
+.social-profile-edit:hover,
+.social-search-tab:hover,
+.social-result-card:hover,
+.social-spoiler-reveal:hover,
+.social-mutual-story:hover,
+.social-theme-button:hover {
+  transform: none;
+  filter: brightness(1.07);
+}
+
+.social-primary-button:active,
+.social-follow-button:active,
+.social-audience-button:active,
+.social-profile-edit:active,
+.social-search-tab:active,
+.social-result-card:active,
+.social-spoiler-reveal:active,
+.social-mutual-story:active,
+.social-theme-button:active,
+.social-spoiler-toggle:active {
+  transform: none;
+  filter: brightness(0.96);
+}
+
+.social-primary-button:focus-visible,
+.social-audience-button:focus-visible,
+.social-spoiler-toggle:focus-visible,
+.social-profile-edit:focus-visible,
+.social-search-tab:focus-visible,
+.social-search-input:focus-visible,
+.social-result-card:focus-visible,
+.social-follow-button:focus-visible,
+.social-spoiler-reveal:focus-visible,
+.social-mutual-story:focus-visible,
+.social-theme-button:focus-visible {
+  outline: 3px solid var(--s5-focus);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 2px #070a14, 0 0 0 6px rgba(156, 232, 255, 0.25);
+}
+
+.social-composer__header {
+  min-height: 76px;
+  padding: 0.95rem 1.05rem;
+}
+
+.social-composer__reflection {
+  margin: 0.95rem 1rem 0;
+  padding: 1rem;
+}
+
+.social-composer__reflection p {
+  font-size: 0.93rem;
+  line-height: 1.52;
+}
+
+.social-composer__label,
+.social-fieldset legend,
+.social-search-label,
+.social-section-heading small {
+  color: #b2bfd8;
+  font-size: 0.68rem;
+}
+
+.social-composer__count,
+.social-composer__summary,
+.social-spoiler-row small,
+.social-shared-context,
+.social-live-preview__hint,
+.social-live-preview__footer,
+.social-visited-profile__copy p,
+.social-result-match small,
+.social-evidence-summary small,
+.social-feed-item p,
+.social-follow-payoff small {
+  color: #9eabc3;
+  font-size: 0.67rem;
+}
+
+.social-fieldset {
+  margin: 0.95rem 1rem 0;
+}
+
+.social-audience-options {
+  gap: 0.5rem;
+}
+
+.social-audience-button {
+  min-height: 50px;
+  padding: 0.62rem 0.55rem;
+  border-color: rgba(190, 203, 237, 0.21);
+  border-radius: var(--s5-radius-control);
+  color: #bcc7dd;
+  background: rgba(8, 14, 27, 0.82);
+  font-size: 0.71rem;
+}
+
+.social-audience-button > span {
+  color: #9cadcf;
+  font-size: 0.56rem;
+}
+
+.social-audience-button[aria-pressed="true"],
+.social-audience-button[aria-checked="true"] {
+  border-color: rgba(115, 220, 255, 0.72);
+  color: #f7fcff;
+  background: var(--s5-surface-selected);
+  box-shadow: inset 0 -3px rgba(115, 220, 255, 0.74);
+}
+
+.social-spoiler-row {
+  min-height: 68px;
+  margin-top: 0.85rem;
+  padding: 0.72rem 0.88rem;
+  border-color: rgba(190, 203, 237, 0.2);
+  background: rgba(8, 14, 27, 0.82);
+}
+
+.social-spoiler-row strong {
+  font-size: 0.78rem;
+}
+
+/* The button owns a 58x48 hitbox; pseudo-elements draw the smaller switch. */
+.social-spoiler-toggle {
+  width: 58px;
+  height: 48px;
+  min-height: 48px;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.social-spoiler-toggle::before {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 10px;
+  width: 48px;
+  height: 28px;
+  border: 1px solid rgba(198, 210, 241, 0.32);
+  border-radius: 999px;
+  background: #29334b;
+  transition:
+    border-color var(--s5-duration-control) ease,
+    background-color var(--s5-duration-control) ease;
+}
+
+.social-spoiler-toggle::after {
+  left: 10px;
+  top: 15px;
+  width: 18px;
+  height: 18px;
+  background: #f0f3fb;
+  transition: transform var(--s5-duration-control) var(--s5-ease-out);
+}
+
+.social-spoiler-toggle[aria-pressed="true"] {
+  background: transparent;
+  box-shadow: none;
+}
+
+.social-spoiler-toggle[aria-pressed="true"]::before {
+  border-color: rgba(255, 157, 184, 0.7);
+  background: #6d324a;
+}
+
+.social-spoiler-toggle[aria-pressed="true"]::after {
+  transform: translateX(20px);
+  background: #ffe2ea;
+}
+
+.social-composer__footer {
+  min-height: 68px;
+  padding: 0.75rem 1rem;
+}
+
+.social-live-preview__header,
+.social-visited-profile__top {
+  min-height: 82px;
+}
+
+.social-live-preview__hint {
+  max-width: 40ch;
+}
+
+/* The traveling card cannot steal clicks from the panels beneath it. */
+.social-shared-post,
+.social-shared-post.is-interactive {
+  pointer-events: none;
+}
+
+.social-shared-post.is-interactive .social-spoiler-reveal {
+  pointer-events: auto;
+}
+
+.social-shared-post {
+  border-color: rgba(205, 216, 247, 0.34);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.38), 0 0 24px rgba(108, 136, 235, 0.07);
+}
+
+.social-spoiler-reveal {
+  min-height: 48px;
+  padding: 0.65rem 0.9rem;
+  font-size: 0.72rem;
+}
+
+.social-profile-shell {
+  width: min(100%, 880px);
+}
+
+.social-profile-edit {
+  min-height: 48px;
+  padding: 0.65rem 0.9rem;
+  font-size: 0.72rem;
+}
+
+.social-search-input-shell {
+  min-height: 50px;
+  padding-inline: 0.8rem;
+  border-color: rgba(195, 207, 239, 0.26);
+  border-radius: var(--s5-radius-control);
+  background: rgba(7, 12, 24, 0.88);
+}
+
+.social-search-input-shell:focus-within {
+  border-color: var(--s5-focus);
+  box-shadow: 0 0 0 3px rgba(115, 220, 255, 0.16);
+}
+
+.social-search-input {
+  height: 48px;
+  color: #f3f6ff;
+  font-size: 0.82rem;
+}
+
+.social-search-input::placeholder {
+  color: #8997b2;
+}
+
+.social-search-tabs {
+  gap: 0.45rem;
+  margin-top: 0.65rem;
+}
+
+.social-search-tab {
+  min-height: 48px;
+  padding: 0.55rem 0.82rem;
+  border-color: rgba(190, 203, 237, 0.14);
+  color: #aab6ce;
+  background: rgba(8, 14, 27, 0.56);
+  font-size: 0.68rem;
+}
+
+.social-search-tab.is-active,
+.social-search-tab[aria-selected="true"] {
+  border-color: rgba(115, 220, 255, 0.58);
+  color: #effcff;
+  background: #172b50;
+  box-shadow: inset 0 -2px rgba(115, 220, 255, 0.68);
+}
+
+.social-result-list {
+  gap: 0.6rem;
+  padding: 0.82rem;
+}
+
+.social-result-card {
+  min-height: 86px;
+  padding: 0.78rem;
+  border-color: rgba(190, 203, 237, 0.18);
+  border-radius: 14px;
+  background: rgba(8, 14, 27, 0.72);
+}
+
+.social-result-card.is-selected,
+.social-result-card[aria-pressed="true"] {
+  border-color: rgba(115, 220, 255, 0.62);
+  background: #172747;
+  box-shadow: inset 4px 0 #73dcff;
+}
+
+.social-result-card:hover {
+  background: #14213b;
+  box-shadow: inset 3px 0 rgba(115, 220, 255, 0.45);
+}
+
+.social-result-copy strong {
+  font-size: 0.78rem;
+}
+
+.social-result-copy small,
+.social-result-match strong {
+  font-size: 0.65rem;
+}
+
+.social-visited-profile__copy p {
+  max-width: 44ch;
+  line-height: 1.48;
+}
+
+.social-match-reason {
+  min-height: 62px;
+  border-color: rgba(115, 220, 255, 0.25);
+  background: rgba(25, 48, 87, 0.62);
+}
+
+.social-evidence-grid {
+  gap: 0.85rem;
+}
+
+.social-evidence-stories {
+  gap: 0.52rem;
+}
+
+.social-mutual-story {
+  min-height: 72px;
+  padding: 0.55rem;
+  border-color: rgba(190, 203, 237, 0.18);
+  background: rgba(8, 14, 27, 0.72);
+}
+
+.social-mutual-story.is-selected {
+  border-color: rgba(115, 220, 255, 0.62);
+  background: #182a4d;
+  box-shadow: inset 0 -3px rgba(115, 220, 255, 0.6);
+}
+
+.social-mutual-story > span:last-child {
+  font-size: 0.62rem;
+}
+
+.social-theme-row {
+  gap: 0.45rem;
+}
+
+.social-theme-button {
+  min-height: 48px;
+  padding: 0.55rem 0.75rem;
+  border-color: rgba(190, 203, 237, 0.18);
+  color: #aab6cf;
+  background: rgba(8, 14, 27, 0.66);
+  font-size: 0.65rem;
+}
+
+.social-theme-button.is-selected,
+.social-theme-button[aria-pressed="true"] {
+  border-color: rgba(115, 220, 255, 0.58);
+  color: #effcff;
+  background: #183055;
+  box-shadow: inset 0 -2px rgba(115, 220, 255, 0.66);
+}
+
+.social-follow-button[aria-pressed="true"] {
+  border-color: rgba(127, 224, 183, 0.68);
+  color: #f2fff9;
+  background: #1e664d;
+  box-shadow: inset 0 -3px rgba(127, 224, 183, 0.55), 0 10px 24px rgba(22, 104, 74, 0.2);
+}
+
+.social-follow-payoff {
+  border-color: rgba(127, 224, 183, 0.32);
+  background: rgba(25, 76, 59, 0.48);
+}
+
+/* Make inactive acts impossible to hit even during cross-fades. */
+.social-scene[inert],
+.social-scene[aria-hidden="true"] {
+  pointer-events: none !important;
+}
+
+.social-scene.is-interactive:not([inert]) {
+  pointer-events: auto;
+}
+
+@media (max-width: 1360px) {
+  .social-cinema__layout {
+    width: min(1280px, calc(100vw - 56px));
+    grid-template-columns: minmax(285px, 340px) minmax(680px, 1fr);
+    gap: 2.5rem;
+  }
+
+  .social-copy-state h2 {
+    font-size: clamp(2.55rem, 3.2vw, 3.55rem);
+  }
+}
+
+@media (pointer: coarse) {
+  .social-primary-button,
+  .social-audience-button,
+  .social-profile-edit,
+  .social-search-tab,
+  .social-follow-button,
+  .social-spoiler-reveal,
+  .social-theme-button {
+    min-height: 52px;
+  }
+
+  .social-result-card {
+    min-height: 92px;
+  }
+
+  .social-mutual-story {
+    min-height: 78px;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .social-cinema__toolbar,
+  .social-composer,
+  .social-live-preview,
+  .social-profile-shell,
+  .social-search-panel,
+  .social-visited-profile,
+  .social-shared-post {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: var(--s5-surface);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #section-5-social *,
+  #section-5-social *::before,
+  #section-5-social *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .social-copy-state,
+  .social-scene,
+  .social-shared-post,
+  .social-composer,
+  .social-live-preview,
+  .social-profile-shell,
+  .social-search-panel,
+  .social-visited-profile {
+    transform: none !important;
+  }
+}
+
+@media (prefers-contrast: more) {
+  #section-5-social,
+  .social-cinema {
+    --s5-border: rgba(236, 241, 255, 0.58);
+    --s5-text-2: #e0e6f2;
+    --s5-muted: #bdc7dc;
+  }
+
+  .social-audience-button,
+  .social-search-tab,
+  .social-result-card,
+  .social-mutual-story,
+  .social-theme-button,
+  .social-search-input-shell,
+  .social-spoiler-row {
+    border-color: rgba(236, 241, 255, 0.48);
+  }
+}
