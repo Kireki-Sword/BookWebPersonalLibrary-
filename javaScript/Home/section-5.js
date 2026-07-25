@@ -20,7 +20,7 @@
   }
 
   window.__INKWELL_SOCIAL_CINEMA_BUILD__ =
-    "2026-07-24-social-cinema-v2-managed";
+    "2026-07-24-social-cinema-v3-managed-fixed";
 
   const { gsap, ScrollTrigger } = window;
   const MANAGED_BY_HOME_JOURNEY =
@@ -133,6 +133,8 @@
     },
   };
 
+  const OPENING_READY_TIME = 1.18;
+
   let timeline = null;
   let trigger = null;
   let activeStep = "control";
@@ -221,6 +223,13 @@
       },
       0.45,
     );
+
+    /*
+     * This is the first fully readable frame of Section 5. The homepage
+     * chapter rail targets this point instead of local time 0, where the
+     * opening copy and all three social scenes are intentionally hidden.
+     */
+    timeline.addLabel("control-ready", OPENING_READY_TIME);
 
     /* Private -> followers -> public with spoiler protection. */
     timeline.set(
@@ -971,32 +980,76 @@
     }
   }
 
+  function isNestedInManagedJourney() {
+    return Boolean(
+      MANAGED_BY_HOME_JOURNEY &&
+        timeline?.parent &&
+        timeline.parent !== gsap?.globalTimeline,
+    );
+  }
+
+  function resetTimelineState() {
+    if (!timeline) {
+      setInitialState();
+      return;
+    }
+
+    const nested = isNestedInManagedJourney();
+
+    timeline.totalTime(0, true);
+    setInitialState();
+
+    /*
+     * A nested child must remain unpaused so its parent timeline can drive it.
+     * The parent itself is paused/scrubbed by homeScroll.js.
+     */
+    timeline.paused(!nested);
+  }
+
+  function refreshTimelineState() {
+    if (!timeline) {
+      return;
+    }
+
+    /*
+     * Function-based positions depend on the real screen size. Recalculate
+     * them only at the untouched opening frame, then preserve the child's
+     * ownership state. Never pause a child after it has been nested in the
+     * master journey.
+     */
+    if (timeline.progress() <= 0.001) {
+      const nested = isNestedInManagedJourney();
+
+      timeline.invalidate();
+      timeline.totalTime(0, true);
+      setInitialState();
+      timeline.paused(!nested);
+    }
+  }
+
   function publishApi() {
     const api = {
       section,
       timeline,
       trigger,
-      reset: () => {
-        trigger?.animation?.pause?.(0);
-        timeline?.pause?.(0);
-        setInitialState();
+      reset: resetTimelineState,
+      refresh: refreshTimelineState,
+      getNavigationTime: () => {
+        const readyTime = Number(timeline?.labels?.["control-ready"]);
+        return Number.isFinite(readyTime)
+          ? readyTime
+          : OPENING_READY_TIME;
       },
-      refresh: () => {
-        if (trigger) {
-          trigger.refresh?.();
-          return;
-        }
-
-        /*
-         * The master journey owns rendering. Avoid invalidating this nested
-         * timeline while it is part-way through, because current transforms
-         * could otherwise be recorded as new starting values.
-         */
-        if (timeline && timeline.progress() <= 0.001) {
-          timeline.invalidate();
-          timeline.pause(0);
-        }
-      },
+      debug: () => ({
+        managed: MANAGED_BY_HOME_JOURNEY,
+        nested: isNestedInManagedJourney(),
+        paused: Boolean(timeline?.paused?.()),
+        progress: timeline?.progress?.() || 0,
+        parentIsGlobal: timeline?.parent === gsap?.globalTimeline,
+        openingReadyTime: Number(
+          timeline?.labels?.["control-ready"] ?? OPENING_READY_TIME,
+        ),
+      }),
       destroy: () => {
         trigger?.kill?.(true);
         timeline?.kill?.();

@@ -25,7 +25,7 @@
   "use strict";
 
   window.__INKWELL_HOME_SCROLL_BUILD__ =
-    "2026-07-24-interaction-v17-five-section-journey";
+    "2026-07-24-interaction-v18-section5-runtime-fix";
 
   const DESKTOP_QUERY =
     "(min-width: 1100px) and (min-height: 700px) and " +
@@ -586,20 +586,51 @@
     master.addLabel("section-4-to-5-start");
     addSection4ToSection5Transition(master, elements);
 
-    master.addLabel("section-5-start");
-    master.to({}, { duration: 0.12 });
-
     if (section5Timeline) {
-      attachChildTimeline(master, section5Timeline);
+      /*
+       * Begin Section 5's real opening animation while the Section 4 -> 5
+       * background hand-off is still finishing. This removes the empty-shell
+       * gap and keeps the transition cinematic.
+       */
+      const section5AttachPosition = "section-4-to-5-start+=0.68";
+      const localNavigationTime = Number(
+        section5Api?.getNavigationTime?.(),
+      );
+
+      master.addLabel("section-5-timeline-start", section5AttachPosition);
+      attachChildTimeline(
+        master,
+        section5Timeline,
+        section5AttachPosition,
+      );
+
+      const childScale = Math.max(
+        Math.abs(section5Timeline.timeScale()),
+        0.0001,
+      );
+      const readableLocalTime = Number.isFinite(localNavigationTime)
+        ? localNavigationTime
+        : 1.18;
+      const readableMasterTime =
+        section5Timeline.startTime() + readableLocalTime / childScale;
+
+      /*
+       * Point 5 now lands on the first fully readable Control frame instead
+       * of local time 0, where the section intentionally contains only the
+       * empty application shell.
+       */
+      master.addLabel("section-5-start", readableMasterTime);
     } else {
+      master.addLabel("section-5-timeline-start");
+      master.addLabel("section-5-start");
       master.to({}, { duration: 7.5 });
     }
 
-    master.addLabel("section-5-end");
+    master.addLabel("section-5-end", master.duration());
     master.to({}, { duration: 0.85 });
 
     state.trigger = ScrollTrigger.create({
-      id: "inkwell-one-master-journey-v6",
+      id: "inkwell-one-master-journey-v7",
       trigger: state.shell,
       animation: master,
       start: () => `top top+=${getNavHeight(elements.nav)}`,
@@ -1145,14 +1176,19 @@
     master.add(timeline);
   }
 
-  function attachChildTimeline(master, timeline) {
+  function attachChildTimeline(master, timeline, position) {
     if (!timeline) {
       return;
     }
 
+    /*
+     * GSAP does not let a paused nested child advance with its parent. Make
+     * the child active before nesting it; the master timeline itself remains
+     * paused and is driven exclusively by ScrollTrigger.
+     */
     timeline.pause(0);
-    master.add(timeline);
     timeline.paused(false);
+    master.add(timeline, position);
   }
 
   function createSection3Timeline() {
