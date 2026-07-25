@@ -1,5 +1,5 @@
 /* ============================================================================
-   INKWELL — SECTION 5: SOCIAL, ON YOUR TERMS (V11 PRODUCT STORY)
+   INKWELL — SECTION 5: SOCIAL, ON YOUR TERMS (V12 SOCIAL FEED REFINEMENT)
 
    Homepage product story:
    1. Control — audience, spoilers, and a stable live preview.
@@ -20,11 +20,11 @@
   "use strict";
 
   const section = document.querySelector("#section-5-social");
-  if (!section || window.__INKWELL_SOCIAL_V11_STARTED__) return;
+  if (!section || window.__INKWELL_SOCIAL_V12_STARTED__) return;
 
-  window.__INKWELL_SOCIAL_V11_STARTED__ = true;
+  window.__INKWELL_SOCIAL_V12_STARTED__ = true;
   window.__INKWELL_SOCIAL_CINEMA_BUILD__ =
-    "2026-07-25-social-cinema-v11-sequential-social";
+    "2026-07-25-social-cinema-v12-feed-refinement";
 
   const { gsap, ScrollTrigger } = window;
   const MANAGED_BY_HOME_JOURNEY =
@@ -51,7 +51,7 @@
     identity: 4.12,
     socialTransition: 6.68,
     social: 7.44,
-    end: 13.42,
+    end: 10.18,
   });
 
   const DEMO_THRESHOLDS = Object.freeze({
@@ -61,18 +61,10 @@
     publicLeave: 1.78,
     spoilerEnter: 2.67,
     spoilerLeave: 2.4,
-    forYouEnter: 8.36,
+    forYouEnter: 8.34,
     forYouLeave: 8.08,
-    searchEnter: 9.18,
-    searchLeave: 8.9,
-    profileEnter: 10.02,
-    profileLeave: 9.72,
-    libraryEnter: 10.88,
-    libraryLeave: 10.58,
-    storyEnter: 11.76,
-    storyLeave: 11.46,
-    layerEnter: 12.62,
-    layerLeave: 12.34,
+    searchEnter: 9.24,
+    searchLeave: 8.94,
   });
 
   const SOCIAL_VIEW_ORDER = Object.freeze([
@@ -85,12 +77,12 @@
   ]);
 
   const SOCIAL_VIEW_META = Object.freeze({
-    following: { label: "Following activity", status: "Social · Following", step: "01 / 06" },
-    foryou: { label: "Explainable recommendations", status: "Social · For You", step: "02 / 06" },
-    search: { label: "Search readers by taste", status: "Social · Search", step: "03 / 06" },
-    profile: { label: "Reader profile", status: "Social · Profile", step: "04 / 06" },
-    library: { label: "Public story library", status: "Social · Library", step: "05 / 06" },
-    story: { label: "Saved story layers", status: "Social · Story", step: "06 / 06" },
+    following: { label: "Following activity", status: "Social · Following", step: "01", segment: 1 },
+    foryou: { label: "Explainable recommendations", status: "Social · For You", step: "02", segment: 2 },
+    search: { label: "Search readers by taste", status: "Social · Search", step: "03", segment: 3 },
+    profile: { label: "Reader profile", status: "Social · Profile", step: "04", segment: 4 },
+    library: { label: "Public story library", status: "Social · Library", step: "05", segment: 5 },
+    story: { label: "Saved story layers", status: "Social · Story", step: "06", segment: 6 },
   });
 
   const TOKYO_GHOUL_RE_ALIASES = [
@@ -234,10 +226,96 @@
   });
 
   const FEED_ITEMS = Object.freeze([
-    { profile: "kai", type: "Ranking updated", title: "Favourite protagonists", detail: "Ken Kaneki moved to #1", story: "Tokyo Ghoul:re", time: "1h" },
-    { profile: "mira", type: "New moment", title: "A scene worth keeping", detail: "Added a visual note about memory", story: "Goodnight Punpun", time: "2h" },
-    { profile: "ren", type: "New reflection", title: "Responsibility after violence", detail: "Published a long-form reflection", story: "Monster", time: "5h" },
-    { profile: "kai", type: "New quote", title: "Saved from a recent reread", detail: "Added a private note", story: "Fullmetal Alchemist", time: "1d" },
+    {
+      profile: "kai",
+      type: "Ranking updated",
+      layer: "Ranking",
+      title: "Favourite protagonists",
+      detail: "Moved Ken Kaneki to #1 after a reread.",
+      story: "Tokyo Ghoul:re",
+      time: "1h",
+      tone: "ranking",
+    },
+    {
+      profile: "mira",
+      type: "Moment added",
+      layer: "Moment",
+      title: "A scene worth keeping",
+      detail: "Saved a silent panel and added a memory note.",
+      story: "Goodnight Punpun",
+      time: "2h",
+      tone: "moment",
+    },
+    {
+      profile: "ren",
+      type: "Reflection published",
+      layer: "Reflection",
+      title: "Responsibility after violence",
+      detail: "Published a long-form reflection with spoiler protection.",
+      story: "Monster",
+      time: "5h",
+      tone: "reflection",
+    },
+    {
+      profile: "kai",
+      type: "Quote saved",
+      layer: "Quote",
+      title: "A line from a reread",
+      detail: "Connected the quote to sacrifice and responsibility.",
+      story: "Fullmetal Alchemist",
+      time: "1d",
+      tone: "quote",
+    },
+    {
+      profile: "mira",
+      type: "Character note",
+      layer: "Character",
+      title: "Aiko Tanaka",
+      detail: "Added a character reflection to a custom ranking.",
+      story: "Goodnight Punpun",
+      time: "1d",
+      tone: "character",
+    },
+    {
+      profile: "ren",
+      type: "Note edited",
+      layer: "Note",
+      title: "The meaning of the ending",
+      detail: "Reworked a public note after comparing two scenes.",
+      story: "20th Century Boys",
+      time: "2d",
+      tone: "note",
+    },
+    {
+      profile: "kai",
+      type: "Thought added",
+      layer: "Thought",
+      title: "Identity after change",
+      detail: "Added a thought that connects three saved moments.",
+      story: "Tokyo Ghoul:re",
+      time: "2d",
+      tone: "thought",
+    },
+    {
+      profile: "mira",
+      type: "Library updated",
+      layer: "Library",
+      title: "Moved to completed",
+      detail: "Updated progress, score, and public saved layers.",
+      story: "Vinland Saga",
+      time: "3d",
+      tone: "library",
+    },
+    {
+      profile: "ren",
+      type: "Category created",
+      layer: "Ranking",
+      title: "Best-written conflicts",
+      detail: "Added a new profile ranking with four entries.",
+      story: "Monster",
+      time: "4d",
+      tone: "ranking",
+    },
   ]);
 
   const AUDIENCE_META = Object.freeze({
@@ -273,7 +351,7 @@
   const STEP_META = Object.freeze({
     control: { number: "01", label: "Audience and spoilers", status: "Control", announcement: "Choose an audience and decide whether to protect spoilers." },
     identity: { number: "02", label: "Profile, rankings, and activity", status: "Identity", announcement: "Build a profile from top stories, custom rankings, and recent activity." },
-    social: { number: "03", label: "Feed, discovery, and story layers", status: "Social", announcement: "Follow activity, discover readers, open a profile, and inspect one story." },
+    social: { number: "03", label: "Following, For You, and Search", status: "Social", announcement: "Compare recent activity, explainable recommendations, and focused reader search." },
   });
 
   const state = {
@@ -290,6 +368,7 @@
     following: new Set(),
     searchQuery: "Tokyo Ghoul:re",
     searchFilter: "all",
+    recommendationFocus: "kai",
   };
 
   const demoState = {
@@ -466,43 +545,48 @@
 
   function socialMarkup() {
     return `
-      <section class="s11-social-stage" data-s11-social-stage aria-label="Social product journey">
-        <header class="s11-social-stage__header">
+      <section class="s11-social-stage s12-social-stage" data-s11-social-stage aria-label="Social product journey">
+        <header class="s11-social-stage__header s12-social-stage__header">
           <span class="s11-social-stage__brand"><small>Inkwell social</small><strong data-s11-social-view-title>Following activity</strong></span>
           <div class="s11-social-tabs" role="tablist" aria-label="Social view">
             <button type="button" role="tab" data-s11-social-tab="following" aria-selected="true">Following</button>
             <button type="button" role="tab" data-s11-social-tab="foryou" aria-selected="false">For You</button>
             <button type="button" role="tab" data-s11-social-tab="search" aria-selected="false">Search</button>
           </div>
-          <span class="s11-social-stage__progress" data-s11-social-progress>01 / 06</span>
+          <span class="s11-social-stage__progress s12-social-stage__progress" data-s11-social-progress aria-label="Social journey step 1 of 6">
+            <span><strong data-s11-social-progress-value>01</strong><small>/06</small></span>
+            <i class="s12-progress-segments" aria-hidden="true">
+              ${Array.from({ length: 6 }, (_, index) => `<b data-s11-social-progress-segment="${index + 1}"></b>`).join("")}
+            </i>
+          </span>
         </header>
 
         <div class="s11-social-viewport" data-s11-social-viewport>
           <section class="s11-social-view is-active" data-s11-social-view="following" role="tabpanel" aria-label="Following activity">
-            <header class="s11-view-heading">
-              <span><small>Latest from people you chose</small><strong>Following</strong><p>New rankings, quotes, moments, reflections, and story updates stay connected to the profile that created them.</p></span>
-              <span class="s11-count-pill">4 updates</span>
+            <header class="s11-view-heading s12-view-heading">
+              <span><small>Latest from people you chose</small><strong>Following</strong><p>A living shelf of updates: rankings, quotes, moments, characters, notes, thoughts, reflections, and library changes.</p></span>
+              <span class="s11-count-pill">9 updates</span>
             </header>
-            <div class="s11-following-layout">
+            <div class="s11-following-layout s12-following-layout">
               <div data-s11-following-featured></div>
-              <div class="s11-following-grid" data-s11-following-grid></div>
+              <div class="s11-following-grid s12-following-grid" data-s11-following-grid></div>
             </div>
           </section>
 
           <section class="s11-social-view" data-s11-social-view="foryou" role="tabpanel" aria-label="For You recommendations" aria-hidden="true" inert>
-            <header class="s11-view-heading">
-              <span><small>Recommended with context</small><strong>For You</strong><p>Each recommendation explains shared taste and shows one reason the reader is still different enough to be interesting.</p></span>
+            <header class="s11-view-heading s12-view-heading">
+              <span><small>Recommended with context</small><strong>For You</strong><p>One reader is spotlighted while two alternate perspectives remain visible. Select a side card to bring that reader forward.</p></span>
               <span class="s11-count-pill">3 explainable matches</span>
             </header>
-            <div class="s11-recommendation-grid" data-s11-for-you-results></div>
+            <div class="s11-recommendation-grid s12-recommendation-stage" data-s11-for-you-results></div>
           </section>
 
           <section class="s11-social-view" data-s11-social-view="search" role="tabpanel" aria-label="Search readers" aria-hidden="true" inert>
-            <header class="s11-view-heading s11-view-heading--search">
-              <span><small>Find a specific kind of reader</small><strong>Search people through what they save and rank</strong></span>
-              <span class="s11-count-pill">Explainable filters</span>
+            <header class="s11-view-heading s11-view-heading--search s12-view-heading">
+              <span><small>Find a specific kind of reader</small><strong>Search through what people save, rank, and write</strong><p>Use one field at a time to keep the reason for every result clear.</p></span>
+              <span class="s11-count-pill">6 precise filters</span>
             </header>
-            <div class="s11-search-workspace">
+            <div class="s11-search-workspace s12-search-workspace">
               <div class="s11-search-box">
                 <label for="s11-reader-search">Search username, story, theme, tag, or ranking category</label>
                 <div class="s11-search-input-shell"><span aria-hidden="true">⌕</span><input id="s11-reader-search" data-s11-search-input type="search" value="Tokyo Ghoul:re" autocomplete="off"></div>
@@ -512,7 +596,7 @@
                   <button type="button" data-s11-search-suggestion="Identity">Identity</button>
                 </div>
               </div>
-              <div class="s11-search-filters" role="radiogroup" aria-label="Search field">
+              <div class="s11-search-filters s12-search-filters" role="radiogroup" aria-label="Search field">
                 <button type="button" role="radio" data-s11-search-filter="all" aria-checked="true">All</button>
                 <button type="button" role="radio" data-s11-search-filter="people" aria-checked="false">Username</button>
                 <button type="button" role="radio" data-s11-search-filter="stories" aria-checked="false">Story</button>
@@ -522,7 +606,7 @@
               </div>
             </div>
             <div class="s11-search-summary" data-s11-search-summary></div>
-            <div class="s11-search-result-grid" data-s11-search-results></div>
+            <div class="s11-search-result-grid s12-search-result-grid" data-s11-search-results></div>
           </section>
 
           <section class="s11-social-view" data-s11-social-view="profile" aria-label="Selected reader profile" aria-hidden="true" inert data-s11-reader-profile></section>
@@ -531,7 +615,6 @@
         </div>
       </section>`;
   }
-
 
   function collectElements() {
     return {
@@ -591,7 +674,9 @@
       socialStage: q("[data-s11-social-stage]"),
       socialViewport: q("[data-s11-social-viewport]"),
       socialViewTitle: q("[data-s11-social-view-title]"),
-      socialProgress: q("[data-s11-social-progress]"),
+      socialProgressRoot: q("[data-s11-social-progress]"),
+      socialProgress: q("[data-s11-social-progress-value]"),
+      socialProgressSegments: qa("[data-s11-social-progress-segment]"),
       socialTabs: qa("[data-s11-social-tab]"),
       socialViews: qa("[data-s11-social-view]"),
       followingFeatured: q("[data-s11-following-featured]"),
@@ -636,7 +721,7 @@
         userLocks.audience = true;
         userLocks.spoiler = true;
       }
-      if (target.matches("[data-s11-social-tab], [data-s11-back-social], [data-s11-open-library], [data-s11-open-story]")) userLocks.socialView = true;
+      if (target.matches("[data-s11-social-tab], [data-s11-back-social], [data-s11-open-library], [data-s11-open-story], [data-s12-recommendation-focus]")) userLocks.socialView = true;
       if (target.closest("[data-s11-profile-key]")) {
         userLocks.profile = true;
         userLocks.socialView = true;
@@ -730,6 +815,15 @@
       state.searchQuery = value;
       if (elements.searchInput) elements.searchInput.value = value;
       renderSearchResults(true);
+      return;
+    }
+
+    const recommendation = event.target.closest("[data-s12-recommendation-focus]");
+    if (recommendation) {
+      const key = recommendation.dataset.s12RecommendationFocus || "kai";
+      state.recommendationFocus = PROFILE_DATA[key] ? key : "kai";
+      renderReaderResults(true);
+      announce(`${PROFILE_DATA[state.recommendationFocus].name} moved into the recommendation spotlight.`);
       return;
     }
 
@@ -923,21 +1017,12 @@
     if (!demoState.spoiler && time >= DEMO_THRESHOLDS.spoilerEnter) demoState.spoiler = true;
     else if (demoState.spoiler && time <= DEMO_THRESHOLDS.spoilerLeave) demoState.spoiler = false;
 
-    const currentIndex = SOCIAL_VIEW_ORDER.indexOf(demoState.socialView);
     if (time <= DEMO_THRESHOLDS.forYouLeave) demoState.socialView = "following";
-    else if (time >= DEMO_THRESHOLDS.storyEnter) demoState.socialView = "story";
-    else if (time >= DEMO_THRESHOLDS.libraryEnter) demoState.socialView = "library";
-    else if (time >= DEMO_THRESHOLDS.profileEnter) demoState.socialView = "profile";
     else if (time >= DEMO_THRESHOLDS.searchEnter) demoState.socialView = "search";
     else if (time >= DEMO_THRESHOLDS.forYouEnter) demoState.socialView = "foryou";
-    else if (currentIndex > 0 && time <= DEMO_THRESHOLDS.forYouLeave) demoState.socialView = "following";
+    else if (demoState.socialView === "search" && time <= DEMO_THRESHOLDS.searchLeave) demoState.socialView = "foryou";
 
-    if (demoState.socialView === "story") {
-      if (time >= DEMO_THRESHOLDS.layerEnter) demoState.storyLayer = "characters";
-      else if (time <= DEMO_THRESHOLDS.layerLeave) demoState.storyLayer = "quotes";
-    } else {
-      demoState.storyLayer = "quotes";
-    }
+    demoState.storyLayer = "quotes";
 
     const signature = JSON.stringify(demoState);
     if (!force && signature === lastDemoSignature) return;
@@ -947,21 +1032,9 @@
     if (!userLocks.spoiler) renderSpoiler(demoState.spoiler, true, "demo");
 
     if (state.activeAct === "social" && !userLocks.socialView) {
-      if (["profile", "library", "story"].includes(demoState.socialView) && !userLocks.profile) selectProfile("kai", false, "demo");
-      if (demoState.socialView === "profile") renderReaderProfile("kai");
-      if (demoState.socialView === "library") renderReaderLibrary("kai");
-      if (demoState.socialView === "story") {
-        state.selectedStory = primaryStory.title;
-        renderStoryDetail(primaryStory.title);
-      }
       setSocialView(demoState.socialView, true, "demo");
     }
-
-    if (state.activeAct === "social" && demoState.socialView === "story" && !userLocks.storyLayer) {
-      setStoryLayer(demoState.storyLayer, true, "demo");
-    }
   }
-
 
   function setActiveAct(key, force = false) {
     if (!force && state.activeAct === key) return;
@@ -1130,19 +1203,33 @@
   function renderFollowingFeed() {
     const [featured, ...rest] = FEED_ITEMS;
     elements.followingFeatured.innerHTML = featuredFeedMarkup(featured);
-    elements.followingGrid.innerHTML = rest.map((item, index) => feedCardMarkup(item, index + 1)).join("");
+    elements.followingGrid.innerHTML = rest.slice(0, 8).map((item, index) => feedCardMarkup(item, index + 1)).join("");
     renderImages(elements.followingFeatured);
     renderImages(elements.followingGrid);
   }
 
 
-  function renderReaderResults() {
+  function renderReaderResults(animate = false) {
     const keys = ["kai", "mira", "ren"];
-    elements.forYouResults.innerHTML = keys.map((key, index) => recommendationCardMarkup(key, index)).join("");
+    const focusKey = keys.includes(state.recommendationFocus) ? state.recommendationFocus : "kai";
+    const sideKeys = keys.filter((key) => key !== focusKey);
+
+    elements.forYouResults.innerHTML = `
+      <div class="s12-recommendation-spotlight">${recommendationSpotlightMarkup(focusKey)}</div>
+      <div class="s12-recommendation-rail" aria-label="Other recommended readers">
+        ${sideKeys.map((key) => recommendationMiniMarkup(key)).join("")}
+      </div>`;
+
     renderImages(elements.forYouResults);
     renderSearchResults(false);
-  }
 
+    if (animate && gsap) {
+      const spotlight = q(".s12-recommendation-spotlight", elements.forYouResults);
+      const railCards = qa(".s12-recommendation-mini", elements.forYouResults);
+      gsap.fromTo(spotlight, { autoAlpha: 0, x: -14, scale: 0.992 }, { autoAlpha: 1, x: 0, scale: 1, duration: 0.38, ease: "power3.out", overwrite: "auto" });
+      gsap.fromTo(railCards, { autoAlpha: 0, x: 12 }, { autoAlpha: 1, x: 0, duration: 0.32, stagger: 0.06, ease: "power3.out", overwrite: "auto" });
+    }
+  }
 
   function renderSearchResults(animate) {
     const query = normalizeText(state.searchQuery);
@@ -1252,12 +1339,21 @@
     const meta = SOCIAL_VIEW_META[view] || SOCIAL_VIEW_META.following;
     setText(elements.socialViewTitle, meta.label);
     setText(elements.socialProgress, meta.step);
+
+    if (elements.socialProgressRoot) {
+      elements.socialProgressRoot.setAttribute("aria-label", `Social journey step ${meta.segment} of 6`);
+    }
+
+    elements.socialProgressSegments.forEach((segment, index) => {
+      segment.classList.toggle("is-complete", index + 1 < meta.segment);
+      segment.classList.toggle("is-active", index + 1 === meta.segment);
+    });
+
     if (state.activeAct === "social") {
       setText(elements.toolbarStatus, meta.status);
       setText(elements.sceneLabel, meta.label);
     }
   }
-
 
   function selectProfile(key, animate, source = "system") {
     const normalized = PROFILE_DATA[key] && key !== "nova" ? key : "kai";
@@ -1498,21 +1594,22 @@
   function feedCardMarkup(item, index) {
     const profile = PROFILE_DATA[item.profile];
     const story = getStoryByTitle(item.story);
-    return `<button type="button" class="s11-feed-card" data-s11-profile-key="${escapeHtml(item.profile)}" aria-label="Open ${escapeHtml(profile.name)} profile"><header><span class="s11-avatar s11-avatar--small" style="${avatarStyle(item.profile)}">${escapeHtml(profile.initial)}</span><span><strong>${escapeHtml(profile.name)}</strong><small>${escapeHtml(item.type)}</small></span><time>${escapeHtml(item.time || `${index + 1}h`)}</time></header><div class="s11-feed-card__story">${storyCoverMarkup(story)}<span><strong>${escapeHtml(item.title)}</strong><small>${escapeHtml(story.title)}</small></span></div><p>${escapeHtml(item.detail)}</p><footer><span>${escapeHtml(profile.tags[0])}</span><span>Open profile →</span></footer></button>`;
+    return `<article class="s11-feed-card s12-feed-card" data-s12-feed-tone="${escapeHtml(item.tone || "default")}" tabindex="0" aria-label="${escapeHtml(profile.name)} ${escapeHtml(item.type)} for ${escapeHtml(story.title)}"><header><span class="s11-avatar s11-avatar--small" style="${avatarStyle(item.profile)}">${escapeHtml(profile.initial)}</span><span><strong>${escapeHtml(profile.name)}</strong><small>${escapeHtml(item.type)}</small></span><time>${escapeHtml(item.time || `${index + 1}h`)}</time></header><div class="s11-feed-card__story s12-feed-card__story">${storyCoverMarkup(story)}<span><strong>${escapeHtml(item.title)}</strong><small>${escapeHtml(story.title)}</small></span></div><p>${escapeHtml(item.detail)}</p><footer><span class="s12-layer-chip">${escapeHtml(item.layer || "Update")}</span><span>${escapeHtml(profile.tags[0])}</span></footer></article>`;
   }
 
   function featuredFeedMarkup(item) {
     const profile = PROFILE_DATA[item.profile];
     const story = getStoryByTitle(item.story);
-    return `<button type="button" class="s11-following-feature" data-s11-profile-key="${escapeHtml(item.profile)}" aria-label="Open ${escapeHtml(profile.name)} profile"><div class="s11-following-feature__cover">${storyCoverMarkup(story)}</div><div class="s11-following-feature__copy"><header><span class="s11-avatar" style="${avatarStyle(item.profile)}">${escapeHtml(profile.initial)}</span><span><small>${escapeHtml(item.type)}</small><strong>${escapeHtml(profile.name)}</strong></span><time>${escapeHtml(item.time)}</time></header><span class="s11-kicker">${escapeHtml(story.title)}</span><h4>${escapeHtml(item.title)}</h4><p>${escapeHtml(item.detail)}. Open the reader to see the ranking, profile, and story layers behind this update.</p><footer><span>${escapeHtml(profile.tags.slice(0, 2).join(" · "))}</span><strong>Open profile →</strong></footer></div></button>`;
+    const layers = [item.layer || "Ranking", "Characters", "Thoughts"];
+    return `<article class="s11-following-feature s12-following-feature" data-s12-feed-tone="${escapeHtml(item.tone || "ranking")}" tabindex="0" aria-label="Featured update from ${escapeHtml(profile.name)}"><div class="s11-following-feature__cover">${storyCoverMarkup(story)}</div><div class="s11-following-feature__copy"><header><span class="s11-avatar" style="${avatarStyle(item.profile)}">${escapeHtml(profile.initial)}</span><span><small>${escapeHtml(item.type)}</small><strong>${escapeHtml(profile.name)}</strong></span><time>${escapeHtml(item.time)}</time></header><span class="s11-kicker">${escapeHtml(story.title)}</span><h4>${escapeHtml(item.title)}</h4><p>${escapeHtml(item.detail)} This update remains attached to the story and the profile category that created it.</p><div class="s12-feature-meta"><span><small>Story</small><strong>${escapeHtml(story.title)}</strong></span><span><small>Profile category</small><strong>${escapeHtml(profile.signature)}</strong></span></div><footer><span>${layers.map((layer) => `<b>${escapeHtml(layer)}</b>`).join("")}</span><strong>${escapeHtml(profile.tags.slice(0, 2).join(" · "))}</strong></footer></div></article>`;
   }
 
 
   function readerResultMarkup(key, context) {
-    return context === "search" ? searchResultMarkup(key, PROFILE_DATA[key].match) : recommendationCardMarkup(key, 0);
+    return context === "search" ? searchResultMarkup(key, PROFILE_DATA[key].match) : recommendationSpotlightMarkup(key);
   }
 
-  function recommendationCardMarkup(key, index) {
+  function recommendationSpotlightMarkup(key) {
     const profile = PROFILE_DATA[key];
     const story = getStoryByTitle(profile.topStories[0]);
     const rankingItems = (profile.signatureItems || profile.topStories)
@@ -1523,7 +1620,14 @@
       .slice(0, 3)
       .map((item) => `<em>${escapeHtml(item)}</em>`)
       .join("");
-    return `<button type="button" class="s11-recommendation-card s11-recommendation-card--${index + 1}" data-s11-profile-key="${escapeHtml(key)}" aria-pressed="${state.selectedProfile === key}"><header><span class="s11-avatar" style="${avatarStyle(key)}">${escapeHtml(profile.initial)}</span><span><small>${escapeHtml(profile.label)}</small><strong>${escapeHtml(profile.name)}</strong><p>${escapeHtml(profile.bio)}</p></span>${storyCoverMarkup(story, "s11-recommendation-cover")}</header><div class="s11-recommendation-reason"><span>↔</span><p>${escapeHtml(profile.match)}</p></div><div class="s11-recommendation-bottom"><span><small>Signature ranking</small><strong>${escapeHtml(profile.signature)}</strong><ol>${rankingItems}</ol></span><span><small>Different perspective</small><strong>${escapeHtml(profile.difference)}</strong><span class="s11-recommendation-themes">${themeItems}</span></span></div><footer><span>${escapeHtml(profile.sharedThemes.join(" · "))}</span><strong>Open profile →</strong></footer></button>`;
+
+    return `<article class="s11-recommendation-card s12-recommendation-feature"><header><span class="s11-avatar s12-avatar-xl" style="${avatarStyle(key)}">${escapeHtml(profile.initial)}</span><span><small>${escapeHtml(profile.label)}</small><strong>${escapeHtml(profile.name)}</strong><p>${escapeHtml(profile.bio)}</p></span>${storyCoverMarkup(story, "s12-recommendation-cover")}</header><div class="s12-recommendation-match"><span aria-hidden="true">↔</span><div><small>Why this reader appeared</small><p>${escapeHtml(profile.match)}</p></div></div><div class="s12-recommendation-columns"><section><small>Signature ranking</small><strong>${escapeHtml(profile.signature)}</strong><ol>${rankingItems}</ol></section><section><small>A different lens</small><p>${escapeHtml(profile.difference)}</p><div class="s11-recommendation-themes">${themeItems}</div></section></div><footer><span><b>${escapeHtml(profile.topStories[0])}</b><small>#1 story</small></span><span><b>${escapeHtml(profile.sharedThemes.length)} shared themes</b><small>Explainable match</small></span></footer></article>`;
+  }
+
+  function recommendationMiniMarkup(key) {
+    const profile = PROFILE_DATA[key];
+    const story = getStoryByTitle(profile.topStories[0]);
+    return `<button type="button" class="s12-recommendation-mini" data-s12-recommendation-focus="${escapeHtml(key)}" aria-label="Spotlight ${escapeHtml(profile.name)}"><header><span class="s11-avatar" style="${avatarStyle(key)}">${escapeHtml(profile.initial)}</span><span><small>${escapeHtml(profile.label)}</small><strong>${escapeHtml(profile.name)}</strong></span>${storyCoverMarkup(story, "s12-recommendation-mini__cover")}</header><p>${escapeHtml(profile.match)}</p><div><span><small>Signature</small><strong>${escapeHtml(profile.signature)}</strong></span><span class="s12-mini-themes">${profile.sharedThemes.slice(0, 2).map((theme) => `<em>${escapeHtml(theme)}</em>`).join("")}</span></div><footer><span>${escapeHtml(story.title)}</span><strong>Bring forward</strong></footer></button>`;
   }
 
   function searchResultMarkup(key, reason) {
@@ -1855,7 +1959,7 @@
         timeline?.kill?.();
         resizeObserver?.disconnect?.();
         cleanupCallbacks.splice(0).forEach((callback) => callback());
-        window.__INKWELL_SOCIAL_V11_STARTED__ = false;
+        window.__INKWELL_SOCIAL_V12_STARTED__ = false;
       },
       cleanup: () => trigger?.kill?.(true),
     };
