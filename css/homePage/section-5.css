@@ -1,5 +1,5 @@
 /* ========================================================================== 
-   INKWELL — SECTION 5: SOCIAL, ON YOUR TERMS (V6 REFINED)
+   INKWELL — SECTION 5: SOCIAL, ON YOUR TERMS (V9 STABLE MOTION + CLEAR DISCOVERY)
 
    Goals:
    - editorial copy never overlaps the chapter indicator
@@ -3247,5 +3247,480 @@
     .social-theme-button
   ):hover {
     transform: none;
+  }
+}
+
+/* ========================================================================== 
+   INKWELL — SECTION 5 V9 STABILITY + CLARITY OVERRIDES
+
+   These rules intentionally live last. They remove scroll-driven flashing,
+   clarify the discovery model, strengthen the Tokyo Ghoul:re cover, and fix
+   the right-hand evidence layout without requiring HTML changes.
+   ========================================================================== */
+
+#section-5-social,
+.social-cinema {
+  --s5-v9-panel: rgba(8, 14, 30, 0.965);
+  --s5-v9-panel-raised: rgba(13, 23, 45, 0.96);
+  --s5-v9-line: rgba(189, 203, 244, 0.2);
+  --s5-v9-line-strong: rgba(124, 218, 255, 0.58);
+  --s5-v9-blue-surface: rgba(29, 58, 104, 0.72);
+  --s5-v9-rose-surface: rgba(104, 48, 71, 0.74);
+  --s5-v9-green-surface: rgba(24, 91, 67, 0.78);
+
+  background:
+    radial-gradient(ellipse 920px 660px at 15% 34%, rgba(105, 132, 255, 0.22), transparent 69%),
+    radial-gradient(ellipse 860px 620px at 86% 24%, rgba(159, 105, 255, 0.18), transparent 70%),
+    radial-gradient(ellipse 760px 520px at 62% 88%, rgba(105, 211, 255, 0.08), transparent 72%),
+    linear-gradient(138deg, #070a1b 0%, #111a3d 44%, #0b1230 72%, #050713 100%);
+}
+
+.social-cinema::after {
+  background:
+    linear-gradient(90deg, rgba(3, 5, 14, 0.22), transparent 27%, transparent 74%, rgba(3, 5, 14, 0.24)),
+    radial-gradient(ellipse 1050px 640px at 62% 44%, rgba(124, 140, 255, 0.055), transparent 75%);
+}
+
+/* Stable interaction feedback: selected state persists; hover/focus never
+   causes brightness flicker or changes the painted hitbox. */
+#section-5-social :is(
+  .social-primary-button,
+  .social-audience-button,
+  .social-profile-edit,
+  .social-search-tab,
+  .social-result-card,
+  .social-follow-button,
+  .social-spoiler-reveal,
+  .social-mutual-story,
+  .social-theme-button,
+  .social-spoiler-toggle
+) {
+  filter: none !important;
+}
+
+#section-5-social :is(
+  .social-primary-button,
+  .social-audience-button,
+  .social-profile-edit,
+  .social-search-tab,
+  .social-result-card,
+  .social-follow-button,
+  .social-spoiler-reveal,
+  .social-mutual-story,
+  .social-theme-button
+):hover {
+  filter: none !important;
+}
+
+/* --------------------------------------------------------------------------
+   CONTROL — clearer hierarchy and a more legible primary story
+   -------------------------------------------------------------------------- */
+
+.social-composer__header {
+  min-height: 92px;
+  padding: 0.82rem 1rem;
+}
+
+/* 40px was too small at the desktop scale shown in the screenshots. 52px
+   preserves a compact header while making the cover recognisable at a glance. */
+.social-story-mini__cover {
+  width: 52px;
+  min-width: 52px;
+  border-radius: 9px;
+  font-size: 0.62rem;
+  box-shadow:
+    0 12px 28px rgba(0, 0, 0, 0.34),
+    0 0 0 1px rgba(204, 214, 255, 0.08);
+}
+
+.social-story-mini {
+  gap: 0.82rem;
+}
+
+.social-story-mini small {
+  color: #aab7d1;
+  font-size: 0.7rem;
+}
+
+.social-story-mini strong {
+  margin-top: 0.18rem;
+  font-size: 0.9rem;
+}
+
+.social-audience-button {
+  border-color: var(--s5-v9-line);
+  background: rgba(6, 12, 26, 0.84);
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.025);
+}
+
+.social-audience-button[aria-checked="true"],
+.social-audience-button[aria-pressed="true"] {
+  border-color: var(--s5-v9-line-strong);
+  color: #f6fcff;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(124, 218, 255, 0.1), transparent 55%),
+    var(--s5-v9-blue-surface);
+  box-shadow:
+    inset 0 -3px rgba(120, 216, 255, 0.72),
+    0 0 0 1px rgba(120, 216, 255, 0.06),
+    0 10px 24px rgba(0, 0, 0, 0.16);
+}
+
+.social-spoiler-row {
+  border-color: var(--s5-v9-line);
+  background: rgba(6, 12, 26, 0.84);
+  transition:
+    border-color 180ms ease,
+    background-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.social-spoiler-row.is-enabled {
+  border-color: rgba(255, 159, 188, 0.48);
+  background: rgba(72, 34, 54, 0.44);
+  box-shadow: inset 3px 0 rgba(255, 159, 188, 0.58);
+}
+
+.social-spoiler-toggle::before,
+.social-spoiler-toggle::after {
+  will-change: transform;
+}
+
+.social-primary-button {
+  min-width: 132px;
+}
+
+.social-primary-button.is-confirmed {
+  border-color: rgba(126, 221, 181, 0.68);
+  color: #f1fff8;
+  background: linear-gradient(135deg, #2b8a67, #3f9a76);
+  box-shadow:
+    0 12px 28px rgba(19, 100, 70, 0.25),
+    inset 0 1px rgba(255, 255, 255, 0.14);
+}
+
+/* --------------------------------------------------------------------------
+   IDENTITY — use profile chips for actual taste metadata
+   -------------------------------------------------------------------------- */
+
+.social-profile-tags {
+  gap: 0.42rem;
+  margin-top: 0.62rem;
+}
+
+.social-profile-tag {
+  min-height: 30px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.36rem 0.58rem;
+  border-color: rgba(190, 202, 239, 0.18);
+  color: #c0cae0;
+  background: rgba(8, 15, 31, 0.68);
+  font-size: 0.6rem;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+.social-profile-content {
+  grid-template-columns: minmax(320px, 0.92fr) minmax(390px, 1.08fr);
+  gap: 1.05rem;
+}
+
+/* --------------------------------------------------------------------------
+   DISCOVERY — the left control selects how reader matches are found.
+   The right side then explains the selected reader with proof.
+   -------------------------------------------------------------------------- */
+
+.social-search-box {
+  padding-top: 0.78rem;
+}
+
+.social-search-label {
+  min-height: 18px;
+  color: #b4bfd6;
+  font-size: 0.67rem;
+  line-height: 1.35;
+}
+
+.social-search-mode-label {
+  display: block;
+  margin-top: 0.68rem;
+  color: #7f8eaa;
+  font-family: var(--font-body, system-ui, sans-serif);
+  font-size: 0.55rem;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.social-search-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.42rem;
+  margin-top: 0.38rem;
+}
+
+.social-search-tab {
+  width: 100%;
+  min-width: 0;
+  min-height: 48px;
+  padding: 0.5rem 0.42rem;
+  border: 1px solid rgba(190, 202, 239, 0.18);
+  border-radius: 12px;
+  color: #a8b4ca;
+  background: rgba(6, 12, 26, 0.68);
+  line-height: 1.2;
+  text-align: center;
+}
+
+.social-search-tab.is-active,
+.social-search-tab[aria-checked="true"] {
+  border-color: var(--s5-v9-line-strong);
+  color: #f0fbff;
+  background: var(--s5-v9-blue-surface);
+  box-shadow:
+    inset 0 -3px rgba(120, 216, 255, 0.72),
+    0 8px 20px rgba(0, 0, 0, 0.14);
+}
+
+.social-result-list {
+  grid-template-rows: repeat(3, minmax(90px, 1fr));
+  gap: 0.55rem;
+  padding: 0.72rem 0.82rem 0.82rem;
+}
+
+.social-result-card {
+  min-height: 92px;
+  padding: 0.72rem 0.76rem;
+  border-color: rgba(190, 202, 239, 0.19);
+}
+
+.social-result-card.is-selected,
+.social-result-card[aria-pressed="true"] {
+  border-color: rgba(120, 216, 255, 0.66);
+  background:
+    radial-gradient(circle at 0% 50%, rgba(120, 216, 255, 0.09), transparent 38%),
+    #172b4d;
+  box-shadow:
+    inset 4px 0 var(--s5-cyan),
+    0 0 24px rgba(113, 140, 255, 0.08);
+}
+
+.social-result-copy small {
+  color: #9eabc2;
+  line-height: 1.38;
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+/* Five explicit rows: profile header, reason, evidence, public activity, payoff.
+   V8 declared only four rows for five children, causing the feed to overlap or
+   collapse into the evidence area on common 768–820px viewports. */
+.social-visited-profile {
+  display: grid;
+  grid-template-rows:
+    auto
+    auto
+    auto
+    minmax(84px, 1fr)
+    auto;
+  align-content: start;
+  overflow: hidden;
+}
+
+.social-visited-profile__top {
+  min-height: 86px;
+}
+
+.social-match-reason {
+  min-height: 60px;
+  margin-top: 0.62rem;
+}
+
+.social-discovery-evidence {
+  min-height: 0;
+  padding: 0.68rem 0.82rem 0;
+  overflow: visible;
+}
+
+.social-section-heading {
+  min-height: 38px;
+}
+
+.social-evidence-hint {
+  color: #9aa8c1;
+  background: rgba(8, 15, 31, 0.7);
+}
+
+.social-evidence-grid {
+  grid-template-columns: minmax(0, 1fr) minmax(122px, 0.34fr);
+  gap: 0.72rem;
+  align-items: stretch;
+  margin-top: 0.52rem;
+}
+
+.social-evidence-stories,
+.social-theme-row {
+  min-height: 0;
+  padding-top: 1.08rem;
+}
+
+.social-evidence-stories {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.48rem;
+}
+
+.social-mutual-story {
+  min-height: 84px;
+  height: 84px;
+  grid-template-columns: 40px minmax(0, 1fr);
+  gap: 0.5rem;
+  align-content: center;
+  padding: 0.5rem;
+  border-color: rgba(190, 202, 239, 0.2);
+  background: rgba(6, 12, 26, 0.78);
+}
+
+.social-mutual-cover {
+  width: 40px;
+  min-width: 40px;
+  border-radius: 7px;
+}
+
+.social-mutual-story > span:last-child {
+  font-size: 0.6rem;
+  line-height: 1.3;
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.social-mutual-story.is-selected,
+.social-mutual-story[aria-pressed="true"] {
+  border-color: rgba(120, 216, 255, 0.66);
+  background: #182e52;
+  box-shadow:
+    inset 0 -3px rgba(120, 216, 255, 0.62),
+    0 8px 18px rgba(0, 0, 0, 0.14);
+}
+
+.social-theme-row {
+  grid-template-rows: repeat(3, 1fr);
+  gap: 0.42rem;
+}
+
+.social-theme-button {
+  min-height: 0;
+  height: auto;
+  padding: 0.52rem 0.58rem;
+  border-radius: 12px;
+  border-color: rgba(190, 202, 239, 0.2);
+  background: rgba(6, 12, 26, 0.72);
+}
+
+.social-theme-button.is-selected,
+.social-theme-button[aria-pressed="true"] {
+  border-color: rgba(120, 216, 255, 0.66);
+  color: #f0fbff;
+  background: #19365f;
+  box-shadow: inset 3px 0 rgba(120, 216, 255, 0.68);
+}
+
+.social-evidence-summary {
+  min-height: 48px;
+  margin-top: 0.52rem;
+  padding: 0.55rem 0.66rem;
+  border-left: 3px solid rgba(120, 216, 255, 0.68);
+  background: rgba(17, 31, 59, 0.72);
+}
+
+.social-evidence-summary strong {
+  font-size: 0.68rem;
+}
+
+.social-evidence-summary small {
+  color: #9ba8c0;
+  font-size: 0.59rem;
+  line-height: 1.35;
+}
+
+.social-visited-feed {
+  min-height: 0;
+  align-self: stretch;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-content: start;
+  gap: 0.48rem;
+  padding: 0.58rem 0.82rem 0.72rem;
+  overflow: hidden;
+}
+
+.social-feed-item {
+  min-height: 82px;
+  height: 100%;
+  padding: 0.6rem 0.64rem;
+  border-color: rgba(190, 202, 239, 0.14);
+  background: rgba(6, 12, 26, 0.68);
+}
+
+.social-feed-item p {
+  margin-top: 0.34rem;
+  color: #aab5ca;
+  font-size: 0.61rem;
+  line-height: 1.42;
+}
+
+@media (max-height: 820px) and (min-width: 1100px) {
+  .social-composer__header {
+    min-height: 84px;
+  }
+
+  .social-story-mini__cover {
+    width: 48px;
+    min-width: 48px;
+  }
+
+  .social-visited-profile__top {
+    min-height: 78px;
+  }
+
+  .social-match-reason {
+    min-height: 54px;
+    margin-top: 0.5rem;
+  }
+
+  .social-discovery-evidence {
+    padding-top: 0.52rem;
+  }
+
+  .social-mutual-story {
+    min-height: 74px;
+    height: 74px;
+  }
+
+  .social-mutual-cover {
+    width: 36px;
+    min-width: 36px;
+  }
+
+  .social-feed-item {
+    min-height: 72px;
+  }
+}
+
+@media (max-width: 1220px) and (min-width: 1100px) {
+  .social-evidence-grid {
+    grid-template-columns: minmax(0, 1fr) 116px;
+  }
+
+  .social-mutual-story {
+    grid-template-columns: 36px minmax(0, 1fr);
+  }
+
+  .social-mutual-cover {
+    width: 36px;
+    min-width: 36px;
   }
 }

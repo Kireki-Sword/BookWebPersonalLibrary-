@@ -1,25 +1,25 @@
 /* ============================================================================
-   INKWELL — SECTION 5: SOCIAL, ON YOUR TERMS (V8 HYBRID SCROLL + INTERACTION)
+   INKWELL — SECTION 5: SOCIAL, ON YOUR TERMS (V9 STABLE MOTION + CLEAR DISCOVERY)
 
    What changed:
-   - scroll once again demonstrates Private -> Followers -> Public -> Spoilers
-   - demo state is deterministic in both scroll directions
-   - the moment a person interacts with a control, that control becomes user-owned
-     and scrolling can no longer overwrite it
-   - no pointerdown handler changes the page scroll position
-   - discovery profiles now have genuinely different themes, stories, and activity
-   - Tokyo Ghoul:re is selected from Supabase as the primary Section 5 story
+   - scroll demonstrations use hysteresis, so state cannot flicker at thresholds
+   - selected controls stay visually stable; no auto-flashing filters or yoyo glows
+   - user ownership begins on pointerdown, before scroll inertia can overwrite a click
+   - search modes are a radio-style "match readers by" control, not misleading tabs
+   - the evidence panel clearly separates shared stories, shared themes, and activity
+   - the profile communicates favourite genre, character, theme, and format
+   - Tokyo Ghoul:re remains the primary Section 5 story and receives a larger cover
    ============================================================================ */
 
 (() => {
   "use strict";
 
   const section = document.querySelector("#section-5-social");
-  if (!section || window.__INKWELL_SOCIAL_V8_STARTED__) return;
+  if (!section || window.__INKWELL_SOCIAL_V9_STARTED__) return;
 
-  window.__INKWELL_SOCIAL_V8_STARTED__ = true;
+  window.__INKWELL_SOCIAL_V9_STARTED__ = true;
   window.__INKWELL_SOCIAL_CINEMA_BUILD__ =
-    "2026-07-25-social-cinema-v8-hybrid-scroll-interaction";
+    "2026-07-25-social-cinema-v9-stable-motion-clear-discovery";
 
   const { gsap, ScrollTrigger } = window;
   const MANAGED_BY_HOME_JOURNEY =
@@ -47,6 +47,49 @@
     discoveryTransition: 6.46,
     discovery: 7.18,
     end: 10.6,
+  });
+
+  // Scroll state changes use separate enter/leave thresholds. This hysteresis
+  // prevents trackpad inertia from toggling a control repeatedly near a boundary.
+  const DEMO_THRESHOLDS = Object.freeze({
+    followersEnter: 1.5,
+    followersLeave: 1.28,
+    publicEnter: 2.2,
+    publicLeave: 1.96,
+    spoilerEnter: 2.72,
+    spoilerLeave: 2.42,
+    miraEnter: 8.3,
+    miraLeave: 8.04,
+    renEnter: 9.2,
+    renLeave: 8.94,
+  });
+
+  const PROFILE_TASTE_CHIPS = Object.freeze([
+    "Fav genre · Psychological",
+    "Fav MC · Ken Kaneki",
+    "Fav theme · Identity",
+    "Fav format · Manga",
+  ]);
+
+  const SEARCH_MODE_COPY = Object.freeze({
+    readers: {
+      button: "Reader name",
+      label: "Find readers by username",
+      placeholder: "Search a reader, for example kai.reads",
+      heading: "Reader matches by name",
+    },
+    stories: {
+      button: "Shared story",
+      label: "Find readers who saved the same story",
+      placeholder: "Search a shared story",
+      heading: "Readers connected by this story",
+    },
+    themes: {
+      button: "Shared theme",
+      label: "Find readers whose public notes share a theme",
+      placeholder: "Search a theme, for example freedom",
+      heading: "Readers connected by this theme",
+    },
   });
 
   const TOKYO_GHOUL_RE_ALIASES = [
@@ -297,10 +340,12 @@
     previewHint: q("[data-social-preview-hint]"),
     previewFooter: q("[data-social-preview-footer]"),
     orbitAvatars: qa(".social-orbit-avatar"),
+    spoilerRow: q(".social-spoiler-row"),
     spoilerToggle: q("[data-social-spoiler-toggle]"),
     spoilerShield: q("[data-social-spoiler-shield]"),
     spoilerReveal: q("[data-social-spoiler-reveal]"),
     shareButton: q("[data-social-share-button]"),
+    draftBadge: q(".social-draft-badge"),
 
     profileShell: q("[data-social-profile-shell]"),
     profileBanner: q(".social-profile-banner"),
@@ -317,6 +362,7 @@
     searchPanel: q(".social-search-panel"),
     searchHeading: q(".social-search-panel__header strong"),
     searchCount: q(".social-search-count"),
+    searchLabel: q(".social-search-label"),
     searchInput: q("[data-social-search-input]"),
     searchTabs: qa("[data-social-search-scope]"),
     resultList: q("[data-social-result-list]"),
@@ -329,6 +375,7 @@
     sharedContext: q(".social-shared-context"),
     mutualStoryButtons: qa("[data-social-mutual-story-index]"),
     themeButtons: qa("[data-social-theme]"),
+    evidenceHint: q(".social-evidence-hint"),
     evidenceSummary: q("[data-social-evidence-summary]"),
     visitedFeed: qa(".social-feed-item"),
     followButton: q("[data-social-follow]"),
@@ -364,7 +411,7 @@
   ];
 
   if (required.some((item) => !item)) {
-    console.warn("Inkwell social V8: required Section 5 markup is missing.");
+    console.warn("Inkwell social V9: required Section 5 markup is missing.");
     return;
   }
 
@@ -379,6 +426,11 @@
   let selectedTheme = "freedom";
   let selectedStoryIndex = -1;
   let lastDemoSignature = "";
+  const demoState = {
+    audience: "private",
+    spoiler: false,
+    profile: "kai",
+  };
   const cleanupCallbacks = [];
 
   const userLocks = {
@@ -396,8 +448,10 @@
     searchScope: "themes",
     searchQuery: "freedom",
     following: false,
+    shared: false,
   };
 
+  prepareInterfaceCopy();
   setupInteractions();
   hydrateDatabaseStories();
 
@@ -479,55 +533,18 @@
 
     timeline.addLabel("control-ready", OPENING_READY_TIME);
 
-    // The audience values are applied by syncDemoState(). These tweens provide
-    // a clear visual rhythm without owning the selected values themselves.
+    // Selected audience, spoiler state, and the share action now communicate
+    // through persistent component states. The scroll timeline never flashes
+    // these controls; it only moves the preview and changes its content.
     timeline.fromTo(
-      elements.audienceButtons,
-      { filter: "brightness(0.93)" },
-      {
-        filter: "brightness(1)",
-        duration: 0.28,
-        stagger: 0.06,
-        ease: "power2.out",
-      },
-      1.06,
-    );
-
-    timeline.to(
       elements.livePreview,
+      { borderColor: "rgba(194, 207, 246, 0.20)" },
       {
-        boxShadow:
-          "0 24px 62px rgba(0,0,0,.3), 0 0 0 1px rgba(115,220,255,.09)",
-        duration: 0.34,
-        repeat: 1,
-        yoyo: true,
+        borderColor: "rgba(120, 216, 255, 0.34)",
+        duration: 0.72,
         ease: "power1.inOut",
       },
-      1.62,
-    );
-
-    timeline.to(
-      elements.spoilerToggle,
-      {
-        filter: "brightness(1.14)",
-        duration: 0.18,
-        repeat: 1,
-        yoyo: true,
-        ease: "power1.inOut",
-      },
-      2.56,
-    );
-
-    timeline.to(
-      elements.shareButton,
-      {
-        filter: "brightness(1.13)",
-        duration: 0.16,
-        repeat: 1,
-        yoyo: true,
-        ease: "power1.inOut",
-      },
-      3.02,
+      1.42,
     );
 
     timeline.addLabel("identity-transition", ACT_TIMES.identityTransition);
@@ -831,17 +848,6 @@
       "discovery+=0.56",
     );
 
-    timeline.to(
-      elements.followButton,
-      {
-        filter: "brightness(1.12)",
-        duration: 0.16,
-        repeat: 1,
-        yoyo: true,
-        ease: "power1.inOut",
-      },
-      "discovery+=2.4",
-    );
 
     // Hold only until the authored ending. A long append-only hold here made
     // the Discovery act look frozen and created the large empty-scroll tail.
@@ -854,7 +860,7 @@
     }
 
     trigger = ScrollTrigger.create({
-      id: "inkwell-social-cinema-v8",
+      id: "inkwell-social-cinema-v9",
       trigger: section,
       animation: timeline,
       pin: elements.pin,
@@ -978,19 +984,52 @@
   }
 
   function getDemoSnapshot(time) {
-    let audience = "private";
-    if (time >= 1.42 && time < 2.08) audience = "followers";
-    if (time >= 2.08) audience = "public";
+    // Direct jumps still resolve to the correct state. Small back-and-forth
+    // movements use hysteresis so a trackpad cannot flicker between options.
+    if (time <= DEMO_THRESHOLDS.followersLeave) {
+      demoState.audience = "private";
+    } else if (time >= DEMO_THRESHOLDS.publicEnter) {
+      demoState.audience = "public";
+    } else if (demoState.audience === "private") {
+      if (time >= DEMO_THRESHOLDS.followersEnter) {
+        demoState.audience = "followers";
+      }
+    } else if (demoState.audience === "public") {
+      if (time <= DEMO_THRESHOLDS.publicLeave) {
+        demoState.audience = "followers";
+      }
+    } else {
+      if (time <= DEMO_THRESHOLDS.followersLeave) {
+        demoState.audience = "private";
+      } else if (time >= DEMO_THRESHOLDS.publicEnter) {
+        demoState.audience = "public";
+      }
+    }
 
-    const spoiler = time >= 2.52 && time < ACT_TIMES.identityTransition + 0.12;
+    if (!demoState.spoiler && time >= DEMO_THRESHOLDS.spoilerEnter) {
+      demoState.spoiler = true;
+    } else if (demoState.spoiler && time <= DEMO_THRESHOLDS.spoilerLeave) {
+      demoState.spoiler = false;
+    }
 
-    let profile = "kai";
-    if (time >= 8.18 && time < 9.08) profile = "mira";
-    if (time >= 9.08) profile = "ren";
+    if (time <= DEMO_THRESHOLDS.miraLeave) {
+      demoState.profile = "kai";
+    } else if (time >= DEMO_THRESHOLDS.renEnter) {
+      demoState.profile = "ren";
+    } else if (demoState.profile === "kai") {
+      if (time >= DEMO_THRESHOLDS.miraEnter) demoState.profile = "mira";
+    } else if (demoState.profile === "ren") {
+      if (time <= DEMO_THRESHOLDS.renLeave) demoState.profile = "mira";
+    } else {
+      if (time <= DEMO_THRESHOLDS.miraLeave) demoState.profile = "kai";
+      if (time >= DEMO_THRESHOLDS.renEnter) demoState.profile = "ren";
+    }
 
-    const following = time >= 9.86;
-
-    return { audience, spoiler, profile, following };
+    return {
+      audience: demoState.audience,
+      spoiler: demoState.spoiler,
+      profile: demoState.profile,
+    };
   }
 
   function syncDemoState(time, force) {
@@ -1000,13 +1039,11 @@
     lastDemoSignature = signature;
 
     if (!userLocks.audience && interactionState.audience !== demo.audience) {
-      interactionState.audience = demo.audience;
-      renderAudience(demo.audience, true);
+      renderAudience(demo.audience, true, "demo");
     }
 
     if (!userLocks.spoiler && interactionState.spoiler !== demo.spoiler) {
-      interactionState.spoiler = demo.spoiler;
-      renderSpoiler(demo.spoiler, true);
+      renderSpoiler(demo.spoiler, true, "demo");
     }
 
     if (
@@ -1020,14 +1057,8 @@
       });
     }
 
-    if (
-      activeAct === "discovery" &&
-      !userLocks.follow &&
-      interactionState.following !== demo.following
-    ) {
-      interactionState.following = demo.following;
-      renderFollowing(demo.following, true);
-    }
+    // Following is intentionally never automated. It is a consequential user
+    // action, so only a real click can change its persistent state.
   }
 
   function setActiveAct(key, force = false) {
@@ -1064,6 +1095,31 @@
     announce(meta.announcement);
   }
 
+  function prepareInterfaceCopy() {
+    elements.profileTags.forEach((tag, index) => {
+      setText(tag, PROFILE_TASTE_CHIPS[index] || PROFILE_TASTE_CHIPS[0]);
+    });
+
+    const searchTabsContainer = elements.searchTabs[0]?.parentElement || null;
+    if (searchTabsContainer && !q(".social-search-mode-label", searchTabsContainer.parentElement)) {
+      const label = document.createElement("span");
+      label.className = "social-search-mode-label";
+      label.textContent = "Match readers by";
+      searchTabsContainer.before(label);
+    }
+
+    elements.searchTabs.forEach((button) => {
+      const key = button.dataset.socialSearchScope || "themes";
+      setText(button, SEARCH_MODE_COPY[key]?.button || SEARCH_MODE_COPY.themes.button);
+    });
+
+    setText(elements.evidenceHint, "Choose one proof item");
+    elements.shareButton?.setAttribute(
+      "aria-label",
+      "Share this reflection with the selected audience",
+    );
+  }
+
   function setupInteractions() {
     const listen = (target, type, handler, options) => {
       if (!target) return;
@@ -1080,7 +1136,25 @@
       const control = event.target.closest(
         "button, input, a, [role='button'], [role='tab'], [role='radio']",
       );
-      if (control) section.classList.add("is-social-interacting");
+      if (!control) return;
+
+      section.classList.add("is-social-interacting");
+      if (control.matches("[data-social-audience]")) userLocks.audience = true;
+      if (control.matches("[data-social-spoiler-toggle], [data-social-spoiler-reveal]")) {
+        userLocks.spoiler = true;
+      }
+      if (control.matches("[data-social-search-scope], [data-social-search-input]")) {
+        userLocks.search = true;
+      }
+      if (control.closest("[data-social-result]")) userLocks.profile = true;
+      if (control.matches("[data-social-mutual-story-index], [data-social-theme]")) {
+        userLocks.evidence = true;
+      }
+      if (control.matches("[data-social-follow]")) userLocks.follow = true;
+      if (control.matches("[data-social-share-button]")) {
+        userLocks.audience = true;
+        userLocks.spoiler = true;
+      }
     }, { capture: true, passive: true });
 
     listen(section, "pointerup", () => {
@@ -1097,7 +1171,7 @@
         userLocks.audience = true;
         interactionState.audience =
           button.dataset.socialAudience || "private";
-        renderAudience(interactionState.audience, true);
+        renderAudience(interactionState.audience, true, "user");
         announce(`${audienceMeta[interactionState.audience].label} audience selected.`);
       });
 
@@ -1134,7 +1208,7 @@
     listen(elements.spoilerToggle, "click", () => {
       userLocks.spoiler = true;
       interactionState.spoiler = !interactionState.spoiler;
-      renderSpoiler(interactionState.spoiler, true);
+      renderSpoiler(interactionState.spoiler, true, "user");
       announce(
         interactionState.spoiler
           ? "Spoiler protection enabled."
@@ -1145,13 +1219,20 @@
     listen(elements.spoilerReveal, "click", () => {
       userLocks.spoiler = true;
       interactionState.spoiler = false;
-      renderSpoiler(false, true);
+      renderSpoiler(false, true, "user");
       announce("Spoiler reflection revealed.");
     });
 
     listen(elements.shareButton, "click", () => {
-      pulse(elements.shareButton);
-      announce("Reflection sharing preview updated.");
+      userLocks.audience = true;
+      userLocks.spoiler = true;
+      interactionState.shared = true;
+      elements.shareButton?.classList.add("is-confirmed");
+      setText(elements.shareButton, "Shared");
+      setText(elements.draftBadge, "Shared just now");
+      announce(
+        `Reflection shared with the ${audienceMeta[interactionState.audience].label.toLowerCase()} audience.`,
+      );
     });
 
     listen(elements.profileEdit, "click", () => {
@@ -1164,11 +1245,12 @@
     });
 
     const tabList = elements.searchTabs[0]?.parentElement || null;
-    tabList?.setAttribute("role", "tablist");
-    tabList?.setAttribute("aria-label", "Discovery search type");
+    tabList?.setAttribute("role", "radiogroup");
+    tabList?.setAttribute("aria-label", "Match readers by");
 
     elements.searchTabs.forEach((tab, index) => {
-      tab.setAttribute("role", "tab");
+      tab.setAttribute("role", "radio");
+      tab.removeAttribute("aria-selected");
       listen(tab, "click", () => {
         userLocks.search = true;
         setSearchScope(
@@ -1238,7 +1320,7 @@
     listen(elements.followButton, "click", () => {
       userLocks.follow = true;
       interactionState.following = !interactionState.following;
-      renderFollowing(interactionState.following, true);
+      renderFollowing(interactionState.following, true, "user");
       announce(
         interactionState.following ? "Reader followed." : "Reader unfollowed.",
       );
@@ -1256,9 +1338,18 @@
     }
   }
 
-  function renderAudience(value, animate) {
+  function resetShareConfirmation() {
+    interactionState.shared = false;
+    elements.shareButton?.classList.remove("is-confirmed");
+    setText(elements.shareButton, "Share reflection");
+    setText(elements.draftBadge, "Draft saved");
+  }
+
+  function renderAudience(value, animate, source = "system") {
     const normalized = value in audienceMeta ? value : "private";
     const meta = audienceMeta[normalized];
+    const audienceChanged = interactionState.audience !== normalized;
+    if (audienceChanged && interactionState.shared) resetShareConfirmation();
     interactionState.audience = normalized;
     section.dataset.socialAudience = normalized;
 
@@ -1300,16 +1391,16 @@
         },
       );
 
-      const active = elements.audienceButtons.find(
-        (button) => button.dataset.socialAudience === normalized,
-      );
-      pulse(active);
+      if (source === "user") {
+        section.dataset.socialLastInteraction = "audience";
+      }
     }
   }
 
-  function renderSpoiler(enabled, animate) {
+  function renderSpoiler(enabled, animate, source = "system") {
     interactionState.spoiler = Boolean(enabled);
     section.classList.toggle("is-social-spoiler-enabled", enabled);
+    elements.spoilerRow?.classList.toggle("is-enabled", enabled);
     elements.spoilerToggle?.setAttribute(
       "aria-pressed",
       enabled ? "true" : "false",
@@ -1317,12 +1408,17 @@
     elements.spoilerShield?.classList.toggle("is-visible", enabled);
 
     if (gsap) {
+      gsap.killTweensOf(elements.spoilerShield);
       gsap.to(elements.spoilerShield, {
         autoAlpha: enabled ? 1 : 0,
-        duration: animate ? 0.28 : 0,
-        ease: "power3.out",
-        overwrite: "auto",
+        duration: animate ? 0.26 : 0,
+        ease: "power2.out",
+        overwrite: true,
       });
+    }
+
+    if (source === "user") {
+      section.dataset.socialLastInteraction = "spoiler";
     }
   }
 
@@ -1330,13 +1426,14 @@
     const normalized = ["readers", "stories", "themes"].includes(scope)
       ? scope
       : "themes";
+    const copy = SEARCH_MODE_COPY[normalized];
     interactionState.searchScope = normalized;
     section.dataset.socialSearchScope = normalized;
 
     elements.searchTabs.forEach((tab) => {
       const selected = tab.dataset.socialSearchScope === normalized;
       tab.classList.toggle("is-active", selected);
-      tab.setAttribute("aria-selected", selected ? "true" : "false");
+      tab.setAttribute("aria-checked", selected ? "true" : "false");
       tab.setAttribute("tabindex", selected ? "0" : "-1");
     });
 
@@ -1357,28 +1454,18 @@
     if (elements.searchInput && document.activeElement !== elements.searchInput) {
       elements.searchInput.value = value;
     }
-
-    if (elements.searchInput) {
-      elements.searchInput.placeholder =
-        normalized === "readers"
-          ? "Search a reader"
-          : normalized === "stories"
-            ? "Search a shared story"
-            : "Search a theme";
-    }
+    if (elements.searchInput) elements.searchInput.placeholder = copy.placeholder;
+    setText(elements.searchLabel, copy.label);
 
     updateSearchSummary();
 
     if (animate && gsap) {
-      pulse(elements.searchTabs.find(
-        (tab) => tab.dataset.socialSearchScope === normalized,
-      ));
       gsap.fromTo(
         elements.searchInput?.closest(".social-search-input-shell"),
-        { filter: "brightness(1.12)" },
+        { borderColor: "rgba(120, 216, 255, 0.56)" },
         {
-          filter: "brightness(1)",
-          duration: 0.22,
+          borderColor: "rgba(194, 207, 241, 0.25)",
+          duration: 0.3,
           ease: "power1.out",
           overwrite: "auto",
         },
@@ -1386,21 +1473,17 @@
     }
 
     if (source === "user") {
-      announce(`${capitalize(normalized)} search selected.`);
+      announce(`${copy.button} matching selected.`);
     }
   }
 
   function updateSearchSummary() {
     const scope = interactionState.searchScope;
     const query = String(interactionState.searchQuery || "").trim();
-    const headings = {
-      readers: "Search by reader name",
-      stories: "Readers connected to this story",
-      themes: "Readers matching this theme",
-    };
+    const copy = SEARCH_MODE_COPY[scope] || SEARCH_MODE_COPY.themes;
 
-    setText(elements.searchHeading, headings[scope]);
-    setText(elements.searchCount, `${elements.resultCards.length} readers`);
+    setText(elements.searchHeading, copy.heading);
+    setText(elements.searchCount, `${elements.resultCards.length} reader matches`);
 
     elements.resultCards.forEach((card) => {
       const key = card.dataset.socialResult || "kai";
@@ -1410,17 +1493,25 @@
       const matchSmall = card.querySelector(".social-result-match small");
 
       if (scope === "themes") {
+        const relevant = profile.themes.includes(normalizeText(query));
         setText(
           detail,
-          `${profile.resultDetail} · ${query || profile.themes[0]}`,
+          relevant
+            ? `Direct theme match · ${profile.themes.join(" · ")}`
+            : `Related taste · ${profile.themes.join(" · ")}`,
         );
+        setText(matchStrong, relevant ? "Direct" : profile.matchCount);
+        setText(matchSmall, relevant ? "theme match" : profile.matchLabel);
       } else if (scope === "stories") {
-        setText(detail, `${profile.resultDetail} · shared story evidence`);
+        setText(detail, `${profile.resultDetail} · shared-story evidence`);
+        setText(matchStrong, profile.matchCount);
+        setText(matchSmall, profile.matchLabel);
       } else {
-        setText(detail, profile.resultDetail);
+        const exact = normalizeText(profile.name).includes(normalizeText(query));
+        setText(detail, exact ? profile.bio : profile.resultDetail);
+        setText(matchStrong, exact ? "Exact" : profile.matchCount);
+        setText(matchSmall, exact ? "name match" : profile.matchLabel);
       }
-      setText(matchStrong, profile.matchCount);
-      setText(matchSmall, profile.matchLabel);
     });
   }
 
@@ -1456,7 +1547,7 @@
 
     if (changed) {
       interactionState.following = false;
-      renderFollowing(false, animate);
+      renderFollowing(false, animate, options.source);
     }
 
     if (elements.followPayoff) {
@@ -1479,7 +1570,7 @@
           overwrite: "auto",
         },
       );
-      pulse(resultCard);
+      if (options.source === "user") pulse(resultCard);
     }
 
     if (options.source === "user") {
@@ -1617,7 +1708,7 @@
     setText(q("small", elements.evidenceSummary), detail);
   }
 
-  function renderFollowing(enabled, animate) {
+  function renderFollowing(enabled, animate, source = "system") {
     interactionState.following = Boolean(enabled);
     section.classList.toggle("is-social-following", enabled);
     elements.followButton?.setAttribute(
@@ -1641,7 +1732,7 @@
       overwrite: "auto",
     });
 
-    if (animate) pulse(elements.followButton);
+    if (animate && source === "user") pulse(elements.followButton);
   }
 
   async function hydrateDatabaseStories() {
@@ -1704,7 +1795,7 @@
 
       return selected;
     } catch (error) {
-      console.warn("Inkwell social V8: database stories unavailable.", error);
+      console.warn("Inkwell social V9: database stories unavailable.", error);
       return [...FALLBACK_STORIES];
     }
   }
@@ -2021,6 +2112,11 @@
     interactionState.searchScope = "themes";
     interactionState.searchQuery = "freedom";
     interactionState.following = false;
+    interactionState.shared = false;
+    demoState.audience = "private";
+    demoState.spoiler = false;
+    demoState.profile = "kai";
+    resetShareConfirmation();
     selectedProfileKey = "kai";
     selectedTheme = "freedom";
     selectedStoryIndex = -1;
@@ -2070,7 +2166,7 @@
         timeline?.kill?.();
         resizeObserver?.disconnect?.();
         cleanupCallbacks.splice(0).forEach((callback) => callback());
-        window.__INKWELL_SOCIAL_V8_STARTED__ = false;
+        window.__INKWELL_SOCIAL_V9_STARTED__ = false;
       },
       cleanup: () => trigger?.kill?.(true),
     };
