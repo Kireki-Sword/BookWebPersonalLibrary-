@@ -1,13 +1,16 @@
 /* ============================================================================
-   INKWELL — SECTION 5: SOCIAL, ON YOUR TERMS (V5 PREMIUM)
+   INKWELL — SECTION 5: SOCIAL, ON YOUR TERMS (V6 REFINED)
 
    Desktop managed journey:
-   - published as a paused child timeline inside the shared Sections 1–5 stage
+   - published as one paused child timeline in the shared Sections 1–5 journey
    - three acts: Control -> Identity -> Discovery
-   - the same reflection card travels from sharing controls into the profile
+   - the same reflection card moves between measured DOM anchors
 
-   Natural / reduced-motion layout:
-   - all three acts remain readable without a pinned child ScrollTrigger
+   Interaction:
+   - audience, spoiler, profile, search scope, reader results, shared stories,
+     themes, and follow state are functional previews
+   - result cards use native button hit areas; decorative children never capture
+     pointer events
    ============================================================================ */
 
 (() => {
@@ -20,7 +23,7 @@
   }
 
   window.__INKWELL_SOCIAL_CINEMA_BUILD__ =
-    "2026-07-24-social-cinema-v5-premium";
+    "2026-07-24-social-cinema-v6-refined";
 
   const { gsap, ScrollTrigger } = window;
   const MANAGED_BY_HOME_JOURNEY =
@@ -32,6 +35,41 @@
   const reduceMotion = window.matchMedia(
     "(prefers-reduced-motion: reduce)",
   ).matches;
+
+  const SUPABASE_URL = "https://hsruxfpslxguhwnccwuj.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_Z2upBCdemNtdB4j5jry65A_XD_u8BsD";
+  const TABLE_NAME = "manga";
+  const BUCKET_NAME = "img";
+  const COVER_FOLDER = "covers";
+
+  const OPENING_READY_TIME = 0.92;
+  const EXCLUDED_STORY_ALIASES = [
+    "attack on titan",
+    "shingeki no kyojin",
+    "vagabond",
+  ];
+  const PREFERRED_STORY_TITLES = [
+    "Monster",
+    "Vinland Saga",
+    "Pluto",
+    "Goodnight Punpun",
+    "Berserk",
+    "20th Century Boys",
+    "Death Note",
+    "Fullmetal Alchemist",
+    "Hunter x Hunter",
+  ];
+  const FALLBACK_STORIES = [
+    { id: "fallback-monster", title: "Monster", creator: "Naoki Urasawa", coverUrl: "" },
+    { id: "fallback-vinland", title: "Vinland Saga", creator: "Makoto Yukimura", coverUrl: "" },
+    { id: "fallback-pluto", title: "Pluto", creator: "Naoki Urasawa", coverUrl: "" },
+    { id: "fallback-punpun", title: "Goodnight Punpun", creator: "Inio Asano", coverUrl: "" },
+    { id: "fallback-berserk", title: "Berserk", creator: "Kentaro Miura", coverUrl: "" },
+    { id: "fallback-20cb", title: "20th Century Boys", creator: "Naoki Urasawa", coverUrl: "" },
+    { id: "fallback-death-note", title: "Death Note", creator: "Tsugumi Ohba", coverUrl: "" },
+    { id: "fallback-fma", title: "Fullmetal Alchemist", creator: "Hiromu Arakawa", coverUrl: "" },
+    { id: "fallback-hxh", title: "Hunter x Hunter", creator: "Yoshihiro Togashi", coverUrl: "" },
+  ];
 
   const elements = {
     pin: section.querySelector("[data-social-cinema-pin]"),
@@ -57,6 +95,8 @@
     composer: section.querySelector(".social-composer"),
     livePreview: section.querySelector(".social-live-preview"),
     postStage: section.querySelector(".social-post-stage"),
+    controlAnchor: section.querySelector('[data-social-post-anchor="control"]'),
+    identityAnchor: section.querySelector('[data-social-post-anchor="identity"]'),
     sharedPost: section.querySelector("[data-social-shared-post]"),
     visibilityBadge: section.querySelector("[data-social-visibility-badge]"),
     audienceButtons: gsapSafeArray(
@@ -76,6 +116,8 @@
     shareButton: section.querySelector("[data-social-share-button]"),
 
     profileShell: section.querySelector("[data-social-profile-shell]"),
+    profileBanner: section.querySelector(".social-profile-banner"),
+    profileHeader: section.querySelector(".social-profile-header"),
     profileAvatar: section.querySelector("[data-social-profile-avatar]"),
     profileBio: section.querySelector("[data-social-profile-bio]"),
     profileTags: gsapSafeArray(
@@ -85,7 +127,7 @@
       section.querySelectorAll("[data-social-profile-stats] .social-profile-stat"),
     ),
     profileCovers: gsapSafeArray(
-      section.querySelectorAll(".social-cover-tile"),
+      section.querySelectorAll("[data-social-favourite-index]"),
     ),
     profilePinSlot: section.querySelector("[data-social-profile-slot]"),
     profilePin: section.querySelector("[data-social-profile-pin]"),
@@ -96,7 +138,9 @@
 
     searchPanel: section.querySelector(".social-search-panel"),
     searchInput: section.querySelector("[data-social-search-input]"),
-    searchTabs: gsapSafeArray(section.querySelectorAll(".social-search-tab")),
+    searchTabs: gsapSafeArray(
+      section.querySelectorAll("[data-social-search-scope]"),
+    ),
     resultCards: gsapSafeArray(
       section.querySelectorAll("[data-social-result]"),
     ),
@@ -105,17 +149,29 @@
     visitedName: section.querySelector(".social-visited-profile__copy h3"),
     visitedBio: section.querySelector(".social-visited-profile__copy p"),
     sharedContext: section.querySelector(".social-shared-context"),
-    mutualCopyStrong: section.querySelector(".social-mutual-copy strong"),
-    mutualCopySmall: section.querySelector(".social-mutual-copy small"),
+    mutualStoryButtons: gsapSafeArray(
+      section.querySelectorAll("[data-social-mutual-story-index]"),
+    ),
+    themeButtons: gsapSafeArray(
+      section.querySelectorAll("[data-social-theme]"),
+    ),
+    evidenceSummary: section.querySelector("[data-social-evidence-summary]"),
     visitedFeed: gsapSafeArray(section.querySelectorAll(".social-feed-item")),
     followButton: section.querySelector("[data-social-follow]"),
     followPayoff: section.querySelector("[data-social-follow-payoff]"),
 
+    favouriteTiles: gsapSafeArray(
+      section.querySelectorAll("[data-social-favourite-index]"),
+    ),
+    activityRows: gsapSafeArray(
+      section.querySelectorAll("[data-social-activity-index]"),
+    ),
+    feedRows: gsapSafeArray(
+      section.querySelectorAll("[data-social-feed-index]"),
+    ),
     storyCoverImages: gsapSafeArray(
       section.querySelectorAll(
-        "[data-social-story-cover], " +
-          "[data-social-post-cover], " +
-          "[data-social-favourite-cover]",
+        "[data-social-story-cover], [data-social-post-cover]",
       ),
     ),
   };
@@ -127,7 +183,8 @@
     elements.scenes.identity,
     elements.scenes.discovery,
     elements.sharedPost,
-    elements.profilePinSlot,
+    elements.controlAnchor,
+    elements.identityAnchor,
   ];
 
   if (required.some((item) => !item)) {
@@ -141,7 +198,7 @@
       name: "kai.reads",
       bio: "Remembers the feeling before the theory.",
       context:
-        "You both saved Attack on Titan and write about freedom, sacrifice, and difficult choices.",
+        "You both save stories about freedom, sacrifice, and difficult choices.",
       matchTitle: "3 shared stories",
       matchDetail: "Freedom · identity · difficult choices",
     },
@@ -150,7 +207,7 @@
       name: "mira.frames",
       bio: "Collects visual moments and quiet endings.",
       context:
-        "You both save visual moments and return to stories about memory, grief, and what remains afterward.",
+        "You both return to visual storytelling about memory, grief, and what remains afterward.",
       matchTitle: "2 shared stories",
       matchDetail: "Memory · grief · cinematography",
     },
@@ -159,7 +216,7 @@
       name: "ren.afterwords",
       bio: "Writes long reflections about history and responsibility.",
       context:
-        "You share four themes: identity, history, responsibility, and the cost of inherited conflict.",
+        "You share themes of identity, history, responsibility, and inherited conflict.",
       matchTitle: "4 shared themes",
       matchDetail: "History · identity · responsibility",
     },
@@ -178,7 +235,7 @@
       label: "Profile and public taste",
       status: "Identity",
       announcement:
-        "Profile identity: favourites and public reflections shape a reader profile.",
+        "Profile identity: favourite stories and public reflections shape a reader profile.",
     },
     discovery: {
       number: "03",
@@ -216,20 +273,24 @@
       previewState: "Community",
       summary: "Anyone can discover this reflection on your profile.",
       hint:
-        "Public posts can appear in story pages, profile activity, and reader search.",
+        "Public posts can appear on story pages, profiles, and reader search.",
       footer: "Community",
       orbitCount: 4,
     },
   };
 
-  const OPENING_READY_TIME = 1.04;
-
   let timeline = null;
   let trigger = null;
   let activeStep = "control";
+  let socialStories = [...FALLBACK_STORIES];
+  let selectedProfileKey = "kai";
+  let selectedTheme = "freedom";
+  let selectedStoryIndex = -1;
+  let supabaseClient = null;
 
   setupInteractions();
-  syncStoryCovers();
+  syncSectionFourCover();
+  hydrateDatabaseStories();
 
   if (!gsap || !ScrollTrigger) {
     showStatic();
@@ -270,8 +331,8 @@
       {
         autoAlpha: 1,
         y: 0,
-        duration: 0.62,
-        stagger: 0.055,
+        duration: 0.52,
+        stagger: 0.045,
         ease: "power3.out",
       },
     );
@@ -280,10 +341,10 @@
       elements.scenes.control,
       {
         autoAlpha: 1,
-        duration: 0.38,
+        duration: 0.3,
         ease: "power2.out",
       },
-      0.12,
+      0.08,
     );
 
     timeline.to(
@@ -292,117 +353,115 @@
         autoAlpha: 1,
         y: 0,
         scale: 1,
-        duration: 0.56,
-        stagger: 0.07,
+        duration: 0.5,
+        stagger: 0.06,
         ease: "power3.out",
       },
-      0.24,
+      0.18,
     );
 
     timeline.to(
       elements.sharedPost,
       {
         autoAlpha: 1,
-        y: 0,
-        scale: 1,
-        duration: 0.62,
+        scale: () => getAnchorTransform(elements.controlAnchor).scale,
+        duration: 0.52,
         ease: "power3.out",
       },
-      0.38,
+      0.3,
     );
 
     timeline.addLabel("control-ready", OPENING_READY_TIME);
 
-    /* Private -> followers -> public with spoiler protection. */
-    setTimelineAudience("private", 1.08);
-    timeline.to({}, { duration: 0.42 });
+    setTimelineAudience("private", 0.96);
+    timeline.to({}, { duration: 0.34 });
 
-    setTimelineAudience("followers", 1.58);
+    setTimelineAudience("followers", 1.38);
     timeline.to(
       elements.orbitAvatars,
       {
         autoAlpha: 1,
         scale: 1,
-        duration: 0.3,
-        stagger: 0.045,
+        duration: 0.26,
+        stagger: 0.035,
         ease: "back.out(1.45)",
       },
-      1.6,
+      1.4,
     );
-    timeline.to({}, { duration: 0.5 });
+    timeline.to({}, { duration: 0.38 });
 
-    setTimelineAudience("public", 2.26);
+    setTimelineAudience("public", 1.96);
     timeline.to(
       elements.orbitAvatars,
       {
-        scale: 1.06,
-        duration: 0.16,
+        scale: 1.055,
+        duration: 0.13,
         repeat: 1,
         yoyo: true,
-        stagger: 0.025,
+        stagger: 0.02,
         ease: "power2.inOut",
       },
-      2.28,
+      1.98,
     );
     timeline.set(
       elements.spoilerToggle,
       { attr: { "aria-pressed": "true" } },
-      2.42,
+      2.1,
     );
     timeline.to(
       elements.spoilerShield,
       {
         autoAlpha: 1,
-        duration: 0.32,
+        duration: 0.28,
         ease: "power2.out",
       },
-      2.44,
+      2.12,
     );
     timeline.to(
       elements.shareButton,
       {
-        scale: 1.045,
-        duration: 0.14,
+        scale: 1.04,
+        duration: 0.12,
         repeat: 1,
         yoyo: true,
         ease: "power2.inOut",
       },
-      2.78,
+      2.42,
     );
-    timeline.to({}, { duration: 0.46 });
+    timeline.to({}, { duration: 0.34 });
 
-    /* The real shared post docks into the profile instead of floating above it. */
-    timeline.addLabel("identity-transition", 3.3);
+    /* Control -> Identity: reveal the destination before moving the post. */
+    timeline.addLabel("identity-transition", 2.82);
 
     timeline.to(
       controlCopy,
       {
         autoAlpha: 0,
-        x: -18,
-        duration: 0.34,
+        x: -16,
+        duration: 0.3,
         ease: "power2.in",
       },
       "identity-transition",
     );
     timeline.fromTo(
       identityCopy,
-      { autoAlpha: 0, x: 18 },
+      { autoAlpha: 0, x: 16 },
       {
         autoAlpha: 1,
         x: 0,
-        duration: 0.46,
+        duration: 0.4,
         ease: "power3.out",
       },
-      "identity-transition+=0.2",
+      "identity-transition+=0.16",
     );
 
     timeline.to(
       [elements.composer, elements.livePreview],
       {
         autoAlpha: 0,
-        y: -18,
-        scale: 0.985,
-        duration: 0.42,
+        y: -14,
+        scale: 0.988,
+        duration: 0.36,
         ease: "power2.inOut",
       },
       "identity-transition",
@@ -411,9 +470,9 @@
       elements.orbitAvatars,
       {
         autoAlpha: 0,
-        scale: 0.74,
-        duration: 0.24,
-        stagger: 0.02,
+        scale: 0.76,
+        duration: 0.2,
+        stagger: 0.018,
         ease: "power2.in",
       },
       "identity-transition",
@@ -422,34 +481,25 @@
       elements.spoilerShield,
       {
         autoAlpha: 0,
-        duration: 0.22,
+        duration: 0.18,
         ease: "power2.in",
       },
       "identity-transition",
-    );
-    timeline.to(
-      elements.scenes.control,
-      {
-        autoAlpha: 0,
-        duration: 0.28,
-        ease: "power2.in",
-      },
-      "identity-transition+=0.18",
     );
 
     timeline.set(
       elements.scenes.identity,
       { visibility: "visible" },
-      "identity-transition+=0.22",
+      "identity-transition+=0.12",
     );
     timeline.to(
       elements.scenes.identity,
       {
         autoAlpha: 1,
-        duration: 0.42,
+        duration: 0.32,
         ease: "power2.out",
       },
-      "identity-transition+=0.22",
+      "identity-transition+=0.12",
     );
     timeline.to(
       elements.profileShell,
@@ -457,263 +507,280 @@
         autoAlpha: 1,
         y: 0,
         scale: 1,
-        duration: 0.62,
+        duration: 0.46,
         ease: "power3.out",
       },
-      "identity-transition+=0.25",
+      "identity-transition+=0.14",
+    );
+    timeline.to(
+      [elements.profileBanner, elements.profileHeader],
+      {
+        autoAlpha: 1,
+        y: 0,
+        duration: 0.34,
+        stagger: 0.04,
+        ease: "power3.out",
+      },
+      "identity-transition+=0.18",
     );
 
     timeline.to(
       elements.sharedPost,
       {
-        x: () => getProfileDockTransform().x,
-        y: () => getProfileDockTransform().y,
-        scale: () => getProfileDockTransform().scale,
-        duration: 0.78,
+        x: () => getAnchorTransform(elements.identityAnchor).x,
+        y: () => getAnchorTransform(elements.identityAnchor).y,
+        scale: () => getAnchorTransform(elements.identityAnchor).scale,
+        duration: 0.66,
         ease: "power3.inOut",
       },
-      "identity-transition+=0.08",
+      "identity-transition+=0.2",
     );
+
     timeline.to(
-      elements.profilePin,
-      {
-        autoAlpha: 1,
-        duration: 0.28,
-        ease: "power2.out",
-      },
-      "identity-transition+=0.7",
-    );
-    timeline.to(
-      elements.sharedPost,
+      elements.scenes.control,
       {
         autoAlpha: 0,
         duration: 0.22,
         ease: "power2.in",
       },
-      "identity-transition+=0.72",
+      "identity-transition+=0.24",
     );
 
-    timeline.addLabel("identity", 4.18);
+    timeline.to(
+      elements.profilePin,
+      {
+        autoAlpha: 1,
+        duration: 0.24,
+        ease: "power2.out",
+      },
+      "identity-transition+=0.78",
+    );
+    timeline.to(
+      elements.sharedPost,
+      {
+        autoAlpha: 0,
+        duration: 0.2,
+        ease: "power2.in",
+      },
+      "identity-transition+=0.8",
+    );
+
+    timeline.addLabel("identity", 3.72);
 
     timeline.fromTo(
       elements.profileAvatar,
-      { rotationY: -42, scale: 0.9 },
+      { autoAlpha: 0, rotationY: -35, scale: 0.88 },
       {
+        autoAlpha: 1,
         rotationY: 0,
         scale: 1,
-        duration: 0.48,
-        ease: "back.out(1.4)",
+        duration: 0.42,
+        ease: "back.out(1.35)",
       },
       "identity",
     );
     timeline.fromTo(
       elements.profileBio,
-      { autoAlpha: 0, y: 10 },
-      {
-        autoAlpha: 1,
-        y: 0,
-        duration: 0.32,
-        ease: "power3.out",
-      },
-      "identity+=0.08",
-    );
-    timeline.fromTo(
-      elements.profileTags,
-      { autoAlpha: 0, y: 8, scale: 0.95 },
-      {
-        autoAlpha: 1,
-        y: 0,
-        scale: 1,
-        duration: 0.3,
-        stagger: 0.045,
-        ease: "power3.out",
-      },
-      "identity+=0.18",
-    );
-    timeline.fromTo(
-      elements.profileStats,
       { autoAlpha: 0, y: 8 },
       {
         autoAlpha: 1,
         y: 0,
-        duration: 0.3,
+        duration: 0.28,
+        ease: "power3.out",
+      },
+      "identity+=0.06",
+    );
+    timeline.fromTo(
+      elements.profileTags,
+      { autoAlpha: 0, y: 7, scale: 0.96 },
+      {
+        autoAlpha: 1,
+        y: 0,
+        scale: 1,
+        duration: 0.26,
         stagger: 0.04,
         ease: "power3.out",
       },
-      "identity+=0.34",
+      "identity+=0.14",
+    );
+    timeline.fromTo(
+      elements.profileStats,
+      { autoAlpha: 0, y: 7 },
+      {
+        autoAlpha: 1,
+        y: 0,
+        duration: 0.28,
+        stagger: 0.035,
+        ease: "power3.out",
+      },
+      "identity+=0.28",
     );
     timeline.fromTo(
       elements.profileCovers,
-      { autoAlpha: 0, y: 14, rotation: -1.5 },
+      { autoAlpha: 0, y: 12, rotation: -1.2 },
       {
         autoAlpha: 1,
         y: 0,
         rotation: 0,
-        duration: 0.36,
-        stagger: 0.055,
+        duration: 0.32,
+        stagger: 0.05,
         ease: "power3.out",
       },
-      "identity+=0.48",
+      "identity+=0.4",
     );
     timeline.fromTo(
       elements.profileActivityRows,
-      { autoAlpha: 0, x: 14 },
+      { autoAlpha: 0, x: 12 },
       {
         autoAlpha: 1,
         x: 0,
-        duration: 0.34,
-        stagger: 0.07,
+        duration: 0.3,
+        stagger: 0.06,
         ease: "power3.out",
       },
-      "identity+=0.62",
-    );
-    timeline.to(
-      [elements.profileAvatar, elements.profileBio],
-      {
-        y: -2,
-        duration: 0.16,
-        repeat: 1,
-        yoyo: true,
-        ease: "power2.inOut",
-      },
-      "identity+=0.95",
+      "identity+=0.5",
     );
     timeline.to(
       elements.profileEdit,
       {
         borderColor: "rgba(123, 220, 255, 0.58)",
         color: "#eef8ff",
-        duration: 0.16,
+        duration: 0.14,
         repeat: 1,
         yoyo: true,
         ease: "power1.inOut",
       },
-      "identity+=0.96",
+      "identity+=0.84",
     );
-    timeline.to({}, { duration: 0.6 });
+    timeline.to({}, { duration: 0.5 });
 
-    /* The profile makes room for reader discovery. */
-    timeline.addLabel("discovery-transition", 5.75);
+    /* Identity -> Discovery: no blank panel; both destinations form together. */
+    timeline.addLabel("discovery-transition", 5.02);
 
     timeline.to(
       identityCopy,
       {
         autoAlpha: 0,
-        x: -18,
-        duration: 0.34,
+        x: -16,
+        duration: 0.3,
         ease: "power2.in",
       },
       "discovery-transition",
     );
     timeline.fromTo(
       discoveryCopy,
-      { autoAlpha: 0, x: 18 },
+      { autoAlpha: 0, x: 16 },
       {
         autoAlpha: 1,
         x: 0,
-        duration: 0.46,
+        duration: 0.4,
         ease: "power3.out",
       },
-      "discovery-transition+=0.2",
+      "discovery-transition+=0.16",
     );
+
     timeline.to(
       elements.profileShell,
       {
         autoAlpha: 0,
-        x: -44,
-        scale: 0.975,
-        duration: 0.48,
+        x: -34,
+        scale: 0.98,
+        duration: 0.42,
         ease: "power2.inOut",
       },
       "discovery-transition",
+    );
+    timeline.set(
+      elements.scenes.discovery,
+      { visibility: "visible" },
+      "discovery-transition+=0.1",
+    );
+    timeline.to(
+      elements.scenes.discovery,
+      {
+        autoAlpha: 1,
+        duration: 0.32,
+        ease: "power2.out",
+      },
+      "discovery-transition+=0.1",
+    );
+    timeline.fromTo(
+      [elements.searchPanel, elements.visitedProfile],
+      {
+        autoAlpha: 0,
+        y: 12,
+        scale: 0.988,
+      },
+      {
+        autoAlpha: 1,
+        y: 0,
+        scale: 1,
+        duration: 0.44,
+        stagger: 0.06,
+        ease: "power3.out",
+      },
+      "discovery-transition+=0.14",
     );
     timeline.to(
       elements.scenes.identity,
       {
         autoAlpha: 0,
-        duration: 0.28,
+        duration: 0.2,
         ease: "power2.in",
       },
-      "discovery-transition+=0.2",
-    );
-    timeline.set(
-      elements.scenes.discovery,
-      { visibility: "visible" },
-      "discovery-transition+=0.24",
-    );
-    timeline.to(
-      elements.scenes.discovery,
-      {
-        autoAlpha: 1,
-        duration: 0.4,
-        ease: "power2.out",
-      },
       "discovery-transition+=0.24",
     );
 
-    timeline.addLabel("discovery", 6.15);
+    timeline.addLabel("discovery", 5.56);
 
-    timeline.fromTo(
-      elements.searchPanel,
-      { autoAlpha: 0, x: -28, y: 10 },
-      {
-        autoAlpha: 1,
-        x: 0,
-        y: 0,
-        duration: 0.48,
-        ease: "power3.out",
-      },
-      "discovery",
-    );
-    timeline.set(elements.searchInput, { value: "freedom" }, "discovery+=0.23");
+    timeline.set(elements.searchInput, { value: "freedom" }, "discovery+=0.1");
     timeline.fromTo(
       elements.resultCards,
-      { autoAlpha: 0, x: -18, y: 6 },
+      { autoAlpha: 0, x: -14, y: 5 },
       {
         autoAlpha: 1,
         x: 0,
         y: 0,
-        duration: 0.34,
-        stagger: 0.065,
+        duration: 0.3,
+        stagger: 0.055,
         ease: "power3.out",
       },
-      "discovery+=0.28",
+      "discovery+=0.12",
     );
     timeline.fromTo(
-      elements.visitedProfile,
-      { autoAlpha: 0, x: 30, y: 10, scale: 0.985 },
+      [elements.sharedContext, ...elements.mutualStoryButtons, ...elements.themeButtons],
+      { autoAlpha: 0, y: 8 },
       {
         autoAlpha: 1,
-        x: 0,
         y: 0,
-        scale: 1,
-        duration: 0.52,
+        duration: 0.28,
+        stagger: 0.035,
         ease: "power3.out",
       },
-      "discovery+=0.52",
+      "discovery+=0.3",
     );
     timeline.fromTo(
       elements.visitedFeed,
-      { autoAlpha: 0, y: 12 },
+      { autoAlpha: 0, y: 10 },
       {
         autoAlpha: 1,
         y: 0,
-        duration: 0.32,
-        stagger: 0.075,
+        duration: 0.28,
+        stagger: 0.06,
         ease: "power3.out",
       },
-      "discovery+=0.82",
+      "discovery+=0.48",
     );
     timeline.to(
       elements.followButton,
       {
-        scale: 1.05,
-        duration: 0.15,
+        scale: 1.045,
+        duration: 0.13,
         repeat: 1,
         yoyo: true,
         ease: "power2.inOut",
       },
-      "discovery+=1.12",
+      "discovery+=0.84",
     );
     timeline.set(
       elements.followButton,
@@ -721,19 +788,19 @@
         attr: { "aria-pressed": "true" },
         textContent: "Following",
       },
-      "discovery+=1.26",
+      "discovery+=0.98",
     );
     timeline.to(
       elements.followPayoff,
       {
         autoAlpha: 1,
         y: 0,
-        duration: 0.42,
+        duration: 0.36,
         ease: "power3.out",
       },
-      "discovery+=1.3",
+      "discovery+=1.02",
     );
-    timeline.to({}, { duration: 0.82 });
+    timeline.to({}, { duration: 0.72 });
 
     if (MANAGED_BY_HOME_JOURNEY) {
       timeline.pause(0);
@@ -741,14 +808,14 @@
     }
 
     trigger = ScrollTrigger.create({
-      id: "inkwell-social-cinema-v5",
+      id: "inkwell-social-cinema-v6",
       trigger: section,
       animation: timeline,
       pin: elements.pin,
       pinSpacing: true,
       start: () => `top top+=${getNavHeight()}`,
-      end: () => `+=${Math.max(4300, window.innerHeight * 5.1)}`,
-      scrub: 1.02,
+      end: () => `+=${Math.max(4200, window.innerHeight * 4.9)}`,
+      scrub: 0.92,
       anticipatePin: 1,
       invalidateOnRefresh: true,
       onUpdate: ({ progress }) => {
@@ -767,11 +834,11 @@
 
     gsap.set(
       [elements.eyebrow, ...elements.copyStates, ...elements.steps, elements.principle],
-      { autoAlpha: 0, y: 16 },
+      { autoAlpha: 0, y: 14 },
     );
     gsap.set(controlCopy, { x: 0 });
-    gsap.set(getCopyState("identity"), { x: 18 });
-    gsap.set(getCopyState("discovery"), { x: 18 });
+    gsap.set(getCopyState("identity"), { x: 16 });
+    gsap.set(getCopyState("discovery"), { x: 16 });
 
     gsap.set(Object.values(elements.scenes), {
       autoAlpha: 0,
@@ -781,58 +848,87 @@
 
     gsap.set([elements.composer, elements.livePreview], {
       autoAlpha: 0,
-      y: 18,
-      scale: 0.988,
+      y: 16,
+      scale: 0.99,
     });
+
+    const initial = getAnchorTransform(elements.controlAnchor);
     gsap.set(elements.sharedPost, {
       autoAlpha: 0,
-      x: 0,
-      y: 20,
-      scale: 0.94,
-      transformOrigin: "50% 50%",
+      x: initial.x,
+      y: initial.y + 12,
+      scale: initial.scale * 0.94,
+      transformOrigin: "0 0",
+      visibility: "visible",
+      pointerEvents: "none",
     });
-    gsap.set(elements.orbitAvatars, { autoAlpha: 0, scale: 0.74 });
+
+    gsap.set(elements.orbitAvatars, { autoAlpha: 0, scale: 0.76 });
     gsap.set(elements.spoilerShield, { autoAlpha: 0 });
 
     gsap.set(elements.profileShell, {
       autoAlpha: 0,
       x: 0,
-      y: 22,
-      scale: 0.986,
+      y: 18,
+      scale: 0.988,
+    });
+    gsap.set([elements.profileBanner, elements.profileHeader], {
+      autoAlpha: 0,
+      y: 10,
     });
     gsap.set(elements.profilePin, { autoAlpha: 0 });
-    gsap.set(elements.profileBio, { autoAlpha: 1, y: 0 });
-    gsap.set(elements.profileTags, { autoAlpha: 1, y: 0, scale: 1 });
-    gsap.set(elements.profileStats, { autoAlpha: 1, y: 0 });
-    gsap.set(elements.profileCovers, { autoAlpha: 1, y: 0, rotation: 0 });
-    gsap.set(elements.profileActivityRows, { autoAlpha: 1, x: 0 });
+    gsap.set(elements.profileAvatar, { autoAlpha: 0 });
+    gsap.set(elements.profileBio, { autoAlpha: 0, y: 8 });
+    gsap.set(elements.profileTags, { autoAlpha: 0, y: 7, scale: 0.96 });
+    gsap.set(elements.profileStats, { autoAlpha: 0, y: 7 });
+    gsap.set(elements.profileCovers, { autoAlpha: 0, y: 12, rotation: -1.2 });
+    gsap.set(elements.profileActivityRows, { autoAlpha: 0, x: 12 });
 
-    gsap.set(elements.searchPanel, { autoAlpha: 0 });
-    gsap.set(elements.resultCards, { autoAlpha: 0 });
-    gsap.set(elements.visitedProfile, { autoAlpha: 0 });
-    gsap.set(elements.visitedFeed, { autoAlpha: 0 });
-    gsap.set(elements.followPayoff, { autoAlpha: 0, y: 10 });
+    gsap.set([elements.searchPanel, elements.visitedProfile], {
+      autoAlpha: 0,
+      y: 12,
+      scale: 0.988,
+    });
+    gsap.set(elements.resultCards, { autoAlpha: 0, x: -14, y: 5 });
+    gsap.set(
+      [elements.sharedContext, ...elements.mutualStoryButtons, ...elements.themeButtons],
+      { autoAlpha: 0, y: 8 },
+    );
+    gsap.set(elements.visitedFeed, { autoAlpha: 0, y: 10 });
+    gsap.set(elements.followPayoff, { autoAlpha: 0, y: 8 });
 
     setAudience("private", false, false);
     setSpoiler(false, false, false);
     setFollowing(false, false, false);
+    selectProfile("kai", false);
+    selectTheme("freedom", false);
     setActiveStep("control");
   }
 
-  function getProfileDockTransform() {
-    const screenRect = elements.screen.getBoundingClientRect();
-    const slotRect = elements.profilePinSlot.getBoundingClientRect();
-    const sharedWidth = Math.max(elements.sharedPost.offsetWidth, 1);
+  function getAnchorTransform(anchor) {
+    if (!anchor || !elements.screen || !elements.sharedPost) {
+      return { x: 0, y: 0, scale: 1 };
+    }
 
-    const baseX = elements.screen.clientWidth * 0.725;
-    const baseY = elements.screen.clientHeight * 0.56;
-    const targetX = slotRect.left - screenRect.left + slotRect.width / 2;
-    const targetY = slotRect.top - screenRect.top + slotRect.height / 2;
+    const screenRect = elements.screen.getBoundingClientRect();
+    const anchorRect = anchor.getBoundingClientRect();
+    const postWidth = Math.max(elements.sharedPost.offsetWidth, 330);
+    const postHeight = Math.max(elements.sharedPost.offsetHeight, 220);
+
+    const widthScale = anchorRect.width > 0
+      ? anchorRect.width / postWidth
+      : 1;
+    const heightScale = anchorRect.height > 0
+      ? anchorRect.height / postHeight
+      : widthScale;
+    const scale = clamp(Math.min(widthScale, heightScale), 0.54, 1);
+    const renderedWidth = postWidth * scale;
+    const renderedHeight = postHeight * scale;
 
     return {
-      x: targetX - baseX,
-      y: targetY - baseY,
-      scale: Math.min(0.72, Math.max(0.5, slotRect.width / sharedWidth)),
+      x: anchorRect.left - screenRect.left + (anchorRect.width - renderedWidth) / 2,
+      y: anchorRect.top - screenRect.top + (anchorRect.height - renderedHeight) / 2,
+      scale,
     };
   }
 
@@ -875,16 +971,9 @@
         getCopyState("control"),
         ...elements.steps,
         elements.principle,
-        ...Object.values(elements.scenes),
+        elements.scenes.control,
         elements.composer,
         elements.livePreview,
-        elements.profileShell,
-        elements.profilePin,
-        elements.searchPanel,
-        ...elements.resultCards,
-        elements.visitedProfile,
-        ...elements.visitedFeed,
-        elements.followPayoff,
       ].filter(Boolean),
       {
         autoAlpha: 1,
@@ -892,14 +981,14 @@
       },
     );
 
-    gsap.set(elements.sharedPost, { autoAlpha: 0 });
+    gsap.set(elements.sharedPost, { autoAlpha: 0, visibility: "hidden" });
     setActiveStep("control");
   }
 
   function syncActiveStep(progress) {
-    const next = progress < 0.37
+    const next = progress < 0.38
       ? "control"
-      : progress < 0.68
+      : progress < 0.69
         ? "identity"
         : "discovery";
 
@@ -926,6 +1015,15 @@
       scene.classList.toggle("is-interactive", sceneKey === key);
       scene.setAttribute("aria-hidden", sceneKey === key ? "false" : "true");
     });
+
+    elements.sharedPost.classList.toggle(
+      "is-interactive",
+      key === "control" && Number(gsap?.getProperty(elements.sharedPost, "opacity") || 0) > 0.2,
+    );
+    elements.sharedPost.setAttribute(
+      "aria-hidden",
+      key === "control" ? "false" : "true",
+    );
 
     if (elements.toolbarStatus) {
       elements.toolbarStatus.textContent = meta.status;
@@ -962,10 +1060,10 @@
       if (gsap) {
         gsap.fromTo(
           elements.sharedPost,
-          { scale: 0.975 },
+          { scale: Number(gsap.getProperty(elements.sharedPost, "scale")) * 0.97 },
           {
-            scale: 1,
-            duration: 0.28,
+            scale: Number(gsap.getProperty(elements.sharedPost, "scale")),
+            duration: 0.24,
             ease: "back.out(1.7)",
             overwrite: "auto",
           },
@@ -986,7 +1084,7 @@
           { scale: 0.96 },
           {
             scale: 1,
-            duration: 0.3,
+            duration: 0.26,
             ease: "back.out(1.7)",
             overwrite: "auto",
           },
@@ -997,12 +1095,7 @@
 
     elements.searchTabs.forEach((tab) => {
       tab.addEventListener("click", () => {
-        elements.searchTabs.forEach((other) => {
-          const selected = other === tab;
-          other.classList.toggle("is-active", selected);
-          other.setAttribute("aria-selected", selected ? "true" : "false");
-        });
-        announce(`${tab.textContent.trim()} search selected.`);
+        setSearchScope(tab.dataset.socialSearchScope || "readers", true);
       });
     });
 
@@ -1012,14 +1105,33 @@
       });
     });
 
+    elements.mutualStoryButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        const index = Number(button.dataset.socialMutualStoryIndex || 0);
+        selectSharedStory(index, true);
+      });
+    });
+
+    elements.themeButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        selectTheme(button.dataset.socialTheme || "freedom", true);
+      });
+    });
+
     elements.followButton?.addEventListener("click", () => {
       const isFollowing =
         elements.followButton.getAttribute("aria-pressed") === "true";
       setFollowing(!isFollowing, true, true);
     });
 
-    window.addEventListener("inkwell:section4-ready", syncStoryCovers);
-    window.addEventListener("inkwell:home-journey-ready", syncStoryCovers);
+    window.addEventListener("inkwell:section4-ready", syncSectionFourCover);
+    window.addEventListener("inkwell:home-journey-ready", syncSectionFourCover);
+    window.addEventListener("resize", debounce(() => {
+      if (timeline && timeline.progress() <= 0.01) {
+        const anchor = getAnchorTransform(elements.controlAnchor);
+        gsap.set(elements.sharedPost, anchor);
+      }
+    }, 120));
   }
 
   function setAudience(value, animate, shouldAnnounce) {
@@ -1043,17 +1155,17 @@
       gsap.to(elements.orbitAvatars, {
         autoAlpha: meta.orbitCount ? 1 : 0,
         scale: meta.orbitCount ? 1 : 0.76,
-        duration: 0.24,
-        stagger: 0.03,
+        duration: 0.22,
+        stagger: 0.025,
         ease: "power2.out",
         overwrite: "auto",
       });
       gsap.fromTo(
         [elements.visibilityBadge, elements.previewState],
-        { scale: 0.92 },
+        { scale: 0.93 },
         {
           scale: 1,
-          duration: 0.23,
+          duration: 0.2,
           ease: "back.out(1.6)",
           overwrite: "auto",
         },
@@ -1075,7 +1187,7 @@
     if (gsap && animate) {
       gsap.to(elements.spoilerShield, {
         autoAlpha: enabled ? 1 : 0,
-        duration: 0.23,
+        duration: 0.22,
         ease: "power2.out",
         overwrite: "auto",
       });
@@ -1090,28 +1202,80 @@
     }
   }
 
+  function setSearchScope(scope, shouldAnnounce) {
+    const normalized = ["readers", "stories", "themes"].includes(scope)
+      ? scope
+      : "readers";
+
+    elements.searchTabs.forEach((tab) => {
+      const selected = tab.dataset.socialSearchScope === normalized;
+      tab.classList.toggle("is-active", selected);
+      tab.setAttribute("aria-selected", selected ? "true" : "false");
+    });
+
+    if (normalized === "readers") {
+      elements.searchInput.placeholder = "Try “freedom”";
+      elements.searchInput.value = selectedTheme;
+    } else if (normalized === "stories") {
+      const story = getMutualStory(selectedStoryIndex >= 0 ? selectedStoryIndex : 0);
+      elements.searchInput.placeholder = "Search a shared story";
+      elements.searchInput.value = story.title;
+    } else {
+      elements.searchInput.placeholder = "Search a theme";
+      elements.searchInput.value = selectedTheme;
+    }
+
+    if (gsap) {
+      gsap.fromTo(
+        elements.searchInput.closest(".social-search-input-shell"),
+        { scale: 0.985 },
+        {
+          scale: 1,
+          duration: 0.2,
+          ease: "back.out(1.5)",
+          overwrite: "auto",
+        },
+      );
+    }
+
+    if (shouldAnnounce) {
+      announce(`${capitalize(normalized)} search selected.`);
+    }
+  }
+
   function selectProfile(key, animate) {
     const profile = profileData[key] || profileData.kai;
+    selectedProfileKey = key in profileData ? key : "kai";
 
     elements.resultCards.forEach((card) => {
-      card.classList.toggle("is-selected", card.dataset.socialResult === key);
+      const selected = card.dataset.socialResult === selectedProfileKey;
+      card.classList.toggle("is-selected", selected);
+      card.setAttribute("aria-pressed", selected ? "true" : "false");
     });
 
     setText(elements.visitedAvatar, profile.initial);
     setText(elements.visitedName, profile.name);
     setText(elements.visitedBio, profile.bio);
     setText(elements.sharedContext, profile.context);
-    setText(elements.mutualCopyStrong, profile.matchTitle);
-    setText(elements.mutualCopySmall, profile.matchDetail);
+    updateEvidenceSummary(profile.matchTitle, profile.matchDetail);
+
+    if (elements.followPayoff) {
+      const strong = elements.followPayoff.querySelector("strong");
+      if (strong) {
+        strong.textContent = `${profile.name} is now in your social feed.`;
+      }
+    }
+
+    setFollowing(false, false, false);
 
     if (gsap && animate) {
       gsap.fromTo(
         elements.visitedProfile,
-        { autoAlpha: 0.78, x: 12 },
+        { autoAlpha: 0.82, x: 10 },
         {
           autoAlpha: 1,
           x: 0,
-          duration: 0.32,
+          duration: 0.28,
           ease: "power3.out",
           overwrite: "auto",
         },
@@ -1119,6 +1283,104 @@
     }
 
     announce(`${profile.name} profile selected.`);
+  }
+
+  function selectSharedStory(index, animate) {
+    const safeIndex = clamp(Math.round(index), 0, elements.mutualStoryButtons.length - 1);
+    const story = getMutualStory(safeIndex);
+    selectedStoryIndex = safeIndex;
+
+    elements.mutualStoryButtons.forEach((button, buttonIndex) => {
+      button.classList.toggle("is-selected", buttonIndex === safeIndex);
+    });
+    elements.themeButtons.forEach((button) => {
+      button.classList.remove("is-selected");
+      button.setAttribute("aria-pressed", "false");
+    });
+
+    setSearchScope("stories", false);
+    elements.searchInput.value = story.title;
+
+    const profileKeys = ["kai", "mira", "ren"];
+    selectProfile(profileKeys[safeIndex % profileKeys.length], false);
+    updateEvidenceSummary(
+      story.title,
+      `Readers who saved ${story.title} and wrote about similar ideas.`,
+    );
+
+    if (gsap && animate) {
+      gsap.fromTo(
+        elements.mutualStoryButtons[safeIndex],
+        { scale: 0.96 },
+        {
+          scale: 1,
+          duration: 0.23,
+          ease: "back.out(1.6)",
+          overwrite: "auto",
+        },
+      );
+    }
+
+    announce(`${story.title} selected as a discovery reason.`);
+  }
+
+  function selectTheme(theme, animate) {
+    const normalized = ["freedom", "identity", "memory"].includes(theme)
+      ? theme
+      : "freedom";
+    selectedTheme = normalized;
+    selectedStoryIndex = -1;
+
+    elements.themeButtons.forEach((button) => {
+      const selected = button.dataset.socialTheme === normalized;
+      button.classList.toggle("is-selected", selected);
+      button.setAttribute("aria-pressed", selected ? "true" : "false");
+    });
+    elements.mutualStoryButtons.forEach((button) => {
+      button.classList.remove("is-selected");
+    });
+
+    setSearchScope("themes", false);
+    elements.searchInput.value = normalized;
+
+    const profileByTheme = {
+      freedom: "kai",
+      identity: "ren",
+      memory: "mira",
+    };
+    selectProfile(profileByTheme[normalized], false);
+    updateEvidenceSummary(
+      capitalize(normalized),
+      `Readers whose public notes repeatedly explore ${normalized}.`,
+    );
+
+    if (gsap && animate) {
+      const active = elements.themeButtons.find(
+        (button) => button.dataset.socialTheme === normalized,
+      );
+      gsap.fromTo(
+        active,
+        { scale: 0.95 },
+        {
+          scale: 1,
+          duration: 0.22,
+          ease: "back.out(1.6)",
+          overwrite: "auto",
+        },
+      );
+    }
+
+    announce(`${capitalize(normalized)} theme selected.`);
+  }
+
+  function updateEvidenceSummary(title, detail) {
+    if (!elements.evidenceSummary) {
+      return;
+    }
+    const strong = elements.evidenceSummary.querySelector("strong");
+    const small = elements.evidenceSummary.querySelector("small");
+    setText(strong, title);
+    setText(small, detail);
   }
 
   function setFollowing(enabled, animate, shouldAnnounce) {
@@ -1137,7 +1399,7 @@
         { scale: 0.94 },
         {
           scale: 1,
-          duration: 0.28,
+          duration: 0.25,
           ease: "back.out(1.7)",
           overwrite: "auto",
         },
@@ -1145,7 +1407,7 @@
       gsap.to(elements.followPayoff, {
         autoAlpha: enabled ? 1 : 0,
         y: enabled ? 0 : 8,
-        duration: 0.34,
+        duration: 0.3,
         ease: "power3.out",
         overwrite: "auto",
       });
@@ -1158,14 +1420,14 @@
     }
   }
 
-  function syncStoryCovers() {
+  function syncSectionFourCover() {
     const source = document.querySelector("#section-4 [data-story-cover]");
     const src = source?.currentSrc || source?.getAttribute("src") || "";
 
     if (!src) {
       if (source && source.dataset.socialCoverListener !== "true") {
         source.dataset.socialCoverListener = "true";
-        source.addEventListener("load", syncStoryCovers, { once: true });
+        source.addEventListener("load", syncSectionFourCover, { once: true });
       }
       return;
     }
@@ -1176,8 +1438,213 @@
     });
   }
 
+  async function hydrateDatabaseStories() {
+    const stories = await loadDatabaseStories();
+    socialStories = stories.length >= 7
+      ? stories
+      : mergeUniqueStories(stories, FALLBACK_STORIES).slice(0, 9);
+    renderDatabaseStories();
+  }
+
+  async function loadDatabaseStories() {
+    try {
+      if (!window.supabase?.createClient) {
+        return [...FALLBACK_STORIES];
+      }
+
+      if (!window.__INKWELL_SOCIAL_SUPABASE_CLIENT__) {
+        window.__INKWELL_SOCIAL_SUPABASE_CLIENT__ =
+          window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      }
+      supabaseClient = window.__INKWELL_SOCIAL_SUPABASE_CLIENT__;
+
+      const result = await supabaseClient
+        .from(TABLE_NAME)
+        .select("*")
+        .limit(120);
+
+      if (result.error) {
+        throw result.error;
+      }
+
+      const normalized = dedupeStories(
+        (result.data || [])
+          .map(normalizeStory)
+          .filter((story) => story.id && story.title)
+          .filter((story) => !isExcludedStory(story.title)),
+      );
+
+      const selected = [];
+      PREFERRED_STORY_TITLES.forEach((preferred) => {
+        const match = normalized.find(
+          (story) => normalizeText(story.title) === normalizeText(preferred),
+        );
+        if (match && !selected.some((item) => item.id === match.id)) {
+          selected.push(match);
+        }
+      });
+
+      normalized
+        .slice()
+        .sort((a, b) => hashString(a.title) - hashString(b.title))
+        .forEach((story) => {
+          if (!selected.some((item) => item.id === story.id)) {
+            selected.push(story);
+          }
+        });
+
+      return selected.slice(0, 12);
+    } catch (error) {
+      console.warn("Inkwell social cinema: database stories unavailable.", error);
+      return [...FALLBACK_STORIES];
+    }
+  }
+
+  function normalizeStory(item) {
+    const id = String(item?.id ?? "");
+    return {
+      id,
+      title: String(item?.title || "Untitled story"),
+      creator: String(
+        item?.creator ?? item?.author ?? item?.writer ?? item?.artist ?? "",
+      ),
+      coverUrl: id ? getCoverUrlFromId(id) : "",
+    };
+  }
+
+  function renderDatabaseStories() {
+    elements.favouriteTiles.forEach((tile, index) => {
+      renderStoryTile(tile, socialStories[index] || FALLBACK_STORIES[index]);
+    });
+
+    elements.mutualStoryButtons.forEach((button, index) => {
+      const story = getMutualStory(index);
+      renderStoryTile(button, story);
+      button.setAttribute(
+        "aria-label",
+        `Use ${story.title} as a reader discovery reason`,
+      );
+    });
+
+    elements.activityRows.forEach((row, index) => {
+      const story = socialStories[7 + index] || socialStories[index] || FALLBACK_STORIES[index];
+      setText(row.querySelector("[data-social-activity-title]"), story.title);
+    });
+
+    elements.feedRows.forEach((row, index) => {
+      const story = socialStories[5 + index] || socialStories[index] || FALLBACK_STORIES[index];
+      const type = index === 0 ? "Note" : "Reflection";
+      setText(row.querySelector("[data-social-feed-title]"), `${story.title} · ${type}`);
+    });
+  }
+
+  function renderStoryTile(container, story) {
+    if (!container || !story) {
+      return;
+    }
+
+    const image = container.querySelector("img");
+    const title = container.querySelector(
+      "[data-social-story-title], [data-social-mutual-title]",
+    );
+    const fallback = container.querySelector("[data-social-cover-fallback]");
+
+    setText(title, story.title);
+    setText(fallback, abbreviateTitle(story.title));
+
+    if (!image || !story.coverUrl) {
+      if (image) {
+        image.hidden = true;
+      }
+      return;
+    }
+
+    image.alt = `${story.title} cover`;
+    image.hidden = false;
+    image.src = story.coverUrl;
+    image.addEventListener(
+      "error",
+      () => {
+        image.hidden = true;
+      },
+      { once: true },
+    );
+  }
+
+  function getMutualStory(index) {
+    return socialStories[4 + index] || socialStories[index] || FALLBACK_STORIES[index];
+  }
+
+  function getCoverUrlFromId(id) {
+    if (!id || !supabaseClient) {
+      return "";
+    }
+    const path = `${COVER_FOLDER}/${id}.jpg`;
+    const { data } = supabaseClient.storage
+      .from(BUCKET_NAME)
+      .getPublicUrl(path);
+    return data?.publicUrl || "";
+  }
+
+  function dedupeStories(stories) {
+    const seen = new Set();
+    return stories.filter((story) => {
+      const key = normalizeText(story.title);
+      if (!key || seen.has(key)) {
+        return false;
+      }
+      seen.add(key);
+      return true;
+    });
+  }
+
+  function mergeUniqueStories(primary, fallback) {
+    return dedupeStories([...(primary || []), ...(fallback || [])]);
+  }
+
+  function isExcludedStory(title) {
+    const normalized = normalizeText(title);
+    return EXCLUDED_STORY_ALIASES.some(
+      (alias) => normalized === alias || normalized.includes(alias),
+    );
+  }
+
+  function normalizeText(value) {
+    return String(value || "")
+      .normalize("NFKD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, " ")
+      .trim();
+  }
+
+  function abbreviateTitle(title) {
+    const words = String(title || "Story")
+      .split(/\s+/)
+      .filter(Boolean);
+    if (words.length === 1) {
+      return words[0].slice(0, 3).toUpperCase();
+    }
+    return words
+      .slice(0, 3)
+      .map((word) => word[0])
+      .join("")
+      .toUpperCase();
+  }
+
+  function hashString(value) {
+    let hash = 2166136261;
+    for (const char of String(value || "")) {
+      hash ^= char.charCodeAt(0);
+      hash = Math.imul(hash, 16777619);
+    }
+    return hash >>> 0;
+  }
+
   function getCopyState(key) {
-    return elements.copyStates.find((item) => item.dataset.socialCopy === key) || null;
+    return elements.copyStates.find(
+      (item) => item.dataset.socialCopy === key,
+    ) || null;
   }
 
   function setText(element, value) {
@@ -1209,7 +1676,6 @@
     }
 
     const nested = isNestedInManagedJourney();
-
     timeline.totalTime(0, true);
     setInitialState();
     timeline.paused(!nested);
@@ -1220,16 +1686,20 @@
       return;
     }
 
-    if (timeline.progress() <= 0.001) {
-      const nested = isNestedInManagedJourney();
+    const nested = isNestedInManagedJourney();
+    const currentTime = timeline.time();
+    timeline.invalidate();
 
-      timeline.invalidate();
+    if (currentTime <= 0.001) {
       timeline.totalTime(0, true);
       setInitialState();
-      timeline.paused(!nested);
+    } else {
+      timeline.time(currentTime, true);
     }
 
-    syncStoryCovers();
+    timeline.paused(!nested);
+    syncSectionFourCover();
+    renderDatabaseStories();
   }
 
   function publishApi() {
@@ -1248,11 +1718,11 @@
         nested: isNestedInManagedJourney(),
         paused: Boolean(timeline?.paused?.()),
         progress: timeline?.progress?.() || 0,
-        parentIsGlobal: timeline?.parent === gsap?.globalTimeline,
-        openingReadyTime: Number(
-          timeline?.labels?.["control-ready"] ?? OPENING_READY_TIME,
-        ),
         activeStep,
+        selectedProfileKey,
+        selectedTheme,
+        selectedStoryIndex,
+        databaseStories: socialStories.map((story) => story.title),
       }),
       destroy: () => {
         trigger?.kill?.(true);
@@ -1280,6 +1750,23 @@
     return nav
       ? Math.max(0, Math.round(nav.getBoundingClientRect().height))
       : 64;
+  }
+
+  function capitalize(value) {
+    const text = String(value || "");
+    return text ? text[0].toUpperCase() + text.slice(1) : "";
+  }
+
+  function clamp(value, min, max) {
+    return Math.min(max, Math.max(min, value));
+  }
+
+  function debounce(callback, wait) {
+    let timer = null;
+    return (...args) => {
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => callback(...args), wait);
+    };
   }
 
   function gsapSafeArray(collection) {
