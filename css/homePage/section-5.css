@@ -2250,118 +2250,149 @@
     border-color: rgba(226, 232, 255, 0.5);
   }
 }
-/* ========================================================================== 
-   INKWELL SECTION 5 — V7 RESEARCH-DRIVEN REFINEMENT
 
-   Principles implemented here:
-   - keep the editorial story visually distinct from the product demo
-   - use an 8px rhythm and fewer competing surface levels
-   - make every frequent control a stable 48px+ target
-   - never move a clickable target on hover
-   - show selection with shape, border, contrast, and text — not color alone
-   - keep the traveling reflection decorative except for its explicit reveal action
-   - provide strong focus visibility and reduced-motion fallbacks
+/* ========================================================================== 
+   INKWELL SECTION 5 — V8 HYBRID SCROLL + INTERACTION
+
+   This layer intentionally overrides the V6 structural rules above while
+   keeping the supplied HTML unchanged.
    ========================================================================== */
 
 #section-5-social,
 .social-cinema {
-  --s5-bg: #070a14;
-  --s5-bg-deep: #050711;
-  --s5-surface: #0d1424;
-  --s5-surface-2: #111a2e;
-  --s5-surface-3: #17223a;
-  --s5-surface-selected: #192d55;
-  --s5-border: rgba(184, 199, 235, 0.22);
-  --s5-border-strong: rgba(205, 217, 247, 0.52);
-  --s5-text: #f7f8ff;
-  --s5-text-2: #ccd5e8;
-  --s5-muted: #98a6c2;
-  --s5-muted-strong: #aebbd2;
-  --s5-blue: #8ca4ff;
-  --s5-violet: #aa8cff;
-  --s5-cyan: #73dcff;
-  --s5-green: #7fe0b7;
-  --s5-rose: #ff9db8;
+  --s5-bg-0: #050611;
+  --s5-bg-1: #080d1f;
+  --s5-bg-2: #0b1024;
+  --s5-surface: rgba(10, 15, 31, 0.985);
+  --s5-surface-2: rgba(15, 23, 46, 0.97);
+  --s5-surface-3: rgba(22, 34, 65, 0.92);
+  --s5-selected: #18345f;
+  --s5-border: rgba(184, 196, 238, 0.22);
+  --s5-border-strong: rgba(207, 219, 255, 0.54);
+  --s5-text: #f7f6ff;
+  --s5-text-2: #d0d7e9;
+  --s5-muted: #98a4be;
+  --s5-muted-2: #7c89a7;
+  --s5-blue: #718cff;
+  --s5-violet: #9b7cff;
+  --s5-cyan: #78d8ff;
+  --s5-pink: #d28cff;
+  --s5-green: #7eddb5;
+  --s5-rose: #ff9db9;
   --s5-focus: #9ce8ff;
   --s5-radius-panel: 20px;
   --s5-radius-control: 12px;
-  --s5-shadow-panel: 0 28px 80px rgba(0, 0, 0, 0.32);
-  --s5-duration-fast: 120ms;
-  --s5-duration-control: 180ms;
-  --s5-duration-scene: 420ms;
-  --s5-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --s5-ease: cubic-bezier(0.22, 1, 0.36, 1);
 
   background:
-    radial-gradient(circle at 12% 32%, rgba(79, 103, 190, 0.16), transparent 36%),
-    radial-gradient(circle at 91% 18%, rgba(112, 78, 190, 0.1), transparent 34%),
-    linear-gradient(180deg, #090d1b 0%, #0b1120 52%, var(--s5-bg-deep) 100%);
+    radial-gradient(
+      circle at 82% 14%,
+      rgba(124, 140, 255, 0.23),
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 16% 30%,
+      rgba(155, 124, 255, 0.16),
+      transparent 38%
+    ),
+    radial-gradient(
+      circle at 74% 82%,
+      rgba(116, 215, 255, 0.085),
+      transparent 36%
+    ),
+    radial-gradient(
+      circle at 24% 94%,
+      rgba(210, 140, 255, 0.075),
+      transparent 38%
+    ),
+    linear-gradient(
+      180deg,
+      #070b17 0%,
+      var(--s5-bg-2) 34%,
+      var(--s5-bg-1) 70%,
+      var(--s5-bg-0) 100%
+    );
 }
 
 .social-cinema::before {
-  opacity: 0.055;
-  background-size: 64px 64px;
+  opacity: 0.075;
+  background-size: 56px 56px;
+  -webkit-mask-image: radial-gradient(circle at 58% 42%, #000, transparent 80%);
+  mask-image: radial-gradient(circle at 58% 42%, #000, transparent 80%);
 }
 
 .social-cinema::after {
-  background: linear-gradient(
-    90deg,
-    rgba(2, 4, 12, 0.26),
-    transparent 24%,
-    transparent 82%,
-    rgba(2, 4, 12, 0.22)
-  );
+  background:
+    linear-gradient(
+      90deg,
+      rgba(3, 5, 14, 0.25) 0%,
+      transparent 23%,
+      transparent 80%,
+      rgba(3, 5, 14, 0.25) 100%
+    );
 }
 
 .social-cinema__layout {
   width: min(1480px, calc(100vw - 80px));
-  grid-template-columns: minmax(320px, 380px) minmax(720px, 1fr);
-  gap: clamp(3rem, 4.5vw, 4.75rem);
-  padding: clamp(1.5rem, 3vh, 2.4rem) 0;
+  grid-template-columns: minmax(330px, 390px) minmax(760px, 1fr);
+  gap: clamp(2.8rem, 4.3vw, 4.75rem);
+  padding: clamp(1.3rem, 2.7vh, 2.25rem) 0;
 }
 
 .social-cinema__copy {
-  padding: clamp(2.75rem, 6vh, 4.75rem) 0 clamp(2rem, 4vh, 3.25rem);
+  padding: clamp(2.5rem, 5.8vh, 4.5rem) 0 clamp(1.65rem, 3.6vh, 2.8rem);
 }
 
 .social-cinema__eyebrow {
   margin-bottom: 1rem;
-  color: #d7def5;
-  font-size: 0.75rem;
-  letter-spacing: 0.14em;
+  color: #d5ddf6;
+  font-size: 0.74rem;
+  letter-spacing: 0.145em;
 }
 
 .social-cinema__eyebrow::before {
-  box-shadow: 0 0 12px rgba(115, 220, 255, 0.42);
+  background: var(--s5-cyan);
+  box-shadow:
+    0 0 14px rgba(120, 216, 255, 0.58),
+    0 0 30px rgba(113, 140, 255, 0.24);
 }
 
 .social-cinema__copy-stage {
-  min-height: clamp(360px, 43vh, 438px);
+  min-height: clamp(370px, 43vh, 438px);
+}
+
+.social-copy-state {
+  justify-content: center;
+  padding-bottom: clamp(0.5rem, 1.4vh, 1rem);
+}
+
+.social-copy-state__index {
+  margin-bottom: 0.72rem;
+  color: #a4b0cc;
+  font-size: 0.72rem;
 }
 
 .social-copy-state h2 {
-  max-width: 370px;
-  font-size: clamp(2.75rem, 3.35vw, 3.9rem);
-  line-height: 0.98;
-  letter-spacing: -0.052em;
-  text-shadow: 0 20px 52px rgba(0, 0, 0, 0.32);
+  max-width: 385px;
+  font-size: clamp(2.8rem, 3.45vw, 4rem);
+  line-height: 0.96;
+  letter-spacing: -0.058em;
+  text-wrap: balance;
+  text-shadow:
+    0 24px 64px rgba(0, 0, 0, 0.4),
+    0 0 44px rgba(124, 140, 255, 0.09);
 }
 
 .social-copy-state p {
   max-width: 39ch;
   margin-top: 1.2rem;
   color: var(--s5-text-2);
-  font-size: clamp(0.96rem, 0.92vw, 1.02rem);
-  line-height: 1.62;
-}
-
-.social-copy-state__index {
-  margin-bottom: 0.7rem;
-  color: var(--s5-muted-strong);
-  font-size: 0.73rem;
+  font-size: clamp(0.95rem, 0.94vw, 1.02rem);
+  line-height: 1.64;
 }
 
 .social-copy-proof {
-  gap: 0.5rem;
+  gap: 0.48rem;
   margin-top: 1.15rem;
 }
 
@@ -2370,70 +2401,96 @@
   display: inline-flex;
   align-items: center;
   padding: 0.42rem 0.68rem;
-  border-color: rgba(196, 207, 239, 0.21);
-  color: #d3dbee;
-  background: rgba(12, 19, 35, 0.7);
-  font-size: 0.71rem;
+  border-color: rgba(193, 206, 246, 0.2);
+  color: #d2daed;
+  background: rgba(8, 14, 28, 0.6);
+  font-size: 0.7rem;
 }
 
 .social-cinema__steps {
-  gap: 0.9rem;
-  margin-top: 0.65rem;
+  gap: 0.82rem;
+  margin-top: 0.55rem;
   padding-top: 1rem;
 }
 
 .social-cinema__step {
-  grid-template-columns: 32px minmax(0, 1fr);
-  gap: 0.58rem;
+  grid-template-columns: 31px minmax(0, 1fr);
+  gap: 0.55rem;
 }
 
 .social-cinema__step-number {
   width: 30px;
   height: 30px;
-  font-size: 0.62rem;
 }
 
 .social-cinema__step-copy strong {
-  font-size: 0.76rem;
+  font-size: 0.74rem;
 }
 
 .social-cinema__step-copy small,
 .social-cinema__principle {
-  color: rgba(170, 181, 207, 0.74);
-  font-size: 0.64rem;
+  color: rgba(160, 173, 204, 0.72);
 }
 
 .social-cinema__viewport {
-  height: min(720px, calc(var(--s5-stage-height) - 46px));
+  height: min(720px, calc(var(--s5-stage-height) - 42px));
 }
 
 .social-cinema__screen {
-  border-color: rgba(194, 207, 242, 0.25);
+  border-color: rgba(194, 207, 246, 0.26);
   border-radius: 24px;
   background:
-    radial-gradient(circle at 55% 2%, rgba(88, 113, 205, 0.095), transparent 36%),
-    linear-gradient(180deg, rgba(8, 13, 25, 0.995), rgba(6, 10, 20, 0.99));
-  box-shadow: var(--s5-shadow-panel), inset 0 1px rgba(255, 255, 255, 0.04);
+    radial-gradient(circle at 52% 0%, rgba(102, 125, 221, 0.11), transparent 35%),
+    linear-gradient(180deg, rgba(7, 11, 24, 0.995), rgba(5, 9, 20, 0.99));
+  box-shadow:
+    0 38px 104px rgba(0, 0, 0, 0.42),
+    0 0 48px rgba(113, 140, 255, 0.055),
+    inset 0 1px rgba(255, 255, 255, 0.04);
 }
 
 .social-cinema__screen::before {
-  opacity: 0.075;
+  opacity: 0.085;
 }
 
 .social-cinema__toolbar {
   height: 54px;
   padding-inline: 1.1rem;
-  background: rgba(5, 9, 19, 0.94);
+  background: rgba(5, 8, 18, 0.94);
+}
+
+/* Match the colored window controls already used in Section 3. */
+.social-cinema__window-dots {
+  gap: 7px;
+}
+
+.social-cinema__window-dots span {
+  width: 8px;
+  height: 8px;
+}
+
+.social-cinema__window-dots span:nth-child(1) {
+  background: var(--s5-pink);
+  box-shadow: 0 0 12px rgba(210, 140, 255, 0.48);
+}
+
+.social-cinema__window-dots span:nth-child(2) {
+  background: var(--s5-blue);
+  box-shadow: 0 0 12px rgba(124, 140, 255, 0.46);
+}
+
+.social-cinema__window-dots span:nth-child(3) {
+  background: var(--s5-cyan);
+  box-shadow: 0 0 12px rgba(116, 215, 255, 0.44);
 }
 
 .social-cinema__toolbar-title {
-  color: #d7deef;
+  color: #d9dfef;
   font-size: 0.77rem;
 }
 
 .social-cinema__toolbar-status,
 .social-cinema__scene-label {
-  color: #a8b4cf;
+  color: #a7b3ce;
 }
 
 .social-cinema__scene-label {
@@ -2442,20 +2499,22 @@
 
 .social-scene {
   inset: 54px 0 0;
-  padding: 3.75rem clamp(1.25rem, 2vw, 1.85rem) clamp(1.15rem, 2vw, 1.7rem);
-}
-
-.social-scene--control,
-.social-scene--discovery {
-  gap: 1.1rem;
+  padding: 3.65rem clamp(1.15rem, 1.8vw, 1.7rem) clamp(1.05rem, 1.7vw, 1.55rem);
 }
 
 .social-scene--control {
-  grid-template-columns: minmax(330px, 0.94fr) minmax(410px, 1.06fr);
+  grid-template-columns: minmax(340px, 0.95fr) minmax(430px, 1.05fr);
+  gap: 1rem;
+}
+
+.social-scene--identity {
+  align-items: stretch;
 }
 
 .social-scene--discovery {
-  grid-template-columns: minmax(345px, 0.92fr) minmax(430px, 1.08fr);
+  grid-template-columns: minmax(365px, 0.91fr) minmax(520px, 1.09fr);
+  gap: 0.9rem;
+  align-items: stretch;
 }
 
 .social-composer,
@@ -2463,13 +2522,29 @@
 .social-profile-shell,
 .social-search-panel,
 .social-visited-profile {
+  min-width: 0;
+  min-height: 0;
   border-color: var(--s5-border);
   border-radius: var(--s5-radius-panel);
-  background: linear-gradient(150deg, rgba(17, 25, 45, 0.98), rgba(8, 13, 25, 0.985));
-  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.23), inset 0 1px rgba(255, 255, 255, 0.036);
+  background:
+    radial-gradient(circle at 86% 4%, rgba(124, 140, 255, 0.08), transparent 32%),
+    linear-gradient(150deg, rgba(16, 24, 45, 0.985), rgba(7, 12, 25, 0.99));
+  box-shadow:
+    0 22px 58px rgba(0, 0, 0, 0.27),
+    inset 0 1px rgba(255, 255, 255, 0.04);
 }
 
-/* Stable hit areas: no transform-based hover on controls. */
+.social-composer,
+.social-live-preview,
+.social-search-panel,
+.social-visited-profile {
+  height: 100%;
+}
+
+/* --------------------------------------------------------------------------
+   RELIABLE CONTROLS AND HIT AREAS
+   -------------------------------------------------------------------------- */
+
 .social-primary-button,
 .social-audience-button,
 .social-spoiler-toggle,
@@ -2480,26 +2555,31 @@
 .social-spoiler-reveal,
 .social-mutual-story,
 .social-theme-button {
+  position: relative;
   min-height: 48px;
-  -webkit-tap-highlight-color: transparent;
+  font: inherit;
+  cursor: pointer;
   touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
   transition:
-    border-color var(--s5-duration-control) ease,
-    background-color var(--s5-duration-control) ease,
-    color var(--s5-duration-control) ease,
-    box-shadow var(--s5-duration-control) ease,
-    filter var(--s5-duration-fast) ease;
+    border-color 180ms ease,
+    background-color 180ms ease,
+    color 180ms ease,
+    box-shadow 180ms ease,
+    filter 120ms ease;
 }
 
 .social-primary-button,
 .social-follow-button {
   min-height: 48px;
-  padding: 0.72rem 1.05rem;
-  border-color: rgba(210, 218, 255, 0.52);
+  padding: 0.72rem 1.08rem;
+  border-color: rgba(209, 219, 255, 0.5);
   border-radius: var(--s5-radius-control);
-  background: linear-gradient(135deg, #708cff, #9375f2);
-  box-shadow: 0 10px 24px rgba(70, 83, 172, 0.22);
-  font-size: 0.78rem;
+  background: linear-gradient(135deg, #718cff, #9879f5);
+  box-shadow:
+    0 12px 28px rgba(74, 86, 178, 0.24),
+    inset 0 1px rgba(255, 255, 255, 0.12);
+  font-size: 0.76rem;
 }
 
 .social-primary-button:hover,
@@ -2542,8 +2622,64 @@
 .social-theme-button:focus-visible {
   outline: 3px solid var(--s5-focus);
   outline-offset: 3px;
-  box-shadow: 0 0 0 2px #070a14, 0 0 0 6px rgba(156, 232, 255, 0.25);
+  box-shadow:
+    0 0 0 2px #070a14,
+    0 0 0 6px rgba(156, 232, 255, 0.24);
 }
+
+/* A child can never become a smaller accidental click target. */
+.social-audience-button > *,
+.social-result-card > *,
+.social-result-card > * > *,
+.social-mutual-story > *,
+.social-mutual-story > * > *,
+.social-follow-button > *,
+.social-theme-button > * {
+  pointer-events: none;
+}
+
+.social-result-card,
+.social-mutual-story,
+.social-theme-button {
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.social-result-card::after,
+.social-mutual-story::after,
+.social-theme-button::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0;
+  background:
+    linear-gradient(
+      112deg,
+      transparent 4%,
+      rgba(255, 255, 255, 0.07) 42%,
+      transparent 72%
+    );
+  transform: translateX(-42%);
+  transition:
+    opacity 180ms ease,
+    transform 420ms var(--s5-ease);
+}
+
+.social-result-card:hover::after,
+.social-result-card:focus-visible::after,
+.social-mutual-story:hover::after,
+.social-mutual-story:focus-visible::after,
+.social-theme-button:hover::after,
+.social-theme-button:focus-visible::after {
+  opacity: 1;
+  transform: translateX(42%);
+}
+
+/* --------------------------------------------------------------------------
+   CONTROL ACT
+   -------------------------------------------------------------------------- */
 
 .social-composer__header {
   min-height: 76px;
@@ -2551,84 +2687,59 @@
 }
 
 .social-composer__reflection {
-  margin: 0.95rem 1rem 0;
-  padding: 1rem;
+  margin: 0.9rem 0.95rem 0;
+  padding: 0.95rem;
 }
 
 .social-composer__reflection p {
-  font-size: 0.93rem;
+  font-size: 0.9rem;
   line-height: 1.52;
 }
 
-.social-composer__label,
-.social-fieldset legend,
-.social-search-label,
-.social-section-heading small {
-  color: #b2bfd8;
-  font-size: 0.68rem;
-}
-
-.social-composer__count,
-.social-composer__summary,
-.social-spoiler-row small,
-.social-shared-context,
-.social-live-preview__hint,
-.social-live-preview__footer,
-.social-visited-profile__copy p,
-.social-result-match small,
-.social-evidence-summary small,
-.social-feed-item p,
-.social-follow-payoff small {
-  color: #9eabc3;
-  font-size: 0.67rem;
-}
-
 .social-fieldset {
-  margin: 0.95rem 1rem 0;
+  margin: 0.88rem 0.95rem 0;
 }
 
 .social-audience-options {
-  gap: 0.5rem;
+  gap: 0.46rem;
 }
 
 .social-audience-button {
   min-height: 50px;
-  padding: 0.62rem 0.55rem;
-  border-color: rgba(190, 203, 237, 0.21);
+  padding: 0.62rem 0.54rem;
+  border-color: rgba(190, 202, 239, 0.2);
   border-radius: var(--s5-radius-control);
-  color: #bcc7dd;
-  background: rgba(8, 14, 27, 0.82);
-  font-size: 0.71rem;
+  color: #bac5db;
+  background: rgba(7, 13, 27, 0.82);
+  font-size: 0.7rem;
 }
 
 .social-audience-button > span {
-  color: #9cadcf;
+  color: #96a8cc;
   font-size: 0.56rem;
 }
 
 .social-audience-button[aria-pressed="true"],
 .social-audience-button[aria-checked="true"] {
-  border-color: rgba(115, 220, 255, 0.72);
-  color: #f7fcff;
-  background: var(--s5-surface-selected);
-  box-shadow: inset 0 -3px rgba(115, 220, 255, 0.74);
+  border-color: rgba(120, 216, 255, 0.72);
+  color: #f5fcff;
+  background: var(--s5-selected);
+  box-shadow:
+    inset 0 -3px rgba(120, 216, 255, 0.72),
+    0 0 20px rgba(113, 140, 255, 0.1);
 }
 
 .social-spoiler-row {
   min-height: 68px;
-  margin-top: 0.85rem;
-  padding: 0.72rem 0.88rem;
-  border-color: rgba(190, 203, 237, 0.2);
-  background: rgba(8, 14, 27, 0.82);
+  margin-top: 0.78rem;
+  padding: 0.7rem 0.82rem;
+  border-color: rgba(190, 202, 239, 0.2);
+  background: rgba(7, 13, 27, 0.82);
 }
 
-.social-spoiler-row strong {
-  font-size: 0.78rem;
-}
-
-/* The button owns a 58x48 hitbox; pseudo-elements draw the smaller switch. */
+/* The actual switch art is 48x28, but the button owns a 60x48 hitbox. */
 .social-spoiler-toggle {
-  width: 58px;
+  width: 60px;
   height: 48px;
   min-height: 48px;
   border: 0;
@@ -2639,7 +2750,7 @@
 .social-spoiler-toggle::before {
   content: "";
   position: absolute;
-  left: 5px;
+  left: 6px;
   top: 10px;
   width: 48px;
   height: 28px;
@@ -2647,17 +2758,17 @@
   border-radius: 999px;
   background: #29334b;
   transition:
-    border-color var(--s5-duration-control) ease,
-    background-color var(--s5-duration-control) ease;
+    border-color 180ms ease,
+    background-color 180ms ease;
 }
 
 .social-spoiler-toggle::after {
-  left: 10px;
+  left: 11px;
   top: 15px;
   width: 18px;
   height: 18px;
   background: #f0f3fb;
-  transition: transform var(--s5-duration-control) var(--s5-ease-out);
+  transition: transform 180ms var(--s5-ease);
 }
 
 .social-spoiler-toggle[aria-pressed="true"] {
@@ -2666,30 +2777,24 @@
 }
 
 .social-spoiler-toggle[aria-pressed="true"]::before {
-  border-color: rgba(255, 157, 184, 0.7);
-  background: #6d324a;
+  border-color: rgba(255, 157, 185, 0.72);
+  background: #6b324a;
 }
 
 .social-spoiler-toggle[aria-pressed="true"]::after {
   transform: translateX(20px);
-  background: #ffe2ea;
+  background: #ffe1ea;
 }
 
 .social-composer__footer {
   min-height: 68px;
-  padding: 0.75rem 1rem;
+  padding: 0.72rem 0.95rem;
 }
 
-.social-live-preview__header,
-.social-visited-profile__top {
-  min-height: 82px;
+.social-live-preview__header {
+  min-height: 80px;
 }
 
-.social-live-preview__hint {
-  max-width: 40ch;
-}
-
-/* The traveling card cannot steal clicks from the panels beneath it. */
 .social-shared-post,
 .social-shared-post.is-interactive {
   pointer-events: none;
@@ -2699,176 +2804,314 @@
   pointer-events: auto;
 }
 
-.social-shared-post {
-  border-color: rgba(205, 216, 247, 0.34);
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.38), 0 0 24px rgba(108, 136, 235, 0.07);
-}
-
 .social-spoiler-reveal {
   min-height: 48px;
   padding: 0.65rem 0.9rem;
-  font-size: 0.72rem;
 }
 
+/* --------------------------------------------------------------------------
+   IDENTITY ACT
+   -------------------------------------------------------------------------- */
+
 .social-profile-shell {
-  width: min(100%, 880px);
+  width: min(100%, 900px);
+  height: 100%;
 }
 
 .social-profile-edit {
   min-height: 48px;
   padding: 0.65rem 0.9rem;
-  font-size: 0.72rem;
+}
+
+/* --------------------------------------------------------------------------
+   DISCOVERY ACT
+   -------------------------------------------------------------------------- */
+
+.social-search-panel {
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  overflow: hidden;
+}
+
+.social-search-panel__header {
+  min-height: 72px;
+}
+
+.social-search-box {
+  padding: 0.85rem 0.85rem 0.75rem;
 }
 
 .social-search-input-shell {
   min-height: 50px;
-  padding-inline: 0.8rem;
-  border-color: rgba(195, 207, 239, 0.26);
+  padding-inline: 0.78rem;
+  border-color: rgba(194, 207, 241, 0.25);
   border-radius: var(--s5-radius-control);
-  background: rgba(7, 12, 24, 0.88);
+  background: rgba(6, 11, 23, 0.88);
 }
 
 .social-search-input-shell:focus-within {
   border-color: var(--s5-focus);
-  box-shadow: 0 0 0 3px rgba(115, 220, 255, 0.16);
+  box-shadow: 0 0 0 3px rgba(120, 216, 255, 0.15);
 }
 
 .social-search-input {
   height: 48px;
   color: #f3f6ff;
-  font-size: 0.82rem;
+  font-size: 0.81rem;
 }
 
 .social-search-input::placeholder {
-  color: #8997b2;
+  color: #8795b0;
 }
 
 .social-search-tabs {
-  gap: 0.45rem;
-  margin-top: 0.65rem;
+  gap: 0.42rem;
+  margin-top: 0.62rem;
 }
 
 .social-search-tab {
   min-height: 48px;
-  padding: 0.55rem 0.82rem;
-  border-color: rgba(190, 203, 237, 0.14);
-  color: #aab6ce;
-  background: rgba(8, 14, 27, 0.56);
-  font-size: 0.68rem;
+  padding: 0.55rem 0.8rem;
+  border-color: rgba(190, 202, 239, 0.15);
+  color: #a7b3cb;
+  background: rgba(7, 13, 27, 0.56);
+  font-size: 0.67rem;
 }
 
 .social-search-tab.is-active,
 .social-search-tab[aria-selected="true"] {
-  border-color: rgba(115, 220, 255, 0.58);
-  color: #effcff;
-  background: #172b50;
-  box-shadow: inset 0 -2px rgba(115, 220, 255, 0.68);
+  border-color: rgba(120, 216, 255, 0.6);
+  color: #eefcff;
+  background: #172d52;
+  box-shadow: inset 0 -2px rgba(120, 216, 255, 0.7);
 }
 
 .social-result-list {
-  gap: 0.6rem;
-  padding: 0.82rem;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: repeat(3, minmax(86px, 1fr));
+  gap: 0.58rem;
+  padding: 0.75rem 0.82rem 0.82rem;
+  overflow: hidden;
 }
 
 .social-result-card {
-  min-height: 86px;
-  padding: 0.78rem;
-  border-color: rgba(190, 203, 237, 0.18);
+  width: 100%;
+  min-height: 88px;
+  padding: 0.75rem;
+  border-color: rgba(190, 202, 239, 0.18);
   border-radius: 14px;
-  background: rgba(8, 14, 27, 0.72);
+  background: rgba(7, 13, 27, 0.73);
 }
 
 .social-result-card.is-selected,
 .social-result-card[aria-pressed="true"] {
-  border-color: rgba(115, 220, 255, 0.62);
-  background: #172747;
-  box-shadow: inset 4px 0 #73dcff;
+  border-color: rgba(120, 216, 255, 0.64);
+  background: #172b4d;
+  box-shadow:
+    inset 4px 0 var(--s5-cyan),
+    0 0 24px rgba(113, 140, 255, 0.08);
 }
 
 .social-result-card:hover {
-  background: #14213b;
-  box-shadow: inset 3px 0 rgba(115, 220, 255, 0.45);
+  background: #13223d;
+  border-color: rgba(120, 216, 255, 0.42);
+  box-shadow: inset 3px 0 rgba(120, 216, 255, 0.42);
+}
+
+.social-result-avatar {
+  width: 48px;
+  height: 48px;
 }
 
 .social-result-copy strong {
-  font-size: 0.78rem;
+  font-size: 0.77rem;
 }
 
-.social-result-copy small,
-.social-result-match strong {
-  font-size: 0.65rem;
-}
-
-.social-visited-profile__copy p {
-  max-width: 44ch;
-  line-height: 1.48;
-}
-
-.social-match-reason {
-  min-height: 62px;
-  border-color: rgba(115, 220, 255, 0.25);
-  background: rgba(25, 48, 87, 0.62);
-}
-
-.social-evidence-grid {
-  gap: 0.85rem;
-}
-
-.social-evidence-stories {
-  gap: 0.52rem;
-}
-
-.social-mutual-story {
-  min-height: 72px;
-  padding: 0.55rem;
-  border-color: rgba(190, 203, 237, 0.18);
-  background: rgba(8, 14, 27, 0.72);
-}
-
-.social-mutual-story.is-selected {
-  border-color: rgba(115, 220, 255, 0.62);
-  background: #182a4d;
-  box-shadow: inset 0 -3px rgba(115, 220, 255, 0.6);
-}
-
-.social-mutual-story > span:last-child {
+.social-result-copy small {
   font-size: 0.62rem;
 }
 
+.social-result-match {
+  min-width: 64px;
+}
+
+.social-visited-profile {
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  overflow: hidden;
+}
+
+.social-visited-profile__top {
+  min-height: 84px;
+  padding: 0.8rem 0.9rem;
+}
+
+.social-visited-profile__avatar {
+  width: 58px;
+  height: 58px;
+}
+
+.social-visited-profile__copy h3 {
+  font-size: 1.26rem;
+}
+
+.social-visited-profile__copy p {
+  max-width: 42ch;
+  font-size: 0.66rem;
+  line-height: 1.42;
+}
+
+.social-match-reason {
+  min-height: 60px;
+  margin: 0.7rem 0.82rem 0;
+  padding: 0.66rem 0.72rem;
+  border-color: rgba(120, 216, 255, 0.23);
+  background: rgba(25, 49, 91, 0.58);
+}
+
+.social-discovery-evidence {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 0.7rem 0.82rem 0;
+  overflow: hidden;
+}
+
+.social-section-heading {
+  min-height: 36px;
+}
+
+.social-evidence-grid {
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 112px;
+  gap: 0.72rem;
+  align-items: stretch;
+  margin-top: 0.55rem;
+}
+
+.social-evidence-stories,
 .social-theme-row {
-  gap: 0.45rem;
+  position: relative;
+  padding-top: 1rem;
+}
+
+.social-evidence-stories::before,
+.social-theme-row::before {
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: #7e8ca8;
+  font-family: var(--font-body, system-ui, sans-serif);
+  font-size: 0.52rem;
+  font-weight: 780;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.social-evidence-stories::before {
+  content: "Shared stories";
+}
+
+.social-theme-row::before {
+  content: "Shared themes";
+}
+
+.social-evidence-stories {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.46rem;
+}
+
+.social-mutual-story {
+  width: 100%;
+  min-height: 76px;
+  padding: 0.52rem;
+  border-color: rgba(190, 202, 239, 0.18);
+  border-radius: 12px;
+  background: rgba(7, 13, 27, 0.74);
+}
+
+.social-mutual-story.is-selected,
+.social-mutual-story[aria-pressed="true"] {
+  border-color: rgba(120, 216, 255, 0.62);
+  background: #182e52;
+  box-shadow: inset 0 -3px rgba(120, 216, 255, 0.62);
+}
+
+.social-mutual-cover {
+  width: 36px;
+}
+
+.social-mutual-story > span:last-child {
+  font-size: 0.59rem;
+}
+
+.social-theme-row {
+  display: grid;
+  grid-template-rows: repeat(3, minmax(48px, 1fr));
+  gap: 0.42rem;
 }
 
 .social-theme-button {
+  width: 100%;
   min-height: 48px;
-  padding: 0.55rem 0.75rem;
-  border-color: rgba(190, 203, 237, 0.18);
-  color: #aab6cf;
-  background: rgba(8, 14, 27, 0.66);
-  font-size: 0.65rem;
+  padding: 0.52rem 0.62rem;
+  border-color: rgba(190, 202, 239, 0.18);
+  color: #a7b3cb;
+  background: rgba(7, 13, 27, 0.7);
+  font-size: 0.62rem;
 }
 
 .social-theme-button.is-selected,
 .social-theme-button[aria-pressed="true"] {
-  border-color: rgba(115, 220, 255, 0.58);
-  color: #effcff;
-  background: #183055;
-  box-shadow: inset 0 -2px rgba(115, 220, 255, 0.66);
+  border-color: rgba(120, 216, 255, 0.62);
+  color: #eefcff;
+  background: #19365f;
+  box-shadow: inset 0 -2px rgba(120, 216, 255, 0.68);
+}
+
+.social-evidence-summary {
+  margin-top: 0.55rem;
+  padding: 0.55rem 0.64rem;
+  border-left-color: rgba(120, 216, 255, 0.64);
+  background: rgba(17, 31, 59, 0.52);
+}
+
+.social-visited-feed {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.46rem;
+  padding: 0.58rem 0.82rem 0.76rem;
+}
+
+.social-feed-item {
+  min-height: 76px;
+  padding: 0.58rem 0.62rem;
+  background: rgba(7, 13, 27, 0.64);
+}
+
+.social-feed-item p {
+  font-size: 0.61rem;
+  line-height: 1.38;
 }
 
 .social-follow-button[aria-pressed="true"] {
-  border-color: rgba(127, 224, 183, 0.68);
-  color: #f2fff9;
-  background: #1e664d;
-  box-shadow: inset 0 -3px rgba(127, 224, 183, 0.55), 0 10px 24px rgba(22, 104, 74, 0.2);
+  border-color: rgba(126, 221, 181, 0.68);
+  color: #f1fff8;
+  background: #1d654c;
+  box-shadow:
+    inset 0 -3px rgba(126, 221, 181, 0.55),
+    0 10px 24px rgba(22, 104, 74, 0.2);
 }
 
 .social-follow-payoff {
-  border-color: rgba(127, 224, 183, 0.32);
-  background: rgba(25, 76, 59, 0.48);
+  margin: 0 0.82rem 0.78rem;
+  border-color: rgba(126, 221, 181, 0.34);
+  background: rgba(24, 81, 61, 0.48);
 }
 
-/* Make inactive acts impossible to hit even during cross-fades. */
+/* Inactive acts cannot intercept pointer or keyboard input during crossfades. */
 .social-scene[inert],
 .social-scene[aria-hidden="true"] {
   pointer-events: none !important;
@@ -2878,15 +3121,51 @@
   pointer-events: auto;
 }
 
-@media (max-width: 1360px) {
+/* Disable CSS transitions only while GSAP is actively changing demo state. */
+.social-cinema.is-social-interacting .social-scene {
+  scroll-behavior: auto;
+}
+
+@media (max-width: 1390px) {
   .social-cinema__layout {
-    width: min(1280px, calc(100vw - 56px));
-    grid-template-columns: minmax(285px, 340px) minmax(680px, 1fr);
+    width: min(1320px, calc(100vw - 56px));
+    grid-template-columns: minmax(290px, 350px) minmax(700px, 1fr);
     gap: 2.5rem;
   }
 
   .social-copy-state h2 {
-    font-size: clamp(2.55rem, 3.2vw, 3.55rem);
+    font-size: clamp(2.55rem, 3.15vw, 3.55rem);
+  }
+
+  .social-scene--discovery {
+    grid-template-columns: minmax(340px, 0.9fr) minmax(480px, 1.1fr);
+  }
+}
+
+@media (max-height: 820px) and (min-width: 1100px) {
+  .social-cinema__copy-stage {
+    min-height: 330px;
+  }
+
+  .social-copy-state h2 {
+    font-size: clamp(2.45rem, 3.1vw, 3.45rem);
+  }
+
+  .social-scene {
+    padding-top: 3.35rem;
+    padding-bottom: 0.85rem;
+  }
+
+  .social-result-list {
+    grid-template-rows: repeat(3, minmax(78px, 1fr));
+  }
+
+  .social-mutual-story {
+    min-height: 68px;
+  }
+
+  .social-feed-item {
+    min-height: 68px;
   }
 }
 
@@ -2902,11 +3181,11 @@
   }
 
   .social-result-card {
-    min-height: 92px;
+    min-height: 94px;
   }
 
   .social-mutual-story {
-    min-height: 78px;
+    min-height: 80px;
   }
 }
 
@@ -2933,25 +3212,14 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
-
-  .social-copy-state,
-  .social-scene,
-  .social-shared-post,
-  .social-composer,
-  .social-live-preview,
-  .social-profile-shell,
-  .social-search-panel,
-  .social-visited-profile {
-    transform: none !important;
-  }
 }
 
 @media (prefers-contrast: more) {
   #section-5-social,
   .social-cinema {
-    --s5-border: rgba(236, 241, 255, 0.58);
-    --s5-text-2: #e0e6f2;
-    --s5-muted: #bdc7dc;
+    --s5-border: rgba(236, 241, 255, 0.6);
+    --s5-text-2: #e1e7f3;
+    --s5-muted: #bdc8dc;
   }
 
   .social-audience-button,
@@ -2961,6 +3229,23 @@
   .social-theme-button,
   .social-search-input-shell,
   .social-spoiler-row {
-    border-color: rgba(236, 241, 255, 0.48);
+    border-color: rgba(236, 241, 255, 0.5);
+  }
+}
+
+/* Final interaction stability: hover never moves the painted hit target. */
+@media (hover: hover) {
+  #section-5-social :is(
+    .social-primary-button,
+    .social-audience-button,
+    .social-profile-edit,
+    .social-search-tab,
+    .social-result-card,
+    .social-follow-button,
+    .social-spoiler-reveal,
+    .social-mutual-story,
+    .social-theme-button
+  ):hover {
+    transform: none;
   }
 }
