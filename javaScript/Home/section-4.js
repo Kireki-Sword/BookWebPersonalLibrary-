@@ -352,7 +352,7 @@
    * waiting for it. Database data improves the rain, but it must never be a
    * requirement for the animation itself.
    */
-  const SECTION_4_DATA_TIMEOUT_MS = 5000;
+  const SECTION_4_DATA_TIMEOUT_MS = 1500;
   const MAX_RAIN_ITEMS_PER_SIDE = 12;
 
   const FALLBACK_RAIN_STORIES = [
@@ -418,33 +418,25 @@
     setupDetailDialog(elements);
 
     /*
-     * Always prepare a complete local scene first. This guarantees that the
-     * chosen left/right covers exist and that the GSAP timeline can be built
-     * even when Supabase is blocked, offline, or simply slow.
+     * Render a complete local scene before touching the network. Section 4
+     * must always be able to publish its GSAP timeline, even when Supabase is
+     * blocked, misconfigured, offline, or slower than the rest of the page.
      */
     renderStory(section, FALLBACK_STORY);
     renderRain(elements, FALLBACK_RAIN_STORIES, FALLBACK_STORY);
 
-    if (!window.supabase?.createClient) {
-      console.warn(
-        "Section 4: Supabase is not loaded. Animating the local fallback.",
-      );
-
-      setStatus(
-        elements,
-        "Live cover data is unavailable. Showing the animated fallback.",
-      );
-
-      startSection4Motion(section, elements);
-      return;
-    }
-
-    supabaseClient = window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_KEY,
-    );
-
     try {
+      if (!window.supabase?.createClient) {
+        throw new Error("Supabase is not loaded.");
+      }
+
+      /* createClient can throw synchronously. It therefore belongs inside the
+       * same guarded startup path as the queries below. */
+      supabaseClient = window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY,
+      );
+
       setStatus(elements, "Loading anime and manga covers.");
 
       const result = await withTimeout(
@@ -480,18 +472,26 @@
         error,
       );
 
-      /* The local scene was already rendered above, so do not switch to a
-       * non-animated static layout here. */
       setStatus(
         elements,
         "Live cover data could not be loaded. Showing the animated fallback.",
       );
+    } finally {
+      /*
+       * This is the important loading fix: no database/client error is allowed
+       * to prevent the managed timeline from being created and published.
+       */
+      startSection4Motion(section, elements);
     }
-
-    startSection4Motion(section, elements);
   }
 
   function startSection4Motion(section, elements) {
+    if (section.dataset.section4MotionStarted === "true") {
+      return;
+    }
+
+    section.dataset.section4MotionStarted = "true";
+
     requestAnimationFrame(() => {
       try {
         setupMotion(section, elements);
