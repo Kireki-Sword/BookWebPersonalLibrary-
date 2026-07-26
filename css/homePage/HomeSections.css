@@ -7,5 +7,18 @@
 @import url("./section-7.css");
 @import url("./footer.css");
 
+
+
+
+@import url("./Responsive/00-foundations.css");
+@import url("./Responsive/01-hero.css");
+@import url("./Responsive/02-showcase.css");
+@import url("./Responsive/03-library-flow.css");
+@import url("./Responsive/04-comperison.css");
+@import url("./Responsive/05-social.css");
+@import url("./Responsive/06-faq.css");
+@import url("./Responsive/07-final-cta.css");
+@import url("./Responsive/08-footer.css");
+
 /* Must remain last: it only coordinates the four existing section styles. */
 @import url("./homeScroll.css");
