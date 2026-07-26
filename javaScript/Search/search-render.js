@@ -651,11 +651,18 @@ export function createSearchRenderer(elements) {
       pageEntries.length <= 3
     );
 
-    pageEntries.forEach((entry) => {
+    const eagerCoverCount =
+      getEagerCoverCount();
+
+    pageEntries.forEach((entry, index) => {
       fragment.append(
         createStoryCard(
           entry,
-          state
+          state,
+          {
+            index,
+            eagerCoverCount
+          }
         )
       );
     });
@@ -673,10 +680,25 @@ export function createSearchRenderer(elements) {
 
   function createStoryCard(
     entry,
-    state
+    state,
+    options = {}
   ) {
     const item =
       entry.item;
+
+    const cardIndex =
+      Number.isInteger(
+        options.index
+      )
+        ? options.index
+        : 0;
+
+    const eagerCoverCount =
+      Number.isInteger(
+        options.eagerCoverCount
+      )
+        ? options.eagerCoverCount
+        : 1;
 
     const fragment =
       elements.cardTemplate
@@ -752,6 +774,29 @@ export function createSearchRenderer(elements) {
         detailUrl;
     });
 
+
+    cover.width =
+      CONFIG.COVER_WIDTH;
+
+    cover.height =
+      CONFIG.COVER_HEIGHT;
+
+    cover.decoding =
+      "async";
+
+    const shouldLoadEagerly =
+      cardIndex <
+      eagerCoverCount;
+
+    cover.loading =
+      shouldLoadEagerly
+        ? "eager"
+        : "lazy";
+
+    cover.fetchPriority =
+      shouldLoadEagerly
+        ? "high"
+        : "auto";
 
     if (item.coverUrl) {
       cover.src =
@@ -904,6 +949,48 @@ export function createSearchRenderer(elements) {
     );
 
     return fragment;
+  }
+
+
+  function getEagerCoverCount() {
+    const computedColumns =
+      window
+        .getComputedStyle(
+          elements.resultsGrid
+        )
+        .gridTemplateColumns
+        .split(/\s+/g)
+        .filter((value) => {
+          return (
+            value &&
+            value !== "none"
+          );
+        })
+        .length;
+
+    let columns =
+      computedColumns;
+
+    if (!columns) {
+      const width =
+        window.innerWidth;
+
+      columns =
+        width <= 520
+          ? 1
+          : width <= 760
+            ? 2
+            : width <= 1080
+              ? 3
+              : width <= 1360
+                ? 4
+                : 5;
+    }
+
+    return (
+      columns *
+      CONFIG.EAGER_COVER_ROWS
+    );
   }
 
 

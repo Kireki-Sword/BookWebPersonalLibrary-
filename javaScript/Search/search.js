@@ -104,6 +104,8 @@ async function startSearchPage() {
 
   readStateFromUrl();
 
+  configurePerPageSelect();
+
   bindEvents();
 
   selectController.initialize();
@@ -492,6 +494,64 @@ function bindEvents() {
 /* =========================================================
    CUSTOM SELECTS
    ========================================================= */
+
+function configurePerPageSelect() {
+  const perPageSelect =
+    elements.customSelects.find((select) => {
+      return !select.querySelector(
+        "#sort-select-trigger"
+      );
+    });
+
+  if (!perPageSelect) {
+    return;
+  }
+
+  const menu =
+    perPageSelect.querySelector(
+      "[data-select-menu]"
+    );
+
+  if (!menu) {
+    return;
+  }
+
+  menu.innerHTML =
+    "";
+
+  CONFIG.ALLOWED_PER_PAGE.forEach((amount) => {
+    const option =
+      document.createElement(
+        "button"
+      );
+
+    option.type =
+      "button";
+
+    option.setAttribute(
+      "role",
+      "option"
+    );
+
+    option.dataset.optionValue =
+      String(
+        amount
+      );
+
+    option.textContent =
+      `${amount} per page`;
+
+    menu.append(
+      option
+    );
+  });
+
+  perPageSelect.dataset.value =
+    String(
+      state.perPage
+    );
+}
+
 
 function handleCustomSelectChange(
   kind,

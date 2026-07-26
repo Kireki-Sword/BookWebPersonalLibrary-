@@ -5048,3 +5048,67 @@ body.search-site .story-card-title-group h3 {
     max-width: none;
   }
 }
+
+/* =========================================================
+   RESEARCHED RESULT DENSITY PATCH — JULY 2026
+
+   Goals:
+   - Keep the proven 2:3 artwork ratio.
+   - Keep cards near 190–230 CSS px on desktop.
+   - Avoid the abrupt 4-column to 3-column size jump near
+     1080 CSS px.
+   - Preserve two columns on small tablets and horizontal
+     cards on phones.
+   ========================================================= */
+
+@media (min-width: 761px) {
+  body.search-site .results-grid,
+  body.search-site .results-loading {
+    grid-template-columns:
+      repeat(
+        auto-fill,
+        minmax(190px, 1fr)
+      )
+      !important;
+  }
+}
+
+/* Keep metadata compact; artwork remains the main signal. */
+body.search-site .story-card-body {
+  min-height: 134px !important;
+}
+
+/* Stable image geometry before a cover has downloaded. */
+body.search-site .story-card-cover img {
+  aspect-ratio: 2 / 3;
+}
+
+/* Existing controls already meet the recommended 44px target. */
+body.search-site .catalogue-select-trigger,
+body.search-site .mobile-filter-button,
+body.search-site .clear-filters-button,
+body.search-site .pagination-button {
+  min-block-size: 44px;
+}
+
+@media (max-width: 760px) {
+  body.search-site .results-grid,
+  body.search-site .results-loading {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr))
+      !important;
+  }
+}
+
+@media (max-width: 520px) {
+  body.search-site .results-grid,
+  body.search-site .results-loading {
+    grid-template-columns:
+      minmax(0, 1fr)
+      !important;
+  }
+
+  body.search-site .story-card-body {
+    min-height: 218px !important;
+  }
+}

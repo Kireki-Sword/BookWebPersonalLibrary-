@@ -32,7 +32,7 @@ export const CONFIG =
       6,
 
     MAX_LOADING_SKELETONS:
-      15,
+      20,
 
     COLLAPSED_GENRE_LIMIT:
       10,
@@ -41,13 +41,22 @@ export const CONFIG =
       10,
 
     DEFAULT_PER_PAGE:
-      15,
+      20,
 
     ALLOWED_PER_PAGE: [
-      15,
-      30,
-      45
+      20,
+      40,
+      60
     ],
+
+    EAGER_COVER_ROWS:
+      1,
+
+    COVER_WIDTH:
+      400,
+
+    COVER_HEIGHT:
+      600,
 
     ALLOWED_SORT_OPTIONS:
       new Set([
