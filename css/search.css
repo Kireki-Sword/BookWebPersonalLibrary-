@@ -5357,3 +5357,545 @@ body.search-site.search-professional-max {
   background-attachment: fixed;
   background-repeat: no-repeat;
 }
+/* =========================================================
+   FINAL CATALOGUE CARD SYSTEM
+   Keep this block at the absolute bottom of search.css.
+
+   This is the authoritative card/layout layer. It overrides
+   earlier experiments without requiring new HTML classes.
+
+   Improvements:
+   - Cover art occupies most of every card.
+   - Titles receive the full card width.
+   - Description, match explanation, and duplicate CTA are
+     removed from the compact grid.
+   - Rating and genres become compact metadata.
+   - Grid responds naturally instead of relying on many fixed
+     column breakpoints.
+   - Touch targets, focus treatment, and mobile proportions
+     are improved.
+   ========================================================= */
+
+/* Avoid repaint cost from the older fixed ambient background. */
+body.search-site,
+body.search-site.search-professional-max {
+  background-attachment: scroll !important;
+}
+
+/* Let the available width determine a useful card count. */
+body.search-site .results-grid,
+body.search-site .results-loading,
+body.search-site.search-professional-max .results-grid,
+body.search-site.search-professional-max .results-loading {
+  grid-template-columns:
+    repeat(
+      auto-fill,
+      minmax(
+        min(100%, 205px),
+        1fr
+      )
+    ) !important;
+
+  align-items: stretch;
+  gap: clamp(1rem, 1.35vw, 1.35rem) !important;
+
+  padding-top: 1.15rem;
+}
+
+/* Sparse result sets should remain aligned with the main grid. */
+body.search-site.search-professional-max
+.results-grid.results-grid-sparse {
+  max-width: none !important;
+
+  grid-template-columns:
+    repeat(
+      auto-fill,
+      minmax(
+        min(100%, 205px),
+        238px
+      )
+    ) !important;
+
+  justify-content: start;
+}
+
+
+/* =========================================================
+   CARD CONTAINER
+   ========================================================= */
+
+body.search-site .story-card {
+  min-height: 0;
+  height: 100%;
+
+  overflow: hidden;
+
+  display: flex;
+  flex-direction: column;
+
+  border-radius: 17px;
+
+  cursor: default;
+}
+
+body.search-site .story-card:hover {
+  transform: translateY(-3px);
+}
+
+/* Show a strong card-level state when one of its links is focused. */
+body.search-site .story-card:focus-within {
+  border-color: rgba(121, 217, 255, 0.48) !important;
+
+  box-shadow:
+    0 0 0 3px rgba(121, 217, 255, 0.09),
+    0 25px 62px rgba(0, 0, 0, 0.40),
+    0 0 30px rgba(105, 126, 255, 0.10)
+    !important;
+}
+
+
+/* =========================================================
+   COVER — PRIMARY VISUAL AREA
+   ========================================================= */
+
+body.search-site .story-card-cover {
+  width: 100%;
+  flex: 0 0 auto;
+
+  /* A standard portrait cover ratio naturally takes 68–74%
+     of the complete compact card height on desktop. */
+  aspect-ratio: 2 / 3;
+
+  overflow: hidden;
+}
+
+body.search-site .story-card-cover img {
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+  object-position: center top;
+}
+
+body.search-site .story-card:hover
+.story-card-cover img {
+  transform: scale(1.022);
+}
+
+/* Classification badge: visible but quieter than a primary action. */
+body.search-site .story-card-format {
+  left: 0.68rem;
+  bottom: 0.68rem;
+
+  max-width: calc(100% - 1.36rem);
+  min-height: 25px;
+
+  display: inline-flex;
+  align-items: center;
+
+  padding: 0.28rem 0.52rem;
+
+  color: #e5efff !important;
+
+  font-size: 0.58rem;
+  font-weight: 760;
+  letter-spacing: 0.025em;
+  line-height: 1;
+
+  text-transform: none;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(18, 42, 79, 0.96),
+      rgba(12, 27, 58, 0.97)
+    )
+    !important;
+
+  border-color: rgba(132, 184, 255, 0.48) !important;
+
+  box-shadow:
+    0 8px 22px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08)
+    !important;
+}
+
+
+/* =========================================================
+   COMPACT INFORMATION AREA
+   ========================================================= */
+
+body.search-site .story-card-body,
+body.search-site.search-professional-max
+.story-card-body {
+  min-height: 0 !important;
+  flex: 1 1 auto;
+
+  display: flex;
+  flex-direction: column;
+
+  padding: 0.86rem 0.88rem 0.88rem !important;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(15, 22, 41, 0.985),
+      rgba(8, 14, 28, 0.995)
+    )
+    !important;
+}
+
+/* Full-width title first, rating on its own compact row. */
+body.search-site .story-card-heading {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.52rem;
+}
+
+body.search-site .story-card-title-group {
+  width: 100%;
+  min-width: 0;
+}
+
+body.search-site .story-card-title-group h3,
+body.search-site.search-professional-max
+.story-card-title-group h3 {
+  min-height: 2.42em;
+
+  margin: 0;
+
+  display: -webkit-box;
+  overflow: hidden;
+
+  color: var(--color-text-primary, #f5f7ff);
+
+  font-size: clamp(1rem, 1.1vw, 1.08rem) !important;
+  font-weight: 620;
+  line-height: 1.21 !important;
+  letter-spacing: -0.012em;
+
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+body.search-site .story-card-title-group h3 a {
+  color: inherit;
+  text-decoration: none;
+
+  transition: color 160ms ease;
+}
+
+body.search-site .story-card-title-group h3 a:hover {
+  color: #cbd7ff;
+}
+
+body.search-site .story-card-title-group p,
+body.search-site.search-professional-max
+.story-card-title-group p {
+  min-height: 0;
+
+  margin-top: 0.36rem;
+
+  color: #aab6cf !important;
+
+  font-size: 0.69rem !important;
+  line-height: 1.42;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Rating no longer steals title width. */
+body.search-site .story-card-score {
+  width: fit-content;
+  min-height: 27px;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 0.28rem;
+
+  padding: 0.25rem 0.48rem;
+
+  color: #dce5f8;
+
+  font-size: 0.69rem;
+  font-weight: 760;
+  line-height: 1;
+
+  background: rgba(64, 86, 153, 0.12);
+
+  border: 1px solid rgba(127, 157, 229, 0.18);
+  border-radius: 999px;
+}
+
+body.search-site .story-card-score i {
+  color: #c9d2ff;
+}
+
+/* The compact search grid should scan, not read like a detail page. */
+body.search-site .story-card-description,
+body.search-site .story-card-match,
+body.search-site .story-card-action {
+  display: none !important;
+}
+
+
+/* =========================================================
+   GENRE METADATA
+   ========================================================= */
+
+body.search-site .story-card-genres {
+  min-height: 30px;
+
+  margin-top: 0.66rem;
+
+  display: flex;
+  align-items: center;
+  align-content: flex-start;
+  gap: 0.36rem;
+  flex-wrap: wrap;
+}
+
+/* Keep the compact card from becoming a tag cloud. */
+body.search-site .story-card-genre:nth-child(n + 4) {
+  display: none;
+}
+
+body.search-site .story-card-genre {
+  min-height: 27px;
+  max-width: 112px;
+
+  display: inline-flex;
+  align-items: center;
+
+  padding: 0.27rem 0.48rem;
+
+  color: #c9d7f0 !important;
+
+  font-size: 0.61rem;
+  font-weight: 650;
+  line-height: 1;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(74, 126, 235, 0.14),
+      rgba(54, 86, 173, 0.055)
+    )
+    !important;
+
+  border-color: rgba(111, 165, 255, 0.22) !important;
+}
+
+
+/* =========================================================
+   LINKS AND FOCUS
+   ========================================================= */
+
+body.search-site .story-card-cover:focus-visible,
+body.search-site .story-card-title-group h3 a:focus-visible {
+  outline: 3px solid rgba(121, 217, 255, 0.76);
+  outline-offset: -3px;
+}
+
+
+/* =========================================================
+   DESKTOP DENSITY
+   ========================================================= */
+
+@media (min-width: 1361px) {
+  body.search-site .results-grid,
+  body.search-site .results-loading {
+    grid-template-columns:
+      repeat(
+        5,
+        minmax(0, 1fr)
+      )
+      !important;
+  }
+}
+
+@media (min-width: 981px) and (max-width: 1360px) {
+  body.search-site .results-grid,
+  body.search-site .results-loading {
+    grid-template-columns:
+      repeat(
+        4,
+        minmax(0, 1fr)
+      )
+      !important;
+  }
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 980px) {
+  body.search-site .results-grid,
+  body.search-site .results-loading {
+    grid-template-columns:
+      repeat(
+        auto-fill,
+        minmax(
+          min(100%, 205px),
+          1fr
+        )
+      )
+      !important;
+  }
+}
+
+@media (max-width: 760px) {
+  body.search-site .results-grid,
+  body.search-site .results-loading {
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(0, 1fr)
+      )
+      !important;
+  }
+
+  body.search-site .story-card-title-group h3 {
+    font-size: 1rem !important;
+  }
+}
+
+
+/* =========================================================
+   MOBILE HORIZONTAL CARD
+   ========================================================= */
+
+@media (max-width: 520px) {
+  body.search-site .results-grid,
+  body.search-site .results-loading {
+    grid-template-columns:
+      minmax(0, 1fr)
+      !important;
+
+    gap: 0.9rem !important;
+  }
+
+  body.search-site .story-card {
+    min-height: 220px;
+
+    display: grid;
+    grid-template-columns:
+      minmax(124px, 42%)
+      minmax(0, 1fr);
+
+    align-items: stretch;
+  }
+
+  body.search-site .story-card-cover {
+    width: 100%;
+    height: 100%;
+    min-height: 220px;
+
+    aspect-ratio: auto;
+
+    border-right:
+      1px solid
+      rgba(184, 192, 255, 0.105);
+
+    border-bottom: 0;
+  }
+
+  body.search-site .story-card-cover img {
+    object-position: center top;
+  }
+
+  body.search-site .story-card-body,
+  body.search-site.search-professional-max
+  .story-card-body {
+    min-height: 220px !important;
+
+    padding: 0.82rem !important;
+  }
+
+  body.search-site .story-card-title-group h3 {
+    min-height: 2.42em;
+
+    font-size: 1rem !important;
+  }
+
+  body.search-site .story-card-title-group p {
+    font-size: 0.68rem !important;
+  }
+
+  body.search-site .story-card-score {
+    min-height: 28px;
+  }
+
+  body.search-site .story-card-genres {
+    margin-top: auto;
+    padding-top: 0.62rem;
+  }
+
+  body.search-site .story-card-genre {
+    min-height: 28px;
+  }
+
+  /* Two chips are enough in the narrower horizontal layout. */
+  body.search-site .story-card-genre:nth-child(n + 3) {
+    display: none;
+  }
+}
+
+
+/* =========================================================
+   VERY SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 370px) {
+  body.search-site .story-card {
+    grid-template-columns:
+      minmax(112px, 40%)
+      minmax(0, 1fr);
+  }
+
+  body.search-site .story-card-body,
+  body.search-site.search-professional-max
+  .story-card-body {
+    padding: 0.72rem !important;
+  }
+
+  body.search-site .story-card-title-group h3 {
+    font-size: 0.94rem !important;
+  }
+
+  body.search-site .story-card-format {
+    left: 0.5rem;
+    bottom: 0.5rem;
+
+    max-width: calc(100% - 1rem);
+
+    padding-inline: 0.42rem;
+  }
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  body.search-site .story-card,
+  body.search-site .story-card-cover img,
+  body.search-site .story-card-title-group h3 a {
+    transition: none !important;
+  }
+
+  body.search-site .story-card:hover {
+    transform: none;
+  }
+
+  body.search-site .story-card:hover
+  .story-card-cover img {
+    transform: none;
+  }
+}
