@@ -1,5 +1,5 @@
 /* ============================================================================
-   INKWELL — SECTION 5: SOCIAL, ON YOUR TERMS (V17 CLEAN PANEL OWNERSHIP / LAYER SEARCH / EDITORIAL FOR YOU)
+   INKWELL — SECTION 5: SOCIAL, ON YOUR TERMS (V18 FIXED FOLLOWING / FULL-CANVAS FOR YOU / CLEAN SEARCH)
 
    Homepage product story:
    1. Control — audience, spoilers, and a stable live preview.
@@ -20,12 +20,12 @@
   "use strict";
 
   const section = document.querySelector("#section-5-social");
-  if (!section || window.__INKWELL_SOCIAL_V17_STARTED__) return;
+  if (!section || window.__INKWELL_SOCIAL_V18_STARTED__) return;
 
-  window.__INKWELL_SOCIAL_V17_STARTED__ = true;
+  window.__INKWELL_SOCIAL_V18_STARTED__ = true;
   window.__INKWELL_SOCIAL_V16_STARTED__ = true;
   window.__INKWELL_SOCIAL_CINEMA_BUILD__ =
-    "2026-07-25-social-cinema-v17-panel-search-for-you-redesign";
+    "2026-07-25-social-cinema-v18-fixed-covers-full-canvas-search";
 
   const { gsap, ScrollTrigger } = window;
   const MANAGED_BY_HOME_JOURNEY =
@@ -716,7 +716,7 @@
 
           <section class="s11-social-view" data-s11-social-view="foryou" role="tabpanel" aria-label="For You discovery" aria-hidden="true" inert hidden>
             <header class="s11-view-heading s12-view-heading s13-view-heading s14-view-heading s14-view-heading--foryou">
-              <span><small>One story layer at a time</small><strong>For You</strong><p>Move through one layer at a time. The saved moment, character, quote, thought, or reflection stays large while profile and story actions remain in the footer.</p></span>
+              <span><small>One story layer at a time</small><strong>For You</strong><p>One saved layer stays in focus. Use the arrows to move, then open the reader, title, or connected reflection from the bottom dock.</p></span>
               <span class="s11-count-pill" data-s14-for-you-count>1 / 5</span>
             </header>
             <div class="s13-for-you-stage s14-for-you-stage" data-s11-for-you-results></div>
@@ -892,7 +892,7 @@
         userLocks.audience = true;
         userLocks.spoiler = true;
       }
-      if (target.matches("[data-s11-social-tab], [data-s11-back-social], [data-s11-open-library], [data-s11-open-story], [data-s13-open-artifact], [data-s13-feed-open], [data-s13-open-author]")) userLocks.socialView = true;
+      if (target.matches("[data-s11-social-tab], [data-s11-back-social], [data-s11-open-library], [data-s11-open-story], [data-s13-open-artifact], [data-s18-open-reflection], [data-s13-feed-open], [data-s13-open-author]")) userLocks.socialView = true;
       if (target.matches("[data-s13-for-you-select], [data-s14-for-you-dot], [data-s17-for-you-prev], [data-s17-for-you-next]")) userLocks.forYouArtifact = true;
       if (target.closest("[data-s11-profile-key]")) {
         userLocks.profile = true;
@@ -1048,6 +1048,18 @@
       state.searchReflectionOnly = !state.searchReflectionOnly;
       renderSearchResults(true);
       announce(state.searchReflectionOnly ? "Only content with a reflection is shown." : "All reflection states are shown.");
+      return;
+    }
+
+    const reflection = event.target.closest("[data-s18-open-reflection]");
+    if (reflection) {
+      const owner = reflection.dataset.s18ReflectionOwner;
+      if (owner && PROFILE_DATA[owner]) selectProfile(owner, false, "user");
+      const title = reflection.dataset.s18OpenReflection || primaryStory.title;
+      state.selectedStory = title;
+      renderStoryDetail(title);
+      setSocialView("story", true, "user");
+      requestAnimationFrame(() => setStoryLayer("reflection", true, "user"));
       return;
     }
 
@@ -1564,7 +1576,11 @@
     const storyFilter = normalizeText(state.searchStory || "all");
     const matchesStory = (title) => storyFilter === "all" || normalizeText(title) === storyFilter;
 
-    const contentCandidates = getSearchContentItems()
+    const exactStory = query
+      ? mergeUniqueStories(FALLBACK_STORIES, stories).find((story) => normalizeText(story.title) === query)
+      : null;
+
+    let contentCandidates = getSearchContentItems()
       .map((artifact, index) => ({
         kind: "artifact",
         artifact,
@@ -1577,6 +1593,10 @@
       .filter(({ artifact }) => matchesStory(artifact.story))
       .filter(({ artifact }) => state.searchLayer === "all" || artifact.searchLayer === state.searchLayer)
       .filter(({ artifact }) => !state.searchReflectionOnly || artifact.hasReflection === true);
+
+    if (exactStory && state.searchStory === "all") {
+      contentCandidates = contentCandidates.filter(({ artifact }) => normalizeText(artifact.story) === normalizeText(exactStory.title));
+    }
 
     const readerCandidates = scoreReaders(tokens, "all")
       .map((item, index) => ({
@@ -2166,22 +2186,26 @@
     const profile = PROFILE_DATA[item.profile];
     const story = getStoryByTitle(item.story);
     const action = activityActionCopy(item, story);
-    return `<article class="s13-following-card s14-following-card" data-s13-feed-tone="${escapeHtml(item.tone || "default")}">
-      <button type="button" class="s13-following-card__button" data-s13-feed-open="${index}" aria-label="Open ${escapeHtml(item.type)} from ${escapeHtml(profile.name)}">
-        <header>
+    return `<article class="s13-following-card s14-following-card s18-following-card" data-s13-feed-tone="${escapeHtml(item.tone || "default")}">
+      <button type="button" class="s13-following-card__button s18-following-card__button" data-s13-feed-open="${index}" aria-label="Open ${escapeHtml(item.type)} from ${escapeHtml(profile.name)}">
+        <header class="s18-following-card__header">
           <span class="s11-avatar s11-avatar--small" style="${avatarStyle(item.profile)}">${escapeHtml(profile.initial)}</span>
           <span class="s13-following-card__identity"><strong>${escapeHtml(profile.name)}</strong><small>${escapeHtml(item.type)}</small></span>
           <time>${escapeHtml(item.time || `${index + 1}h`)}</time>
         </header>
-        <div class="s13-following-card__body">
-          <span class="s13-following-card__copy">
+        <div class="s13-following-card__body s18-following-card__body">
+          <span class="s13-following-card__copy s18-following-card__copy">
             <small>${escapeHtml(action)}</small>
             <strong>${escapeHtml(item.title)}</strong>
             <p>${escapeHtml(item.detail)}</p>
           </span>
-          ${storyCoverMarkup(story, "s13-following-card__cover")}
+          <span class="s18-following-card__cover-shell">${storyCoverMarkup(story, "s13-following-card__cover")}</span>
         </div>
-        <footer><span class="s13-layer-chip">${escapeHtml(item.layer || "Update")}</span><span>${escapeHtml(story.title)}</span><span>${escapeHtml(profile.tags[0])}</span></footer>
+        <footer class="s18-following-card__footer">
+          <span class="s13-layer-chip">${escapeHtml(item.layer || "Update")}</span>
+          <span class="s18-following-card__story">${escapeHtml(story.title)}</span>
+          <span class="s18-following-card__category">${escapeHtml(profile.tags[0])}</span>
+        </footer>
       </button>
     </article>`;
   }
@@ -2209,50 +2233,49 @@
     `;
 
     if (type === "moment") {
-      return `<div class="s17-primary-layer s17-primary-layer--media">${media}<span><small>Saved moment</small><strong>${escapeHtml(artifact.title)}</strong></span></div>`;
+      return `<div class="s17-primary-layer s17-primary-layer--media s18-primary-layer">${media}</div>`;
     }
     if (type === "character") {
-      return `<div class="s17-primary-layer s17-primary-layer--character">${media}<span><small>Character focus</small><strong>${escapeHtml(artifact.title)}</strong></span></div>`;
+      return `<div class="s17-primary-layer s17-primary-layer--character s18-primary-layer">${media}</div>`;
     }
     if (type === "quote") {
-      return `<div class="s17-primary-layer s17-primary-layer--text">${media}<blockquote>${escapeHtml(artifact.excerpt)}</blockquote><small>${escapeHtml(story.title)}</small></div>`;
+      return `<div class="s17-primary-layer s17-primary-layer--text s18-primary-layer">${media}<blockquote>${escapeHtml(artifact.excerpt)}</blockquote><small>${escapeHtml(story.title)}</small></div>`;
     }
     if (type === "thought") {
-      return `<div class="s17-primary-layer s17-primary-layer--text">${media}<p>${escapeHtml(artifact.excerpt)}</p><small>Connected thought · ${escapeHtml(story.title)}</small></div>`;
+      return `<div class="s17-primary-layer s17-primary-layer--text s18-primary-layer">${media}<p>${escapeHtml(artifact.excerpt)}</p><small>Thought · ${escapeHtml(story.title)}</small></div>`;
     }
-    return `<div class="s17-primary-layer s17-primary-layer--text">${media}<p>${escapeHtml(artifact.excerpt)}</p><small>Public reflection · ${escapeHtml(story.title)}</small></div>`;
+    return `<div class="s17-primary-layer s17-primary-layer--text s18-primary-layer">${media}<p>${escapeHtml(artifact.excerpt)}</p><small>Reflection · ${escapeHtml(story.title)}</small></div>`;
   }
 
   function forYouArtifactMarkup(artifact, index) {
     const profile = PROFILE_DATA[artifact.profile];
     const story = getStoryByTitle(artifact.story);
     const type = normalizeText(artifact.type);
-    const needsReflectionCopy = ["moment", "character"].includes(type);
-    return `<article class="s14-for-you-slide s17-for-you-slide" data-s14-for-you-index="${index}" data-s14-artifact-type="${escapeHtml(type)}" aria-label="${escapeHtml(artifact.type)} recommendation ${index + 1} of ${Math.min(5, DISCOVERY_ARTIFACTS.length)}">
-      <div class="s14-for-you-slide__visual s17-for-you-slide__visual">
+    return `<article class="s14-for-you-slide s17-for-you-slide s18-for-you-slide" data-s14-for-you-index="${index}" data-s14-artifact-type="${escapeHtml(type)}" aria-label="${escapeHtml(artifact.type)} recommendation ${index + 1} of ${Math.min(5, DISCOVERY_ARTIFACTS.length)}">
+      <div class="s14-for-you-slide__visual s17-for-you-slide__visual s18-for-you-canvas">
         ${forYouPrimaryMarkup(artifact, story)}
         <span class="s14-for-you-slide__type">${escapeHtml(artifact.type)}</span>
+        <span class="s13-reason-chip s14-reason-chip s18-for-you-reason"><b aria-hidden="true">↔</b>${escapeHtml(artifact.reason)}</span>
       </div>
 
-      <div class="s14-for-you-slide__content s17-for-you-slide__content">
-        <span class="s13-reason-chip s14-reason-chip"><b aria-hidden="true">↔</b>${escapeHtml(artifact.reason)}</span>
-        <span class="s13-artifact-kicker">${escapeHtml(artifact.type)} · ${escapeHtml(story.title)}</span>
-        <h4>${escapeHtml(artifact.title)}</h4>
-        ${needsReflectionCopy ? `<p class="s17-for-you-reflection">${escapeHtml(artifact.excerpt)}</p>` : ""}
-        <div class="s13-artifact-tags">${artifact.tags.map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}</div>
+      <div class="s18-for-you-dock">
+        <div class="s18-for-you-dock__copy">
+          <span class="s13-artifact-kicker">${escapeHtml(artifact.type)} · ${escapeHtml(story.title)}</span>
+          <h4>${escapeHtml(artifact.title)}</h4>
+          <div class="s13-artifact-tags">${artifact.tags.map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}</div>
+        </div>
 
-        <footer class="s14-for-you-slide__footer s17-for-you-footer">
-          <button type="button" class="s14-author-card s16-author-card s17-author-card" data-s13-open-author="${escapeHtml(artifact.profile)}" aria-label="Open ${escapeHtml(profile.name)} profile">
+        <footer class="s14-for-you-slide__footer s17-for-you-footer s18-for-you-footer">
+          <button type="button" class="s14-author-card s16-author-card s17-author-card s18-author-card" data-s13-open-author="${escapeHtml(artifact.profile)}" aria-label="Open ${escapeHtml(profile.name)} profile">
             <span class="s11-avatar" style="${avatarStyle(artifact.profile)}">${escapeHtml(profile.initial)}</span>
             <span><strong>${escapeHtml(profile.name)}</strong><small>${escapeHtml(profile.label)}</small></span>
             <b aria-hidden="true">→</b>
           </button>
-          <div class="s14-for-you-actions s17-for-you-actions">
+          <div class="s14-for-you-actions s17-for-you-actions s18-for-you-actions">
             <button type="button" class="s13-secondary-action" data-s11-open-story="${escapeHtml(story.title)}" data-s13-story-owner="${escapeHtml(artifact.profile)}" aria-label="View ${escapeHtml(story.title)}">View title</button>
-            <button type="button" class="s13-primary-action" data-s13-open-artifact="${escapeHtml(artifact.id)}">See reflection</button>
+            <button type="button" class="s13-primary-action" data-s18-open-reflection="${escapeHtml(story.title)}" data-s18-reflection-owner="${escapeHtml(artifact.profile)}">See reflection</button>
           </div>
         </footer>
-        <small class="s13-artifact-meta">${escapeHtml(artifact.meta)}</small>
       </div>
     </article>`;
   }
@@ -2269,19 +2292,24 @@
       : `data-s13-open-artifact="${escapeHtml(artifact.id)}"`;
     const resultType = escapeHtml(artifact.searchLayer || normalizeText(artifact.type));
     const displayType = normalizeText(artifact.type) === "reflection" ? "Note" : artifact.type;
-    return `<button type="button" class="s13-search-card s13-search-artifact" data-s16-search-result-type="${resultType}" ${actionAttribute} aria-label="Open ${escapeHtml(displayType)} ${escapeHtml(artifact.title)}">
-      <span class="s13-search-card__main">
-        ${storyCoverMarkup(story, "s13-search-artifact__cover")}
-        <span class="s13-search-artifact__copy"><small>${escapeHtml(displayType)} · ${escapeHtml(story.title)}</small><strong>${escapeHtml(artifact.title)}</strong><p>${escapeHtml(artifact.excerpt)}</p><span class="s13-search-card__tags">${(artifact.tags || []).slice(0, 3).map((tag) => `<em>${escapeHtml(tag)}</em>`).join("")}</span></span>
+    return `<button type="button" class="s13-search-card s13-search-artifact s18-search-artifact" data-s16-search-result-type="${resultType}" ${actionAttribute} aria-label="Open ${escapeHtml(displayType)} ${escapeHtml(artifact.title)}">
+      <span class="s18-search-artifact__cover">${storyCoverMarkup(story, "s13-search-artifact__cover")}</span>
+      <span class="s18-search-artifact__copy">
+        <small>${escapeHtml(displayType)} · ${escapeHtml(story.title)}</small>
+        <strong>${escapeHtml(artifact.title)}</strong>
+        <span class="s13-search-card__tags">${(artifact.tags || []).slice(0, 3).map((tag) => `<em>${escapeHtml(tag)}</em>`).join("")}</span>
       </span>
-      <span class="s13-search-artifact__footer"><span class="s11-avatar s11-avatar--small" style="${avatarStyle(artifact.profile)}">${escapeHtml(profile.initial)}</span><span><strong>${escapeHtml(profile.name)}</strong><small>${escapeHtml(artifact.reason)}</small></span></span>
+      <span class="s18-search-artifact__author">
+        <span class="s11-avatar s11-avatar--small" style="${avatarStyle(artifact.profile)}">${escapeHtml(profile.initial)}</span>
+        <span><strong>${escapeHtml(profile.name)}</strong><small>${escapeHtml(profile.label)}</small></span>
+      </span>
     </button>`;
   }
 
   function searchResultMarkup(key, reason) {
     const profile = PROFILE_DATA[key];
     const story = getStoryByTitle(profile.topStories[0]);
-    return `<button type="button" class="s13-search-card s13-search-reader" data-s16-search-result-type="reader" data-s11-profile-key="${escapeHtml(key)}" aria-pressed="${state.selectedProfile === key}">
+    return `<button type="button" class="s13-search-card s13-search-reader s18-search-reader" data-s16-search-result-type="reader" data-s11-profile-key="${escapeHtml(key)}" aria-pressed="${state.selectedProfile === key}">
       <header><span class="s11-avatar" style="${avatarStyle(key)}">${escapeHtml(profile.initial)}</span><span><small>${escapeHtml(profile.label)}</small><strong>${escapeHtml(profile.name)}</strong><p>${escapeHtml(profile.bio)}</p></span>${storyCoverMarkup(story, "s13-search-reader__cover")}</header>
       <div class="s13-search-reader__reason"><small>Why this profile matched</small><p>${escapeHtml(reason)}</p></div>
       <dl><div><dt>#1 story</dt><dd>${escapeHtml(story.title)}</dd></div><div><dt>Signature ranking</dt><dd>${escapeHtml(profile.signature)}</dd></div><div><dt>Public themes</dt><dd>${escapeHtml(profile.sharedThemes.join(" · "))}</dd></div></dl>
@@ -2820,7 +2848,7 @@
         timeline?.kill?.();
         resizeObserver?.disconnect?.();
         cleanupCallbacks.splice(0).forEach((callback) => callback());
-        window.__INKWELL_SOCIAL_V17_STARTED__ = false;
+        window.__INKWELL_SOCIAL_V18_STARTED__ = false;
         window.__INKWELL_SOCIAL_V16_STARTED__ = false;
       },
       cleanup: () => trigger?.kill?.(true),
