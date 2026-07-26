@@ -1,5 +1,5 @@
 /* ============================================================================
-   INKWELL — SECTION 5: SOCIAL, ON YOUR TERMS (V16 COLOR-CODED FOLLOWING / ADAPTIVE FOR YOU / WORKING SEARCH)
+   INKWELL — SECTION 5: SOCIAL, ON YOUR TERMS (V17 CLEAN PANEL OWNERSHIP / LAYER SEARCH / EDITORIAL FOR YOU)
 
    Homepage product story:
    1. Control — audience, spoilers, and a stable live preview.
@@ -20,11 +20,12 @@
   "use strict";
 
   const section = document.querySelector("#section-5-social");
-  if (!section || window.__INKWELL_SOCIAL_V16_STARTED__) return;
+  if (!section || window.__INKWELL_SOCIAL_V17_STARTED__) return;
 
+  window.__INKWELL_SOCIAL_V17_STARTED__ = true;
   window.__INKWELL_SOCIAL_V16_STARTED__ = true;
   window.__INKWELL_SOCIAL_CINEMA_BUILD__ =
-    "2026-07-25-social-cinema-v16-adaptive-content-search-fix";
+    "2026-07-25-social-cinema-v17-panel-search-for-you-redesign";
 
   const { gsap, ScrollTrigger } = window;
   const MANAGED_BY_HOME_JOURNEY =
@@ -87,10 +88,10 @@
   const SOCIAL_VIEW_META = Object.freeze({
     following: { label: "Following activity", status: "Social · Following", step: "01", segment: 1 },
     foryou: { label: "Content-first discovery", status: "Social · For You", step: "02", segment: 2 },
-    search: { label: "Search content, readers, and stories", status: "Social · Search", step: "03", segment: 3 },
-    profile: { label: "Reader profile", status: "Social · Profile", step: "04", segment: 4 },
-    library: { label: "Public story library", status: "Social · Library", step: "05", segment: 5 },
-    story: { label: "Saved story layers", status: "Social · Story", step: "06", segment: 6 },
+    search: { label: "Search layers and readers", status: "Social · Search", step: "03", segment: 3 },
+    profile: { label: "Reader profile", status: "Social · Profile", step: "03", segment: 3 },
+    library: { label: "Public story library", status: "Social · Library", step: "03", segment: 3 },
+    story: { label: "Saved story layers", status: "Social · Story", step: "03", segment: 3 },
   });
 
   const TOKYO_GHOUL_RE_ALIASES = [
@@ -503,7 +504,9 @@
     following: new Set(),
     searchQuery: "Tokyo Ghoul:re",
     searchFilter: "all",
-    searchMode: "all",
+    searchMode: "content",
+    searchLayer: "all",
+    searchReflectionOnly: false,
     searchStory: "all",
     searchSort: "relevance",
     forYouArtifact: 0,
@@ -591,7 +594,7 @@
         <h2>Follow people. Discover ideas. Search with intent.</h2>
         <p>Following shows what changed. For You becomes a one-card-at-a-time stream for moments, characters, reflections, quotes, and thoughts. Search then narrows by result type, story, and sort order.</p>
         <div class="social-copy-proof" aria-label="Social features">
-          <span>Visual activity</span><span>Scroll-snap discovery</span><span>Layered search</span>
+          <span>Visual activity</span><span>Layer-by-layer discovery</span><span>Layered search</span>
         </div>`;
     }
 
@@ -694,10 +697,10 @@
             <button type="button" role="tab" data-s11-social-tab="foryou" aria-selected="false">For You</button>
             <button type="button" role="tab" data-s11-social-tab="search" aria-selected="false">Search</button>
           </div>
-          <span class="s11-social-stage__progress s12-social-stage__progress" data-s11-social-progress aria-label="Social journey step 1 of 6">
-            <span><strong data-s11-social-progress-value>01</strong><small>/06</small></span>
+          <span class="s11-social-stage__progress s12-social-stage__progress" data-s11-social-progress aria-label="Social journey step 1 of 3">
+            <span><strong data-s11-social-progress-value>01</strong><small>/03</small></span>
             <i class="s12-progress-segments" aria-hidden="true">
-              ${Array.from({ length: 6 }, (_, index) => `<b data-s11-social-progress-segment="${index + 1}"></b>`).join("")}
+              ${Array.from({ length: 3 }, (_, index) => `<b data-s11-social-progress-segment="${index + 1}"></b>`).join("")}
             </i>
           </span>
         </header>
@@ -711,46 +714,57 @@
             <div class="s13-following-grid s14-following-grid" data-s11-following-grid role="feed" aria-label="Updates from followed readers"></div>
           </section>
 
-          <section class="s11-social-view" data-s11-social-view="foryou" role="tabpanel" aria-label="For You discovery" aria-hidden="true" inert>
+          <section class="s11-social-view" data-s11-social-view="foryou" role="tabpanel" aria-label="For You discovery" aria-hidden="true" inert hidden>
             <header class="s11-view-heading s12-view-heading s13-view-heading s14-view-heading s14-view-heading--foryou">
-              <span><small>One story layer at a time</small><strong>For You</strong><p>Scroll through one immersive card per idea. Open the saved layer, visit the reader, or keep moving without losing your place.</p></span>
+              <span><small>One story layer at a time</small><strong>For You</strong><p>Move through one layer at a time. The saved moment, character, quote, thought, or reflection stays large while profile and story actions remain in the footer.</p></span>
               <span class="s11-count-pill" data-s14-for-you-count>1 / 5</span>
             </header>
             <div class="s13-for-you-stage s14-for-you-stage" data-s11-for-you-results></div>
           </section>
 
-          <section class="s11-social-view" data-s11-social-view="search" role="tabpanel" aria-label="Search" aria-hidden="true" inert>
+          <section class="s11-social-view" data-s11-social-view="search" role="tabpanel" aria-label="Search" aria-hidden="true" inert hidden>
             <header class="s11-view-heading s11-view-heading--search s12-view-heading s13-view-heading s14-view-heading s14-view-heading--search">
-              <span><small>Search by story layer or reader</small><strong>Find the exact kind of result</strong><p>Start broad, then narrow by result type, story, and sort order. The active choices stay visible above the results.</p></span>
+              <span><small>Search layers or readers</small><strong>Find ideas, then decide whose perspective to open</strong><p>Search a title, character, or theme. Content shows public story layers; People ranks reader profiles that match the same query.</p></span>
               <span class="s11-count-pill" data-s14-search-count>6 results</span>
             </header>
 
-            <div class="s14-search-toolbar">
+            <div class="s17-search-scope" role="tablist" aria-label="Search result family">
+              <button type="button" role="tab" data-s13-search-mode="content" aria-selected="true">
+                <span>01</span><strong>Content</strong><small>Moments, characters, quotes, thoughts, rankings, and notes</small>
+              </button>
+              <button type="button" role="tab" data-s13-search-mode="people" aria-selected="false">
+                <span>02</span><strong>People</strong><small>Reader profiles ranked by taste, themes, and public activity</small>
+              </button>
+            </div>
+
+            <div class="s14-search-toolbar s17-search-toolbar">
               <div class="s11-search-box s13-search-box s14-search-box">
-                <label for="s11-reader-search">Search a story, reader, character, theme, ranking, or note</label>
+                <label for="s11-reader-search">Search a title, reader, character, theme, ranking, or note</label>
                 <div class="s11-search-input-shell"><span aria-hidden="true">⌕</span><input id="s11-reader-search" data-s11-search-input type="search" value="Tokyo Ghoul:re" autocomplete="off"></div>
                 <div class="s11-search-suggestions" aria-label="Suggested searches">
-                  <button type="button" data-s11-search-suggestion="Tokyo Ghoul:re">Tokyo Ghoul:re</button>
-                  <button type="button" data-s11-search-suggestion="Ken Kaneki">Ken Kaneki</button>
+                  <button type="button" data-s11-search-suggestion="Identity">Identity</button>
                   <button type="button" data-s11-search-suggestion="Memory">Memory</button>
+                  <button type="button" data-s11-search-suggestion="Responsibility">Responsibility</button>
                 </div>
               </div>
 
-              <div class="s14-search-selects">
-                <label><span>Story</span><select data-s14-search-story aria-label="Filter search results by story"></select></label>
+              <div class="s14-search-selects s17-search-selects">
+                <label><span>Title</span><select data-s14-search-story aria-label="Filter search results by title"></select></label>
                 <label><span>Sort by</span><select data-s14-search-sort aria-label="Sort search results"><option value="relevance">Best match</option><option value="recent">Recently updated</option><option value="saved">Most saved</option><option value="reader">Reader match</option></select></label>
               </div>
             </div>
 
-            <div class="s13-search-modes s14-search-typebar" role="tablist" aria-label="Result type">
-              <button type="button" role="tab" data-s13-search-mode="all" aria-selected="true">All</button>
-              <button type="button" role="tab" data-s13-search-mode="stories" aria-selected="false">Stories</button>
-              <button type="button" role="tab" data-s13-search-mode="readers" aria-selected="false">Readers</button>
-              <button type="button" role="tab" data-s13-search-mode="moment" aria-selected="false">Moments</button>
-              <button type="button" role="tab" data-s13-search-mode="character" aria-selected="false">Characters</button>
-              <button type="button" role="tab" data-s13-search-mode="reflection" aria-selected="false">Reflections</button>
-              <button type="button" role="tab" data-s13-search-mode="quote" aria-selected="false">Quotes</button>
-              <button type="button" role="tab" data-s13-search-mode="thought" aria-selected="false">Thoughts</button>
+            <div class="s17-search-content-filters" data-s17-search-content-filters>
+              <div class="s17-search-layerbar" role="radiogroup" aria-label="Content layer">
+                <button type="button" data-s17-search-layer="all" aria-pressed="true">All layers</button>
+                <button type="button" data-s17-search-layer="moment" aria-pressed="false">Moments</button>
+                <button type="button" data-s17-search-layer="character" aria-pressed="false">Characters</button>
+                <button type="button" data-s17-search-layer="quote" aria-pressed="false">Quotes</button>
+                <button type="button" data-s17-search-layer="thought" aria-pressed="false">Thoughts</button>
+                <button type="button" data-s17-search-layer="ranking" aria-pressed="false">Rankings</button>
+                <button type="button" data-s17-search-layer="note" aria-pressed="false">Notes</button>
+              </div>
+              <button type="button" class="s17-reflection-toggle" data-s17-search-reflection aria-pressed="false"><span aria-hidden="true">◇</span>Only with a reflection</button>
             </div>
 
             <div class="s14-search-active" data-s13-search-filters aria-live="polite"></div>
@@ -758,9 +772,9 @@
             <div class="s13-search-results s14-search-results" data-s11-search-results></div>
           </section>
 
-          <section class="s11-social-view" data-s11-social-view="profile" aria-label="Selected reader profile" aria-hidden="true" inert data-s11-reader-profile></section>
-          <section class="s11-social-view" data-s11-social-view="library" aria-label="Selected reader library" aria-hidden="true" inert data-s11-reader-library></section>
-          <section class="s11-social-view" data-s11-social-view="story" aria-label="Selected story layers" aria-hidden="true" inert data-s11-story-detail></section>
+          <section class="s11-social-view" data-s11-social-view="profile" aria-label="Selected reader profile" aria-hidden="true" inert hidden data-s11-reader-profile></section>
+          <section class="s11-social-view" data-s11-social-view="library" aria-label="Selected reader library" aria-hidden="true" inert hidden data-s11-reader-library></section>
+          <section class="s11-social-view" data-s11-social-view="story" aria-label="Selected story layers" aria-hidden="true" inert hidden data-s11-story-detail></section>
         </div>
       </section>`;
   }
@@ -833,6 +847,9 @@
       searchResults: q("[data-s11-search-results]"),
       searchInput: q("[data-s11-search-input]"),
       searchModes: qa("[data-s13-search-mode]"),
+      searchLayerButtons: qa("[data-s17-search-layer]"),
+      searchReflectionToggle: q("[data-s17-search-reflection]"),
+      searchContentFilters: q("[data-s17-search-content-filters]"),
       searchFilterContainer: q("[data-s13-search-filters]"),
       searchFilterLabel: q("[data-s13-search-filter-label]"),
       searchStorySelect: q("[data-s14-search-story]"),
@@ -876,13 +893,13 @@
         userLocks.spoiler = true;
       }
       if (target.matches("[data-s11-social-tab], [data-s11-back-social], [data-s11-open-library], [data-s11-open-story], [data-s13-open-artifact], [data-s13-feed-open], [data-s13-open-author]")) userLocks.socialView = true;
-      if (target.matches("[data-s13-for-you-select], [data-s14-for-you-dot]")) userLocks.forYouArtifact = true;
+      if (target.matches("[data-s13-for-you-select], [data-s14-for-you-dot], [data-s17-for-you-prev], [data-s17-for-you-next]")) userLocks.forYouArtifact = true;
       if (target.closest("[data-s11-profile-key]")) {
         userLocks.profile = true;
         userLocks.socialView = true;
       }
       if (target.matches("[data-s11-story-layer]")) userLocks.storyLayer = true;
-      if (target.matches("[data-s11-search-input], [data-s11-search-suggestion], [data-s13-search-mode], [data-s13-search-filter], [data-s14-search-story], [data-s14-search-sort]")) userLocks.search = true;
+      if (target.matches("[data-s11-search-input], [data-s11-search-suggestion], [data-s13-search-mode], [data-s17-search-layer], [data-s17-search-reflection], [data-s14-search-story], [data-s14-search-sort]")) userLocks.search = true;
       if (target.matches("[data-s11-profile-category]")) userLocks.profileCategory = true;
     }, { capture: true, passive: true });
 
@@ -927,7 +944,7 @@
     }, 120));
 
     elements.searchModes.forEach((button, index) => {
-      listen(button, "click", () => setSearchMode(button.dataset.s13SearchMode || "discover", true, "user"));
+      listen(button, "click", () => setSearchMode(button.dataset.s13SearchMode || "content", true, "user"));
       listen(button, "keydown", (event) => handleRovingTabKey(event, elements.searchModes, index));
     });
 
@@ -946,7 +963,9 @@
       if (!chip) return;
       const key = chip.dataset.s14ClearSearchFilter;
       if (key === "story") state.searchStory = "all";
-      if (key === "type") state.searchMode = "all";
+      if (key === "type") state.searchMode = "content";
+      if (key === "layer") state.searchLayer = "all";
+      if (key === "reflection") state.searchReflectionOnly = false;
       if (key === "query") {
         state.searchQuery = "";
         if (elements.searchInput) elements.searchInput.value = "";
@@ -1001,6 +1020,34 @@
     if (forYouChoice) {
       const index = Number(forYouChoice.dataset.s13ForYouSelect ?? forYouChoice.dataset.s14ForYouDot ?? 0);
       setForYouArtifact(index, true, "user");
+      return;
+    }
+
+    const previousForYou = event.target.closest("[data-s17-for-you-prev]");
+    if (previousForYou) {
+      setForYouArtifact(state.forYouArtifact - 1, true, "user");
+      return;
+    }
+
+    const nextForYou = event.target.closest("[data-s17-for-you-next]");
+    if (nextForYou) {
+      setForYouArtifact(state.forYouArtifact + 1, true, "user");
+      return;
+    }
+
+    const searchLayer = event.target.closest("[data-s17-search-layer]");
+    if (searchLayer) {
+      state.searchLayer = searchLayer.dataset.s17SearchLayer || "all";
+      renderSearchResults(true);
+      announce(`${searchLayer.textContent.trim()} selected.`);
+      return;
+    }
+
+    const reflectionToggle = event.target.closest("[data-s17-search-reflection]");
+    if (reflectionToggle) {
+      state.searchReflectionOnly = !state.searchReflectionOnly;
+      renderSearchResults(true);
+      announce(state.searchReflectionOnly ? "Only content with a reflection is shown." : "All reflection states are shown.");
       return;
     }
 
@@ -1129,6 +1176,7 @@
     timeline.fromTo(q("[data-s14-profile-activity]", elements.profile), { autoAlpha: 0, y: 12 }, { autoAlpha: 1, y: 0, duration: 0.38, ease: "power3.out" }, "identity+=1.34");
 
     timeline.addLabel("social-transition", ACT_TIMES.socialTransition);
+    timeline.call(() => setSocialView("following", false, "restore"), null, "social-transition");
     timeline.to(identityCopy, { autoAlpha: 0, y: -16, duration: 0.34, ease: "power2.inOut" }, "social-transition");
     timeline.fromTo(socialCopy, { autoAlpha: 0, y: 18 }, { autoAlpha: 1, y: 0, duration: 0.46, ease: "power3.out" }, "social-transition+=0.12");
     timeline.to(elements.profile, { autoAlpha: 0, x: -28, scale: 0.984, duration: 0.46, ease: "power2.inOut" }, "social-transition");
@@ -1201,6 +1249,7 @@
     clearDynamicMotionStyles(elements.socialStage);
     gsap.set(elements.followingGrid, { autoAlpha: 0, y: 14 });
     gsap.set(elements.socialStage, { autoAlpha: 0, y: 20, scale: 0.986 });
+    enforceSocialPanelOwnership(state.socialView || "following");
     setActiveAct("control", true);
     lastDemoSignature = "";
   }
@@ -1283,7 +1332,10 @@
     setText(elements.toolbarStatus, meta.status);
     setText(elements.sceneNumber, meta.number);
     setText(elements.sceneLabel, meta.label);
-    if (key === "social") updateSocialChrome(state.socialView);
+    if (key === "social") {
+      enforceSocialPanelOwnership(state.socialView || "following");
+      updateSocialChrome(state.socialView);
+    }
     announce(meta.announcement);
   }
 
@@ -1458,11 +1510,16 @@
 
     if (!q("[data-s14-for-you-feed]", elements.forYouResults)) {
       elements.forYouResults.innerHTML = `
-        <div class="s14-for-you-feed" data-s14-for-you-feed aria-label="For You recommendations. Use the page scroll, arrow keys, or item controls to move between recommendations.">
+        <div class="s14-for-you-feed s17-for-you-feed" data-s14-for-you-feed aria-label="For You recommendations. Use the page scroll, arrow keys, or the up and down controls to move between recommendations.">
           ${DISCOVERY_ARTIFACTS.slice(0, count).map((artifact, index) => forYouArtifactMarkup(artifact, index)).join("")}
         </div>
-        <nav class="s14-for-you-dots" aria-label="For You item">
-          ${Array.from({ length: count }, (_, index) => `<button type="button" data-s14-for-you-dot="${index}" aria-label="Show recommendation ${index + 1}" aria-current="${index === state.forYouArtifact ? "true" : "false"}"><span></span></button>`).join("")}
+        <nav class="s14-for-you-dots s17-for-you-nav" aria-label="For You item">
+          <button type="button" class="s17-for-you-arrow" data-s17-for-you-prev aria-label="Show previous recommendation">↑</button>
+          <span class="s17-for-you-nav__label" aria-hidden="true">More ideas</span>
+          <span class="s17-for-you-nav__dots">
+            ${Array.from({ length: count }, (_, index) => `<button type="button" data-s14-for-you-dot="${index}" aria-label="Show recommendation ${index + 1}" aria-current="${index === state.forYouArtifact ? "true" : "false"}"><span></span></button>`).join("")}
+          </span>
+          <button type="button" class="s17-for-you-arrow" data-s17-for-you-next aria-label="Show next recommendation">↓</button>
         </nav>`;
       renderImages(elements.forYouResults);
       renderArtifactMedia(elements.forYouResults);
@@ -1501,16 +1558,13 @@
     renderSearchFilters();
     updateSearchModeTabs();
 
-    const mode = state.searchMode;
+    const mode = state.searchMode === "people" ? "people" : "content";
     const query = normalizeText(state.searchQuery);
     const tokens = query.split(/\s+/).filter(Boolean);
     const storyFilter = normalizeText(state.searchStory || "all");
     const matchesStory = (title) => storyFilter === "all" || normalizeText(title) === storyFilter;
 
-    let cards = [];
-    let summary = "";
-
-    const artifactCandidates = DISCOVERY_ARTIFACTS
+    const contentCandidates = getSearchContentItems()
       .map((artifact, index) => ({
         kind: "artifact",
         artifact,
@@ -1518,59 +1572,48 @@
         score: scoreArtifact(artifact, tokens),
         recent: Number(artifact.updatedHours ?? 999),
         saved: Number(artifact.popularity ?? 0),
-        reader: scoreValues([PROFILE_DATA[artifact.profile].match, ...artifact.tags], tokens),
+        reader: scoreValues([PROFILE_DATA[artifact.profile]?.match, ...(artifact.tags || [])], tokens),
       }))
       .filter(({ artifact }) => matchesStory(artifact.story))
-      .filter(({ artifact }) => ["all", "stories", "readers"].includes(mode) || normalizeText(artifact.type) === normalizeText(mode));
+      .filter(({ artifact }) => state.searchLayer === "all" || artifact.searchLayer === state.searchLayer)
+      .filter(({ artifact }) => !state.searchReflectionOnly || artifact.hasReflection === true);
 
     const readerCandidates = scoreReaders(tokens, "all")
-      .map((item, index) => ({ kind: "reader", ...item, index, recent: 12 + index * 8, saved: 80 - index * 5, reader: item.score + 4 }))
+      .map((item, index) => ({
+        kind: "reader",
+        ...item,
+        index,
+        recent: 12 + index * 8,
+        saved: 80 - index * 5,
+        reader: item.score + 4,
+      }))
       .filter(({ key }) => state.searchStory === "all" || PROFILE_DATA[key].topStories.some(matchesStory));
 
-    const storyCandidates = scoreStories(tokens, "all")
-      .map((item, index) => ({ kind: "story", ...item, index, recent: 18 + index * 4, saved: Math.max(45, 96 - index * 4), reader: item.score + item.profiles.size }))
-      .filter(({ story }) => matchesStory(story.title));
-
-    if (mode === "readers") cards = readerCandidates;
-    else if (mode === "stories") cards = storyCandidates;
-    else if (["moment", "character", "reflection", "quote", "thought"].includes(mode)) cards = artifactCandidates;
-    else {
-      cards = [
-        ...artifactCandidates.slice(0, 4),
-        ...readerCandidates.slice(0, 1),
-        ...storyCandidates.slice(0, 1),
-      ];
-    }
+    let cards = mode === "people" ? readerCandidates : contentCandidates;
 
     const sorter = {
-      relevance: (a, b) => (b.score || 0) - (a.score || 0),
-      recent: (a, b) => (a.recent || 999) - (b.recent || 999),
-      saved: (a, b) => (b.saved || 0) - (a.saved || 0),
-      reader: (a, b) => (b.reader || 0) - (a.reader || 0),
-    }[state.searchSort] || ((a, b) => (b.score || 0) - (a.score || 0));
+      relevance: (a, b) => b.score - a.score,
+      recent: (a, b) => a.recent - b.recent,
+      saved: (a, b) => b.saved - a.saved,
+      reader: (a, b) => b.reader - a.reader,
+    }[state.searchSort] || ((a, b) => b.score - a.score);
 
     cards.sort(sorter);
-    const shown = cards.slice(0, mode === "readers" ? 3 : 6);
+    if (tokens.length && cards.some((item) => item.score > 0)) cards = cards.filter((item) => item.score > 0);
 
+    const shown = cards.slice(0, 6);
     const markup = shown.map((item) => {
-      if (item.kind === "artifact") return searchArtifactMarkup(item.artifact);
       if (item.kind === "reader") return searchResultMarkup(item.key, item.reason);
-      return searchStoryMarkup(item.story, item.context);
+      return searchArtifactMarkup(item.artifact);
     }).join("");
 
-    const gridClass = mode === "readers"
-      ? "s13-search-grid--readers"
-      : mode === "stories"
-        ? "s13-search-grid--stories"
-        : "s13-search-grid--discover";
-
-    elements.searchResults.innerHTML = `<div class="s13-search-grid s14-search-grid ${gridClass}">${markup || searchEmptyMarkup()}</div>`;
+    const gridClass = mode === "people" ? "s13-search-grid--readers" : "s13-search-grid--discover";
+    elements.searchResults.innerHTML = `<div class="s13-search-grid s14-search-grid ${gridClass}" data-s17-search-family="${mode}">${markup || searchEmptyMarkup()}</div>`;
     renderImages(elements.searchResults);
 
-    const typeLabel = searchModeLabel(mode);
-    const storyLabel = state.searchStory === "all" ? "all stories" : state.searchStory;
-    summary = `${shown.length} ${typeLabel.toLowerCase()} result${shown.length === 1 ? "" : "s"} across ${storyLabel}. Sorted by ${searchSortLabel(state.searchSort)}.`;
-    setText(elements.searchSummary, summary);
+    const family = mode === "people" ? "reader" : "content";
+    const storyLabel = state.searchStory === "all" ? "any title" : state.searchStory;
+    setText(elements.searchSummary, `${shown.length} ${family} result${shown.length === 1 ? "" : "s"} across ${storyLabel}. Sorted by ${searchSortLabel(state.searchSort)}.`);
     setText(elements.searchCount, `${shown.length} result${shown.length === 1 ? "" : "s"}`);
 
     const renderedCards = qa(".s13-search-card", elements.searchResults);
@@ -1588,17 +1631,60 @@
           overwrite: "auto",
           onComplete: () => gsap.set(renderedCards, { clearProps: "transform" }),
         });
-      } else {
-        gsap.set(renderedCards, { autoAlpha: 1, x: 0, y: 0, scale: 1 });
       }
     }
   }
 
+  function getSearchContentItems() {
+    const layerAlias = (value) => {
+      const normalized = normalizeText(value);
+      if (normalized === "reflection") return "note";
+      if (normalized === "library" || normalized === "category") return "ranking";
+      return normalized || "note";
+    };
+
+    const discovery = DISCOVERY_ARTIFACTS.map((artifact) => ({
+      ...artifact,
+      searchLayer: layerAlias(artifact.type),
+      hasReflection: true,
+      source: "discovery",
+    }));
+
+    const feed = FEED_ITEMS.map((item, index) => {
+      const profile = PROFILE_DATA[item.profile];
+      const searchLayer = layerAlias(item.layer);
+      return {
+        id: `feed-${index}`,
+        feedIndex: index,
+        profile: item.profile,
+        type: item.layer,
+        layer: searchLayer,
+        searchLayer,
+        story: item.story,
+        title: item.title,
+        excerpt: item.detail,
+        reason: activityActionCopy(item, getStoryByTitle(item.story)),
+        tags: [item.layer, ...(profile?.tags || []).slice(0, 2)],
+        meta: `${item.type} · ${item.time}`,
+        popularity: 82 - index,
+        updatedHours: index + 1,
+        hasReflection: ["moment", "character", "quote", "thought", "note"].includes(searchLayer) || item.type.includes("Reflection"),
+        source: "feed",
+      };
+    });
+
+    const map = new Map();
+    [...discovery, ...feed].forEach((item) => {
+      const key = `${normalizeText(item.story)}|${normalizeText(item.searchLayer)}|${normalizeText(item.title)}`;
+      if (!map.has(key)) map.set(key, item);
+    });
+    return Array.from(map.values());
+  }
+
   function setSearchMode(mode, animate, source = "system") {
-    const allowed = ["all", "stories", "readers", "moment", "character", "reflection", "quote", "thought"];
-    state.searchMode = allowed.includes(mode) ? mode : "all";
+    state.searchMode = mode === "people" ? "people" : "content";
     renderSearchResults(animate);
-    if (source === "user") announce(`${searchModeLabel(state.searchMode)} results selected.`);
+    if (source === "user") announce(`${searchModeLabel(state.searchMode)} selected.`);
   }
 
   function updateSearchModeTabs() {
@@ -1608,6 +1694,23 @@
       button.setAttribute("aria-selected", selected ? "true" : "false");
       button.tabIndex = selected ? 0 : -1;
     });
+
+    if (elements.searchContentFilters) {
+      const visible = state.searchMode === "content";
+      elements.searchContentFilters.hidden = !visible;
+      elements.searchContentFilters.setAttribute("aria-hidden", visible ? "false" : "true");
+    }
+
+    elements.searchLayerButtons?.forEach((button) => {
+      const selected = button.dataset.s17SearchLayer === state.searchLayer;
+      button.classList.toggle("is-selected", selected);
+      button.setAttribute("aria-pressed", selected ? "true" : "false");
+    });
+
+    if (elements.searchReflectionToggle) {
+      elements.searchReflectionToggle.classList.toggle("is-selected", state.searchReflectionOnly);
+      elements.searchReflectionToggle.setAttribute("aria-pressed", state.searchReflectionOnly ? "true" : "false");
+    }
   }
 
   function renderSearchFilters() {
@@ -1618,19 +1721,22 @@
         .slice(0, 14);
       const signature = titles.join("|");
       if (elements.searchStorySelect.dataset.s14Options !== signature) {
-        elements.searchStorySelect.innerHTML = `<option value="all">All stories</option>${titles.map((title) => `<option value="${escapeHtml(title)}">${escapeHtml(title)}</option>`).join("")}`;
+        elements.searchStorySelect.innerHTML = `<option value="all">Any title</option>${titles.map((title) => `<option value="${escapeHtml(title)}">${escapeHtml(title)}</option>`).join("")}`;
         elements.searchStorySelect.dataset.s14Options = signature;
       }
       elements.searchStorySelect.value = state.searchStory;
     }
     if (elements.searchSortSelect) elements.searchSortSelect.value = state.searchSort;
 
+    updateSearchModeTabs();
     if (!elements.searchFilterContainer) return;
     const chips = [];
     if (state.searchQuery) chips.push(`<button type="button" data-s14-clear-search-filter="query">Query: ${escapeHtml(state.searchQuery)} <span aria-hidden="true">×</span></button>`);
-    if (state.searchMode !== "all") chips.push(`<button type="button" data-s14-clear-search-filter="type">Type: ${escapeHtml(searchModeLabel(state.searchMode))} <span aria-hidden="true">×</span></button>`);
-    if (state.searchStory !== "all") chips.push(`<button type="button" data-s14-clear-search-filter="story">Story: ${escapeHtml(state.searchStory)} <span aria-hidden="true">×</span></button>`);
-    elements.searchFilterContainer.innerHTML = chips.length ? `<span>Active filters</span>${chips.join("")}` : `<span>Showing all public story layers</span>`;
+    if (state.searchMode === "people") chips.push(`<button type="button" data-s14-clear-search-filter="type">People <span aria-hidden="true">×</span></button>`);
+    if (state.searchLayer !== "all" && state.searchMode === "content") chips.push(`<button type="button" data-s14-clear-search-filter="layer">Layer: ${escapeHtml(searchLayerLabel(state.searchLayer))} <span aria-hidden="true">×</span></button>`);
+    if (state.searchReflectionOnly && state.searchMode === "content") chips.push(`<button type="button" data-s14-clear-search-filter="reflection">With reflection <span aria-hidden="true">×</span></button>`);
+    if (state.searchStory !== "all") chips.push(`<button type="button" data-s14-clear-search-filter="story">Title: ${escapeHtml(state.searchStory)} <span aria-hidden="true">×</span></button>`);
+    elements.searchFilterContainer.innerHTML = chips.length ? `<span>Active filters</span>${chips.join("")}` : `<span>${state.searchMode === "people" ? "Ranking matching reader profiles" : "Searching public story layers"}</span>`;
   }
 
   function scoreReaders(tokens, filter) {
@@ -1713,19 +1819,32 @@
     setSocialView(mode, animate, source);
   }
 
+  function enforceSocialPanelOwnership(view) {
+    const incoming = elements.socialViews.find((panel) => panel.dataset.s11SocialView === view) || null;
+    elements.socialViews.forEach((panel) => {
+      const selected = panel === incoming;
+      panel.classList.toggle("is-active", selected);
+      panel.hidden = !selected;
+      panel.setAttribute("aria-hidden", selected ? "false" : "true");
+      panel.toggleAttribute("inert", !selected);
+      panel.style.pointerEvents = selected ? "auto" : "none";
+      panel.style.zIndex = selected ? "2" : "1";
+      if (!selected) {
+        panel.style.opacity = "0";
+        panel.style.visibility = "hidden";
+        panel.style.transform = "none";
+      }
+    });
+    return incoming;
+  }
+
   function setSocialView(view, animate, source = "system") {
     const normalized = SOCIAL_VIEW_ORDER.includes(view) ? view : "following";
     const previous = state.socialView;
 
-    if (previous === normalized && source !== "restore" && source !== "demo") {
-      updateSocialChrome(normalized);
-      return;
-    }
-
     if (["following", "foryou", "search"].includes(previous) && !["following", "foryou", "search"].includes(normalized)) state.returnView = previous;
     if (["following", "foryou", "search"].includes(normalized)) state.returnView = normalized;
 
-    /* Render dynamic destinations before the panel becomes visible. */
     if (normalized === "search") renderSearchResults(false);
     if (normalized === "profile") renderReaderProfile(state.selectedProfile);
     if (normalized === "library") renderReaderLibrary(state.selectedProfile);
@@ -1744,58 +1863,33 @@
     const previousIndex = SOCIAL_VIEW_ORDER.indexOf(previous);
     const nextIndex = SOCIAL_VIEW_ORDER.indexOf(normalized);
     const direction = nextIndex >= previousIndex ? 1 : -1;
-    const incoming = elements.socialViews.find((panel) => panel.dataset.s11SocialView === normalized);
-    const outgoing = elements.socialViews.find((panel) => panel.dataset.s11SocialView === previous && panel !== incoming);
 
-    if (outgoing) blurFocusWithin(outgoing);
     if (gsap) gsap.killTweensOf(elements.socialViews);
+    elements.socialViews.forEach(blurFocusWithin);
+    const incoming = enforceSocialPanelOwnership(normalized);
 
-    elements.socialViews.forEach((panel) => {
-      const selected = panel === incoming;
-      panel.classList.toggle("is-active", selected);
-      panel.setAttribute("aria-hidden", selected ? "false" : "true");
-      panel.toggleAttribute("inert", !selected);
-      panel.style.pointerEvents = selected ? "auto" : "none";
-      panel.style.zIndex = selected ? "2" : "1";
-    });
-
-    if (!gsap || !animate) {
-      elements.socialViews.forEach((panel) => {
-        const selected = panel === incoming;
-        panel.style.opacity = selected ? "1" : "0";
-        panel.style.visibility = selected ? "visible" : "hidden";
-        panel.style.transform = "none";
-      });
-    } else {
-      if (incoming) {
-        gsap.set(incoming, { clearProps: "transform", visibility: "visible", pointerEvents: "auto", x: 0, y: 0, scale: 1 });
+    if (incoming) {
+      incoming.style.visibility = "visible";
+      incoming.style.opacity = "1";
+      if (gsap && animate) {
         gsap.fromTo(incoming,
-          { autoAlpha: 0, x: direction * 20, scale: 0.996 },
+          { autoAlpha: 0, x: direction * 18, y: 5, scale: 0.996 },
           {
             autoAlpha: 1,
             x: 0,
+            y: 0,
             scale: 1,
             duration: 0.38,
             ease: "power3.out",
             overwrite: true,
-            onComplete: () => gsap.set(incoming, { clearProps: "transform", pointerEvents: "auto" }),
+            onComplete: () => {
+              gsap.set(incoming, { clearProps: "transform" });
+              enforceSocialPanelOwnership(state.socialView);
+            },
           },
         );
-      }
-      if (outgoing) {
-        gsap.to(outgoing, {
-          autoAlpha: 0,
-          x: -direction * 18,
-          scale: 0.994,
-          duration: 0.24,
-          ease: "power2.in",
-          overwrite: true,
-          onComplete: () => {
-            if (outgoing !== elements.socialViews.find((panel) => panel.dataset.s11SocialView === state.socialView)) {
-              gsap.set(outgoing, { visibility: "hidden", x: 0, scale: 1, pointerEvents: "none" });
-            }
-          },
-        });
+      } else {
+        incoming.style.transform = "none";
       }
     }
 
@@ -1810,7 +1904,7 @@
     setText(elements.socialProgress, meta.step);
 
     if (elements.socialProgressRoot) {
-      elements.socialProgressRoot.setAttribute("aria-label", `Social journey step ${meta.segment} of 6`);
+      elements.socialProgressRoot.setAttribute("aria-label", `Social journey step ${meta.segment} of 3`);
     }
 
     elements.socialProgressSegments.forEach((segment, index) => {
@@ -2107,62 +2201,55 @@
     return map[item.type] || `${item.type} · ${story.title}`;
   }
 
-  function forYouFeatureMarkup(artifact) {
+  function forYouPrimaryMarkup(artifact, story) {
     const type = normalizeText(artifact.type);
-    const tags = artifact.tags || [];
-    const previewCopy = {
-      moment: "The saved frame is the main idea. The note explains what the image holds after the scene has passed.",
-      character: "Follow the character through the traits and conflicts that keep returning across this reader’s shelf.",
-      reflection: "A longer argument with room for context, ambiguity, and spoiler protection instead of a one-line reaction.",
-      quote: "The remembered line stays attached to the reader’s public context, not separated from the reason it mattered.",
-      thought: "A compact interpretation that can be revised after a reread without erasing the earlier version.",
-    }[type] || "A public story layer with its reason, context, and connected reader kept visible.";
+    const media = `
+      <img class="s14-for-you-slide__image" data-s14-artifact-media="${escapeHtml(artifact.mediaKey || "")}" alt="Visual for ${escapeHtml(artifact.title)}" hidden>
+      ${storyCoverMarkup(story, "s14-for-you-slide__fallback")}
+    `;
 
-    const previewLabel = {
-      moment: "Visual note",
-      character: "Character lens",
-      reflection: "Reading format",
-      quote: "Saved context",
-      thought: "Connected idea",
-    }[type] || "Story layer";
-
-    return `<section class="s16-layer-preview s16-layer-preview--${escapeHtml(type)}" aria-label="${escapeHtml(previewLabel)}">
-      <span class="s16-layer-preview__label">${escapeHtml(previewLabel)}</span>
-      <p>${escapeHtml(previewCopy)}</p>
-      <div>${tags.slice(0, 3).map((tag, tagIndex) => `<span><b>${String(tagIndex + 1).padStart(2, "0")}</b>${escapeHtml(tag)}</span>`).join("")}</div>
-    </section>`;
+    if (type === "moment") {
+      return `<div class="s17-primary-layer s17-primary-layer--media">${media}<span><small>Saved moment</small><strong>${escapeHtml(artifact.title)}</strong></span></div>`;
+    }
+    if (type === "character") {
+      return `<div class="s17-primary-layer s17-primary-layer--character">${media}<span><small>Character focus</small><strong>${escapeHtml(artifact.title)}</strong></span></div>`;
+    }
+    if (type === "quote") {
+      return `<div class="s17-primary-layer s17-primary-layer--text">${media}<blockquote>${escapeHtml(artifact.excerpt)}</blockquote><small>${escapeHtml(story.title)}</small></div>`;
+    }
+    if (type === "thought") {
+      return `<div class="s17-primary-layer s17-primary-layer--text">${media}<p>${escapeHtml(artifact.excerpt)}</p><small>Connected thought · ${escapeHtml(story.title)}</small></div>`;
+    }
+    return `<div class="s17-primary-layer s17-primary-layer--text">${media}<p>${escapeHtml(artifact.excerpt)}</p><small>Public reflection · ${escapeHtml(story.title)}</small></div>`;
   }
 
   function forYouArtifactMarkup(artifact, index) {
     const profile = PROFILE_DATA[artifact.profile];
     const story = getStoryByTitle(artifact.story);
     const type = normalizeText(artifact.type);
-    return `<article class="s14-for-you-slide" data-s14-for-you-index="${index}" data-s14-artifact-type="${escapeHtml(type)}" aria-label="${escapeHtml(artifact.type)} recommendation ${index + 1} of ${Math.min(5, DISCOVERY_ARTIFACTS.length)}">
-      <div class="s14-for-you-slide__visual">
-        <img class="s14-for-you-slide__image" data-s14-artifact-media="${escapeHtml(artifact.mediaKey || "")}" alt="Visual for ${escapeHtml(artifact.title)}" hidden>
-        ${storyCoverMarkup(story, "s14-for-you-slide__fallback")}
-        <span class="s14-for-you-slide__scrim" aria-hidden="true"></span>
+    const needsReflectionCopy = ["moment", "character"].includes(type);
+    return `<article class="s14-for-you-slide s17-for-you-slide" data-s14-for-you-index="${index}" data-s14-artifact-type="${escapeHtml(type)}" aria-label="${escapeHtml(artifact.type)} recommendation ${index + 1} of ${Math.min(5, DISCOVERY_ARTIFACTS.length)}">
+      <div class="s14-for-you-slide__visual s17-for-you-slide__visual">
+        ${forYouPrimaryMarkup(artifact, story)}
         <span class="s14-for-you-slide__type">${escapeHtml(artifact.type)}</span>
-        <span class="s14-for-you-slide__position">${String(index + 1).padStart(2, "0")} / ${String(Math.min(5, DISCOVERY_ARTIFACTS.length)).padStart(2, "0")}</span>
       </div>
 
-      <div class="s14-for-you-slide__content">
+      <div class="s14-for-you-slide__content s17-for-you-slide__content">
         <span class="s13-reason-chip s14-reason-chip"><b aria-hidden="true">↔</b>${escapeHtml(artifact.reason)}</span>
         <span class="s13-artifact-kicker">${escapeHtml(artifact.type)} · ${escapeHtml(story.title)}</span>
         <h4>${escapeHtml(artifact.title)}</h4>
-        <p>${escapeHtml(artifact.excerpt)}</p>
+        ${needsReflectionCopy ? `<p class="s17-for-you-reflection">${escapeHtml(artifact.excerpt)}</p>` : ""}
         <div class="s13-artifact-tags">${artifact.tags.map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}</div>
-        ${forYouFeatureMarkup(artifact)}
 
-        <footer class="s14-for-you-slide__footer">
-          <button type="button" class="s14-author-card s16-author-card" data-s13-open-author="${escapeHtml(artifact.profile)}" aria-label="Open ${escapeHtml(profile.name)} profile">
+        <footer class="s14-for-you-slide__footer s17-for-you-footer">
+          <button type="button" class="s14-author-card s16-author-card s17-author-card" data-s13-open-author="${escapeHtml(artifact.profile)}" aria-label="Open ${escapeHtml(profile.name)} profile">
             <span class="s11-avatar" style="${avatarStyle(artifact.profile)}">${escapeHtml(profile.initial)}</span>
             <span><strong>${escapeHtml(profile.name)}</strong><small>${escapeHtml(profile.label)}</small></span>
             <b aria-hidden="true">→</b>
           </button>
-          <div class="s14-for-you-actions">
-            <button type="button" class="s13-secondary-action" data-s11-open-story="${escapeHtml(story.title)}" data-s13-story-owner="${escapeHtml(artifact.profile)}">View story</button>
-            <button type="button" class="s13-primary-action" data-s13-open-artifact="${escapeHtml(artifact.id)}">Open ${escapeHtml(artifact.type.toLowerCase())}</button>
+          <div class="s14-for-you-actions s17-for-you-actions">
+            <button type="button" class="s13-secondary-action" data-s11-open-story="${escapeHtml(story.title)}" data-s13-story-owner="${escapeHtml(artifact.profile)}" aria-label="View ${escapeHtml(story.title)}">View title</button>
+            <button type="button" class="s13-primary-action" data-s13-open-artifact="${escapeHtml(artifact.id)}">See reflection</button>
           </div>
         </footer>
         <small class="s13-artifact-meta">${escapeHtml(artifact.meta)}</small>
@@ -2177,10 +2264,15 @@
   function searchArtifactMarkup(artifact) {
     const profile = PROFILE_DATA[artifact.profile];
     const story = getStoryByTitle(artifact.story);
-    return `<button type="button" class="s13-search-card s13-search-artifact" data-s16-search-result-type="${escapeHtml(normalizeText(artifact.type))}" data-s13-open-artifact="${escapeHtml(artifact.id)}" aria-label="Open ${escapeHtml(artifact.type)} ${escapeHtml(artifact.title)}">
+    const actionAttribute = Number.isInteger(artifact.feedIndex)
+      ? `data-s13-feed-open="${artifact.feedIndex}"`
+      : `data-s13-open-artifact="${escapeHtml(artifact.id)}"`;
+    const resultType = escapeHtml(artifact.searchLayer || normalizeText(artifact.type));
+    const displayType = normalizeText(artifact.type) === "reflection" ? "Note" : artifact.type;
+    return `<button type="button" class="s13-search-card s13-search-artifact" data-s16-search-result-type="${resultType}" ${actionAttribute} aria-label="Open ${escapeHtml(displayType)} ${escapeHtml(artifact.title)}">
       <span class="s13-search-card__main">
         ${storyCoverMarkup(story, "s13-search-artifact__cover")}
-        <span class="s13-search-artifact__copy"><small>${escapeHtml(artifact.type)} · ${escapeHtml(story.title)}</small><strong>${escapeHtml(artifact.title)}</strong><p>${escapeHtml(artifact.excerpt)}</p><span class="s13-search-card__tags">${artifact.tags.slice(0, 3).map((tag) => `<em>${escapeHtml(tag)}</em>`).join("")}</span></span>
+        <span class="s13-search-artifact__copy"><small>${escapeHtml(displayType)} · ${escapeHtml(story.title)}</small><strong>${escapeHtml(artifact.title)}</strong><p>${escapeHtml(artifact.excerpt)}</p><span class="s13-search-card__tags">${(artifact.tags || []).slice(0, 3).map((tag) => `<em>${escapeHtml(tag)}</em>`).join("")}</span></span>
       </span>
       <span class="s13-search-artifact__footer"><span class="s11-avatar s11-avatar--small" style="${avatarStyle(artifact.profile)}">${escapeHtml(profile.initial)}</span><span><strong>${escapeHtml(profile.name)}</strong><small>${escapeHtml(artifact.reason)}</small></span></span>
     </button>`;
@@ -2209,10 +2301,9 @@
 
   function inferSearchMode(value) {
     const normalized = normalizeText(value);
-    if (!normalized) return "all";
-    if (normalized.startsWith("@") || ["kai.reads", "mira.frames", "ren.afterwords"].some((name) => normalized.includes(normalizeText(name)))) return "readers";
-    if (PREFERRED_STORY_TITLES.some((title) => normalizeText(title) === normalized)) return "stories";
-    return "all";
+    if (!normalized) return "content";
+    if (normalized.startsWith("@") || ["kai.reads", "mira.frames", "ren.afterwords"].some((name) => normalized.includes(normalizeText(name)))) return "people";
+    return "content";
   }
 
   function openDiscoveryArtifact(id, animate, source = "user") {
@@ -2381,38 +2472,34 @@
     slides.forEach((slide, slideIndex) => {
       const current = slideIndex === index;
       slide.classList.toggle("is-current", current);
+      slide.hidden = !current;
       slide.setAttribute("aria-hidden", current ? "false" : "true");
       slide.toggleAttribute("inert", !current);
       slide.style.pointerEvents = current ? "auto" : "none";
       slide.style.zIndex = current ? "2" : "1";
 
-      if (!gsap || !animate) {
-        slide.style.opacity = current ? "1" : "0";
-        slide.style.visibility = current ? "visible" : "hidden";
+      if (!current) {
+        slide.style.opacity = "0";
+        slide.style.visibility = "hidden";
         slide.style.transform = "none";
         return;
       }
 
-      if (current) {
-        gsap.set(slide, { visibility: "visible" });
+      slide.style.visibility = "visible";
+      slide.style.opacity = "1";
+      if (gsap && animate) {
         gsap.fromTo(slide,
-          { autoAlpha: 0, y: direction * 22, scale: 0.992 },
-          { autoAlpha: 1, y: 0, scale: 1, duration: 0.42, ease: "power3.out", overwrite: true, clearProps: "transform" },
-        );
-      } else {
-        gsap.to(slide, {
-          autoAlpha: 0,
-          y: -direction * 16,
-          scale: 0.994,
-          duration: 0.22,
-          ease: "power2.in",
-          overwrite: true,
-          onComplete: () => {
-            if (slideIndex !== state.forYouArtifact) {
-              gsap.set(slide, { visibility: "hidden", y: 0, scale: 1 });
-            }
+          { autoAlpha: 0, y: direction * 18, scale: 0.994 },
+          {
+            autoAlpha: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.42,
+            ease: "power3.out",
+            overwrite: true,
+            onComplete: () => gsap.set(slide, { clearProps: "transform" }),
           },
-        });
+        );
       }
     });
 
@@ -2423,12 +2510,21 @@
       dot.tabIndex = current ? 0 : -1;
     });
 
+    const previous = q("[data-s17-for-you-prev]", elements.forYouResults);
+    const next = q("[data-s17-for-you-next]", elements.forYouResults);
+    if (previous) previous.disabled = index === 0;
+    if (next) next.disabled = index === count - 1;
+
     setText(elements.forYouCount, `${index + 1} / ${count}`);
     lastForYouArtifact = index;
   }
 
   function searchModeLabel(mode) {
-    return ({ all: "All", stories: "Stories", readers: "Readers", moment: "Moments", character: "Characters", reflection: "Reflections", quote: "Quotes", thought: "Thoughts" })[mode] || "All";
+    return mode === "people" ? "People" : "Content";
+  }
+
+  function searchLayerLabel(layer) {
+    return ({ all: "All layers", moment: "Moments", character: "Characters", quote: "Quotes", thought: "Thoughts", ranking: "Rankings", note: "Notes" })[layer] || "All layers";
   }
 
   function searchSortLabel(sort) {
@@ -2436,7 +2532,7 @@
   }
 
   function searchEmptyMarkup() {
-    return `<div class="s14-search-empty"><span aria-hidden="true">⌕</span><strong>No exact result yet</strong><p>Try another story, remove a result-type filter, or search a reader name.</p></div>`;
+    return `<div class="s14-search-empty"><span aria-hidden="true">⌕</span><strong>No exact result yet</strong><p>Try another title or theme, clear a layer filter, or switch between Content and People.</p></div>`;
   }
 
   function renderImages(root) {
@@ -2671,7 +2767,9 @@
     state.following.clear();
     state.searchQuery = "Tokyo Ghoul:re";
     state.searchFilter = "all";
-    state.searchMode = "all";
+    state.searchMode = "content";
+    state.searchLayer = "all";
+    state.searchReflectionOnly = false;
     state.searchStory = "all";
     state.searchSort = "relevance";
     state.forYouArtifact = 0;
@@ -2722,6 +2820,7 @@
         timeline?.kill?.();
         resizeObserver?.disconnect?.();
         cleanupCallbacks.splice(0).forEach((callback) => callback());
+        window.__INKWELL_SOCIAL_V17_STARTED__ = false;
         window.__INKWELL_SOCIAL_V16_STARTED__ = false;
       },
       cleanup: () => trigger?.kill?.(true),
