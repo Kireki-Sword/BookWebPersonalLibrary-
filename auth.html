@@ -3,27 +3,29 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Log in or create an Inkwell account without leaving the page.">
+  <meta name="description" content="Log in, create an Inkwell account, or recover your password.">
   <meta name="theme-color" content="#050713">
   <title>Log in · Inkwell</title>
 
-  <!-- Your existing global Inkwell stylesheet -->
+  <!-- Keep your existing global stylesheet. -->
   <link rel="stylesheet" href="style.css">
-  <!-- Page-specific authentication styles -->
   <link rel="stylesheet" href="css/auth.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
 
-  <script src="js/auth.js" defer></script>
+  <!-- Supabase must load before the shared client and page logic. -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+  <script src="javaScript/Auth/supabaseClient.js" defer></script>
+  <script src="javaScript/Auth/auth.js" defer></script>
 </head>
 <body class="auth-site" data-auth-mode="login">
   <a class="auth-skip-link" href="#auth-main">Skip to account form</a>
 
   <nav class="auth-nav" aria-label="Authentication navigation">
-    <a class="nav-logo" href="index.html" aria-label="Inkwell home">
-      <span class="nav-logo-icon" aria-hidden="true">
+    <a class="auth-logo" href="index.html" aria-label="Inkwell home">
+      <span class="auth-logo-icon" aria-hidden="true">
         <i class="ti ti-book-2"></i>
       </span>
-      <span class="nav-logo-text">Inkwell</span>
+      <span class="auth-logo-text">Inkwell</span>
     </a>
 
     <a class="auth-back-link" href="index.html">
@@ -33,18 +35,38 @@
   </nav>
 
   <main class="auth-main" id="auth-main">
-    <section class="auth-intro" aria-labelledby="auth-page-title">
-      <p class="auth-page-eyebrow">YOUR INKWELL ACCOUNT</p>
-      <h1 id="auth-page-title">One place for every story that stays.</h1>
-      <p>Move between logging in and creating an account without leaving the page.</p>
-    </section>
+    <section class="auth-shell" data-auth-shell aria-label="Inkwell account access">
+      <div class="auth-aurora auth-aurora-one" aria-hidden="true"></div>
+      <div class="auth-aurora auth-aurora-two" aria-hidden="true"></div>
 
-    <section class="auth-shell" aria-label="Log in or create an account" data-auth-shell>
-      <div class="auth-shell-glow auth-shell-glow-one" aria-hidden="true"></div>
-      <div class="auth-shell-glow auth-shell-glow-two" aria-hidden="true"></div>
+      <!-- Mobile only. Desktop switching happens through the moving story panel. -->
+      <div class="auth-mobile-tabs" role="tablist" aria-label="Choose account action">
+        <button
+          id="login-tab"
+          class="auth-mobile-tab is-active"
+          type="button"
+          role="tab"
+          aria-selected="true"
+          aria-controls="login-view"
+          data-auth-switch="login"
+        >
+          Log in
+        </button>
+        <button
+          id="signup-tab"
+          class="auth-mobile-tab"
+          type="button"
+          role="tab"
+          aria-selected="false"
+          aria-controls="signup-view"
+          data-auth-switch="signup"
+        >
+          Sign up
+        </button>
+      </div>
 
-      <!-- Both forms remain in a stable semantic order. The inactive form is inert. -->
-      <div class="auth-forms-layer" data-auth-forms-layer>
+      <div class="auth-form-stage" data-auth-form-stage>
+        <!-- Login occupies the right half on desktop. -->
         <article
           class="auth-view auth-view-login is-active"
           id="login-view"
@@ -55,25 +77,20 @@
           <div class="auth-form-card">
             <header class="auth-view-header">
               <p class="auth-view-kicker">WELCOME BACK</p>
-              <h2>Return to your shelf.</h2>
+              <h1>Return to your shelf.</h1>
               <p>Open your library, saved moments, and reflections exactly where you left them.</p>
             </header>
 
-            <div class="auth-provider-row" aria-label="Social login options">
-              <button class="auth-provider-button" type="button" data-demo-provider="Google">
-                <i class="ti ti-brand-google" aria-hidden="true"></i>
-                <span>Continue with Google</span>
-              </button>
-              <button class="auth-provider-button auth-provider-icon" type="button" data-demo-provider="Apple" aria-label="Continue with Apple">
-                <i class="ti ti-brand-apple" aria-hidden="true"></i>
-              </button>
-            </div>
+            <button class="auth-provider-button" type="button" data-oauth-provider="google">
+              <i class="ti ti-brand-google" aria-hidden="true"></i>
+              <span>Continue with Google</span>
+            </button>
 
             <div class="auth-divider" aria-hidden="true">
               <span>or use email</span>
             </div>
 
-            <form class="auth-form" data-auth-form="login" novalidate>
+            <form class="auth-form" id="login-form" data-auth-form="login" novalidate>
               <div class="auth-field">
                 <label for="login-email">Email address</label>
                 <div class="auth-input-shell">
@@ -95,9 +112,10 @@
               <div class="auth-field">
                 <div class="auth-label-row">
                   <label for="login-password">Password</label>
-                  <button class="auth-inline-button" type="button" data-demo-forgot>Forgot password?</button>
+                  <button class="auth-inline-button" type="button" data-auth-switch="forgot">
+                    Forgot password?
+                  </button>
                 </div>
-
                 <div class="auth-input-shell">
                   <i class="ti ti-lock" aria-hidden="true"></i>
                   <input
@@ -115,21 +133,12 @@
                     data-password-toggle="login-password"
                     aria-label="Show password"
                     aria-controls="login-password"
+                    aria-pressed="false"
                   >
                     <i class="ti ti-eye" aria-hidden="true"></i>
                   </button>
                 </div>
                 <p class="auth-field-message" id="login-password-error" aria-live="polite"></p>
-              </div>
-
-              <div class="auth-form-options">
-                <label class="auth-checkbox">
-                  <input type="checkbox" name="remember">
-                  <span class="auth-checkbox-box" aria-hidden="true">
-                    <i class="ti ti-check"></i>
-                  </span>
-                  <span>Keep me signed in</span>
-                </label>
               </div>
 
               <button class="auth-primary-action" type="submit">
@@ -147,6 +156,7 @@
           </div>
         </article>
 
+        <!-- Sign-up occupies the left half on desktop. -->
         <article
           class="auth-view auth-view-signup"
           id="signup-view"
@@ -155,29 +165,43 @@
           aria-labelledby="signup-tab"
           aria-hidden="true"
           inert
+          hidden
         >
           <div class="auth-form-card">
             <header class="auth-view-header">
               <p class="auth-view-kicker">BEGIN YOUR COLLECTION</p>
-              <h2>Make space for what stays.</h2>
+              <h1>Make space for what stays.</h1>
               <p>Create a private library for the stories, quotes, and thoughts you want to keep.</p>
             </header>
 
-            <div class="auth-provider-row" aria-label="Social signup options">
-              <button class="auth-provider-button" type="button" data-demo-provider="Google">
-                <i class="ti ti-brand-google" aria-hidden="true"></i>
-                <span>Sign up with Google</span>
-              </button>
-              <button class="auth-provider-button auth-provider-icon" type="button" data-demo-provider="Apple" aria-label="Sign up with Apple">
-                <i class="ti ti-brand-apple" aria-hidden="true"></i>
-              </button>
-            </div>
+            <button class="auth-provider-button" type="button" data-oauth-provider="google">
+              <i class="ti ti-brand-google" aria-hidden="true"></i>
+              <span>Sign up with Google</span>
+            </button>
 
             <div class="auth-divider" aria-hidden="true">
               <span>or use email</span>
             </div>
 
-            <form class="auth-form" data-auth-form="signup" novalidate>
+            <form class="auth-form" id="signup-form" data-auth-form="signup" novalidate>
+              <div class="auth-field">
+                <label for="signup-name">Display name</label>
+                <div class="auth-input-shell">
+                  <i class="ti ti-user" aria-hidden="true"></i>
+                  <input
+                    id="signup-name"
+                    name="displayName"
+                    type="text"
+                    autocomplete="name"
+                    maxlength="40"
+                    placeholder="How readers will know you"
+                    aria-describedby="signup-name-error"
+                    required
+                  >
+                </div>
+                <p class="auth-field-message" id="signup-name-error" aria-live="polite"></p>
+              </div>
+
               <div class="auth-field">
                 <label for="signup-email">Email address</label>
                 <div class="auth-input-shell">
@@ -205,8 +229,8 @@
                     name="password"
                     type="password"
                     autocomplete="new-password"
-                    placeholder="Use at least 8 characters"
                     minlength="8"
+                    placeholder="Use at least 8 characters"
                     aria-describedby="signup-password-help signup-password-error"
                     required
                   >
@@ -216,11 +240,11 @@
                     data-password-toggle="signup-password"
                     aria-label="Show password"
                     aria-controls="signup-password"
+                    aria-pressed="false"
                   >
                     <i class="ti ti-eye" aria-hidden="true"></i>
                   </button>
                 </div>
-
                 <div class="auth-password-feedback" id="signup-password-help" data-password-feedback data-score="0">
                   <div class="auth-strength-track" aria-hidden="true">
                     <span></span><span></span><span></span><span></span>
@@ -231,11 +255,9 @@
               </div>
 
               <label class="auth-checkbox auth-terms">
-                <input type="checkbox" name="terms" aria-describedby="signup-terms-error" required>
-                <span class="auth-checkbox-box" aria-hidden="true">
-                  <i class="ti ti-check"></i>
-                </span>
-                <span>I agree to the <a href="#">Terms</a> and <a href="#">Privacy Policy</a>.</span>
+                <input id="signup-terms" name="terms" type="checkbox" aria-describedby="signup-terms-error" required>
+                <span class="auth-checkbox-box" aria-hidden="true"><i class="ti ti-check"></i></span>
+                <span>I agree to the Terms and Privacy Policy.</span>
               </label>
               <p class="auth-field-message auth-terms-error" id="signup-terms-error" aria-live="polite"></p>
 
@@ -249,106 +271,116 @@
 
             <p class="auth-mobile-switch-copy">
               Already have an account?
-              <button type="button" data-auth-switch="login">Log in</button>
+              <button type="button" data-auth-switch="login">Return to login</button>
             </p>
+          </div>
+        </article>
+
+        <!-- Password recovery shares the login side. -->
+        <article
+          class="auth-view auth-view-forgot"
+          id="forgot-view"
+          data-auth-view="forgot"
+          aria-hidden="true"
+          inert
+          hidden
+        >
+          <div class="auth-form-card auth-form-card-compact">
+            <button class="auth-text-back" type="button" data-auth-switch="login">
+              <i class="ti ti-arrow-left" aria-hidden="true"></i>
+              Back to login
+            </button>
+
+            <header class="auth-view-header">
+              <p class="auth-view-kicker">PASSWORD RECOVERY</p>
+              <h1>Find your way back.</h1>
+              <p>Enter your account email and we will send you a secure password-reset link.</p>
+            </header>
+
+            <form class="auth-form" id="forgot-form" data-auth-form="forgot" novalidate>
+              <div class="auth-field">
+                <label for="forgot-email">Email address</label>
+                <div class="auth-input-shell">
+                  <i class="ti ti-mail" aria-hidden="true"></i>
+                  <input
+                    id="forgot-email"
+                    name="email"
+                    type="email"
+                    inputmode="email"
+                    autocomplete="email"
+                    placeholder="reader@example.com"
+                    aria-describedby="forgot-email-error"
+                    required
+                  >
+                </div>
+                <p class="auth-field-message" id="forgot-email-error" aria-live="polite"></p>
+              </div>
+
+              <button class="auth-primary-action" type="submit">
+                <span data-submit-label>Send reset link</span>
+                <i class="ti ti-send" aria-hidden="true"></i>
+              </button>
+
+              <p class="auth-form-status" data-form-status role="status" aria-live="polite"></p>
+            </form>
           </div>
         </article>
       </div>
 
-      <!-- This original story archive moves on the horizontal axis. -->
-      <aside class="auth-story-panel" aria-live="polite" aria-atomic="true">
-        <div class="auth-bookmark-rail" aria-hidden="true">
-          <span></span>
-        </div>
-
-        <div class="auth-story-copy auth-story-copy-login" data-story-copy="login">
-          <p class="auth-story-eyebrow">
-            <span class="auth-story-number">01</span>
-            CONTINUE YOUR STORY
-          </p>
+      <!-- This panel slides horizontally on desktop. -->
+      <aside class="auth-story-panel" data-story-panel aria-live="polite">
+        <div class="auth-story-copy is-active" data-story-copy="login">
+          <p class="auth-story-eyebrow"><span>01</span> CONTINUE YOUR STORY</p>
           <h2>Return to the stories that stayed with you.</h2>
           <p>Your quotes, moments, characters, notes, and reflections are waiting where you left them.</p>
+          <div class="auth-story-switch">
+            <span>New to Inkwell?</span>
+            <button type="button" data-auth-switch="signup">Create an account <i class="ti ti-arrow-right"></i></button>
+          </div>
         </div>
 
-        <div class="auth-story-copy auth-story-copy-signup" data-story-copy="signup" aria-hidden="true">
-          <p class="auth-story-eyebrow">
-            <span class="auth-story-number">02</span>
-            BEGIN YOUR COLLECTION
-          </p>
-          <h2>Build a library that remembers more than a score.</h2>
-          <p>Save what moved you, write what it meant, and let every story leave a visible mark.</p>
+        <div class="auth-story-copy" data-story-copy="signup" aria-hidden="true">
+          <p class="auth-story-eyebrow"><span>02</span> BEGIN YOUR COLLECTION</p>
+          <h2>Keep a record of what each story leaves behind.</h2>
+          <p>Build a library shaped by your own quotes, moments, characters, notes, and thoughts.</p>
+          <div class="auth-story-switch">
+            <span>Already have an account?</span>
+            <button type="button" data-auth-switch="login"><i class="ti ti-arrow-left"></i> Return to login</button>
+          </div>
         </div>
 
-        <div class="auth-memory-scene" aria-hidden="true" data-memory-scene>
-          <div class="auth-orbit auth-orbit-one"></div>
-          <div class="auth-orbit auth-orbit-two"></div>
+        <div class="auth-story-copy" data-story-copy="forgot" aria-hidden="true">
+          <p class="auth-story-eyebrow"><span>01</span> RETURN TO INKWELL</p>
+          <h2>Your library is still here.</h2>
+          <p>Use the recovery email to choose a new password and continue where you left off.</p>
+          <div class="auth-story-switch">
+            <span>Remembered your password?</span>
+            <button type="button" data-auth-switch="login"><i class="ti ti-arrow-left"></i> Return to login</button>
+          </div>
+        </div>
 
-          <article class="auth-memory-card auth-memory-card-quote">
-            <span>QUOTE · 04</span>
+        <div class="auth-memory-art" aria-hidden="true">
+          <span class="auth-orbit auth-orbit-one"></span>
+          <span class="auth-orbit auth-orbit-two"></span>
+
+          <article class="auth-memory-card auth-memory-quote">
+            <small>QUOTE · 04</small>
             <p>“A reflection remembers the person you were when the story found you.”</p>
           </article>
 
-          <article class="auth-memory-card auth-memory-card-cover">
-            <div class="auth-cover-art">
-              <span class="auth-cover-moon"></span>
-              <span class="auth-cover-line auth-cover-line-one"></span>
-              <span class="auth-cover-line auth-cover-line-two"></span>
-            </div>
-            <div>
-              <span>SAVED STORY</span>
-              <strong>The Quiet Between Chapters</strong>
-            </div>
+          <article class="auth-memory-card auth-memory-cover">
+            <div class="auth-cover-art"><span></span><span></span><span></span></div>
+            <small>SAVED STORY</small>
+            <strong>The Quiet Between Chapters</strong>
           </article>
 
-          <article class="auth-memory-card auth-memory-card-note">
-            <span>THOUGHT · 11:42 PM</span>
-            <p>Progress is not always movement. Sometimes it is finally seeing what was already there.</p>
+          <article class="auth-memory-card auth-memory-thought">
+            <small>THOUGHT · 11:42 PM</small>
+            <p>Progress is not always moving forward. Sometimes it is finally seeing what was already there.</p>
           </article>
-
-          <div class="auth-memory-chip auth-memory-chip-one">QUOTES</div>
-          <div class="auth-memory-chip auth-memory-chip-two">MOMENTS</div>
-          <div class="auth-memory-chip auth-memory-chip-three">THOUGHTS</div>
-        </div>
-
-        <div class="auth-story-footer">
-          <div>
-            <span class="auth-story-progress-label">CHAPTER</span>
-            <strong data-chapter-number>01 / 02</strong>
-          </div>
-
-          <button class="auth-story-switch" type="button" data-panel-switch="signup">
-            <span data-panel-switch-label>Create an account</span>
-            <i class="ti ti-arrow-right" aria-hidden="true"></i>
-          </button>
         </div>
       </aside>
-
-      <!-- Mobile-only segmented switch. -->
-      <div class="auth-mobile-tabs" role="tablist" aria-label="Choose account action">
-        <span class="auth-mobile-tab-indicator" aria-hidden="true"></span>
-        <button
-          id="login-tab"
-          type="button"
-          role="tab"
-          aria-selected="true"
-          aria-controls="login-view"
-          data-auth-switch="login"
-        >Log in</button>
-        <button
-          id="signup-tab"
-          type="button"
-          role="tab"
-          aria-selected="false"
-          aria-controls="signup-view"
-          data-auth-switch="signup"
-          tabindex="-1"
-        >Sign up</button>
-      </div>
     </section>
-
-    <p class="auth-demo-note">
-      Front-end demo only. It validates locally but does not send, save, or store passwords.
-    </p>
   </main>
 </body>
 </html>

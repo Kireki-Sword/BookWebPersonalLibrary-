@@ -1,5 +1,5 @@
 /* ============================================================================
-   INKWELL — SECTION 5: SOCIAL, ON YOUR TERMS (V20 RESPONSIVE SOCIAL FEED / STABLE INTERACTION OWNERSHIP)
+   INKWELL — SECTION 5: SOCIAL, ON YOUR TERMS (V22 ACTIVITY LEDGER / EDITORIAL STORY STAGE / CURATED SEARCH)
 
    Homepage product story:
    1. Control — audience, spoilers, and a stable live preview.
@@ -20,12 +20,15 @@
   "use strict";
 
   const section = document.querySelector("#section-5-social");
-  if (!section || window.__INKWELL_SOCIAL_V20_STARTED__) return;
+  if (!section || window.__INKWELL_SOCIAL_V22_STARTED__ || window.__INKWELL_SOCIAL_V20_STARTED__) return;
 
+  window.__INKWELL_SOCIAL_V22_STARTED__ = true;
   window.__INKWELL_SOCIAL_V20_STARTED__ = true;
   window.__INKWELL_SOCIAL_V16_STARTED__ = true;
+  section.classList.add("s22-ready");
+  section.dataset.s22Ready = "true";
   window.__INKWELL_SOCIAL_CINEMA_BUILD__ =
-    "2026-07-26-social-cinema-v21-editorial-showcase-user-owned-feed";
+    "2026-07-26-social-cinema-v22-activity-ledger-editorial-stage-curated-search";
 
   const { gsap, ScrollTrigger } = window;
   const MANAGED_BY_HOME_JOURNEY =
@@ -823,36 +826,37 @@
               <span><small>Latest from people you chose</small><strong>Following</strong><p>Nine visual updates. Every card makes the story cover, the changed layer, and the reason to open it immediately scannable.</p></span>
               <span class="s11-count-pill">9 updates</span>
             </header>
-            <div class="s13-following-grid s14-following-grid" data-s11-following-grid role="feed" aria-label="Updates from followed readers"></div>
+            <div class="s13-following-grid s14-following-grid s22-following-grid" data-s11-following-grid role="feed" aria-label="Updates from followed readers"></div>
           </section>
 
-          <section class="s11-social-view" data-s11-social-view="foryou" role="tabpanel" aria-label="For You discovery" aria-hidden="true" inert hidden>
+          <section class="s11-social-view s22-for-you-view" data-s11-social-view="foryou" role="tabpanel" aria-label="For You discovery" aria-hidden="true" inert hidden>
             <header class="s11-view-heading s12-view-heading s13-view-heading s14-view-heading s14-view-heading--foryou">
               <span><small>One story layer at a time</small><strong>For You</strong><p>One saved layer stays in focus. Move between a moment, character, quote, thought, or ranking, then open the reader, title, or reflection from the bottom dock.</p></span>
               <span class="s11-count-pill" data-s14-for-you-count>1 / 5</span>
             </header>
-            <div class="s13-for-you-stage s14-for-you-stage" data-s11-for-you-results></div>
+            <div class="s13-for-you-stage s14-for-you-stage s22-for-you-stage" data-s11-for-you-results></div>
           </section>
 
-          <section class="s11-social-view s21-search-view" data-s11-social-view="search" role="tabpanel" aria-label="Search showcase" aria-hidden="true" inert hidden>
+          <section class="s11-social-view s21-search-view s22-search-view" data-s11-social-view="search" role="tabpanel" aria-label="Search showcase" aria-hidden="true" inert hidden>
             <header class="s11-view-heading s12-view-heading s13-view-heading s14-view-heading s21-search-heading">
               <span><small>One example, clearly explained</small><strong>Search by idea, not by database fields</strong><p>This scene demonstrates how an “Identity” search connects public moments, characters, quotes, thoughts, and rankings. It is intentionally a fixed product showcase.</p></span>
               <span class="s11-count-pill" data-s14-search-count>6 examples</span>
             </header>
 
-            <div class="s21-search-demo" aria-label="Example search for Identity">
-              <div class="s21-search-demo__query">
-                <span aria-hidden="true">⌕</span>
-                <span><small>Example search</small><strong>Identity</strong></span>
-                <em>Showcase only</em>
+            <div class="s22-search-demo" aria-label="Static example search for Identity">
+              <div class="s22-search-demo__query">
+                <span class="s22-search-demo__icon" aria-hidden="true">⌕</span>
+                <span class="s22-search-demo__copy"><small>Example search</small><strong>Identity</strong></span>
+                <em>Demo</em>
               </div>
-              <div class="s21-search-demo__scope" aria-label="Included content layers">
-                <span class="is-active">All layers</span>
-                <span>Moments</span>
-                <span>Characters</span>
-                <span>Quotes</span>
-                <span>Thoughts</span>
-                <span>Rankings</span>
+              <div class="s22-search-demo__legend" aria-label="Layer types represented in the showcase">
+                <small>Connected public layers</small>
+                <span>Moment</span>
+                <span>Character</span>
+                <span>Quote</span>
+                <span>Thought</span>
+                <span>Ranking</span>
+                <span>Note</span>
               </div>
             </div>
 
@@ -1623,16 +1627,17 @@
 
     if (!q("[data-s14-for-you-feed]", elements.forYouResults)) {
       elements.forYouResults.innerHTML = `
-        <div class="s14-for-you-feed s17-for-you-feed" data-s14-for-you-feed aria-label="For You recommendations. Use the page scroll, arrow keys, or the up and down controls to move between recommendations.">
+        <div class="s22-for-you-feed" data-s14-for-you-feed aria-label="For You recommendations. Use the mouse wheel, arrow keys, touch swipe, or the previous and next buttons to move one post at a time.">
           ${DISCOVERY_ARTIFACTS.slice(0, count).map((artifact, index) => forYouArtifactMarkup(artifact, index)).join("")}
         </div>
-        <nav class="s14-for-you-dots s17-for-you-nav s21-for-you-rail" aria-label="For You recommendation controls">
-          <button type="button" class="s17-for-you-arrow s21-for-you-rail__arrow" data-s17-for-you-prev aria-label="Previous recommendation">↑</button>
-          <span class="s21-for-you-rail__position" aria-hidden="true"><b>${String(state.forYouArtifact + 1).padStart(2, "0")}</b><small>/${String(count).padStart(2, "0")}</small></span>
-          <span class="s17-for-you-nav__dots s21-for-you-rail__dots">
-            ${Array.from({ length: count }, (_, index) => `<button type="button" data-s14-for-you-dot="${index}" aria-label="Show recommendation ${index + 1}" aria-current="${index === state.forYouArtifact ? "true" : "false"}"><span></span></button>`).join("")}
+        <nav class="s22-for-you-pager" aria-label="For You post controls">
+          <button type="button" class="s22-for-you-pager__arrow" data-s17-for-you-prev aria-label="Previous post">↑</button>
+          <span class="s22-for-you-pager__label">Post</span>
+          <span class="s22-for-you-pager__position" aria-live="polite"><b>${String(state.forYouArtifact + 1).padStart(2, "0")}</b><small> / ${String(count).padStart(2, "0")}</small></span>
+          <span class="s22-for-you-pager__dots">
+            ${Array.from({ length: count }, (_, index) => `<button type="button" data-s14-for-you-dot="${index}" aria-label="Show post ${index + 1}" aria-current="${index === state.forYouArtifact ? "true" : "false"}"><span></span></button>`).join("")}
           </span>
-          <button type="button" class="s17-for-you-arrow s21-for-you-rail__arrow" data-s17-for-you-next aria-label="Next recommendation">↓</button>
+          <button type="button" class="s22-for-you-pager__arrow" data-s17-for-you-next aria-label="Next post">↓</button>
         </nav>`;
       renderImages(elements.forYouResults);
       renderArtifactMedia(elements.forYouResults);
@@ -1675,69 +1680,38 @@
   function renderSearchResultsInternal(animate) {
     if (!elements.searchResults) return;
 
-    // Section 5 is a product story, not a live database screen. Keep one
-    // intentional example so the layout remains legible and deterministic.
     state.searchMode = "content";
     state.searchQuery = "Identity";
     state.searchLayer = "all";
     state.searchReflectionOnly = false;
     state.searchSort = "relevance";
 
-    const mode = "content";
-    const query = normalizeText(state.searchQuery);
-    const tokens = query.split(/\s+/).filter(Boolean);
+    const candidates = getSearchContentItems();
+    const desired = [
+      (item) => item.id === "mira-moment-silence",
+      (item) => item.id === "kai-character-kaneki",
+      (item) => item.id === "kai-quote-choice",
+      (item) => item.id === "mira-thought-memory",
+      (item) => item.id === "ren-ranking-conflicts",
+      (item) => item.source === "feed" && normalizeText(item.story) === "land of the lustrous" && item.searchLayer === "character",
+    ];
 
-    let contentCandidates = getSearchContentItems()
-      .map((artifact, index) => ({
-        kind: "artifact",
-        artifact,
-        index,
-        score: scoreArtifact(artifact, tokens),
-        recent: Number(artifact.updatedHours ?? 999),
-        saved: Number(artifact.popularity ?? 0),
-        reader: scoreValues([PROFILE_DATA[artifact.profile]?.match, ...(artifact.tags || [])], tokens),
-      }))
-      .filter(({ artifact }) => state.searchLayer === "all" || artifact.searchLayer === state.searchLayer)
-      .filter(({ artifact }) => !state.searchReflectionOnly || artifact.hasReflection === true);
+    const shown = [];
+    desired.forEach((match) => {
+      const item = candidates.find((candidate) => match(candidate));
+      if (item && !shown.includes(item)) shown.push(item);
+    });
+    candidates.forEach((item) => {
+      if (shown.length < 6 && !shown.includes(item)) shown.push(item);
+    });
 
-    const readerCandidates = scoreReaders(tokens, "all")
-      .map((item, index) => ({
-        kind: "reader",
-        ...item,
-        index,
-        recent: 8 + index * 5,
-        saved: 100 - index * 4,
-        reader: item.score + 5,
-      }));
-
-    let cards = mode === "people" ? readerCandidates : contentCandidates;
-
-    const sorter = {
-      relevance: (a, b) => b.score - a.score,
-      recent: (a, b) => a.recent - b.recent,
-      saved: (a, b) => b.saved - a.saved,
-      reader: (a, b) => b.reader - a.reader,
-    }[state.searchSort] || ((a, b) => b.score - a.score);
-
-    cards.sort(sorter);
-    if (mode === "content" && tokens.length && cards.some((item) => item.score > 0)) cards = cards.filter((item) => item.score > 0);
-
-    const shown = cards.slice(0, 6);
-    const markup = shown.map((item) => {
-      if (item.kind === "reader") return searchResultMarkup(item.key, item.reason, item.score);
-      return searchArtifactMarkup(item.artifact);
-    }).join("");
-
-    const gridClass = mode === "people" ? "s13-search-grid--readers" : "s13-search-grid--discover";
-    elements.searchResults.innerHTML = `<div class="s13-search-grid s14-search-grid ${gridClass} s19-search-grid" data-s17-search-family="${mode}">${markup || searchEmptyMarkup()}</div>`;
+    elements.searchResults.innerHTML = `<div class="s22-search-grid" aria-label="Six curated Identity search examples">${shown.slice(0, 6).map(searchArtifactMarkup).join("")}</div>`;
     renderImages(elements.searchResults);
 
-    const family = mode === "people" ? "reader" : "content";
-    const queryLabel = state.searchQuery ? ` matching “${state.searchQuery}”` : "";
-    setText(elements.searchSummary, `${shown.length} public layers connected to “Identity”, arranged as a visual example rather than a live search tool.`);
-    setText(elements.searchCount, `${shown.length} example${shown.length === 1 ? "" : "s"}`);
+    setText(elements.searchSummary, `${Math.min(6, shown.length)} public layers connected to “Identity” — one curated example per layer family.`);
+    setText(elements.searchCount, `${Math.min(6, shown.length)} examples`);
 
-    const renderedCards = qa(".s13-search-card", elements.searchResults);
+    const renderedCards = qa(".s22-search-card", elements.searchResults);
     if (gsap && renderedCards.length) {
       gsap.killTweensOf(renderedCards);
       gsap.set(renderedCards, { clearProps: "opacity,visibility,transform" });
@@ -2274,7 +2248,7 @@
       });
       return selected;
     } catch (error) {
-      console.warn("Inkwell social V21: database stories unavailable.", error);
+      console.warn("Inkwell social V22: database stories unavailable.", error);
       return [...FALLBACK_STORIES];
     }
   }
@@ -2311,53 +2285,54 @@
   function followingCardMarkup(item, index) {
     const profile = PROFILE_DATA[item.profile];
     const story = getStoryByTitle(item.story);
-    const action = activityActionCopy(item, story);
+    const headline = followingHeadline(item, story);
     const layer = item.layer || "Update";
-    const category = profile.tags?.[0] || "Reader activity";
 
-    return `<article class="s13-following-card s14-following-card s18-following-card s19-following-card s20-following-card s21-following-card" data-s13-feed-tone="${escapeHtml(item.tone || "default")}">
-      <button type="button" class="s13-following-card__button s18-following-card__button s19-following-card__button s20-following-card__button s21-following-card__button" data-s13-feed-open="${index}" aria-label="Open ${escapeHtml(item.type)} from ${escapeHtml(profile.name)}">
-        <header class="s18-following-card__header s19-following-card__header s20-following-card__header">
+    return `<article class="s22-following-card" data-s13-feed-tone="${escapeHtml(item.tone || "default")}">
+      <button type="button" class="s22-following-card__button" data-s13-feed-open="${index}" aria-label="${escapeHtml(headline)} by ${escapeHtml(profile.name)}">
+        <header class="s22-following-card__header">
           <span class="s11-avatar s11-avatar--small" style="${avatarStyle(item.profile)}">${escapeHtml(profile.initial)}</span>
-          <span class="s13-following-card__identity"><strong>${escapeHtml(profile.name)}</strong><small>${escapeHtml(item.type)}</small></span>
-          <time>${escapeHtml(item.time || `${index + 1}h`)}</time>
+          <strong class="s22-following-card__reader">${escapeHtml(profile.name)}</strong>
+          <time datetime="${escapeHtml(item.time || `${index + 1}h`)}">${escapeHtml(item.time || `${index + 1}h`)}</time>
         </header>
-        <div class="s13-following-card__body s18-following-card__body s19-following-card__body s20-following-card__body">
-          <span class="s13-following-card__copy s18-following-card__copy s19-following-card__copy s20-following-card__copy">
-            <small class="s20-following-card__action">${escapeHtml(action)}</small>
-            <strong title="${escapeHtml(item.title)}">${escapeHtml(item.title)}</strong>
-            <p>${escapeHtml(item.detail)}</p>
-          </span>
-          <span class="s18-following-card__cover-shell s19-following-card__cover-shell s20-following-card__cover-shell">${storyCoverMarkup(story, "s13-following-card__cover")}</span>
+
+        <div class="s22-following-card__content">
+          <h3>${escapeHtml(headline)}</h3>
+          <div class="s22-following-card__meta">
+            <span class="s22-layer-chip">${escapeHtml(layer)}</span>
+            <span class="s22-following-card__story" title="${escapeHtml(story.title)}">${escapeHtml(story.title)}</span>
+          </div>
         </div>
-        <footer class="s18-following-card__footer s19-following-card__footer s20-following-card__footer">
-          <span class="s13-layer-chip s20-following-card__layer">${escapeHtml(layer)}</span>
-          <span class="s18-following-card__story" title="${escapeHtml(story.title)}">${escapeHtml(story.title)}</span>
-          <span class="s18-following-card__category" title="${escapeHtml(category)}">${escapeHtml(category)}</span>
-        </footer>
+
+        <span class="s22-following-card__cover">${storyCoverMarkup(story, "s22-following-cover")}</span>
       </button>
     </article>`;
   }
 
-  function activityActionCopy(item, story) {
+  function followingHeadline(item, story) {
+    const characterName = String(item.title || "").replace(/\s+across every change$/i, "").trim();
     const map = {
-      "Ranking updated": "Updated a public ranking",
-      "Moment added": "Saved a moment from",
-      "Reflection published": "Published a reflection on",
-      "Quote saved": "Saved a quote from",
-      "Character note": "Added a character note for",
-      "Note edited": "Revised a public note on",
-      "Thought added": "Connected a new thought to",
-      "Library updated": "Changed progress and saved layers for",
-      "Category created": "Created a new profile category",
+      "Ranking updated": `Moved ${story.title} to #1`,
+      "Moment added": `Saved a new moment from ${story.title}`,
+      "Reflection published": `Published a reflection on ${story.title}`,
+      "Quote saved": `Saved a quote from ${story.title}`,
+      "Character note": `Added a character note for ${characterName || story.title}`,
+      "Note edited": `Revised a public note on ${story.title}`,
+      "Thought added": `Added a new thought to ${story.title}`,
+      "Library updated": `Moved ${story.title} to Completed`,
+      "Category created": `Created a ranking: ${item.title}`,
     };
     return map[item.type] || `${item.type} · ${story.title}`;
   }
 
+  function activityActionCopy(item, story) {
+    return followingHeadline(item, story);
+  }
+
   function artifactMediaMarkup(artifact, story, className = "") {
-    return `<div class="s20-artifact-media ${escapeHtml(className)}">
-      <img class="s14-for-you-slide__image" data-s14-artifact-media="${escapeHtml(artifact.mediaKey || "")}" alt="Visual for ${escapeHtml(artifact.title)}" hidden>
-      ${storyCoverMarkup(story, "s14-for-you-slide__fallback")}
+    return `<div class="s22-artifact-media ${escapeHtml(className)}">
+      <img class="s22-artifact-media__image" data-s14-artifact-media="${escapeHtml(artifact.mediaKey || "")}" alt="" hidden>
+      ${storyCoverMarkup(story, "s22-artifact-media__fallback")}
     </div>`;
   }
 
@@ -2366,69 +2341,101 @@
     const media = artifactMediaMarkup(artifact, story);
 
     if (type === "moment") {
-      return `<div class="s19-primary-layer s19-primary-layer--feature s19-primary-layer--moment s20-primary-layer s20-primary-layer--feature">
-        ${artifactMediaMarkup(artifact, story, "s19-feature-media")}
-        <div class="s19-feature-copy s20-feature-copy"><small>Saved moment</small><strong>One frame, then the idea around it</strong><p>${escapeHtml(artifact.excerpt)}</p><span>${escapeHtml(artifact.meta)}</span></div>
+      return `<div class="s22-primary s22-primary--feature s22-primary--moment">
+        ${artifactMediaMarkup(artifact, story, "s22-primary__media")}
+        <div class="s22-primary__copy">
+          <small>Saved moment</small>
+          <h3>One frame, then the idea around it</h3>
+          <p>${escapeHtml(artifact.excerpt)}</p>
+          <span class="s22-primary__meta">${escapeHtml(artifact.meta)}</span>
+        </div>
       </div>`;
     }
+
     if (type === "character") {
-      return `<div class="s19-primary-layer s19-primary-layer--feature s19-primary-layer--character s20-primary-layer s20-primary-layer--feature">
-        ${artifactMediaMarkup(artifact, story, "s19-feature-media")}
-        <div class="s19-feature-copy s20-feature-copy"><small>Character focus</small><strong>${escapeHtml(artifact.subject || artifact.title)}</strong><p>${escapeHtml(artifact.excerpt)}</p><div class="s19-feature-tags">${artifact.tags.map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}</div></div>
+      return `<div class="s22-primary s22-primary--feature s22-primary--character">
+        ${artifactMediaMarkup(artifact, story, "s22-primary__media")}
+        <div class="s22-primary__copy">
+          <small>Character focus</small>
+          <h3>${escapeHtml(artifact.subject || artifact.title)}</h3>
+          <p>${escapeHtml(artifact.excerpt)}</p>
+          <div class="s22-primary__inline-tags">${artifact.tags.slice(0, 3).map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}</div>
+        </div>
       </div>`;
     }
+
     if (type === "quote") {
-      return `<div class="s19-primary-layer s19-primary-layer--text s19-primary-layer--quote s20-primary-layer s20-primary-layer--text s20-primary-layer--quote">
-        <div class="s20-layer-copy"><small>Saved quote context</small><blockquote>${escapeHtml(artifact.excerpt)}</blockquote><span>${escapeHtml(story.title)}</span></div>
+      return `<div class="s22-primary s22-primary--text s22-primary--quote">
+        <div class="s22-primary__copy">
+          <small>Saved quote context</small>
+          <blockquote>${escapeHtml(artifact.excerpt)}</blockquote>
+          <span class="s22-primary__meta">${escapeHtml(story.title)}</span>
+        </div>
         ${media}
       </div>`;
     }
+
     if (type === "thought") {
-      return `<div class="s19-primary-layer s19-primary-layer--text s19-primary-layer--thought s20-primary-layer s20-primary-layer--text s20-primary-layer--thought">
-        <div class="s20-layer-copy"><small>Connected thought</small><h5>${escapeHtml(artifact.title)}</h5><p>${escapeHtml(artifact.excerpt)}</p></div>
+      return `<div class="s22-primary s22-primary--text s22-primary--thought">
+        <div class="s22-primary__copy">
+          <small>Connected thought</small>
+          <h3>${escapeHtml(artifact.title)}</h3>
+          <p>${escapeHtml(artifact.excerpt)}</p>
+          <span class="s22-primary__meta">${escapeHtml(artifact.meta)}</span>
+        </div>
         ${media}
       </div>`;
     }
+
     if (type === "ranking") {
       const items = (artifact.items || []).slice(0, 3);
-      return `<div class="s19-primary-layer s19-primary-layer--ranking s20-primary-layer s20-primary-layer--ranking">
-        <div class="s20-layer-copy"><small>Public ranking</small><h5>${escapeHtml(artifact.title)}</h5><ol>${items.map((item, index) => `<li><b>${String(index + 1).padStart(2, "0")}</b><span>${escapeHtml(item)}</span></li>`).join("")}</ol><p>${escapeHtml(artifact.excerpt)}</p></div>
+      return `<div class="s22-primary s22-primary--ranking">
+        <div class="s22-primary__copy">
+          <small>Public ranking</small>
+          <h3>${escapeHtml(artifact.title)}</h3>
+          <ol>${items.map((item, itemIndex) => `<li><b>${String(itemIndex + 1).padStart(2, "0")}</b><span>${escapeHtml(item)}</span></li>`).join("")}</ol>
+        </div>
         ${media}
       </div>`;
     }
-    return `<div class="s19-primary-layer s20-primary-layer s20-primary-layer--text"><div class="s20-layer-copy"><p>${escapeHtml(artifact.excerpt)}</p></div>${media}</div>`;
+
+    return `<div class="s22-primary s22-primary--text"><div class="s22-primary__copy"><p>${escapeHtml(artifact.excerpt)}</p></div>${media}</div>`;
   }
 
   function forYouArtifactMarkup(artifact, index) {
     const profile = PROFILE_DATA[artifact.profile];
     const story = getStoryByTitle(artifact.story);
     const type = normalizeText(artifact.type);
-    return `<article class="s14-for-you-slide s17-for-you-slide s18-for-you-slide s19-for-you-slide s20-for-you-slide s21-for-you-slide" data-s14-for-you-index="${index}" data-s14-artifact-type="${escapeHtml(type)}" aria-label="${escapeHtml(artifact.type)} recommendation ${index + 1} of ${Math.min(5, DISCOVERY_ARTIFACTS.length)}">
-      <div class="s14-for-you-slide__visual s17-for-you-slide__visual s18-for-you-canvas s19-for-you-canvas s20-for-you-canvas s21-for-you-canvas">
-        <div class="s20-for-you-meta">
-          <span class="s13-reason-chip s14-reason-chip s18-for-you-reason s19-for-you-reason s20-for-you-reason"><b aria-hidden="true">↔</b>${escapeHtml(artifact.reason)}</span>
-          <span class="s14-for-you-slide__type s20-for-you-type">${escapeHtml(artifact.type)}</span>
-        </div>
-        ${forYouPrimaryMarkup(artifact, story)}
-      </div>
+    const total = Math.min(5, DISCOVERY_ARTIFACTS.length);
 
-      <div class="s18-for-you-dock s19-for-you-dock s20-for-you-dock s21-for-you-dock">
-        <div class="s18-for-you-dock__copy s19-for-you-dock__copy s20-for-you-dock__copy">
-          <span class="s20-for-you-dock__cover">${storyCoverMarkup(story, "s20-for-you-cover")}</span>
-          <span class="s13-artifact-kicker">${escapeHtml(artifact.type)} · ${escapeHtml(story.title)}</span>
-          <h4>${escapeHtml(artifact.title)}</h4>
-          <div class="s13-artifact-tags">${artifact.tags.map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}</div>
+    return `<article class="s22-for-you-slide s22-for-you-slide--${escapeHtml(type)}" data-s14-for-you-index="${index}" data-s14-artifact-type="${escapeHtml(type)}" aria-label="${escapeHtml(artifact.type)} recommendation ${index + 1} of ${total}">
+      <div class="s22-for-you-post">
+        <header class="s22-for-you-post__context">
+          <span class="s22-for-you-reason"><b aria-hidden="true">↔</b><span>${escapeHtml(artifact.reason)}</span></span>
+          <span class="s22-for-you-type">${escapeHtml(artifact.type)}</span>
+        </header>
+
+        <div class="s22-for-you-post__canvas">
+          ${forYouPrimaryMarkup(artifact, story)}
         </div>
 
-        <footer class="s14-for-you-slide__footer s17-for-you-footer s18-for-you-footer s19-for-you-footer s20-for-you-footer s21-for-you-footer">
-          <button type="button" class="s14-author-card s16-author-card s17-author-card s18-author-card s20-author-card" data-s13-open-author="${escapeHtml(artifact.profile)}" aria-label="Open ${escapeHtml(profile.name)} profile">
+        <section class="s22-story-dock" aria-label="Story and public layer details">
+          <span class="s22-story-dock__cover">${storyCoverMarkup(story, "s22-story-cover")}</span>
+          <span class="s22-story-dock__copy">
+            <small>${escapeHtml(artifact.type)} · ${escapeHtml(story.title)}</small>
+            <h4>${escapeHtml(artifact.title)}</h4>
+          </span>
+          <span class="s22-story-dock__tags">${artifact.tags.slice(0, 3).map((tag) => `<em>${escapeHtml(tag)}</em>`).join("")}</span>
+        </section>
+
+        <footer class="s22-reader-dock">
+          <div class="s22-author-card" aria-label="Public reader preview for ${escapeHtml(profile.name)}">
             <span class="s11-avatar" style="${avatarStyle(artifact.profile)}">${escapeHtml(profile.initial)}</span>
             <span><strong>${escapeHtml(profile.name)}</strong><small>${escapeHtml(profile.label)}</small></span>
-            <b aria-hidden="true">→</b>
-          </button>
-          <div class="s14-for-you-actions s17-for-you-actions s18-for-you-actions s20-for-you-actions">
-            <button type="button" class="s13-secondary-action" data-s11-open-story="${escapeHtml(story.title)}" data-s13-story-owner="${escapeHtml(artifact.profile)}" aria-label="View ${escapeHtml(story.title)}">View title</button>
-            <button type="button" class="s13-primary-action" data-s18-open-reflection="${escapeHtml(story.title)}" data-s18-reflection-owner="${escapeHtml(artifact.profile)}">See reflection</button>
+          </div>
+          <div class="s22-reader-dock__actions">
+            <button type="button" class="s22-action s22-action--secondary" data-s11-open-story="${escapeHtml(story.title)}" data-s13-story-owner="${escapeHtml(artifact.profile)}" aria-label="View ${escapeHtml(story.title)}">View title</button>
+            <button type="button" class="s22-action s22-action--primary" data-s18-open-reflection="${escapeHtml(story.title)}" data-s18-reflection-owner="${escapeHtml(artifact.profile)}">See reflection</button>
           </div>
         </footer>
       </div>
@@ -2443,18 +2450,18 @@
     const profile = PROFILE_DATA[artifact.profile];
     const story = getStoryByTitle(artifact.story);
     const resultType = escapeHtml(artifact.searchLayer || normalizeText(artifact.type));
-    const displayType = artifact.type;
-    return `<article class="s13-search-card s13-search-artifact s18-search-artifact s19-search-artifact s21-search-card" data-s16-search-result-type="${resultType}" aria-label="${escapeHtml(displayType)} example: ${escapeHtml(artifact.title)}">
-      <span class="s18-search-artifact__cover s19-search-artifact__cover s21-search-card__cover">${storyCoverMarkup(story, "s13-search-artifact__cover")}</span>
-      <span class="s18-search-artifact__copy s19-search-artifact__copy s21-search-card__copy">
-        <small>${escapeHtml(displayType)} · ${escapeHtml(story.title)}</small>
-        <strong>${escapeHtml(artifact.title)}</strong>
-        <span class="s13-search-card__tags">${(artifact.tags || []).slice(0, 3).map((tag) => `<em>${escapeHtml(tag)}</em>`).join("")}</span>
+
+    return `<article class="s22-search-card" data-s16-search-result-type="${resultType}" aria-label="${escapeHtml(artifact.type)} example: ${escapeHtml(artifact.title)}">
+      <span class="s22-search-card__cover">${storyCoverMarkup(story, "s22-search-cover")}</span>
+      <span class="s22-search-card__content">
+        <small>${escapeHtml(artifact.type)} · ${escapeHtml(story.title)}</small>
+        <h3>${escapeHtml(artifact.title)}</h3>
+        <span class="s22-search-card__tags">${(artifact.tags || []).slice(0, 3).map((tag) => `<em>${escapeHtml(tag)}</em>`).join("")}</span>
       </span>
-      <span class="s18-search-artifact__author s19-search-artifact__author s21-search-card__author">
+      <footer class="s22-search-card__author">
         <span class="s11-avatar s11-avatar--small" style="${avatarStyle(artifact.profile)}">${escapeHtml(profile.initial)}</span>
         <span><strong>${escapeHtml(profile.name)}</strong><small>${escapeHtml(profile.label)}</small></span>
-      </span>
+      </footer>
     </article>`;
   }
 
@@ -2584,7 +2591,7 @@
 
 
   function storyCoverMarkup(story, extraClass = "") {
-    return `<span class="s11-cover ${escapeHtml(extraClass)}" data-story-title="${escapeHtml(story.title)}"><img src="${escapeHtml(story.coverUrl || "")}" alt="${escapeHtml(story.title)} cover" ${story.coverUrl ? "" : "hidden"}><span>${escapeHtml(abbreviateTitle(story.title))}</span></span>`;
+    return `<span class="s11-cover s22-cover ${escapeHtml(extraClass)}" data-story-title="${escapeHtml(story.title)}"><img alt="" hidden><span>${escapeHtml(abbreviateTitle(story.title))}</span></span>`;
   }
 
 
@@ -2617,19 +2624,30 @@
   function setImageCandidates(image, candidates) {
     if (!image) return;
     const queue = Array.from(new Set(candidates.filter(Boolean)));
+    const shell = image.closest(".s22-artifact-media");
     let cursor = 0;
+
+    image.hidden = true;
+    image.alt = "";
+    shell?.classList.remove("has-image");
+
     const next = () => {
+      image.hidden = true;
+      image.alt = "";
+      shell?.classList.remove("has-image");
       if (cursor >= queue.length) {
-        image.hidden = true;
         image.removeAttribute("src");
         return;
       }
-      image.hidden = false;
       image.src = queue[cursor++];
     };
-    image.addEventListener("error", next, { passive: true });
+
+    image.addEventListener("error", next);
     image.addEventListener("load", () => {
-      image.closest(".s14-for-you-slide")?.classList.add("has-local-media");
+      image.hidden = false;
+      image.alt = "Recommended story visual";
+      shell?.classList.add("has-image");
+      image.closest("[data-s14-for-you-index]")?.classList.add("has-local-media");
       classifyArtifactMedia(image);
     }, { once: true });
     next();
@@ -2637,47 +2655,53 @@
 
   function setupForYouFeedInteractions(force = false) {
     const stage = elements.forYouResults;
-    if (!stage || stage.dataset.s21Bound === "true") return;
-    stage.dataset.s21Bound = "true";
+    const panel = elements.socialViews.find((view) => view.dataset.s11SocialView === "foryou") || stage;
+    if (!stage || !panel || panel.dataset.s22FeedBound === "true") return;
+    panel.dataset.s22FeedBound = "true";
     stage.tabIndex = stage.tabIndex >= 0 ? stage.tabIndex : 0;
 
+    const count = () => Math.min(5, DISCOVERY_ARTIFACTS.length);
     const ownFeed = () => {
       userLocks.socialView = true;
       userLocks.forYouArtifact = true;
       section.dataset.socialInteraction = "user";
+      claimJourneyInteraction();
     };
 
     stage.addEventListener("keydown", (event) => {
       if (!["ArrowDown", "PageDown", "ArrowUp", "PageUp", "Home", "End"].includes(event.key)) return;
-      event.preventDefault();
-      event.stopPropagation();
-      ownFeed();
+
       let next = state.forYouArtifact;
       if (["ArrowDown", "PageDown"].includes(event.key)) next += 1;
       if (["ArrowUp", "PageUp"].includes(event.key)) next -= 1;
       if (event.key === "Home") next = 0;
-      if (event.key === "End") next = Math.min(5, DISCOVERY_ARTIFACTS.length) - 1;
-      claimJourneyInteraction();
+      if (event.key === "End") next = count() - 1;
+
+      const atStartBoundary = next < 0;
+      const atEndBoundary = next >= count();
+      if (atStartBoundary || atEndBoundary) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+      ownFeed();
       setForYouArtifact(next, true, "user");
     });
 
-    stage.addEventListener("wheel", (event) => {
+    panel.addEventListener("wheel", (event) => {
       if (state.socialView !== "foryou" || state.activeAct !== "social") return;
       if (event.ctrlKey || event.metaKey || event.shiftKey) return;
       if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
 
-      const count = Math.min(5, DISCOVERY_ARTIFACTS.length);
-      const multiplier = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? Math.max(240, stage.clientHeight) : 1;
+      const multiplier = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? Math.max(240, panel.clientHeight) : 1;
       const delta = event.deltaY * multiplier;
       const direction = Math.sign(delta);
       if (!direction) return;
 
-      // Once someone scrolls inside For You, the timeline may no longer swap
-      // the tab or post underneath them. At the first/last post, native page
-      // scrolling is deliberately released so the homepage journey can move on.
-      ownFeed();
       const atStart = state.forYouArtifact === 0 && direction < 0;
-      const atEnd = state.forYouArtifact === count - 1 && direction > 0;
+      const atEnd = state.forYouArtifact === count() - 1 && direction > 0;
+
+      // At either boundary the event is intentionally left untouched so the
+      // master homepage journey regains the native page scroll immediately.
       if (atStart || atEnd) {
         forYouWheelDelta = 0;
         return;
@@ -2685,18 +2709,19 @@
 
       event.preventDefault();
       event.stopPropagation();
-      claimJourneyInteraction();
+      event.stopImmediatePropagation();
+      ownFeed();
 
       const now = performance.now();
       if (now < forYouWheelLockedUntil) return;
       forYouWheelDelta += delta;
-      if (Math.abs(forYouWheelDelta) < 42) return;
+      if (Math.abs(forYouWheelDelta) < 48) return;
 
-      forYouWheelLockedUntil = now + 460;
+      forYouWheelLockedUntil = now + 440;
       const next = state.forYouArtifact + (forYouWheelDelta > 0 ? 1 : -1);
       forYouWheelDelta = 0;
       setForYouArtifact(next, true, "user");
-    }, { passive: false });
+    }, { passive: false, capture: true });
 
     let pointerStartY = null;
     let pointerStartX = null;
@@ -2712,8 +2737,11 @@
       pointerStartY = null;
       pointerStartX = null;
       if (Math.abs(dy) < 44 || Math.abs(dy) <= Math.abs(dx)) return;
+
+      const next = state.forYouArtifact + (dy < 0 ? 1 : -1);
+      if (next < 0 || next >= count()) return;
       ownFeed();
-      setForYouArtifact(state.forYouArtifact + (dy < 0 ? 1 : -1), true, "user");
+      setForYouArtifact(next, true, "user");
     }, { passive: true });
   }
 
@@ -2768,7 +2796,7 @@
       dot.tabIndex = current ? 0 : -1;
     });
 
-    const railPosition = q(".s21-for-you-rail__position", elements.forYouResults);
+    const railPosition = q(".s22-for-you-pager__position", elements.forYouResults);
     if (railPosition) railPosition.innerHTML = `<b>${String(index + 1).padStart(2, "0")}</b><small>/${String(count).padStart(2, "0")}</small>`;
 
     const previous = q("[data-s17-for-you-prev]", elements.forYouResults);
@@ -2797,10 +2825,10 @@
   }
 
   function renderImages(root) {
-    qa(".s11-cover", root).forEach((cover) => {
+    qa(".s11-cover, .s22-cover", root).forEach((cover) => {
       const story = getStoryByTitle(cover.dataset.storyTitle || "");
       const image = q("img", cover);
-      const fallback = q("span:last-child", cover);
+      const fallback = q(":scope > span:last-child", cover);
       if (fallback) fallback.textContent = abbreviateTitle(story.title);
       setStoryImage(image, story);
     });
@@ -2809,16 +2837,27 @@
 
   function setStoryImage(image, story) {
     if (!image) return;
-    if (!story?.coverUrl) {
+    const cover = image.closest("[data-story-title]");
+    cover?.classList.remove("has-image");
+    image.hidden = true;
+    image.alt = "";
+    image.removeAttribute("src");
+
+    if (!story?.coverUrl) return;
+
+    image.addEventListener("load", () => {
+      image.alt = `${story.title} cover`;
+      image.hidden = false;
+      cover?.classList.add("has-image");
+      classifyArtifactMedia(image);
+    }, { once: true });
+    image.addEventListener("error", () => {
       image.hidden = true;
+      image.alt = "";
       image.removeAttribute("src");
-      return;
-    }
-    image.alt = `${story.title} cover`;
-    image.hidden = false;
-    image.addEventListener("load", () => classifyArtifactMedia(image), { once: true });
+      cover?.classList.remove("has-image");
+    }, { once: true });
     image.src = story.coverUrl;
-    image.addEventListener("error", () => { image.hidden = true; }, { once: true });
   }
 
   function getStoryByTitle(title) {
@@ -3086,8 +3125,11 @@
         timeline?.kill?.();
         resizeObserver?.disconnect?.();
         cleanupCallbacks.splice(0).forEach((callback) => callback());
+        window.__INKWELL_SOCIAL_V22_STARTED__ = false;
         window.__INKWELL_SOCIAL_V20_STARTED__ = false;
         window.__INKWELL_SOCIAL_V16_STARTED__ = false;
+        section.classList.remove("s22-ready");
+        delete section.dataset.s22Ready;
       },
       cleanup: () => trigger?.kill?.(true),
     };
