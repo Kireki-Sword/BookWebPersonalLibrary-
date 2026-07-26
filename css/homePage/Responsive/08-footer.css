@@ -1,0 +1,47 @@
+/* ========================================================================== 
+   INKWELL — RESPONSIVE FOOTER POLISH
+   ========================================================================== */
+
+.site-footer {
+  padding-bottom: max(1.6rem, env(safe-area-inset-bottom));
+}
+
+.site-footer__nav a,
+.site-footer__brand-link,
+.site-footer__bottom a {
+  min-height: var(--responsive-touch-target, 44px);
+}
+
+@media (max-width: 899px) {
+  .site-footer {
+    --closing-pad-inline: var(--responsive-gutter, 1.25rem);
+  }
+
+  .site-footer__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2rem;
+  }
+
+  .site-footer__brand {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 560px) {
+  .site-footer__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .site-footer__brand {
+    grid-column: auto;
+  }
+
+  .site-footer__nav ul {
+    gap: 0.35rem;
+  }
+
+  .site-footer__bottom {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

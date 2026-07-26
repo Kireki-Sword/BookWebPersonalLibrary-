@@ -884,8 +884,14 @@ export function createSearchRenderer(elements) {
     }
 
 
+    const visibleGenreLimit =
+      2;
+
     item.genres
-      .slice(0, 2)
+      .slice(
+        0,
+        visibleGenreLimit
+      )
       .forEach((genre) => {
         const genreElement =
           document.createElement(
@@ -906,21 +912,31 @@ export function createSearchRenderer(elements) {
 
     if (
       item.genres.length >
-      2
+      visibleGenreLimit
     ) {
+      const remainingCount =
+        item.genres.length -
+        visibleGenreLimit;
+
       const remaining =
         document.createElement(
           "span"
         );
 
       remaining.className =
-        "story-card-genre";
+        "story-card-more";
 
       remaining.textContent =
-        `+${
-          item.genres.length -
-          2
-        }`;
+        `+${remainingCount} more`;
+
+      remaining.setAttribute(
+        "aria-label",
+        `${remainingCount} more ${
+          remainingCount === 1
+            ? "genre"
+            : "genres"
+        }`
+      );
 
       genres.append(
         remaining

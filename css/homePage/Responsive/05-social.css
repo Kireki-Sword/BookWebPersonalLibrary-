@@ -1,0 +1,268 @@
+/* ========================================================================== 
+   INKWELL — RESPONSIVE SECTION 5: SOCIAL, ON YOUR TERMS
+   The desktop timeline remains untouched. Static mode becomes a vertical
+   product tour with scrollable subregions only where the content requires it.
+   ========================================================================== */
+
+@media (max-width: 1099px), (max-height: 699px), (prefers-reduced-motion: reduce) {
+  #section-5-social,
+  .social-cinema {
+    min-height: auto;
+    overflow: clip;
+  }
+
+  .social-cinema__pin {
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+  }
+
+  .social-cinema__layout {
+    width: min(var(--responsive-content-max), calc(100% - (var(--responsive-gutter) * 2)));
+    height: auto;
+    min-height: 0;
+    margin-inline: auto;
+    padding:
+      clamp(4.5rem, 8vw, 6.5rem)
+      0
+      clamp(4.5rem, 8vw, 6.5rem);
+    grid-template-columns: minmax(15rem, 0.7fr) minmax(0, 1.3fr);
+    gap: clamp(1.5rem, 4vw, 3rem);
+    align-items: start;
+  }
+
+  .social-cinema__copy {
+    position: sticky;
+    top: calc(var(--responsive-nav-height) + 1.5rem);
+    align-self: start;
+    min-height: 0;
+  }
+
+  .social-cinema__copy-stage {
+    min-height: 0;
+  }
+
+  .social-copy-state {
+    position: relative !important;
+    inset: auto !important;
+    display: none;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+  }
+
+  .social-copy-state:first-child,
+  .social-copy-state.is-active {
+    display: block;
+  }
+
+  .social-cinema__screen,
+  .social-cinema__screen-shell,
+  .social-cinema__screen-viewport,
+  .social-cinema__screen-stage,
+  .social-cinema__viewport {
+    width: 100%;
+    min-width: 0;
+    height: auto;
+    min-height: 0;
+    max-height: none;
+    overflow: visible;
+  }
+
+  .social-scene,
+  #section-5-social .social-scene--social {
+    position: relative !important;
+    inset: auto !important;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+    pointer-events: auto !important;
+  }
+
+  .social-scene[aria-hidden="true"] {
+    display: none;
+  }
+
+  .s11-social-stage,
+  .s12-social-stage,
+  .s13-social-stage {
+    min-height: 0;
+    height: auto;
+  }
+
+  .s11-social-viewport,
+  .s13-social-viewport,
+  .s13-search-results,
+  .s11-library-list,
+  .s11-activity-list,
+  .s11-layer-items {
+    max-height: none;
+    overflow: visible;
+  }
+
+  .s13-following-grid,
+  .s13-search-grid--discover,
+  .s13-search-grid--readers,
+  .s13-search-grid--stories,
+  .s11-reader-ranking-grid,
+  .s11-top-stories,
+  .s11-stats,
+  .s11-category-tabs,
+  .s11-category-card ol {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: auto;
+    height: auto;
+  }
+
+  .s13-for-you-stage,
+  .s13-for-you-card,
+  .s11-profile__hero,
+  .s11-reader-profile-hero,
+  .s11-story-hero,
+  .s11-library-story__main {
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  }
+
+  .s13-for-you-rail {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: auto;
+  }
+
+  .s13-for-you-main,
+  .s13-for-you-preview,
+  .s13-following-card,
+  .s13-search-card {
+    min-height: 0;
+  }
+
+  #section-5-social button,
+  #section-5-social a,
+  #section-5-social input,
+  #section-5-social select {
+    min-height: var(--responsive-touch-target);
+  }
+
+  #section-5-social input,
+  #section-5-social select,
+  #section-5-social textarea {
+    font-size: max(1rem, 16px);
+  }
+
+  .s13-search-controls,
+  .s11-search-filters,
+  .s13-search-filters,
+  .s13-search-modes,
+  .s11-social-tabs,
+  .s11-story-layer-tabs {
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scrollbar-width: thin;
+  }
+
+  .s13-search-controls > *,
+  .s11-search-filters > *,
+  .s13-search-filters > *,
+  .s13-search-modes > *,
+  .s11-social-tabs > *,
+  .s11-story-layer-tabs > * {
+    flex: 0 0 auto;
+  }
+}
+
+@media (max-width: 899px) {
+  .social-cinema__layout {
+    grid-template-columns: 1fr;
+  }
+
+  .social-cinema__copy {
+    position: relative;
+    top: auto;
+    max-width: 46rem;
+  }
+
+  .social-cinema__screen {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 760px) {
+  .social-cinema__layout {
+    width: min(100% - (var(--responsive-gutter) * 2), var(--responsive-content-max));
+  }
+
+  .social-cinema__screen,
+  .s11-social-stage,
+  .s12-social-stage,
+  .s13-social-stage,
+  .s11-profile,
+  .s11-reader-profile-page,
+  .s11-library-page,
+  .s11-story-page {
+    border-radius: clamp(1rem, 5vw, 1.5rem);
+  }
+
+  .s13-following-grid,
+  .s13-search-grid--discover,
+  .s13-search-grid--readers,
+  .s13-search-grid--stories,
+  .s13-for-you-rail,
+  .s11-reader-ranking-grid,
+  .s11-top-stories,
+  .s11-stats,
+  .s11-category-tabs,
+  .s11-category-card ol {
+    grid-template-columns: 1fr;
+  }
+
+  .s13-for-you-stage,
+  .s13-for-you-card,
+  .s11-profile__hero,
+  .s11-reader-profile-hero,
+  .s11-story-hero,
+  .s11-library-story__main {
+    grid-template-columns: 1fr;
+  }
+
+  .s13-for-you-card__visual {
+    min-height: 15rem;
+    border-right: 0;
+    border-bottom: 1px solid rgba(184, 196, 255, 0.12);
+  }
+
+  .s13-artifact-actions,
+  .s11-profile__body,
+  .s11-reader-profile-body,
+  .s11-story-layer-content {
+    grid-template-columns: 1fr;
+  }
+
+  .s13-social-stage__header,
+  .s11-social-stage__header,
+  .s11-subpage-toolbar {
+    position: relative;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.65rem;
+  }
+
+  .s11-social-stage__brand,
+  .s13-social-stage__brand {
+    display: none;
+  }
+}
+
+@media (max-width: 430px) {
+  .social-cinema__layout {
+    width: calc(100% - 1.5rem);
+  }
+
+  .social-cinema__copy h2 {
+    font-size: clamp(2.7rem, 14vw, 4rem);
+  }
+
+  .s13-artifact-actions {
+    grid-template-columns: 1fr;
+  }
+}

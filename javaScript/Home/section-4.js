@@ -2,7 +2,7 @@
   "use strict";
 
   window.__INKWELL_SECTION4_BUILD__ =
-    "2026-07-24-interaction-v11-single-cover-handoff";
+    "2026-07-26-interaction-v12-fluid-card-morph";
 
   const SUPABASE_URL = "https://hsruxfpslxguhwnccwuj.supabase.co";
 
@@ -3398,7 +3398,7 @@
      * A moderate slowdown remains after the merge, but it is faster than V4.
      * This affects the cover handoff, card docking and comparison reveal.
      */
-    const POST_MERGE_SLOWDOWN = 1.78;
+    const POST_MERGE_SLOWDOWN = 1.42;
 
     const postMergeDuration = (duration) => {
       return duration * POST_MERGE_SLOWDOWN;
@@ -3408,11 +3408,17 @@
       return cardRevealTime + postMergeDuration(offsetFromReveal);
     };
 
-    const handoffEndTime = postMergeTime(0.76);
+    const handoffEndTime = postMergeTime(0.66);
 
-    const cardDockTime = postMergeTime(0.9);
+    /*
+     * Continue directly into the upward dock as soon as the cover has become
+     * part of the full card. The previous pause here made the cover look as if
+     * it hit, pushed against, and then snapped into the card.
+     */
+    const cardDockTime = handoffEndTime;
 
-    const comparisonTime = postMergeTime(1.3);
+    const comparisonTime =
+      cardDockTime + postMergeDuration(0.42);
 
     const clampValue = (value, minimum, maximum) => {
       return Math.min(maximum, Math.max(minimum, value));
@@ -3549,6 +3555,8 @@
       yPercent: -50,
 
       scale: 1.03,
+
+      clipPath: "inset(0% 0% 0% 0% round 19px)",
 
       pointerEvents: "none",
     });
@@ -4068,14 +4076,32 @@
       cardRevealTime,
     );
 
-    /* Reveal the empty shared-card shell while the single cover travels. */
-    timeline.to(
+    /*
+     * Morph the merged cover into the complete story card in one continuous
+     * movement. The card begins clipped to a cover-sized window in the centre,
+     * then unfolds while the cover travels into its final slot. This avoids the
+     * old full-shell-then-insert motion that looked like a push and a stop.
+     */
+    timeline.set(
       elements.sharedCardWrap,
       {
         autoAlpha: 1,
-        scale: 1.03,
-        duration: postMergeDuration(0.14),
-        ease: "power2.out",
+        clipPath: () =>
+          getCoverRevealClipPath(
+            chosenLeft,
+            elements.sharedCard,
+            elements.stage,
+          ),
+      },
+      cardRevealTime,
+    );
+
+    timeline.to(
+      elements.sharedCardWrap,
+      {
+        clipPath: "inset(0% 0% 0% 0% round 19px)",
+        duration: handoffEndTime - cardRevealTime,
+        ease: "power2.inOut",
       },
       cardRevealTime,
     );
@@ -4088,52 +4114,49 @@
         width: () => getRelativeRect(elements.cardCover, elements.stage).width,
         height: () => getRelativeRect(elements.cardCover, elements.stage).height,
         borderRadius: "13px",
-        rotation: -1.2,
+        rotation: 0,
         duration: handoffEndTime - cardRevealTime,
-        ease: "power3.inOut",
+        ease: "power2.inOut",
       },
       cardRevealTime,
     );
 
+    /* Bring the story details in during the unfolding motion, not afterward. */
     timeline.to(
-      elements.handoff,
+      elements.cardBaseContent,
       {
-        rotation: 0,
-        duration: postMergeDuration(0.12),
+        autoAlpha: 1,
+        y: 0,
+        duration: postMergeDuration(0.2),
+        stagger: postMergeDuration(0.02),
         ease: "power2.out",
       },
-      handoffEndTime - postMergeDuration(0.12),
+      cardRevealTime +
+        (handoffEndTime - cardRevealTime) * 0.5,
     );
 
-    /* The two identical covers crossfade only after occupying the same slot. */
+    /* Crossfade on the final part of the same movement, ending exactly at dock. */
+    const coverCrossfadeDuration =
+      postMergeDuration(0.075);
+
     timeline.to(
       elements.cardCover,
       {
         autoAlpha: 1,
-        duration: postMergeDuration(0.06),
+        duration: coverCrossfadeDuration,
+        ease: "power1.inOut",
       },
-      handoffEndTime - postMergeDuration(0.04),
+      handoffEndTime - coverCrossfadeDuration,
     );
 
     timeline.to(
       elements.handoff,
       {
         autoAlpha: 0,
-        duration: postMergeDuration(0.06),
+        duration: coverCrossfadeDuration,
+        ease: "power1.inOut",
       },
-      handoffEndTime - postMergeDuration(0.04),
-    );
-
-    timeline.to(
-      elements.cardBaseContent,
-      {
-        autoAlpha: 1,
-        y: 0,
-        duration: postMergeDuration(0.16),
-        stagger: postMergeDuration(0.025),
-        ease: "power2.out",
-      },
-      handoffEndTime + postMergeDuration(0.04),
+      handoffEndTime - coverCrossfadeDuration,
     );
 
     timeline.to(
@@ -4368,6 +4391,94 @@
     };
 
     elements.handoffImage.src = sourceUrl;
+  }
+
+  function getCoverRevealClipPath(
+    source,
+    card,
+    stage,
+  ) {
+    const sourceRect =
+      getRelativeRect(source, stage);
+
+    const cardRect =
+      getRelativeRect(card, stage);
+
+    const cardWidth = Math.max(
+      cardRect.width,
+      1,
+    );
+
+    const cardHeight = Math.max(
+      cardRect.height,
+      1,
+    );
+
+    const revealWidth = Math.min(
+      cardWidth,
+      sourceRect.width * 1.04,
+    );
+
+    const revealHeight = Math.min(
+      cardHeight,
+      sourceRect.height * 1.02,
+    );
+
+    const sourceCenterX =
+      sourceRect.left + sourceRect.width / 2;
+
+    const sourceCenterY =
+      sourceRect.top + sourceRect.height / 2;
+
+    const localCenterX =
+      sourceCenterX - cardRect.left;
+
+    const localCenterY =
+      sourceCenterY - cardRect.top;
+
+    const clamp = (value, minimum, maximum) => {
+      return Math.min(
+        maximum,
+        Math.max(minimum, value),
+      );
+    };
+
+    const left = clamp(
+      localCenterX - revealWidth / 2,
+      0,
+      cardWidth,
+    );
+
+    const top = clamp(
+      localCenterY - revealHeight / 2,
+      0,
+      cardHeight,
+    );
+
+    const right = clamp(
+      cardWidth - (left + revealWidth),
+      0,
+      cardWidth,
+    );
+
+    const bottom = clamp(
+      cardHeight - (top + revealHeight),
+      0,
+      cardHeight,
+    );
+
+    const toPercent = (value, total) => {
+      return (
+        (value / total) * 100
+      ).toFixed(3);
+    };
+
+    return (
+      `inset(${toPercent(top, cardHeight)}% ` +
+      `${toPercent(right, cardWidth)}% ` +
+      `${toPercent(bottom, cardHeight)}% ` +
+      `${toPercent(left, cardWidth)}% round 14px)`
+    );
   }
 
   function getCenterTarget(item, stage) {

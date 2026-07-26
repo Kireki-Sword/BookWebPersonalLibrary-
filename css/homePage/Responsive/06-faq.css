@@ -1,0 +1,59 @@
+/* ========================================================================== 
+   INKWELL — RESPONSIVE SECTION 6: FAQ
+   ========================================================================== */
+
+@media (max-width: 1099px), (max-height: 699px), (prefers-reduced-motion: reduce) {
+  .home-faq {
+    padding:
+      clamp(4.5rem, 8vw, 7rem)
+      0
+      clamp(4.5rem, 8vw, 7rem);
+    overflow: clip;
+  }
+
+  .home-faq .home-closing__container {
+    width: min(var(--responsive-content-max), calc(100% - (var(--responsive-gutter) * 2)));
+  }
+
+  .home-faq__layout {
+    grid-template-columns: minmax(15rem, 0.75fr) minmax(0, 1.25fr);
+    gap: clamp(2rem, 5vw, 4.5rem);
+  }
+
+  .home-faq__intro {
+    top: calc(var(--responsive-nav-height) + 1.5rem);
+  }
+
+  .home-faq__trigger {
+    min-height: 4rem;
+  }
+}
+
+@media (max-width: 899px) {
+  .home-faq__layout {
+    grid-template-columns: 1fr;
+  }
+
+  .home-faq__intro {
+    position: relative;
+    top: auto;
+    max-width: 44rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .home-faq h2 {
+    max-width: 100%;
+    font-size: clamp(2.75rem, 14vw, 4.25rem);
+  }
+
+  .home-faq__trigger {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 0.75rem;
+    padding: 1rem 0;
+  }
+
+  .home-faq__answer-inner {
+    padding-inline-start: 0;
+  }
+}

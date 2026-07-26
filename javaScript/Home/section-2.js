@@ -42,6 +42,20 @@
     "(prefers-reduced-motion: reduce)"
   ).matches;
 
+  /*
+   * Keep the complete cinematic story on desktop and laptop screens that
+   * have a precise hovering pointer. Compact or touch-first screens use the
+   * static, tap-to-open layer explorer instead of a scaled-down pinned story.
+   */
+  const supportsStandaloneScrollStory = window.matchMedia(
+    "(min-width: 1100px) and (min-height: 600px) and " +
+    "(hover: hover) and (pointer: fine) and " +
+    "(prefers-reduced-motion: no-preference)"
+  ).matches;
+
+  const USE_RESPONSIVE_STATIC_MODE =
+    !MANAGED_BY_HOME_JOURNEY && !supportsStandaloneScrollStory;
+
   const elements = {
     header: section.querySelector(
       ".section-2-header"
@@ -256,8 +270,8 @@
     applyManagedLayoutMetrics();
     setInitialState();
 
-    if (prefersReducedMotion) {
-      buildReducedMotionVersion();
+    if (prefersReducedMotion || USE_RESPONSIVE_STATIC_MODE) {
+      buildResponsiveStaticVersion();
       publishManagedApi(null);
       return;
     }
@@ -848,6 +862,10 @@
   }
 
   function previewSavedLayer(layer) {
+    if (section.classList.contains("is-responsive-static")) {
+      return toggleResponsiveStaticLayer(layer);
+    }
+
     if (!layer || !masterTimeline || !Number.isFinite(layer.openTime)) {
       return false;
     }
@@ -2645,6 +2663,78 @@
 
     lastStatusText =
       text;
+  }
+
+  /* ==========================================================================
+     RESPONSIVE STATIC LAYER EXPLORER
+     ========================================================================== */
+
+  function buildResponsiveStaticVersion() {
+    section.classList.add("is-responsive-static");
+    buildReducedMotionVersion();
+
+    layers.forEach((layer, index) => {
+      if (!layer.stage || !layer.button) return;
+
+      if (!layer.stage.id) {
+        layer.stage.id = `section-2-static-layer-${index + 1}`;
+      }
+
+      layer.button.setAttribute("aria-controls", layer.stage.id);
+      layer.button.setAttribute("aria-expanded", "false");
+      layer.button.setAttribute(
+        "aria-label",
+        `Show saved ${layer.label.toLowerCase()}`
+      );
+
+      layer.stage.classList.remove("is-static-open");
+      layer.stage.setAttribute("aria-hidden", "true");
+      layer.stage.setAttribute("inert", "");
+    });
+
+    updateStatus(
+      "Choose Quotes, Moments, Characters, Notes, or Thoughts to explore the saved layers."
+    );
+  }
+
+  function toggleResponsiveStaticLayer(layer) {
+    if (!layer?.stage || !layer.button) return false;
+
+    const willOpen = !layer.stage.classList.contains("is-static-open");
+
+    layers.forEach((candidate) => {
+      if (!candidate.stage || !candidate.button) return;
+
+      const open = candidate === layer && willOpen;
+      candidate.stage.classList.toggle("is-static-open", open);
+      candidate.stage.classList.toggle("is-active", open);
+      candidate.stage.setAttribute("aria-hidden", String(!open));
+      candidate.stage.toggleAttribute("inert", !open);
+      candidate.button.setAttribute("aria-expanded", String(open));
+      candidate.button.classList.toggle("is-static-selected", open);
+
+      gsap.set(candidate.stage, {
+        clearProps: "opacity,visibility,pointerEvents,transform"
+      });
+    });
+
+    resetEvidenceInteractions();
+    updateStatus(
+      willOpen
+        ? `${layer.label} layer opened.`
+        : `${layer.label} layer closed.`
+    );
+
+    if (willOpen) {
+      window.requestAnimationFrame(() => {
+        layer.stage.scrollIntoView({
+          behavior: prefersReducedMotion ? "auto" : "smooth",
+          block: "nearest"
+        });
+      });
+    }
+
+    return true;
   }
 
   /* ==========================================================================

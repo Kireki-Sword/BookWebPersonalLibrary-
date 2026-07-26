@@ -49,15 +49,6 @@ export const CONFIG =
       60
     ],
 
-    EAGER_COVER_ROWS:
-      1,
-
-    COVER_WIDTH:
-      400,
-
-    COVER_HEIGHT:
-      600,
-
     ALLOWED_SORT_OPTIONS:
       new Set([
         "relevance",

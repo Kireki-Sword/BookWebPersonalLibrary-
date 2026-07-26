@@ -1,0 +1,216 @@
+/* ========================================================================== 
+   INKWELL — RESPONSIVE SECTION 4: SAME STORY, DIFFERENT SOULS
+   Section 4 already publishes a static fallback. This layer removes remaining
+   cinematic geometry and makes all comparison content flow naturally.
+   ========================================================================== */
+
+@media (max-width: 1099px), (max-height: 699px), (prefers-reduced-motion: reduce) {
+  .section-cover-rain {
+    --s4-layout-width: min(var(--responsive-content-max), calc(100% - (var(--responsive-gutter) * 2)));
+    --s4-card-width: min(100%, 46rem);
+    min-height: auto;
+    overflow: clip;
+  }
+
+  .section-cover-rain .s4-stage,
+  .section-cover-rain.is-static .s4-stage {
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+    padding:
+      clamp(4.5rem, 8vw, 6.5rem)
+      var(--responsive-gutter)
+      clamp(4.5rem, 8vw, 6.5rem);
+  }
+
+  .s4-rain-lane,
+  .s4-cover-handoff,
+  .s4-selection-copy,
+  .s4-scroll-cue {
+    display: none !important;
+  }
+
+  .s4-cinematic-copy,
+  .s4-content-intro {
+    position: relative !important;
+    inset: auto !important;
+    width: min(100%, 48rem);
+    margin: 0 auto clamp(2rem, 5vw, 3.5rem);
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+    text-align: center;
+  }
+
+  .s4-cinematic-copy h2,
+  .s4-content-intro h2 {
+    font-size: clamp(3rem, 9vw, 5.6rem);
+  }
+
+  .s4-shared-card-wrap {
+    position: relative !important;
+    inset: auto !important;
+    width: min(100%, 48rem);
+    margin: 0 auto clamp(2.5rem, 6vw, 4rem);
+    transform: none !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+
+  .s4-shared-card {
+    width: 100%;
+    min-height: 0;
+  }
+
+  .s4-compare-stage,
+  .s4-compare-stage[data-focus="left"],
+  .s4-compare-stage[data-focus="right"] {
+    position: relative !important;
+    inset: auto !important;
+    width: min(100%, var(--responsive-content-max));
+    height: auto;
+    min-height: 0;
+    margin-inline: auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: start;
+    gap: clamp(1rem, 2.5vw, 2rem);
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+  }
+
+  .s4-reader-side,
+  .s4-reader-content {
+    position: relative !important;
+    inset: auto !important;
+    width: 100%;
+    min-width: 0;
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+  }
+
+  .s4-reader-content {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .s4-profile-card,
+  .s4-evidence-card {
+    min-width: 0;
+  }
+
+  .s4-layer-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+  }
+
+  .s4-layer-button,
+  .s4-detail-button,
+  .s4-moment-nav,
+  .s4-spoiler-button,
+  .s4-card-actions button {
+    min-height: var(--responsive-touch-target);
+    min-width: var(--responsive-touch-target);
+  }
+
+  .s4-quote-grid,
+  .s4-character-grid,
+  .s4-note-grid,
+  .s4-moment-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .s4-detail-dialog {
+    padding: max(0.75rem, env(safe-area-inset-top)) var(--responsive-gutter) max(0.75rem, env(safe-area-inset-bottom));
+  }
+
+  .s4-detail-window {
+    width: min(100%, 58rem);
+    max-height: calc(100dvh - 1.5rem - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+  }
+}
+
+@media (max-width: 899px) {
+  .s4-compare-stage,
+  .s4-compare-stage[data-focus="left"],
+  .s4-compare-stage[data-focus="right"] {
+    grid-template-columns: 1fr;
+    gap: 1.4rem;
+  }
+
+  .s4-compare-divider {
+    order: 2;
+    min-height: 0;
+    grid-template-columns: 1fr auto 1fr;
+    grid-template-rows: auto;
+  }
+
+  .s4-reader-side-left { order: 1; }
+  .s4-reader-side-right { order: 3; }
+
+  .s4-divider-line {
+    width: 100%;
+    height: 1px;
+    min-height: 0;
+  }
+}
+
+@media (max-width: 680px) {
+  .section-cover-rain .s4-stage,
+  .section-cover-rain.is-static .s4-stage {
+    padding-inline: var(--responsive-gutter);
+  }
+
+  .s4-cinematic-copy h2,
+  .s4-content-intro h2 {
+    font-size: clamp(2.8rem, 14vw, 4.4rem);
+  }
+
+  .s4-shared-card {
+    grid-template-columns: 5.4rem minmax(0, 1fr);
+    grid-template-areas:
+      "cover info"
+      "cover score"
+      "meta meta"
+      "layers layers";
+    gap: 0.85rem;
+    padding: 0.9rem;
+  }
+
+  .s4-card-cover {
+    width: 5.4rem;
+  }
+
+  .s4-card-layers,
+  .s4-card-actions,
+  .s4-layer-buttons {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .s4-quote-grid,
+  .s4-character-grid,
+  .s4-note-grid,
+  .s4-moment-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .s4-moment-stage,
+  .s4-moment-media {
+    min-height: 0;
+  }
+
+  .s4-detail-window {
+    border-radius: 1rem;
+  }
+
+  .s4-detail-toolbar {
+    align-items: flex-start;
+  }
+}
