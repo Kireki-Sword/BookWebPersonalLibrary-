@@ -1,0 +1,560 @@
+/* ==========================================================================
+   INKWELL — SECTION 7: FINAL CTA
+
+   Load after style.css and the existing homepage section styles. This file is
+   scoped to Section 7. In desktop managed mode it becomes the seventh scene in the shared pinned journey.
+   ========================================================================== */
+
+.home-final-cta {
+  --closing-max-width: 1240px;
+  --closing-pad-inline: clamp(1.25rem, 4vw, 4rem);
+  color: var(--color-text-primary, #f5f7ff);
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+  scroll-margin-top: calc(var(--journey-nav-height, 64px) + 1.5rem);
+}
+
+.home-final-cta .home-closing__container {
+  width: min(var(--closing-max-width), calc(100% - (var(--closing-pad-inline) * 2)));
+  margin-inline: auto;
+}
+
+.home-final-cta .home-closing__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  color: var(--color-accent-light, #cdd6ff);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.home-final-cta .home-closing__eyebrow::before {
+  content: "";
+  width: 0.42rem;
+  height: 0.42rem;
+  border-radius: 999px;
+  background: var(--color-focus, #79d9ff);
+  box-shadow: 0 0 18px rgba(121, 217, 255, 0.68);
+}
+
+.home-final-cta h2 {
+  color: var(--color-text-primary, #f5f7ff);
+  font-family: var(--font-display, "Newsreader", Georgia, serif);
+  font-weight: 600;
+  letter-spacing: -0.055em;
+  line-height: 0.92;
+  text-wrap: balance;
+}
+
+.home-final-cta p {
+  color: var(--color-text-muted, #99a6c2);
+}
+
+.home-final-cta {
+  padding: clamp(5.5rem, 9vw, 9rem) 0;
+  background:
+    radial-gradient(circle at 14% 70%, rgba(159, 131, 255, 0.18), transparent 30%),
+    radial-gradient(circle at 88% 18%, rgba(121, 217, 255, 0.12), transparent 32%),
+    linear-gradient(180deg, #070b18 0%, #050713 100%);
+}
+
+.home-final-cta__card {
+  --pointer-x: 72%;
+  --pointer-y: 24%;
+  position: relative;
+  min-height: 520px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(360px, 0.92fr);
+  align-items: center;
+  gap: clamp(2.5rem, 5vw, 5.5rem);
+  padding: clamp(2rem, 5vw, 5rem);
+  overflow: hidden;
+  border: 1px solid rgba(173, 190, 255, 0.28);
+  border-radius: clamp(26px, 3vw, 38px);
+  background:
+    radial-gradient(circle at 15% 10%, rgba(255, 255, 255, 0.1), transparent 25%),
+    linear-gradient(135deg, rgba(18, 27, 61, 0.96), rgba(36, 27, 76, 0.93) 58%, rgba(8, 17, 37, 0.96));
+  box-shadow:
+    0 46px 120px rgba(0, 0, 0, 0.48),
+    0 0 80px rgba(114, 140, 255, 0.11),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.home-final-cta__card::before,
+.home-final-cta__card::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+}
+
+.home-final-cta__card::before {
+  inset: 0;
+  background:
+    radial-gradient(
+      520px circle at var(--pointer-x) var(--pointer-y),
+      rgba(121, 217, 255, 0.14),
+      transparent 64%
+    );
+  opacity: 0.72;
+  transition: opacity 260ms ease;
+}
+
+.home-final-cta__card::after {
+  width: 30rem;
+  height: 30rem;
+  right: -10rem;
+  bottom: -16rem;
+  border-radius: 50%;
+  border: 1px solid rgba(173, 190, 255, 0.12);
+  box-shadow:
+    0 0 0 3rem rgba(114, 140, 255, 0.025),
+    0 0 0 7rem rgba(159, 131, 255, 0.018);
+}
+
+.home-final-cta__copy,
+.home-final-cta__visual {
+  position: relative;
+  z-index: 1;
+}
+
+.home-final-cta h2 {
+  max-width: 10ch;
+  margin-top: 1.05rem;
+  font-size: clamp(3.25rem, 6vw, 6.6rem);
+}
+
+.home-final-cta__copy > p {
+  max-width: 42rem;
+  margin-top: 1.5rem;
+  color: var(--color-text-secondary, #c6cee3);
+  font-size: clamp(1rem, 1.4vw, 1.12rem);
+  line-height: 1.75;
+}
+
+.home-final-cta__actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem 1.2rem;
+  margin-top: 2rem;
+}
+
+.home-final-cta__button {
+  position: relative;
+  isolation: isolate;
+  min-height: 54px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.72rem;
+  overflow: hidden;
+  padding: 0.86rem 1.35rem;
+  border: 1px solid rgba(199, 207, 255, 0.34);
+  border-radius: 12px;
+  background:
+    radial-gradient(circle at 24% 16%, rgba(255, 255, 255, 0.26), transparent 26%),
+    linear-gradient(145deg, var(--palette-violet, #9f83ff), var(--palette-blue, #728cff) 58%, var(--palette-blue-dark, #5664d5));
+  color: #fff;
+  font-size: 0.94rem;
+  font-weight: 700;
+  line-height: 1;
+  text-decoration: none;
+  box-shadow:
+    0 18px 38px rgba(0, 0, 0, 0.38),
+    0 0 32px rgba(114, 140, 255, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  transition:
+    transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    border-color 220ms ease,
+    box-shadow 220ms ease,
+    filter 220ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.home-final-cta__button > *:not(.home-ripple) {
+  position: relative;
+  z-index: 1;
+}
+
+.home-final-cta__button:hover {
+  transform: translateY(-2px);
+  border-color: rgba(215, 221, 255, 0.55);
+  filter: saturate(1.08) brightness(1.04);
+  box-shadow:
+    0 24px 48px rgba(0, 0, 0, 0.46),
+    0 0 40px rgba(159, 131, 255, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.home-final-cta__button:active {
+  transform: translateY(0) scale(0.985);
+}
+
+.home-final-cta__button i {
+  font-size: 1.08rem;
+  transition: transform 220ms ease;
+}
+
+.home-final-cta__button:hover i {
+  transform: translateX(3px);
+}
+
+.home-final-cta__login {
+  color: var(--color-text-secondary, #c6cee3);
+  font-size: 0.9rem;
+  text-underline-offset: 0.25em;
+  transition: color 180ms ease;
+}
+
+.home-final-cta__login:hover {
+  color: #fff;
+}
+
+.home-final-cta__proof {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.1rem;
+  margin-top: 1.55rem;
+  color: var(--color-text-subtle, #7e8aa5);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.home-final-cta__proof span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.42rem;
+}
+
+.home-final-cta__proof span::before {
+  content: "";
+  width: 0.34rem;
+  height: 0.34rem;
+  border-radius: 50%;
+  background: var(--color-focus, #79d9ff);
+  box-shadow: 0 0 12px rgba(121, 217, 255, 0.58);
+}
+
+.home-final-cta__visual {
+  min-height: 360px;
+  display: grid;
+  place-items: center;
+  perspective: 900px;
+}
+
+.home-memory-orbit {
+  position: relative;
+  width: min(100%, 390px);
+  aspect-ratio: 1;
+}
+
+.home-memory-orbit::before,
+.home-memory-orbit::after {
+  content: "";
+  position: absolute;
+  inset: 12%;
+  border: 1px solid rgba(173, 190, 255, 0.15);
+  border-radius: 50%;
+}
+
+.home-memory-orbit::after {
+  inset: 1%;
+  border-style: dashed;
+  opacity: 0.58;
+  animation: home-orbit-spin 34s linear infinite;
+}
+
+.home-memory-book {
+  position: absolute;
+  inset: 22%;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(190, 203, 255, 0.32);
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 28% 16%, rgba(255, 255, 255, 0.16), transparent 26%),
+    linear-gradient(145deg, rgba(34, 44, 91, 0.96), rgba(23, 27, 61, 0.96));
+  color: #fff;
+  box-shadow:
+    0 30px 70px rgba(0, 0, 0, 0.48),
+    0 0 42px rgba(114, 140, 255, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  transform: rotateY(-8deg) rotateX(4deg);
+}
+
+.home-memory-book i {
+  font-size: clamp(3rem, 6vw, 4.6rem);
+  filter: drop-shadow(0 0 24px rgba(121, 217, 255, 0.25));
+}
+
+.home-memory-chip {
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 38px;
+  padding: 0.62rem 0.82rem;
+  border: 1px solid rgba(173, 190, 255, 0.24);
+  border-radius: 999px;
+  background: rgba(12, 18, 40, 0.78);
+  color: var(--color-text-secondary, #c6cee3);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.025em;
+  box-shadow:
+    0 14px 34px rgba(0, 0, 0, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  animation: home-chip-float 5.6s ease-in-out infinite;
+}
+
+.home-memory-chip i {
+  color: var(--color-focus, #79d9ff);
+  font-size: 0.95rem;
+}
+
+.home-memory-chip--quotes {
+  top: 5%;
+  left: 11%;
+}
+
+.home-memory-chip--moments {
+  top: 19%;
+  right: -2%;
+  animation-delay: -1.1s;
+}
+
+.home-memory-chip--characters {
+  right: 4%;
+  bottom: 15%;
+  animation-delay: -2.4s;
+}
+
+.home-memory-chip--notes {
+  bottom: 3%;
+  left: 23%;
+  animation-delay: -3.2s;
+}
+
+.home-memory-chip--thoughts {
+  left: -4%;
+  top: 48%;
+  animation-delay: -4.1s;
+}
+
+.home-ripple {
+  position: absolute;
+  z-index: 0;
+  width: 1px;
+  height: 1px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.35);
+  transform: translate(-50%, -50%) scale(0);
+  pointer-events: none;
+  animation: home-ripple 620ms ease-out forwards;
+}
+
+@keyframes home-ripple {
+  to {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0;
+  }
+}
+
+@keyframes home-orbit-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes home-chip-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -8px, 0);
+  }
+}
+
+
+.home-final-cta__button:focus-visible,
+.home-final-cta__login:focus-visible {
+  outline: none;
+  box-shadow: var(
+    --focus-ring-cyan,
+    0 0 0 3px rgba(121, 217, 255, 0.18),
+    0 0 0 1px rgba(121, 217, 255, 0.82)
+  );
+}
+
+/* Section 7 entrance enhancement. Content remains visible without JS. */
+.section-7-cta-js [data-section-7-reveal] .section-7-reveal-item {
+  opacity: 0;
+  transform: translate3d(0, 18px, 0);
+  transition:
+    opacity 620ms ease,
+    transform 620ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.section-7-cta-js [data-section-7-reveal].is-revealed .section-7-reveal-item {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+@media (max-width: 980px) {
+  .home-final-cta__card {
+    grid-template-columns: 1fr;
+  }
+
+  .home-final-cta__visual {
+    min-height: 320px;
+  }
+
+  .home-memory-orbit {
+    width: min(72vw, 390px);
+  }
+}
+
+@media (max-width: 700px) {
+  .home-final-cta {
+    --closing-pad-inline: 1rem;
+  }
+
+  .home-final-cta__card {
+    min-height: 0;
+    padding: 1.6rem;
+    border-radius: 26px;
+  }
+
+  .home-final-cta__actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .home-final-cta__button {
+    width: 100%;
+  }
+
+  .home-final-cta__login {
+    align-self: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .home-final-cta h2 {
+    font-size: clamp(2.65rem, 14vw, 4rem);
+  }
+
+  .home-final-cta__visual {
+    min-height: 280px;
+  }
+
+  .home-memory-chip {
+    font-size: 0.66rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-final-cta__button,
+  .home-final-cta__button i,
+  .section-7-reveal-item {
+    transition: none !important;
+  }
+
+  .home-memory-orbit::after,
+  .home-memory-chip {
+    animation: none !important;
+  }
+
+  .section-7-cta-js [data-section-7-reveal] .section-7-reveal-item {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (hover: none), (pointer: coarse) {
+  .home-final-cta__card::before {
+    display: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .home-final-cta__button,
+  .home-memory-book,
+  .home-memory-chip {
+    forced-color-adjust: auto;
+    border: 1px solid ButtonText;
+    background: Canvas;
+    color: CanvasText;
+    box-shadow: none;
+  }
+
+  .home-final-cta__button {
+    background: ButtonFace;
+    color: ButtonText;
+  }
+}
+
+
+/* --------------------------------------------------------------------------
+   MANAGED MASTER-JOURNEY LAYOUT
+   Section 7 is the final direct child of .home-journey-stage.
+   -------------------------------------------------------------------------- */
+@media (min-width: 1100px) and (min-height: 700px) and (prefers-reduced-motion: no-preference) {
+  body:is(.journey-preparing, .journey-ready) #start-your-library {
+    width: 100%;
+    height: 100% !important;
+    min-height: 0 !important;
+    display: grid;
+    place-items: center;
+    padding: clamp(1.15rem, 2.6vh, 2.2rem) 0 !important;
+    overflow: hidden !important;
+  }
+
+  body:is(.journey-preparing, .journey-ready) #start-your-library .home-closing__container {
+    width: min(1320px, calc(100vw - 72px));
+  }
+
+  body:is(.journey-preparing, .journey-ready) #start-your-library .home-final-cta__card {
+    min-height: 0;
+    height: min(610px, calc(100svh - var(--journey-nav-height, 64px) - 38px));
+    grid-template-columns: minmax(0, 1.08fr) minmax(330px, 0.92fr);
+    gap: clamp(2rem, 4.4vw, 4.8rem);
+    padding: clamp(2rem, 4.2vw, 4.2rem);
+  }
+
+  body:is(.journey-preparing, .journey-ready) #start-your-library h2 {
+    margin-top: 0.78rem;
+    font-size: clamp(3.35rem, 5.35vw, 5.9rem);
+  }
+
+  body:is(.journey-preparing, .journey-ready) #start-your-library .home-final-cta__copy > p {
+    margin-top: 1.1rem;
+    font-size: clamp(0.94rem, 1.08vw, 1.06rem);
+    line-height: 1.62;
+  }
+
+  body:is(.journey-preparing, .journey-ready) #start-your-library .home-final-cta__actions {
+    margin-top: 1.45rem;
+  }
+
+  body:is(.journey-preparing, .journey-ready) #start-your-library .home-final-cta__proof {
+    margin-top: 1.15rem;
+  }
+
+  body:is(.journey-preparing, .journey-ready) #start-your-library .home-final-cta__visual {
+    min-height: 0;
+    height: 100%;
+  }
+
+  body:is(.journey-preparing, .journey-ready) #start-your-library .home-memory-orbit {
+    width: min(34vw, 370px);
+  }
+}

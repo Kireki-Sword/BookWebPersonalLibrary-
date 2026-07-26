@@ -1,5 +1,5 @@
 /* ============================================================================
-   INKWELL — ONE MASTER PINNED HOME-PAGE JOURNEY (V6)
+   INKWELL — ONE MASTER PINNED HOME-PAGE JOURNEY (V7)
 
    REQUIRED SCRIPT ORDER
    1. Supabase
@@ -12,20 +12,23 @@
    8. section-2.js
    9. section-3.js
    10. section-4.js
-   11. section-5-social.js
+   11. section-5.js
+   12. section-6-faq.js
+   13. section-7-final-cta.js
+   14. footer.js
 
    Desktop behavior:
    - one pinned shell beneath the navbar
    - wheel/trackpad movement advances one reversible master timeline
-   - Sections 2, 4, and 5 keep their own internal timelines
-   - cinematic hand-offs connect all five scenes without normal page movement
+   - Sections 2, 4, and 5 keep their own internal timelines; Sections 6 and 7 are coordinated scenes
+   - cinematic hand-offs connect all seven scenes without normal page movement
    ============================================================================ */
 
 (() => {
   "use strict";
 
   window.__INKWELL_HOME_SCROLL_BUILD__ =
-    "2026-07-25-interaction-v19-scene-hit-isolation";
+    "2026-07-26-interaction-v20-seven-scene-journey";
 
   const DESKTOP_QUERY =
     "(min-width: 1100px) and (min-height: 700px) and " +
@@ -43,7 +46,7 @@
   /*
    * This is a page-section navigator, not a replacement for the browser's
    * native scrollbar. The native scrollbar remains available as a familiar
-   * fallback, while these five stops jump to exact labels in the GSAP master
+   * fallback, while these seven stops jump to exact labels in the GSAP master
    * timeline.
    */
   const JOURNEY_STOPS = Object.freeze([
@@ -97,6 +100,26 @@
       eyebrow: "Social, on your terms",
       title: "Find the right people",
     },
+    {
+      key: "section-6",
+      timelineLabel: "section-6-start",
+      entranceStartLabel: "section-5-to-6-start",
+      entranceEndLabel: "section-6-start",
+      entranceDirection: 1,
+      targetSelector: "#faq",
+      eyebrow: "Before you begin",
+      title: "Questions answered",
+    },
+    {
+      key: "section-7",
+      timelineLabel: "section-7-start",
+      entranceStartLabel: "section-6-to-7-start",
+      entranceEndLabel: "section-7-start",
+      entranceDirection: 1,
+      targetSelector: "#start-your-library",
+      eyebrow: "Your next story",
+      title: "Start your library",
+    },
   ]);
 
   const JOURNEY_TRANSITION_OUT = 0.12;
@@ -113,6 +136,8 @@
     section3: "#section-3-library-flow",
     section4: "#section-4",
     section5: "#section-5-social",
+    section6: "#faq",
+    section7: "#start-your-library",
     shell: "[data-home-journey-shell]",
     stage: "[data-home-journey-stage]",
   };
@@ -190,7 +215,9 @@
       !elements.section2 ||
       !elements.section3 ||
       !elements.section4 ||
-      !elements.section5
+      !elements.section5 ||
+      !elements.section6 ||
+      !elements.section7
     ) {
       failToNaturalLayout("One or more homepage sections are missing.");
       return;
@@ -281,6 +308,8 @@
   function collectElements() {
     const section3 = document.querySelector(SELECTORS.section3);
     const section5 = document.querySelector(SELECTORS.section5);
+    const section6 = document.querySelector(SELECTORS.section6);
+    const section7 = document.querySelector(SELECTORS.section7);
 
     return {
       nav: document.querySelector(SELECTORS.nav),
@@ -291,6 +320,8 @@
       section3,
       section4: document.querySelector(SELECTORS.section4),
       section5,
+      section6,
+      section7,
       section2Header: document.querySelector(".section-2-header"),
       section2Label: document.querySelector(
         ".section-2-header .section-label",
@@ -373,6 +404,21 @@
         : [],
       section5Viewport:
         section5?.querySelector(".social-cinema__viewport") || null,
+
+      section6Items: section6
+        ? gsapSafeArray(
+            section6.querySelectorAll(
+              ".home-faq__intro, .home-faq__list, .home-faq__item",
+            ),
+          )
+        : [],
+      section7Items: section7
+        ? gsapSafeArray(
+            section7.querySelectorAll(
+              ".home-final-cta__copy, .home-final-cta__visual, .home-memory-chip",
+            ),
+          )
+        : [],
     };
   }
 
@@ -395,13 +441,15 @@
     gsap.set(elements.hero, {
       autoAlpha: 1,
       pointerEvents: "auto",
-      zIndex: 5,
+      zIndex: 7,
     });
 
-    gsap.set(elements.section2, { zIndex: 4 });
-    gsap.set(elements.section3, { zIndex: 3 });
-    gsap.set(elements.section4, { zIndex: 2 });
-    gsap.set(elements.section5, { zIndex: 1 });
+    gsap.set(elements.section2, { zIndex: 6 });
+    gsap.set(elements.section3, { zIndex: 5 });
+    gsap.set(elements.section4, { zIndex: 4 });
+    gsap.set(elements.section5, { zIndex: 3 });
+    gsap.set(elements.section6, { zIndex: 2 });
+    gsap.set(elements.section7, { zIndex: 1 });
 
   }
 
@@ -525,13 +573,15 @@
     gsap.set(elements.hero, {
       autoAlpha: 1,
       pointerEvents: "auto",
-      zIndex: 5,
+      zIndex: 7,
     });
 
-    gsap.set(elements.section2, { zIndex: 4 });
-    gsap.set(elements.section3, { zIndex: 3 });
-    gsap.set(elements.section4, { zIndex: 2 });
-    gsap.set(elements.section5, { zIndex: 1 });
+    gsap.set(elements.section2, { zIndex: 6 });
+    gsap.set(elements.section3, { zIndex: 5 });
+    gsap.set(elements.section4, { zIndex: 4 });
+    gsap.set(elements.section5, { zIndex: 3 });
+    gsap.set(elements.section6, { zIndex: 2 });
+    gsap.set(elements.section7, { zIndex: 1 });
 
     const master = gsap.timeline({
       defaults: { ease: "none" },
@@ -627,18 +677,35 @@
     }
 
     master.addLabel("section-5-end", master.duration());
-    master.to({}, { duration: 0.85 });
+    master.to({}, { duration: 0.52 });
+
+    /* SECTION 5 -> 6 ----------------------------------------------------- */
+    master.addLabel("section-5-to-6-start");
+    addSection5ToSection6Transition(master, elements);
+
+    master.addLabel("section-6-start");
+    master.to({}, { duration: 2.45 });
+    master.addLabel("section-6-end");
+
+    /* SECTION 6 -> 7 ----------------------------------------------------- */
+    master.addLabel("section-6-to-7-start");
+    addSection6ToSection7Transition(master, elements);
+
+    master.addLabel("section-7-start");
+    master.to({}, { duration: 2.6 });
+    master.addLabel("section-7-end");
+    master.to({}, { duration: 0.9 });
 
     state.trigger = ScrollTrigger.create({
-      id: "inkwell-one-master-journey-v7",
+      id: "inkwell-one-master-journey-v8",
       trigger: state.shell,
       animation: master,
       start: () => `top top+=${getNavHeight(elements.nav)}`,
       end: () => {
         const distance = Math.max(
           master.duration() * SCROLL_PIXELS_PER_TIMELINE_SECOND,
-          window.innerHeight * 10.6,
-          10800,
+          window.innerHeight * 13.2,
+          13200,
         );
 
         return `+=${Math.round(distance)}`;
@@ -1176,6 +1243,120 @@
     master.add(timeline);
   }
 
+  function addSection5ToSection6Transition(master, elements) {
+    const { gsap } = state;
+    const timeline = gsap.timeline({ defaults: { ease: "none" } });
+    const incoming = elements.section6Items || [];
+
+    timeline.set(elements.section6, {
+      visibility: "visible",
+      pointerEvents: "none",
+      autoAlpha: 0,
+      scale: 1.012,
+    });
+
+    timeline.set(incoming, {
+      autoAlpha: 0,
+      y: 26,
+      scale: 0.985,
+    });
+
+    timeline.to(elements.section5, {
+      autoAlpha: 0,
+      yPercent: -1.6,
+      scale: 0.992,
+      duration: 0.78,
+      ease: "power2.inOut",
+    }, 0);
+
+    timeline.to(elements.section6, {
+      autoAlpha: 1,
+      scale: 1,
+      duration: 0.86,
+      ease: "power2.inOut",
+    }, 0.28);
+
+    timeline.to(incoming, {
+      autoAlpha: 1,
+      y: 0,
+      scale: 1,
+      duration: 0.68,
+      stagger: 0.075,
+      ease: "power3.out",
+    }, 0.54);
+
+    timeline.set(elements.section5, {
+      visibility: "hidden",
+      pointerEvents: "none",
+      yPercent: 0,
+    }, 1.18);
+
+    timeline.set(elements.section6, { pointerEvents: "auto" }, 1.28);
+    timeline.to({}, { duration: Math.max(0, 1.45 - timeline.duration()) });
+    master.add(timeline);
+  }
+
+  function addSection6ToSection7Transition(master, elements) {
+    const { gsap } = state;
+    const timeline = gsap.timeline({ defaults: { ease: "none" } });
+    const outgoing = elements.section6Items || [];
+    const incoming = elements.section7Items || [];
+
+    timeline.set(elements.section7, {
+      visibility: "visible",
+      pointerEvents: "none",
+      autoAlpha: 0,
+      scale: 1.014,
+    });
+
+    timeline.set(incoming, {
+      autoAlpha: 0,
+      y: 28,
+      scale: 0.982,
+    });
+
+    timeline.to(outgoing, {
+      autoAlpha: 0,
+      y: -22,
+      scale: 0.986,
+      duration: 0.52,
+      stagger: 0.025,
+      ease: "power2.inOut",
+    }, 0);
+
+    timeline.to(elements.section6, {
+      autoAlpha: 0,
+      scale: 0.993,
+      duration: 0.8,
+      ease: "power2.inOut",
+    }, 0.18);
+
+    timeline.to(elements.section7, {
+      autoAlpha: 1,
+      scale: 1,
+      duration: 0.88,
+      ease: "power2.inOut",
+    }, 0.34);
+
+    timeline.to(incoming, {
+      autoAlpha: 1,
+      y: 0,
+      scale: 1,
+      duration: 0.72,
+      stagger: 0.065,
+      ease: "power3.out",
+    }, 0.62);
+
+    timeline.set(elements.section6, {
+      visibility: "hidden",
+      pointerEvents: "none",
+    }, 1.2);
+
+    timeline.set(elements.section7, { pointerEvents: "auto" }, 1.32);
+    timeline.to({}, { duration: Math.max(0, 1.5 - timeline.duration()) });
+    master.add(timeline);
+  }
+
   function attachChildTimeline(master, timeline, position) {
     if (!timeline) {
       return;
@@ -1323,7 +1504,11 @@
     const labels = master.labels;
     let active = "section-1";
 
-    if (time >= (labels["section-5-start"] ?? Infinity)) {
+    if (time >= (labels["section-7-start"] ?? Infinity)) {
+      active = "section-7";
+    } else if (time >= (labels["section-6-start"] ?? Infinity)) {
+      active = "section-6";
+    } else if (time >= (labels["section-5-start"] ?? Infinity)) {
       active = "section-5";
     } else if (time >= (labels["section-4-start"] ?? Infinity)) {
       active = "section-4";
@@ -1352,7 +1537,9 @@
         (active === "section-2" && scene.matches(SELECTORS.section2)) ||
         (active === "section-3" && scene.matches(SELECTORS.section3)) ||
         (active === "section-4" && scene.matches(SELECTORS.section4)) ||
-        (active === "section-5" && scene.matches(SELECTORS.section5));
+        (active === "section-5" && scene.matches(SELECTORS.section5)) ||
+        (active === "section-6" && scene.matches(SELECTORS.section6)) ||
+        (active === "section-7" && scene.matches(SELECTORS.section7));
 
       scene.classList.toggle("is-journey-active", isActive);
       scene.setAttribute("aria-hidden", isActive ? "false" : "true");
@@ -2344,6 +2531,8 @@
       elements.section3,
       elements.section4,
       elements.section5,
+      elements.section6,
+      elements.section7,
     ].filter(Boolean);
   }
 
