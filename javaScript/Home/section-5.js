@@ -1,12 +1,12 @@
 /* ============================================================================
-   INKWELL — SECTION 5: SOCIAL, ON YOUR TERMS (V18 FIXED FOLLOWING / FULL-CANVAS FOR YOU / CLEAN SEARCH)
+   INKWELL — SECTION 5: SOCIAL, ON YOUR TERMS (V19 VERTICAL DISCOVERY / THEME SEARCH / FULL PEOPLE GRID)
 
    Homepage product story:
    1. Control — audience, spoilers, and a stable live preview.
    2. Identity — a real profile with Top Stories, custom rankings, stats,
       biography, tags, and recent activity.
    3. Social — equal Following updates, content-first For You discovery,
-      and an immersive one-card For You stream and search by result type, story, and sort order.
+      and an immersive one-card For You stream and search by theme, genre, layer, reader, and sort order.
 
    Integration:
    - replaces only the Section 5 JavaScript file
@@ -20,12 +20,12 @@
   "use strict";
 
   const section = document.querySelector("#section-5-social");
-  if (!section || window.__INKWELL_SOCIAL_V18_STARTED__) return;
+  if (!section || window.__INKWELL_SOCIAL_V19_STARTED__) return;
 
-  window.__INKWELL_SOCIAL_V18_STARTED__ = true;
+  window.__INKWELL_SOCIAL_V19_STARTED__ = true;
   window.__INKWELL_SOCIAL_V16_STARTED__ = true;
   window.__INKWELL_SOCIAL_CINEMA_BUILD__ =
-    "2026-07-25-social-cinema-v18-fixed-covers-full-canvas-search";
+    "2026-07-26-social-cinema-v19-vertical-discovery-theme-search";
 
   const { gsap, ScrollTrigger } = window;
   const MANAGED_BY_HOME_JOURNEY =
@@ -88,7 +88,7 @@
   const SOCIAL_VIEW_META = Object.freeze({
     following: { label: "Following activity", status: "Social · Following", step: "01", segment: 1 },
     foryou: { label: "Content-first discovery", status: "Social · For You", step: "02", segment: 2 },
-    search: { label: "Search layers and readers", status: "Social · Search", step: "03", segment: 3 },
+    search: { label: "Search themes and readers", status: "Social · Search", step: "03", segment: 3 },
     profile: { label: "Reader profile", status: "Social · Profile", step: "03", segment: 3 },
     library: { label: "Public story library", status: "Social · Library", step: "03", segment: 3 },
     story: { label: "Saved story layers", status: "Social · Story", step: "03", segment: 3 },
@@ -139,6 +139,30 @@
     { id: "fallback-monster", title: "Monster", creator: "Naoki Urasawa", coverUrl: "" },
     { id: "fallback-fma", title: "Fullmetal Alchemist", creator: "Hiromu Arakawa", coverUrl: "" },
   ];
+
+  const STORY_DISCOVERY_META = Object.freeze({
+    "tokyo ghoul re": { genres: ["Psychological", "Dark fantasy"], themes: ["Identity", "Belonging", "Transformation"], characters: ["Ken Kaneki", "Touka Kirishima"] },
+    "tokyo ghoul": { genres: ["Psychological", "Dark fantasy"], themes: ["Identity", "Alienation", "Survival"], characters: ["Ken Kaneki", "Rize Kamishiro"] },
+    "orb on the movements of the earth": { genres: ["Historical", "Drama"], themes: ["Knowledge", "Conviction", "Systems"], characters: ["Rafal", "Badeni"] },
+    "billy bat": { genres: ["Mystery", "Historical"], themes: ["Conspiracy", "History", "Responsibility"], characters: ["Kevin Yamagata", "Billy"] },
+    "vinland saga": { genres: ["Historical", "Action"], themes: ["Violence", "Purpose", "Growth"], characters: ["Thorfinn", "Askeladd"] },
+    "blood on the tracks": { genres: ["Psychological", "Drama"], themes: ["Memory", "Fear", "Family"], characters: ["Seiichi Osabe", "Seiko Osabe"] },
+    "berserk": { genres: ["Dark fantasy", "Action"], themes: ["Survival", "Responsibility", "Purpose"], characters: ["Guts", "Griffith"] },
+    "the climber": { genres: ["Sports", "Psychological"], themes: ["Isolation", "Focus", "Growth"], characters: ["Buntaro Mori"] },
+    "one piece": { genres: ["Adventure", "Fantasy"], themes: ["Freedom", "Loyalty", "Chosen family"], characters: ["Monkey D. Luffy", "Nico Robin"] },
+    "land of the lustrous": { genres: ["Fantasy", "Drama"], themes: ["Identity", "Change", "Memory"], characters: ["Phosphophyllite", "Cinnabar"] },
+    "20th century boys": { genres: ["Mystery", "Thriller"], themes: ["History", "Inherited myths", "Responsibility"], characters: ["Kenji Endo", "Friend"] },
+    "homunculus": { genres: ["Psychological", "Horror"], themes: ["Identity", "Perception", "The body"], characters: ["Susumu Nakoshi"] },
+    "steins gate": { genres: ["Science fiction", "Thriller"], themes: ["Time", "Choice", "Consequence"], characters: ["Rintaro Okabe", "Kurisu Makise"] },
+    "chainsaw man": { genres: ["Action", "Horror"], themes: ["Systems", "Desire", "Identity"], characters: ["Denji", "Makima"] },
+    "goodnight punpun": { genres: ["Psychological", "Drama"], themes: ["Memory", "Grief", "Isolation"], characters: ["Punpun Onodera", "Aiko Tanaka"] },
+    "monster": { genres: ["Psychological", "Mystery"], themes: ["Responsibility", "Morality", "History"], characters: ["Kenzo Tenma", "Johan Liebert"] },
+    "fullmetal alchemist": { genres: ["Fantasy", "Adventure"], themes: ["Choice", "Responsibility", "Sacrifice"], characters: ["Edward Elric", "Alphonse Elric"] },
+  });
+
+  function getStoryDiscoveryMeta(title) {
+    return STORY_DISCOVERY_META[normalizeText(title)] || { genres: [], themes: [], characters: [] };
+  }
 
   const SECTION5_MEDIA_ROOT = "img/section5";
   const SECTION5_MEDIA = Object.freeze({
@@ -281,6 +305,91 @@
         { title: "Berserk", creator: "Kentaro Miura", format: "Manga", status: "Reading", score: "9.1", layers: ["Moments", "Characters", "Notes"] },
       ],
     },
+
+    sol: {
+      initial: "S",
+      name: "sol.quotes",
+      label: "Quote-led reader",
+      bio: "Returns to lines about choice, hope, and the promises people keep under pressure.",
+      tags: ["Quotes", "Choice", "Hope"],
+      stats: [["49", "stories"], ["63", "saved quotes"], ["176", "following"]],
+      topStories: ["Fullmetal Alchemist", "Steins;Gate", "One Piece", "Vinland Saga"],
+      categories: [
+        { title: "Lines that changed on reread", subtitle: "Quotes whose meaning moved with context", items: ["Choosing the next step", "Accepting the cost", "Keeping a promise", "Starting again"] },
+        { title: "Favourite hopeful stories", subtitle: "Hope without easy answers", items: ["Fullmetal Alchemist", "One Piece", "Vinland Saga", "Steins;Gate"] },
+      ],
+      signature: "Lines that changed on reread",
+      signatureItems: ["Choosing the next step", "Accepting the cost", "Keeping a promise"],
+      match: "Your profiles both connect remembered lines to responsibility, sacrifice, and what people choose next.",
+      difference: "Sol begins with language and dialogue; your profile more often begins with characters and systems.",
+      sharedThemes: ["Choice", "Hope", "Responsibility"],
+      activity: [
+        { type: "Quote", title: "Fullmetal Alchemist", detail: "Added reread context", time: "3h" },
+        { type: "Ranking", title: "Lines that changed on reread", detail: "Moved a promise to #1", time: "2d" },
+      ],
+      library: [
+        { title: "Fullmetal Alchemist", creator: "Hiromu Arakawa", format: "Manga", status: "Completed", score: "9.6", layers: ["Quotes", "Characters", "Notes", "Thoughts"] },
+        { title: "Steins;Gate", creator: "5pb. / Nitroplus", format: "Anime", status: "Completed", score: "9.4", layers: ["Quotes", "Moments", "Thoughts"] },
+        { title: "One Piece", creator: "Eiichiro Oda", format: "Manga", status: "Reading", score: "9.3", layers: ["Quotes", "Characters", "Notes"] },
+        { title: "Vinland Saga", creator: "Makoto Yukimura", format: "Manga", status: "Reading", score: "9.2", layers: ["Quotes", "Moments", "Thoughts"] },
+      ],
+    },
+    aya: {
+      initial: "A",
+      name: "aya.archive",
+      label: "History-and-mystery reader",
+      bio: "Follows stories through institutions, inherited myths, and the records people leave behind.",
+      tags: ["History", "Mystery", "Systems"],
+      stats: [["71", "stories"], ["24", "public rankings"], ["267", "following"]],
+      topStories: ["20th Century Boys", "Billy Bat", "Monster", "Orb: On the Movements of the Earth"],
+      categories: [
+        { title: "Best historical mysteries", subtitle: "Stories where the archive changes the present", items: ["20th Century Boys", "Billy Bat", "Monster", "Orb"] },
+        { title: "Systems worth questioning", subtitle: "Institutions that shape private choices", items: ["Propaganda", "Education", "Public memory", "Authority"] },
+      ],
+      signature: "Best historical mysteries",
+      signatureItems: ["20th Century Boys", "Billy Bat", "Monster"],
+      match: "You both return to history, responsibility, and the way systems teach people what to believe.",
+      difference: "Aya tracks evidence and chronology; your profile stays closer to identity and emotional consequence.",
+      sharedThemes: ["History", "Systems", "Responsibility"],
+      activity: [
+        { type: "Ranking", title: "Best historical mysteries", detail: "Added Orb to the top four", time: "4h" },
+        { type: "Note", title: "Billy Bat", detail: "Revised a timeline note", time: "1d" },
+      ],
+      library: [
+        { title: "20th Century Boys", creator: "Naoki Urasawa", format: "Manga", status: "Completed", score: "9.8", layers: ["Quotes", "Moments", "Characters", "Notes"] },
+        { title: "Billy Bat", creator: "Naoki Urasawa", format: "Manga", status: "Completed", score: "9.5", layers: ["Moments", "Characters", "Notes", "Thoughts"] },
+        { title: "Monster", creator: "Naoki Urasawa", format: "Manga", status: "Completed", score: "9.7", layers: ["Quotes", "Characters", "Notes", "Thoughts"] },
+        { title: "Orb: On the Movements of the Earth", creator: "Uoto", format: "Manga", status: "Completed", score: "9.4", layers: ["Quotes", "Moments", "Thoughts"] },
+      ],
+    },
+    theo: {
+      initial: "T",
+      name: "theo.panels",
+      label: "Composition-first reader",
+      bio: "Reads movement, page rhythm, and visual transformation before explaining the theme underneath.",
+      tags: ["Visual storytelling", "Transformation", "Isolation"],
+      stats: [["45", "stories"], ["52", "saved moments"], ["198", "following"]],
+      topStories: ["The Climber", "Land of the Lustrous", "Berserk", "Goodnight Punpun"],
+      categories: [
+        { title: "Best visual transformations", subtitle: "Changes that can be read in the image itself", items: ["Phosphophyllite", "Buntaro Mori", "Guts", "Punpun"] },
+        { title: "Most expressive page rhythm", subtitle: "Stories whose pacing becomes meaning", items: ["The Climber", "Land of the Lustrous", "Berserk", "Goodnight Punpun"] },
+      ],
+      signature: "Best visual transformations",
+      signatureItems: ["Phosphophyllite", "Buntaro Mori", "Guts"],
+      match: "You both save moments where identity and perspective are visible before they are explained.",
+      difference: "Theo is highly visual and concise; your profile gives more room to written reflection.",
+      sharedThemes: ["Transformation", "Isolation", "Perspective"],
+      activity: [
+        { type: "Moment", title: "The Climber", detail: "Saved a vertical ascent panel", time: "6h" },
+        { type: "Character", title: "Land of the Lustrous", detail: "Updated a transformation note", time: "2d" },
+      ],
+      library: [
+        { title: "The Climber", creator: "Shin-ichi Sakamoto", format: "Manga", status: "Completed", score: "9.7", layers: ["Moments", "Characters", "Notes"] },
+        { title: "Land of the Lustrous", creator: "Haruko Ichikawa", format: "Manga", status: "Reading", score: "9.5", layers: ["Moments", "Characters", "Thoughts"] },
+        { title: "Berserk", creator: "Kentaro Miura", format: "Manga", status: "Reading", score: "9.4", layers: ["Moments", "Characters", "Notes"] },
+        { title: "Goodnight Punpun", creator: "Inio Asano", format: "Manga", status: "Completed", score: "9.2", layers: ["Moments", "Characters", "Thoughts"] },
+      ],
+    },
   });
 
   const FEED_ITEMS = Object.freeze([
@@ -399,6 +508,7 @@
       type: "Character",
       layer: "characters",
       story: "Tokyo Ghoul:re",
+      subject: "Ken Kaneki",
       title: "Ken Kaneki after the fracture",
       excerpt: "A character note about the gap between surviving a transformation and knowing what kind of person should exist afterward.",
       reason: "Shown because Kaneki leads your public ranking and identity repeats across your notes.",
@@ -406,21 +516,6 @@
       meta: "Character note · ranked #1",
       popularity: 98,
       updatedHours: 5,
-    },
-    {
-      id: "ren-reflection-responsibility",
-      mediaKey: "reflection-responsibility",
-      profile: "ren",
-      type: "Reflection",
-      layer: "reflection",
-      story: "Berserk",
-      title: "Responsibility after survival",
-      excerpt: "A long-form reflection on how endurance can keep someone alive while quietly changing what they believe they owe to other people.",
-      reason: "Shown as a different lens on responsibility, aftermath, and chosen purpose.",
-      tags: ["Responsibility", "Aftermath", "Purpose"],
-      meta: "612 words · 5 minute read",
-      popularity: 91,
-      updatedHours: 8,
     },
     {
       id: "kai-quote-choice",
@@ -445,12 +540,28 @@
       layer: "thoughts",
       story: "Blood on the Tracks",
       title: "Memory changes the frame",
-      excerpt: "A short thought connecting one remembered image to the way fear reorganizes an entire relationship long after the scene ends.",
+      excerpt: "The image returns differently after a reread. What first looked like a private moment begins to feel like evidence of how fear can reorganize a family, teach a child to distrust their own memory, and keep shaping every later relationship even when the original scene is no longer visible. The thought stays unfinished because the meaning keeps moving with the reader...",
       reason: "Shown because your profile returns to memory, perspective, and emotional aftermath.",
       tags: ["Memory", "Fear", "Perspective"],
       meta: "Connected thought · edited 2d ago",
       popularity: 86,
       updatedHours: 48,
+    },
+    {
+      id: "ren-ranking-conflicts",
+      mediaKey: "",
+      profile: "ren",
+      type: "Ranking",
+      layer: "ranking",
+      story: "Monster",
+      title: "Conflicts that reshape every side",
+      excerpt: "A public ranking that compares conflicts by the ideas they force every character to inherit.",
+      reason: "Shown because responsibility, history, and opposing systems repeat across your public profile.",
+      tags: ["History", "Responsibility", "Conflict"],
+      items: ["Tenma and Johan", "Friend and Kenji", "Guts and Griffith"],
+      meta: "Public ranking · updated 4d ago",
+      popularity: 90,
+      updatedHours: 72,
     },
   ]);
 
@@ -487,7 +598,7 @@
   const STEP_META = Object.freeze({
     control: { number: "01", label: "Audience and spoilers", status: "Control", announcement: "Choose an audience and decide whether to protect spoilers." },
     identity: { number: "02", label: "Profile, rankings, and activity", status: "Identity", announcement: "Build a profile from top stories, custom rankings, and recent activity." },
-    social: { number: "03", label: "Following, For You, and Search", status: "Social", announcement: "Scan activity from people you follow, discover public story layers, and search by content or reader." },
+    social: { number: "03", label: "Following, For You, and Search", status: "Social", announcement: "Scan activity from people you follow, discover public story layers, and search by theme or reader." },
   });
 
   const state = {
@@ -502,13 +613,12 @@
     storyLayer: "quotes",
     profileCategory: 0,
     following: new Set(),
-    searchQuery: "Tokyo Ghoul:re",
+    searchQuery: "Identity",
     searchFilter: "all",
     searchMode: "content",
     searchLayer: "all",
     searchReflectionOnly: false,
-    searchStory: "all",
-    searchSort: "relevance",
+        searchSort: "relevance",
     forYouArtifact: 0,
   };
 
@@ -716,7 +826,7 @@
 
           <section class="s11-social-view" data-s11-social-view="foryou" role="tabpanel" aria-label="For You discovery" aria-hidden="true" inert hidden>
             <header class="s11-view-heading s12-view-heading s13-view-heading s14-view-heading s14-view-heading--foryou">
-              <span><small>One story layer at a time</small><strong>For You</strong><p>One saved layer stays in focus. Use the arrows to move, then open the reader, title, or connected reflection from the bottom dock.</p></span>
+              <span><small>One story layer at a time</small><strong>For You</strong><p>One saved layer stays in focus. Move between a moment, character, quote, thought, or ranking, then open the reader, title, or reflection from the bottom dock.</p></span>
               <span class="s11-count-pill" data-s14-for-you-count>1 / 5</span>
             </header>
             <div class="s13-for-you-stage s14-for-you-stage" data-s11-for-you-results></div>
@@ -724,39 +834,22 @@
 
           <section class="s11-social-view" data-s11-social-view="search" role="tabpanel" aria-label="Search" aria-hidden="true" inert hidden>
             <header class="s11-view-heading s11-view-heading--search s12-view-heading s13-view-heading s14-view-heading s14-view-heading--search">
-              <span><small>Search layers or readers</small><strong>Find ideas, then decide whose perspective to open</strong><p>Search a title, character, or theme. Content shows public story layers; People ranks reader profiles that match the same query.</p></span>
+              <span><small>Search themes or readers</small><strong>Start with an idea, genre, character, or reading style</strong><p>Content finds public layers connected to the same idea. People finds readers whose themes, characters, rankings, and activity match it.</p></span>
               <span class="s11-count-pill" data-s14-search-count>6 results</span>
             </header>
 
             <div class="s17-search-scope" role="tablist" aria-label="Search result family">
               <button type="button" role="tab" data-s13-search-mode="content" aria-selected="true">
-                <span>01</span><strong>Content</strong><small>Moments, characters, quotes, thoughts, rankings, and notes</small>
+                <span>01</span><strong>Content</strong><small>Ideas inside moments, characters, quotes, thoughts, rankings, and notes</small>
               </button>
               <button type="button" role="tab" data-s13-search-mode="people" aria-selected="false">
-                <span>02</span><strong>People</strong><small>Reader profiles ranked by taste, themes, and public activity</small>
+                <span>02</span><strong>People</strong><small>Reader profiles ranked by themes, genres, characters, and public activity</small>
               </button>
             </div>
 
-            <div class="s14-search-toolbar s17-search-toolbar">
-              <div class="s11-search-box s13-search-box s14-search-box">
-                <label for="s11-reader-search">Search a title, reader, character, theme, ranking, or note</label>
-                <div class="s11-search-input-shell"><span aria-hidden="true">⌕</span><input id="s11-reader-search" data-s11-search-input type="search" value="Tokyo Ghoul:re" autocomplete="off"></div>
-                <div class="s11-search-suggestions" aria-label="Suggested searches">
-                  <button type="button" data-s11-search-suggestion="Identity">Identity</button>
-                  <button type="button" data-s11-search-suggestion="Memory">Memory</button>
-                  <button type="button" data-s11-search-suggestion="Responsibility">Responsibility</button>
-                </div>
-              </div>
-
-              <div class="s14-search-selects s17-search-selects">
-                <label><span>Title</span><select data-s14-search-story aria-label="Filter search results by title"></select></label>
-                <label><span>Sort by</span><select data-s14-search-sort aria-label="Sort search results"><option value="relevance">Best match</option><option value="recent">Recently updated</option><option value="saved">Most saved</option><option value="reader">Reader match</option></select></label>
-              </div>
-            </div>
-
-            <div class="s17-search-content-filters" data-s17-search-content-filters>
-              <div class="s17-search-layerbar" role="radiogroup" aria-label="Content layer">
-                <button type="button" data-s17-search-layer="all" aria-pressed="true">All layers</button>
+            <div class="s17-search-content-filters s19-search-content-filters" data-s17-search-content-filters>
+              <div class="s17-search-layerbar s19-search-layerbar" role="radiogroup" aria-label="Content layer">
+                <button type="button" data-s17-search-layer="all" aria-pressed="true">All</button>
                 <button type="button" data-s17-search-layer="moment" aria-pressed="false">Moments</button>
                 <button type="button" data-s17-search-layer="character" aria-pressed="false">Characters</button>
                 <button type="button" data-s17-search-layer="quote" aria-pressed="false">Quotes</button>
@@ -764,7 +857,23 @@
                 <button type="button" data-s17-search-layer="ranking" aria-pressed="false">Rankings</button>
                 <button type="button" data-s17-search-layer="note" aria-pressed="false">Notes</button>
               </div>
-              <button type="button" class="s17-reflection-toggle" data-s17-search-reflection aria-pressed="false"><span aria-hidden="true">◇</span>Only with a reflection</button>
+              <button type="button" class="s17-reflection-toggle s19-reflection-toggle" data-s17-search-reflection aria-pressed="false"><span aria-hidden="true">◇</span>Has reflection</button>
+            </div>
+
+            <div class="s14-search-toolbar s17-search-toolbar s19-search-toolbar">
+              <div class="s11-search-box s13-search-box s14-search-box">
+                <label for="s11-reader-search">Search a genre, theme, character, reader style, or ranking idea</label>
+                <div class="s11-search-input-shell"><span aria-hidden="true">⌕</span><input id="s11-reader-search" data-s11-search-input type="search" value="Identity" placeholder="Try identity, historical drama, grief, Ken Kaneki..." autocomplete="off"></div>
+                <div class="s11-search-suggestions" aria-label="Suggested searches">
+                  <button type="button" data-s11-search-suggestion="Identity">Identity</button>
+                  <button type="button" data-s11-search-suggestion="Historical drama">Historical drama</button>
+                  <button type="button" data-s11-search-suggestion="Visual storytelling">Visual storytelling</button>
+                </div>
+              </div>
+
+              <div class="s14-search-selects s17-search-selects s19-search-selects">
+                <label><span>Sort by</span><select data-s14-search-sort aria-label="Sort search results"><option value="relevance">Best match</option><option value="recent">Recently updated</option><option value="saved">Most saved</option><option value="reader">Reader match</option></select></label>
+              </div>
             </div>
 
             <div class="s14-search-active" data-s13-search-filters aria-live="polite"></div>
@@ -948,10 +1057,6 @@
       listen(button, "keydown", (event) => handleRovingTabKey(event, elements.searchModes, index));
     });
 
-    listen(elements.searchStorySelect, "change", () => {
-      state.searchStory = elements.searchStorySelect.value || "all";
-      renderSearchResults(true);
-    });
 
     listen(elements.searchSortSelect, "change", () => {
       state.searchSort = elements.searchSortSelect.value || "relevance";
@@ -962,7 +1067,6 @@
       const chip = event.target.closest("[data-s14-clear-search-filter]");
       if (!chip) return;
       const key = chip.dataset.s14ClearSearchFilter;
-      if (key === "story") state.searchStory = "all";
       if (key === "type") state.searchMode = "content";
       if (key === "layer") state.searchLayer = "all";
       if (key === "reflection") state.searchReflectionOnly = false;
@@ -1010,7 +1114,6 @@
       state.searchQuery = value;
       state.searchMode = inferSearchMode(value);
       state.searchFilter = "all";
-      state.searchStory = "all";
       if (elements.searchInput) elements.searchInput.value = value;
       renderSearchResults(true);
       return;
@@ -1573,12 +1676,6 @@
     const mode = state.searchMode === "people" ? "people" : "content";
     const query = normalizeText(state.searchQuery);
     const tokens = query.split(/\s+/).filter(Boolean);
-    const storyFilter = normalizeText(state.searchStory || "all");
-    const matchesStory = (title) => storyFilter === "all" || normalizeText(title) === storyFilter;
-
-    const exactStory = query
-      ? mergeUniqueStories(FALLBACK_STORIES, stories).find((story) => normalizeText(story.title) === query)
-      : null;
 
     let contentCandidates = getSearchContentItems()
       .map((artifact, index) => ({
@@ -1590,24 +1687,18 @@
         saved: Number(artifact.popularity ?? 0),
         reader: scoreValues([PROFILE_DATA[artifact.profile]?.match, ...(artifact.tags || [])], tokens),
       }))
-      .filter(({ artifact }) => matchesStory(artifact.story))
       .filter(({ artifact }) => state.searchLayer === "all" || artifact.searchLayer === state.searchLayer)
       .filter(({ artifact }) => !state.searchReflectionOnly || artifact.hasReflection === true);
-
-    if (exactStory && state.searchStory === "all") {
-      contentCandidates = contentCandidates.filter(({ artifact }) => normalizeText(artifact.story) === normalizeText(exactStory.title));
-    }
 
     const readerCandidates = scoreReaders(tokens, "all")
       .map((item, index) => ({
         kind: "reader",
         ...item,
         index,
-        recent: 12 + index * 8,
-        saved: 80 - index * 5,
-        reader: item.score + 4,
-      }))
-      .filter(({ key }) => state.searchStory === "all" || PROFILE_DATA[key].topStories.some(matchesStory));
+        recent: 8 + index * 5,
+        saved: 100 - index * 4,
+        reader: item.score + 5,
+      }));
 
     let cards = mode === "people" ? readerCandidates : contentCandidates;
 
@@ -1619,21 +1710,21 @@
     }[state.searchSort] || ((a, b) => b.score - a.score);
 
     cards.sort(sorter);
-    if (tokens.length && cards.some((item) => item.score > 0)) cards = cards.filter((item) => item.score > 0);
+    if (mode === "content" && tokens.length && cards.some((item) => item.score > 0)) cards = cards.filter((item) => item.score > 0);
 
     const shown = cards.slice(0, 6);
     const markup = shown.map((item) => {
-      if (item.kind === "reader") return searchResultMarkup(item.key, item.reason);
+      if (item.kind === "reader") return searchResultMarkup(item.key, item.reason, item.score);
       return searchArtifactMarkup(item.artifact);
     }).join("");
 
     const gridClass = mode === "people" ? "s13-search-grid--readers" : "s13-search-grid--discover";
-    elements.searchResults.innerHTML = `<div class="s13-search-grid s14-search-grid ${gridClass}" data-s17-search-family="${mode}">${markup || searchEmptyMarkup()}</div>`;
+    elements.searchResults.innerHTML = `<div class="s13-search-grid s14-search-grid ${gridClass} s19-search-grid" data-s17-search-family="${mode}">${markup || searchEmptyMarkup()}</div>`;
     renderImages(elements.searchResults);
 
     const family = mode === "people" ? "reader" : "content";
-    const storyLabel = state.searchStory === "all" ? "any title" : state.searchStory;
-    setText(elements.searchSummary, `${shown.length} ${family} result${shown.length === 1 ? "" : "s"} across ${storyLabel}. Sorted by ${searchSortLabel(state.searchSort)}.`);
+    const queryLabel = state.searchQuery ? ` matching “${state.searchQuery}”` : "";
+    setText(elements.searchSummary, `${shown.length} ${family} result${shown.length === 1 ? "" : "s"}${queryLabel}. Sorted by ${searchSortLabel(state.searchSort)}.`);
     setText(elements.searchCount, `${shown.length} result${shown.length === 1 ? "" : "s"}`);
 
     const renderedCards = qa(".s13-search-card", elements.searchResults);
@@ -1646,7 +1737,7 @@
           y: 0,
           scale: 1,
           duration: 0.32,
-          stagger: 0.045,
+          stagger: 0.035,
           ease: "power3.out",
           overwrite: "auto",
           onComplete: () => gsap.set(renderedCards, { clearProps: "transform" }),
@@ -1663,16 +1754,23 @@
       return normalized || "note";
     };
 
-    const discovery = DISCOVERY_ARTIFACTS.map((artifact) => ({
-      ...artifact,
-      searchLayer: layerAlias(artifact.type),
-      hasReflection: true,
-      source: "discovery",
-    }));
+    const discovery = DISCOVERY_ARTIFACTS.map((artifact) => {
+      const meta = getStoryDiscoveryMeta(artifact.story);
+      return {
+        ...artifact,
+        searchLayer: layerAlias(artifact.type),
+        hasReflection: true,
+        genres: meta.genres,
+        themes: meta.themes,
+        characters: meta.characters,
+        source: "discovery",
+      };
+    });
 
     const feed = FEED_ITEMS.map((item, index) => {
       const profile = PROFILE_DATA[item.profile];
       const searchLayer = layerAlias(item.layer);
+      const meta = getStoryDiscoveryMeta(item.story);
       return {
         id: `feed-${index}`,
         feedIndex: index,
@@ -1685,6 +1783,9 @@
         excerpt: item.detail,
         reason: activityActionCopy(item, getStoryByTitle(item.story)),
         tags: [item.layer, ...(profile?.tags || []).slice(0, 2)],
+        genres: meta.genres,
+        themes: meta.themes,
+        characters: meta.characters,
         meta: `${item.type} · ${item.time}`,
         popularity: 82 - index,
         updatedHours: index + 1,
@@ -1734,44 +1835,36 @@
   }
 
   function renderSearchFilters() {
-    if (elements.searchStorySelect) {
-      const titles = mergeUniqueStories(FALLBACK_STORIES, stories)
-        .map((story) => story.title)
-        .filter((title) => PREFERRED_STORY_TITLES.includes(title))
-        .slice(0, 14);
-      const signature = titles.join("|");
-      if (elements.searchStorySelect.dataset.s14Options !== signature) {
-        elements.searchStorySelect.innerHTML = `<option value="all">Any title</option>${titles.map((title) => `<option value="${escapeHtml(title)}">${escapeHtml(title)}</option>`).join("")}`;
-        elements.searchStorySelect.dataset.s14Options = signature;
-      }
-      elements.searchStorySelect.value = state.searchStory;
-    }
     if (elements.searchSortSelect) elements.searchSortSelect.value = state.searchSort;
 
     updateSearchModeTabs();
     if (!elements.searchFilterContainer) return;
     const chips = [];
-    if (state.searchQuery) chips.push(`<button type="button" data-s14-clear-search-filter="query">Query: ${escapeHtml(state.searchQuery)} <span aria-hidden="true">×</span></button>`);
+    if (state.searchQuery) chips.push(`<button type="button" data-s14-clear-search-filter="query">Idea: ${escapeHtml(state.searchQuery)} <span aria-hidden="true">×</span></button>`);
     if (state.searchMode === "people") chips.push(`<button type="button" data-s14-clear-search-filter="type">People <span aria-hidden="true">×</span></button>`);
     if (state.searchLayer !== "all" && state.searchMode === "content") chips.push(`<button type="button" data-s14-clear-search-filter="layer">Layer: ${escapeHtml(searchLayerLabel(state.searchLayer))} <span aria-hidden="true">×</span></button>`);
-    if (state.searchReflectionOnly && state.searchMode === "content") chips.push(`<button type="button" data-s14-clear-search-filter="reflection">With reflection <span aria-hidden="true">×</span></button>`);
-    if (state.searchStory !== "all") chips.push(`<button type="button" data-s14-clear-search-filter="story">Title: ${escapeHtml(state.searchStory)} <span aria-hidden="true">×</span></button>`);
-    elements.searchFilterContainer.innerHTML = chips.length ? `<span>Active filters</span>${chips.join("")}` : `<span>${state.searchMode === "people" ? "Ranking matching reader profiles" : "Searching public story layers"}</span>`;
+    if (state.searchReflectionOnly && state.searchMode === "content") chips.push(`<button type="button" data-s14-clear-search-filter="reflection">Has reflection <span aria-hidden="true">×</span></button>`);
+    elements.searchFilterContainer.innerHTML = chips.length ? `<span>Active filters</span>${chips.join("")}` : `<span>${state.searchMode === "people" ? "Ranking matching reader profiles" : "Searching public layers by idea"}</span>`;
   }
 
   function scoreReaders(tokens, filter) {
-    return ["kai", "mira", "ren"].map((key) => {
-      const profile = PROFILE_DATA[key];
-      const groups = {
-        people: [profile.name, profile.label, profile.bio],
-        stories: profile.topStories,
-        themes: profile.sharedThemes,
-        tags: profile.tags,
-        rankings: [profile.signature, ...profile.signatureItems, ...profile.categories.flatMap((category) => [category.title, ...category.items])],
-      };
-      const values = filter === "all" ? Object.values(groups).flat() : (groups[filter] || []);
-      return { key, score: scoreValues(values, tokens), reason: searchReason(profile, filter, tokens) };
-    }).sort((a, b) => b.score - a.score);
+    return Object.keys(PROFILE_DATA)
+      .filter((key) => key !== "nova")
+      .map((key) => {
+        const profile = PROFILE_DATA[key];
+        const storyMeta = profile.topStories.map(getStoryDiscoveryMeta);
+        const groups = {
+          people: [profile.name, profile.label, profile.bio],
+          themes: [...profile.sharedThemes, ...profile.tags, ...storyMeta.flatMap((meta) => meta.themes)],
+          genres: storyMeta.flatMap((meta) => meta.genres),
+          characters: storyMeta.flatMap((meta) => meta.characters),
+          rankings: [profile.signature, ...profile.signatureItems, ...profile.categories.flatMap((category) => [category.title, ...category.items])],
+          activity: profile.activity.flatMap((item) => [item.type, item.title, item.detail]),
+        };
+        const values = filter === "all" ? Object.values(groups).flat() : (groups[filter] || []);
+        return { key, score: scoreValues(values, tokens), reason: searchReason(profile, filter, tokens) };
+      })
+      .sort((a, b) => b.score - a.score);
   }
 
   function scoreStories(tokens, filter) {
@@ -1811,15 +1904,19 @@
 
   function scoreArtifact(artifact, tokens) {
     const profile = PROFILE_DATA[artifact.profile];
+    const meta = getStoryDiscoveryMeta(artifact.story);
     return scoreValues([
       artifact.type,
-      artifact.story,
       artifact.title,
       artifact.excerpt,
       artifact.reason,
-      ...artifact.tags,
+      ...(artifact.tags || []),
+      ...(artifact.genres || meta.genres),
+      ...(artifact.themes || meta.themes),
+      ...(artifact.characters || meta.characters),
       profile.name,
       profile.label,
+      ...(profile.tags || []),
     ], tokens);
   }
 
@@ -2186,22 +2283,22 @@
     const profile = PROFILE_DATA[item.profile];
     const story = getStoryByTitle(item.story);
     const action = activityActionCopy(item, story);
-    return `<article class="s13-following-card s14-following-card s18-following-card" data-s13-feed-tone="${escapeHtml(item.tone || "default")}">
-      <button type="button" class="s13-following-card__button s18-following-card__button" data-s13-feed-open="${index}" aria-label="Open ${escapeHtml(item.type)} from ${escapeHtml(profile.name)}">
-        <header class="s18-following-card__header">
+    return `<article class="s13-following-card s14-following-card s18-following-card s19-following-card" data-s13-feed-tone="${escapeHtml(item.tone || "default")}">
+      <button type="button" class="s13-following-card__button s18-following-card__button s19-following-card__button" data-s13-feed-open="${index}" aria-label="Open ${escapeHtml(item.type)} from ${escapeHtml(profile.name)}">
+        <header class="s18-following-card__header s19-following-card__header">
           <span class="s11-avatar s11-avatar--small" style="${avatarStyle(item.profile)}">${escapeHtml(profile.initial)}</span>
           <span class="s13-following-card__identity"><strong>${escapeHtml(profile.name)}</strong><small>${escapeHtml(item.type)}</small></span>
           <time>${escapeHtml(item.time || `${index + 1}h`)}</time>
         </header>
-        <div class="s13-following-card__body s18-following-card__body">
-          <span class="s13-following-card__copy s18-following-card__copy">
+        <div class="s13-following-card__body s18-following-card__body s19-following-card__body">
+          <span class="s13-following-card__copy s18-following-card__copy s19-following-card__copy">
             <small>${escapeHtml(action)}</small>
             <strong>${escapeHtml(item.title)}</strong>
             <p>${escapeHtml(item.detail)}</p>
           </span>
-          <span class="s18-following-card__cover-shell">${storyCoverMarkup(story, "s13-following-card__cover")}</span>
+          <span class="s18-following-card__cover-shell s19-following-card__cover-shell">${storyCoverMarkup(story, "s13-following-card__cover")}</span>
         </div>
-        <footer class="s18-following-card__footer">
+        <footer class="s18-following-card__footer s19-following-card__footer">
           <span class="s13-layer-chip">${escapeHtml(item.layer || "Update")}</span>
           <span class="s18-following-card__story">${escapeHtml(story.title)}</span>
           <span class="s18-following-card__category">${escapeHtml(profile.tags[0])}</span>
@@ -2233,39 +2330,49 @@
     `;
 
     if (type === "moment") {
-      return `<div class="s17-primary-layer s17-primary-layer--media s18-primary-layer">${media}</div>`;
+      return `<div class="s19-primary-layer s19-primary-layer--feature s19-primary-layer--moment">
+        <div class="s19-feature-media">${media}</div>
+        <div class="s19-feature-copy"><small>Saved moment</small><strong>One frame, then the idea around it</strong><p>${escapeHtml(artifact.excerpt)}</p><span>${escapeHtml(artifact.meta)}</span></div>
+      </div>`;
     }
     if (type === "character") {
-      return `<div class="s17-primary-layer s17-primary-layer--character s18-primary-layer">${media}</div>`;
+      return `<div class="s19-primary-layer s19-primary-layer--feature s19-primary-layer--character">
+        <div class="s19-feature-media">${media}</div>
+        <div class="s19-feature-copy"><small>Character focus</small><strong>${escapeHtml(artifact.subject || artifact.title)}</strong><p>${escapeHtml(artifact.excerpt)}</p><div class="s19-feature-tags">${artifact.tags.map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}</div></div>
+      </div>`;
     }
     if (type === "quote") {
-      return `<div class="s17-primary-layer s17-primary-layer--text s18-primary-layer">${media}<blockquote>${escapeHtml(artifact.excerpt)}</blockquote><small>${escapeHtml(story.title)}</small></div>`;
+      return `<div class="s19-primary-layer s19-primary-layer--text s19-primary-layer--quote">${media}<small>Saved quote context</small><blockquote>${escapeHtml(artifact.excerpt)}</blockquote><span>${escapeHtml(story.title)}</span></div>`;
     }
     if (type === "thought") {
-      return `<div class="s17-primary-layer s17-primary-layer--text s18-primary-layer">${media}<p>${escapeHtml(artifact.excerpt)}</p><small>Thought · ${escapeHtml(story.title)}</small></div>`;
+      return `<div class="s19-primary-layer s19-primary-layer--text s19-primary-layer--thought">${media}<small>Connected thought</small><h5>${escapeHtml(artifact.title)}</h5><p>${escapeHtml(artifact.excerpt)}</p></div>`;
     }
-    return `<div class="s17-primary-layer s17-primary-layer--text s18-primary-layer">${media}<p>${escapeHtml(artifact.excerpt)}</p><small>Reflection · ${escapeHtml(story.title)}</small></div>`;
+    if (type === "ranking") {
+      const items = (artifact.items || []).slice(0, 3);
+      return `<div class="s19-primary-layer s19-primary-layer--ranking">${media}<div><small>Public ranking</small><h5>${escapeHtml(artifact.title)}</h5><ol>${items.map((item, index) => `<li><b>${String(index + 1).padStart(2, "0")}</b><span>${escapeHtml(item)}</span></li>`).join("")}</ol><p>${escapeHtml(artifact.excerpt)}</p></div></div>`;
+    }
+    return `<div class="s19-primary-layer s19-primary-layer--text"><p>${escapeHtml(artifact.excerpt)}</p></div>`;
   }
 
   function forYouArtifactMarkup(artifact, index) {
     const profile = PROFILE_DATA[artifact.profile];
     const story = getStoryByTitle(artifact.story);
     const type = normalizeText(artifact.type);
-    return `<article class="s14-for-you-slide s17-for-you-slide s18-for-you-slide" data-s14-for-you-index="${index}" data-s14-artifact-type="${escapeHtml(type)}" aria-label="${escapeHtml(artifact.type)} recommendation ${index + 1} of ${Math.min(5, DISCOVERY_ARTIFACTS.length)}">
-      <div class="s14-for-you-slide__visual s17-for-you-slide__visual s18-for-you-canvas">
+    return `<article class="s14-for-you-slide s17-for-you-slide s18-for-you-slide s19-for-you-slide" data-s14-for-you-index="${index}" data-s14-artifact-type="${escapeHtml(type)}" aria-label="${escapeHtml(artifact.type)} recommendation ${index + 1} of ${Math.min(5, DISCOVERY_ARTIFACTS.length)}">
+      <div class="s14-for-you-slide__visual s17-for-you-slide__visual s18-for-you-canvas s19-for-you-canvas">
         ${forYouPrimaryMarkup(artifact, story)}
         <span class="s14-for-you-slide__type">${escapeHtml(artifact.type)}</span>
-        <span class="s13-reason-chip s14-reason-chip s18-for-you-reason"><b aria-hidden="true">↔</b>${escapeHtml(artifact.reason)}</span>
+        <span class="s13-reason-chip s14-reason-chip s18-for-you-reason s19-for-you-reason"><b aria-hidden="true">↔</b>${escapeHtml(artifact.reason)}</span>
       </div>
 
-      <div class="s18-for-you-dock">
-        <div class="s18-for-you-dock__copy">
+      <div class="s18-for-you-dock s19-for-you-dock">
+        <div class="s18-for-you-dock__copy s19-for-you-dock__copy">
           <span class="s13-artifact-kicker">${escapeHtml(artifact.type)} · ${escapeHtml(story.title)}</span>
           <h4>${escapeHtml(artifact.title)}</h4>
           <div class="s13-artifact-tags">${artifact.tags.map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}</div>
         </div>
 
-        <footer class="s14-for-you-slide__footer s17-for-you-footer s18-for-you-footer">
+        <footer class="s14-for-you-slide__footer s17-for-you-footer s18-for-you-footer s19-for-you-footer">
           <button type="button" class="s14-author-card s16-author-card s17-author-card s18-author-card" data-s13-open-author="${escapeHtml(artifact.profile)}" aria-label="Open ${escapeHtml(profile.name)} profile">
             <span class="s11-avatar" style="${avatarStyle(artifact.profile)}">${escapeHtml(profile.initial)}</span>
             <span><strong>${escapeHtml(profile.name)}</strong><small>${escapeHtml(profile.label)}</small></span>
@@ -2291,29 +2398,32 @@
       ? `data-s13-feed-open="${artifact.feedIndex}"`
       : `data-s13-open-artifact="${escapeHtml(artifact.id)}"`;
     const resultType = escapeHtml(artifact.searchLayer || normalizeText(artifact.type));
-    const displayType = normalizeText(artifact.type) === "reflection" ? "Note" : artifact.type;
-    return `<button type="button" class="s13-search-card s13-search-artifact s18-search-artifact" data-s16-search-result-type="${resultType}" ${actionAttribute} aria-label="Open ${escapeHtml(displayType)} ${escapeHtml(artifact.title)}">
-      <span class="s18-search-artifact__cover">${storyCoverMarkup(story, "s13-search-artifact__cover")}</span>
-      <span class="s18-search-artifact__copy">
+    const displayType = artifact.type;
+    return `<button type="button" class="s13-search-card s13-search-artifact s18-search-artifact s19-search-artifact" data-s16-search-result-type="${resultType}" ${actionAttribute} aria-label="Open ${escapeHtml(displayType)} ${escapeHtml(artifact.title)}">
+      <span class="s18-search-artifact__cover s19-search-artifact__cover">${storyCoverMarkup(story, "s13-search-artifact__cover")}</span>
+      <span class="s18-search-artifact__copy s19-search-artifact__copy">
         <small>${escapeHtml(displayType)} · ${escapeHtml(story.title)}</small>
         <strong>${escapeHtml(artifact.title)}</strong>
         <span class="s13-search-card__tags">${(artifact.tags || []).slice(0, 3).map((tag) => `<em>${escapeHtml(tag)}</em>`).join("")}</span>
       </span>
-      <span class="s18-search-artifact__author">
+      <span class="s18-search-artifact__author s19-search-artifact__author">
         <span class="s11-avatar s11-avatar--small" style="${avatarStyle(artifact.profile)}">${escapeHtml(profile.initial)}</span>
         <span><strong>${escapeHtml(profile.name)}</strong><small>${escapeHtml(profile.label)}</small></span>
       </span>
     </button>`;
   }
 
-  function searchResultMarkup(key, reason) {
+  function searchResultMarkup(key, reason, score = 0) {
     const profile = PROFILE_DATA[key];
     const story = getStoryByTitle(profile.topStories[0]);
-    return `<button type="button" class="s13-search-card s13-search-reader s18-search-reader" data-s16-search-result-type="reader" data-s11-profile-key="${escapeHtml(key)}" aria-pressed="${state.selectedProfile === key}">
-      <header><span class="s11-avatar" style="${avatarStyle(key)}">${escapeHtml(profile.initial)}</span><span><small>${escapeHtml(profile.label)}</small><strong>${escapeHtml(profile.name)}</strong><p>${escapeHtml(profile.bio)}</p></span>${storyCoverMarkup(story, "s13-search-reader__cover")}</header>
-      <div class="s13-search-reader__reason"><small>Why this profile matched</small><p>${escapeHtml(reason)}</p></div>
-      <dl><div><dt>#1 story</dt><dd>${escapeHtml(story.title)}</dd></div><div><dt>Signature ranking</dt><dd>${escapeHtml(profile.signature)}</dd></div><div><dt>Public themes</dt><dd>${escapeHtml(profile.sharedThemes.join(" · "))}</dd></div></dl>
-      <footer><span>${escapeHtml(profile.tags.slice(0, 2).join(" · "))}</span><strong>View reader →</strong></footer>
+    const meta = getStoryDiscoveryMeta(story.title);
+    const themes = Array.from(new Set([...(profile.sharedThemes || []), ...(profile.tags || []), ...(meta.genres || [])])).slice(0, 3);
+    return `<button type="button" class="s13-search-card s13-search-reader s18-search-reader s19-search-reader" data-s16-search-result-type="reader" data-s11-profile-key="${escapeHtml(key)}" aria-pressed="${state.selectedProfile === key}">
+      <header class="s19-search-reader__header"><span class="s11-avatar" style="${avatarStyle(key)}">${escapeHtml(profile.initial)}</span><span><small>${escapeHtml(profile.label)}</small><strong>${escapeHtml(profile.name)}</strong></span>${storyCoverMarkup(story, "s13-search-reader__cover")}</header>
+      <p class="s19-search-reader__reason">${escapeHtml(reason)}</p>
+      <div class="s19-search-reader__themes">${themes.map((theme) => `<span>${escapeHtml(theme)}</span>`).join("")}</div>
+      <div class="s19-search-reader__stories"><span><small>Top story</small><strong>${escapeHtml(story.title)}</strong></span><span><small>Signature</small><strong>${escapeHtml(profile.signature)}</strong></span></div>
+      <footer><span>${Math.max(68, Math.min(99, 72 + score * 3))}% idea match</span><strong>View profile →</strong></footer>
     </button>`;
   }
 
@@ -2680,6 +2790,9 @@
       kai: "--avatar-a:#5270b8;--avatar-b:#745a90",
       mira: "--avatar-a:#6a5b99;--avatar-b:#914f7b",
       ren: "--avatar-a:#4f817b;--avatar-b:#4f638d",
+      sol: "--avatar-a:#9a6b4f;--avatar-b:#7d5ea8",
+      aya: "--avatar-a:#4f739a;--avatar-b:#6b5b96",
+      theo: "--avatar-a:#4c8c8a;--avatar-b:#5570a6",
       nova: "--avatar-a:#6f8cff;--avatar-b:#a17bff",
     };
     return styles[key] || styles.nova;
@@ -2793,12 +2906,11 @@
     state.storyLayer = "quotes";
     state.profileCategory = 0;
     state.following.clear();
-    state.searchQuery = "Tokyo Ghoul:re";
+    state.searchQuery = "Identity";
     state.searchFilter = "all";
     state.searchMode = "content";
     state.searchLayer = "all";
     state.searchReflectionOnly = false;
-    state.searchStory = "all";
     state.searchSort = "relevance";
     state.forYouArtifact = 0;
     lastForYouArtifact = 0;
@@ -2848,7 +2960,7 @@
         timeline?.kill?.();
         resizeObserver?.disconnect?.();
         cleanupCallbacks.splice(0).forEach((callback) => callback());
-        window.__INKWELL_SOCIAL_V18_STARTED__ = false;
+        window.__INKWELL_SOCIAL_V19_STARTED__ = false;
         window.__INKWELL_SOCIAL_V16_STARTED__ = false;
       },
       cleanup: () => trigger?.kill?.(true),

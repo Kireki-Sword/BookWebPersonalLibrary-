@@ -1,6 +1,6 @@
 /* ========================================================================== 
    INKWELL — SECTION 6: FAQ INTERACTIONS
-   Accordion, keyboard navigation, reveal, and subtle pointer glow.
+   Single-open accordion, keyboard navigation, reveal, and pointer glow.
    ========================================================================== */
 
 (() => {
@@ -14,27 +14,52 @@
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
 
-  setupAccordion(root);
-  setupReveal(root, reducedMotion.matches || window.__INKWELL_MASTER_JOURNEY__ === true);
+  setupSingleOpenAccordion(root);
+  setupReveal(
+    root,
+    reducedMotion.matches || window.__INKWELL_MASTER_JOURNEY__ === true,
+  );
   setupPointerGlow(root, reducedMotion, finePointer);
 
-  function setupAccordion(faqRoot) {
+  function setupSingleOpenAccordion(faqRoot) {
     const items = Array.from(faqRoot.querySelectorAll("[data-faq-item]"));
     const triggers = items
       .map((item) => item.querySelector("[data-faq-trigger]"))
       .filter(Boolean);
 
+    if (!items.length || !triggers.length) return;
+
+    // Keep only one initially open even if the HTML was accidentally copied
+    // with several .is-open classes or aria-expanded="true" values.
+    const initialOpenItem =
+      items.find(
+        (item) =>
+          item.classList.contains("is-open") ||
+          item.querySelector("[data-faq-trigger]")?.getAttribute("aria-expanded") ===
+            "true",
+      ) || items[0];
+
     items.forEach((item) => {
-      const trigger = item.querySelector("[data-faq-trigger]");
-      const panel = item.querySelector("[data-faq-panel]");
-      if (!trigger || !panel) return;
+      setItemState(item, item === initialOpenItem, false);
+    });
 
-      const startsOpen = item.classList.contains("is-open");
-      updateItem(item, trigger, panel, startsOpen);
-
+    triggers.forEach((trigger) => {
       trigger.addEventListener("click", () => {
-        const willOpen = trigger.getAttribute("aria-expanded") !== "true";
-        updateItem(item, trigger, panel, willOpen);
+        const item = trigger.closest("[data-faq-item]");
+        if (!item) return;
+
+        const isOpen = trigger.getAttribute("aria-expanded") === "true";
+
+        // Opening one answer always closes every other answer first.
+        if (!isOpen) {
+          items.forEach((candidate) => {
+            setItemState(candidate, candidate === item, true);
+          });
+          return;
+        }
+
+        // The active answer may also be collapsed, leaving every item closed.
+        setItemState(item, false, true);
       });
 
       trigger.addEventListener("keydown", (event) => {
@@ -64,11 +89,27 @@
     });
   }
 
-  function updateItem(item, trigger, panel, open) {
+  function setItemState(item, open, announce) {
+    const trigger = item.querySelector("[data-faq-trigger]");
+    const panel = item.querySelector("[data-faq-panel]");
+    if (!trigger || !panel) return;
+
     item.classList.toggle("is-open", open);
     trigger.setAttribute("aria-expanded", String(open));
     panel.setAttribute("aria-hidden", String(!open));
     panel.toggleAttribute("inert", !open);
+
+    if (announce) {
+      root.dispatchEvent(
+        new CustomEvent("inkwell:faq-change", {
+          bubbles: true,
+          detail: {
+            id: trigger.id,
+            open,
+          },
+        }),
+      );
+    }
   }
 
   function setupReveal(element, reduce) {
@@ -90,15 +131,22 @@
   }
 
   function setupPointerGlow(element, reduceQuery, pointerQuery) {
-    let rafId = 0;
+    let frame = 0;
     let latestEvent = null;
 
-    const applyPointer = () => {
-      rafId = 0;
+    const paint = () => {
+      frame = 0;
       if (!latestEvent) return;
+
       const rect = element.getBoundingClientRect();
-      element.style.setProperty("--pointer-x", `${latestEvent.clientX - rect.left}px`);
-      element.style.setProperty("--pointer-y", `${latestEvent.clientY - rect.top}px`);
+      element.style.setProperty(
+        "--pointer-x",
+        `${latestEvent.clientX - rect.left}px`,
+      );
+      element.style.setProperty(
+        "--pointer-y",
+        `${latestEvent.clientY - rect.top}px`,
+      );
     };
 
     element.addEventListener("pointerenter", () => {
@@ -109,7 +157,7 @@
     element.addEventListener("pointermove", (event) => {
       if (reduceQuery.matches || !pointerQuery.matches) return;
       latestEvent = event;
-      if (!rafId) rafId = window.requestAnimationFrame(applyPointer);
+      if (!frame) frame = window.requestAnimationFrame(paint);
     });
 
     element.addEventListener("pointerleave", () => {
