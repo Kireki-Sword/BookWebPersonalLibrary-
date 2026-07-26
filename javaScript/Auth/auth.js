@@ -19,11 +19,12 @@
     const switches = [...document.querySelectorAll("[data-auth-switch]")];
     const storyCopies = [...document.querySelectorAll("[data-story-copy]")];
     const mobileTabs = [...document.querySelectorAll(".auth-mobile-tab")];
+    const modeOptions = [...document.querySelectorAll(".auth-mode-option")];
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     const mobileLayout = window.matchMedia("(max-width: 860px)");
 
-    if (!supabase || !body || !shell || views.length === 0) {
-      console.error("The authentication page could not start.");
+    if (!body || !shell || views.length === 0) {
+      console.error("The authentication page interface could not start.");
       return;
     }
 
@@ -42,12 +43,18 @@
       window.history[method]({ authMode: mode }, "", url);
     }
 
-    function updateMobileTabs(mode) {
+    function updateModeControls(mode) {
       mobileTabs.forEach((button) => {
         const selected = button.dataset.authSwitch === mode;
         button.classList.toggle("is-active", selected);
         button.setAttribute("aria-selected", String(selected));
         button.tabIndex = selected ? 0 : -1;
+      });
+
+      modeOptions.forEach((button) => {
+        const selected = button.dataset.authSwitch === mode;
+        button.classList.toggle("is-active", selected);
+        button.setAttribute("aria-pressed", String(selected));
       });
     }
 
@@ -107,7 +114,7 @@
         }
       });
 
-      updateMobileTabs(nextMode);
+      updateModeControls(nextMode);
       updateStoryCopy(nextMode);
       document.title =
         nextMode === "signup"
@@ -152,11 +159,19 @@
 
     initializePasswordToggles();
     initializePasswordStrength();
-    initializeLoginForm(supabase);
-    initializeSignupForm(supabase);
-    initializeForgotForm(supabase);
-    initializeOAuthButtons(supabase);
-    initializeAuthReturn(supabase);
+
+    if (supabase) {
+      initializeLoginForm(supabase);
+      initializeSignupForm(supabase);
+      initializeForgotForm(supabase);
+      initializeOAuthButtons(supabase);
+      initializeAuthReturn(supabase);
+    } else {
+      initializeUnavailableAuth();
+      console.error(
+        "Supabase did not load. The Log in / Sign up interface still works, but account requests are unavailable."
+      );
+    }
 
     setMode(currentMode, {
       updateHistory: false,
@@ -170,9 +185,28 @@
     initialView.inert = false;
     initialView.setAttribute("aria-hidden", "false");
     initialView.classList.add("is-active");
-    updateMobileTabs(currentMode);
+    updateModeControls(currentMode);
     updateStoryCopy(currentMode);
     requestAnimationFrame(syncMobileHeight);
+  }
+
+  function initializeUnavailableAuth() {
+    const message =
+      "The authentication service did not load. Refresh the page, check the Supabase script, and try again.";
+
+    document.querySelectorAll("[data-auth-form]").forEach((form) => {
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        setFormStatus(form, message, "error");
+      });
+    });
+
+    document.querySelectorAll("[data-oauth-provider]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const form = button.closest("[data-auth-view]")?.querySelector("form");
+        if (form) setFormStatus(form, message, "error");
+      });
+    });
   }
 
   function initializePasswordToggles() {
@@ -282,13 +316,13 @@
       event.preventDefault();
       clearFormErrors(form);
 
-      const displayName = form.elements.displayName.value.trim();
+      const displayName = form.elements.displayName?.value.trim() || "";
       const email = form.elements.email.value.trim();
       const password = form.elements.password.value;
       const terms = form.elements.terms.checked;
       let valid = true;
 
-      if (displayName.length < 2) {
+      if (form.elements.displayName && displayName.length < 2) {
         valid = setFieldError(form.elements.displayName, "Use at least 2 characters.") && valid;
       }
 
@@ -324,9 +358,9 @@
               verified: "1",
               next: getNextParameter()
             }),
-            data: {
-              display_name: displayName
-            }
+            data: displayName
+              ? { display_name: displayName }
+              : {}
           }
         });
 

@@ -75,6 +75,11 @@
           aria-labelledby="login-tab"
         >
           <div class="auth-form-card">
+            <div class="auth-mode-switch" role="group" aria-label="Choose account action">
+              <button class="auth-mode-option is-active" type="button" data-auth-switch="login" aria-pressed="true">Log in</button>
+              <button class="auth-mode-option" type="button" data-auth-switch="signup" aria-pressed="false">Sign up</button>
+            </div>
+
             <header class="auth-view-header">
               <p class="auth-view-kicker">WELCOME BACK</p>
               <h1>Return to your shelf.</h1>
@@ -168,10 +173,15 @@
           hidden
         >
           <div class="auth-form-card">
+            <div class="auth-mode-switch" role="group" aria-label="Choose account action">
+              <button class="auth-mode-option" type="button" data-auth-switch="login" aria-pressed="false">Log in</button>
+              <button class="auth-mode-option is-active" type="button" data-auth-switch="signup" aria-pressed="true">Sign up</button>
+            </div>
+
             <header class="auth-view-header">
               <p class="auth-view-kicker">BEGIN YOUR COLLECTION</p>
               <h1>Make space for what stays.</h1>
-              <p>Create a private library for the stories, quotes, and thoughts you want to keep.</p>
+              <p>Create your account now. You can choose a display name and profile details later.</p>
             </header>
 
             <button class="auth-provider-button" type="button" data-oauth-provider="google">
@@ -184,24 +194,6 @@
             </div>
 
             <form class="auth-form" id="signup-form" data-auth-form="signup" novalidate>
-              <div class="auth-field">
-                <label for="signup-name">Display name</label>
-                <div class="auth-input-shell">
-                  <i class="ti ti-user" aria-hidden="true"></i>
-                  <input
-                    id="signup-name"
-                    name="displayName"
-                    type="text"
-                    autocomplete="name"
-                    maxlength="40"
-                    placeholder="How readers will know you"
-                    aria-describedby="signup-name-error"
-                    required
-                  >
-                </div>
-                <p class="auth-field-message" id="signup-name-error" aria-live="polite"></p>
-              </div>
-
               <div class="auth-field">
                 <label for="signup-email">Email address</label>
                 <div class="auth-input-shell">
@@ -331,21 +323,27 @@
       <aside class="auth-story-panel" data-story-panel aria-live="polite">
         <div class="auth-story-copy is-active" data-story-copy="login">
           <p class="auth-story-eyebrow"><span>01</span> CONTINUE YOUR STORY</p>
-          <h2>Return to the stories that stayed with you.</h2>
-          <p>Your quotes, moments, characters, notes, and reflections are waiting where you left them.</p>
+          <h2>Your shelf is waiting.</h2>
+          <p>Return to the stories, quotes, moments, and reflections you saved.</p>
           <div class="auth-story-switch">
             <span>New to Inkwell?</span>
-            <button type="button" data-auth-switch="signup">Create an account <i class="ti ti-arrow-right"></i></button>
+            <button class="auth-story-switch-button" type="button" data-auth-switch="signup">
+              <span>Create an account</span>
+              <i class="ti ti-arrow-right" aria-hidden="true"></i>
+            </button>
           </div>
         </div>
 
         <div class="auth-story-copy" data-story-copy="signup" aria-hidden="true">
           <p class="auth-story-eyebrow"><span>02</span> BEGIN YOUR COLLECTION</p>
-          <h2>Keep a record of what each story leaves behind.</h2>
-          <p>Build a library shaped by your own quotes, moments, characters, notes, and thoughts.</p>
+          <h2>Make room for what stays.</h2>
+          <p>Build a private library for stories, quotes, moments, notes, and thoughts.</p>
           <div class="auth-story-switch">
             <span>Already have an account?</span>
-            <button type="button" data-auth-switch="login"><i class="ti ti-arrow-left"></i> Return to login</button>
+            <button class="auth-story-switch-button" type="button" data-auth-switch="login">
+              <i class="ti ti-arrow-left" aria-hidden="true"></i>
+              <span>Return to login</span>
+            </button>
           </div>
         </div>
 
@@ -355,7 +353,10 @@
           <p>Use the recovery email to choose a new password and continue where you left off.</p>
           <div class="auth-story-switch">
             <span>Remembered your password?</span>
-            <button type="button" data-auth-switch="login"><i class="ti ti-arrow-left"></i> Return to login</button>
+            <button class="auth-story-switch-button" type="button" data-auth-switch="login">
+              <i class="ti ti-arrow-left" aria-hidden="true"></i>
+              <span>Return to login</span>
+            </button>
           </div>
         </div>
 
