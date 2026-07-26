@@ -1,12 +1,12 @@
 /* ============================================================================
-   INKWELL — SECTION 5: SOCIAL, ON YOUR TERMS (V13 FOLLOWING / FOR YOU / SEARCH REBUILD)
+   INKWELL — SECTION 5: SOCIAL, ON YOUR TERMS (V14 PROFILE FIT / IMMERSIVE FOR YOU / SEARCH REFINEMENT)
 
    Homepage product story:
    1. Control — audience, spoilers, and a stable live preview.
    2. Identity — a real profile with Top Stories, custom rankings, stats,
       biography, tags, and recent activity.
    3. Social — equal Following updates, content-first For You discovery,
-      and search that can switch between Discover, Readers, and Stories.
+      and an immersive one-card For You stream and search by result type, story, and sort order.
 
    Integration:
    - replaces only the Section 5 JavaScript file
@@ -20,11 +20,11 @@
   "use strict";
 
   const section = document.querySelector("#section-5-social");
-  if (!section || window.__INKWELL_SOCIAL_V13_STARTED__) return;
+  if (!section || window.__INKWELL_SOCIAL_V14_STARTED__) return;
 
-  window.__INKWELL_SOCIAL_V13_STARTED__ = true;
+  window.__INKWELL_SOCIAL_V14_STARTED__ = true;
   window.__INKWELL_SOCIAL_CINEMA_BUILD__ =
-    "2026-07-25-social-cinema-v13-content-discovery";
+    "2026-07-25-social-cinema-v14-immersive-feed";
 
   const { gsap, ScrollTrigger } = window;
   const MANAGED_BY_HOME_JOURNEY =
@@ -61,14 +61,14 @@
     publicLeave: 1.78,
     spoilerEnter: 2.67,
     spoilerLeave: 2.4,
-    forYouEnter: 8.34,
-    forYouLeave: 8.08,
-    forYouSecondEnter: 8.56,
-    forYouSecondLeave: 8.44,
-    forYouThirdEnter: 8.88,
-    forYouThirdLeave: 8.76,
-    searchEnter: 9.24,
-    searchLeave: 8.94,
+    forYouEnter: 8.3,
+    forYouLeave: 8.04,
+    forYouSecondEnter: 8.48,
+    forYouThirdEnter: 8.66,
+    forYouFourthEnter: 8.84,
+    forYouFifthEnter: 9.02,
+    searchEnter: 9.28,
+    searchLeave: 9.08,
   });
 
   const SOCIAL_VIEW_ORDER = Object.freeze([
@@ -97,28 +97,77 @@
 
   const PREFERRED_STORY_TITLES = [
     "Tokyo Ghoul:re",
-    "Monster",
+    "Orb: On the Movements of the Earth",
+    "Billy Bat",
     "Vinland Saga",
-    "Goodnight Punpun",
+    "Blood on the Tracks",
     "Berserk",
+    "The Climber",
+    "Tokyo Ghoul",
+    "One Piece",
+    "Land of the Lustrous",
     "20th Century Boys",
+    "Homunculus",
+    "Steins;Gate",
+    "Chainsaw Man",
+    "Goodnight Punpun",
+    "Monster",
     "Fullmetal Alchemist",
-    "Death Note",
-    "Pluto",
-    "Hunter x Hunter",
   ];
 
   const FALLBACK_STORIES = [
     { id: "fallback-tokyo-ghoul-re", title: "Tokyo Ghoul:re", creator: "Sui Ishida", coverUrl: "" },
-    { id: "fallback-monster", title: "Monster", creator: "Naoki Urasawa", coverUrl: "" },
+    { id: "fallback-orb", title: "Orb: On the Movements of the Earth", creator: "Uoto", coverUrl: "" },
+    { id: "fallback-billy-bat", title: "Billy Bat", creator: "Naoki Urasawa", coverUrl: "" },
     { id: "fallback-vinland", title: "Vinland Saga", creator: "Makoto Yukimura", coverUrl: "" },
-    { id: "fallback-punpun", title: "Goodnight Punpun", creator: "Inio Asano", coverUrl: "" },
+    { id: "fallback-blood-tracks", title: "Blood on the Tracks", creator: "Shuzo Oshimi", coverUrl: "" },
     { id: "fallback-berserk", title: "Berserk", creator: "Kentaro Miura", coverUrl: "" },
+    { id: "fallback-climber", title: "The Climber", creator: "Shin-ichi Sakamoto", coverUrl: "" },
+    { id: "fallback-tokyo-ghoul", title: "Tokyo Ghoul", creator: "Sui Ishida", coverUrl: "" },
+    { id: "fallback-one-piece", title: "One Piece", creator: "Eiichiro Oda", coverUrl: "" },
+    { id: "fallback-land-lustrous", title: "Land of the Lustrous", creator: "Haruko Ichikawa", coverUrl: "" },
     { id: "fallback-20cb", title: "20th Century Boys", creator: "Naoki Urasawa", coverUrl: "" },
+    { id: "fallback-homunculus", title: "Homunculus", creator: "Hideo Yamamoto", coverUrl: "" },
+    { id: "fallback-steins-gate", title: "Steins;Gate", creator: "5pb. / Nitroplus", coverUrl: "" },
+    { id: "fallback-chainsaw-man", title: "Chainsaw Man", creator: "Tatsuki Fujimoto", coverUrl: "" },
+    { id: "fallback-punpun", title: "Goodnight Punpun", creator: "Inio Asano", coverUrl: "" },
+    { id: "fallback-monster", title: "Monster", creator: "Naoki Urasawa", coverUrl: "" },
     { id: "fallback-fma", title: "Fullmetal Alchemist", creator: "Hiromu Arakawa", coverUrl: "" },
-    { id: "fallback-death-note", title: "Death Note", creator: "Tsugumi Ohba", coverUrl: "" },
-    { id: "fallback-pluto", title: "Pluto", creator: "Naoki Urasawa", coverUrl: "" },
   ];
+
+  const SECTION5_MEDIA_ROOT = "img/section5";
+  const SECTION5_MEDIA = Object.freeze({
+    "moment-silence": [
+      "foryou-moment-goodnight-punpun.webp",
+      "foryou-moment-goodnight-punpun.jpg",
+      "moment-goodnight-punpun.webp",
+      "goodnight-punpun-moment.jpg",
+    ],
+    "character-kaneki": [
+      "foryou-character-ken-kaneki.webp",
+      "foryou-character-ken-kaneki.jpg",
+      "character-ken-kaneki.webp",
+      "tokyo-ghoul-re-kaneki.jpg",
+    ],
+    "reflection-responsibility": [
+      "foryou-reflection-berserk.webp",
+      "foryou-reflection-berserk.jpg",
+      "reflection-berserk.webp",
+      "berserk-reflection.jpg",
+    ],
+    "quote-choice": [
+      "foryou-quote-fullmetal-alchemist.webp",
+      "foryou-quote-fullmetal-alchemist.jpg",
+      "quote-fullmetal-alchemist.webp",
+      "fullmetal-alchemist-quote.jpg",
+    ],
+    "thought-memory": [
+      "foryou-thought-blood-on-the-tracks.webp",
+      "foryou-thought-blood-on-the-tracks.jpg",
+      "thought-blood-on-the-tracks.webp",
+      "blood-on-the-tracks-thought.jpg",
+    ],
+  });
 
   const PROFILE_DATA = Object.freeze({
     nova: {
@@ -128,7 +177,7 @@
       bio: "Tracks identity, responsibility, and the truths that change with perspective.",
       tags: ["Psychological", "Character studies", "Identity", "Manga"],
       stats: [["42", "stories"], ["18", "public reflections"], ["126", "following"]],
-      topStories: ["Tokyo Ghoul:re", "Monster", "Vinland Saga", "Goodnight Punpun"],
+      topStories: ["Tokyo Ghoul:re", "Orb: On the Movements of the Earth", "Billy Bat", "Vinland Saga", "Blood on the Tracks"],
       categories: [
         { title: "Favourite main characters", subtitle: "The leads I keep returning to", items: ["Ken Kaneki", "Kenzo Tenma", "Thorfinn", "Punpun Onodera"] },
         { title: "Favourite supporting cast", subtitle: "Characters who changed the whole story", items: ["Touka Kirishima", "Wolfgang Grimmer", "Askeladd", "Aiko Tanaka"] },
@@ -234,9 +283,9 @@
       profile: "kai",
       type: "Ranking updated",
       layer: "Ranking",
-      title: "Favourite protagonists",
-      detail: "Moved Ken Kaneki to #1 after a reread.",
-      story: "Tokyo Ghoul:re",
+      title: "Stories that refuse an easy victory",
+      detail: "Moved Berserk to #1 after revisiting the cost of survival.",
+      story: "Berserk",
       time: "1h",
       tone: "ranking",
     },
@@ -244,9 +293,9 @@
       profile: "mira",
       type: "Moment added",
       layer: "Moment",
-      title: "A scene worth keeping",
-      detail: "Saved a silent panel and added a memory note.",
-      story: "Goodnight Punpun",
+      title: "The frame before the next step",
+      detail: "Saved a mountain panel and wrote about isolation becoming focus.",
+      story: "The Climber",
       time: "2h",
       tone: "moment",
     },
@@ -254,9 +303,9 @@
       profile: "ren",
       type: "Reflection published",
       layer: "Reflection",
-      title: "Responsibility after violence",
-      detail: "Published a long-form reflection with spoiler protection.",
-      story: "Monster",
+      title: "Identity after becoming unrecognizable",
+      detail: "Published a spoiler-protected reflection on fear and belonging.",
+      story: "Tokyo Ghoul",
       time: "5h",
       tone: "reflection",
     },
@@ -264,9 +313,9 @@
       profile: "kai",
       type: "Quote saved",
       layer: "Quote",
-      title: "A line from a reread",
-      detail: "Connected the quote to sacrifice and responsibility.",
-      story: "Fullmetal Alchemist",
+      title: "A promise that keeps moving forward",
+      detail: "Connected a remembered line to loyalty and chosen family.",
+      story: "One Piece",
       time: "1d",
       tone: "quote",
     },
@@ -274,9 +323,9 @@
       profile: "mira",
       type: "Character note",
       layer: "Character",
-      title: "Aiko Tanaka",
-      detail: "Added a character reflection to a custom ranking.",
-      story: "Goodnight Punpun",
+      title: "Phosphophyllite across every change",
+      detail: "Added a character note about memory, form, and continuity.",
+      story: "Land of the Lustrous",
       time: "1d",
       tone: "character",
     },
@@ -284,8 +333,8 @@
       profile: "ren",
       type: "Note edited",
       layer: "Note",
-      title: "The meaning of the ending",
-      detail: "Reworked a public note after comparing two scenes.",
+      title: "What the ending asks us to inherit",
+      detail: "Reworked a public note after comparing two timelines.",
       story: "20th Century Boys",
       time: "2d",
       tone: "note",
@@ -294,9 +343,9 @@
       profile: "kai",
       type: "Thought added",
       layer: "Thought",
-      title: "Identity after change",
-      detail: "Added a thought that connects three saved moments.",
-      story: "Tokyo Ghoul:re",
+      title: "The body as an unreliable answer",
+      detail: "Connected a new thought to self-image and perception.",
+      story: "Homunculus",
       time: "2d",
       tone: "thought",
     },
@@ -305,8 +354,8 @@
       type: "Library updated",
       layer: "Library",
       title: "Moved to completed",
-      detail: "Updated progress, score, and public saved layers.",
-      story: "Vinland Saga",
+      detail: "Updated progress, score, and the public layers saved with it.",
+      story: "Steins;Gate",
       time: "3d",
       tone: "library",
     },
@@ -314,9 +363,9 @@
       profile: "ren",
       type: "Category created",
       layer: "Ranking",
-      title: "Best-written conflicts",
-      detail: "Added a new profile ranking with four entries.",
-      story: "Monster",
+      title: "Characters shaped by impossible systems",
+      detail: "Created a profile ranking with four entries and a short note.",
+      story: "Chainsaw Man",
       time: "4d",
       tone: "ranking",
     },
@@ -324,114 +373,79 @@
 
   const DISCOVERY_ARTIFACTS = Object.freeze([
     {
-      id: "kai-reflection-identity",
-      profile: "kai",
-      type: "Reflection",
-      layer: "reflection",
-      story: "Tokyo Ghoul:re",
-      title: "Identity without certainty",
-      excerpt: "Kaneki’s transformation feels less like becoming stronger and more like losing every stable answer about who he is.",
-      reason: "Because Tokyo Ghoul:re is in your Top 4 and identity appears across your public notes.",
-      tags: ["Identity", "Sacrifice", "Character study"],
-      meta: "486 words · 4 minute read",
-    },
-    {
       id: "mira-moment-silence",
+      mediaKey: "moment-silence",
       profile: "mira",
       type: "Moment",
       layer: "moments",
       story: "Goodnight Punpun",
       title: "The silence after the choice",
-      excerpt: "A saved scene where empty space carries more memory than the conversation that came before it.",
-      reason: "Similar to visual moments you saved around memory, grief, and perspective.",
+      excerpt: "A saved visual moment where the empty space after a decision carries more memory than the conversation that came before it.",
+      reason: "Shown because you save visual moments around memory, grief, and perspective.",
       tags: ["Memory", "Visual storytelling", "Grief"],
       meta: "1 saved moment · visual note",
+      popularity: 94,
+      updatedHours: 2,
     },
     {
-      id: "ren-ranking-conflicts",
-      profile: "ren",
-      type: "Ranking",
+      id: "kai-character-kaneki",
+      mediaKey: "character-kaneki",
+      profile: "kai",
+      type: "Character",
       layer: "characters",
-      story: "Monster",
-      title: "Best-written conflicts",
-      excerpt: "A ranking built around characters whose opposing ideas reshape everyone around them.",
-      reason: "Outside your usual lens: historical responsibility and inherited conflict.",
-      tags: ["History", "Responsibility", "Conflict"],
-      meta: "4 ranked entries · updated 5h ago",
-      ranking: ["Tenma and Johan", "Friend’s legacy", "Kaneki’s identity"],
+      story: "Tokyo Ghoul:re",
+      title: "Ken Kaneki after the fracture",
+      excerpt: "A character note about the gap between surviving a transformation and knowing what kind of person should exist afterward.",
+      reason: "Shown because Kaneki leads your public ranking and identity repeats across your notes.",
+      tags: ["Identity", "Character arc", "Belonging"],
+      meta: "Character note · ranked #1",
+      popularity: 98,
+      updatedHours: 5,
     },
     {
-      id: "kai-quote-responsibility",
+      id: "ren-reflection-responsibility",
+      mediaKey: "reflection-responsibility",
+      profile: "ren",
+      type: "Reflection",
+      layer: "reflection",
+      story: "Berserk",
+      title: "Responsibility after survival",
+      excerpt: "A long-form reflection on how endurance can keep someone alive while quietly changing what they believe they owe to other people.",
+      reason: "Shown as a different lens on responsibility, aftermath, and chosen purpose.",
+      tags: ["Responsibility", "Aftermath", "Purpose"],
+      meta: "612 words · 5 minute read",
+      popularity: 91,
+      updatedHours: 8,
+    },
+    {
+      id: "kai-quote-choice",
+      mediaKey: "quote-choice",
       profile: "kai",
       type: "Quote",
       layer: "quotes",
       story: "Fullmetal Alchemist",
-      title: "The price of becoming",
-      excerpt: "A saved line connected to responsibility, sacrifice, and the cost of changing someone else’s future.",
-      reason: "Because you repeatedly connect character choices to responsibility.",
-      tags: ["Responsibility", "Sacrifice", "Choice"],
-      meta: "Saved quote · public note",
+      title: "A line remembered for the choice around it",
+      excerpt: "The saved line stays private here; the public note explains why its idea about responsibility changed after a reread.",
+      reason: "Shown because you connect remembered lines to responsibility and sacrifice.",
+      tags: ["Choice", "Responsibility", "Reread"],
+      meta: "Saved quote · public context note",
+      popularity: 88,
+      updatedHours: 24,
     },
     {
-      id: "mira-character-thorfinn",
+      id: "mira-thought-memory",
+      mediaKey: "thought-memory",
       profile: "mira",
-      type: "Character",
-      layer: "characters",
-      story: "Vinland Saga",
-      title: "Thorfinn after violence",
-      excerpt: "A character note about the quiet work of becoming someone different after a life built around revenge.",
-      reason: "Because character change and moral repair appear in your rankings.",
-      tags: ["Character arc", "Repair", "Identity"],
-      meta: "Character note · ranked #2",
-    },
-    {
-      id: "ren-note-ending",
-      profile: "ren",
-      type: "Note",
-      layer: "notes",
-      story: "20th Century Boys",
-      title: "What the ending asks us to inherit",
-      excerpt: "A revised note comparing responsibility across two scenes without erasing the earlier interpretation.",
-      reason: "Because you save notes that change after rereads.",
-      tags: ["Ending", "History", "Reread"],
-      meta: "Edited 2d ago · revision history",
-    },
-    {
-      id: "kai-thought-three-stories",
-      profile: "kai",
       type: "Thought",
       layer: "thoughts",
-      story: "Tokyo Ghoul:re",
-      title: "Three stories, one fear",
-      excerpt: "A short thought connecting identity, belonging, and the fear of becoming unrecognizable to yourself.",
-      reason: "Because identity and belonging are recurring profile themes for you.",
-      tags: ["Identity", "Belonging", "Perspective"],
-      meta: "Connected thought · 3 stories",
-    },
-    {
-      id: "mira-reflection-memory",
-      profile: "mira",
-      type: "Reflection",
-      layer: "reflection",
-      story: "Monster",
+      story: "Blood on the Tracks",
       title: "Memory changes the frame",
-      excerpt: "A compact reflection on how one remembered image can reorganize the meaning of an entire ending.",
-      reason: "Because you save visual evidence before writing long reflections.",
-      tags: ["Memory", "Ending", "Visual rhythm"],
-      meta: "218 words · 2 minute read",
-    },
-    {
-      id: "ren-ranking-responsibility",
-      profile: "ren",
-      type: "Ranking",
-      layer: "characters",
-      story: "Berserk",
-      title: "Characters shaped by responsibility",
-      excerpt: "A public ranking of characters defined less by power than by what they choose to carry afterward.",
-      reason: "Because responsibility is one of your strongest repeated themes.",
-      tags: ["Responsibility", "Character study", "Aftermath"],
-      meta: "5 ranked entries · public showcase",
-      ranking: ["Guts", "Kenzo Tenma", "Thorfinn"],
+      excerpt: "A short thought connecting one remembered image to the way fear reorganizes an entire relationship long after the scene ends.",
+      reason: "Shown because your profile returns to memory, perspective, and emotional aftermath.",
+      tags: ["Memory", "Fear", "Perspective"],
+      meta: "Connected thought · edited 2d ago",
+      popularity: 86,
+      updatedHours: 48,
     },
   ]);
 
@@ -485,7 +499,9 @@
     following: new Set(),
     searchQuery: "Tokyo Ghoul:re",
     searchFilter: "all",
-    searchMode: "discover",
+    searchMode: "all",
+    searchStory: "all",
+    searchSort: "relevance",
     forYouArtifact: 0,
   };
 
@@ -516,6 +532,8 @@
   let primaryStory = FALLBACK_STORIES[0];
   let resizeObserver = null;
   let lastDemoSignature = "";
+  let suppressForYouScrollSync = false;
+  let forYouScrollTimer = 0;
   const cleanupCallbacks = [];
 
   const q = (selector, root = section) => root?.querySelector(selector) || null;
@@ -568,9 +586,9 @@
       discoveryCopy.innerHTML = `
         <span class="social-copy-state__index">03 · Activity, ideas, and intentional search</span>
         <h2>Follow people. Discover ideas. Search with intent.</h2>
-        <p>Following explains what changed. For You lets a reflection, moment, quote, character, or ranking earn your attention. Search separates content, readers, and stories so every result has a clear purpose.</p>
+        <p>Following shows what changed. For You becomes a one-card-at-a-time stream for moments, characters, reflections, quotes, and thoughts. Search then narrows by result type, story, and sort order.</p>
         <div class="social-copy-proof" aria-label="Social features">
-          <span>Contextual activity</span><span>Content-first discovery</span><span>Search by intent</span>
+          <span>Visual activity</span><span>Scroll-snap discovery</span><span>Layered search</span>
         </div>`;
     }
 
@@ -590,7 +608,7 @@
     }
 
     if (principle) {
-      principle.textContent = "Following introduces updates. For You introduces ideas. Search finds either content or people.";
+      principle.textContent = "Follow the people you chose. Discover one idea at a time. Search only when you know what you need.";
     }
 
     const identityScene = q('[data-social-scene="identity"]');
@@ -608,10 +626,10 @@
 
   function identityMarkup() {
     return `
-      <article class="s11-profile" data-s11-profile>
-        <header class="s11-profile__hero">
+      <article class="s11-profile s14-profile" data-s11-profile>
+        <header class="s11-profile__hero s14-profile__hero">
           <div class="s11-profile__banner" aria-hidden="true"><span>perspective</span></div>
-          <div class="s11-profile__identity">
+          <div class="s11-profile__identity" data-s14-profile-intro>
             <div class="s11-avatar s11-avatar--large" data-s11-own-avatar>N</div>
             <div class="s11-profile__copy">
               <span class="s11-kicker">Your public profile</span>
@@ -621,20 +639,20 @@
             </div>
             <button type="button" class="s11-secondary-button" data-s11-edit-profile>Edit profile</button>
           </div>
-          <div class="s11-stats" data-s11-own-stats></div>
+          <div class="s11-stats" data-s11-own-stats data-s14-profile-stats></div>
         </header>
 
-        <div class="s11-profile__body">
-          <section class="s11-top-stories" aria-labelledby="s11-top-stories-title">
+        <div class="s11-profile__body s14-profile__body">
+          <section class="s11-top-stories s14-top-stories" aria-labelledby="s11-top-stories-title" data-s14-profile-ranking>
             <div class="s11-section-heading">
               <span><small>Taste at a glance</small><strong id="s11-top-stories-title">The stories that define me</strong></span>
               <button type="button" class="s11-text-button" data-s11-open-ranking>View full Top 10</button>
             </div>
-            <div class="s11-ranking-showcase" data-s11-own-ranking></div>
+            <div class="s11-ranking-showcase s14-ranking-showcase" data-s11-own-ranking></div>
           </section>
 
-          <aside class="s11-profile__side">
-            <section class="s11-category-section" aria-labelledby="s11-categories-title">
+          <aside class="s11-profile__side s14-profile__side">
+            <section class="s11-category-section s14-category-section" aria-labelledby="s11-categories-title" data-s14-profile-categories>
               <div class="s11-section-heading s11-section-heading--compact">
                 <span><small>Curated by you</small><strong id="s11-categories-title">Custom profile showcases</strong></span>
                 <span class="s11-count-pill">3 categories</span>
@@ -643,7 +661,7 @@
               <div class="s11-category-detail" data-s11-own-category-detail></div>
             </section>
 
-            <section class="s11-activity-section" aria-labelledby="s11-activity-title">
+            <section class="s11-activity-section s14-activity-section" aria-labelledby="s11-activity-title" data-s14-profile-activity>
               <div class="s11-section-heading s11-section-heading--compact">
                 <span><small>What changed</small><strong id="s11-activity-title">Recent activity</strong></span>
               </div>
@@ -665,8 +683,8 @@
 
   function socialMarkup() {
     return `
-      <section class="s11-social-stage s12-social-stage s13-social-stage" data-s11-social-stage aria-label="Social product journey">
-        <header class="s11-social-stage__header s12-social-stage__header s13-social-stage__header">
+      <section class="s11-social-stage s12-social-stage s13-social-stage s14-social-stage" data-s11-social-stage aria-label="Social product journey">
+        <header class="s11-social-stage__header s12-social-stage__header s13-social-stage__header s14-social-stage__header">
           <span class="s11-social-stage__brand"><small>Inkwell social</small><strong data-s11-social-view-title>Following activity</strong></span>
           <div class="s11-social-tabs" role="tablist" aria-label="Social view">
             <button type="button" role="tab" data-s11-social-tab="following" aria-selected="true">Following</button>
@@ -683,51 +701,58 @@
 
         <div class="s11-social-viewport" data-s11-social-viewport>
           <section class="s11-social-view is-active" data-s11-social-view="following" role="tabpanel" aria-label="Following activity">
-            <header class="s11-view-heading s12-view-heading s13-view-heading">
-              <span><small>Latest from people you chose</small><strong>Following</strong><p>Nine equal updates. Each card shows who changed what, where it belongs, and one reason the update may be worth opening.</p></span>
+            <header class="s11-view-heading s12-view-heading s13-view-heading s14-view-heading">
+              <span><small>Latest from people you chose</small><strong>Following</strong><p>Nine visual updates. Every card makes the story cover, the changed layer, and the reason to open it immediately scannable.</p></span>
               <span class="s11-count-pill">9 updates</span>
             </header>
-            <div class="s13-following-grid" data-s11-following-grid role="feed" aria-label="Updates from followed readers"></div>
+            <div class="s13-following-grid s14-following-grid" data-s11-following-grid role="feed" aria-label="Updates from followed readers"></div>
           </section>
 
           <section class="s11-social-view" data-s11-social-view="foryou" role="tabpanel" aria-label="For You discovery" aria-hidden="true" inert>
-            <header class="s11-view-heading s12-view-heading s13-view-heading">
-              <span><small>Ideas before profiles</small><strong>For You</strong><p>Discover one public reflection, moment, quote, character note, ranking, or thought first—then decide whether the reader behind it is interesting.</p></span>
-              <span class="s11-count-pill">3 content signals</span>
+            <header class="s11-view-heading s12-view-heading s13-view-heading s14-view-heading s14-view-heading--foryou">
+              <span><small>One story layer at a time</small><strong>For You</strong><p>Scroll through one immersive card per idea. Open the saved layer, visit the reader, or keep moving without losing your place.</p></span>
+              <span class="s11-count-pill" data-s14-for-you-count>1 / 5</span>
             </header>
-            <div class="s13-for-you-stage" data-s11-for-you-results></div>
+            <div class="s13-for-you-stage s14-for-you-stage" data-s11-for-you-results></div>
           </section>
 
           <section class="s11-social-view" data-s11-social-view="search" role="tabpanel" aria-label="Search" aria-hidden="true" inert>
-            <header class="s11-view-heading s11-view-heading--search s12-view-heading s13-view-heading">
-              <span><small>Search with a clear intention</small><strong>Find content, readers, or stories</strong><p>Use Discover for public artifacts, Readers for matching profiles, and Stories for direct title results.</p></span>
-              <span class="s11-count-pill">3 result views</span>
+            <header class="s11-view-heading s11-view-heading--search s12-view-heading s13-view-heading s14-view-heading s14-view-heading--search">
+              <span><small>Search by story layer or reader</small><strong>Find the exact kind of result</strong><p>Start broad, then narrow by result type, story, and sort order. The active choices stay visible above the results.</p></span>
+              <span class="s11-count-pill" data-s14-search-count>6 results</span>
             </header>
-            <div class="s13-search-controls">
-              <div class="s11-search-box s13-search-box">
-                <label for="s11-reader-search">Search a username, story, theme, tag, character, or ranking</label>
+
+            <div class="s14-search-toolbar">
+              <div class="s11-search-box s13-search-box s14-search-box">
+                <label for="s11-reader-search">Search a story, reader, character, theme, ranking, or note</label>
                 <div class="s11-search-input-shell"><span aria-hidden="true">⌕</span><input id="s11-reader-search" data-s11-search-input type="search" value="Tokyo Ghoul:re" autocomplete="off"></div>
                 <div class="s11-search-suggestions" aria-label="Suggested searches">
                   <button type="button" data-s11-search-suggestion="Tokyo Ghoul:re">Tokyo Ghoul:re</button>
-                  <button type="button" data-s11-search-suggestion="Favourite protagonists">Favourite protagonists</button>
-                  <button type="button" data-s11-search-suggestion="Identity">Identity</button>
+                  <button type="button" data-s11-search-suggestion="Ken Kaneki">Ken Kaneki</button>
+                  <button type="button" data-s11-search-suggestion="Memory">Memory</button>
                 </div>
               </div>
-              <div class="s13-search-mode-block">
-                <span class="s13-filter-label">Show results as</span>
-                <div class="s13-search-modes" role="tablist" aria-label="Search result type">
-                  <button type="button" role="tab" data-s13-search-mode="discover" aria-selected="true">Discover</button>
-                  <button type="button" role="tab" data-s13-search-mode="readers" aria-selected="false">Readers</button>
-                  <button type="button" role="tab" data-s13-search-mode="stories" aria-selected="false">Stories</button>
-                </div>
-              </div>
-              <div class="s13-search-filter-block">
-                <span class="s13-filter-label" data-s13-search-filter-label>Content type</span>
-                <div class="s13-search-filters" data-s13-search-filters role="radiogroup" aria-label="Search filter"></div>
+
+              <div class="s14-search-selects">
+                <label><span>Story</span><select data-s14-search-story aria-label="Filter search results by story"></select></label>
+                <label><span>Sort by</span><select data-s14-search-sort aria-label="Sort search results"><option value="relevance">Best match</option><option value="recent">Recently updated</option><option value="saved">Most saved</option><option value="reader">Reader match</option></select></label>
               </div>
             </div>
-            <div class="s11-search-summary s13-search-summary" data-s11-search-summary></div>
-            <div class="s13-search-results" data-s11-search-results></div>
+
+            <div class="s13-search-modes s14-search-typebar" role="tablist" aria-label="Result type">
+              <button type="button" role="tab" data-s13-search-mode="all" aria-selected="true">All</button>
+              <button type="button" role="tab" data-s13-search-mode="stories" aria-selected="false">Stories</button>
+              <button type="button" role="tab" data-s13-search-mode="readers" aria-selected="false">Readers</button>
+              <button type="button" role="tab" data-s13-search-mode="moment" aria-selected="false">Moments</button>
+              <button type="button" role="tab" data-s13-search-mode="character" aria-selected="false">Characters</button>
+              <button type="button" role="tab" data-s13-search-mode="reflection" aria-selected="false">Reflections</button>
+              <button type="button" role="tab" data-s13-search-mode="quote" aria-selected="false">Quotes</button>
+              <button type="button" role="tab" data-s13-search-mode="thought" aria-selected="false">Thoughts</button>
+            </div>
+
+            <div class="s14-search-active" data-s13-search-filters aria-live="polite"></div>
+            <div class="s11-search-summary s13-search-summary s14-search-summary" data-s11-search-summary></div>
+            <div class="s13-search-results s14-search-results" data-s11-search-results></div>
           </section>
 
           <section class="s11-social-view" data-s11-social-view="profile" aria-label="Selected reader profile" aria-hidden="true" inert data-s11-reader-profile></section>
@@ -807,6 +832,10 @@
       searchModes: qa("[data-s13-search-mode]"),
       searchFilterContainer: q("[data-s13-search-filters]"),
       searchFilterLabel: q("[data-s13-search-filter-label]"),
+      searchStorySelect: q("[data-s14-search-story]"),
+      searchSortSelect: q("[data-s14-search-sort]"),
+      searchCount: q("[data-s14-search-count]"),
+      forYouCount: q("[data-s14-for-you-count]"),
       searchSummary: q("[data-s11-search-summary]"),
       readerProfile: q("[data-s11-reader-profile]"),
       readerLibrary: q("[data-s11-reader-library]"),
@@ -844,13 +873,13 @@
         userLocks.spoiler = true;
       }
       if (target.matches("[data-s11-social-tab], [data-s11-back-social], [data-s11-open-library], [data-s11-open-story], [data-s13-open-artifact], [data-s13-feed-open]")) userLocks.socialView = true;
-      if (target.matches("[data-s13-for-you-select]")) userLocks.forYouArtifact = true;
+      if (target.matches("[data-s13-for-you-select], [data-s14-for-you-dot]")) userLocks.forYouArtifact = true;
       if (target.closest("[data-s11-profile-key]")) {
         userLocks.profile = true;
         userLocks.socialView = true;
       }
       if (target.matches("[data-s11-story-layer]")) userLocks.storyLayer = true;
-      if (target.matches("[data-s11-search-input], [data-s11-search-suggestion], [data-s13-search-mode], [data-s13-search-filter]")) userLocks.search = true;
+      if (target.matches("[data-s11-search-input], [data-s11-search-suggestion], [data-s13-search-mode], [data-s13-search-filter], [data-s14-search-story], [data-s14-search-sort]")) userLocks.search = true;
       if (target.matches("[data-s11-profile-category]")) userLocks.profileCategory = true;
     }, { capture: true, passive: true });
 
@@ -899,22 +928,32 @@
       listen(button, "keydown", (event) => handleRovingTabKey(event, elements.searchModes, index));
     });
 
-    listen(elements.searchFilterContainer, "click", (event) => {
-      const button = event.target.closest("[data-s13-search-filter]");
-      if (!button) return;
-      state.searchFilter = button.dataset.s13SearchFilter || "all";
+    listen(elements.searchStorySelect, "change", () => {
+      state.searchStory = elements.searchStorySelect.value || "all";
       renderSearchResults(true);
     });
 
-    listen(elements.searchFilterContainer, "keydown", (event) => {
-      const button = event.target.closest("[data-s13-search-filter]");
-      if (!button) return;
-      const buttons = qa("[data-s13-search-filter]", elements.searchFilterContainer);
-      handleRovingRadioKey(event, buttons, buttons.indexOf(button), (next) => next.click());
+    listen(elements.searchSortSelect, "change", () => {
+      state.searchSort = elements.searchSortSelect.value || "relevance";
+      renderSearchResults(true);
+    });
+
+    listen(elements.searchFilterContainer, "click", (event) => {
+      const chip = event.target.closest("[data-s14-clear-search-filter]");
+      if (!chip) return;
+      const key = chip.dataset.s14ClearSearchFilter;
+      if (key === "story") state.searchStory = "all";
+      if (key === "type") state.searchMode = "all";
+      if (key === "query") {
+        state.searchQuery = "";
+        if (elements.searchInput) elements.searchInput.value = "";
+      }
+      renderSearchResults(true);
     });
 
     listen(elements.socialStage, "click", handleSocialStageClick);
     listen(elements.socialStage, "keydown", handleSocialStageKeydown);
+    setupForYouFeedInteractions();
 
     listen(document, "keydown", (event) => {
       if (event.key !== "Escape") return;
@@ -949,14 +988,15 @@
       state.searchQuery = value;
       state.searchMode = inferSearchMode(value);
       state.searchFilter = "all";
+      state.searchStory = "all";
       if (elements.searchInput) elements.searchInput.value = value;
       renderSearchResults(true);
       return;
     }
 
-    const forYouChoice = event.target.closest("[data-s13-for-you-select]");
+    const forYouChoice = event.target.closest("[data-s13-for-you-select], [data-s14-for-you-dot]");
     if (forYouChoice) {
-      const index = Number(forYouChoice.dataset.s13ForYouSelect || 0);
+      const index = Number(forYouChoice.dataset.s13ForYouSelect ?? forYouChoice.dataset.s14ForYouDot ?? 0);
       setForYouArtifact(index, true, "user");
       return;
     }
@@ -1072,14 +1112,18 @@
     timeline.to([elements.composer, elements.livePreview, elements.sharedPost], { autoAlpha: 0, y: -18, scale: 0.982, duration: 0.42, ease: "power2.inOut" }, "identity-transition");
     timeline.set(elements.scenes.identity, { visibility: "visible" }, "identity-transition+=0.06");
     timeline.to(elements.scenes.identity, { autoAlpha: 1, duration: 0.34, ease: "power2.out" }, "identity-transition+=0.08");
-    timeline.fromTo(elements.profile, { autoAlpha: 0, y: 22, scale: 0.984 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.62, ease: "power3.out" }, "identity-transition+=0.12");
+    timeline.fromTo(elements.profile, { autoAlpha: 0, y: 22, scale: 0.984 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.58, ease: "power3.out" }, "identity-transition+=0.12");
     timeline.to(elements.scenes.control, { autoAlpha: 0, duration: 0.22 }, "identity-transition+=0.26");
 
     timeline.addLabel("identity", ACT_TIMES.identity);
-    timeline.fromTo(qa(".s11-profile__identity > *, .s11-stat", elements.profile), { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: 0.34, stagger: 0.035, ease: "power3.out" }, "identity");
-    timeline.fromTo(qa(".s11-rank-card", elements.profile), { autoAlpha: 0, y: 16 }, { autoAlpha: 1, y: 0, duration: 0.4, stagger: 0.055, ease: "power3.out" }, "identity+=0.28");
-    timeline.fromTo(qa(".s11-category-tab, .s11-category-detail", elements.profile), { autoAlpha: 0, x: 12 }, { autoAlpha: 1, x: 0, duration: 0.36, stagger: 0.05, ease: "power3.out" }, "identity+=0.54");
-    timeline.fromTo(qa(".s11-activity-item", elements.profile), { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: 0.32, stagger: 0.05, ease: "power3.out" }, "identity+=0.76");
+    timeline.fromTo(q("[data-s14-profile-intro]", elements.profile), { autoAlpha: 0, y: 12 }, { autoAlpha: 1, y: 0, duration: 0.36, ease: "power3.out" }, "identity");
+    timeline.fromTo(qa(".s11-stat", elements.profile), { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: 0.3, stagger: 0.045, ease: "power3.out" }, "identity+=0.16");
+    timeline.fromTo(q("[data-s14-profile-ranking]", elements.profile), { autoAlpha: 0, y: 16 }, { autoAlpha: 1, y: 0, duration: 0.36, ease: "power3.out" }, "identity+=0.34");
+    timeline.fromTo(qa(".s11-rank-card", elements.profile), { autoAlpha: 0, y: 18, scale: 0.985 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.4, stagger: 0.055, ease: "power3.out" }, "identity+=0.48");
+    timeline.fromTo(q("[data-s14-profile-categories]", elements.profile), { autoAlpha: 0, x: 14 }, { autoAlpha: 1, x: 0, duration: 0.4, ease: "power3.out" }, "identity+=0.9");
+    timeline.fromTo(qa(".s11-category-tab, .s11-category-detail", elements.profile), { autoAlpha: 0, x: 10 }, { autoAlpha: 1, x: 0, duration: 0.3, stagger: 0.045, ease: "power3.out" }, "identity+=1.02");
+    timeline.fromTo(q("[data-s14-profile-activity]", elements.profile), { autoAlpha: 0, y: 12 }, { autoAlpha: 1, y: 0, duration: 0.36, ease: "power3.out" }, "identity+=1.38");
+    timeline.fromTo(qa(".s11-activity-item", elements.profile), { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: 0.28, stagger: 0.06, ease: "power3.out" }, "identity+=1.48");
 
     timeline.addLabel("social-transition", ACT_TIMES.socialTransition);
     timeline.to(identityCopy, { autoAlpha: 0, y: -16, duration: 0.34, ease: "power2.inOut" }, "social-transition");
@@ -1101,7 +1145,7 @@
     }
 
     trigger = ScrollTrigger.create({
-      id: "inkwell-social-cinema-v11",
+      id: "inkwell-social-cinema-v14",
       trigger: section,
       animation: timeline,
       pin: elements.pin,
@@ -1143,6 +1187,7 @@
     });
 
     gsap.set(elements.profile, { autoAlpha: 0, x: 0, y: 22, scale: 0.984 });
+    gsap.set([q("[data-s14-profile-intro]", elements.profile), q("[data-s14-profile-ranking]", elements.profile), q("[data-s14-profile-categories]", elements.profile), q("[data-s14-profile-activity]", elements.profile), ...qa(".s11-stat, .s11-rank-card, .s11-category-tab, .s11-category-detail, .s11-activity-item", elements.profile)], { autoAlpha: 0 });
     gsap.set(elements.socialStage, { autoAlpha: 0, y: 20, scale: 0.986 });
     setActiveAct("control", true);
     lastDemoSignature = "";
@@ -1176,10 +1221,11 @@
     else if (time >= DEMO_THRESHOLDS.forYouEnter) demoState.socialView = "foryou";
     else if (demoState.socialView === "search" && time <= DEMO_THRESHOLDS.searchLeave) demoState.socialView = "foryou";
 
-    if (time <= DEMO_THRESHOLDS.forYouSecondLeave) demoState.forYouArtifact = 0;
-    else if (time >= DEMO_THRESHOLDS.forYouThirdEnter) demoState.forYouArtifact = 2;
-    else if (demoState.forYouArtifact === 0 && time >= DEMO_THRESHOLDS.forYouSecondEnter) demoState.forYouArtifact = 1;
-    else if (demoState.forYouArtifact === 2 && time <= DEMO_THRESHOLDS.forYouThirdLeave) demoState.forYouArtifact = 1;
+    if (time < DEMO_THRESHOLDS.forYouSecondEnter) demoState.forYouArtifact = 0;
+    else if (time < DEMO_THRESHOLDS.forYouThirdEnter) demoState.forYouArtifact = 1;
+    else if (time < DEMO_THRESHOLDS.forYouFourthEnter) demoState.forYouArtifact = 2;
+    else if (time < DEMO_THRESHOLDS.forYouFifthEnter) demoState.forYouArtifact = 3;
+    else demoState.forYouArtifact = 4;
 
     demoState.storyLayer = "quotes";
 
@@ -1373,47 +1419,28 @@
 
   function renderReaderResults(animate = false) {
     if (!elements.forYouResults) return;
-    const count = Math.min(3, DISCOVERY_ARTIFACTS.length);
-    const activeIndex = ((Number(state.forYouArtifact) % count) + count) % count;
-    state.forYouArtifact = activeIndex;
-    const active = DISCOVERY_ARTIFACTS[activeIndex];
-    const alternates = Array.from({ length: count - 1 }, (_, offset) =>
-      (activeIndex + offset + 1) % count,
-    );
+    const count = Math.min(5, DISCOVERY_ARTIFACTS.length);
+    state.forYouArtifact = clamp(Math.round(Number(state.forYouArtifact) || 0), 0, count - 1);
 
-    elements.forYouResults.innerHTML = `
-      <div class="s13-for-you-main">${forYouArtifactMarkup(active, activeIndex)}</div>
-      <aside class="s13-for-you-rail" aria-label="More recommended public content">
-        ${alternates.map((index) => forYouPreviewMarkup(DISCOVERY_ARTIFACTS[index], index)).join("")}
-      </aside>`;
-
-    renderImages(elements.forYouResults);
-
-    if (animate && gsap) {
-      const main = q(".s13-for-you-main", elements.forYouResults);
-      const previews = qa(".s13-for-you-preview", elements.forYouResults);
-      gsap.fromTo(main, { autoAlpha: 0, y: 14, scale: 0.992 }, {
-        autoAlpha: 1,
-        y: 0,
-        scale: 1,
-        duration: 0.38,
-        ease: "power3.out",
-        overwrite: "auto",
-      });
-      gsap.fromTo(previews, { autoAlpha: 0, x: 12 }, {
-        autoAlpha: 1,
-        x: 0,
-        duration: 0.3,
-        stagger: 0.055,
-        ease: "power3.out",
-        overwrite: "auto",
-      });
+    if (!q("[data-s14-for-you-feed]", elements.forYouResults)) {
+      elements.forYouResults.innerHTML = `
+        <div class="s14-for-you-feed premium-scrollbar" data-s14-for-you-feed tabindex="0" aria-label="For You recommendations. Scroll vertically to move between items.">
+          ${DISCOVERY_ARTIFACTS.slice(0, count).map((artifact, index) => forYouArtifactMarkup(artifact, index)).join("")}
+        </div>
+        <nav class="s14-for-you-dots" aria-label="For You item">
+          ${Array.from({ length: count }, (_, index) => `<button type="button" data-s14-for-you-dot="${index}" aria-label="Show recommendation ${index + 1}" aria-current="${index === state.forYouArtifact ? "true" : "false"}"><span></span></button>`).join("")}
+        </nav>`;
+      renderImages(elements.forYouResults);
+      renderArtifactMedia(elements.forYouResults);
+      setupForYouFeedInteractions(true);
     }
+
+    syncForYouStage(animate);
   }
 
   function setForYouArtifact(index, animate, source = "system") {
-    const count = Math.min(3, DISCOVERY_ARTIFACTS.length);
-    const normalized = ((Math.round(Number(index) || 0) % count) + count) % count;
+    const count = Math.min(5, DISCOVERY_ARTIFACTS.length);
+    const normalized = clamp(Math.round(Number(index) || 0), 0, count - 1);
     state.forYouArtifact = normalized;
     renderReaderResults(animate);
     if (source === "user") {
@@ -1430,51 +1457,81 @@
     const mode = state.searchMode;
     const query = normalizeText(state.searchQuery);
     const tokens = query.split(/\s+/).filter(Boolean);
-    let markup = "";
-    let count = 0;
+    const storyFilter = normalizeText(state.searchStory || "all");
+    const matchesStory = (title) => storyFilter === "all" || normalizeText(title) === storyFilter;
+
+    let cards = [];
     let summary = "";
 
-    if (mode === "discover") {
-      const candidates = DISCOVERY_ARTIFACTS
-        .map((artifact) => ({ artifact, score: scoreArtifact(artifact, tokens) }))
-        .filter(({ artifact }) => state.searchFilter === "all" || normalizeText(artifact.type) === normalizeText(state.searchFilter))
-        .sort((a, b) => b.score - a.score);
-      const exact = candidates.filter((item) => item.score > 0);
-      const results = (exact.length ? exact : candidates).slice(0, 6);
-      count = exact.length || results.length;
-      markup = `<div class="s13-search-grid s13-search-grid--discover">${results.map(({ artifact }) => searchArtifactMarkup(artifact)).join("")}</div>`;
-      summary = exact.length
-        ? `${exact.length} public artifact${exact.length === 1 ? "" : "s"} matched “${state.searchQuery || "your taste"}”.`
-        : `No exact content match. Showing the closest public artifacts by story, theme, and profile context.`;
-    } else if (mode === "readers") {
-      const results = scoreReaders(tokens, state.searchFilter);
-      const exact = results.filter((item) => item.score > 0);
-      const shown = (exact.length ? exact : results).slice(0, 3);
-      count = exact.length || shown.length;
-      markup = `<div class="s13-search-grid s13-search-grid--readers">${shown.map((item) => searchResultMarkup(item.key, item.reason)).join("")}</div>`;
-      summary = exact.length
-        ? `${exact.length} reader${exact.length === 1 ? "" : "s"} matched through ${searchFilterLabel(state.searchFilter)}.`
-        : `No exact reader match. Showing the closest profiles by public taste.`;
-    } else {
-      const results = scoreStories(tokens, state.searchFilter);
-      const exact = results.filter((item) => item.score > 0);
-      const shown = (exact.length ? exact : results).slice(0, 6);
-      count = exact.length || shown.length;
-      markup = `<div class="s13-search-grid s13-search-grid--stories">${shown.map((item) => searchStoryMarkup(item.story, item.context)).join("")}</div>`;
-      summary = exact.length
-        ? `${exact.length} stor${exact.length === 1 ? "y" : "ies"} matched “${state.searchQuery || "your search"}”.`
-        : `No exact story match. Showing the closest titles connected to public profiles and saved layers.`;
+    const artifactCandidates = DISCOVERY_ARTIFACTS
+      .map((artifact, index) => ({
+        kind: "artifact",
+        artifact,
+        index,
+        score: scoreArtifact(artifact, tokens),
+        recent: Number(artifact.updatedHours ?? 999),
+        saved: Number(artifact.popularity ?? 0),
+        reader: scoreValues([PROFILE_DATA[artifact.profile].match, ...artifact.tags], tokens),
+      }))
+      .filter(({ artifact }) => matchesStory(artifact.story))
+      .filter(({ artifact }) => ["all", "stories", "readers"].includes(mode) || normalizeText(artifact.type) === normalizeText(mode));
+
+    const readerCandidates = scoreReaders(tokens, "all")
+      .map((item, index) => ({ kind: "reader", ...item, index, recent: 12 + index * 8, saved: 80 - index * 5, reader: item.score + 4 }))
+      .filter(({ key }) => state.searchStory === "all" || PROFILE_DATA[key].topStories.some(matchesStory));
+
+    const storyCandidates = scoreStories(tokens, "all")
+      .map((item, index) => ({ kind: "story", ...item, index, recent: 18 + index * 4, saved: Math.max(45, 96 - index * 4), reader: item.score + item.profiles.size }))
+      .filter(({ story }) => matchesStory(story.title));
+
+    if (mode === "readers") cards = readerCandidates;
+    else if (mode === "stories") cards = storyCandidates;
+    else if (["moment", "character", "reflection", "quote", "thought"].includes(mode)) cards = artifactCandidates;
+    else {
+      cards = [
+        ...artifactCandidates.slice(0, 4),
+        ...readerCandidates.slice(0, 1),
+        ...storyCandidates.slice(0, 1),
+      ];
     }
 
-    elements.searchResults.innerHTML = markup;
+    const sorter = {
+      relevance: (a, b) => (b.score || 0) - (a.score || 0),
+      recent: (a, b) => (a.recent || 999) - (b.recent || 999),
+      saved: (a, b) => (b.saved || 0) - (a.saved || 0),
+      reader: (a, b) => (b.reader || 0) - (a.reader || 0),
+    }[state.searchSort] || ((a, b) => (b.score || 0) - (a.score || 0));
+
+    cards.sort(sorter);
+    const shown = cards.slice(0, mode === "readers" ? 3 : 6);
+
+    const markup = shown.map((item) => {
+      if (item.kind === "artifact") return searchArtifactMarkup(item.artifact);
+      if (item.kind === "reader") return searchResultMarkup(item.key, item.reason);
+      return searchStoryMarkup(item.story, item.context);
+    }).join("");
+
+    const gridClass = mode === "readers"
+      ? "s13-search-grid--readers"
+      : mode === "stories"
+        ? "s13-search-grid--stories"
+        : "s13-search-grid--discover";
+
+    elements.searchResults.innerHTML = `<div class="s13-search-grid s14-search-grid ${gridClass}">${markup || searchEmptyMarkup()}</div>`;
     renderImages(elements.searchResults);
-    setText(elements.searchSummary, `${summary} ${count ? `Showing ${Math.min(count, mode === "readers" ? 3 : 6)}.` : ""}`.trim());
+
+    const typeLabel = searchModeLabel(mode);
+    const storyLabel = state.searchStory === "all" ? "all stories" : state.searchStory;
+    summary = `${shown.length} ${typeLabel.toLowerCase()} result${shown.length === 1 ? "" : "s"} across ${storyLabel}. Sorted by ${searchSortLabel(state.searchSort)}.`;
+    setText(elements.searchSummary, summary);
+    setText(elements.searchCount, `${shown.length} result${shown.length === 1 ? "" : "s"}`);
 
     if (animate && gsap) {
-      gsap.fromTo(qa(".s13-search-card", elements.searchResults), { autoAlpha: 0, y: 9 }, {
+      gsap.fromTo(qa(".s13-search-card", elements.searchResults), { autoAlpha: 0, y: 10, scale: 0.992 }, {
         autoAlpha: 1,
         y: 0,
-        duration: 0.3,
+        scale: 1,
+        duration: 0.32,
         stagger: 0.045,
         ease: "power3.out",
         overwrite: "auto",
@@ -1483,11 +1540,10 @@
   }
 
   function setSearchMode(mode, animate, source = "system") {
-    const normalized = ["discover", "readers", "stories"].includes(mode) ? mode : "discover";
-    state.searchMode = normalized;
-    state.searchFilter = "all";
+    const allowed = ["all", "stories", "readers", "moment", "character", "reflection", "quote", "thought"];
+    state.searchMode = allowed.includes(mode) ? mode : "all";
     renderSearchResults(animate);
-    if (source === "user") announce(`${normalized === "discover" ? "Discover" : normalized === "readers" ? "Readers" : "Stories"} search results selected.`);
+    if (source === "user") announce(`${searchModeLabel(state.searchMode)} results selected.`);
   }
 
   function updateSearchModeTabs() {
@@ -1500,28 +1556,26 @@
   }
 
   function renderSearchFilters() {
+    if (elements.searchStorySelect) {
+      const titles = mergeUniqueStories(FALLBACK_STORIES, stories)
+        .map((story) => story.title)
+        .filter((title) => PREFERRED_STORY_TITLES.includes(title))
+        .slice(0, 14);
+      const signature = titles.join("|");
+      if (elements.searchStorySelect.dataset.s14Options !== signature) {
+        elements.searchStorySelect.innerHTML = `<option value="all">All stories</option>${titles.map((title) => `<option value="${escapeHtml(title)}">${escapeHtml(title)}</option>`).join("")}`;
+        elements.searchStorySelect.dataset.s14Options = signature;
+      }
+      elements.searchStorySelect.value = state.searchStory;
+    }
+    if (elements.searchSortSelect) elements.searchSortSelect.value = state.searchSort;
+
     if (!elements.searchFilterContainer) return;
-    const configs = {
-      discover: {
-        label: "Content type",
-        options: [["all", "All"], ["reflection", "Reflections"], ["quote", "Quotes"], ["moment", "Moments"], ["character", "Characters"], ["ranking", "Rankings"], ["note", "Notes"], ["thought", "Thoughts"]],
-      },
-      readers: {
-        label: "Match profile by",
-        options: [["all", "All fields"], ["people", "Username"], ["stories", "Story"], ["themes", "Theme"], ["tags", "Tag"], ["rankings", "Ranking"]],
-      },
-      stories: {
-        label: "Story connection",
-        options: [["all", "All"], ["top", "Top ranked"], ["reflections", "Reflections"], ["layers", "Saved layers"]],
-      },
-    };
-    const config = configs[state.searchMode] || configs.discover;
-    if (!config.options.some(([value]) => value === state.searchFilter)) state.searchFilter = "all";
-    setText(elements.searchFilterLabel, config.label);
-    elements.searchFilterContainer.innerHTML = config.options.map(([value, label]) => {
-      const selected = value === state.searchFilter;
-      return `<button type="button" role="radio" data-s13-search-filter="${escapeHtml(value)}" aria-checked="${selected}" tabindex="${selected ? 0 : -1}">${escapeHtml(label)}</button>`;
-    }).join("");
+    const chips = [];
+    if (state.searchQuery) chips.push(`<button type="button" data-s14-clear-search-filter="query">Query: ${escapeHtml(state.searchQuery)} <span aria-hidden="true">×</span></button>`);
+    if (state.searchMode !== "all") chips.push(`<button type="button" data-s14-clear-search-filter="type">Type: ${escapeHtml(searchModeLabel(state.searchMode))} <span aria-hidden="true">×</span></button>`);
+    if (state.searchStory !== "all") chips.push(`<button type="button" data-s14-clear-search-filter="story">Story: ${escapeHtml(state.searchStory)} <span aria-hidden="true">×</span></button>`);
+    elements.searchFilterContainer.innerHTML = chips.length ? `<span>Active filters</span>${chips.join("")}` : `<span>Showing all public story layers</span>`;
   }
 
   function scoreReaders(tokens, filter) {
@@ -1879,7 +1933,7 @@
       });
       return selected;
     } catch (error) {
-      console.warn("Inkwell social V13: database stories unavailable.", error);
+      console.warn("Inkwell social V14: database stories unavailable.", error);
       return [...FALLBACK_STORIES];
     }
   }
@@ -1917,7 +1971,7 @@
     const profile = PROFILE_DATA[item.profile];
     const story = getStoryByTitle(item.story);
     const action = activityActionCopy(item, story);
-    return `<article class="s13-following-card" data-s13-feed-tone="${escapeHtml(item.tone || "default")}">
+    return `<article class="s13-following-card s14-following-card" data-s13-feed-tone="${escapeHtml(item.tone || "default")}">
       <button type="button" class="s13-following-card__button" data-s13-feed-open="${index}" aria-label="Open ${escapeHtml(item.type)} from ${escapeHtml(profile.name)}">
         <header>
           <span class="s11-avatar s11-avatar--small" style="${avatarStyle(item.profile)}">${escapeHtml(profile.initial)}</span>
@@ -1955,37 +2009,40 @@
   function forYouArtifactMarkup(artifact, index) {
     const profile = PROFILE_DATA[artifact.profile];
     const story = getStoryByTitle(artifact.story);
-    const ranking = artifact.ranking?.length
-      ? `<ol class="s13-artifact-ranking">${artifact.ranking.map((item, rank) => `<li><b>${rank + 1}</b><span>${escapeHtml(item)}</span></li>`).join("")}</ol>`
-      : "";
-    return `<article class="s13-for-you-card" data-s13-artifact-type="${escapeHtml(normalizeText(artifact.type))}">
-      <div class="s13-for-you-card__visual">
-        ${storyCoverMarkup(story, "s13-for-you-card__cover")}
-        <span class="s13-artifact-position">${String(index + 1).padStart(2, "0")} / 03</span>
+    const type = normalizeText(artifact.type);
+    return `<article class="s14-for-you-slide" data-s14-for-you-index="${index}" data-s14-artifact-type="${escapeHtml(type)}" aria-label="${escapeHtml(artifact.type)} recommendation ${index + 1} of ${Math.min(5, DISCOVERY_ARTIFACTS.length)}">
+      <div class="s14-for-you-slide__visual">
+        <img class="s14-for-you-slide__image" data-s14-artifact-media="${escapeHtml(artifact.mediaKey || "")}" alt="Visual for ${escapeHtml(artifact.title)}" hidden>
+        ${storyCoverMarkup(story, "s14-for-you-slide__fallback")}
+        <span class="s14-for-you-slide__scrim" aria-hidden="true"></span>
+        <span class="s14-for-you-slide__type">${escapeHtml(artifact.type)}</span>
+        <span class="s14-for-you-slide__position">${String(index + 1).padStart(2, "0")} / ${String(Math.min(5, DISCOVERY_ARTIFACTS.length)).padStart(2, "0")}</span>
       </div>
-      <div class="s13-for-you-card__content">
-        <span class="s13-reason-chip"><b aria-hidden="true">↔</b>${escapeHtml(artifact.reason)}</span>
+
+      <div class="s14-for-you-slide__content">
+        <span class="s13-reason-chip s14-reason-chip"><b aria-hidden="true">↔</b>${escapeHtml(artifact.reason)}</span>
         <span class="s13-artifact-kicker">${escapeHtml(artifact.type)} · ${escapeHtml(story.title)}</span>
         <h4>${escapeHtml(artifact.title)}</h4>
         <p>${escapeHtml(artifact.excerpt)}</p>
-        ${ranking}
         <div class="s13-artifact-tags">${artifact.tags.map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}</div>
-        <footer>
-          <button type="button" class="s13-author-button" data-s13-open-author="${escapeHtml(artifact.profile)}"><span class="s11-avatar s11-avatar--small" style="${avatarStyle(artifact.profile)}">${escapeHtml(profile.initial)}</span><span><strong>${escapeHtml(profile.name)}</strong><small>${escapeHtml(profile.label)}</small></span></button>
-          <span class="s13-artifact-actions"><button type="button" class="s13-secondary-action" data-s11-open-story="${escapeHtml(story.title)}" data-s13-story-owner="${escapeHtml(artifact.profile)}">View story</button><button type="button" class="s13-primary-action" data-s13-open-artifact="${escapeHtml(artifact.id)}">Open ${escapeHtml(artifact.type.toLowerCase())}</button></span>
+
+        <footer class="s14-for-you-slide__footer">
+          <button type="button" class="s14-author-card" data-s13-open-author="${escapeHtml(artifact.profile)}" aria-label="Open ${escapeHtml(profile.name)} profile">
+            <span class="s11-avatar" style="${avatarStyle(artifact.profile)}">${escapeHtml(profile.initial)}</span>
+            <span><small>${escapeHtml(profile.label)}</small><strong>${escapeHtml(profile.name)}</strong><em>View profile</em></span>
+          </button>
+          <div class="s14-for-you-actions">
+            <button type="button" class="s13-secondary-action" data-s11-open-story="${escapeHtml(story.title)}" data-s13-story-owner="${escapeHtml(artifact.profile)}">View story</button>
+            <button type="button" class="s13-primary-action" data-s13-open-artifact="${escapeHtml(artifact.id)}">Open ${escapeHtml(artifact.type.toLowerCase())}</button>
+          </div>
         </footer>
         <small class="s13-artifact-meta">${escapeHtml(artifact.meta)}</small>
       </div>
     </article>`;
   }
 
-  function forYouPreviewMarkup(artifact, index) {
-    const profile = PROFILE_DATA[artifact.profile];
-    const story = getStoryByTitle(artifact.story);
-    return `<button type="button" class="s13-for-you-preview" data-s13-for-you-select="${index}" aria-label="Show ${escapeHtml(artifact.title)} from ${escapeHtml(profile.name)}">
-      ${storyCoverMarkup(story, "s13-for-you-preview__cover")}
-      <span class="s13-for-you-preview__copy"><small>${escapeHtml(artifact.type)} · ${escapeHtml(profile.name)}</small><strong>${escapeHtml(artifact.title)}</strong><p>${escapeHtml(artifact.excerpt)}</p><span>${escapeHtml(artifact.tags.slice(0, 2).join(" · "))}</span></span>
-    </button>`;
+  function forYouPreviewMarkup() {
+    return "";
   }
 
   function searchArtifactMarkup(artifact) {
@@ -2023,9 +2080,10 @@
 
   function inferSearchMode(value) {
     const normalized = normalizeText(value);
-    if (!normalized) return "discover";
+    if (!normalized) return "all";
     if (normalized.startsWith("@") || ["kai.reads", "mira.frames", "ren.afterwords"].some((name) => normalized.includes(normalizeText(name)))) return "readers";
-    return "discover";
+    if (PREFERRED_STORY_TITLES.some((title) => normalizeText(title) === normalized)) return "stories";
+    return "all";
   }
 
   function openDiscoveryArtifact(id, animate, source = "user") {
@@ -2127,6 +2185,113 @@
   }
 
 
+  function section5MediaCandidates(key) {
+    const names = SECTION5_MEDIA[key] || [];
+    return names.map((name) => `${SECTION5_MEDIA_ROOT}/${name}`);
+  }
+
+  function renderArtifactMedia(root) {
+    qa("[data-s14-artifact-media]", root).forEach((image) => {
+      const key = image.dataset.s14ArtifactMedia || "";
+      const slide = image.closest("[data-s14-for-you-index]");
+      const artifact = DISCOVERY_ARTIFACTS[Number(slide?.dataset.s14ForYouIndex || 0)];
+      const story = getStoryByTitle(artifact?.story || "");
+      const candidates = [...section5MediaCandidates(key), story?.coverUrl].filter(Boolean);
+      setImageCandidates(image, candidates);
+    });
+  }
+
+  function setImageCandidates(image, candidates) {
+    if (!image) return;
+    const queue = Array.from(new Set(candidates.filter(Boolean)));
+    let cursor = 0;
+    const next = () => {
+      if (cursor >= queue.length) {
+        image.hidden = true;
+        image.removeAttribute("src");
+        return;
+      }
+      image.hidden = false;
+      image.src = queue[cursor++];
+    };
+    image.addEventListener("error", next, { passive: true });
+    image.addEventListener("load", () => image.closest(".s14-for-you-slide")?.classList.add("has-local-media"), { once: true });
+    next();
+  }
+
+  function setupForYouFeedInteractions(force = false) {
+    const feed = q("[data-s14-for-you-feed]", elements.forYouResults);
+    if (!feed || (feed.dataset.s14Bound === "true" && !force)) return;
+    feed.dataset.s14Bound = "true";
+
+    const syncFromScroll = () => {
+      if (suppressForYouScrollSync) return;
+      const slides = qa("[data-s14-for-you-index]", feed);
+      if (!slides.length) return;
+      const index = slides.reduce((closest, slide, slideIndex) => {
+        const distance = Math.abs(slide.offsetTop - feed.scrollTop);
+        return distance < closest.distance ? { index: slideIndex, distance } : closest;
+      }, { index: 0, distance: Number.POSITIVE_INFINITY }).index;
+      if (index === state.forYouArtifact) return;
+      userLocks.forYouArtifact = true;
+      state.forYouArtifact = index;
+      syncForYouStage(false, false);
+      announce(`${DISCOVERY_ARTIFACTS[index].type} recommendation ${index + 1} of ${Math.min(5, DISCOVERY_ARTIFACTS.length)}.`);
+    };
+
+    feed.addEventListener("scroll", () => {
+      window.clearTimeout(forYouScrollTimer);
+      forYouScrollTimer = window.setTimeout(syncFromScroll, 80);
+    }, { passive: true });
+
+    feed.addEventListener("keydown", (event) => {
+      if (!["ArrowDown", "PageDown", "ArrowUp", "PageUp", "Home", "End"].includes(event.key)) return;
+      event.preventDefault();
+      let next = state.forYouArtifact;
+      if (["ArrowDown", "PageDown"].includes(event.key)) next += 1;
+      if (["ArrowUp", "PageUp"].includes(event.key)) next -= 1;
+      if (event.key === "Home") next = 0;
+      if (event.key === "End") next = Math.min(5, DISCOVERY_ARTIFACTS.length) - 1;
+      userLocks.forYouArtifact = true;
+      setForYouArtifact(next, true, "user");
+    });
+  }
+
+  function syncForYouStage(animate, scroll = true) {
+    const count = Math.min(5, DISCOVERY_ARTIFACTS.length);
+    const index = clamp(state.forYouArtifact, 0, count - 1);
+    const feed = q("[data-s14-for-you-feed]", elements.forYouResults);
+    const slides = qa("[data-s14-for-you-index]", elements.forYouResults);
+    const dots = qa("[data-s14-for-you-dot]", elements.forYouResults);
+
+    slides.forEach((slide, slideIndex) => slide.classList.toggle("is-current", slideIndex === index));
+    dots.forEach((dot, dotIndex) => {
+      const current = dotIndex === index;
+      dot.classList.toggle("is-current", current);
+      dot.setAttribute("aria-current", current ? "true" : "false");
+    });
+    setText(elements.forYouCount, `${index + 1} / ${count}`);
+
+    if (feed && scroll) {
+      suppressForYouScrollSync = true;
+      const target = slides[index];
+      feed.scrollTo({ top: target?.offsetTop || 0, behavior: animate && !reduceMotion ? "smooth" : "auto" });
+      window.setTimeout(() => { suppressForYouScrollSync = false; }, animate ? 520 : 40);
+    }
+  }
+
+  function searchModeLabel(mode) {
+    return ({ all: "All", stories: "Stories", readers: "Readers", moment: "Moments", character: "Characters", reflection: "Reflections", quote: "Quotes", thought: "Thoughts" })[mode] || "All";
+  }
+
+  function searchSortLabel(sort) {
+    return ({ relevance: "best match", recent: "recently updated", saved: "most saved", reader: "reader match" })[sort] || "best match";
+  }
+
+  function searchEmptyMarkup() {
+    return `<div class="s14-search-empty"><span aria-hidden="true">⌕</span><strong>No exact result yet</strong><p>Try another story, remove a result-type filter, or search a reader name.</p></div>`;
+  }
+
   function renderImages(root) {
     qa(".s11-cover", root).forEach((cover) => {
       const story = getStoryByTitle(cover.dataset.storyTitle || "");
@@ -2213,7 +2378,7 @@
   }
 
   function searchFilterLabel(filter) {
-    return ({ all: "all profile fields", people: "username", stories: "story", themes: "theme", tags: "tag", rankings: "ranking" })[filter] || "all profile fields";
+    return searchModeLabel(filter);
   }
 
   function viewLabel(view) {
@@ -2340,7 +2505,9 @@
     state.following.clear();
     state.searchQuery = "Tokyo Ghoul:re";
     state.searchFilter = "all";
-    state.searchMode = "discover";
+    state.searchMode = "all";
+    state.searchStory = "all";
+    state.searchSort = "relevance";
     state.forYouArtifact = 0;
     if (elements.searchInput) elements.searchInput.value = state.searchQuery;
     demoState.audience = "private";
