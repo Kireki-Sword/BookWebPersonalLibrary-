@@ -1,5 +1,5 @@
 /* ============================================================================
-   INKWELL — SECTION 5: SOCIAL, ON YOUR TERMS (V14 PROFILE FIT / IMMERSIVE FOR YOU / SEARCH REFINEMENT)
+   INKWELL — SECTION 5: SOCIAL, ON YOUR TERMS (V15 STABLE DYNAMIC CONTENT / STACKED FOR YOU / HIT-AREA FIX)
 
    Homepage product story:
    1. Control — audience, spoilers, and a stable live preview.
@@ -20,11 +20,11 @@
   "use strict";
 
   const section = document.querySelector("#section-5-social");
-  if (!section || window.__INKWELL_SOCIAL_V14_STARTED__) return;
+  if (!section || window.__INKWELL_SOCIAL_V15_STARTED__) return;
 
-  window.__INKWELL_SOCIAL_V14_STARTED__ = true;
+  window.__INKWELL_SOCIAL_V15_STARTED__ = true;
   window.__INKWELL_SOCIAL_CINEMA_BUILD__ =
-    "2026-07-25-social-cinema-v14-immersive-feed";
+    "2026-07-25-social-cinema-v15-stable-interactions";
 
   const { gsap, ScrollTrigger } = window;
   const MANAGED_BY_HOME_JOURNEY =
@@ -49,11 +49,15 @@
     control: 0,
     identityTransition: 3.35,
     identity: 4.12,
-    socialTransition: 6.68,
-    social: 7.44,
-    end: 10.18,
+    socialTransition: 6.82,
+    social: 7.58,
+    end: 12.45,
   });
 
+  /* The V14 For You thresholds were only ~0.18 timeline seconds apart. On a
+     scrubbed parent timeline that made five items fight over one smooth-scroll
+     container. V15 gives every item a readable interval and uses a stacked
+     transition instead of a nested scrolling surface. */
   const DEMO_THRESHOLDS = Object.freeze({
     followersEnter: 1.38,
     followersLeave: 1.16,
@@ -61,14 +65,14 @@
     publicLeave: 1.78,
     spoilerEnter: 2.67,
     spoilerLeave: 2.4,
-    forYouEnter: 8.3,
-    forYouLeave: 8.04,
-    forYouSecondEnter: 8.48,
-    forYouThirdEnter: 8.66,
-    forYouFourthEnter: 8.84,
-    forYouFifthEnter: 9.02,
-    searchEnter: 9.28,
-    searchLeave: 9.08,
+    forYouEnter: 8.48,
+    forYouLeave: 8.18,
+    forYouSecondEnter: 8.98,
+    forYouThirdEnter: 9.48,
+    forYouFourthEnter: 9.98,
+    forYouFifthEnter: 10.48,
+    searchEnter: 11.08,
+    searchLeave: 10.78,
   });
 
   const SOCIAL_VIEW_ORDER = Object.freeze([
@@ -303,9 +307,9 @@
       profile: "ren",
       type: "Reflection published",
       layer: "Reflection",
-      title: "Identity after becoming unrecognizable",
-      detail: "Published a spoiler-protected reflection on fear and belonging.",
-      story: "Tokyo Ghoul",
+      title: "The choice that creates another timeline",
+      detail: "Published a spoiler-protected reflection on memory, consequence, and choosing again.",
+      story: "Steins;Gate",
       time: "5h",
       tone: "reflection",
     },
@@ -355,7 +359,7 @@
       layer: "Library",
       title: "Moved to completed",
       detail: "Updated progress, score, and the public layers saved with it.",
-      story: "Steins;Gate",
+      story: "Monster",
       time: "3d",
       tone: "library",
     },
@@ -532,8 +536,7 @@
   let primaryStory = FALLBACK_STORIES[0];
   let resizeObserver = null;
   let lastDemoSignature = "";
-  let suppressForYouScrollSync = false;
-  let forYouScrollTimer = 0;
+  let lastForYouArtifact = 0;
   const cleanupCallbacks = [];
 
   const q = (selector, root = section) => root?.querySelector(selector) || null;
@@ -863,7 +866,7 @@
     };
 
     listen(section, "pointerdown", (event) => {
-      const target = event.target.closest("button, input, a");
+      const target = event.target.closest("button, input, select, a");
       if (!target) return;
       if (target.matches("[data-social-audience]")) userLocks.audience = true;
       if (target.matches("[data-social-spoiler-toggle], [data-social-spoiler-reveal]")) userLocks.spoiler = true;
@@ -872,7 +875,7 @@
         userLocks.audience = true;
         userLocks.spoiler = true;
       }
-      if (target.matches("[data-s11-social-tab], [data-s11-back-social], [data-s11-open-library], [data-s11-open-story], [data-s13-open-artifact], [data-s13-feed-open]")) userLocks.socialView = true;
+      if (target.matches("[data-s11-social-tab], [data-s11-back-social], [data-s11-open-library], [data-s11-open-story], [data-s13-open-artifact], [data-s13-feed-open], [data-s13-open-author]")) userLocks.socialView = true;
       if (target.matches("[data-s13-for-you-select], [data-s14-for-you-dot]")) userLocks.forYouArtifact = true;
       if (target.closest("[data-s11-profile-key]")) {
         userLocks.profile = true;
@@ -1116,14 +1119,14 @@
     timeline.to(elements.scenes.control, { autoAlpha: 0, duration: 0.22 }, "identity-transition+=0.26");
 
     timeline.addLabel("identity", ACT_TIMES.identity);
+    /* Only stable containers are timeline targets. Database hydration replaces
+       cards inside these containers, so animating the old card nodes left the
+       newly rendered profile and search content invisible in V14. */
     timeline.fromTo(q("[data-s14-profile-intro]", elements.profile), { autoAlpha: 0, y: 12 }, { autoAlpha: 1, y: 0, duration: 0.36, ease: "power3.out" }, "identity");
-    timeline.fromTo(qa(".s11-stat", elements.profile), { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: 0.3, stagger: 0.045, ease: "power3.out" }, "identity+=0.16");
-    timeline.fromTo(q("[data-s14-profile-ranking]", elements.profile), { autoAlpha: 0, y: 16 }, { autoAlpha: 1, y: 0, duration: 0.36, ease: "power3.out" }, "identity+=0.34");
-    timeline.fromTo(qa(".s11-rank-card", elements.profile), { autoAlpha: 0, y: 18, scale: 0.985 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.4, stagger: 0.055, ease: "power3.out" }, "identity+=0.48");
-    timeline.fromTo(q("[data-s14-profile-categories]", elements.profile), { autoAlpha: 0, x: 14 }, { autoAlpha: 1, x: 0, duration: 0.4, ease: "power3.out" }, "identity+=0.9");
-    timeline.fromTo(qa(".s11-category-tab, .s11-category-detail", elements.profile), { autoAlpha: 0, x: 10 }, { autoAlpha: 1, x: 0, duration: 0.3, stagger: 0.045, ease: "power3.out" }, "identity+=1.02");
-    timeline.fromTo(q("[data-s14-profile-activity]", elements.profile), { autoAlpha: 0, y: 12 }, { autoAlpha: 1, y: 0, duration: 0.36, ease: "power3.out" }, "identity+=1.38");
-    timeline.fromTo(qa(".s11-activity-item", elements.profile), { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: 0.28, stagger: 0.06, ease: "power3.out" }, "identity+=1.48");
+    timeline.fromTo(q("[data-s14-profile-stats]", elements.profile), { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: 0.32, ease: "power3.out" }, "identity+=0.16");
+    timeline.fromTo(q("[data-s14-profile-ranking]", elements.profile), { autoAlpha: 0, y: 16 }, { autoAlpha: 1, y: 0, duration: 0.42, ease: "power3.out" }, "identity+=0.36");
+    timeline.fromTo(q("[data-s14-profile-categories]", elements.profile), { autoAlpha: 0, x: 14 }, { autoAlpha: 1, x: 0, duration: 0.42, ease: "power3.out" }, "identity+=0.9");
+    timeline.fromTo(q("[data-s14-profile-activity]", elements.profile), { autoAlpha: 0, y: 12 }, { autoAlpha: 1, y: 0, duration: 0.38, ease: "power3.out" }, "identity+=1.34");
 
     timeline.addLabel("social-transition", ACT_TIMES.socialTransition);
     timeline.to(identityCopy, { autoAlpha: 0, y: -16, duration: 0.34, ease: "power2.inOut" }, "social-transition");
@@ -1135,7 +1138,7 @@
     timeline.to(elements.scenes.identity, { autoAlpha: 0, duration: 0.22 }, "social-transition+=0.26");
 
     timeline.addLabel("social", ACT_TIMES.social);
-    timeline.fromTo(qa(".s13-following-card", elements.socialStage), { autoAlpha: 0, y: 16 }, { autoAlpha: 1, y: 0, duration: 0.38, stagger: 0.055, ease: "power3.out" }, "social+=0.1");
+    timeline.fromTo(elements.followingGrid, { autoAlpha: 0, y: 14 }, { autoAlpha: 1, y: 0, duration: 0.44, ease: "power3.out" }, "social+=0.1");
     timeline.to({}, { duration: ACT_TIMES.end - ACT_TIMES.social }, "social");
     timeline.addLabel("section-end", ACT_TIMES.end);
 
@@ -1187,7 +1190,16 @@
     });
 
     gsap.set(elements.profile, { autoAlpha: 0, x: 0, y: 22, scale: 0.984 });
-    gsap.set([q("[data-s14-profile-intro]", elements.profile), q("[data-s14-profile-ranking]", elements.profile), q("[data-s14-profile-categories]", elements.profile), q("[data-s14-profile-activity]", elements.profile), ...qa(".s11-stat, .s11-rank-card, .s11-category-tab, .s11-category-detail, .s11-activity-item", elements.profile)], { autoAlpha: 0 });
+    gsap.set([
+      q("[data-s14-profile-intro]", elements.profile),
+      q("[data-s14-profile-stats]", elements.profile),
+      q("[data-s14-profile-ranking]", elements.profile),
+      q("[data-s14-profile-categories]", elements.profile),
+      q("[data-s14-profile-activity]", elements.profile),
+    ].filter(Boolean), { autoAlpha: 0 });
+    clearDynamicMotionStyles(elements.profile);
+    clearDynamicMotionStyles(elements.socialStage);
+    gsap.set(elements.followingGrid, { autoAlpha: 0, y: 14 });
     gsap.set(elements.socialStage, { autoAlpha: 0, y: 20, scale: 0.986 });
     setActiveAct("control", true);
     lastDemoSignature = "";
@@ -1273,6 +1285,26 @@
     setText(elements.sceneLabel, meta.label);
     if (key === "social") updateSocialChrome(state.socialView);
     announce(meta.announcement);
+  }
+
+  function clearDynamicMotionStyles(root = section) {
+    if (!root || !gsap) return;
+    const dynamic = qa(
+      ".s11-stat, .s11-rank-card, .s11-category-tab, .s11-category-detail > *, " +
+      ".s11-activity-item, .s13-following-card, .s13-search-card",
+      root,
+    );
+    if (dynamic.length) {
+      gsap.killTweensOf(dynamic);
+      gsap.set(dynamic, { clearProps: "opacity,visibility,transform" });
+    }
+  }
+
+  function blurFocusWithin(root) {
+    const active = document.activeElement;
+    if (root && active instanceof HTMLElement && root.contains(active)) {
+      active.blur();
+    }
   }
 
   function renderAll(animate, source) {
@@ -1383,6 +1415,7 @@
     elements.ownCategoryTabs.innerHTML = profile.categories.map((category, index) => `<button type="button" role="tab" class="s11-category-tab" data-s11-profile-category="${index}" aria-selected="${index === state.profileCategory}"><span>${String(index + 1).padStart(2, "0")}</span>${escapeHtml(category.title)}</button>`).join("");
     setProfileCategory(state.profileCategory, false, "restore");
     elements.ownActivity.innerHTML = profile.activity.slice(0, 2).map(activityMarkup).join("");
+    clearDynamicMotionStyles(elements.profile);
 
     const full = mergeUniqueStories(rankingStories, stories).slice(0, 10);
     elements.fullRanking.innerHTML = full.map((story, index) => `<li><span class="s11-ranking-number">${String(index + 1).padStart(2, "0")}</span>${storyCoverMarkup(story)}<span><strong>${escapeHtml(story.title)}</strong><small>${escapeHtml(story.creator || "Story")}</small></span></li>`).join("");
@@ -1414,6 +1447,7 @@
       .map((item, index) => followingCardMarkup(item, index))
       .join("");
     renderImages(elements.followingGrid);
+    clearDynamicMotionStyles(elements.followingGrid);
   }
 
 
@@ -1424,7 +1458,7 @@
 
     if (!q("[data-s14-for-you-feed]", elements.forYouResults)) {
       elements.forYouResults.innerHTML = `
-        <div class="s14-for-you-feed premium-scrollbar" data-s14-for-you-feed tabindex="0" aria-label="For You recommendations. Scroll vertically to move between items.">
+        <div class="s14-for-you-feed" data-s14-for-you-feed aria-label="For You recommendations. Use the page scroll, arrow keys, or item controls to move between recommendations.">
           ${DISCOVERY_ARTIFACTS.slice(0, count).map((artifact, index) => forYouArtifactMarkup(artifact, index)).join("")}
         </div>
         <nav class="s14-for-you-dots" aria-label="For You item">
@@ -1526,16 +1560,24 @@
     setText(elements.searchSummary, summary);
     setText(elements.searchCount, `${shown.length} result${shown.length === 1 ? "" : "s"}`);
 
-    if (animate && gsap) {
-      gsap.fromTo(qa(".s13-search-card", elements.searchResults), { autoAlpha: 0, y: 10, scale: 0.992 }, {
-        autoAlpha: 1,
-        y: 0,
-        scale: 1,
-        duration: 0.32,
-        stagger: 0.045,
-        ease: "power3.out",
-        overwrite: "auto",
-      });
+    const renderedCards = qa(".s13-search-card", elements.searchResults);
+    if (gsap && renderedCards.length) {
+      gsap.killTweensOf(renderedCards);
+      gsap.set(renderedCards, { clearProps: "opacity,visibility,transform" });
+      if (animate) {
+        gsap.fromTo(renderedCards, { autoAlpha: 0, y: 10, scale: 0.992 }, {
+          autoAlpha: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.32,
+          stagger: 0.045,
+          ease: "power3.out",
+          overwrite: "auto",
+          onComplete: () => gsap.set(renderedCards, { clearProps: "transform" }),
+        });
+      } else {
+        gsap.set(renderedCards, { autoAlpha: 1, x: 0, y: 0, scale: 1 });
+      }
     }
   }
 
@@ -1660,6 +1702,7 @@
   function setSocialView(view, animate, source = "system") {
     const normalized = SOCIAL_VIEW_ORDER.includes(view) ? view : "following";
     const previous = state.socialView;
+
     if (previous === normalized && source !== "restore" && source !== "demo") {
       updateSocialChrome(normalized);
       return;
@@ -1667,6 +1710,13 @@
 
     if (["following", "foryou", "search"].includes(previous) && !["following", "foryou", "search"].includes(normalized)) state.returnView = previous;
     if (["following", "foryou", "search"].includes(normalized)) state.returnView = normalized;
+
+    /* Render dynamic destinations before the panel becomes visible. */
+    if (normalized === "search") renderSearchResults(false);
+    if (normalized === "profile") renderReaderProfile(state.selectedProfile);
+    if (normalized === "library") renderReaderLibrary(state.selectedProfile);
+    if (normalized === "story") renderStoryDetail(state.selectedStory || primaryStory.title);
+
     state.socialView = normalized;
     section.dataset.socialView = normalized;
 
@@ -1680,33 +1730,55 @@
     const previousIndex = SOCIAL_VIEW_ORDER.indexOf(previous);
     const nextIndex = SOCIAL_VIEW_ORDER.indexOf(normalized);
     const direction = nextIndex >= previousIndex ? 1 : -1;
+    const incoming = elements.socialViews.find((panel) => panel.dataset.s11SocialView === normalized);
+    const outgoing = elements.socialViews.find((panel) => panel.dataset.s11SocialView === previous && panel !== incoming);
+
+    if (outgoing) blurFocusWithin(outgoing);
+    if (gsap) gsap.killTweensOf(elements.socialViews);
 
     elements.socialViews.forEach((panel) => {
-      const selected = panel.dataset.s11SocialView === normalized;
+      const selected = panel === incoming;
       panel.classList.toggle("is-active", selected);
       panel.setAttribute("aria-hidden", selected ? "false" : "true");
       panel.toggleAttribute("inert", !selected);
-
-      if (!gsap) {
-        panel.style.opacity = selected ? "1" : "0";
-        panel.style.visibility = selected ? "visible" : "hidden";
-        return;
-      }
-
-      if (selected) {
-        panel.style.visibility = "visible";
-        gsap.fromTo(panel, { autoAlpha: animate ? 0 : 1, x: animate ? direction * 28 : 0, scale: animate ? 0.992 : 1 }, { autoAlpha: 1, x: 0, scale: 1, duration: animate ? 0.44 : 0, ease: "power3.out", overwrite: "auto" });
-      } else {
-        gsap.to(panel, { autoAlpha: 0, x: animate ? -direction * 20 : 0, scale: animate ? 0.992 : 1, duration: animate ? 0.28 : 0, ease: "power2.in", overwrite: "auto", onComplete: () => { if (panel.dataset.s11SocialView !== state.socialView) panel.style.visibility = "hidden"; } });
-      }
+      panel.style.pointerEvents = selected ? "auto" : "none";
+      panel.style.zIndex = selected ? "2" : "1";
     });
 
-    if (normalized === "search") renderSearchResults(false);
-    if (normalized === "profile") renderReaderProfile(state.selectedProfile);
-    if (normalized === "library") renderReaderLibrary(state.selectedProfile);
-    if (normalized === "story") renderStoryDetail(state.selectedStory || primaryStory.title);
-    updateSocialChrome(normalized);
+    if (!gsap || !animate) {
+      elements.socialViews.forEach((panel) => {
+        const selected = panel === incoming;
+        panel.style.opacity = selected ? "1" : "0";
+        panel.style.visibility = selected ? "visible" : "hidden";
+        panel.style.transform = "none";
+      });
+    } else {
+      if (incoming) {
+        gsap.set(incoming, { visibility: "visible", pointerEvents: "auto" });
+        gsap.fromTo(incoming,
+          { autoAlpha: 0, x: direction * 24, scale: 0.994 },
+          { autoAlpha: 1, x: 0, scale: 1, duration: 0.42, ease: "power3.out", overwrite: true, clearProps: "transform" },
+        );
+      }
+      if (outgoing) {
+        gsap.to(outgoing, {
+          autoAlpha: 0,
+          x: -direction * 18,
+          scale: 0.994,
+          duration: 0.24,
+          ease: "power2.in",
+          overwrite: true,
+          onComplete: () => {
+            if (outgoing !== elements.socialViews.find((panel) => panel.dataset.s11SocialView === state.socialView)) {
+              gsap.set(outgoing, { visibility: "hidden", x: 0, scale: 1, pointerEvents: "none" });
+            }
+          },
+        });
+      }
+    }
 
+    if (normalized === "foryou") syncForYouStage(false);
+    updateSocialChrome(normalized);
     if (source === "user") announce(`${SOCIAL_VIEW_META[normalized].label} opened.`);
   }
 
@@ -1899,7 +1971,7 @@
 
   async function hydrateDatabaseStories() {
     const loaded = await loadDatabaseStories();
-    stories = mergeUniqueStories(loaded, FALLBACK_STORIES).slice(0, 24);
+    stories = buildStoryCatalog(loaded);
     primaryStory = findTokyoGhoulRe(stories) || FALLBACK_STORIES[0];
     stories = mergeUniqueStories([primaryStory], stories);
     applyPrimaryStory(primaryStory);
@@ -1910,6 +1982,13 @@
     renderReaderLibrary(state.selectedProfile);
     if (state.socialView === "story") renderStoryDetail(state.selectedStory || primaryStory.title);
     requestAnimationFrame(() => ScrollTrigger?.refresh?.());
+  }
+
+  function buildStoryCatalog(loaded) {
+    const preferred = PREFERRED_STORY_TITLES
+      .map((title) => findStoryByTitle(loaded, title) || findStoryByTitle(FALLBACK_STORIES, title))
+      .filter(Boolean);
+    return mergeUniqueStories(preferred, loaded, FALLBACK_STORIES).slice(0, 36);
   }
 
   async function loadDatabaseStories() {
@@ -1933,7 +2012,7 @@
       });
       return selected;
     } catch (error) {
-      console.warn("Inkwell social V14: database stories unavailable.", error);
+      console.warn("Inkwell social V15: database stories unavailable.", error);
       return [...FALLBACK_STORIES];
     }
   }
@@ -2048,13 +2127,13 @@
   function searchArtifactMarkup(artifact) {
     const profile = PROFILE_DATA[artifact.profile];
     const story = getStoryByTitle(artifact.story);
-    return `<article class="s13-search-card s13-search-artifact">
-      <button type="button" class="s13-search-card__main" data-s13-open-artifact="${escapeHtml(artifact.id)}" aria-label="Open ${escapeHtml(artifact.type)} ${escapeHtml(artifact.title)}">
+    return `<button type="button" class="s13-search-card s13-search-artifact" data-s13-open-artifact="${escapeHtml(artifact.id)}" aria-label="Open ${escapeHtml(artifact.type)} ${escapeHtml(artifact.title)}">
+      <span class="s13-search-card__main">
         ${storyCoverMarkup(story, "s13-search-artifact__cover")}
         <span class="s13-search-artifact__copy"><small>${escapeHtml(artifact.type)} · ${escapeHtml(story.title)}</small><strong>${escapeHtml(artifact.title)}</strong><p>${escapeHtml(artifact.excerpt)}</p><span class="s13-search-card__tags">${artifact.tags.slice(0, 3).map((tag) => `<em>${escapeHtml(tag)}</em>`).join("")}</span></span>
-      </button>
-      <footer><span class="s11-avatar s11-avatar--small" style="${avatarStyle(artifact.profile)}">${escapeHtml(profile.initial)}</span><span><strong>${escapeHtml(profile.name)}</strong><small>${escapeHtml(artifact.reason)}</small></span></footer>
-    </article>`;
+      </span>
+      <span class="s13-search-artifact__footer"><span class="s11-avatar s11-avatar--small" style="${avatarStyle(artifact.profile)}">${escapeHtml(profile.initial)}</span><span><strong>${escapeHtml(profile.name)}</strong><small>${escapeHtml(artifact.reason)}</small></span></span>
+    </button>`;
   }
 
   function searchResultMarkup(key, reason) {
@@ -2220,33 +2299,16 @@
   }
 
   function setupForYouFeedInteractions(force = false) {
-    const feed = q("[data-s14-for-you-feed]", elements.forYouResults);
-    if (!feed || (feed.dataset.s14Bound === "true" && !force)) return;
-    feed.dataset.s14Bound = "true";
+    const stage = elements.forYouResults;
+    if (!stage || stage.dataset.s15Bound === "true") return;
+    stage.dataset.s15Bound = "true";
 
-    const syncFromScroll = () => {
-      if (suppressForYouScrollSync) return;
-      const slides = qa("[data-s14-for-you-index]", feed);
-      if (!slides.length) return;
-      const index = slides.reduce((closest, slide, slideIndex) => {
-        const distance = Math.abs(slide.offsetTop - feed.scrollTop);
-        return distance < closest.distance ? { index: slideIndex, distance } : closest;
-      }, { index: 0, distance: Number.POSITIVE_INFINITY }).index;
-      if (index === state.forYouArtifact) return;
-      userLocks.forYouArtifact = true;
-      state.forYouArtifact = index;
-      syncForYouStage(false, false);
-      announce(`${DISCOVERY_ARTIFACTS[index].type} recommendation ${index + 1} of ${Math.min(5, DISCOVERY_ARTIFACTS.length)}.`);
-    };
-
-    feed.addEventListener("scroll", () => {
-      window.clearTimeout(forYouScrollTimer);
-      forYouScrollTimer = window.setTimeout(syncFromScroll, 80);
-    }, { passive: true });
-
-    feed.addEventListener("keydown", (event) => {
+    /* No nested wheel/scroll surface: the master homepage timeline owns wheel
+       movement. Keyboard and dot controls change the selected stacked card. */
+    stage.addEventListener("keydown", (event) => {
       if (!["ArrowDown", "PageDown", "ArrowUp", "PageUp", "Home", "End"].includes(event.key)) return;
       event.preventDefault();
+      event.stopPropagation();
       let next = state.forYouArtifact;
       if (["ArrowDown", "PageDown"].includes(event.key)) next += 1;
       if (["ArrowUp", "PageUp"].includes(event.key)) next -= 1;
@@ -2257,27 +2319,62 @@
     });
   }
 
-  function syncForYouStage(animate, scroll = true) {
+  function syncForYouStage(animate) {
     const count = Math.min(5, DISCOVERY_ARTIFACTS.length);
     const index = clamp(state.forYouArtifact, 0, count - 1);
-    const feed = q("[data-s14-for-you-feed]", elements.forYouResults);
     const slides = qa("[data-s14-for-you-index]", elements.forYouResults);
     const dots = qa("[data-s14-for-you-dot]", elements.forYouResults);
+    const direction = index >= lastForYouArtifact ? 1 : -1;
 
-    slides.forEach((slide, slideIndex) => slide.classList.toggle("is-current", slideIndex === index));
+    if (gsap) gsap.killTweensOf(slides);
+
+    slides.forEach((slide, slideIndex) => {
+      const current = slideIndex === index;
+      slide.classList.toggle("is-current", current);
+      slide.setAttribute("aria-hidden", current ? "false" : "true");
+      slide.toggleAttribute("inert", !current);
+      slide.style.pointerEvents = current ? "auto" : "none";
+      slide.style.zIndex = current ? "2" : "1";
+
+      if (!gsap || !animate) {
+        slide.style.opacity = current ? "1" : "0";
+        slide.style.visibility = current ? "visible" : "hidden";
+        slide.style.transform = "none";
+        return;
+      }
+
+      if (current) {
+        gsap.set(slide, { visibility: "visible" });
+        gsap.fromTo(slide,
+          { autoAlpha: 0, y: direction * 22, scale: 0.992 },
+          { autoAlpha: 1, y: 0, scale: 1, duration: 0.42, ease: "power3.out", overwrite: true, clearProps: "transform" },
+        );
+      } else {
+        gsap.to(slide, {
+          autoAlpha: 0,
+          y: -direction * 16,
+          scale: 0.994,
+          duration: 0.22,
+          ease: "power2.in",
+          overwrite: true,
+          onComplete: () => {
+            if (slideIndex !== state.forYouArtifact) {
+              gsap.set(slide, { visibility: "hidden", y: 0, scale: 1 });
+            }
+          },
+        });
+      }
+    });
+
     dots.forEach((dot, dotIndex) => {
       const current = dotIndex === index;
       dot.classList.toggle("is-current", current);
       dot.setAttribute("aria-current", current ? "true" : "false");
+      dot.tabIndex = current ? 0 : -1;
     });
-    setText(elements.forYouCount, `${index + 1} / ${count}`);
 
-    if (feed && scroll) {
-      suppressForYouScrollSync = true;
-      const target = slides[index];
-      feed.scrollTo({ top: target?.offsetTop || 0, behavior: animate && !reduceMotion ? "smooth" : "auto" });
-      window.setTimeout(() => { suppressForYouScrollSync = false; }, animate ? 520 : 40);
-    }
+    setText(elements.forYouCount, `${index + 1} / ${count}`);
+    lastForYouArtifact = index;
   }
 
   function searchModeLabel(mode) {
@@ -2349,8 +2446,27 @@
 
   function findStoryByTitle(items, title) {
     const wanted = normalizeText(title);
-    return items.find((story) => normalizeText(story.title) === wanted)
-      || items.find((story) => normalizeText(story.title).includes(wanted) || wanted.includes(normalizeText(story.title)));
+    if (!wanted) return null;
+    const list = Array.from(items || []).filter(Boolean);
+    const exact = list.find((story) => normalizeText(story.title) === wanted);
+    if (exact) return exact;
+
+    /* Fuzzy matching is only a final fallback. Requiring meaningful token
+       overlap prevents a short database title from hijacking another story. */
+    const wantedTokens = new Set(wanted.split(" ").filter((token) => token.length > 2));
+    let best = null;
+    let bestScore = 0;
+    list.forEach((story) => {
+      const candidate = normalizeText(story.title);
+      const tokens = candidate.split(" ").filter((token) => token.length > 2);
+      const overlap = tokens.filter((token) => wantedTokens.has(token)).length;
+      const score = overlap * 10 - Math.abs(candidate.length - wanted.length) * 0.02;
+      if (overlap >= Math.min(2, wantedTokens.size) && score > bestScore) {
+        best = story;
+        bestScore = score;
+      }
+    });
+    return best;
   }
 
   function dedupeStories(items) {
@@ -2509,6 +2625,7 @@
     state.searchStory = "all";
     state.searchSort = "relevance";
     state.forYouArtifact = 0;
+    lastForYouArtifact = 0;
     if (elements.searchInput) elements.searchInput.value = state.searchQuery;
     demoState.audience = "private";
     demoState.spoiler = false;
@@ -2555,7 +2672,7 @@
         timeline?.kill?.();
         resizeObserver?.disconnect?.();
         cleanupCallbacks.splice(0).forEach((callback) => callback());
-        window.__INKWELL_SOCIAL_V13_STARTED__ = false;
+        window.__INKWELL_SOCIAL_V15_STARTED__ = false;
       },
       cleanup: () => trigger?.kill?.(true),
     };

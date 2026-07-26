@@ -7235,3 +7235,315 @@
 #section-5-social .s14-view-heading--search > span:first-child {
   max-width: 78ch;
 }
+
+
+/* ========================================================================== 
+   INKWELL — SECTION 5 SOCIAL V15 AUTHORITATIVE FIXES
+   - dynamic profile/search nodes never remain opacity: 0 after hydration
+   - hub views are real constrained grids
+   - For You uses a stacked transition, not nested native scrolling
+   - inactive panels cannot receive hover/click/focus
+   - search results fit the fixed product frame
+   ========================================================================== */
+
+#section-5-social .s11-social-view {
+  pointer-events: none;
+}
+
+#section-5-social .s11-social-view.is-active {
+  pointer-events: auto;
+}
+
+#section-5-social .s11-social-view[data-s11-social-view="following"],
+#section-5-social .s11-social-view[data-s11-social-view="foryou"],
+#section-5-social .s11-social-view[data-s11-social-view="search"] {
+  display: grid;
+  min-height: 0;
+}
+
+/* Dynamic children are intentionally not animation-state owners. Stable
+   parent sections are animated by JavaScript, so database hydration cannot
+   leave replacement cards hidden. */
+#section-5-social :is(
+  .s14-ranking-showcase .s11-rank-card,
+  .s14-activity-section .s11-activity-item,
+  .s14-category-section .s11-category-tab,
+  .s14-category-section .s11-category-detail > *,
+  .s14-following-card,
+  .s14-search-results .s13-search-card
+) {
+  visibility: visible;
+}
+
+/* Profile sizing: reserve actual rows for the five cards and activity. */
+#section-5-social .s14-top-stories,
+#section-5-social .s14-profile__side,
+#section-5-social .s14-category-section,
+#section-5-social .s14-activity-section {
+  min-height: 0;
+}
+
+#section-5-social .s14-ranking-showcase {
+  height: 100%;
+  align-items: stretch;
+}
+
+#section-5-social .s14-activity-section .s11-activity-list {
+  height: 100%;
+  align-content: stretch;
+}
+
+/* Full-card hit areas. */
+#section-5-social .s14-following-card {
+  overflow: hidden;
+  isolation: isolate;
+}
+
+#section-5-social .s14-following-card .s13-following-card__button {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  min-height: 100%;
+  touch-action: manipulation;
+}
+
+#section-5-social .s14-following-card .s13-following-card__button::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+}
+
+#section-5-social .s14-following-card .s13-following-card__button > * {
+  position: relative;
+  z-index: 6;
+  pointer-events: none;
+}
+
+#section-5-social .s14-following-card:hover,
+#section-5-social .s14-following-card:focus-within {
+  transform: translateY(-3px) scale(1.004);
+}
+
+/* For You: one compact stacked card. There is no nested scrolling surface, so
+   wheel movement remains owned by the homepage journey. */
+#section-5-social .s14-for-you-stage {
+  min-height: 0;
+  height: 100%;
+  grid-template-columns: minmax(0, 1fr) 30px;
+  overflow: hidden;
+}
+
+#section-5-social .s14-for-you-feed {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  display: block;
+  overflow: hidden;
+  scroll-snap-type: none;
+  scroll-behavior: auto;
+  overscroll-behavior: none;
+}
+
+#section-5-social .s14-for-you-slide {
+  position: absolute;
+  inset: 0;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  grid-template-columns: minmax(190px, 0.72fr) minmax(0, 1.28fr);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  scroll-snap-align: none;
+  scroll-snap-stop: normal;
+}
+
+#section-5-social .s14-for-you-slide.is-current {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+#section-5-social .s14-for-you-slide__fallback {
+  width: min(52%, 148px);
+  height: min(70%, 218px);
+}
+
+#section-5-social .s14-for-you-slide__content {
+  padding: clamp(0.68rem, 1vw, 0.9rem);
+}
+
+#section-5-social .s14-for-you-slide__content h4 {
+  font-size: clamp(1.16rem, 1.75vw, 1.58rem);
+  line-height: 1.02;
+}
+
+#section-5-social .s14-for-you-slide__content > p {
+  margin-top: 0.42rem;
+  font-size: clamp(0.56rem, 0.62vw, 0.67rem);
+  -webkit-line-clamp: 4;
+}
+
+#section-5-social .s14-for-you-slide__footer {
+  padding-top: 0.54rem;
+}
+
+#section-5-social .s14-author-card {
+  min-height: 48px;
+}
+
+#section-5-social .s14-for-you-dots button {
+  width: 30px;
+  height: 34px;
+}
+
+/* Search: constrain every row and make six results visibly occupy a 3x2 grid. */
+#section-5-social .s11-social-view[data-s11-social-view="search"] {
+  grid-template-rows: auto auto auto auto auto minmax(150px, 1fr);
+  align-content: stretch;
+}
+
+#section-5-social .s14-search-results {
+  min-height: 150px;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+#section-5-social .s14-search-grid {
+  height: 100%;
+  min-height: 0;
+  grid-auto-rows: minmax(0, 1fr);
+  align-content: stretch;
+}
+
+#section-5-social .s14-search-grid.s13-search-grid--discover,
+#section-5-social .s14-search-grid.s13-search-grid--stories,
+#section-5-social .s14-search-grid.s13-search-grid--readers {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+}
+
+#section-5-social .s14-search-grid.s13-search-grid--readers {
+  grid-template-rows: minmax(0, 1fr);
+}
+
+#section-5-social .s14-search-results .s13-search-card {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+#section-5-social .s14-search-results button.s13-search-artifact {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  padding: 0;
+  border-style: solid;
+  color: inherit;
+  text-align: left;
+}
+
+#section-5-social .s14-search-results .s13-search-card__main {
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+#section-5-social .s13-search-artifact__footer {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr);
+  align-items: center;
+  gap: 0.42rem;
+  padding: 0.42rem 0.58rem;
+  border-top: 1px solid rgba(167, 183, 245, 0.1);
+  background: rgba(5, 10, 24, 0.38);
+  pointer-events: none;
+}
+
+#section-5-social .s13-search-artifact__footer .s11-avatar--small {
+  width: 30px;
+  height: 30px;
+  flex-basis: 30px;
+}
+
+#section-5-social .s13-search-artifact__footer strong,
+#section-5-social .s13-search-artifact__footer small {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#section-5-social .s13-search-artifact__footer strong {
+  color: var(--s14-text-2);
+  font-size: 0.5rem;
+}
+
+#section-5-social .s13-search-artifact__footer small {
+  margin-top: 0.08rem;
+  color: var(--s14-subtle);
+  font-size: 0.4rem;
+}
+
+#section-5-social .s14-search-results .s13-search-card:hover,
+#section-5-social .s14-search-results .s13-search-card:focus-visible,
+#section-5-social .s14-search-results .s13-search-card:focus-within {
+  transform: translateY(-2px) !important;
+}
+
+@media (max-height: 800px) and (min-width: 1100px) {
+  #section-5-social .s14-for-you-slide {
+    grid-template-columns: minmax(170px, 0.66fr) minmax(0, 1.34fr);
+  }
+
+  #section-5-social .s14-for-you-slide__fallback {
+    width: min(48%, 126px);
+    height: min(66%, 186px);
+  }
+
+  #section-5-social .s14-search-toolbar {
+    gap: 0.42rem;
+  }
+
+  #section-5-social .s14-search-typebar button {
+    min-height: 30px;
+  }
+}
+
+@media (max-width: 1099px) {
+  #section-5-social .s14-for-you-feed {
+    min-height: 520px;
+  }
+
+  #section-5-social .s14-for-you-slide {
+    position: absolute;
+  }
+
+  #section-5-social .s14-search-results {
+    overflow: auto;
+  }
+
+  #section-5-social .s14-search-grid.s13-search-grid--discover,
+  #section-5-social .s14-search-grid.s13-search-grid--stories,
+  #section-5-social .s14-search-grid.s13-search-grid--readers {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: auto;
+  }
+}
+
+@media (max-width: 760px) {
+  #section-5-social .s14-for-you-slide {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(220px, 0.8fr) minmax(0, 1.2fr);
+  }
+
+  #section-5-social .s14-search-grid.s13-search-grid--discover,
+  #section-5-social .s14-search-grid.s13-search-grid--stories,
+  #section-5-social .s14-search-grid.s13-search-grid--readers {
+    grid-template-columns: 1fr;
+  }
+}

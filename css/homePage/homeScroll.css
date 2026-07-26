@@ -913,3 +913,25 @@ body.journey-section-entrance-playing .journey-section-rail__button.is-current {
     background: #070a18;
   }
 }
+
+/* ========================================================================== 
+   HOME JOURNEY V19 — SCENE HIT / FOCUS ISOLATION
+   The active-scene class is the only source of pointer ownership. This also
+   overrides stale inline pointer-events values left by direct chapter jumps.
+   ========================================================================== */
+
+body.journey-ready .home-journey-stage > .journey-scene,
+body.journey-ready .home-journey-stage > .journey-scene[aria-hidden="true"],
+body.journey-ready .home-journey-stage > .journey-scene[inert] {
+  pointer-events: none !important;
+}
+
+body.journey-ready .home-journey-stage > .journey-scene.is-journey-active,
+body.journey-ready .home-journey-stage > .journey-scene.is-journey-active[aria-hidden="false"] {
+  pointer-events: auto !important;
+}
+
+body.journey-scene-transitioning .home-journey-stage,
+body.journey-scene-transitioning .home-journey-stage > .journey-scene {
+  pointer-events: none !important;
+}

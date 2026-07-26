@@ -25,7 +25,7 @@
   "use strict";
 
   window.__INKWELL_HOME_SCROLL_BUILD__ =
-    "2026-07-24-interaction-v18-section5-runtime-fix";
+    "2026-07-25-interaction-v19-scene-hit-isolation";
 
   const DESKTOP_QUERY =
     "(min-width: 1100px) and (min-height: 700px) and " +
@@ -1334,12 +1334,17 @@
     }
 
     syncJourneyNavigator(active, master.progress(), time);
+    enforceSceneInteractivity(active);
 
     if (active === state.activeScene) {
       return;
     }
 
     state.activeScene = active;
+  }
+
+  function enforceSceneInteractivity(active) {
+    const activeElement = document.activeElement;
 
     document.querySelectorAll(".journey-scene").forEach((scene) => {
       const isActive =
@@ -1351,6 +1356,14 @@
 
       scene.classList.toggle("is-journey-active", isActive);
       scene.setAttribute("aria-hidden", isActive ? "false" : "true");
+      scene.toggleAttribute("inert", !isActive);
+      scene.style.pointerEvents = isActive ? "auto" : "none";
+
+      /* Focus is state too. A button focused in Section 4 kept :focus-within
+         styling and keyboard ownership after Section 5 moved over it. */
+      if (!isActive && activeElement instanceof HTMLElement && scene.contains(activeElement)) {
+        activeElement.blur();
+      }
     });
   }
 
@@ -1628,6 +1641,9 @@
 
   function forceJourneyScrollPosition(target) {
     const trigger = state.trigger;
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
     const master = state.master;
     const maximumScroll = Math.max(
       0,
@@ -2082,8 +2098,6 @@
         state.gsap.set(curtain, { autoAlpha: 0 });
       }
 
-      const targetRoot = document.querySelector(stop.targetSelector);
-      state.gsap.set(targetRoot, { pointerEvents: "auto" });
       state.trigger?.update();
       state.trigger?.getTween?.()?.progress(1);
       syncActiveScene();
