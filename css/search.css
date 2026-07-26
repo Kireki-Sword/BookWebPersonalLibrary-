@@ -3231,7 +3231,7 @@ body {
    DESIGN TOKENS
    ========================================================= */
 
-body.search-site {
+body {
   --search-page: #050816;
   --search-page-deep: #03050d;
 
@@ -3281,12 +3281,12 @@ html {
   scrollbar-gutter: stable;
 }
 
-body.search-site {
+body {
   min-width: 0;
   overflow-x: clip;
 }
 
-body.search-site > nav[aria-label="Primary navigation"] {
+body > nav[aria-label="Primary navigation"] {
   position: sticky;
   top: 0;
   z-index: 100;
@@ -3316,11 +3316,11 @@ body.search-site > nav[aria-label="Primary navigation"] {
   -webkit-backdrop-filter: none !important;
 }
 
-body.search-site > nav[aria-label="Primary navigation"]::after {
+body > nav[aria-label="Primary navigation"]::after {
   display: none !important;
 }
 
-body.search-site .search-page {
+body .search-page {
   min-width: 0;
   overflow-x: clip;
 
@@ -3352,7 +3352,7 @@ body.search-site .search-page {
     !important;
 }
 
-body.search-site .search-page::before {
+body .search-page::before {
   content: "";
   display: block !important;
 
@@ -3370,13 +3370,13 @@ body.search-site .search-page::before {
     );
 }
 
-body.search-site .search-page::after,
-body.search-site .search-intro::before,
-body.search-site .search-intro::after,
-body.search-site .search-intro-inner::before,
-body.search-site .search-intro-inner::after,
-body.search-site .search-workspace::before,
-body.search-site .search-workspace::after {
+body .search-page::after,
+body .search-intro::before,
+body .search-intro::after,
+body .search-intro-inner::before,
+body .search-intro-inner::after,
+body .search-workspace::before,
+body .search-workspace::after {
   display: none !important;
 }
 
@@ -3385,7 +3385,7 @@ body.search-site .search-workspace::after {
    COMPACT SEARCH INTRODUCTION
    ========================================================= */
 
-body.search-site .search-intro {
+body .search-intro {
   padding:
     clamp(2.15rem, 4vw, 3.45rem)
     1.5rem
@@ -3396,11 +3396,11 @@ body.search-site .search-intro {
   box-shadow: none !important;
 }
 
-body.search-site .search-intro-inner {
+body .search-intro-inner {
   width: min(880px, 100%);
 }
 
-body.search-site .search-eyebrow {
+body .search-eyebrow {
   margin-bottom: 0.62rem;
 
   color: #b6c2f4;
@@ -3409,7 +3409,7 @@ body.search-site .search-eyebrow {
   letter-spacing: 0.14em;
 }
 
-body.search-site .search-intro h1 {
+body .search-intro h1 {
   color: var(--search-text-primary);
 
   font-size: clamp(2.7rem, 5vw, 4.25rem);
@@ -3421,7 +3421,7 @@ body.search-site .search-intro h1 {
     0 0 54px rgba(114, 140, 255, 0.09);
 }
 
-body.search-site .search-intro-copy {
+body .search-intro-copy {
   max-width: 680px;
 
   margin:
@@ -3440,7 +3440,7 @@ body.search-site .search-intro-copy {
    SEARCH CONTROL
    ========================================================= */
 
-body.search-site .catalogue-search {
+body .catalogue-search {
   width: min(800px, 100%);
   margin-top: 1.2rem;
 
@@ -3462,7 +3462,7 @@ body.search-site .catalogue-search {
     0 0 34px rgba(104, 126, 237, 0.07);
 }
 
-body.search-site .catalogue-search::before {
+body .catalogue-search::before {
   inset: -46px -76px;
 
   opacity: 0.76;
@@ -3478,11 +3478,11 @@ body.search-site .catalogue-search::before {
     !important;
 }
 
-body.search-site .catalogue-search::after {
+body .catalogue-search::after {
   display: none;
 }
 
-body.search-site .catalogue-search-form {
+body .catalogue-search-form {
   min-height: 62px;
 
   background:
@@ -3508,7 +3508,7 @@ body.search-site .catalogue-search-form {
   transform: none !important;
 }
 
-body.search-site .catalogue-search-form:focus-within {
+body .catalogue-search-form:focus-within {
   transform: none !important;
 
   box-shadow:
@@ -3518,7 +3518,7 @@ body.search-site .catalogue-search-form:focus-within {
     !important;
 }
 
-body.search-site .catalogue-search-icon {
+body .catalogue-search-icon {
   width: 38px;
   height: 38px;
 
@@ -3546,7 +3546,7 @@ body.search-site .catalogue-search-icon {
   filter: none !important;
 }
 
-body.search-site .catalogue-search-form input {
+body .catalogue-search-form input {
   height: 60px;
 
   color: var(--search-text-primary);
@@ -3554,16 +3554,16 @@ body.search-site .catalogue-search-form input {
   font-size: 0.95rem;
 }
 
-body.search-site .catalogue-search-form input::placeholder {
+body .catalogue-search-form input::placeholder {
   color: #8794af;
 }
 
-body.search-site .catalogue-search-clear {
+body .catalogue-search-clear {
   width: 44px;
   height: 44px;
 }
 
-body.search-site .catalogue-search-submit {
+body .catalogue-search-submit {
   min-height: 60px;
 
   background:
@@ -3594,7 +3594,7 @@ body.search-site .catalogue-search-submit {
    SEARCH WORKSPACE
    ========================================================= */
 
-body.search-site .search-workspace {
+body .search-workspace {
   width: min(1480px, calc(100% - 2.5rem));
 
   grid-template-columns:
@@ -3609,11 +3609,11 @@ body.search-site .search-workspace {
     5rem;
 }
 
-body.search-site .results-panel,
-body.search-site .results-toolbar,
-body.search-site .results-controls,
-body.search-site .results-grid,
-body.search-site .story-card {
+body .results-panel,
+body .results-toolbar,
+body .results-controls,
+body .results-grid,
+body .story-card {
   min-width: 0;
   max-width: 100%;
 }
@@ -3623,7 +3623,7 @@ body.search-site .story-card {
    FILTER PANEL
    ========================================================= */
 
-body.search-site .filter-panel {
+body .filter-panel {
   top: 82px;
 
   background:
@@ -3655,7 +3655,7 @@ body.search-site .filter-panel {
   -webkit-backdrop-filter: none !important;
 }
 
-body.search-site .filter-panel::before {
+body .filter-panel::before {
   height: 1px;
 
   opacity: 0.56;
@@ -3665,29 +3665,29 @@ body.search-site .filter-panel::before {
     rgba(101, 190, 255, 0.12);
 }
 
-body.search-site .filter-panel-header {
+body .filter-panel-header {
   padding:
     1.18rem
     1.05rem
     1rem;
 }
 
-body.search-site .filter-panel-eyebrow,
-body.search-site .catalogue-select-label,
-body.search-site .results-status {
+body .filter-panel-eyebrow,
+body .catalogue-select-label,
+body .results-status {
   color: var(--search-text-subtle);
 
   font-size: 0.69rem;
   letter-spacing: 0.055em;
 }
 
-body.search-site .filter-group legend {
+body .filter-group legend {
   color: #bac5df;
 
   font-size: 0.72rem;
 }
 
-body.search-site .filter-option {
+body .filter-option {
   min-height: 44px;
 
   color: #afbbd3;
@@ -3695,7 +3695,7 @@ body.search-site .filter-option {
   font-size: 0.78rem;
 }
 
-body.search-site .filter-option:hover {
+body .filter-option:hover {
   color: #f0f4ff;
 
   background:
@@ -3703,7 +3703,7 @@ body.search-site .filter-option:hover {
     !important;
 }
 
-body.search-site .filter-option:has(input:checked) {
+body .filter-option:has(input:checked) {
   color: #f8faff;
 
   background:
@@ -3719,7 +3719,7 @@ body.search-site .filter-option:has(input:checked) {
     !important;
 }
 
-body.search-site .filter-option-count {
+body .filter-option-count {
   color: #a9b6d1;
 
   background:
@@ -3731,7 +3731,7 @@ body.search-site .filter-option-count {
     !important;
 }
 
-body.search-site .filter-panel-body {
+body .filter-panel-body {
   scrollbar-width: thin;
 
   scrollbar-color:
@@ -3739,17 +3739,17 @@ body.search-site .filter-panel-body {
     transparent;
 }
 
-body.search-site
+body
 .filter-panel-body::-webkit-scrollbar {
   width: 6px;
 }
 
-body.search-site
+body
 .filter-panel-body::-webkit-scrollbar-track {
   background: transparent;
 }
 
-body.search-site
+body
 .filter-panel-body::-webkit-scrollbar-thumb {
   background:
     rgba(117, 140, 255, 0.34);
@@ -3763,7 +3763,7 @@ body.search-site
   background-clip: padding-box;
 }
 
-body.search-site
+body
 .filter-panel:hover
 .filter-panel-body::-webkit-scrollbar-thumb {
   background:
@@ -3772,7 +3772,7 @@ body.search-site
   background-clip: padding-box;
 }
 
-body.search-site .clear-filters-button {
+body .clear-filters-button {
   min-height: 44px;
 }
 
@@ -3781,7 +3781,7 @@ body.search-site .clear-filters-button {
    RESULTS TOOLBAR
    ========================================================= */
 
-body.search-site .results-toolbar {
+body .results-toolbar {
   z-index: 60;
 
   min-height: 78px;
@@ -3820,7 +3820,7 @@ body.search-site .results-toolbar {
     !important;
 }
 
-body.search-site .results-toolbar::before {
+body .results-toolbar::before {
   content: "";
 
   position: absolute;
@@ -3842,7 +3842,7 @@ body.search-site .results-toolbar::before {
     );
 }
 
-body.search-site .results-toolbar::after {
+body .results-toolbar::after {
   left: 1rem;
   bottom: -1px;
 
@@ -3857,13 +3857,13 @@ body.search-site .results-toolbar::after {
     );
 }
 
-body.search-site .results-heading-group {
+body .results-heading-group {
   position: relative;
 
   padding-left: 0.85rem;
 }
 
-body.search-site .results-heading-group::before {
+body .results-heading-group::before {
   content: "";
 
   position: absolute;
@@ -3884,7 +3884,7 @@ body.search-site .results-heading-group::before {
   border-radius: 999px;
 }
 
-body.search-site .results-heading-group h2 {
+body .results-heading-group h2 {
   color: var(--search-text-primary);
 
   font-size:
@@ -3897,22 +3897,22 @@ body.search-site .results-heading-group h2 {
   line-height: 1.03;
 }
 
-body.search-site .results-controls {
+body .results-controls {
   position: relative;
   z-index: 70;
 }
 
-body.search-site .catalogue-select {
+body .catalogue-select {
   position: relative;
   z-index: 1;
 }
 
-body.search-site .catalogue-select.is-open {
+body .catalogue-select.is-open {
   z-index: 100;
 }
 
-body.search-site .catalogue-select-trigger,
-body.search-site .mobile-filter-button {
+body .catalogue-select-trigger,
+body .mobile-filter-button {
   min-height: 44px;
 
   color: var(--search-text-secondary);
@@ -3930,7 +3930,7 @@ body.search-site .mobile-filter-button {
     !important;
 }
 
-body.search-site .catalogue-select-menu {
+body .catalogue-select-menu {
   top:
     calc(
       100% + 0.5rem
@@ -3980,18 +3980,18 @@ body.search-site .catalogue-select-menu {
   -webkit-backdrop-filter: none !important;
 }
 
-body.search-site
+body
 .catalogue-select-menu button {
   min-height: 44px;
 
   color: var(--search-text-secondary);
 }
 
-body.search-site
+body
 .catalogue-select-menu button:hover,
-body.search-site
+body
 .catalogue-select-menu button.is-active,
-body.search-site
+body
 .catalogue-select-menu
 button[aria-selected="true"] {
   color: #ffffff;
@@ -4010,7 +4010,7 @@ button[aria-selected="true"] {
    ACTIVE FILTERS
    ========================================================= */
 
-body.search-site .active-filters {
+body .active-filters {
   position: relative;
   z-index: 10;
 
@@ -4030,7 +4030,7 @@ body.search-site .active-filters {
   border-radius: 13px;
 }
 
-body.search-site .active-filter-chip {
+body .active-filter-chip {
   min-height: 36px;
 
   color: #dce7fb;
@@ -4049,8 +4049,8 @@ body.search-site .active-filter-chip {
    RESPONSIVE RESULTS GRID
    ========================================================= */
 
-body.search-site .results-grid,
-body.search-site .results-loading {
+body .results-grid,
+body .results-loading {
   grid-template-columns:
     repeat(
       5,
@@ -4076,7 +4076,7 @@ body.search-site .results-loading {
    PREMIUM STORY CARD
    ========================================================= */
 
-body.search-site .story-card {
+body .story-card {
   position: relative;
   isolation: isolate;
 
@@ -4123,7 +4123,7 @@ body.search-site .story-card {
     box-shadow 180ms ease;
 }
 
-body.search-site .story-card::before {
+body .story-card::before {
   left: 22px;
   right: 22px;
 
@@ -4138,7 +4138,7 @@ body.search-site .story-card::before {
 }
 
 /* Artwork is the primary recognition surface. */
-body.search-site .story-card-cover {
+body .story-card-cover {
   width: 100%;
   flex: 0 0 auto;
 
@@ -4149,7 +4149,7 @@ body.search-site .story-card-cover {
   background: #0a1021;
 }
 
-body.search-site .story-card-cover::after {
+body .story-card-cover::after {
   background:
     linear-gradient(
       180deg,
@@ -4159,7 +4159,7 @@ body.search-site .story-card-cover::after {
     );
 }
 
-body.search-site .story-card-cover img {
+body .story-card-cover img {
   width: 100%;
   height: 100%;
 
@@ -4171,7 +4171,7 @@ body.search-site .story-card-cover img {
     filter 260ms ease;
 }
 
-body.search-site .story-card-format {
+body .story-card-format {
   left: 0.68rem;
   bottom: 0.68rem;
 
@@ -4223,7 +4223,7 @@ body.search-site .story-card-format {
    CARD INFORMATION HIERARCHY
    ========================================================= */
 
-body.search-site .story-card-body {
+body .story-card-body {
   min-height: 140px !important;
   flex: 1 1 auto;
 
@@ -4250,7 +4250,7 @@ body.search-site .story-card-body {
   title and creator can align with the existing score without
   changing the supplied HTML structure.
 */
-body.search-site .story-card-heading {
+body .story-card-heading {
   display: grid;
 
   grid-template-columns:
@@ -4267,11 +4267,11 @@ body.search-site .story-card-heading {
   row-gap: 0.38rem;
 }
 
-body.search-site .story-card-title-group {
+body .story-card-title-group {
   display: contents;
 }
 
-body.search-site .story-card-title-group h3 {
+body .story-card-title-group h3 {
   grid-area: title;
 
   min-height: 2.4em;
@@ -4299,7 +4299,7 @@ body.search-site .story-card-title-group h3 {
   -webkit-line-clamp: 2;
 }
 
-body.search-site
+body
 .story-card-title-group h3 a {
   color: inherit;
   text-decoration: none;
@@ -4308,7 +4308,7 @@ body.search-site
     color 160ms ease;
 }
 
-body.search-site .story-card-title-group p {
+body .story-card-title-group p {
   grid-area: creator;
 
   min-width: 0;
@@ -4328,7 +4328,7 @@ body.search-site .story-card-title-group p {
 }
 
 /* Rating is metadata, not a button. */
-body.search-site .story-card-score {
+body .story-card-score {
   grid-area: score;
 
   width: auto;
@@ -4352,14 +4352,14 @@ body.search-site .story-card-score {
   border-radius: 0;
 }
 
-body.search-site .story-card-score i {
+body .story-card-score i {
   color: #cdd5ff;
 }
 
 /* Detailed prose belongs on the story page, not the dense grid. */
-body.search-site .story-card-description,
-body.search-site .story-card-match,
-body.search-site .story-card-action {
+body .story-card-description,
+body .story-card-match,
+body .story-card-action {
   display: none !important;
 }
 
@@ -4368,7 +4368,7 @@ body.search-site .story-card-action {
    QUIET GENRE METADATA
    ========================================================= */
 
-body.search-site .story-card-genres {
+body .story-card-genres {
   min-height: 22px;
 
   margin-top: auto;
@@ -4383,12 +4383,12 @@ body.search-site .story-card-genres {
 }
 
 /* Show only the two strongest genres in the compact grid. */
-body.search-site
+body
 .story-card-genre:nth-child(n + 3) {
   display: none;
 }
 
-body.search-site .story-card-genre {
+body .story-card-genre {
   min-width: 0;
   min-height: 0;
   max-width: 46%;
@@ -4414,7 +4414,7 @@ body.search-site .story-card-genre {
   border-radius: 0;
 }
 
-body.search-site
+body
 .story-card-genre:first-child:has(
   + .story-card-genre
 )::after {
@@ -4433,7 +4433,7 @@ body.search-site
    ========================================================= */
 
 @media (hover: hover) and (pointer: fine) {
-  body.search-site .story-card:hover {
+  body .story-card:hover {
     transform:
       translateY(-3px);
 
@@ -4446,7 +4446,7 @@ body.search-site
       !important;
   }
 
-  body.search-site
+  body
   .story-card:hover
   .story-card-cover img {
     transform:
@@ -4457,14 +4457,14 @@ body.search-site
       contrast(1.015);
   }
 
-  body.search-site
+  body
   .story-card-title-group
   h3 a:hover {
     color: #d4deff;
   }
 }
 
-body.search-site .story-card:focus-within {
+body .story-card:focus-within {
   border-color:
     rgba(139, 230, 255, 0.50)
     !important;
@@ -4481,7 +4481,7 @@ body.search-site .story-card:focus-within {
    PAGINATION
    ========================================================= */
 
-body.search-site .results-pagination {
+body .results-pagination {
   position: relative !important;
   top: auto !important;
   left: auto !important;
@@ -4512,14 +4512,14 @@ body.search-site .results-pagination {
   -webkit-backdrop-filter: none !important;
 }
 
-body.search-site
+body
 .results-pagination::before,
-body.search-site
+body
 .results-pagination::after {
   display: none !important;
 }
 
-body.search-site .pagination-button {
+body .pagination-button {
   min-width: 44px;
   height: 44px;
 
@@ -4531,7 +4531,7 @@ body.search-site .pagination-button {
    STRONG, CONSISTENT KEYBOARD FOCUS
    ========================================================= */
 
-body.search-site
+body
 :is(
   .catalogue-search-clear,
   .catalogue-search-submit,
@@ -4571,7 +4571,7 @@ body.search-site
    ========================================================= */
 
 @media (max-width: 1360px) {
-  body.search-site .search-workspace {
+  body .search-workspace {
     grid-template-columns:
       232px
       minmax(0, 1fr);
@@ -4579,8 +4579,8 @@ body.search-site
     gap: 1.05rem;
   }
 
-  body.search-site .results-grid,
-  body.search-site .results-loading {
+  body .results-grid,
+  body .results-loading {
     grid-template-columns:
       repeat(
         4,
@@ -4591,14 +4591,14 @@ body.search-site
 }
 
 @media (max-width: 1080px) {
-  body.search-site .search-workspace {
+  body .search-workspace {
     grid-template-columns:
       220px
       minmax(0, 1fr);
   }
 
-  body.search-site .results-grid,
-  body.search-site .results-loading {
+  body .results-grid,
+  body .results-loading {
     grid-template-columns:
       repeat(
         3,
@@ -4614,7 +4614,7 @@ body.search-site
    ========================================================= */
 
 @media (max-width: 980px) {
-  body.search-site .search-workspace {
+  body .search-workspace {
     width:
       min(
         calc(100% - 1.5rem),
@@ -4625,7 +4625,7 @@ body.search-site
       minmax(0, 1fr);
   }
 
-  body.search-site .filter-panel {
+  body .filter-panel {
     top: 0;
 
     width:
@@ -4643,14 +4643,14 @@ body.search-site
 }
 
 @media (max-width: 760px) {
-  body.search-site .search-intro {
+  body .search-intro {
     padding:
       1.9rem
       1rem
       1.1rem;
   }
 
-  body.search-site .search-intro h1 {
+  body .search-intro h1 {
     font-size:
       clamp(
         2.45rem,
@@ -4659,13 +4659,13 @@ body.search-site
       );
   }
 
-  body.search-site .results-toolbar {
+  body .results-toolbar {
     align-items: stretch;
 
     padding: 0.9rem;
   }
 
-  body.search-site .results-controls {
+  body .results-controls {
     width: 100%;
 
     display: grid;
@@ -4676,19 +4676,19 @@ body.search-site
     gap: 0.62rem;
   }
 
-  body.search-site .mobile-filter-button {
+  body .mobile-filter-button {
     grid-column:
       1 / -1;
 
     width: 100%;
   }
 
-  body.search-site .catalogue-select {
+  body .catalogue-select {
     min-width: 0;
   }
 
-  body.search-site .results-grid,
-  body.search-site .results-loading {
+  body .results-grid,
+  body .results-loading {
     grid-template-columns:
       repeat(
         2,
@@ -4704,38 +4704,38 @@ body.search-site
    ========================================================= */
 
 @media (max-width: 520px) {
-  body.search-site {
+  body {
     overflow-x: hidden;
   }
 
-  body.search-site .search-page,
-  body.search-site .search-workspace,
-  body.search-site .results-panel,
-  body.search-site .results-grid,
-  body.search-site .story-card {
+  body .search-page,
+  body .search-workspace,
+  body .results-panel,
+  body .results-grid,
+  body .story-card {
     width: 100%;
     max-width: 100%;
     min-width: 0;
   }
 
-  body.search-site .search-workspace {
+  body .search-workspace {
     width:
       calc(
         100% - 1rem
       );
   }
 
-  body.search-site .results-controls {
+  body .results-controls {
     grid-template-columns:
       minmax(0, 1fr);
   }
 
-  body.search-site .mobile-filter-button {
+  body .mobile-filter-button {
     grid-column: auto;
   }
 
-  body.search-site .results-grid,
-  body.search-site .results-loading {
+  body .results-grid,
+  body .results-loading {
     grid-template-columns:
       minmax(0, 1fr)
       !important;
@@ -4743,7 +4743,7 @@ body.search-site
     gap: 0.9rem !important;
   }
 
-  body.search-site .story-card {
+  body .story-card {
     min-height: 218px;
 
     display: grid;
@@ -4755,7 +4755,7 @@ body.search-site
     align-items: stretch;
   }
 
-  body.search-site .story-card-cover {
+  body .story-card-cover {
     width: 100%;
     height: 100%;
     min-height: 218px;
@@ -4769,7 +4769,7 @@ body.search-site
     border-bottom: 0;
   }
 
-  body.search-site .story-card-body {
+  body .story-card-body {
     min-height: 218px !important;
 
     padding:
@@ -4777,11 +4777,11 @@ body.search-site
       !important;
   }
 
-  body.search-site .story-card-heading {
+  body .story-card-heading {
     row-gap: 0.42rem;
   }
 
-  body.search-site
+  body
   .story-card-title-group h3 {
     min-height: 2.4em;
 
@@ -4790,15 +4790,15 @@ body.search-site
       !important;
   }
 
-  body.search-site
+  body
   .story-card-title-group p,
-  body.search-site .story-card-score {
+  body .story-card-score {
     font-size:
       0.72rem
       !important;
   }
 
-  body.search-site .story-card-format {
+  body .story-card-format {
     left: 0.52rem;
     bottom: 0.52rem;
 
@@ -4808,39 +4808,39 @@ body.search-site
       );
   }
 
-  body.search-site .story-card-genres {
+  body .story-card-genres {
     padding-top: 0.58rem;
   }
 }
 
 @media (max-width: 370px) {
-  body.search-site .story-card {
+  body .story-card {
     grid-template-columns:
       minmax(112px, 40%)
       minmax(0, 1fr);
   }
 
-  body.search-site .story-card-body {
+  body .story-card-body {
     padding:
       0.72rem
       !important;
   }
 
-  body.search-site
+  body
   .story-card-title-group h3 {
     font-size:
       0.94rem
       !important;
   }
 
-  body.search-site
+  body
   .story-card-title-group p {
     font-size:
       0.68rem
       !important;
   }
 
-  body.search-site .story-card-score {
+  body .story-card-score {
     font-size:
       0.68rem
       !important;
@@ -4853,15 +4853,15 @@ body.search-site
    ========================================================= */
 
 @media (prefers-contrast: more) {
-  body.search-site {
+  body {
     --search-text-secondary: #d8dff0;
     --search-text-muted: #bac5db;
     --search-border: rgba(192, 208, 255, 0.40);
   }
 
-  body.search-site .story-card,
-  body.search-site .results-toolbar,
-  body.search-site .filter-panel {
+  body .story-card,
+  body .results-toolbar,
+  body .filter-panel {
     border-color:
       rgba(192, 208, 255, 0.38)
       !important;
@@ -4869,19 +4869,19 @@ body.search-site
 }
 
 @media (forced-colors: active) {
-  body.search-site .story-card,
-  body.search-site .results-toolbar,
-  body.search-site .filter-panel,
-  body.search-site .catalogue-search-form,
-  body.search-site .catalogue-select-trigger,
-  body.search-site .pagination-button {
+  body .story-card,
+  body .results-toolbar,
+  body .filter-panel,
+  body .catalogue-search-form,
+  body .catalogue-select-trigger,
+  body .pagination-button {
     border:
       1px solid
       CanvasText
       !important;
   }
 
-  body.search-site
+  body
   :is(
     .story-card-cover,
     .story-card-title-group h3 a,
@@ -4901,20 +4901,20 @@ body.search-site
    ========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
-  body.search-site .story-card,
-  body.search-site .story-card-cover img,
-  body.search-site
+  body .story-card,
+  body .story-card-cover img,
+  body
   .story-card-title-group h3 a,
-  body.search-site
+  body
   .catalogue-search-submit {
     transition: none !important;
   }
 
-  body.search-site .story-card:hover {
+  body .story-card:hover {
     transform: none !important;
   }
 
-  body.search-site
+  body
   .story-card:hover
   .story-card-cover img {
     transform: none !important;
