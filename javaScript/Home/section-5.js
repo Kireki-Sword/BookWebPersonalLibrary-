@@ -1,5 +1,5 @@
 /* ============================================================================
-   INKWELL — SECTION 5: SOCIAL, ON YOUR TERMS (V15 STABLE DYNAMIC CONTENT / STACKED FOR YOU / HIT-AREA FIX)
+   INKWELL — SECTION 5: SOCIAL, ON YOUR TERMS (V16 COLOR-CODED FOLLOWING / ADAPTIVE FOR YOU / WORKING SEARCH)
 
    Homepage product story:
    1. Control — audience, spoilers, and a stable live preview.
@@ -20,11 +20,11 @@
   "use strict";
 
   const section = document.querySelector("#section-5-social");
-  if (!section || window.__INKWELL_SOCIAL_V15_STARTED__) return;
+  if (!section || window.__INKWELL_SOCIAL_V16_STARTED__) return;
 
-  window.__INKWELL_SOCIAL_V15_STARTED__ = true;
+  window.__INKWELL_SOCIAL_V16_STARTED__ = true;
   window.__INKWELL_SOCIAL_CINEMA_BUILD__ =
-    "2026-07-25-social-cinema-v15-stable-interactions";
+    "2026-07-25-social-cinema-v16-adaptive-content-search-fix";
 
   const { gsap, ScrollTrigger } = window;
   const MANAGED_BY_HOME_JOURNEY =
@@ -371,7 +371,7 @@
       detail: "Created a profile ranking with four entries and a short note.",
       story: "Chainsaw Man",
       time: "4d",
-      tone: "ranking",
+      tone: "category",
     },
   ]);
 
@@ -1484,6 +1484,19 @@
   }
 
   function renderSearchResults(animate) {
+    try {
+      renderSearchResultsInternal(animate);
+    } catch (error) {
+      console.error("Inkwell Section 5 search render failed:", error);
+      if (elements.searchResults) {
+        elements.searchResults.innerHTML = `<div class="s14-search-empty"><span><strong>Search could not finish rendering.</strong><small>Try another result type or clear the active query.</small></span></div>`;
+      }
+      setText(elements.searchSummary, "Search is ready for another query.");
+      setText(elements.searchCount, "0 results");
+    }
+  }
+
+  function renderSearchResultsInternal(animate) {
     if (!elements.searchResults) return;
     renderSearchFilters();
     updateSearchModeTabs();
@@ -1662,6 +1675,7 @@
         const values = [item.story.title, item.story.creator, ...Array.from(item.profiles).flatMap((key) => PROFILE_DATA[key].tags)];
         return {
           story: item.story,
+          profiles: item.profiles,
           score: scoreValues(values, tokens),
           context: `${item.profiles.size} public profile${item.profiles.size === 1 ? "" : "s"} · ${item.layers || 3} saved layers`,
         };
@@ -1754,10 +1768,18 @@
       });
     } else {
       if (incoming) {
-        gsap.set(incoming, { visibility: "visible", pointerEvents: "auto" });
+        gsap.set(incoming, { clearProps: "transform", visibility: "visible", pointerEvents: "auto", x: 0, y: 0, scale: 1 });
         gsap.fromTo(incoming,
-          { autoAlpha: 0, x: direction * 24, scale: 0.994 },
-          { autoAlpha: 1, x: 0, scale: 1, duration: 0.42, ease: "power3.out", overwrite: true, clearProps: "transform" },
+          { autoAlpha: 0, x: direction * 20, scale: 0.996 },
+          {
+            autoAlpha: 1,
+            x: 0,
+            scale: 1,
+            duration: 0.38,
+            ease: "power3.out",
+            overwrite: true,
+            onComplete: () => gsap.set(incoming, { clearProps: "transform", pointerEvents: "auto" }),
+          },
         );
       }
       if (outgoing) {
@@ -2085,6 +2107,32 @@
     return map[item.type] || `${item.type} · ${story.title}`;
   }
 
+  function forYouFeatureMarkup(artifact) {
+    const type = normalizeText(artifact.type);
+    const tags = artifact.tags || [];
+    const previewCopy = {
+      moment: "The saved frame is the main idea. The note explains what the image holds after the scene has passed.",
+      character: "Follow the character through the traits and conflicts that keep returning across this reader’s shelf.",
+      reflection: "A longer argument with room for context, ambiguity, and spoiler protection instead of a one-line reaction.",
+      quote: "The remembered line stays attached to the reader’s public context, not separated from the reason it mattered.",
+      thought: "A compact interpretation that can be revised after a reread without erasing the earlier version.",
+    }[type] || "A public story layer with its reason, context, and connected reader kept visible.";
+
+    const previewLabel = {
+      moment: "Visual note",
+      character: "Character lens",
+      reflection: "Reading format",
+      quote: "Saved context",
+      thought: "Connected idea",
+    }[type] || "Story layer";
+
+    return `<section class="s16-layer-preview s16-layer-preview--${escapeHtml(type)}" aria-label="${escapeHtml(previewLabel)}">
+      <span class="s16-layer-preview__label">${escapeHtml(previewLabel)}</span>
+      <p>${escapeHtml(previewCopy)}</p>
+      <div>${tags.slice(0, 3).map((tag, tagIndex) => `<span><b>${String(tagIndex + 1).padStart(2, "0")}</b>${escapeHtml(tag)}</span>`).join("")}</div>
+    </section>`;
+  }
+
   function forYouArtifactMarkup(artifact, index) {
     const profile = PROFILE_DATA[artifact.profile];
     const story = getStoryByTitle(artifact.story);
@@ -2104,11 +2152,13 @@
         <h4>${escapeHtml(artifact.title)}</h4>
         <p>${escapeHtml(artifact.excerpt)}</p>
         <div class="s13-artifact-tags">${artifact.tags.map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}</div>
+        ${forYouFeatureMarkup(artifact)}
 
         <footer class="s14-for-you-slide__footer">
-          <button type="button" class="s14-author-card" data-s13-open-author="${escapeHtml(artifact.profile)}" aria-label="Open ${escapeHtml(profile.name)} profile">
+          <button type="button" class="s14-author-card s16-author-card" data-s13-open-author="${escapeHtml(artifact.profile)}" aria-label="Open ${escapeHtml(profile.name)} profile">
             <span class="s11-avatar" style="${avatarStyle(artifact.profile)}">${escapeHtml(profile.initial)}</span>
-            <span><small>${escapeHtml(profile.label)}</small><strong>${escapeHtml(profile.name)}</strong><em>View profile</em></span>
+            <span><strong>${escapeHtml(profile.name)}</strong><small>${escapeHtml(profile.label)}</small></span>
+            <b aria-hidden="true">→</b>
           </button>
           <div class="s14-for-you-actions">
             <button type="button" class="s13-secondary-action" data-s11-open-story="${escapeHtml(story.title)}" data-s13-story-owner="${escapeHtml(artifact.profile)}">View story</button>
@@ -2127,7 +2177,7 @@
   function searchArtifactMarkup(artifact) {
     const profile = PROFILE_DATA[artifact.profile];
     const story = getStoryByTitle(artifact.story);
-    return `<button type="button" class="s13-search-card s13-search-artifact" data-s13-open-artifact="${escapeHtml(artifact.id)}" aria-label="Open ${escapeHtml(artifact.type)} ${escapeHtml(artifact.title)}">
+    return `<button type="button" class="s13-search-card s13-search-artifact" data-s16-search-result-type="${escapeHtml(normalizeText(artifact.type))}" data-s13-open-artifact="${escapeHtml(artifact.id)}" aria-label="Open ${escapeHtml(artifact.type)} ${escapeHtml(artifact.title)}">
       <span class="s13-search-card__main">
         ${storyCoverMarkup(story, "s13-search-artifact__cover")}
         <span class="s13-search-artifact__copy"><small>${escapeHtml(artifact.type)} · ${escapeHtml(story.title)}</small><strong>${escapeHtml(artifact.title)}</strong><p>${escapeHtml(artifact.excerpt)}</p><span class="s13-search-card__tags">${artifact.tags.slice(0, 3).map((tag) => `<em>${escapeHtml(tag)}</em>`).join("")}</span></span>
@@ -2139,7 +2189,7 @@
   function searchResultMarkup(key, reason) {
     const profile = PROFILE_DATA[key];
     const story = getStoryByTitle(profile.topStories[0]);
-    return `<button type="button" class="s13-search-card s13-search-reader" data-s11-profile-key="${escapeHtml(key)}" aria-pressed="${state.selectedProfile === key}">
+    return `<button type="button" class="s13-search-card s13-search-reader" data-s16-search-result-type="reader" data-s11-profile-key="${escapeHtml(key)}" aria-pressed="${state.selectedProfile === key}">
       <header><span class="s11-avatar" style="${avatarStyle(key)}">${escapeHtml(profile.initial)}</span><span><small>${escapeHtml(profile.label)}</small><strong>${escapeHtml(profile.name)}</strong><p>${escapeHtml(profile.bio)}</p></span>${storyCoverMarkup(story, "s13-search-reader__cover")}</header>
       <div class="s13-search-reader__reason"><small>Why this profile matched</small><p>${escapeHtml(reason)}</p></div>
       <dl><div><dt>#1 story</dt><dd>${escapeHtml(story.title)}</dd></div><div><dt>Signature ranking</dt><dd>${escapeHtml(profile.signature)}</dd></div><div><dt>Public themes</dt><dd>${escapeHtml(profile.sharedThemes.join(" · "))}</dd></div></dl>
@@ -2151,7 +2201,7 @@
     const related = DISCOVERY_ARTIFACTS.filter((artifact) => normalizeText(artifact.story) === normalizeText(story.title));
     const types = Array.from(new Set(related.map((artifact) => artifact.type))).slice(0, 3);
     const owner = related[0]?.profile || ["kai", "mira", "ren"].find((key) => PROFILE_DATA[key].topStories.some((title) => normalizeText(title) === normalizeText(story.title))) || "kai";
-    return `<button type="button" class="s13-search-card s13-search-story" data-s11-open-story="${escapeHtml(story.title)}" data-s13-story-owner="${escapeHtml(owner)}" aria-label="Open ${escapeHtml(story.title)} story page">
+    return `<button type="button" class="s13-search-card s13-search-story" data-s16-search-result-type="story" data-s11-open-story="${escapeHtml(story.title)}" data-s13-story-owner="${escapeHtml(owner)}" aria-label="Open ${escapeHtml(story.title)} story page">
       ${storyCoverMarkup(story, "s13-search-story__cover")}
       <span class="s13-search-story__copy"><small>${escapeHtml(story.creator || "Story")}</small><strong>${escapeHtml(story.title)}</strong><p>${escapeHtml(context || "Public reflections and saved layers")}</p><span>${types.length ? types.map((type) => `<em>${escapeHtml(type)}</em>`).join("") : "<em>Public story</em>"}</span></span>
     </button>`;
@@ -2672,7 +2722,7 @@
         timeline?.kill?.();
         resizeObserver?.disconnect?.();
         cleanupCallbacks.splice(0).forEach((callback) => callback());
-        window.__INKWELL_SOCIAL_V15_STARTED__ = false;
+        window.__INKWELL_SOCIAL_V16_STARTED__ = false;
       },
       cleanup: () => trigger?.kill?.(true),
     };

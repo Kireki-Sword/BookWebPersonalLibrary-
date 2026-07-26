@@ -7238,7 +7238,7 @@
 
 
 /* ========================================================================== 
-   INKWELL — SECTION 5 SOCIAL V15 AUTHORITATIVE FIXES
+   INKWELL — SECTION 5 SOCIAL V15 AUTHORITATIVE FIXES (base retained below V16)
    - dynamic profile/search nodes never remain opacity: 0 after hydration
    - hub views are real constrained grids
    - For You uses a stacked transition, not nested native scrolling
@@ -7544,6 +7544,560 @@
   #section-5-social .s14-search-grid.s13-search-grid--discover,
   #section-5-social .s14-search-grid.s13-search-grid--stories,
   #section-5-social .s14-search-grid.s13-search-grid--readers {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* ========================================================================== 
+   INKWELL — SECTION 5 SOCIAL V16 AUTHORITATIVE UI FIXES
+   - full, uncropped Following covers
+   - distinct layer colors with matching readable tags
+   - adaptive For You composition by artifact type
+   - compact linked profile card
+   - resilient, visible and clickable Search
+   ========================================================================== */
+
+#section-5-social {
+  --s16-ranking: #a98cff;
+  --s16-moment: #ef88ca;
+  --s16-reflection: #69d8ff;
+  --s16-quote: #ffd27d;
+  --s16-character: #7ea7ff;
+  --s16-note: #72d5c4;
+  --s16-thought: #c293ff;
+  --s16-library: #76dda9;
+  --s16-category: #ff9f83;
+}
+
+/* Keep navigation controls above all changing panels. */
+#section-5-social .s14-social-stage__header,
+#section-5-social .s11-social-tabs {
+  position: relative;
+  z-index: 40;
+  pointer-events: auto;
+}
+
+#section-5-social .s11-social-tabs button {
+  position: relative;
+  z-index: 2;
+  pointer-events: auto;
+}
+
+/* --------------------------------------------------------------------------
+   Following — compact information, complete covers, readable color language
+   -------------------------------------------------------------------------- */
+
+#section-5-social .s14-following-grid {
+  gap: 0.48rem;
+}
+
+#section-5-social .s14-following-card {
+  --s16-tone: var(--s16-ranking);
+  --s16-tone-soft: color-mix(in srgb, var(--s16-tone) 17%, transparent);
+  --s16-tone-line: color-mix(in srgb, var(--s16-tone) 56%, rgba(255, 255, 255, 0.1));
+  overflow: hidden;
+  border-color: color-mix(in srgb, var(--s16-tone) 31%, var(--s14-line) 69%);
+  background:
+    linear-gradient(106deg, var(--s16-tone-soft), transparent 54%),
+    radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--s16-tone) 22%, transparent), transparent 44%),
+    linear-gradient(145deg, rgba(25, 38, 73, 0.985), rgba(10, 18, 40, 0.995));
+}
+
+#section-5-social .s14-following-card[data-s13-feed-tone="ranking"] { --s16-tone: var(--s16-ranking); }
+#section-5-social .s14-following-card[data-s13-feed-tone="moment"] { --s16-tone: var(--s16-moment); }
+#section-5-social .s14-following-card[data-s13-feed-tone="reflection"] { --s16-tone: var(--s16-reflection); }
+#section-5-social .s14-following-card[data-s13-feed-tone="quote"] { --s16-tone: var(--s16-quote); }
+#section-5-social .s14-following-card[data-s13-feed-tone="character"] { --s16-tone: var(--s16-character); }
+#section-5-social .s14-following-card[data-s13-feed-tone="note"] { --s16-tone: var(--s16-note); }
+#section-5-social .s14-following-card[data-s13-feed-tone="thought"] { --s16-tone: var(--s16-thought); }
+#section-5-social .s14-following-card[data-s13-feed-tone="library"] { --s16-tone: var(--s16-library); }
+#section-5-social .s14-following-card[data-s13-feed-tone="category"] { --s16-tone: var(--s16-category); }
+
+#section-5-social .s14-following-card::before {
+  width: 3px;
+  top: 10px;
+  bottom: 10px;
+  background: var(--s16-tone);
+  box-shadow: 0 0 16px color-mix(in srgb, var(--s16-tone) 32%, transparent);
+}
+
+/* The button already owns the full card. Remove the previous overlay layer,
+   which made hover/click debugging difficult and could cover text. */
+#section-5-social .s14-following-card .s13-following-card__button::after {
+  display: none !important;
+}
+
+#section-5-social .s14-following-card .s13-following-card__button {
+  height: 100%;
+  min-height: 0;
+  grid-template-rows: 32px minmax(0, 1fr) 25px;
+  gap: 0.28rem;
+  padding: 0.5rem 0.56rem 0.46rem 0.66rem;
+}
+
+#section-5-social .s14-following-card .s13-following-card__button > * {
+  z-index: auto;
+}
+
+#section-5-social .s14-following-card .s13-following-card__body {
+  min-height: 0;
+  grid-template-columns: minmax(0, 1fr) 62px;
+  gap: 0.54rem;
+  align-items: center;
+  overflow: hidden;
+}
+
+#section-5-social .s14-following-card .s13-following-card__copy {
+  min-height: 0;
+  overflow: hidden;
+}
+
+#section-5-social .s14-following-card .s13-following-card__copy > small {
+  color: color-mix(in srgb, var(--s16-tone) 82%, white 18%);
+  font-weight: 830;
+}
+
+#section-5-social .s14-following-card .s13-following-card__copy > strong {
+  margin-top: 0.14rem;
+  font-size: 0.65rem;
+  line-height: 1.08;
+  -webkit-line-clamp: 2;
+}
+
+#section-5-social .s14-following-card .s13-following-card__copy > p {
+  margin-top: 0.17rem;
+  font-size: 0.43rem;
+  line-height: 1.27;
+  -webkit-line-clamp: 2;
+}
+
+#section-5-social .s14-following-card .s13-following-card__cover {
+  width: 62px;
+  height: 84px;
+  max-height: 100%;
+  align-self: center;
+  overflow: hidden;
+  border-color: color-mix(in srgb, var(--s16-tone) 38%, rgba(255, 255, 255, 0.12));
+  border-radius: 8px;
+  background:
+    radial-gradient(circle at 50% 20%, color-mix(in srgb, var(--s16-tone) 16%, transparent), transparent 58%),
+    rgba(5, 10, 23, 0.88);
+}
+
+#section-5-social .s14-following-card .s13-following-card__cover img {
+  object-fit: contain;
+  object-position: center;
+  background: rgba(5, 10, 23, 0.92);
+}
+
+#section-5-social .s14-following-card .s13-following-card__button > footer {
+  min-height: 25px;
+  gap: 0.28rem;
+  overflow: hidden;
+}
+
+#section-5-social .s14-following-card .s13-layer-chip {
+  flex: 0 0 auto;
+  min-height: 22px;
+  padding: 0.18rem 0.44rem;
+  border-color: color-mix(in srgb, var(--s16-tone) 66%, rgba(255, 255, 255, 0.12));
+  color: color-mix(in srgb, var(--s16-tone) 38%, white 62%);
+  background: color-mix(in srgb, var(--s16-tone) 24%, rgba(8, 14, 31, 0.88));
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.07);
+  opacity: 1;
+}
+
+#section-5-social .s14-following-card .s13-following-card__button > footer > span:not(.s13-layer-chip) {
+  opacity: 0.82;
+}
+
+#section-5-social .s14-following-card:hover,
+#section-5-social .s14-following-card:focus-within {
+  transform: translateY(-3px);
+  border-color: var(--s16-tone-line);
+  box-shadow:
+    0 22px 42px rgba(0, 0, 0, 0.33),
+    0 0 24px color-mix(in srgb, var(--s16-tone) 13%, transparent),
+    inset 0 1px rgba(255, 255, 255, 0.07);
+}
+
+#section-5-social .s14-following-card:hover .s13-following-card__cover,
+#section-5-social .s14-following-card:focus-within .s13-following-card__cover {
+  transform: translateY(-1px) scale(1.035);
+}
+
+/* --------------------------------------------------------------------------
+   For You — layouts change with the saved layer instead of using one template
+   -------------------------------------------------------------------------- */
+
+#section-5-social .s14-for-you-slide {
+  --s16-artifact-tone: var(--s16-moment);
+  grid-template-columns: minmax(250px, 0.96fr) minmax(0, 1.04fr);
+  border-color: color-mix(in srgb, var(--s16-artifact-tone) 38%, var(--s14-line) 62%);
+  background:
+    radial-gradient(circle at 0% 0%, color-mix(in srgb, var(--s16-artifact-tone) 17%, transparent), transparent 46%),
+    linear-gradient(145deg, rgba(18, 29, 60, 0.99), rgba(8, 15, 34, 0.995));
+}
+
+#section-5-social .s14-for-you-slide[data-s14-artifact-type="moment"] {
+  --s16-artifact-tone: var(--s16-moment);
+  grid-template-columns: minmax(285px, 1.08fr) minmax(0, 0.92fr);
+}
+
+#section-5-social .s14-for-you-slide[data-s14-artifact-type="character"] {
+  --s16-artifact-tone: var(--s16-character);
+  grid-template-columns: minmax(245px, 0.88fr) minmax(0, 1.12fr);
+}
+
+#section-5-social .s14-for-you-slide[data-s14-artifact-type="reflection"] {
+  --s16-artifact-tone: var(--s16-reflection);
+  grid-template-columns: minmax(190px, 0.58fr) minmax(0, 1.42fr);
+}
+
+#section-5-social .s14-for-you-slide[data-s14-artifact-type="quote"] {
+  --s16-artifact-tone: var(--s16-quote);
+  grid-template-columns: minmax(190px, 0.58fr) minmax(0, 1.42fr);
+}
+
+#section-5-social .s14-for-you-slide[data-s14-artifact-type="thought"] {
+  --s16-artifact-tone: var(--s16-thought);
+  grid-template-columns: minmax(220px, 0.72fr) minmax(0, 1.28fr);
+}
+
+#section-5-social .s14-for-you-slide__visual {
+  min-height: 0;
+  padding: 0.72rem;
+  background:
+    radial-gradient(circle at 50% 38%, color-mix(in srgb, var(--s16-artifact-tone) 18%, transparent), transparent 52%),
+    linear-gradient(160deg, rgba(13, 24, 52, 0.96), rgba(5, 10, 24, 0.99));
+}
+
+#section-5-social .s14-for-you-slide__image {
+  object-fit: cover;
+  object-position: center;
+}
+
+#section-5-social .s14-for-you-slide__fallback {
+  width: min(72%, 210px);
+  height: min(82%, 310px);
+  border-color: color-mix(in srgb, var(--s16-artifact-tone) 45%, rgba(255, 255, 255, 0.12));
+  background:
+    radial-gradient(circle at 50% 24%, color-mix(in srgb, var(--s16-artifact-tone) 18%, transparent), transparent 56%),
+    rgba(7, 13, 29, 0.86);
+}
+
+#section-5-social .s14-for-you-slide__fallback img {
+  object-fit: contain;
+  background: rgba(6, 11, 26, 0.92);
+}
+
+#section-5-social .s14-for-you-slide[data-s14-artifact-type="reflection"] .s14-for-you-slide__fallback,
+#section-5-social .s14-for-you-slide[data-s14-artifact-type="quote"] .s14-for-you-slide__fallback {
+  width: min(72%, 146px);
+  height: min(72%, 218px);
+}
+
+#section-5-social .s14-for-you-slide__type {
+  border-color: color-mix(in srgb, var(--s16-artifact-tone) 60%, rgba(255, 255, 255, 0.1));
+  color: color-mix(in srgb, var(--s16-artifact-tone) 42%, white 58%);
+  background: color-mix(in srgb, var(--s16-artifact-tone) 22%, rgba(5, 10, 24, 0.86));
+}
+
+#section-5-social .s14-for-you-slide__content {
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto auto auto auto auto minmax(0, 1fr) auto auto;
+  align-content: stretch;
+  gap: 0;
+  padding: clamp(0.72rem, 1.1vw, 0.94rem);
+}
+
+#section-5-social .s14-for-you-slide__content h4 {
+  margin-top: 0.3rem;
+  font-size: clamp(1.28rem, 2vw, 1.82rem);
+}
+
+#section-5-social .s14-for-you-slide__content > p {
+  margin-top: 0.38rem;
+  font-size: clamp(0.57rem, 0.63vw, 0.68rem);
+  line-height: 1.45;
+  -webkit-line-clamp: 3;
+}
+
+#section-5-social .s14-for-you-slide .s13-artifact-kicker {
+  color: color-mix(in srgb, var(--s16-artifact-tone) 76%, white 24%);
+}
+
+#section-5-social .s14-for-you-slide .s13-artifact-tags span {
+  border-color: color-mix(in srgb, var(--s16-artifact-tone) 52%, rgba(255, 255, 255, 0.1));
+  color: color-mix(in srgb, var(--s16-artifact-tone) 36%, white 64%);
+  background: color-mix(in srgb, var(--s16-artifact-tone) 19%, rgba(8, 15, 34, 0.9));
+}
+
+#section-5-social .s16-layer-preview {
+  min-height: 0;
+  align-self: stretch;
+  margin-top: 0.52rem;
+  padding: 0.58rem;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--s16-artifact-tone) 28%, var(--s14-line) 72%);
+  border-radius: 13px;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--s16-artifact-tone) 10%, transparent), transparent 58%),
+    rgba(7, 13, 29, 0.56);
+}
+
+#section-5-social .s16-layer-preview__label {
+  color: color-mix(in srgb, var(--s16-artifact-tone) 75%, white 25%);
+  font-size: 0.46rem;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+#section-5-social .s16-layer-preview > p {
+  margin: 0.28rem 0 0;
+  color: var(--s14-text-2);
+  font-size: 0.51rem;
+  line-height: 1.38;
+}
+
+#section-5-social .s16-layer-preview > div {
+  margin-top: 0.42rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.3rem;
+}
+
+#section-5-social .s16-layer-preview > div > span {
+  min-width: 0;
+  min-height: 31px;
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr);
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.25rem 0.32rem;
+  border: 1px solid color-mix(in srgb, var(--s16-artifact-tone) 22%, var(--s14-line) 78%);
+  border-radius: 9px;
+  color: var(--s14-text-2);
+  background: rgba(5, 10, 24, 0.54);
+  font-size: 0.43rem;
+  overflow: hidden;
+}
+
+#section-5-social .s16-layer-preview > div b {
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  border-radius: 7px;
+  color: color-mix(in srgb, var(--s16-artifact-tone) 45%, white 55%);
+  background: color-mix(in srgb, var(--s16-artifact-tone) 22%, rgba(8, 15, 34, 0.9));
+  font-size: 0.4rem;
+}
+
+#section-5-social .s16-layer-preview--moment {
+  min-height: 96px;
+}
+
+#section-5-social .s16-layer-preview--character > div > span {
+  border-radius: 999px;
+}
+
+#section-5-social .s16-layer-preview--reflection {
+  border-left: 3px solid var(--s16-artifact-tone);
+}
+
+#section-5-social .s16-layer-preview--quote {
+  position: relative;
+  padding-left: 1rem;
+}
+
+#section-5-social .s16-layer-preview--quote::before {
+  content: "“";
+  position: absolute;
+  left: 0.35rem;
+  top: 0.25rem;
+  color: color-mix(in srgb, var(--s16-artifact-tone) 64%, white 36%);
+  font: 800 1.6rem/1 var(--font-display, Georgia, serif);
+  opacity: 0.65;
+}
+
+#section-5-social .s16-layer-preview--thought {
+  border-radius: 18px 18px 18px 6px;
+}
+
+#section-5-social .s14-for-you-slide__footer {
+  margin-top: 0.54rem;
+  padding-top: 0.52rem;
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+#section-5-social .s16-author-card {
+  min-height: 46px;
+  grid-template-columns: 34px minmax(0, 1fr) 22px;
+  gap: 0.42rem;
+  padding: 0.32rem 0.42rem;
+  border-color: color-mix(in srgb, var(--s16-artifact-tone) 22%, var(--s14-line) 78%);
+  background: rgba(5, 10, 24, 0.54);
+}
+
+#section-5-social .s16-author-card .s11-avatar {
+  width: 34px;
+  height: 34px;
+  flex-basis: 34px;
+  border-radius: 11px;
+  font-size: 0.78rem;
+}
+
+#section-5-social .s16-author-card > span:nth-child(2) {
+  min-width: 0;
+}
+
+#section-5-social .s16-author-card strong,
+#section-5-social .s16-author-card small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#section-5-social .s16-author-card > b {
+  color: color-mix(in srgb, var(--s16-artifact-tone) 62%, white 38%);
+  font-size: 0.8rem;
+}
+
+#section-5-social .s16-author-card:hover,
+#section-5-social .s16-author-card:focus-visible,
+#section-5-social .s14-for-you-actions button:hover,
+#section-5-social .s14-for-you-actions button:focus-visible {
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--s16-artifact-tone) 55%, rgba(255, 255, 255, 0.12));
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.24);
+}
+
+/* --------------------------------------------------------------------------
+   Search — guaranteed panel ownership, functional result rendering and colors
+   -------------------------------------------------------------------------- */
+
+#section-5-social .s11-social-view[data-s11-social-view="search"] {
+  isolation: isolate;
+  min-height: 0;
+}
+
+#section-5-social .s11-social-view[data-s11-social-view="search"].is-active {
+  display: grid !important;
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto !important;
+}
+
+#section-5-social .s14-search-toolbar,
+#section-5-social .s14-search-typebar,
+#section-5-social .s14-search-active,
+#section-5-social .s14-search-summary,
+#section-5-social .s14-search-results {
+  position: relative;
+  z-index: 2;
+}
+
+#section-5-social .s14-search-results {
+  min-height: 154px;
+}
+
+#section-5-social .s14-search-results .s13-search-card {
+  --s16-result-tone: var(--s16-reflection);
+  border-color: color-mix(in srgb, var(--s16-result-tone) 26%, var(--s14-line) 74%);
+  background:
+    linear-gradient(130deg, color-mix(in srgb, var(--s16-result-tone) 9%, transparent), transparent 52%),
+    linear-gradient(145deg, rgba(22, 34, 68, 0.97), rgba(10, 18, 40, 0.995));
+}
+
+#section-5-social .s14-search-results [data-s16-search-result-type="moment"] { --s16-result-tone: var(--s16-moment); }
+#section-5-social .s14-search-results [data-s16-search-result-type="character"] { --s16-result-tone: var(--s16-character); }
+#section-5-social .s14-search-results [data-s16-search-result-type="reflection"] { --s16-result-tone: var(--s16-reflection); }
+#section-5-social .s14-search-results [data-s16-search-result-type="quote"] { --s16-result-tone: var(--s16-quote); }
+#section-5-social .s14-search-results [data-s16-search-result-type="thought"] { --s16-result-tone: var(--s16-thought); }
+#section-5-social .s14-search-results [data-s16-search-result-type="reader"] { --s16-result-tone: var(--s16-category); }
+#section-5-social .s14-search-results [data-s16-search-result-type="story"] { --s16-result-tone: var(--s16-library); }
+
+#section-5-social .s14-search-results .s13-search-card:hover,
+#section-5-social .s14-search-results .s13-search-card:focus-visible,
+#section-5-social .s14-search-results .s13-search-card:focus-within {
+  border-color: color-mix(in srgb, var(--s16-result-tone) 58%, rgba(255, 255, 255, 0.12));
+  box-shadow:
+    0 18px 34px rgba(0, 0, 0, 0.3),
+    0 0 20px color-mix(in srgb, var(--s16-result-tone) 11%, transparent);
+}
+
+#section-5-social .s14-search-results .s13-search-artifact__copy > small {
+  color: color-mix(in srgb, var(--s16-result-tone) 72%, white 28%);
+}
+
+#section-5-social .s14-search-results .s13-search-card__tags em,
+#section-5-social .s14-search-results .s13-search-story__copy em {
+  border-color: color-mix(in srgb, var(--s16-result-tone) 45%, rgba(255, 255, 255, 0.1));
+  color: color-mix(in srgb, var(--s16-result-tone) 34%, white 66%);
+  background: color-mix(in srgb, var(--s16-result-tone) 18%, rgba(7, 13, 29, 0.9));
+}
+
+#section-5-social .s14-search-empty strong,
+#section-5-social .s14-search-empty small {
+  display: block;
+}
+
+#section-5-social .s14-search-empty strong {
+  color: var(--s14-text-2);
+  font-size: 0.68rem;
+}
+
+#section-5-social .s14-search-empty small {
+  margin-top: 0.25rem;
+  color: var(--s14-muted);
+  font-size: 0.5rem;
+}
+
+@media (max-height: 800px) and (min-width: 1100px) {
+  #section-5-social .s14-following-card .s13-following-card__button {
+    grid-template-rows: 29px minmax(0, 1fr) 23px;
+    padding-block: 0.42rem 0.38rem;
+  }
+
+  #section-5-social .s14-following-card .s13-following-card__body {
+    grid-template-columns: minmax(0, 1fr) 54px;
+  }
+
+  #section-5-social .s14-following-card .s13-following-card__cover {
+    width: 54px;
+    height: 74px;
+  }
+
+  #section-5-social .s16-layer-preview {
+    margin-top: 0.38rem;
+    padding: 0.45rem;
+  }
+
+  #section-5-social .s16-layer-preview > p {
+    font-size: 0.46rem;
+  }
+
+  #section-5-social .s16-layer-preview > div > span {
+    min-height: 27px;
+  }
+}
+
+@media (max-width: 760px) {
+  #section-5-social .s14-following-card .s13-following-card__body {
+    grid-template-columns: minmax(0, 1fr) 58px;
+  }
+
+  #section-5-social .s14-for-you-slide,
+  #section-5-social .s14-for-you-slide[data-s14-artifact-type] {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(230px, 0.86fr) minmax(0, 1.14fr);
+  }
+
+  #section-5-social .s16-layer-preview > div {
     grid-template-columns: 1fr;
   }
 }
