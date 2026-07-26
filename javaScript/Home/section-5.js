@@ -25,7 +25,7 @@
   window.__INKWELL_SOCIAL_V20_STARTED__ = true;
   window.__INKWELL_SOCIAL_V16_STARTED__ = true;
   window.__INKWELL_SOCIAL_CINEMA_BUILD__ =
-    "2026-07-26-social-cinema-v20-responsive-feed-stable-scroll";
+    "2026-07-26-social-cinema-v21-editorial-showcase-user-owned-feed";
 
   const { gsap, ScrollTrigger } = window;
   const MANAGED_BY_HOME_JOURNEY =
@@ -834,53 +834,30 @@
             <div class="s13-for-you-stage s14-for-you-stage" data-s11-for-you-results></div>
           </section>
 
-          <section class="s11-social-view" data-s11-social-view="search" role="tabpanel" aria-label="Search" aria-hidden="true" inert hidden>
-            <header class="s11-view-heading s11-view-heading--search s12-view-heading s13-view-heading s14-view-heading s14-view-heading--search">
-              <span><small>Search themes or readers</small><strong>Start with an idea, genre, character, or reading style</strong><p>Content finds public layers connected to the same idea. People finds readers whose themes, characters, rankings, and activity match it.</p></span>
-              <span class="s11-count-pill" data-s14-search-count>6 results</span>
+          <section class="s11-social-view s21-search-view" data-s11-social-view="search" role="tabpanel" aria-label="Search showcase" aria-hidden="true" inert hidden>
+            <header class="s11-view-heading s12-view-heading s13-view-heading s14-view-heading s21-search-heading">
+              <span><small>One example, clearly explained</small><strong>Search by idea, not by database fields</strong><p>This scene demonstrates how an “Identity” search connects public moments, characters, quotes, thoughts, and rankings. It is intentionally a fixed product showcase.</p></span>
+              <span class="s11-count-pill" data-s14-search-count>6 examples</span>
             </header>
 
-            <div class="s17-search-scope" role="tablist" aria-label="Search result family">
-              <button type="button" role="tab" data-s13-search-mode="content" aria-selected="true">
-                <span>01</span><strong>Content</strong><small>Ideas inside moments, characters, quotes, thoughts, rankings, and notes</small>
-              </button>
-              <button type="button" role="tab" data-s13-search-mode="people" aria-selected="false">
-                <span>02</span><strong>People</strong><small>Reader profiles ranked by themes, genres, characters, and public activity</small>
-              </button>
-            </div>
-
-            <div class="s17-search-content-filters s19-search-content-filters" data-s17-search-content-filters>
-              <div class="s17-search-layerbar s19-search-layerbar" role="radiogroup" aria-label="Content layer">
-                <button type="button" data-s17-search-layer="all" aria-pressed="true">All</button>
-                <button type="button" data-s17-search-layer="moment" aria-pressed="false">Moments</button>
-                <button type="button" data-s17-search-layer="character" aria-pressed="false">Characters</button>
-                <button type="button" data-s17-search-layer="quote" aria-pressed="false">Quotes</button>
-                <button type="button" data-s17-search-layer="thought" aria-pressed="false">Thoughts</button>
-                <button type="button" data-s17-search-layer="ranking" aria-pressed="false">Rankings</button>
-                <button type="button" data-s17-search-layer="note" aria-pressed="false">Notes</button>
+            <div class="s21-search-demo" aria-label="Example search for Identity">
+              <div class="s21-search-demo__query">
+                <span aria-hidden="true">⌕</span>
+                <span><small>Example search</small><strong>Identity</strong></span>
+                <em>Showcase only</em>
               </div>
-              <button type="button" class="s17-reflection-toggle s19-reflection-toggle" data-s17-search-reflection aria-pressed="false"><span aria-hidden="true">◇</span>Has reflection</button>
-            </div>
-
-            <div class="s14-search-toolbar s17-search-toolbar s19-search-toolbar">
-              <div class="s11-search-box s13-search-box s14-search-box">
-                <label for="s11-reader-search">Search a genre, theme, character, reader style, or ranking idea</label>
-                <div class="s11-search-input-shell"><span aria-hidden="true">⌕</span><input id="s11-reader-search" data-s11-search-input type="search" value="Identity" placeholder="Try identity, historical drama, grief, Ken Kaneki..." autocomplete="off"></div>
-                <div class="s11-search-suggestions" aria-label="Suggested searches">
-                  <button type="button" data-s11-search-suggestion="Identity">Identity</button>
-                  <button type="button" data-s11-search-suggestion="Historical drama">Historical drama</button>
-                  <button type="button" data-s11-search-suggestion="Visual storytelling">Visual storytelling</button>
-                </div>
-              </div>
-
-              <div class="s14-search-selects s17-search-selects s19-search-selects">
-                <label><span>Sort by</span><select data-s14-search-sort aria-label="Sort search results"><option value="relevance">Best match</option><option value="recent">Recently updated</option><option value="saved">Most saved</option><option value="reader">Reader match</option></select></label>
+              <div class="s21-search-demo__scope" aria-label="Included content layers">
+                <span class="is-active">All layers</span>
+                <span>Moments</span>
+                <span>Characters</span>
+                <span>Quotes</span>
+                <span>Thoughts</span>
+                <span>Rankings</span>
               </div>
             </div>
 
-            <div class="s14-search-active" data-s13-search-filters aria-live="polite"></div>
-            <div class="s11-search-summary s13-search-summary s14-search-summary" data-s11-search-summary></div>
-            <div class="s13-search-results s14-search-results" data-s11-search-results></div>
+            <div class="s11-search-summary s13-search-summary s14-search-summary s21-search-summary" data-s11-search-summary></div>
+            <div class="s13-search-results s14-search-results s21-search-results" data-s11-search-results></div>
           </section>
 
           <section class="s11-social-view" data-s11-social-view="profile" aria-label="Selected reader profile" aria-hidden="true" inert hidden data-s11-reader-profile></section>
@@ -1649,13 +1626,13 @@
         <div class="s14-for-you-feed s17-for-you-feed" data-s14-for-you-feed aria-label="For You recommendations. Use the page scroll, arrow keys, or the up and down controls to move between recommendations.">
           ${DISCOVERY_ARTIFACTS.slice(0, count).map((artifact, index) => forYouArtifactMarkup(artifact, index)).join("")}
         </div>
-        <nav class="s14-for-you-dots s17-for-you-nav" aria-label="For You item">
-          <button type="button" class="s17-for-you-arrow" data-s17-for-you-prev aria-label="Show previous recommendation">↑</button>
-          <span class="s17-for-you-nav__label" aria-hidden="true">More ideas</span>
-          <span class="s17-for-you-nav__dots">
+        <nav class="s14-for-you-dots s17-for-you-nav s21-for-you-rail" aria-label="For You recommendation controls">
+          <button type="button" class="s17-for-you-arrow s21-for-you-rail__arrow" data-s17-for-you-prev aria-label="Previous recommendation">↑</button>
+          <span class="s21-for-you-rail__position" aria-hidden="true"><b>${String(state.forYouArtifact + 1).padStart(2, "0")}</b><small>/${String(count).padStart(2, "0")}</small></span>
+          <span class="s17-for-you-nav__dots s21-for-you-rail__dots">
             ${Array.from({ length: count }, (_, index) => `<button type="button" data-s14-for-you-dot="${index}" aria-label="Show recommendation ${index + 1}" aria-current="${index === state.forYouArtifact ? "true" : "false"}"><span></span></button>`).join("")}
           </span>
-          <button type="button" class="s17-for-you-arrow" data-s17-for-you-next aria-label="Show next recommendation">↓</button>
+          <button type="button" class="s17-for-you-arrow s21-for-you-rail__arrow" data-s17-for-you-next aria-label="Next recommendation">↓</button>
         </nav>`;
       renderImages(elements.forYouResults);
       renderArtifactMedia(elements.forYouResults);
@@ -1669,7 +1646,11 @@
     const count = Math.min(5, DISCOVERY_ARTIFACTS.length);
     const normalized = clamp(Math.round(Number(index) || 0), 0, count - 1);
     state.forYouArtifact = normalized;
-    if (source === "user") claimJourneyInteraction();
+    if (source === "user") {
+      userLocks.forYouArtifact = true;
+      userLocks.socialView = true;
+      claimJourneyInteraction();
+    }
     renderReaderResults(animate);
     refreshSocialLayout();
     if (source === "user") {
@@ -1693,10 +1674,16 @@
 
   function renderSearchResultsInternal(animate) {
     if (!elements.searchResults) return;
-    renderSearchFilters();
-    updateSearchModeTabs();
 
-    const mode = state.searchMode === "people" ? "people" : "content";
+    // Section 5 is a product story, not a live database screen. Keep one
+    // intentional example so the layout remains legible and deterministic.
+    state.searchMode = "content";
+    state.searchQuery = "Identity";
+    state.searchLayer = "all";
+    state.searchReflectionOnly = false;
+    state.searchSort = "relevance";
+
+    const mode = "content";
     const query = normalizeText(state.searchQuery);
     const tokens = query.split(/\s+/).filter(Boolean);
 
@@ -1747,8 +1734,8 @@
 
     const family = mode === "people" ? "reader" : "content";
     const queryLabel = state.searchQuery ? ` matching “${state.searchQuery}”` : "";
-    setText(elements.searchSummary, `${shown.length} ${family} result${shown.length === 1 ? "" : "s"}${queryLabel}. Sorted by ${searchSortLabel(state.searchSort)}.`);
-    setText(elements.searchCount, `${shown.length} result${shown.length === 1 ? "" : "s"}`);
+    setText(elements.searchSummary, `${shown.length} public layers connected to “Identity”, arranged as a visual example rather than a live search tool.`);
+    setText(elements.searchCount, `${shown.length} example${shown.length === 1 ? "" : "s"}`);
 
     const renderedCards = qa(".s13-search-card", elements.searchResults);
     if (gsap && renderedCards.length) {
@@ -2287,7 +2274,7 @@
       });
       return selected;
     } catch (error) {
-      console.warn("Inkwell social V15: database stories unavailable.", error);
+      console.warn("Inkwell social V21: database stories unavailable.", error);
       return [...FALLBACK_STORIES];
     }
   }
@@ -2328,8 +2315,8 @@
     const layer = item.layer || "Update";
     const category = profile.tags?.[0] || "Reader activity";
 
-    return `<article class="s13-following-card s14-following-card s18-following-card s19-following-card s20-following-card" data-s13-feed-tone="${escapeHtml(item.tone || "default")}">
-      <button type="button" class="s13-following-card__button s18-following-card__button s19-following-card__button s20-following-card__button" data-s13-feed-open="${index}" aria-label="Open ${escapeHtml(item.type)} from ${escapeHtml(profile.name)}">
+    return `<article class="s13-following-card s14-following-card s18-following-card s19-following-card s20-following-card s21-following-card" data-s13-feed-tone="${escapeHtml(item.tone || "default")}">
+      <button type="button" class="s13-following-card__button s18-following-card__button s19-following-card__button s20-following-card__button s21-following-card__button" data-s13-feed-open="${index}" aria-label="Open ${escapeHtml(item.type)} from ${escapeHtml(profile.name)}">
         <header class="s18-following-card__header s19-following-card__header s20-following-card__header">
           <span class="s11-avatar s11-avatar--small" style="${avatarStyle(item.profile)}">${escapeHtml(profile.initial)}</span>
           <span class="s13-following-card__identity"><strong>${escapeHtml(profile.name)}</strong><small>${escapeHtml(item.type)}</small></span>
@@ -2416,8 +2403,8 @@
     const profile = PROFILE_DATA[artifact.profile];
     const story = getStoryByTitle(artifact.story);
     const type = normalizeText(artifact.type);
-    return `<article class="s14-for-you-slide s17-for-you-slide s18-for-you-slide s19-for-you-slide s20-for-you-slide" data-s14-for-you-index="${index}" data-s14-artifact-type="${escapeHtml(type)}" aria-label="${escapeHtml(artifact.type)} recommendation ${index + 1} of ${Math.min(5, DISCOVERY_ARTIFACTS.length)}">
-      <div class="s14-for-you-slide__visual s17-for-you-slide__visual s18-for-you-canvas s19-for-you-canvas s20-for-you-canvas">
+    return `<article class="s14-for-you-slide s17-for-you-slide s18-for-you-slide s19-for-you-slide s20-for-you-slide s21-for-you-slide" data-s14-for-you-index="${index}" data-s14-artifact-type="${escapeHtml(type)}" aria-label="${escapeHtml(artifact.type)} recommendation ${index + 1} of ${Math.min(5, DISCOVERY_ARTIFACTS.length)}">
+      <div class="s14-for-you-slide__visual s17-for-you-slide__visual s18-for-you-canvas s19-for-you-canvas s20-for-you-canvas s21-for-you-canvas">
         <div class="s20-for-you-meta">
           <span class="s13-reason-chip s14-reason-chip s18-for-you-reason s19-for-you-reason s20-for-you-reason"><b aria-hidden="true">↔</b>${escapeHtml(artifact.reason)}</span>
           <span class="s14-for-you-slide__type s20-for-you-type">${escapeHtml(artifact.type)}</span>
@@ -2425,7 +2412,7 @@
         ${forYouPrimaryMarkup(artifact, story)}
       </div>
 
-      <div class="s18-for-you-dock s19-for-you-dock s20-for-you-dock">
+      <div class="s18-for-you-dock s19-for-you-dock s20-for-you-dock s21-for-you-dock">
         <div class="s18-for-you-dock__copy s19-for-you-dock__copy s20-for-you-dock__copy">
           <span class="s20-for-you-dock__cover">${storyCoverMarkup(story, "s20-for-you-cover")}</span>
           <span class="s13-artifact-kicker">${escapeHtml(artifact.type)} · ${escapeHtml(story.title)}</span>
@@ -2433,7 +2420,7 @@
           <div class="s13-artifact-tags">${artifact.tags.map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}</div>
         </div>
 
-        <footer class="s14-for-you-slide__footer s17-for-you-footer s18-for-you-footer s19-for-you-footer s20-for-you-footer">
+        <footer class="s14-for-you-slide__footer s17-for-you-footer s18-for-you-footer s19-for-you-footer s20-for-you-footer s21-for-you-footer">
           <button type="button" class="s14-author-card s16-author-card s17-author-card s18-author-card s20-author-card" data-s13-open-author="${escapeHtml(artifact.profile)}" aria-label="Open ${escapeHtml(profile.name)} profile">
             <span class="s11-avatar" style="${avatarStyle(artifact.profile)}">${escapeHtml(profile.initial)}</span>
             <span><strong>${escapeHtml(profile.name)}</strong><small>${escapeHtml(profile.label)}</small></span>
@@ -2455,23 +2442,20 @@
   function searchArtifactMarkup(artifact) {
     const profile = PROFILE_DATA[artifact.profile];
     const story = getStoryByTitle(artifact.story);
-    const actionAttribute = Number.isInteger(artifact.feedIndex)
-      ? `data-s13-feed-open="${artifact.feedIndex}"`
-      : `data-s13-open-artifact="${escapeHtml(artifact.id)}"`;
     const resultType = escapeHtml(artifact.searchLayer || normalizeText(artifact.type));
     const displayType = artifact.type;
-    return `<button type="button" class="s13-search-card s13-search-artifact s18-search-artifact s19-search-artifact" data-s16-search-result-type="${resultType}" ${actionAttribute} aria-label="Open ${escapeHtml(displayType)} ${escapeHtml(artifact.title)}">
-      <span class="s18-search-artifact__cover s19-search-artifact__cover">${storyCoverMarkup(story, "s13-search-artifact__cover")}</span>
-      <span class="s18-search-artifact__copy s19-search-artifact__copy">
+    return `<article class="s13-search-card s13-search-artifact s18-search-artifact s19-search-artifact s21-search-card" data-s16-search-result-type="${resultType}" aria-label="${escapeHtml(displayType)} example: ${escapeHtml(artifact.title)}">
+      <span class="s18-search-artifact__cover s19-search-artifact__cover s21-search-card__cover">${storyCoverMarkup(story, "s13-search-artifact__cover")}</span>
+      <span class="s18-search-artifact__copy s19-search-artifact__copy s21-search-card__copy">
         <small>${escapeHtml(displayType)} · ${escapeHtml(story.title)}</small>
         <strong>${escapeHtml(artifact.title)}</strong>
         <span class="s13-search-card__tags">${(artifact.tags || []).slice(0, 3).map((tag) => `<em>${escapeHtml(tag)}</em>`).join("")}</span>
       </span>
-      <span class="s18-search-artifact__author s19-search-artifact__author">
+      <span class="s18-search-artifact__author s19-search-artifact__author s21-search-card__author">
         <span class="s11-avatar s11-avatar--small" style="${avatarStyle(artifact.profile)}">${escapeHtml(profile.initial)}</span>
         <span><strong>${escapeHtml(profile.name)}</strong><small>${escapeHtml(profile.label)}</small></span>
       </span>
-    </button>`;
+    </article>`;
   }
 
   function searchResultMarkup(key, reason, score = 0) {
@@ -2653,20 +2637,26 @@
 
   function setupForYouFeedInteractions(force = false) {
     const stage = elements.forYouResults;
-    if (!stage || stage.dataset.s20Bound === "true") return;
-    stage.dataset.s20Bound = "true";
+    if (!stage || stage.dataset.s21Bound === "true") return;
+    stage.dataset.s21Bound = "true";
     stage.tabIndex = stage.tabIndex >= 0 ? stage.tabIndex : 0;
+
+    const ownFeed = () => {
+      userLocks.socialView = true;
+      userLocks.forYouArtifact = true;
+      section.dataset.socialInteraction = "user";
+    };
 
     stage.addEventListener("keydown", (event) => {
       if (!["ArrowDown", "PageDown", "ArrowUp", "PageUp", "Home", "End"].includes(event.key)) return;
       event.preventDefault();
       event.stopPropagation();
+      ownFeed();
       let next = state.forYouArtifact;
       if (["ArrowDown", "PageDown"].includes(event.key)) next += 1;
       if (["ArrowUp", "PageUp"].includes(event.key)) next -= 1;
       if (event.key === "Home") next = 0;
       if (event.key === "End") next = Math.min(5, DISCOVERY_ARTIFACTS.length) - 1;
-      userLocks.forYouArtifact = true;
       claimJourneyInteraction();
       setForYouArtifact(next, true, "user");
     });
@@ -2682,6 +2672,10 @@
       const direction = Math.sign(delta);
       if (!direction) return;
 
+      // Once someone scrolls inside For You, the timeline may no longer swap
+      // the tab or post underneath them. At the first/last post, native page
+      // scrolling is deliberately released so the homepage journey can move on.
+      ownFeed();
       const atStart = state.forYouArtifact === 0 && direction < 0;
       const atEnd = state.forYouArtifact === count - 1 && direction > 0;
       if (atStart || atEnd) {
@@ -2696,14 +2690,31 @@
       const now = performance.now();
       if (now < forYouWheelLockedUntil) return;
       forYouWheelDelta += delta;
-      if (Math.abs(forYouWheelDelta) < 34) return;
+      if (Math.abs(forYouWheelDelta) < 42) return;
 
-      userLocks.forYouArtifact = true;
-      forYouWheelLockedUntil = now + 420;
+      forYouWheelLockedUntil = now + 460;
       const next = state.forYouArtifact + (forYouWheelDelta > 0 ? 1 : -1);
       forYouWheelDelta = 0;
       setForYouArtifact(next, true, "user");
     }, { passive: false });
+
+    let pointerStartY = null;
+    let pointerStartX = null;
+    stage.addEventListener("pointerdown", (event) => {
+      if (event.pointerType === "mouse") return;
+      pointerStartY = event.clientY;
+      pointerStartX = event.clientX;
+    }, { passive: true });
+    stage.addEventListener("pointerup", (event) => {
+      if (pointerStartY == null || pointerStartX == null) return;
+      const dy = event.clientY - pointerStartY;
+      const dx = event.clientX - pointerStartX;
+      pointerStartY = null;
+      pointerStartX = null;
+      if (Math.abs(dy) < 44 || Math.abs(dy) <= Math.abs(dx)) return;
+      ownFeed();
+      setForYouArtifact(state.forYouArtifact + (dy < 0 ? 1 : -1), true, "user");
+    }, { passive: true });
   }
 
   function syncForYouStage(animate) {
@@ -2720,6 +2731,7 @@
       slide.classList.toggle("is-current", current);
       slide.hidden = !current;
       slide.setAttribute("aria-hidden", current ? "false" : "true");
+      slide.setAttribute("aria-current", current ? "true" : "false");
       slide.toggleAttribute("inert", !current);
       slide.style.pointerEvents = current ? "auto" : "none";
       slide.style.zIndex = current ? "2" : "1";
@@ -2755,6 +2767,9 @@
       dot.setAttribute("aria-current", current ? "true" : "false");
       dot.tabIndex = current ? 0 : -1;
     });
+
+    const railPosition = q(".s21-for-you-rail__position", elements.forYouResults);
+    if (railPosition) railPosition.innerHTML = `<b>${String(index + 1).padStart(2, "0")}</b><small>/${String(count).padStart(2, "0")}</small>`;
 
     const previous = q("[data-s17-for-you-prev]", elements.forYouResults);
     const next = q("[data-s17-for-you-next]", elements.forYouResults);
