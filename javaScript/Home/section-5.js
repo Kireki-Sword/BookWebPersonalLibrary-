@@ -1,5 +1,5 @@
 /* ============================================================================
-   INKWELL — SECTION 5: SOCIAL, ON YOUR TERMS (V19 VERTICAL DISCOVERY / THEME SEARCH / FULL PEOPLE GRID)
+   INKWELL — SECTION 5: SOCIAL, ON YOUR TERMS (V20 RESPONSIVE SOCIAL FEED / STABLE INTERACTION OWNERSHIP)
 
    Homepage product story:
    1. Control — audience, spoilers, and a stable live preview.
@@ -20,12 +20,12 @@
   "use strict";
 
   const section = document.querySelector("#section-5-social");
-  if (!section || window.__INKWELL_SOCIAL_V19_STARTED__) return;
+  if (!section || window.__INKWELL_SOCIAL_V20_STARTED__) return;
 
-  window.__INKWELL_SOCIAL_V19_STARTED__ = true;
+  window.__INKWELL_SOCIAL_V20_STARTED__ = true;
   window.__INKWELL_SOCIAL_V16_STARTED__ = true;
   window.__INKWELL_SOCIAL_CINEMA_BUILD__ =
-    "2026-07-26-social-cinema-v19-vertical-discovery-theme-search";
+    "2026-07-26-social-cinema-v20-responsive-feed-stable-scroll";
 
   const { gsap, ScrollTrigger } = window;
   const MANAGED_BY_HOME_JOURNEY =
@@ -650,6 +650,8 @@
   let resizeObserver = null;
   let lastDemoSignature = "";
   let lastForYouArtifact = 0;
+  let forYouWheelDelta = 0;
+  let forYouWheelLockedUntil = 0;
   const cleanupCallbacks = [];
 
   const q = (selector, root = section) => root?.querySelector(selector) || null;
@@ -702,7 +704,7 @@
       discoveryCopy.innerHTML = `
         <span class="social-copy-state__index">03 · Activity, ideas, and intentional search</span>
         <h2>Follow people. Discover ideas. Search with intent.</h2>
-        <p>Following shows what changed. For You becomes a one-card-at-a-time stream for moments, characters, reflections, quotes, and thoughts. Search then narrows by result type, story, and sort order.</p>
+        <p>Following shows what changed. For You becomes a one-card-at-a-time stream for moments, characters, quotes, thoughts, and rankings. Search then narrows by result type, story, and sort order.</p>
         <div class="social-copy-proof" aria-label="Social features">
           <span>Visual activity</span><span>Layer-by-layer discovery</span><span>Layered search</span>
         </div>`;
@@ -1043,7 +1045,14 @@
     });
 
     elements.socialTabs.forEach((button, index) => {
-      listen(button, "click", () => setSocialView(button.dataset.s11SocialTab || "following", true, "user"));
+      listen(button, "click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        userLocks.socialView = true;
+        claimJourneyInteraction();
+        button.focus({ preventScroll: true });
+        setSocialView(button.dataset.s11SocialTab || "following", true, "user");
+      });
       listen(button, "keydown", (event) => handleRovingTabKey(event, elements.socialTabs, index));
     });
 
@@ -1291,7 +1300,14 @@
     timeline.fromTo(q("[data-s14-profile-activity]", elements.profile), { autoAlpha: 0, y: 12 }, { autoAlpha: 1, y: 0, duration: 0.38, ease: "power3.out" }, "identity+=1.34");
 
     timeline.addLabel("social-transition", ACT_TIMES.socialTransition);
-    timeline.call(() => setSocialView("following", false, "restore"), null, "social-transition");
+    timeline.call(() => {
+      if (!userLocks.socialView) {
+        setSocialView("following", false, "restore");
+      } else {
+        enforceSocialPanelOwnership(state.socialView || "following");
+        updateSocialChrome(state.socialView || "following");
+      }
+    }, null, "social-transition");
     timeline.to(identityCopy, { autoAlpha: 0, y: -16, duration: 0.34, ease: "power2.inOut" }, "social-transition");
     timeline.fromTo(socialCopy, { autoAlpha: 0, y: 18 }, { autoAlpha: 1, y: 0, duration: 0.46, ease: "power3.out" }, "social-transition+=0.12");
     timeline.to(elements.profile, { autoAlpha: 0, x: -28, scale: 0.984, duration: 0.46, ease: "power2.inOut" }, "social-transition");
@@ -1415,7 +1431,12 @@
     if (state.activeAct === "social" && !userLocks.socialView) {
       setSocialView(demoState.socialView, true, "demo");
     }
-    if (state.activeAct === "social" && demoState.socialView === "foryou" && !userLocks.forYouArtifact) {
+    if (
+      state.activeAct === "social" &&
+      state.socialView === "foryou" &&
+      demoState.socialView === "foryou" &&
+      !userLocks.forYouArtifact
+    ) {
       setForYouArtifact(demoState.forYouArtifact, true, "demo");
     }
   }
@@ -1648,7 +1669,9 @@
     const count = Math.min(5, DISCOVERY_ARTIFACTS.length);
     const normalized = clamp(Math.round(Number(index) || 0), 0, count - 1);
     state.forYouArtifact = normalized;
+    if (source === "user") claimJourneyInteraction();
     renderReaderResults(animate);
+    refreshSocialLayout();
     if (source === "user") {
       const artifact = DISCOVERY_ARTIFACTS[normalized];
       announce(`${artifact.type} recommendation from ${PROFILE_DATA[artifact.profile].name} selected.`);
@@ -1932,6 +1955,23 @@
     return score;
   }
 
+  function claimJourneyInteraction() {
+    try {
+      trigger?.getTween?.()?.progress?.(1);
+      window.InkwellHomeJourney?.settleScroll?.();
+    } catch (_) {
+      // The natural-layout and standalone versions do not always expose a parent scroll tween.
+    }
+  }
+
+  function refreshSocialLayout() {
+    requestAnimationFrame(() => {
+      enforceSocialPanelOwnership(state.socialView || "following");
+      if (state.socialView === "foryou") syncForYouStage(false);
+      ScrollTrigger?.update?.();
+    });
+  }
+
   function setHubMode(mode, animate, source = "system") {
     setSocialView(mode, animate, source);
   }
@@ -1958,6 +1998,7 @@
   function setSocialView(view, animate, source = "system") {
     const normalized = SOCIAL_VIEW_ORDER.includes(view) ? view : "following";
     const previous = state.socialView;
+    if (source === "user") claimJourneyInteraction();
 
     if (["following", "foryou", "search"].includes(previous) && !["following", "foryou", "search"].includes(normalized)) state.returnView = previous;
     if (["following", "foryou", "search"].includes(normalized)) state.returnView = normalized;
@@ -2012,6 +2053,7 @@
 
     if (normalized === "foryou") syncForYouStage(false);
     updateSocialChrome(normalized);
+    refreshSocialLayout();
     if (source === "user") announce(`${SOCIAL_VIEW_META[normalized].label} opened.`);
   }
 
@@ -2283,25 +2325,28 @@
     const profile = PROFILE_DATA[item.profile];
     const story = getStoryByTitle(item.story);
     const action = activityActionCopy(item, story);
-    return `<article class="s13-following-card s14-following-card s18-following-card s19-following-card" data-s13-feed-tone="${escapeHtml(item.tone || "default")}">
-      <button type="button" class="s13-following-card__button s18-following-card__button s19-following-card__button" data-s13-feed-open="${index}" aria-label="Open ${escapeHtml(item.type)} from ${escapeHtml(profile.name)}">
-        <header class="s18-following-card__header s19-following-card__header">
+    const layer = item.layer || "Update";
+    const category = profile.tags?.[0] || "Reader activity";
+
+    return `<article class="s13-following-card s14-following-card s18-following-card s19-following-card s20-following-card" data-s13-feed-tone="${escapeHtml(item.tone || "default")}">
+      <button type="button" class="s13-following-card__button s18-following-card__button s19-following-card__button s20-following-card__button" data-s13-feed-open="${index}" aria-label="Open ${escapeHtml(item.type)} from ${escapeHtml(profile.name)}">
+        <header class="s18-following-card__header s19-following-card__header s20-following-card__header">
           <span class="s11-avatar s11-avatar--small" style="${avatarStyle(item.profile)}">${escapeHtml(profile.initial)}</span>
           <span class="s13-following-card__identity"><strong>${escapeHtml(profile.name)}</strong><small>${escapeHtml(item.type)}</small></span>
           <time>${escapeHtml(item.time || `${index + 1}h`)}</time>
         </header>
-        <div class="s13-following-card__body s18-following-card__body s19-following-card__body">
-          <span class="s13-following-card__copy s18-following-card__copy s19-following-card__copy">
-            <small>${escapeHtml(action)}</small>
-            <strong>${escapeHtml(item.title)}</strong>
+        <div class="s13-following-card__body s18-following-card__body s19-following-card__body s20-following-card__body">
+          <span class="s13-following-card__copy s18-following-card__copy s19-following-card__copy s20-following-card__copy">
+            <small class="s20-following-card__action">${escapeHtml(action)}</small>
+            <strong title="${escapeHtml(item.title)}">${escapeHtml(item.title)}</strong>
             <p>${escapeHtml(item.detail)}</p>
           </span>
-          <span class="s18-following-card__cover-shell s19-following-card__cover-shell">${storyCoverMarkup(story, "s13-following-card__cover")}</span>
+          <span class="s18-following-card__cover-shell s19-following-card__cover-shell s20-following-card__cover-shell">${storyCoverMarkup(story, "s13-following-card__cover")}</span>
         </div>
-        <footer class="s18-following-card__footer s19-following-card__footer">
-          <span class="s13-layer-chip">${escapeHtml(item.layer || "Update")}</span>
-          <span class="s18-following-card__story">${escapeHtml(story.title)}</span>
-          <span class="s18-following-card__category">${escapeHtml(profile.tags[0])}</span>
+        <footer class="s18-following-card__footer s19-following-card__footer s20-following-card__footer">
+          <span class="s13-layer-chip s20-following-card__layer">${escapeHtml(layer)}</span>
+          <span class="s18-following-card__story" title="${escapeHtml(story.title)}">${escapeHtml(story.title)}</span>
+          <span class="s18-following-card__category" title="${escapeHtml(category)}">${escapeHtml(category)}</span>
         </footer>
       </button>
     </article>`;
@@ -2322,63 +2367,79 @@
     return map[item.type] || `${item.type} · ${story.title}`;
   }
 
-  function forYouPrimaryMarkup(artifact, story) {
-    const type = normalizeText(artifact.type);
-    const media = `
+  function artifactMediaMarkup(artifact, story, className = "") {
+    return `<div class="s20-artifact-media ${escapeHtml(className)}">
       <img class="s14-for-you-slide__image" data-s14-artifact-media="${escapeHtml(artifact.mediaKey || "")}" alt="Visual for ${escapeHtml(artifact.title)}" hidden>
       ${storyCoverMarkup(story, "s14-for-you-slide__fallback")}
-    `;
+    </div>`;
+  }
+
+  function forYouPrimaryMarkup(artifact, story) {
+    const type = normalizeText(artifact.type);
+    const media = artifactMediaMarkup(artifact, story);
 
     if (type === "moment") {
-      return `<div class="s19-primary-layer s19-primary-layer--feature s19-primary-layer--moment">
-        <div class="s19-feature-media">${media}</div>
-        <div class="s19-feature-copy"><small>Saved moment</small><strong>One frame, then the idea around it</strong><p>${escapeHtml(artifact.excerpt)}</p><span>${escapeHtml(artifact.meta)}</span></div>
+      return `<div class="s19-primary-layer s19-primary-layer--feature s19-primary-layer--moment s20-primary-layer s20-primary-layer--feature">
+        ${artifactMediaMarkup(artifact, story, "s19-feature-media")}
+        <div class="s19-feature-copy s20-feature-copy"><small>Saved moment</small><strong>One frame, then the idea around it</strong><p>${escapeHtml(artifact.excerpt)}</p><span>${escapeHtml(artifact.meta)}</span></div>
       </div>`;
     }
     if (type === "character") {
-      return `<div class="s19-primary-layer s19-primary-layer--feature s19-primary-layer--character">
-        <div class="s19-feature-media">${media}</div>
-        <div class="s19-feature-copy"><small>Character focus</small><strong>${escapeHtml(artifact.subject || artifact.title)}</strong><p>${escapeHtml(artifact.excerpt)}</p><div class="s19-feature-tags">${artifact.tags.map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}</div></div>
+      return `<div class="s19-primary-layer s19-primary-layer--feature s19-primary-layer--character s20-primary-layer s20-primary-layer--feature">
+        ${artifactMediaMarkup(artifact, story, "s19-feature-media")}
+        <div class="s19-feature-copy s20-feature-copy"><small>Character focus</small><strong>${escapeHtml(artifact.subject || artifact.title)}</strong><p>${escapeHtml(artifact.excerpt)}</p><div class="s19-feature-tags">${artifact.tags.map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}</div></div>
       </div>`;
     }
     if (type === "quote") {
-      return `<div class="s19-primary-layer s19-primary-layer--text s19-primary-layer--quote">${media}<small>Saved quote context</small><blockquote>${escapeHtml(artifact.excerpt)}</blockquote><span>${escapeHtml(story.title)}</span></div>`;
+      return `<div class="s19-primary-layer s19-primary-layer--text s19-primary-layer--quote s20-primary-layer s20-primary-layer--text s20-primary-layer--quote">
+        <div class="s20-layer-copy"><small>Saved quote context</small><blockquote>${escapeHtml(artifact.excerpt)}</blockquote><span>${escapeHtml(story.title)}</span></div>
+        ${media}
+      </div>`;
     }
     if (type === "thought") {
-      return `<div class="s19-primary-layer s19-primary-layer--text s19-primary-layer--thought">${media}<small>Connected thought</small><h5>${escapeHtml(artifact.title)}</h5><p>${escapeHtml(artifact.excerpt)}</p></div>`;
+      return `<div class="s19-primary-layer s19-primary-layer--text s19-primary-layer--thought s20-primary-layer s20-primary-layer--text s20-primary-layer--thought">
+        <div class="s20-layer-copy"><small>Connected thought</small><h5>${escapeHtml(artifact.title)}</h5><p>${escapeHtml(artifact.excerpt)}</p></div>
+        ${media}
+      </div>`;
     }
     if (type === "ranking") {
       const items = (artifact.items || []).slice(0, 3);
-      return `<div class="s19-primary-layer s19-primary-layer--ranking">${media}<div><small>Public ranking</small><h5>${escapeHtml(artifact.title)}</h5><ol>${items.map((item, index) => `<li><b>${String(index + 1).padStart(2, "0")}</b><span>${escapeHtml(item)}</span></li>`).join("")}</ol><p>${escapeHtml(artifact.excerpt)}</p></div></div>`;
+      return `<div class="s19-primary-layer s19-primary-layer--ranking s20-primary-layer s20-primary-layer--ranking">
+        <div class="s20-layer-copy"><small>Public ranking</small><h5>${escapeHtml(artifact.title)}</h5><ol>${items.map((item, index) => `<li><b>${String(index + 1).padStart(2, "0")}</b><span>${escapeHtml(item)}</span></li>`).join("")}</ol><p>${escapeHtml(artifact.excerpt)}</p></div>
+        ${media}
+      </div>`;
     }
-    return `<div class="s19-primary-layer s19-primary-layer--text"><p>${escapeHtml(artifact.excerpt)}</p></div>`;
+    return `<div class="s19-primary-layer s20-primary-layer s20-primary-layer--text"><div class="s20-layer-copy"><p>${escapeHtml(artifact.excerpt)}</p></div>${media}</div>`;
   }
 
   function forYouArtifactMarkup(artifact, index) {
     const profile = PROFILE_DATA[artifact.profile];
     const story = getStoryByTitle(artifact.story);
     const type = normalizeText(artifact.type);
-    return `<article class="s14-for-you-slide s17-for-you-slide s18-for-you-slide s19-for-you-slide" data-s14-for-you-index="${index}" data-s14-artifact-type="${escapeHtml(type)}" aria-label="${escapeHtml(artifact.type)} recommendation ${index + 1} of ${Math.min(5, DISCOVERY_ARTIFACTS.length)}">
-      <div class="s14-for-you-slide__visual s17-for-you-slide__visual s18-for-you-canvas s19-for-you-canvas">
+    return `<article class="s14-for-you-slide s17-for-you-slide s18-for-you-slide s19-for-you-slide s20-for-you-slide" data-s14-for-you-index="${index}" data-s14-artifact-type="${escapeHtml(type)}" aria-label="${escapeHtml(artifact.type)} recommendation ${index + 1} of ${Math.min(5, DISCOVERY_ARTIFACTS.length)}">
+      <div class="s14-for-you-slide__visual s17-for-you-slide__visual s18-for-you-canvas s19-for-you-canvas s20-for-you-canvas">
+        <div class="s20-for-you-meta">
+          <span class="s13-reason-chip s14-reason-chip s18-for-you-reason s19-for-you-reason s20-for-you-reason"><b aria-hidden="true">↔</b>${escapeHtml(artifact.reason)}</span>
+          <span class="s14-for-you-slide__type s20-for-you-type">${escapeHtml(artifact.type)}</span>
+        </div>
         ${forYouPrimaryMarkup(artifact, story)}
-        <span class="s14-for-you-slide__type">${escapeHtml(artifact.type)}</span>
-        <span class="s13-reason-chip s14-reason-chip s18-for-you-reason s19-for-you-reason"><b aria-hidden="true">↔</b>${escapeHtml(artifact.reason)}</span>
       </div>
 
-      <div class="s18-for-you-dock s19-for-you-dock">
-        <div class="s18-for-you-dock__copy s19-for-you-dock__copy">
+      <div class="s18-for-you-dock s19-for-you-dock s20-for-you-dock">
+        <div class="s18-for-you-dock__copy s19-for-you-dock__copy s20-for-you-dock__copy">
+          <span class="s20-for-you-dock__cover">${storyCoverMarkup(story, "s20-for-you-cover")}</span>
           <span class="s13-artifact-kicker">${escapeHtml(artifact.type)} · ${escapeHtml(story.title)}</span>
           <h4>${escapeHtml(artifact.title)}</h4>
           <div class="s13-artifact-tags">${artifact.tags.map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}</div>
         </div>
 
-        <footer class="s14-for-you-slide__footer s17-for-you-footer s18-for-you-footer s19-for-you-footer">
-          <button type="button" class="s14-author-card s16-author-card s17-author-card s18-author-card" data-s13-open-author="${escapeHtml(artifact.profile)}" aria-label="Open ${escapeHtml(profile.name)} profile">
+        <footer class="s14-for-you-slide__footer s17-for-you-footer s18-for-you-footer s19-for-you-footer s20-for-you-footer">
+          <button type="button" class="s14-author-card s16-author-card s17-author-card s18-author-card s20-author-card" data-s13-open-author="${escapeHtml(artifact.profile)}" aria-label="Open ${escapeHtml(profile.name)} profile">
             <span class="s11-avatar" style="${avatarStyle(artifact.profile)}">${escapeHtml(profile.initial)}</span>
             <span><strong>${escapeHtml(profile.name)}</strong><small>${escapeHtml(profile.label)}</small></span>
             <b aria-hidden="true">→</b>
           </button>
-          <div class="s14-for-you-actions s17-for-you-actions s18-for-you-actions">
+          <div class="s14-for-you-actions s17-for-you-actions s18-for-you-actions s20-for-you-actions">
             <button type="button" class="s13-secondary-action" data-s11-open-story="${escapeHtml(story.title)}" data-s13-story-owner="${escapeHtml(artifact.profile)}" aria-label="View ${escapeHtml(story.title)}">View title</button>
             <button type="button" class="s13-primary-action" data-s18-open-reflection="${escapeHtml(story.title)}" data-s18-reflection-owner="${escapeHtml(artifact.profile)}">See reflection</button>
           </div>
@@ -2559,6 +2620,16 @@
     });
   }
 
+  function classifyArtifactMedia(image) {
+    if (!image?.naturalWidth || !image?.naturalHeight) return;
+    const slide = image.closest("[data-s14-for-you-index]");
+    if (!slide) return;
+    const ratio = image.naturalWidth / image.naturalHeight;
+    const orientation = ratio > 1.18 ? "landscape" : ratio < 0.84 ? "portrait" : "square";
+    slide.dataset.s20MediaOrientation = orientation;
+    slide.style.setProperty("--s20-media-ratio", String(Math.round(ratio * 1000) / 1000));
+  }
+
   function setImageCandidates(image, candidates) {
     if (!image) return;
     const queue = Array.from(new Set(candidates.filter(Boolean)));
@@ -2573,17 +2644,19 @@
       image.src = queue[cursor++];
     };
     image.addEventListener("error", next, { passive: true });
-    image.addEventListener("load", () => image.closest(".s14-for-you-slide")?.classList.add("has-local-media"), { once: true });
+    image.addEventListener("load", () => {
+      image.closest(".s14-for-you-slide")?.classList.add("has-local-media");
+      classifyArtifactMedia(image);
+    }, { once: true });
     next();
   }
 
   function setupForYouFeedInteractions(force = false) {
     const stage = elements.forYouResults;
-    if (!stage || stage.dataset.s15Bound === "true") return;
-    stage.dataset.s15Bound = "true";
+    if (!stage || stage.dataset.s20Bound === "true") return;
+    stage.dataset.s20Bound = "true";
+    stage.tabIndex = stage.tabIndex >= 0 ? stage.tabIndex : 0;
 
-    /* No nested wheel/scroll surface: the master homepage timeline owns wheel
-       movement. Keyboard and dot controls change the selected stacked card. */
     stage.addEventListener("keydown", (event) => {
       if (!["ArrowDown", "PageDown", "ArrowUp", "PageUp", "Home", "End"].includes(event.key)) return;
       event.preventDefault();
@@ -2594,8 +2667,43 @@
       if (event.key === "Home") next = 0;
       if (event.key === "End") next = Math.min(5, DISCOVERY_ARTIFACTS.length) - 1;
       userLocks.forYouArtifact = true;
+      claimJourneyInteraction();
       setForYouArtifact(next, true, "user");
     });
+
+    stage.addEventListener("wheel", (event) => {
+      if (state.socialView !== "foryou" || state.activeAct !== "social") return;
+      if (event.ctrlKey || event.metaKey || event.shiftKey) return;
+      if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
+
+      const count = Math.min(5, DISCOVERY_ARTIFACTS.length);
+      const multiplier = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? Math.max(240, stage.clientHeight) : 1;
+      const delta = event.deltaY * multiplier;
+      const direction = Math.sign(delta);
+      if (!direction) return;
+
+      const atStart = state.forYouArtifact === 0 && direction < 0;
+      const atEnd = state.forYouArtifact === count - 1 && direction > 0;
+      if (atStart || atEnd) {
+        forYouWheelDelta = 0;
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
+      claimJourneyInteraction();
+
+      const now = performance.now();
+      if (now < forYouWheelLockedUntil) return;
+      forYouWheelDelta += delta;
+      if (Math.abs(forYouWheelDelta) < 34) return;
+
+      userLocks.forYouArtifact = true;
+      forYouWheelLockedUntil = now + 420;
+      const next = state.forYouArtifact + (forYouWheelDelta > 0 ? 1 : -1);
+      forYouWheelDelta = 0;
+      setForYouArtifact(next, true, "user");
+    }, { passive: false });
   }
 
   function syncForYouStage(animate) {
@@ -2693,6 +2801,7 @@
     }
     image.alt = `${story.title} cover`;
     image.hidden = false;
+    image.addEventListener("load", () => classifyArtifactMedia(image), { once: true });
     image.src = story.coverUrl;
     image.addEventListener("error", () => { image.hidden = true; }, { once: true });
   }
@@ -2914,6 +3023,8 @@
     state.searchSort = "relevance";
     state.forYouArtifact = 0;
     lastForYouArtifact = 0;
+    forYouWheelDelta = 0;
+    forYouWheelLockedUntil = 0;
     if (elements.searchInput) elements.searchInput.value = state.searchQuery;
     demoState.audience = "private";
     demoState.spoiler = false;
@@ -2960,7 +3071,7 @@
         timeline?.kill?.();
         resizeObserver?.disconnect?.();
         cleanupCallbacks.splice(0).forEach((callback) => callback());
-        window.__INKWELL_SOCIAL_V19_STARTED__ = false;
+        window.__INKWELL_SOCIAL_V20_STARTED__ = false;
         window.__INKWELL_SOCIAL_V16_STARTED__ = false;
       },
       cleanup: () => trigger?.kill?.(true),
